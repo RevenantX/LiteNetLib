@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+using System;
 using LiteNetLib;
 
 class Program

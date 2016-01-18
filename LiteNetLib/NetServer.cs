@@ -161,7 +161,7 @@ namespace LiteNetLib
                 int peerId = _idList.Pop();
                 byte[] peerIdData = BitConverter.GetBytes(peerId);
 
-                NetPeer netPeer = new NetPeer(new ReliableConnection(socket, remoteEndPoint), peerId);
+                NetPeer netPeer = new NetPeer(new ReliableOrderedChannel(socket, remoteEndPoint), peerId);
                 netPeer.Connection.BadRoundTripTime = UpdateTime * 2 + 250;
                 netPeer.Connection.OnReliableInOrderPacket = OnReliableInOrderPacket;
                 netPeer.Connection.OnSendError = OnSendError;

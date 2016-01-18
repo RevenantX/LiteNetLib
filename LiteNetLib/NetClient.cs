@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 
 namespace LiteNetLib
@@ -6,7 +6,7 @@ namespace LiteNetLib
     public class NetClient : NetBase<NetClient>
     {
         private NetPeer _peer;
-        private ReliableConnection _connection;
+        private ReliableOrderedChannel _connection;
         private bool _connected;
 
         public NetClient()
@@ -79,7 +79,7 @@ namespace LiteNetLib
             //Force close connection
             CloseConnection(true);
             //Create reliable connection
-            _connection = new ReliableConnection(socket, ep);
+            _connection = new ReliableOrderedChannel(socket, ep);
             _connection.textColor = ConsoleColor.Yellow;
             _connection.BadRoundTripTime = UpdateTime * 2 + 250;
             _connection.OnReliableInOrderPacket = OnReliableInOrderPacket;
@@ -113,7 +113,7 @@ namespace LiteNetLib
 				return null;
             if (!_connection.EndPoint.Equals(remoteEndPoint))
             {
-                NetUtils.DebugWrite(ConsoleColor.DarkCyan, "[NC] Bad remoteEndPoint " + remoteEndPoint.ToString());
+                NetUtils.DebugWrite(ConsoleColor.DarkCyan, "[NC] Bad remoteEndPoint " + remoteEndPoint);
                 return null;
             }
             //Process income packet

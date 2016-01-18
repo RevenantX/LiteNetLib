@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+using System;
 
 namespace LiteNetLib
 {
@@ -24,9 +23,6 @@ namespace LiteNetLib
 
     public class NetPacket
     {
-        //HeaderSize constant
-        public const int HeaderSize = 4;
-
         //Header
         public PacketProperty property; //1 1
         public PacketInfo info;         //1 2
@@ -63,9 +59,9 @@ namespace LiteNetLib
             p.sequence = BitConverter.ToUInt16(data, 2);
 
             //Reading other data
-            int dataLenght = packetSize - HeaderSize;
+            int dataLenght = packetSize - NetConstants.HeaderSize;
             p.data = new byte[dataLenght];
-            Buffer.BlockCopy(data, HeaderSize, p.data, 0, dataLenght);
+            Buffer.BlockCopy(data, NetConstants.HeaderSize, p.data, 0, dataLenght);
 
             return p;
         }
@@ -78,12 +74,12 @@ namespace LiteNetLib
             //Writing data first
             if(data != null)
             {
-                buffer = new byte[HeaderSize + data.Length];
-                Buffer.BlockCopy(data, 0, buffer, HeaderSize, data.Length);
+                buffer = new byte[NetConstants.HeaderSize + data.Length];
+                Buffer.BlockCopy(data, 0, buffer, NetConstants.HeaderSize, data.Length);
             }
             else
             {
-                buffer = new byte[HeaderSize];
+                buffer = new byte[NetConstants.HeaderSize];
             }
 
             buffer[0] = (byte)property;
