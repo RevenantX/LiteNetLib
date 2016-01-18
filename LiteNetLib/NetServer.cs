@@ -98,7 +98,7 @@ namespace LiteNetLib
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
-                EnqueueEvent(new NetEvent(_peers[remoteEndPoint], packet.data, NetEventType.Receive));
+                EnqueueEvent(new NetEvent(_peers[remoteEndPoint], packet.Data, NetEventType.Receive));
             }
         }
 
@@ -119,7 +119,7 @@ namespace LiteNetLib
             if(_peers.ContainsKey(remoteEndPoint))
             {
                 NetPeer netPeer = _peers[remoteEndPoint];
-                if (packet.property == PacketProperty.Disconnect)
+                if (packet.Property == PacketProperty.Disconnect)
                 {
                     RemovePeer(netPeer);
                     EnqueueEvent(new NetEvent(netPeer, null, NetEventType.Disconnect));
@@ -131,7 +131,7 @@ namespace LiteNetLib
             }
 
             //Add new peer
-            if (_peers.Count < _maxClients && packet.property == PacketProperty.Connect)
+            if (_peers.Count < _maxClients && packet.Property == PacketProperty.Connect)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request: accepting");
                 //Getting new id for peer

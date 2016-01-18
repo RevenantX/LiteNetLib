@@ -27,15 +27,15 @@ namespace LiteNetLib
 
             _localSequence++;
             var p =  _outgoingPackets.Dequeue();
-            p.sequence = _localSequence;
+            p.Sequence = _localSequence;
             return p;
         }
 
         public bool ProcessPacket(NetPacket packet)
         {
-            if (NetConstants.SequenceMoreRecent(packet.sequence, _remoteSequence))
+            if (NetConstants.SequenceMoreRecent(packet.Sequence, _remoteSequence))
             {
-                _remoteSequence = packet.sequence;
+                _remoteSequence = packet.Sequence;
                 _peer.AddIncomingPacket(packet);
                 return true;
             }

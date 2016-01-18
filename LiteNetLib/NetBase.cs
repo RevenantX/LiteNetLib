@@ -15,12 +15,12 @@ namespace LiteNetLib
         private bool _running;
         private EndPoint _remoteEndPoint;
         private Stopwatch _tickWatch;
-        private Queue<NetEvent> _receivedMessages;
+        private Queue<NetEvent> _netEventsQueue;
 
         protected NetBase()
         {
             _tickWatch = new Stopwatch();
-            _receivedMessages = new Queue<NetEvent>();
+            _netEventsQueue = new Queue<NetEvent>();
             _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
             _updateTime = 100;
             _thread = new Thread(Update);
@@ -80,19 +80,19 @@ namespace LiteNetLib
 
         protected void EnqueueEvent(NetEvent netEvent)
         {
-            lock (_receivedMessages)
+            lock (_netEventsQueue)
             {
-                _receivedMessages.Enqueue(netEvent);
+                _netEventsQueue.Enqueue(netEvent);
             }
         }
 
         public NetEvent GetNextEvent()
         {
-            if (_receivedMessages.Count > 0)
+            if (_netEventsQueue.Count > 0)
             {
-                lock(_receivedMessages)
+                lock(_netEventsQueue)
                 {
-                    return _receivedMessages.Dequeue();
+                    return _netEventsQueue.Dequeue();
                 }
             }
             return null;

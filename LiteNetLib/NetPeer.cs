@@ -113,21 +113,21 @@ namespace LiteNetLib
         public void Send(byte[] data, SendOptions options)
         {
             NetPacket packet = CreatePacket();
-            packet.data = data;
+            packet.Data = data;
 
             switch (options)
             {
                 case SendOptions.Reliable:
-                    packet.property = PacketProperty.Reliable;
+                    packet.Property = PacketProperty.Reliable;
                     break;
-                case SendOptions.InOrder:
-                    packet.property = PacketProperty.Sequenced;
+                case SendOptions.Sequenced:
+                    packet.Property = PacketProperty.Sequenced;
                     break;
-                case SendOptions.ReliableInOrder:
-                    packet.property = PacketProperty.ReliableOrdered;
+                case SendOptions.ReliableOrdered:
+                    packet.Property = PacketProperty.ReliableOrdered;
                     break;
                 default:
-                    packet.property = PacketProperty.None;
+                    packet.Property = PacketProperty.None;
                     break;
             }
 
@@ -137,29 +137,32 @@ namespace LiteNetLib
         public void Send(byte[] data, PacketProperty property)
         {
             NetPacket packet = CreatePacket(property);
-            packet.property = property;
-            packet.data = data;
+            packet.Property = property;
+            packet.Data = data;
             SendPacket(packet);
         }
 
         public void Send(PacketProperty property)
         {
             NetPacket packet = CreatePacket(property);
-            packet.property = property;
+            packet.Property = property;
             SendPacket(packet);
         }
 
         public void SendPacket(NetPacket packet)
         {
-            switch (packet.property)
+            switch (packet.Property)
             {
                 case PacketProperty.Reliable:
+                    //DebugWrite("[RS]Packet reliable");
                     _reliableUnorderedChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.Sequenced:
+                    //DebugWrite("[RS]Packet sequenced");
                     _sequencedChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.ReliableOrdered:
+                    //DebugWrite("[RS]Packet reliable ordered");
                     _reliableOrderedChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.AckReliable:
@@ -169,7 +172,7 @@ namespace LiteNetLib
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
                 case PacketProperty.None:
-                    NetUtils.DebugWrite(DebugTextColor, "[RS]Packet simple");
+                    DebugWrite("[RS]Packet simple");
                     _outgoingQueue.Enqueue(packet);
                     break;
             }
@@ -205,25 +208,27 @@ namespace LiteNetLib
                 ? _packetPool.Pop() 
                 : new NetPacket();
 
-            packet.property = property;
+            packet.Property = property;
             return packet;
         }
 
         public void Recycle(NetPacket packet)
         {
+            packet.Data = null;
             _packetPool.Push(packet);
         }
 
         public void AddIncomingPacket(NetPacket packet)
         {
             _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
+            Recycle(packet);
         }
 
         //Process incoming packet
         public void ProcessPacket(NetPacket packet)
         {
-            DebugWrite("[RR]PacketProperty: {0}", packet.property);
-            switch (packet.property)
+            DebugWrite("[RR]PacketProperty: {0}", packet.Property);
+            switch (packet.Property)
             {
                 //If we get ping, send pong
                 case PacketProperty.Ping:
@@ -240,11 +245,11 @@ namespace LiteNetLib
 
                 //Process ack
                 case PacketProperty.AckReliable:
-                    _reliableUnorderedChannel.ProcessAck(packet.data);
+                    _reliableUnorderedChannel.ProcessAck(packet.Data);
                     break;
 
                 case PacketProperty.AckReliableOrdered:
-                    _reliableOrderedChannel.ProcessAck(packet.data);
+                    _reliableOrderedChannel.ProcessAck(packet.Data);
                     break;
 
                 //Process in order packets
@@ -271,10 +276,14 @@ namespace LiteNetLib
 
                 //Simple packet without acks
                 case PacketProperty.None:
+                case PacketProperty.Connect:
+                case PacketProperty.Disconnect:
                     _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
                     break;
             }
         }
+
+        private const int FlowUpdateTime = 100;
 
         public void Update(int deltaTime)
         {
@@ -282,49 +291,42 @@ namespace LiteNetLib
             //Get current flow mode
             int maxSendPacketsCount = _flowModes[(int) _currentFlowMode];
             int availableSendPacketsCount = maxSendPacketsCount - _sendedPacketsCount;
-            int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime)/1000);
+            int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime)/ FlowUpdateTime);
 
             DebugWrite("[UPDATE]Delta: {0}ms, MaxSend: {1}", deltaTime, currentMaxSend);
 
-            //Reset queue index
-            _reliableOrderedChannel.ResetQueueIndex();
-            _reliableUnorderedChannel.ResetQueueIndex();
-
-            if (currentMaxSend > 0)
+            //Pending send
+            while (currentSended < currentMaxSend)
             {
-                //Pending send
-                while (currentSended < currentMaxSend)
+                //Get one of packets
+                NetPacket packet = _reliableOrderedChannel.GetQueuedPacket();
+                if (packet == null)
+                    packet = _reliableUnorderedChannel.GetQueuedPacket();
+                if (packet == null)
+                    packet = _sequencedChannel.GetQueuedPacket();
+                if (packet == null)
                 {
-                    //Get one of packets
-                    NetPacket packet = _reliableOrderedChannel.GetQueuedPacket();
-                    if (packet == null)
-                        packet = _reliableUnorderedChannel.GetQueuedPacket();
-                    if (packet == null)
-                        packet = _sequencedChannel.GetQueuedPacket();
-                    if (packet == null)
-                    {
-                        if (_outgoingQueue.Count > 0)
-                            packet = _outgoingQueue.Dequeue();
-                        else
-                            break;
-                    }
-                    
-                    //packet.timeStamp = Environment.TickCount;
-                    if (_socket.SendTo(packet, _remoteEndPoint) == -1)
-                    {
-                        _peerListener.ProcessSendError(_remoteEndPoint);
-                        return;
-                    }
-                    currentSended++;
+                    if (_outgoingQueue.Count > 0)
+                        packet = _outgoingQueue.Dequeue();
+                    else
+                        break;
                 }
-
-                //Increase counter
-                _sendedPacketsCount += currentSended;
+                    
+                //packet.timeStamp = Environment.TickCount;
+                if (_socket.SendTo(packet, _remoteEndPoint) == -1)
+                {
+                    _peerListener.ProcessSendError(_remoteEndPoint);
+                    return;
+                }
+                currentSended++;
             }
+
+            //Increase counter
+            _sendedPacketsCount += currentSended;
 
             //ResetFlowTimer
             _flowTimer += deltaTime;
-            if (_flowTimer >= 1000)
+            if (_flowTimer >= FlowUpdateTime)
             {
                 DebugWrite("[UPDATE]Reset flow timer, _sendedPackets - {0}", _sendedPacketsCount);
                 _sendedPacketsCount = 0;

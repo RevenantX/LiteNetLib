@@ -78,10 +78,5 @@ namespace LiteNetLib
         {
             return null;
         }
-
-        public void ResetQueueIndex()
-        {
-            
-        }
     }
 }

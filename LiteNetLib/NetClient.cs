@@ -113,7 +113,7 @@ namespace LiteNetLib
         public override void ReceiveFromPeer(NetPacket packet, EndPoint remoteEndPoint)
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
-            EnqueueEvent(new NetEvent(_peer, packet.data, NetEventType.Receive));
+            EnqueueEvent(new NetEvent(_peer, packet.Data, NetEventType.Receive));
         }
 
         public override void ProcessSendError(EndPoint remoteEndPoint)
@@ -127,13 +127,13 @@ namespace LiteNetLib
             if (_peer == null)
 				return;
 
-            if (!_localEndPoint.Equals(remoteEndPoint))
+            if (!_peer.EndPoint.Equals(remoteEndPoint))
             {
                 NetUtils.DebugWrite(ConsoleColor.DarkCyan, "[NC] Bad EndPoint " + remoteEndPoint);
                 return;
             }
 
-            if (packet.property == PacketProperty.Disconnect)
+            if (packet.Property == PacketProperty.Disconnect)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
                 CloseConnection(true);
@@ -141,7 +141,7 @@ namespace LiteNetLib
                 return;
             }
 
-            if (packet.property == PacketProperty.Connect)
+            if (packet.Property == PacketProperty.Connect)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
                 _connected = true;

@@ -19,14 +19,14 @@ namespace LiteNetLib
     public class NetPacket
     {
         //Header
-        public PacketProperty property; //1 1
-        public ushort sequence;         //2 3
+        public PacketProperty Property; //1 1
+        public ushort Sequence;         //2 3
 
         //Data
-        public byte[] data;
+        public byte[] Data;
 
         //Additional info!
-        public int timeStamp;
+        public int TimeStamp;
 
         //Packet constructor
         public NetPacket()
@@ -49,16 +49,16 @@ namespace LiteNetLib
             //Reading property
             if (data[0] > 9)
                 return null;
-            p.property = (PacketProperty)data[0];
+            p.Property = (PacketProperty)data[0];
 
             //init datasize
             int dataLenght = packetSize;
             int dataStart;
 
             //Sequence
-            if (IsSequenced(p.property))
+            if (IsSequenced(p.Property))
             {
-                p.sequence = BitConverter.ToUInt16(data, 2);
+                p.Sequence = BitConverter.ToUInt16(data, 1);
                 dataLenght -= NetConstants.SequencedHeaderSize;
                 dataStart = NetConstants.SequencedHeaderSize;
             }
@@ -69,8 +69,8 @@ namespace LiteNetLib
             }
 
             //Reading other data
-            p.data = new byte[dataLenght];
-            Buffer.BlockCopy(data, dataStart, p.data, 0, dataLenght);
+            p.Data = new byte[dataLenght];
+            Buffer.BlockCopy(data, dataStart, p.Data, 0, dataLenght);
 
             return p;
         }
@@ -81,26 +81,26 @@ namespace LiteNetLib
             byte[] buffer;
             int dataSize = 0;
             int headerSize = NetConstants.SequencedHeaderSize;
-            if (data != null)
-                dataSize = data.Length;
+            if (Data != null)
+                dataSize = Data.Length;
 
             //write property   
-            if (IsSequenced(property))
+            if (IsSequenced(Property))
             {
                 buffer = new byte[NetConstants.SequencedHeaderSize + dataSize];
-                FastBitConverter.GetBytes(buffer, 1, sequence);
+                FastBitConverter.GetBytes(buffer, 1, Sequence);
             }
             else
             {
                 headerSize = NetConstants.HeaderSize;
                 buffer = new byte[NetConstants.HeaderSize + dataSize];
             }
-            buffer[0] = (byte)property;
+            buffer[0] = (byte)Property;
 
             //Writing data
             if (dataSize > 0)
             {
-                Buffer.BlockCopy(data, 0, buffer, headerSize, dataSize);
+                Buffer.BlockCopy(Data, 0, buffer, headerSize, dataSize);
             }
 
             return buffer;

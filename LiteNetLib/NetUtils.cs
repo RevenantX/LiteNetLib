@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -46,7 +46,7 @@ namespace LiteNetLib
                     UnityEngine.Debug.Log(debugStr);
 #else
                     Console.ForegroundColor = color;
-                    Console.WriteLine(str, args);
+                    //Console.WriteLine(str, args);
                     Console.ForegroundColor = ConsoleColor.Gray;
 #endif
                 }
@@ -61,7 +61,7 @@ namespace LiteNetLib
                     UnityEngine.Debug.Log(debugStr);
 #else
                     Console.ForegroundColor = color;
-                    Console.WriteLine(str, args);
+                    //Console.WriteLine(str, args);
                     Console.ForegroundColor = ConsoleColor.Gray;
 #endif
                 }
