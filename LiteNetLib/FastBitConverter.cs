@@ -72,37 +72,37 @@ public sealed class FastBitConverter
         return 4;
     }
 
-    public int GetBytes(byte[] bytes, int startIndex, short value)
+    public static int GetBytes(byte[] bytes, int startIndex, short value)
     {
         WriteLittleEndian(bytes, startIndex, value);
         return 2;
     }
 
-    public int GetBytes(byte[] bytes, int startIndex, ushort value)
+    public static int GetBytes(byte[] bytes, int startIndex, ushort value)
     {
         WriteLittleEndian(bytes, startIndex, value);
         return 2;
     }
 
-    public int GetBytes(byte[] bytes, int startIndex, int value)
+    public static int GetBytes(byte[] bytes, int startIndex, int value)
     {
         WriteLittleEndian(bytes, startIndex, value);
         return 4;
     }
 
-    public int GetBytes(byte[] bytes, int startIndex, uint value)
+    public static int GetBytes(byte[] bytes, int startIndex, uint value)
     {
         WriteLittleEndian(bytes, startIndex, value);
         return 4;
     }
 
-    public int GetBytes(byte[] bytes, int startIndex, long value)
+    public static int GetBytes(byte[] bytes, int startIndex, long value)
     {
         WriteLittleEndian(bytes, startIndex, (ulong)value);
         return 8;
     }
 
-    public int GetBytes(byte[] bytes, int startIndex, ulong value)
+    public static int GetBytes(byte[] bytes, int startIndex, ulong value)
     {
         WriteLittleEndian(bytes, startIndex, value);
         return 8;

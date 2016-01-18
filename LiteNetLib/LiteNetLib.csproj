@@ -33,6 +33,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FastBitConverter.cs" />
+    <Compile Include="INetChannel.cs" />
     <Compile Include="INetSocket.cs" />
     <Compile Include="NetConstants.cs" />
     <Compile Include="NetEndPoint.cs" />

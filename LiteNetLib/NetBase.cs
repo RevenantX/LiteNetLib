@@ -75,6 +75,14 @@ namespace LiteNetLib
             get { return _running; }
         }
 
+        protected void EnqueueEvent(NetEvent netEvent)
+        {
+            lock (_receivedMessages)
+            {
+                _receivedMessages.Enqueue(netEvent);
+            }
+        }
+
         public NetEvent GetNextEvent()
         {
             if (_receivedMessages.Count > 0)
@@ -112,10 +120,7 @@ namespace LiteNetLib
                             NetEvent netEvent = ProcessPacket(packet, _remoteEndPoint);
                             if (netEvent != null)
                             {
-                                lock (_receivedMessages)
-                                {
-                                    _receivedMessages.Enqueue(netEvent);
-                                }
+                                EnqueueEvent(netEvent);
                             }
                         }
                     }
@@ -129,10 +134,7 @@ namespace LiteNetLib
                             NetEvent netEvent = ProcessError();
                             if (netEvent != null)
                             {
-                                lock (_receivedMessages)
-                                {
-                                    _receivedMessages.Enqueue(netEvent);
-                                }
+                                EnqueueEvent(netEvent);
                             }
                             _running = false;
                             socket.Close();

@@ -1,11 +1,12 @@
 using System;
+using System.Threading;
 using LiteNetLib;
 
 class Program
 {
     private static int _messagesReceivedCount = 0;
 
-    public static void ServerEvent(NetServer sender, NetEvent netEvent)
+    public static void ServerEvent(NetEvent netEvent)
     {
         if (netEvent.type == NetEventType.Receive)
         {
@@ -17,7 +18,7 @@ class Program
         }
     }
 
-    public static void ClientEvent(NetClient sender, NetEvent netEvent)
+    public static void ClientEvent(NetEvent netEvent)
     {
         if (netEvent.type == NetEventType.Connect)
         {
@@ -47,19 +48,29 @@ class Program
     static void Main(string[] args)
     {
         NetServer server = new NetServer(2);
-        server.AddNetEventListener(ServerEvent);
         server.Start(9050);
 
         NetClient client = new NetClient();
-        client.AddNetEventListener(ClientEvent);
         client.Start(9051);
         client.Connect("localhost", 9050);
 
-        Console.ReadLine();
+        while (!Console.KeyAvailable)
+        {
+            NetEvent evt = client.GetNextEvent();
+            if (evt != null)
+            {
+                ClientEvent(evt);
+            }
+
+            evt = server.GetNextEvent();
+            if (evt != null)
+            {
+                ServerEvent(evt);
+            }
+            Thread.Sleep(10);
+        }
 
         server.Stop();
-
-        Console.ReadLine();
         client.Stop();
     }
 }

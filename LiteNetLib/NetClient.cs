@@ -95,13 +95,13 @@ namespace LiteNetLib
 
         public override void ProcessReceivedPacket(NetPacket packet, EndPoint remoteEndPoint)
         {
-            CallNetEventReceived(new NetEvent(_peer, packet.data, NetEventType.Receive));
+            EnqueueEvent(new NetEvent(_peer, packet.data, NetEventType.Receive));
         }
 
         public override void ProcessSendError(EndPoint remoteEndPoint)
         {
             Stop();
-            CallNetEventReceived(new NetEvent(null, null, NetEventType.Error));
+            EnqueueEvent(new NetEvent(null, null, NetEventType.Error));
         }
 
         protected override NetEvent ProcessPacket(NetPacket packet, EndPoint remoteEndPoint)

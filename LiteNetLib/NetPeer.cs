@@ -26,7 +26,7 @@ namespace LiteNetLib
         private int _flowTimer;
 
         private INetSocket _socket;             //Udp socket
-        private Queue<NetPacket> _sentQueue;    //Queue for sending packets
+        private Queue<NetPacket> _outgoingQueue;//Queue for sending packets
         private Stack<NetPacket> _packetPool; 
 
         private int _roundTripTime;             //RTT, Ping
@@ -41,7 +41,7 @@ namespace LiteNetLib
         private EndPoint _remoteEndPoint;
 
         //DEBUG
-        public static ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
+        public ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
         public EndPoint EndPoint
         {
@@ -89,7 +89,7 @@ namespace LiteNetLib
             _socket = socket;
             _remoteEndPoint = remoteEndPoint;
 
-            _sentQueue = new Queue<NetPacket>();
+            _outgoingQueue = new Queue<NetPacket>();
             _flowModes = new int[2];
             _flowModes[0] = 64 / 4; //bad
             _flowModes[1] = 64;     //good
@@ -170,7 +170,7 @@ namespace LiteNetLib
                 case PacketProperty.Pong:
                 case PacketProperty.None:
                     NetUtils.DebugWrite(DebugTextColor, "[RS]Packet simple");
-                    _sentQueue.Enqueue(packet);
+                    _outgoingQueue.Enqueue(packet);
                     break;
             }
         }
@@ -181,17 +181,22 @@ namespace LiteNetLib
             if (_roundTripTime < _badRoundTripTime)
             {
                 if (_currentFlowMode != FlowMode.Good)
-                    NetUtils.DebugWrite(DebugTextColor, "[PA]Enabled good flow mode, RTT: {0}", _roundTripTime);
+                    DebugWrite("[PA]Enabled good flow mode, RTT: {0}", _roundTripTime);
 
                 _currentFlowMode = FlowMode.Good;
             }
             else
             {
                 if (_currentFlowMode != FlowMode.Bad)
-                    NetUtils.DebugWrite(DebugTextColor, "[PA]Enabled bad flow mode, RTT: {0}", _roundTripTime);
+                    DebugWrite("[PA]Enabled bad flow mode, RTT: {0}", _roundTripTime);
 
                 _currentFlowMode = FlowMode.Bad;
             }
+        }
+
+        public void DebugWrite(string str, params object[] args)
+        {
+            NetUtils.DebugWrite(DebugTextColor, str, args);
         }
 
         public NetPacket CreatePacket(PacketProperty property = PacketProperty.None)
@@ -209,10 +214,15 @@ namespace LiteNetLib
             _packetPool.Push(packet);
         }
 
+        public void AddIncomingPacket(NetPacket packet)
+        {
+            _peerListener.ProcessReceivedPacket(packet, _remoteEndPoint);
+        }
+
         //Process incoming packet
         public void ProcessPacket(NetPacket packet)
         {
-            NetUtils.DebugWrite(DebugTextColor, "[RR]PacketProperty: {0}", packet.property);
+            DebugWrite("[RR]PacketProperty: {0}", packet.property);
             switch (packet.property)
             {
                 //If we get ping, send pong
@@ -225,7 +235,7 @@ namespace LiteNetLib
                     _ping = (int) _pingStopwatch.ElapsedMilliseconds;
                     _pingStopwatch.Reset();
                     UpdateFlowMode(_ping);
-                    NetUtils.DebugWrite(DebugTextColor, "[PP]Ping: {0}", _ping);
+                    DebugWrite("[PP]Ping: {0}", _ping);
                     break;
 
                 //Process ack
@@ -239,19 +249,29 @@ namespace LiteNetLib
 
                 //Process in order packets
                 case PacketProperty.Sequenced:
-                    _sequencedChannel.ProcessPacket(packet);
+                    if (!_sequencedChannel.ProcessPacket(packet))
+                    {
+                        Recycle(packet);
+                    }
                     break;
 
                 case PacketProperty.Reliable:
-                    _reliableUnorderedChannel.ProcessPacket(packet);
+                    if (!_reliableUnorderedChannel.ProcessPacket(packet))
+                    {
+                        Recycle(packet);
+                    }
                     break;
 
                 case PacketProperty.ReliableOrdered:
-                    _reliableOrderedChannel.ProcessPacket(packet);
+                    if (!_reliableOrderedChannel.ProcessPacket(packet))
+                    {
+                        Recycle(packet);
+                    }
                     break;
 
                 //Simple packet without acks
                 case PacketProperty.None:
+                    _peerListener.ProcessReceivedPacket(packet, _remoteEndPoint);
                     break;
             }
         }
@@ -264,17 +284,31 @@ namespace LiteNetLib
             int availableSendPacketsCount = maxSendPacketsCount - _sendedPacketsCount;
             int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime)/1000);
 
-            NetUtils.DebugWrite(DebugTextColor, "[UPDATE]Delta: {0}ms, MaxSend: {1}", deltaTime, currentMaxSend);
+            DebugWrite("[UPDATE]Delta: {0}ms, MaxSend: {1}", deltaTime, currentMaxSend);
+
+            //Reset queue index
+            _reliableOrderedChannel.ResetQueueIndex();
+            _reliableUnorderedChannel.ResetQueueIndex();
 
             if (currentMaxSend > 0)
             {
                 //Pending send
                 while (currentSended < currentMaxSend)
                 {
-                    NetPacket packet;
+                    //Get one of packets
+                    NetPacket packet = _reliableOrderedChannel.GetQueuedPacket();
+                    if (packet == null)
+                        packet = _reliableUnorderedChannel.GetQueuedPacket();
+                    if (packet == null)
+                        packet = _sequencedChannel.GetQueuedPacket();
+                    if (packet == null)
+                    {
+                        if (_outgoingQueue.Count > 0)
+                            packet = _outgoingQueue.Dequeue();
+                        else
+                            break;
+                    }
                     
-                    _reliableOrderedChannel
-
                     //packet.timeStamp = Environment.TickCount;
                     if (_socket.SendTo(packet, _remoteEndPoint) == -1)
                     {
@@ -292,7 +326,7 @@ namespace LiteNetLib
             _flowTimer += deltaTime;
             if (_flowTimer >= 1000)
             {
-                NetUtils.DebugWrite(DebugTextColor, "[UPDATE]Reset flow timer, _sendedPackets - {0}", _sendedPacketsCount);
+                DebugWrite("[UPDATE]Reset flow timer, _sendedPackets - {0}", _sendedPacketsCount);
                 _sendedPacketsCount = 0;
                 _flowTimer = 0;
             }

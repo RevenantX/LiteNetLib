@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -64,7 +64,7 @@ namespace LiteNetLib
         {
             if (peer != null && _peers.ContainsKey(peer.EndPoint))
             {
-                peer.SendInfo(PacketInfo.Disconnect);
+                peer.Send(PacketProperty.Disconnect);
                 RemovePeer(peer);
             }
         }
@@ -79,7 +79,7 @@ namespace LiteNetLib
         {
             foreach (NetPeer netPeer in _peers.Values)
             {
-                netPeer.SendInfo(PacketInfo.Disconnect);
+                netPeer.Send(PacketProperty.Disconnect);
             }
             _peers.Clear();
 
@@ -99,7 +99,7 @@ namespace LiteNetLib
             {
                 if (netPeer.LastPing > _timeout)
                 {
-                    CallNetEventReceived(new NetEvent(netPeer, null, NetEventType.Disconnect));
+                    EnqueueEvent(new NetEvent(netPeer, null, NetEventType.Disconnect));
                     RemovePeer(netPeer);
                 }
                 else
@@ -117,17 +117,17 @@ namespace LiteNetLib
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
-                CallNetEventReceived(new NetEvent(_peers[remoteEndPoint], packet.data, NetEventType.Receive));
+                EnqueueEvent(new NetEvent(_peers[remoteEndPoint], packet.data, NetEventType.Receive));
             }
         }
 
-        private void OnSendError(EndPoint remoteEndPoint)
+        public override void ProcessSendError(EndPoint remoteEndPoint)
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
                 NetPeer peer = _peers[remoteEndPoint];
 
-                CallNetEventReceived(new NetEvent(peer, null, NetEventType.Disconnect));
+                EnqueueEvent(new NetEvent(peer, null, NetEventType.Disconnect));
                 RemovePeer(peer);
             }
         }

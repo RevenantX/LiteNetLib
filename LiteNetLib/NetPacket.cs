@@ -88,13 +88,7 @@ namespace LiteNetLib
             if (IsSequenced(property))
             {
                 buffer = new byte[NetConstants.SequencedHeaderSize + dataSize];
-#if BIGENDIAN
-                buffer[1] = (byte)(sequence);
-                buffer[2] = (byte)(sequence >> 8);
-#else
-                buffer[1] = (byte)(sequence);
-                buffer[2] = (byte)(sequence >> 8);
-#endif
+                FastBitConverter.GetBytes(buffer, 1, sequence);
             }
             else
             {
