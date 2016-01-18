@@ -25,7 +25,7 @@ namespace LiteNetLib
         private int _sendedPacketsCount;
         private int _flowTimer;
 
-        private INetSocket _socket;             //Udp socket
+        private NetSocket _socket;             //Udp socket
         private Queue<NetPacket> _outgoingQueue;//Queue for sending packets
         private Stack<NetPacket> _packetPool; 
 
@@ -81,7 +81,7 @@ namespace LiteNetLib
         private long _id;
         private IPeerListener _peerListener;
 
-        public NetPeer(IPeerListener peerListener, INetSocket socket, IPEndPoint remoteEndPoint)
+        public NetPeer(IPeerListener peerListener, NetSocket socket, IPEndPoint remoteEndPoint)
         {
             _id = NetUtils.GetIdFromEndPoint(remoteEndPoint);
             _peerListener = peerListener;

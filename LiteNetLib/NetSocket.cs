@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 namespace LiteNetLib
 {
-    public class NetSocket : INetSocket
+    public class NetSocket
     {
         private const int BufferSize = 131071;
         private byte[] _receiveBuffer = new byte[BufferSize];
