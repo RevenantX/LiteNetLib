@@ -4,11 +4,9 @@ using System.Net.Sockets;
 
 namespace LiteNetLib
 {
-    public sealed class NetSocket
+    public class NetSocket : INetSocket
     {
-        public const int MaxPacketSize = 1400 - NetPacket.HeaderSize;
-
-        private byte[] _receiveBuffer = new byte[MaxPacketSize];
+        private byte[] _receiveBuffer = new byte[NetConstants.MaxPacketSize];
         private Socket _udpSocket;               //Udp socket
 
         //Socket constructor
@@ -39,12 +37,12 @@ namespace LiteNetLib
         }
 
         //Send to
-        public int SendTo(NetPacket packet, EndPoint remoteEP)
+        public int SendTo(NetPacket packet, EndPoint remoteEndPoint)
         {
             try
             {
-                int result = _udpSocket.SendTo(packet.ToByteArray(), remoteEP);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEP, result);
+                int result = _udpSocket.SendTo(packet.ToByteArray(), remoteEndPoint);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
                 return result;
             }
             catch (Exception ex)
@@ -55,14 +53,14 @@ namespace LiteNetLib
         }
 
         //Receive from
-        public int ReceiveFrom(out NetPacket packet, ref EndPoint remoteEP, ref int errorCode)
+        public int ReceiveFrom(out NetPacket packet, ref EndPoint remoteEndPoint, ref int errorCode)
         {
             int result;
 
             //Reading data
             try
             {
-                result = _udpSocket.ReceiveFrom(_receiveBuffer, ref remoteEP);
+                result = _udpSocket.ReceiveFrom(_receiveBuffer, ref remoteEndPoint);
             }
             catch (SocketException ex)
             {
@@ -81,7 +79,7 @@ namespace LiteNetLib
             }
 
             //All ok!
-            NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Recieved data from {0}, result: {1}", remoteEP.ToString(), result);
+            NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Recieved data from {0}, result: {1}", remoteEndPoint.ToString(), result);
 
             //Detecting bad data
             if (result == 0)
@@ -90,7 +88,7 @@ namespace LiteNetLib
                 packet = null;
                 return 0;
             }
-            else if (result < NetPacket.HeaderSize)
+            else if (result < NetConstants.HeaderSize)
             {
                 NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (D<HS)");
                 packet = null;

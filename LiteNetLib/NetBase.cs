@@ -1,23 +1,23 @@
-using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 
 namespace LiteNetLib
 {
-    public abstract class NetBase<T> where T : NetBase<T>
+    public abstract class NetBase<T> : IPeerListener where T : NetBase<T>
     {
-        public delegate void NetEventReceivedDelegate(T sender, NetEvent netEvent);
-
         protected NetSocket socket;
-
         private Thread _thread;
         private int _updateTime;
-        private event NetEventReceivedDelegate NetEventReceived;
         private bool _running;
         private EndPoint _remoteEndPoint;
+        private Stopwatch _tickWatch;
+        private Queue<NetEvent> _receivedMessages; 
 
         protected NetBase()
         {
+            _receivedMessages = new Queue<NetEvent>();
             _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
             _updateTime = 100;
             _thread = new Thread(Update);
@@ -37,6 +37,7 @@ namespace LiteNetLib
             }
             if (socket.Bind(port))
             {
+                _tickWatch.Start();
                 _running = true;
                 _thread.Start();
                 return true;
@@ -74,35 +75,33 @@ namespace LiteNetLib
             get { return _running; }
         }
 
-        /// <summary>
-        /// Subscribe method to receive events
-        /// </summary>
-        /// <param name="func"></param>
-        public void AddNetEventListener(NetEventReceivedDelegate func)
+        public NetEvent GetNextEvent()
         {
-            NetEventReceived += func;
-        }
-
-        protected void CallNetEventReceived(NetEvent netEvent)
-        {
-            NetEventReceived((T)this, netEvent);
+            if (_receivedMessages.Count > 0)
+            {
+                lock(_receivedMessages)
+                {
+                    return _receivedMessages.Dequeue();
+                }
+            }
+            return null;
         }
 
         //Update function
         private void Update()
         {
-            NetPacket packet;
-            int startTime, diffTime;
-
             while (_running)
             {
                 //Init timer
-                startTime = Environment.TickCount;
+                long startTime = _tickWatch.ElapsedMilliseconds;
+                long diffTime = 0;
 
                 do
                 {
                     int errorCode = 0;
+
                     //Receive some info
+                    NetPacket packet;
                     int result = socket.ReceiveFrom(out packet, ref _remoteEndPoint, ref errorCode);
 
                     if (result >= 0)
@@ -113,7 +112,10 @@ namespace LiteNetLib
                             NetEvent netEvent = ProcessPacket(packet, _remoteEndPoint);
                             if (netEvent != null)
                             {
-                                NetEventReceived((T)this, netEvent);
+                                lock (_receivedMessages)
+                                {
+                                    _receivedMessages.Enqueue(netEvent);
+                                }
                             }
                         }
                     }
@@ -127,7 +129,10 @@ namespace LiteNetLib
                             NetEvent netEvent = ProcessError();
                             if (netEvent != null)
                             {
-                                NetEventReceived((T)this, netEvent);
+                                lock (_receivedMessages)
+                                {
+                                    _receivedMessages.Enqueue(netEvent);
+                                }
                             }
                             _running = false;
                             socket.Close();
@@ -136,11 +141,11 @@ namespace LiteNetLib
                     }
 
                     //Calc diffTime
-                    diffTime = Environment.TickCount - startTime;
+                    diffTime = _tickWatch.ElapsedMilliseconds - startTime;
                 } while (diffTime < _updateTime && _running);
 
                 //PostProcess
-                PostProcessEvent(diffTime);
+                PostProcessEvent((int)diffTime);
             }
         }
 
@@ -151,5 +156,8 @@ namespace LiteNetLib
 
         protected abstract NetEvent ProcessPacket(NetPacket packet, EndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
+
+        public abstract void ProcessReceivedPacket(NetPacket packet, EndPoint endPoint);
+        public abstract void ProcessSendError(EndPoint endPoint);
     }
 }

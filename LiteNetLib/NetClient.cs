@@ -6,7 +6,6 @@ namespace LiteNetLib
     public class NetClient : NetBase<NetClient>
     {
         private NetPeer _peer;
-        private ReliableOrderedChannel _connection;
         private bool _connected;
 
         public NetClient()
@@ -37,7 +36,7 @@ namespace LiteNetLib
             {
                 if (!force)
                 {
-                    _peer.Connection.SendInfo(PacketInfo.Disconnect);
+                    _peer.Send(PacketProperty.Disconnect);
                 }
                 _peer = null;
             }
@@ -79,29 +78,27 @@ namespace LiteNetLib
             //Force close connection
             CloseConnection(true);
             //Create reliable connection
-            _connection = new ReliableOrderedChannel(socket, ep);
-            _connection.textColor = ConsoleColor.Yellow;
-            _connection.BadRoundTripTime = UpdateTime * 2 + 250;
-            _connection.OnReliableInOrderPacket = OnReliableInOrderPacket;
-            _connection.OnSendError = OnSendError;
-            _connection.SendInfo(PacketInfo.Connect);
+            _peer = new NetPeer(this, socket, ep);
+            _peer.DebugTextColor = ConsoleColor.Yellow;
+            _peer.BadRoundTripTime = UpdateTime * 2 + 250;
+            _peer.Send(PacketProperty.Connect);
         }
 
         protected override void PostProcessEvent(int deltaTime)
         {
-            if (_connection != null)
+            if (_peer != null)
             {
-                _connection.Update(deltaTime);
+                _peer.Update(deltaTime);
                 //Console.WriteLine("PQ: {0}, RQ: {1}", _peer.GetConnection().PendingAckQueue, _peer.GetConnection().ReceivedQueueSize);
             }
         }
 
-        private void OnReliableInOrderPacket(NetPacket packet, EndPoint remoteEndPoint)
+        public override void ProcessReceivedPacket(NetPacket packet, EndPoint remoteEndPoint)
         {
             CallNetEventReceived(new NetEvent(_peer, packet.data, NetEventType.Receive));
         }
 
-        private void OnSendError(EndPoint remoteEndPoint)
+        public override void ProcessSendError(EndPoint remoteEndPoint)
         {
             Stop();
             CallNetEventReceived(new NetEvent(null, null, NetEventType.Error));
@@ -109,15 +106,15 @@ namespace LiteNetLib
 
         protected override NetEvent ProcessPacket(NetPacket packet, EndPoint remoteEndPoint)
         {
-            if (_connection == null)
+            if (_peer == null)
 				return null;
-            if (!_connection.EndPoint.Equals(remoteEndPoint))
+            if (!_peer.EndPoint.Equals(remoteEndPoint))
             {
                 NetUtils.DebugWrite(ConsoleColor.DarkCyan, "[NC] Bad remoteEndPoint " + remoteEndPoint);
                 return null;
             }
             //Process income packet
-            bool packetHasInfo = _connection.ProcessPacket(packet);
+            bool packetHasInfo = _peer.ProcessPacket(packet);
 
             if (packetHasInfo)
             {
@@ -130,7 +127,8 @@ namespace LiteNetLib
                 else if (packet.info == PacketInfo.Connect && packet.data.Length == 4)
                 {
                     NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
-                    _peer = new NetPeer(_connection, BitConverter.ToInt32(packet.data, 0));
+                    //_peer = new NetPeer(_connection, BitConverter.ToInt32(packet.data, 0));
+                    _peer.Id = BitConverter.ToInt32(packet.data, 0);
                     _connected = true;
                     return new NetEvent(_peer, null, NetEventType.Connect);
                 }

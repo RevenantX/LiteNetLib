@@ -1,15 +1,20 @@
 namespace LiteNetLib
 {
-    class SequencedChannel
+    class SequencedChannel : INetChannel
     {
-        private NetConnection netConnection;
+        private NetPeer _peer;
 
-        public SequencedChannel(NetConnection netConnection)
+        public SequencedChannel(NetPeer peer)
         {
-            this.netConnection = netConnection;
+            _peer = peer;
         }
 
-        public void SendPacket(NetPacket packet)
+        public void AddToQueue(NetPacket packet)
+        {
+            
+        }
+
+        public NetPacket GetQueuedPacket()
         {
             
         }

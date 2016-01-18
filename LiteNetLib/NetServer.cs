@@ -56,15 +56,15 @@ namespace LiteNetLib
 
         private void RemovePeer(NetPeer peer)
         {
-            _peersToRemove.Enqueue(peer.GetEndPoint());
+            _peersToRemove.Enqueue(peer.EndPoint);
             _idList.Push(peer.Id);
         }
 
         public void DisconnectPeer(NetPeer peer)
         {
-            if (peer != null && _peers.ContainsKey(peer.GetEndPoint()))
+            if (peer != null && _peers.ContainsKey(peer.EndPoint))
             {
-                peer.Connection.SendInfo(PacketInfo.Disconnect);
+                peer.SendInfo(PacketInfo.Disconnect);
                 RemovePeer(peer);
             }
         }
@@ -79,7 +79,7 @@ namespace LiteNetLib
         {
             foreach (NetPeer netPeer in _peers.Values)
             {
-                netPeer.Connection.SendInfo(PacketInfo.Disconnect);
+                netPeer.SendInfo(PacketInfo.Disconnect);
             }
             _peers.Clear();
 
@@ -97,14 +97,14 @@ namespace LiteNetLib
             //Process acks
             foreach (NetPeer netPeer in _peers.Values)
             {
-                if (netPeer.Connection.LastPing > _timeout)
+                if (netPeer.LastPing > _timeout)
                 {
                     CallNetEventReceived(new NetEvent(netPeer, null, NetEventType.Disconnect));
                     RemovePeer(netPeer);
                 }
                 else
                 {
-                    netPeer.Connection.Update(deltaTime);
+                    netPeer.Update(deltaTime);
                 }
             }
             while (_peersToRemove.Count > 0)
@@ -113,7 +113,7 @@ namespace LiteNetLib
             }
         }
 
-        private void OnReliableInOrderPacket(NetPacket packet, EndPoint remoteEndPoint)
+        public override void ProcessReceivedPacket(NetPacket packet, EndPoint remoteEndPoint)
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
@@ -143,7 +143,7 @@ namespace LiteNetLib
                     RemovePeer(netPeer);
                     return new NetEvent(netPeer, null, NetEventType.Disconnect);
                 }
-                else if (netPeer.Connection.ProcessPacket(packet))
+                else if (netPeer.ProcessPacket(packet))
                 {
                     return new NetEvent(netPeer, packet.data, NetEventType.Receive);
                 }
@@ -161,12 +161,10 @@ namespace LiteNetLib
                 int peerId = _idList.Pop();
                 byte[] peerIdData = BitConverter.GetBytes(peerId);
 
-                NetPeer netPeer = new NetPeer(new ReliableOrderedChannel(socket, remoteEndPoint), peerId);
-                netPeer.Connection.BadRoundTripTime = UpdateTime * 2 + 250;
-                netPeer.Connection.OnReliableInOrderPacket = OnReliableInOrderPacket;
-                netPeer.Connection.OnSendError = OnSendError;
-                netPeer.Connection.ProcessPacket(packet);
-                netPeer.Connection.SendInfo(PacketInfo.Connect, peerIdData);
+                NetPeer netPeer = new NetPeer(this, socket, remoteEndPoint, peerId);
+                netPeer.BadRoundTripTime = UpdateTime * 2 + 250;
+                netPeer.ProcessPacket(packet);
+                netPeer.SendInfo(PacketInfo.Connect, peerIdData);
 
                 _peers.Add(remoteEndPoint, netPeer);
 

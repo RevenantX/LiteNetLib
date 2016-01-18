@@ -2,31 +2,25 @@ using System;
 
 namespace LiteNetLib
 {
-    //Packet types
     public enum PacketProperty : byte
     {
-        None = 33,
-        Reliable = 34,
-        InOrder = 35,
-        ReliableInOrder = 36,
-        Ack = 37,
-        Ping = 38,
-        Pong = 39
-    }
-
-    public enum PacketInfo : byte
-    {
-        None = 54,
-        Connect = 55,
-        Disconnect = 56,
+        None,
+        Reliable,
+        Sequenced,
+        ReliableOrdered,
+        AckReliable,
+        AckReliableOrdered,
+        Ping,
+        Pong,
+        Connect,
+        Disconnect
     }
 
     public class NetPacket
     {
         //Header
         public PacketProperty property; //1 1
-        public PacketInfo info;         //1 2
-        public ushort sequence;         //2 4
+        public ushort sequence;         //2 3
 
         //Data
         public byte[] data;
@@ -37,7 +31,14 @@ namespace LiteNetLib
         //Packet constructor
         public NetPacket()
         {
-            info = PacketInfo.None;
+            
+        }
+
+        public static bool IsSequenced(PacketProperty property)
+        {
+            return property == PacketProperty.Reliable || 
+                   property == PacketProperty.Sequenced ||
+                   property == PacketProperty.ReliableOrdered;
         }
 
         //Packet contstructor from byte array
@@ -46,22 +47,30 @@ namespace LiteNetLib
             NetPacket p = new NetPacket();
 
             //Reading property
-            if (data[0] < 33 || data[0] > 39)
+            if (data[0] > 9)
                 return null;
             p.property = (PacketProperty)data[0];
 
-            //Reading info
-            if (data[1] < 54 || data[1] > 56)
-                return null;
-            p.info = (PacketInfo)data[1];
+            //init datasize
+            int dataLenght = packetSize;
+            int dataStart;
 
             //Sequence
-            p.sequence = BitConverter.ToUInt16(data, 2);
+            if (IsSequenced(p.property))
+            {
+                p.sequence = BitConverter.ToUInt16(data, 2);
+                dataLenght -= NetConstants.SequencedHeaderSize;
+                dataStart = NetConstants.SequencedHeaderSize;
+            }
+            else
+            {
+                dataLenght -= NetConstants.HeaderSize;
+                dataStart = NetConstants.HeaderSize;
+            }
 
             //Reading other data
-            int dataLenght = packetSize - NetConstants.HeaderSize;
             p.data = new byte[dataLenght];
-            Buffer.BlockCopy(data, NetConstants.HeaderSize, p.data, 0, dataLenght);
+            Buffer.BlockCopy(data, dataStart, p.data, 0, dataLenght);
 
             return p;
         }
@@ -70,27 +79,35 @@ namespace LiteNetLib
         public byte[] ToByteArray()
         {
             byte[] buffer;
-                
-            //Writing data first
-            if(data != null)
+            int dataSize = 0;
+            int headerSize = NetConstants.SequencedHeaderSize;
+            if (data != null)
+                dataSize = data.Length;
+
+            //write property   
+            if (IsSequenced(property))
             {
-                buffer = new byte[NetConstants.HeaderSize + data.Length];
-                Buffer.BlockCopy(data, 0, buffer, NetConstants.HeaderSize, data.Length);
+                buffer = new byte[NetConstants.SequencedHeaderSize + dataSize];
+#if BIGENDIAN
+                buffer[1] = (byte)(sequence);
+                buffer[2] = (byte)(sequence >> 8);
+#else
+                buffer[1] = (byte)(sequence);
+                buffer[2] = (byte)(sequence >> 8);
+#endif
             }
             else
             {
-                buffer = new byte[NetConstants.HeaderSize];
+                headerSize = NetConstants.HeaderSize;
+                buffer = new byte[NetConstants.HeaderSize + dataSize];
             }
-
             buffer[0] = (byte)property;
-            buffer[1] = (byte)info;
-            #if BIGENDIAN
-            buffer[2] = (byte)(sequence);
-            buffer[3] = (byte)(sequence >> 8);
-            #else
-            buffer[2] = (byte)(sequence);
-            buffer[3] = (byte)(sequence >> 8);
-            #endif
+
+            //Writing data
+            if (dataSize > 0)
+            {
+                Buffer.BlockCopy(data, 0, buffer, headerSize, dataSize);
+            }
 
             return buffer;
         }

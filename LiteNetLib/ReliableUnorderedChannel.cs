@@ -1,15 +1,29 @@
+using System.Collections.Generic;
+
 namespace LiteNetLib
 {
-    class ReliableUnorderedChannel
+    class ReliableUnorderedChannel : INetChannel
     {
-        private NetConnection netConnection;
+        private NetPeer _peer;
+        private Queue<NetPacket> _packetQueue; 
 
-        public ReliableUnorderedChannel(NetConnection netConnection)
+        public ReliableUnorderedChannel(NetPeer peer)
         {
-            this.netConnection = netConnection;
+            _packetQueue = new Queue<NetPacket>();
+            _peer = peer;
         }
 
-        public void SendPacket(NetPacket packet)
+        public void AddToQueue(NetPacket packet)
+        {
+            _packetQueue.Enqueue(packet);
+        }
+
+        public void ProcessAck(byte[] acksData)
+        {
+            
+        }
+
+        public NetPacket GetQueuedPacket()
         {
             
         }

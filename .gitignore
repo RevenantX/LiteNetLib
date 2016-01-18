@@ -1,3 +1,4 @@
 *.userprefs
+*.suo
 LiteNetLib/obj
 LiteNetLib/bin

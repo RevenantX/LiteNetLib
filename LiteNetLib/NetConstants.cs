@@ -10,9 +10,8 @@ namespace LiteNetLib
 
     public static class NetConstants
     {
-        //HeaderSize constant
-        public const int HeaderSize = 4;
-
+        public const int HeaderSize = 1;
+        public const int SequencedHeaderSize = 3;
         public const int DefaultWindowSize = 64;
         public const ushort MaxSequence = 65535;
         public const ushort HalfMaxSequence = MaxSequence / 2;
