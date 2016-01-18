@@ -26,7 +26,7 @@ namespace LiteNetLib
         public byte[] Data;
 
         //Additional info!
-        public int TimeStamp;
+        public long TimeStamp;
 
         //Packet constructor
         public NetPacket()

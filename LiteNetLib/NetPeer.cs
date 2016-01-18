@@ -99,7 +99,7 @@ namespace LiteNetLib
             _badRoundTripTime = 650;
 
             _ping = 0;
-            _pingUpdateDelay = 3000;
+            _pingUpdateDelay = 1000;
             _pingUpdateTimer = 0;
             _pingStopwatch = new Stopwatch();
 
