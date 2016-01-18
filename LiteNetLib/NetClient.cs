@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace LiteNetLib
 {
@@ -7,10 +8,26 @@ namespace LiteNetLib
     {
         private NetPeer _peer;
         private bool _connected;
+        private long _id;
+
+        public long Id
+        {
+            get { return _id; }
+        }
 
         public NetClient()
         {
 
+        }
+
+        public override bool Start(int port)
+        {
+            bool result = base.Start(port);
+            if (result)
+            {
+                _id = NetConstants.GetIdFromEndPoint(_localEndPoint);
+            }
+            return result;
         }
 
         /// <summary>
@@ -73,12 +90,12 @@ namespace LiteNetLib
             IPAddress ipAddress = NetUtils.GetHostIP(address);
 
             //Create server endpoint
-            EndPoint ep = new IPEndPoint(ipAddress, port);
+            IPEndPoint ep = new IPEndPoint(ipAddress, port);
 
             //Force close connection
             CloseConnection(true);
             //Create reliable connection
-            _peer = new NetPeer(this, socket, ep);
+            _peer = new NetPeer(this, _socket, ep);
             _peer.DebugTextColor = ConsoleColor.Yellow;
             _peer.BadRoundTripTime = UpdateTime * 2 + 250;
             _peer.Send(PacketProperty.Connect);
@@ -93,8 +110,9 @@ namespace LiteNetLib
             }
         }
 
-        public override void ProcessReceivedPacket(NetPacket packet, EndPoint remoteEndPoint)
+        public override void ReceiveFromPeer(NetPacket packet, EndPoint remoteEndPoint)
         {
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
             EnqueueEvent(new NetEvent(_peer, packet.data, NetEventType.Receive));
         }
 
@@ -104,44 +122,35 @@ namespace LiteNetLib
             EnqueueEvent(new NetEvent(null, null, NetEventType.Error));
         }
 
-        protected override NetEvent ProcessPacket(NetPacket packet, EndPoint remoteEndPoint)
+        protected override void ReceiveFromSocket(NetPacket packet, EndPoint remoteEndPoint)
         {
             if (_peer == null)
-				return null;
-            if (!_peer.EndPoint.Equals(remoteEndPoint))
+				return;
+
+            if (!_localEndPoint.Equals(remoteEndPoint))
             {
-                NetUtils.DebugWrite(ConsoleColor.DarkCyan, "[NC] Bad remoteEndPoint " + remoteEndPoint);
-                return null;
+                NetUtils.DebugWrite(ConsoleColor.DarkCyan, "[NC] Bad EndPoint " + remoteEndPoint);
+                return;
             }
+
+            if (packet.property == PacketProperty.Disconnect)
+            {
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
+                CloseConnection(true);
+                EnqueueEvent(new NetEvent(null, null, NetEventType.Disconnect));
+                return;
+            }
+
+            if (packet.property == PacketProperty.Connect)
+            {
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
+                _connected = true;
+                EnqueueEvent(new NetEvent(_peer, null, NetEventType.Connect));
+                return;
+            }
+
             //Process income packet
-            bool packetHasInfo = _peer.ProcessPacket(packet);
-
-            if (packetHasInfo)
-            {
-                if (packet.info == PacketInfo.Disconnect)
-                {
-                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
-                    CloseConnection(true);
-                    return new NetEvent(null, null, NetEventType.Disconnect);
-                }
-                else if (packet.info == PacketInfo.Connect && packet.data.Length == 4)
-                {
-                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
-                    //_peer = new NetPeer(_connection, BitConverter.ToInt32(packet.data, 0));
-                    _peer.Id = BitConverter.ToInt32(packet.data, 0);
-                    _connected = true;
-                    return new NetEvent(_peer, null, NetEventType.Connect);
-                }
-                else
-                {
-                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
-                    if (_peer == null)
-                        return null;
-
-                    return new NetEvent(_peer, packet.data, NetEventType.Receive);
-                }
-            }
-            return null;
+            _peer.ProcessPacket(packet);
         }
     }
 }

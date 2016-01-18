@@ -7,22 +7,24 @@ namespace LiteNetLib
 {
     public abstract class NetBase<T> : IPeerListener where T : NetBase<T>
     {
-        protected NetSocket socket;
+        protected NetSocket _socket;
+        protected IPEndPoint _localEndPoint;
+
         private Thread _thread;
         private int _updateTime;
         private bool _running;
         private EndPoint _remoteEndPoint;
         private Stopwatch _tickWatch;
-        private Queue<NetEvent> _receivedMessages; 
+        private Queue<NetEvent> _receivedMessages;
 
         protected NetBase()
         {
+            _tickWatch = new Stopwatch();
             _receivedMessages = new Queue<NetEvent>();
             _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
             _updateTime = 100;
             _thread = new Thread(Update);
-
-            socket = new NetSocket();
+            _socket = new NetSocket();
         }
 
         /// <summary>
@@ -35,7 +37,8 @@ namespace LiteNetLib
             {
                 return false;
             }
-            if (socket.Bind(port))
+            _localEndPoint = new IPEndPoint(IPAddress.Any, port);
+            if (_socket.Bind(_localEndPoint))
             {
                 _tickWatch.Start();
                 _running = true;
@@ -54,7 +57,7 @@ namespace LiteNetLib
             {
                 _running = false;
                 _thread.Join(1000);
-                socket.Close();
+                _socket.Close();
             }
         }
 
@@ -110,18 +113,14 @@ namespace LiteNetLib
 
                     //Receive some info
                     NetPacket packet;
-                    int result = socket.ReceiveFrom(out packet, ref _remoteEndPoint, ref errorCode);
+                    int result = _socket.ReceiveFrom(out packet, ref _remoteEndPoint, ref errorCode);
 
                     if (result >= 0)
                     {
                         //ProcessEvents
                         if (packet != null)
                         {
-                            NetEvent netEvent = ProcessPacket(packet, _remoteEndPoint);
-                            if (netEvent != null)
-                            {
-                                EnqueueEvent(netEvent);
-                            }
+                            ReceiveFromSocket(packet, _remoteEndPoint);
                         }
                     }
                     else
@@ -137,7 +136,7 @@ namespace LiteNetLib
                                 EnqueueEvent(netEvent);
                             }
                             _running = false;
-                            socket.Close();
+                            _socket.Close();
                             return;
                         }
                     }
@@ -156,10 +155,10 @@ namespace LiteNetLib
             return new NetEvent(null, null, NetEventType.Error);
         }
 
-        protected abstract NetEvent ProcessPacket(NetPacket packet, EndPoint remoteEndPoint);
+        protected abstract void ReceiveFromSocket(NetPacket packet, EndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
 
-        public abstract void ProcessReceivedPacket(NetPacket packet, EndPoint endPoint);
+        public abstract void ReceiveFromPeer(NetPacket packet, EndPoint endPoint);
         public abstract void ProcessSendError(EndPoint endPoint);
     }
 }

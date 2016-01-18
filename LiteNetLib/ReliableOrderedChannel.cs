@@ -75,7 +75,7 @@ namespace LiteNetLib
 
         public void ResetQueueIndex()
         {
-            _queueIndex = _windowStart;
+            _queueIndex = _windowStart % _windowSize;
         }
 
         private NetPacket SendAcks()
@@ -165,7 +165,7 @@ namespace LiteNetLib
 
                     //process holded packet
                     _receivedPackets[_remoteWindowStart % _windowSize] = null;
-                    _peer.ProcessPacket(p);
+                    _peer.AddIncomingPacket(p);
                     _remoteWindowStart = (_remoteWindowStart + 1) % NetConstants.MaxSequence;
                 }
 

@@ -7,7 +7,7 @@ namespace LiteNetLib
 {
     public interface IPeerListener
     {
-        void ProcessReceivedPacket(NetPacket packet, EndPoint endPoint);
+        void ReceiveFromPeer(NetPacket packet, EndPoint endPoint);
         void ProcessSendError(EndPoint endPoint);
     }
 
@@ -38,12 +38,12 @@ namespace LiteNetLib
         private int _pingUpdateDelay;
         private int _pingUpdateTimer;
 
-        private EndPoint _remoteEndPoint;
+        private IPEndPoint _remoteEndPoint;
 
         //DEBUG
         public ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
-        public EndPoint EndPoint
+        public IPEndPoint EndPoint
         {
             get { return _remoteEndPoint; }
         }
@@ -70,22 +70,22 @@ namespace LiteNetLib
             get { return _pingStopwatch.ElapsedMilliseconds; }
         }
 
-        public int Id
+        public long Id
         {
             get { return _id; }
-            set { _id = value; }
         }
 
         private ReliableOrderedChannel _reliableOrderedChannel;
         private ReliableUnorderedChannel _reliableUnorderedChannel;
         private SequencedChannel _sequencedChannel;
-        private int _id;
+        private long _id;
         private IPeerListener _peerListener;
 
-        public NetPeer(IPeerListener peerListener, INetSocket socket, EndPoint remoteEndPoint, int id = 0)
+        public NetPeer(IPeerListener peerListener, INetSocket socket, IPEndPoint remoteEndPoint)
         {
+            _id = NetConstants.GetIdFromEndPoint(remoteEndPoint);
             _peerListener = peerListener;
-            _id = id;
+            
             _socket = socket;
             _remoteEndPoint = remoteEndPoint;
 
@@ -216,7 +216,7 @@ namespace LiteNetLib
 
         public void AddIncomingPacket(NetPacket packet)
         {
-            _peerListener.ProcessReceivedPacket(packet, _remoteEndPoint);
+            _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
         }
 
         //Process incoming packet
@@ -271,7 +271,7 @@ namespace LiteNetLib
 
                 //Simple packet without acks
                 case PacketProperty.None:
-                    _peerListener.ProcessReceivedPacket(packet, _remoteEndPoint);
+                    _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
                     break;
             }
         }

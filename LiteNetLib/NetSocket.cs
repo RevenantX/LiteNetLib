@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -20,13 +20,12 @@ namespace LiteNetLib
         }
 
         //Bind socket to port
-        public bool Bind(int port)
+        public bool Bind(IPEndPoint ep)
         {            
-            IPEndPoint ipep = new IPEndPoint(IPAddress.Any, port);
             try
             {
-                _udpSocket.Bind(ipep);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", port);
+                _udpSocket.Bind(ep);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);
                 return true;
             }
             catch (SocketException ex)
