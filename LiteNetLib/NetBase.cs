@@ -105,25 +105,21 @@ namespace LiteNetLib
             {
                 //Init timer
                 long startTime = _tickWatch.ElapsedMilliseconds;
-                long diffTime = 0;
 
                 do
                 {
                     int errorCode = 0;
 
                     //Receive some info
-                    NetPacket packet;
-                    int result = _socket.ReceiveFrom(out packet, ref _remoteEndPoint, ref errorCode);
+                    NetPacket packet = new NetPacket();
+                    int result = _socket.ReceiveFrom(packet, ref _remoteEndPoint, ref errorCode);
 
-                    if (result >= 0)
+                    if (result > 0)
                     {
                         //ProcessEvents
-                        if (packet != null)
-                        {
-                            ReceiveFromSocket(packet, _remoteEndPoint);
-                        }
+                        ReceiveFromSocket(packet, _remoteEndPoint);
                     }
-                    else
+                    else if(result < 0)
                     {
                         //If not 10054
                         if (errorCode != 10054)
@@ -141,12 +137,11 @@ namespace LiteNetLib
                         }
                     }
 
-                    //Calc diffTime
-                    diffTime = _tickWatch.ElapsedMilliseconds - startTime;
-                } while (diffTime < _updateTime && _running);
+                    Thread.Sleep(1);
+                } while (_tickWatch.ElapsedMilliseconds - startTime < _updateTime && _running);
 
                 //PostProcess
-                PostProcessEvent((int)diffTime);
+                PostProcessEvent(_updateTime);
             }
         }
 

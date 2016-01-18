@@ -25,7 +25,7 @@ namespace LiteNetLib
             bool result = base.Start(port);
             if (result)
             {
-                _id = NetConstants.GetIdFromEndPoint(_localEndPoint);
+                _id = NetUtils.GetIdFromEndPoint(_localEndPoint);
             }
             return result;
         }

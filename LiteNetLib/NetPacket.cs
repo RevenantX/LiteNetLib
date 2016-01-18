@@ -42,23 +42,21 @@ namespace LiteNetLib
         }
 
         //Packet contstructor from byte array
-        public static NetPacket CreateFromBytes(byte[] data, int packetSize)
+        public bool FromBytes(byte[] data, int packetSize)
         {
-            NetPacket p = new NetPacket();
-
             //Reading property
             if (data[0] > 9)
-                return null;
-            p.Property = (PacketProperty)data[0];
+                return false;
+            Property = (PacketProperty)data[0];
 
             //init datasize
             int dataLenght = packetSize;
             int dataStart;
 
             //Sequence
-            if (IsSequenced(p.Property))
+            if (IsSequenced(Property))
             {
-                p.Sequence = BitConverter.ToUInt16(data, 1);
+                Sequence = BitConverter.ToUInt16(data, 1);
                 dataLenght -= NetConstants.SequencedHeaderSize;
                 dataStart = NetConstants.SequencedHeaderSize;
             }
@@ -69,10 +67,10 @@ namespace LiteNetLib
             }
 
             //Reading other data
-            p.Data = new byte[dataLenght];
-            Buffer.BlockCopy(data, dataStart, p.Data, 0, dataLenght);
+            Data = new byte[dataLenght];
+            Buffer.BlockCopy(data, dataStart, Data, 0, dataLenght);
 
-            return p;
+            return true;
         }
 
         //Converting to byte array for sending

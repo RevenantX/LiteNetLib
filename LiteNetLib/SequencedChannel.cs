@@ -33,7 +33,7 @@ namespace LiteNetLib
 
         public bool ProcessPacket(NetPacket packet)
         {
-            if (NetConstants.SequenceMoreRecent(packet.Sequence, _remoteSequence))
+            if (NetUtils.RelativeSequenceNumber(packet.Sequence, _remoteSequence) > 0)
             {
                 _remoteSequence = packet.Sequence;
                 _peer.AddIncomingPacket(packet);

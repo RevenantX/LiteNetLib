@@ -16,6 +16,10 @@ class Program
         {
             Console.WriteLine("peer disconnected!");
         }
+        else if(netEvent.type == NetEventType.Error)
+        {
+            Console.WriteLine("peer eror");
+        }
     }
 
     public static void ClientEvent(NetEvent netEvent)
@@ -62,14 +66,12 @@ class Program
 
         while (!Console.KeyAvailable)
         {
-            NetEvent evt = client.GetNextEvent();
-            if (evt != null)
+            NetEvent evt;
+            while ((evt = client.GetNextEvent()) != null)
             {
                 ClientEvent(evt);
             }
-
-            evt = server.GetNextEvent();
-            if (evt != null)
+            while ((evt = server.GetNextEvent()) != null)
             {
                 ServerEvent(evt);
             }

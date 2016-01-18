@@ -25,6 +25,23 @@ namespace LiteNetLib
             return null;
         }
 
+        public static int RelativeSequenceNumber(int number, int expected)
+        {
+            return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
+        }
+
+        public static long GetIdFromEndPoint(IPEndPoint ep)
+        {
+            long id = 0;
+            byte[] addr = ep.Address.GetAddressBytes();
+            id |= (long)addr[0];
+            id |= (long)addr[1] << 8;
+            id |= (long)addr[2] << 16;
+            id |= (long)addr[3] << 24;
+            id |= (long)ep.Port << 32;
+            return id;
+        }
+
 #if (DEBUG || UNITY_DEBUG)
         private static Object mt = new Object();
 #endif

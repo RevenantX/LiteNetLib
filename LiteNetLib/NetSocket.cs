@@ -6,7 +6,8 @@ namespace LiteNetLib
 {
     public class NetSocket : INetSocket
     {
-        private byte[] _receiveBuffer = new byte[NetConstants.MaxPacketSize];
+        private const int BufferSize = 131071;
+        private byte[] _receiveBuffer = new byte[BufferSize];
         private Socket _udpSocket;               //Udp socket
 
         //Socket constructor
@@ -14,9 +15,12 @@ namespace LiteNetLib
         {
             _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 255);
-            _udpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 1);
-            _udpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 1);
-            //_udpSocket.Blocking = false;
+            _udpSocket.ReceiveBufferSize = BufferSize;
+            _udpSocket.SendBufferSize = BufferSize;
+            //_udpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 1);
+            //_udpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 1);
+            _udpSocket.Blocking = false;
+            //_udpSocket.DontFragment = true;
         }
 
         //Bind socket to port
@@ -40,38 +44,43 @@ namespace LiteNetLib
         {
             try
             {
-                int result = _udpSocket.SendTo(packet.ToByteArray(), remoteEndPoint);
+                byte[] data = packet.ToByteArray();
+                int result = _udpSocket.SendTo(data, remoteEndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
                 return result;
             }
             catch (Exception ex)
             {
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]" + ex.ToString());
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]" + ex);
                 return -1;
             }
         }
 
         //Receive from
-        public int ReceiveFrom(out NetPacket packet, ref EndPoint remoteEndPoint, ref int errorCode)
+        public int ReceiveFrom(NetPacket packet, ref EndPoint remoteEndPoint, ref int errorCode)
         {
+            //wait for data
+            if (!_udpSocket.Poll(1000, SelectMode.SelectRead))
+            {
+                return 0;
+            }
+
             int result;
 
             //Reading data
             try
             {
-                result = _udpSocket.ReceiveFrom(_receiveBuffer, ref remoteEndPoint);
+                result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref remoteEndPoint);
             }
             catch (SocketException ex)
             {
-                if (ex.SocketErrorCode == SocketError.TimedOut)
+                if (ex.SocketErrorCode == SocketError.WouldBlock)
                 {
-                    packet = null;
                     return 0;
                 }
                 else
                 {
                     NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Error code: {0} - {1}", ex.ErrorCode, ex.ToString());
-                    packet = null;
                     errorCode = ex.ErrorCode;
                     return -1;
                 }
@@ -84,19 +93,16 @@ namespace LiteNetLib
             if (result == 0)
             {
                 NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (0)");
-                packet = null;
                 return 0;
             }
             else if (result < NetConstants.HeaderSize)
             {
                 NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (D<HS)");
-                packet = null;
                 return 0;
             }
 
             //Creating packet from data
-            packet = NetPacket.CreateFromBytes(_receiveBuffer, result);
-            if (packet == null)
+            if (!packet.FromBytes(_receiveBuffer, result))
             {
                 NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (corrupted packet)");
                 return 0;

@@ -83,7 +83,7 @@ namespace LiteNetLib
 
         public NetPeer(IPeerListener peerListener, INetSocket socket, IPEndPoint remoteEndPoint)
         {
-            _id = NetConstants.GetIdFromEndPoint(remoteEndPoint);
+            _id = NetUtils.GetIdFromEndPoint(remoteEndPoint);
             _peerListener = peerListener;
             
             _socket = socket;
@@ -149,32 +149,34 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
+        private readonly object sendLock = new object();
         public void SendPacket(NetPacket packet)
         {
-            switch (packet.Property)
+            lock (sendLock)
             {
-                case PacketProperty.Reliable:
-                    //DebugWrite("[RS]Packet reliable");
-                    _reliableUnorderedChannel.AddToQueue(packet);
-                    break;
-                case PacketProperty.Sequenced:
-                    //DebugWrite("[RS]Packet sequenced");
-                    _sequencedChannel.AddToQueue(packet);
-                    break;
-                case PacketProperty.ReliableOrdered:
-                    //DebugWrite("[RS]Packet reliable ordered");
-                    _reliableOrderedChannel.AddToQueue(packet);
-                    break;
-                case PacketProperty.AckReliable:
-                case PacketProperty.AckReliableOrdered:
-                case PacketProperty.Connect:
-                case PacketProperty.Disconnect:
-                case PacketProperty.Ping:
-                case PacketProperty.Pong:
-                case PacketProperty.None:
-                    DebugWrite("[RS]Packet simple");
-                    _outgoingQueue.Enqueue(packet);
-                    break;
+                switch (packet.Property)
+                {
+                    case PacketProperty.Reliable:
+                        //DebugWrite("[RS]Packet reliable");
+                        _reliableUnorderedChannel.AddToQueue(packet);
+                        break;
+                    case PacketProperty.Sequenced:
+                        //DebugWrite("[RS]Packet sequenced");
+                        _sequencedChannel.AddToQueue(packet);
+                        break;
+                    case PacketProperty.ReliableOrdered:
+                        //DebugWrite("[RS]Packet reliable ordered");
+                        _reliableOrderedChannel.AddToQueue(packet);
+                        break;
+                    case PacketProperty.AckReliable:
+                    case PacketProperty.AckReliableOrdered:
+                    case PacketProperty.Connect:
+                    case PacketProperty.Disconnect:
+                    case PacketProperty.None:
+                        DebugWrite("[RS]Packet simple");
+                        _outgoingQueue.Enqueue(packet);
+                        break;
+                }
             }
         }
 
@@ -204,12 +206,15 @@ namespace LiteNetLib
 
         public NetPacket CreatePacket(PacketProperty property = PacketProperty.None)
         {
-            var packet = _packetPool.Count > 0 
-                ? _packetPool.Pop() 
-                : new NetPacket();
+            lock (_packetPool)
+            {
+                var packet = _packetPool.Count > 0
+                   ? _packetPool.Pop()
+                   : new NetPacket();
 
-            packet.Property = property;
-            return packet;
+                packet.Property = property;
+                return packet;
+            }
         }
 
         public void Recycle(NetPacket packet)
@@ -232,7 +237,8 @@ namespace LiteNetLib
             {
                 //If we get ping, send pong
                 case PacketProperty.Ping:
-                    Send(PacketProperty.Pong);
+                    NetPacket pongPacket = CreatePacket(PacketProperty.Pong);
+                    _socket.SendTo(pongPacket, _remoteEndPoint);
                     break;
 
                 //If we get pong, calculate ping time and rtt
@@ -256,21 +262,21 @@ namespace LiteNetLib
                 case PacketProperty.Sequenced:
                     if (!_sequencedChannel.ProcessPacket(packet))
                     {
-                        Recycle(packet);
+                        //Recycle(packet);
                     }
                     break;
 
                 case PacketProperty.Reliable:
                     if (!_reliableUnorderedChannel.ProcessPacket(packet))
                     {
-                        Recycle(packet);
+                        //Recycle(packet);
                     }
                     break;
 
                 case PacketProperty.ReliableOrdered:
                     if (!_reliableOrderedChannel.ProcessPacket(packet))
                     {
-                        Recycle(packet);
+                        //Recycle(packet);
                     }
                     break;
 
