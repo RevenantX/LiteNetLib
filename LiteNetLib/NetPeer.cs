@@ -215,6 +215,11 @@ namespace LiteNetLib
             NetUtils.DebugWrite(DebugTextColor, str, args);
         }
 
+        public void DebugWriteForce(string str, params object[] args)
+        {
+            NetUtils.DebugWrite(true, DebugTextColor, str, args);
+        }
+
         public NetPacket CreatePacket(PacketProperty property = PacketProperty.None)
         {
             lock (_packetPool)
