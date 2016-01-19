@@ -147,7 +147,7 @@ namespace LiteNetLib
                     }
                 }
 
-                _queueIndex = (_queueIndex + 1)%NetConstants.WindowSize;
+                _queueIndex = (_queueIndex + 1) % NetConstants.WindowSize;
             } while (currentPacket == null && _queueIndex != startQueueIndex);
 
             //return
@@ -216,8 +216,6 @@ namespace LiteNetLib
                 while (_remoteWindowStart != newWindowStart)
                 {
                     _outgoingAcks[_remoteWindowStart % NetConstants.WindowSize] = false;
-                    //_receivedPackets[_remoteWindowStart % NetConstants.WindowSize] = null;
-                    //_earlyReceived[_remoteWindowStart % NetConstants.WindowSize] = false;
                     _remoteWindowStart = (_remoteWindowStart + 1) % NetConstants.MaxSequence;
                 }
             }

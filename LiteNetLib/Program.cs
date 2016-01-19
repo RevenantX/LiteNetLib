@@ -10,7 +10,7 @@ class Program
     {
         if (netEvent.type == NetEventType.Receive)
         {
-            netEvent.peer.Send(netEvent.data, SendOptions.ReliableOrdered);
+            netEvent.peer.Send(netEvent.data, SendOptions.Reliable);
         }
         else if (netEvent.type == NetEventType.Disconnect)
         {
