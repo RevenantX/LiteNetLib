@@ -28,7 +28,7 @@ class Program
         {
             Console.WriteLine("CliConnected");
 
-            for (int i = 0; i < 2000; i++)
+            for (int i = 0; i < 4000; i++)
             {
                 byte[] data = new byte[1300];
                 FastBitConverter.GetBytes(data, 0, i+1);
