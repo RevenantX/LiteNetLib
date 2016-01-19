@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 
 namespace LiteNetLib
 {
     public interface IPeerListener
     {
-        void ReceiveFromPeer(NetPacket packet, EndPoint endPoint);
-        void ProcessSendError(EndPoint endPoint);
+        void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
+        void ProcessSendError(NetEndPoint endPoint);
     }
 
     public class NetPeer
@@ -47,7 +46,7 @@ namespace LiteNetLib
 
         private readonly int[] _flowModes;
         private readonly Stopwatch _pingStopwatch;
-        private readonly IPEndPoint _remoteEndPoint;
+        private readonly NetEndPoint _remoteEndPoint;
         private readonly ReliableOrderedChannel _reliableOrderedChannel;
         private readonly ReliableUnorderedChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
@@ -59,7 +58,7 @@ namespace LiteNetLib
         //DEBUG
         public ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
-        public IPEndPoint EndPoint
+        public NetEndPoint EndPoint
         {
             get { return _remoteEndPoint; }
         }
@@ -80,7 +79,7 @@ namespace LiteNetLib
             get { return _id; }
         }
 
-        public NetPeer(IPeerListener peerListener, NetSocket socket, IPEndPoint remoteEndPoint)
+        public NetPeer(IPeerListener peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
         {
             _id = NetUtils.GetIdFromEndPoint(remoteEndPoint);
             _peerListener = peerListener;

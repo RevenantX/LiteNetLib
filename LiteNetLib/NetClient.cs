@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace LiteNetLib
 {
@@ -90,7 +89,7 @@ namespace LiteNetLib
             IPAddress ipAddress = NetUtils.GetHostIP(address);
 
             //Create server endpoint
-            IPEndPoint ep = new IPEndPoint(ipAddress, port);
+            NetEndPoint ep = new NetEndPoint(ipAddress, port);
 
             //Force close connection
             CloseConnection(true);
@@ -110,20 +109,20 @@ namespace LiteNetLib
             }
         }
 
-        public override void ReceiveFromPeer(NetPacket packet, EndPoint remoteEndPoint)
+        public override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
             EnqueueEvent(new NetEvent(_peer, packet.Data, NetEventType.Receive));
             //_peer.Recycle(packet);
         }
 
-        public override void ProcessSendError(EndPoint remoteEndPoint)
+        public override void ProcessSendError(NetEndPoint remoteEndPoint)
         {
             Stop();
             EnqueueEvent(new NetEvent(null, null, NetEventType.Error));
         }
 
-        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, EndPoint remoteEndPoint)
+        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
             if (_peer == null)
 				return;

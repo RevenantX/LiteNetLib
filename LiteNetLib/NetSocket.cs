@@ -24,12 +24,12 @@ namespace LiteNetLib
         }
 
         //Bind socket to port
-        public bool Bind(IPEndPoint ep)
+        public bool Bind(NetEndPoint ep)
         {            
             try
             {
-                _udpSocket.Bind(ep);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);
+                _udpSocket.Bind(ep.EndPoint);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.EndPoint.Port);
                 return true;
             }
             catch (SocketException ex)
@@ -40,12 +40,12 @@ namespace LiteNetLib
         }
 
         //Send to
-        public int SendTo(NetPacket packet, EndPoint remoteEndPoint)
+        public int SendTo(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             try
             {
                 byte[] data = packet.ToByteArray();
-                int result = _udpSocket.SendTo(data, remoteEndPoint);
+                int result = _udpSocket.SendTo(data, remoteEndPoint.EndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
                 return result;
             }
@@ -57,7 +57,7 @@ namespace LiteNetLib
         }
 
         //Receive from
-        public int ReceiveFrom(ref byte[] data, ref EndPoint remoteEndPoint, ref int errorCode)
+        public int ReceiveFrom(ref byte[] data, ref NetEndPoint remoteEndPoint, ref int errorCode)
         {
             //wait for data
             if (!_udpSocket.Poll(1000, SelectMode.SelectRead))
@@ -70,7 +70,9 @@ namespace LiteNetLib
             //Reading data
             try
             {
-                result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref remoteEndPoint);
+                EndPoint p = remoteEndPoint.EndPoint;
+                result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref p);
+                remoteEndPoint.EndPoint = (IPEndPoint)p;
             }
             catch (SocketException ex)
             {
@@ -95,7 +97,8 @@ namespace LiteNetLib
                 NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (0)");
                 return 0;
             }
-            else if (result < NetConstants.HeaderSize)
+
+            if (result < NetConstants.HeaderSize)
             {
                 NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (D<HS)");
                 return 0;

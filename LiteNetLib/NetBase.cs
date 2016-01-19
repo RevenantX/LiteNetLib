@@ -8,12 +8,12 @@ namespace LiteNetLib
     public abstract class NetBase<T> : IPeerListener where T : NetBase<T>
     {
         protected NetSocket _socket;
-        protected IPEndPoint _localEndPoint;
+        protected NetEndPoint _localEndPoint;
 
         private Thread _thread;
         private int _updateTime;
         private bool _running;
-        private EndPoint _remoteEndPoint;
+        private NetEndPoint _remoteEndPoint;
         private Stopwatch _tickWatch;
         private Queue<NetEvent> _netEventsQueue;
 
@@ -21,7 +21,7 @@ namespace LiteNetLib
         {
             _tickWatch = new Stopwatch();
             _netEventsQueue = new Queue<NetEvent>();
-            _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            _remoteEndPoint = new NetEndPoint(IPAddress.Any, 0);
             _updateTime = 100;
             _thread = new Thread(Update);
             _socket = new NetSocket();
@@ -37,7 +37,7 @@ namespace LiteNetLib
             {
                 return false;
             }
-            _localEndPoint = new IPEndPoint(IPAddress.Any, port);
+            _localEndPoint = new NetEndPoint(IPAddress.Any, port);
             if (_socket.Bind(_localEndPoint))
             {
                 _tickWatch.Start();
@@ -150,10 +150,10 @@ namespace LiteNetLib
             return new NetEvent(null, null, NetEventType.Error);
         }
 
-        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, EndPoint remoteEndPoint);
+        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
 
-        public abstract void ReceiveFromPeer(NetPacket packet, EndPoint endPoint);
-        public abstract void ProcessSendError(EndPoint endPoint);
+        public abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
+        public abstract void ProcessSendError(NetEndPoint endPoint);
     }
 }

@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 
 namespace LiteNetLib
 {
     public class NetServer : NetBase<NetServer>
     {
-        private Dictionary<EndPoint, NetPeer> _peers;
+        private Dictionary<NetEndPoint, NetPeer> _peers;
         private int _maxClients;
         private long _timeout = 5000; //5sec
-        private Queue<EndPoint> _peersToRemove;
+        private Queue<NetEndPoint> _peersToRemove;
 
         public long DisconnectTimeout
         {
@@ -19,8 +18,8 @@ namespace LiteNetLib
 
         public NetServer(int maxClients)
         {
-            _peers = new Dictionary<EndPoint, NetPeer>(maxClients);
-            _peersToRemove = new Queue<EndPoint>(maxClients);
+            _peers = new Dictionary<NetEndPoint, NetPeer>(maxClients);
+            _peersToRemove = new Queue<NetEndPoint>(maxClients);
             _maxClients = maxClients;
         }
 
@@ -94,7 +93,7 @@ namespace LiteNetLib
             }
         }
 
-        public override void ReceiveFromPeer(NetPacket packet, EndPoint remoteEndPoint)
+        public override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
@@ -102,7 +101,7 @@ namespace LiteNetLib
             }
         }
 
-        public override void ProcessSendError(EndPoint remoteEndPoint)
+        public override void ProcessSendError(NetEndPoint remoteEndPoint)
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
@@ -113,7 +112,7 @@ namespace LiteNetLib
             }
         }
 
-        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, EndPoint remoteEndPoint)
+        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
             NetPacket packet;
             //Check peers
@@ -154,7 +153,7 @@ namespace LiteNetLib
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request: accepting");
                 //Getting new id for peer
 
-                NetPeer netPeer = new NetPeer(this, _socket, (IPEndPoint)remoteEndPoint);
+                NetPeer netPeer = new NetPeer(this, _socket, remoteEndPoint);
                 netPeer.BadRoundTripTime = UpdateTime * 2 + 250;
                 netPeer.Recycle(packet);
                 netPeer.Send(PacketProperty.Connect);

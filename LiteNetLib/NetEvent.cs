@@ -1,5 +1,3 @@
-﻿using System;
-
 namespace LiteNetLib
 {
     public enum NetEventType
