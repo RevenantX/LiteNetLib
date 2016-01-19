@@ -23,9 +23,7 @@ namespace LiteNetLib
 
         private readonly Stopwatch _packetTimeStopwatch;
 
-        private long _acksLastTime;
         private const long ResendDelay = 300;
-        private const long AcksResendDelay = 300;
 
         //Socket constructor
         public ReliableOrderedChannel(NetPeer peer)
@@ -98,9 +96,8 @@ namespace LiteNetLib
         public NetPacket GetQueuedPacket()
         {
             long currentTime = _packetTimeStopwatch.ElapsedMilliseconds;
-            if (_mustSendAcks || currentTime - _acksLastTime > AcksResendDelay)
+            if (_mustSendAcks)
             {
-                _acksLastTime = currentTime;
                 _mustSendAcks = false;
                 return SendAcks();
             }
@@ -218,14 +215,14 @@ namespace LiteNetLib
             }
 
             //Final stage - process valid packet
+            //trigger acks send
+            _mustSendAcks = true;
+
             if (_outgoingAcks[packet.Sequence % NetConstants.WindowSize])
             {
                 _peer.DebugWrite("[RR]ReliableInOrder duplicate");
                 return false;
             }
-
-            //trigger acks send
-            _mustSendAcks = true;
 
             //save ack
             _outgoingAcks[packet.Sequence % NetConstants.WindowSize] = true;
