@@ -38,7 +38,9 @@ namespace LiteNetLib
         {
             return property == PacketProperty.Reliable || 
                    property == PacketProperty.Sequenced ||
-                   property == PacketProperty.ReliableOrdered;
+                   property == PacketProperty.ReliableOrdered ||
+                   property == PacketProperty.Ping || 
+                   property == PacketProperty.Pong;
         }
 
         //Packet contstructor from byte array
@@ -69,7 +71,6 @@ namespace LiteNetLib
             //Reading other data
             Data = new byte[dataLenght];
             Buffer.BlockCopy(data, dataStart, Data, 0, dataLenght);
-
             return true;
         }
 

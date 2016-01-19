@@ -80,7 +80,7 @@ public sealed class FastBitConverter
 
     public static int GetBytes(byte[] bytes, int startIndex, ushort value)
     {
-        WriteLittleEndian(bytes, startIndex, value);
+        WriteLittleEndian(bytes, startIndex, (short)value);
         return 2;
     }
 
@@ -92,7 +92,7 @@ public sealed class FastBitConverter
 
     public static int GetBytes(byte[] bytes, int startIndex, uint value)
     {
-        WriteLittleEndian(bytes, startIndex, value);
+        WriteLittleEndian(bytes, startIndex, (int)value);
         return 4;
     }
 

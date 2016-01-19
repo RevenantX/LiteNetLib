@@ -79,7 +79,7 @@ namespace LiteNetLib
                 {
                     NetPacket removed = _pendingPackets[storeIdx];
                     _pendingPackets[storeIdx] = null;
-                    _peer.UpdateFlowMode((int)(_packetTimeStopwatch.ElapsedMilliseconds - removed.TimeStamp));
+                    _peer.UpdateRoundTripTime((int)(_packetTimeStopwatch.ElapsedMilliseconds - removed.TimeStamp));
                     _peer.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", ackSequence);
                     _peer.Recycle(removed);
                 }
@@ -190,7 +190,7 @@ namespace LiteNetLib
                 return false;
             }
 
-            //Very new packet
+            //If very new - move window
             if (relate >= NetConstants.WindowSize)
             {
                 int newWindowStart = (_remoteWindowStart + relate - NetConstants.WindowSize + 1) % NetConstants.MaxSequence;
@@ -200,9 +200,14 @@ namespace LiteNetLib
                     _receivedPackets[_remoteWindowStart % NetConstants.WindowSize] = null;
                     _remoteWindowStart = (_remoteWindowStart + 1) % NetConstants.MaxSequence;
                 }
-                return ProcessPacket(packet);
             }
 
+            //Process
+            return ProcessValidPacket(packet);
+        }
+
+        private bool ProcessValidPacket(NetPacket packet)
+        {
             //Normal packet
             if (_outgoingAcks[packet.Sequence % NetConstants.WindowSize])
             {
@@ -223,7 +228,7 @@ namespace LiteNetLib
                 _peer.AddIncomingPacket(packet);
                 _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
 
-                while(true)
+                while (true)
                 {
                     NetPacket p = _receivedPackets[_remoteSequence % NetConstants.WindowSize];
                     if (p == null)

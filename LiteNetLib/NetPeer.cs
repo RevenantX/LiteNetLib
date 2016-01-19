@@ -21,24 +21,40 @@ namespace LiteNetLib
 
         //Flow control
         private FlowMode _currentFlowMode;
-        private int[] _flowModes;
         private int _sendedPacketsCount;
         private int _flowTimer;
 
-        private NetSocket _socket;             //Udp socket
-        private Queue<NetPacket> _outgoingQueue;//Queue for sending packets
-        private Stack<NetPacket> _packetPool; 
+        private readonly NetSocket _socket;              //Udp socket
+        private readonly Queue<NetPacket> _outgoingQueue;//Queue for sending packets
+        private readonly Stack<NetPacket> _packetPool;   //Pool for packets
 
-        private int _roundTripTime;             //RTT, Ping
-        private int _maxReceivedTime;           //Max RTT
+        private int _rtt;                                //round trip time
+        private int _avgRtt;
+        private int _rttCount;
         private int _badRoundTripTime;
+        private int _goodRttCount;
+        private ushort _pingSequence;
+        private ushort _remotePingSequence;
+        private ushort _pongSequence;
 
-        private int _ping;
-        private Stopwatch _pingStopwatch;
-        private int _pingUpdateDelay;
-        private int _pingUpdateTimer;
+        private int _rttUpdateDelay;
+        private int _rttUpdateTimer;
+        private const int RttResetDelay = 1000;
+        private int _rttResetTimer;
 
-        private IPEndPoint _remoteEndPoint;
+        private const int FlowUpdateTime = 100;
+        private const int ThrottleIncreaseThreshold = 32;
+
+        private readonly int[] _flowModes;
+        private readonly Stopwatch _pingStopwatch;
+        private readonly IPEndPoint _remoteEndPoint;
+        private readonly ReliableOrderedChannel _reliableOrderedChannel;
+        private readonly ReliableUnorderedChannel _reliableUnorderedChannel;
+        private readonly SequencedChannel _sequencedChannel;
+        private readonly long _id;
+        private readonly IPeerListener _peerListener;
+
+        private readonly object _sendLock = new object();
 
         //DEBUG
         public ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
@@ -46,12 +62,6 @@ namespace LiteNetLib
         public IPEndPoint EndPoint
         {
             get { return _remoteEndPoint; }
-        }
-
-        public int MaxReceivedTime
-        {
-            get { return _maxReceivedTime; }
-            set { _maxReceivedTime = value; }
         }
 
         public int BadRoundTripTime
@@ -62,24 +72,13 @@ namespace LiteNetLib
 
         public int Ping
         {
-            get { return _ping; }
-        }
-
-        public long LastPing
-        {
-            get { return _pingStopwatch.ElapsedMilliseconds; }
+            get { return _avgRtt; }
         }
 
         public long Id
         {
             get { return _id; }
         }
-
-        private ReliableOrderedChannel _reliableOrderedChannel;
-        private ReliableUnorderedChannel _reliableUnorderedChannel;
-        private SequencedChannel _sequencedChannel;
-        private long _id;
-        private IPeerListener _peerListener;
 
         public NetPeer(IPeerListener peerListener, NetSocket socket, IPEndPoint remoteEndPoint)
         {
@@ -94,13 +93,12 @@ namespace LiteNetLib
             _flowModes[0] = 64 / 4; //bad
             _flowModes[1] = 64;     //good
 
-            _roundTripTime = 0;
-            _maxReceivedTime = 0;
+            _avgRtt = 0;
+            _rtt = 0;
             _badRoundTripTime = 650;
+            _rttUpdateDelay = 1000;
+            _rttUpdateTimer = 0;
 
-            _ping = 0;
-            _pingUpdateDelay = 1000;
-            _pingUpdateTimer = 0;
             _pingStopwatch = new Stopwatch();
 
             _reliableOrderedChannel = new ReliableOrderedChannel(this);
@@ -149,10 +147,9 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
-        private readonly object sendLock = new object();
         public void SendPacket(NetPacket packet)
         {
-            lock (sendLock)
+            lock (_sendLock)
             {
                 switch (packet.Property)
                 {
@@ -176,26 +173,40 @@ namespace LiteNetLib
                         DebugWrite("[RS]Packet simple");
                         _outgoingQueue.Enqueue(packet);
                         break;
+                    case PacketProperty.Ping:
+                    case PacketProperty.Pong:
+                        _socket.SendTo(packet, _remoteEndPoint);
+                        break;
+                    default:
+                        throw new Exception("Unknown packet property: " + packet.Property);
                 }
             }
         }
 
-        public void UpdateFlowMode(int roundTripTime)
+        public void UpdateRoundTripTime(int roundTripTime)
         {
-            _roundTripTime = roundTripTime;
-            if (_roundTripTime < _badRoundTripTime)
-            {
-                if (_currentFlowMode != FlowMode.Good)
-                    DebugWrite("[PA]Enabled good flow mode, RTT: {0}", _roundTripTime);
+            _rtt += roundTripTime;
+            _rttCount++;
+            _avgRtt = _rtt/_rttCount;
 
-                _currentFlowMode = FlowMode.Good;
+            if (_avgRtt < _badRoundTripTime)
+            {
+                _goodRttCount++;
+                if (_goodRttCount > ThrottleIncreaseThreshold && _currentFlowMode != FlowMode.Good)
+                {
+                    _goodRttCount = 0;
+                    DebugWrite("[PA]Enabled good flow mode, RTT: {0}", _avgRtt);
+                    _currentFlowMode = FlowMode.Good;
+                }
             }
             else
             {
+                _goodRttCount = 0;
                 if (_currentFlowMode != FlowMode.Bad)
-                    DebugWrite("[PA]Enabled bad flow mode, RTT: {0}", _roundTripTime);
-
-                _currentFlowMode = FlowMode.Bad;
+                {
+                    DebugWrite("[PA]Enabled bad flow mode, RTT: {0}", _avgRtt);
+                    _currentFlowMode = FlowMode.Bad;
+                }
             }
         }
 
@@ -240,18 +251,27 @@ namespace LiteNetLib
             {
                 //If we get ping, send pong
                 case PacketProperty.Ping:
+                    if (NetUtils.RelativeSequenceNumber(packet.Sequence, _remotePingSequence) < 0)
+                    {
+                        break;
+                    }
+                    _remotePingSequence = packet.Sequence;
                     NetPacket pongPacket = CreatePacket(PacketProperty.Pong);
-                    _socket.SendTo(pongPacket, _remoteEndPoint);
-                    Console.WriteLine("PINGRECV - SENDPONG " + _id);
+                    pongPacket.Sequence = packet.Sequence;
+                    SendPacket(pongPacket);
                     break;
 
                 //If we get pong, calculate ping time and rtt
                 case PacketProperty.Pong:
-                    _ping = (int) _pingStopwatch.ElapsedMilliseconds;
+                    if (NetUtils.RelativeSequenceNumber(packet.Sequence, _pongSequence) < 0)
+                    {
+                        break;
+                    }
+                    _pongSequence = packet.Sequence;
+                    int rtt = (int) _pingStopwatch.ElapsedMilliseconds;
                     _pingStopwatch.Reset();
-                    UpdateFlowMode(_ping);
-                    DebugWrite("[PP]Ping: {0}", _ping);
-                    Console.WriteLine("PONGRECV" + _id);
+                    UpdateRoundTripTime(rtt);
+                    DebugWrite("[PP]Ping: {0}", rtt);
                     break;
 
                 //Process ack
@@ -299,8 +319,6 @@ namespace LiteNetLib
             Recycle(packet);
         }
 
-        private const int FlowUpdateTime = 100;
-
         public void Update(int deltaTime)
         {
             int currentSended = 0;
@@ -328,11 +346,9 @@ namespace LiteNetLib
                         break;
                 }
                     
-                //packet.timeStamp = Environment.TickCount;
                 if (_socket.SendTo(packet, _remoteEndPoint) == -1)
                 {
                     _peerListener.ProcessSendError(_remoteEndPoint);
-                    Console.WriteLine("SOSEC");
                     return;
                 }
                 currentSended++;
@@ -351,16 +367,31 @@ namespace LiteNetLib
             }
 
             //Send ping
-            _pingUpdateTimer += deltaTime;
-            if (_pingUpdateTimer >= _pingUpdateDelay)
+            _rttUpdateTimer += deltaTime;
+            if (_rttUpdateTimer >= _rttUpdateDelay)
             {
-                Console.WriteLine("PINGSEND " + _id);
-                _pingUpdateTimer = 0;
-                //_pingStopwatch.Reset();
+                //reset timer
+                _rttUpdateTimer = 0;
+
+                //create packet
                 NetPacket packet = CreatePacket(PacketProperty.Ping);
-                _pingStopwatch.Start();
-                _socket.SendTo(packet, _remoteEndPoint);
+                packet.Sequence = _pingSequence;
+                _pingSequence++;
+
+                //send
+                SendPacket(packet);
                 Recycle(packet);
+
+                //reset timer
+                _pingStopwatch.Restart();
+            }
+
+            //reset rtt
+            _rttResetTimer += deltaTime;
+            if (_rttResetTimer >= RttResetDelay)
+            {
+                _rtt = 0;
+                _rttCount = 0;
             }
         }
     }

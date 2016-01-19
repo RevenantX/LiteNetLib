@@ -78,7 +78,7 @@ namespace LiteNetLib
             //Process acks
             foreach (NetPeer netPeer in _peers.Values)
             {
-                if (netPeer.LastPing > _timeout)
+                if (netPeer.Ping > _timeout)
                 {
                     EnqueueEvent(new NetEvent(netPeer, null, NetEventType.Disconnect));
                     RemovePeer(netPeer);
