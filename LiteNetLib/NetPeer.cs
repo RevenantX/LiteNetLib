@@ -47,8 +47,8 @@ namespace LiteNetLib
         private readonly int[] _flowModes;
         private readonly Stopwatch _pingStopwatch;
         private readonly NetEndPoint _remoteEndPoint;
-        private readonly ReliableOrderedChannel _reliableOrderedChannel;
-        private readonly ReliableUnorderedChannel _reliableUnorderedChannel;
+        private readonly ReliableChannel _reliableOrderedChannel;
+        private readonly ReliableChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
         private readonly long _id;
         private readonly IPeerListener _peerListener;
@@ -100,8 +100,8 @@ namespace LiteNetLib
 
             _pingStopwatch = new Stopwatch();
 
-            _reliableOrderedChannel = new ReliableOrderedChannel(this);
-            _reliableUnorderedChannel = new ReliableUnorderedChannel(this);
+            _reliableOrderedChannel = new ReliableChannel(this, true);
+            _reliableUnorderedChannel = new ReliableChannel(this, false);
             _sequencedChannel = new SequencedChannel(this);
 
             _packetPool = new Stack<NetPacket>();

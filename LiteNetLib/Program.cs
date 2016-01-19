@@ -32,7 +32,7 @@ class Program
             {
                 byte[] data = new byte[1300];
                 FastBitConverter.GetBytes(data, 0, i+1);
-                netEvent.peer.Send(data, SendOptions.ReliableOrdered);
+                netEvent.peer.Send(data, SendOptions.Reliable);
             }
         }
         else if (netEvent.type == NetEventType.Receive)
@@ -42,7 +42,7 @@ class Program
             Console.WriteLine("CNT: {0}, DT: {1}", _messagesReceivedCount, dt);
             if (_messagesReceivedCount != dt)
             {
-                Console.WriteLine("DIFF DIFF DIFF DIFF DIFF DIFF DIFF");
+                //Console.WriteLine("DIFF DIFF DIFF DIFF DIFF DIFF DIFF");
             }
         }
         else if (netEvent.type == NetEventType.Error)

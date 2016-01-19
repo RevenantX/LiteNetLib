@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace LiteNetLib
 {
-    public class ReliableOrderedChannel : INetChannel
+    public class ReliableChannel : INetChannel
     {
         //For reliable inOrder
         private ushort _localSeqence;
@@ -12,8 +12,9 @@ namespace LiteNetLib
 
         private readonly Queue<NetPacket> _outgoingPackets;
         private readonly bool[] _outgoingAcks;               //for send acks
-        private readonly NetPacket[] _pendingPackets;        //for unacked packets
-        private readonly NetPacket[] _receivedPackets;       //for drop duplicates
+        private readonly NetPacket[] _pendingPackets;        //for unacked packets and duplicates
+        private readonly NetPacket[] _receivedPackets;       //for order
+        private readonly bool[] _earlyReceived;              //for unordered
  
         private int _localWindowStart;
         private int _remoteWindowStart;
@@ -24,17 +25,23 @@ namespace LiteNetLib
         private readonly Stopwatch _packetTimeStopwatch;
 
         private const long ResendDelay = 300;
+        private readonly bool _ordered;
 
         //Socket constructor
-        public ReliableOrderedChannel(NetPeer peer)
+        public ReliableChannel(NetPeer peer, bool ordered)
         {
             _peer = peer;
+            _ordered = ordered;
 
             _outgoingPackets = new Queue<NetPacket>();
 
             _outgoingAcks = new bool[NetConstants.WindowSize];
             _pendingPackets = new NetPacket[NetConstants.WindowSize];
-            _receivedPackets = new NetPacket[NetConstants.WindowSize];
+
+            if (_ordered)
+                _receivedPackets = new NetPacket[NetConstants.WindowSize];
+            else
+                _earlyReceived = new bool[NetConstants.WindowSize];
 
             _localWindowStart = 0;
             _localSeqence = 0;
@@ -209,7 +216,8 @@ namespace LiteNetLib
                 while (_remoteWindowStart != newWindowStart)
                 {
                     _outgoingAcks[_remoteWindowStart % NetConstants.WindowSize] = false;
-                    _receivedPackets[_remoteWindowStart % NetConstants.WindowSize] = null;
+                    //_receivedPackets[_remoteWindowStart % NetConstants.WindowSize] = null;
+                    //_earlyReceived[_remoteWindowStart % NetConstants.WindowSize] = false;
                     _remoteWindowStart = (_remoteWindowStart + 1) % NetConstants.MaxSequence;
                 }
             }
@@ -234,23 +242,40 @@ namespace LiteNetLib
                 _peer.AddIncomingPacket(packet);
                 _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
 
-                while (true)
+                if (_ordered)
                 {
-                    NetPacket p = _receivedPackets[_remoteSequence % NetConstants.WindowSize];
-                    if (p == null)
-                        break;
-
-                    //process holded packet
-                    _receivedPackets[_remoteSequence % NetConstants.WindowSize] = null;
-                    _peer.AddIncomingPacket(p);
-                    _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
+                    NetPacket p;
+                    while ( (p = _receivedPackets[_remoteSequence % NetConstants.WindowSize]) != null)
+                    {
+                        //process holded packet
+                        _receivedPackets[_remoteSequence % NetConstants.WindowSize] = null;
+                        _peer.AddIncomingPacket(p);
+                        _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
+                    }
+                }
+                else
+                {
+                    while (_earlyReceived[_remoteSequence % NetConstants.WindowSize])
+                    {
+                        //process early packet
+                        _earlyReceived[_remoteSequence % NetConstants.WindowSize] = false;
+                        _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
+                    }
                 }
 
                 return true;
             }
 
             //holded packet
-            _receivedPackets[packet.Sequence % NetConstants.WindowSize] = packet;
+            if (_ordered)
+            {
+                _receivedPackets[packet.Sequence % NetConstants.WindowSize] = packet;
+            }
+            else
+            {
+                _earlyReceived[packet.Sequence % NetConstants.WindowSize] = true;
+                _peer.AddIncomingPacket(packet);
+            }
             return true;
         }
     }
