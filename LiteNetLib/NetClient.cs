@@ -114,6 +114,7 @@ namespace LiteNetLib
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
             EnqueueEvent(new NetEvent(_peer, packet.Data, NetEventType.Receive));
+            //_peer.Recycle(packet);
         }
 
         public override void ProcessSendError(EndPoint remoteEndPoint)
@@ -122,10 +123,16 @@ namespace LiteNetLib
             EnqueueEvent(new NetEvent(null, null, NetEventType.Error));
         }
 
-        protected override void ReceiveFromSocket(NetPacket packet, EndPoint remoteEndPoint)
+        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, EndPoint remoteEndPoint)
         {
             if (_peer == null)
 				return;
+
+            NetPacket packet = _peer.CreatePacket();
+            if (!packet.FromBytes(reusableBuffer, count))
+            {
+                _peer.Recycle(packet);
+            }
 
             if (!_peer.EndPoint.Equals(remoteEndPoint))
             {

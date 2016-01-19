@@ -7,7 +7,7 @@ namespace LiteNetLib
     public class NetSocket
     {
         private const int BufferSize = 131071;
-        private byte[] _receiveBuffer = new byte[BufferSize];
+        private byte[] _receiveBuffer = new byte[NetConstants.MaxPacketSize];
         private Socket _udpSocket;               //Udp socket
 
         //Socket constructor
@@ -57,7 +57,7 @@ namespace LiteNetLib
         }
 
         //Receive from
-        public int ReceiveFrom(NetPacket packet, ref EndPoint remoteEndPoint, ref int errorCode)
+        public int ReceiveFrom(ref byte[] data, ref EndPoint remoteEndPoint, ref int errorCode)
         {
             //wait for data
             if (!_udpSocket.Poll(1000, SelectMode.SelectRead))
@@ -100,14 +100,9 @@ namespace LiteNetLib
                 NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (D<HS)");
                 return 0;
             }
+            data = _receiveBuffer;
 
             //Creating packet from data
-            if (!packet.FromBytes(_receiveBuffer, result))
-            {
-                NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (corrupted packet)");
-                return 0;
-            }
-
             return result;
         }
 

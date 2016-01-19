@@ -113,12 +113,23 @@ namespace LiteNetLib
             }
         }
 
-        protected override void ReceiveFromSocket(NetPacket packet, EndPoint remoteEndPoint)
+        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, EndPoint remoteEndPoint)
         {
+            NetPacket packet;
             //Check peers
-            if(_peers.ContainsKey(remoteEndPoint))
+            if (_peers.ContainsKey(remoteEndPoint))
             {
                 NetPeer netPeer = _peers[remoteEndPoint];
+                packet = netPeer.CreatePacket();
+
+                //Bad packet check
+                if (!packet.FromBytes(reusableBuffer, count))
+                {
+                    netPeer.Recycle(packet);
+                    return;
+                }
+                
+                //Send
                 if (packet.Property == PacketProperty.Disconnect)
                 {
                     RemovePeer(netPeer);
@@ -128,9 +139,16 @@ namespace LiteNetLib
                 {
                     netPeer.ProcessPacket(packet);
                 }
+                return;
             }
 
-            //Add new peer
+            //Else add new peer
+            packet = new NetPacket();
+            if (!packet.FromBytes(reusableBuffer, count))
+            {
+                //Bad packet
+                return;
+            }
             if (_peers.Count < _maxClients && packet.Property == PacketProperty.Connect)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request: accepting");
@@ -138,7 +156,7 @@ namespace LiteNetLib
 
                 NetPeer netPeer = new NetPeer(this, _socket, (IPEndPoint)remoteEndPoint);
                 netPeer.BadRoundTripTime = UpdateTime * 2 + 250;
-                netPeer.ProcessPacket(packet);
+                netPeer.Recycle(packet);
                 netPeer.Send(PacketProperty.Connect);
 
                 _peers.Add(remoteEndPoint, netPeer);

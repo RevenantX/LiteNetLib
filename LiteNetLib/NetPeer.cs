@@ -220,7 +220,10 @@ namespace LiteNetLib
         public void Recycle(NetPacket packet)
         {
             packet.Data = null;
-            _packetPool.Push(packet);
+            lock (_packetPool)
+            {
+                _packetPool.Push(packet);
+            }
         }
 
         public void AddIncomingPacket(NetPacket packet)
@@ -239,6 +242,7 @@ namespace LiteNetLib
                 case PacketProperty.Ping:
                     NetPacket pongPacket = CreatePacket(PacketProperty.Pong);
                     _socket.SendTo(pongPacket, _remoteEndPoint);
+                    Console.WriteLine("PINGRECV - SENDPONG " + _id);
                     break;
 
                 //If we get pong, calculate ping time and rtt
@@ -247,6 +251,7 @@ namespace LiteNetLib
                     _pingStopwatch.Reset();
                     UpdateFlowMode(_ping);
                     DebugWrite("[PP]Ping: {0}", _ping);
+                    Console.WriteLine("PONGRECV" + _id);
                     break;
 
                 //Process ack
@@ -260,23 +265,26 @@ namespace LiteNetLib
 
                 //Process in order packets
                 case PacketProperty.Sequenced:
-                    if (!_sequencedChannel.ProcessPacket(packet))
+                    if (_sequencedChannel.ProcessPacket(packet))
                     {
-                        //Recycle(packet);
+                        //do not recycle
+                        return;
                     }
                     break;
 
                 case PacketProperty.Reliable:
-                    if (!_reliableUnorderedChannel.ProcessPacket(packet))
+                    if (_reliableUnorderedChannel.ProcessPacket(packet))
                     {
-                        //Recycle(packet);
+                        //do not recycle
+                        return;
                     }
                     break;
 
                 case PacketProperty.ReliableOrdered:
-                    if (!_reliableOrderedChannel.ProcessPacket(packet))
+                    if (_reliableOrderedChannel.ProcessPacket(packet))
                     {
-                        //Recycle(packet);
+                        //do not recycle
+                        return;
                     }
                     break;
 
@@ -285,8 +293,10 @@ namespace LiteNetLib
                 case PacketProperty.Connect:
                 case PacketProperty.Disconnect:
                     _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
-                    break;
+                    return; //do not recycle
             }
+
+            Recycle(packet);
         }
 
         private const int FlowUpdateTime = 100;
@@ -322,6 +332,7 @@ namespace LiteNetLib
                 if (_socket.SendTo(packet, _remoteEndPoint) == -1)
                 {
                     _peerListener.ProcessSendError(_remoteEndPoint);
+                    Console.WriteLine("SOSEC");
                     return;
                 }
                 currentSended++;
@@ -343,6 +354,7 @@ namespace LiteNetLib
             _pingUpdateTimer += deltaTime;
             if (_pingUpdateTimer >= _pingUpdateDelay)
             {
+                Console.WriteLine("PINGSEND " + _id);
                 _pingUpdateTimer = 0;
                 //_pingStopwatch.Reset();
                 NetPacket packet = CreatePacket(PacketProperty.Ping);

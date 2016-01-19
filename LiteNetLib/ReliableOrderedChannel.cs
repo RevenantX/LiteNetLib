@@ -190,45 +190,28 @@ namespace LiteNetLib
                 return false;
             }
 
-            //flag send acks
-            _mustSendAcks = true;
-
-            //New packet
-            if (relate == NetConstants.WindowSize)
+            //Very new packet
+            if (relate >= NetConstants.WindowSize)
             {
-                _outgoingAcks[packet.Sequence % NetConstants.WindowSize] = true;
-                _peer.AddIncomingPacket(packet);
-                _remoteWindowStart = (_remoteWindowStart + 1) % NetConstants.MaxSequence;
-                _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
-
-                while (true)
+                int newWindowStart = (_remoteWindowStart + relate - NetConstants.WindowSize + 1) % NetConstants.MaxSequence;
+                while (_remoteWindowStart != newWindowStart)
                 {
-                    NetPacket p = _receivedPackets[_remoteSequence % NetConstants.WindowSize];
-                    if (p == null)
-                        break;
-
-                    //process holded packet
-                    _receivedPackets[_remoteSequence % NetConstants.WindowSize] = null;
-                    _peer.AddIncomingPacket(p);
-                    _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
+                    _outgoingAcks[_remoteWindowStart % NetConstants.WindowSize] = false;
+                    _receivedPackets[_remoteWindowStart % NetConstants.WindowSize] = null;
                     _remoteWindowStart = (_remoteWindowStart + 1) % NetConstants.MaxSequence;
                 }
-            }
-
-            if (relate > NetConstants.WindowSize)
-            {
-                _outgoingAcks[packet.Sequence % NetConstants.WindowSize] = true;
-                _receivedPackets[packet.Sequence % NetConstants.WindowSize] = packet;
-                return true;
+                return ProcessPacket(packet);
             }
 
             //Normal packet
-            //Check duplicate
             if (_outgoingAcks[packet.Sequence % NetConstants.WindowSize])
             {
                 _peer.DebugWrite("[RR]ReliableInOrder duplicate");
                 return false;
             }
+
+            //trigger acks send
+            _mustSendAcks = true;
 
             //save ack
             _outgoingAcks[packet.Sequence % NetConstants.WindowSize] = true;

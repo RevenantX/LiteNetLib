@@ -111,13 +111,13 @@ namespace LiteNetLib
                     int errorCode = 0;
 
                     //Receive some info
-                    NetPacket packet = new NetPacket();
-                    int result = _socket.ReceiveFrom(packet, ref _remoteEndPoint, ref errorCode);
+                    byte[] reusableBuffer = null;
+                    int result = _socket.ReceiveFrom(ref reusableBuffer, ref _remoteEndPoint, ref errorCode);
 
                     if (result > 0)
                     {
                         //ProcessEvents
-                        ReceiveFromSocket(packet, _remoteEndPoint);
+                        ReceiveFromSocket(reusableBuffer, result, _remoteEndPoint);
                     }
                     else if(result < 0)
                     {
@@ -150,7 +150,7 @@ namespace LiteNetLib
             return new NetEvent(null, null, NetEventType.Error);
         }
 
-        protected abstract void ReceiveFromSocket(NetPacket packet, EndPoint remoteEndPoint);
+        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, EndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
 
         public abstract void ReceiveFromPeer(NetPacket packet, EndPoint endPoint);
