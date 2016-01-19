@@ -215,7 +215,7 @@ namespace LiteNetLib
             //Final stage - process valid packet
             if (_outgoingAcks[packet.Sequence % NetConstants.WindowSize])
             {
-                _peer.DebugWriteForce("[RR]ReliableInOrder duplicate");
+                _peer.DebugWrite("[RR]ReliableInOrder duplicate");
                 return false;
             }
 
