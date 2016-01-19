@@ -193,7 +193,10 @@ namespace LiteNetLib
             //If very new - move window
             if (relate >= NetConstants.WindowSize)
             {
+                //New window position
                 int newWindowStart = (_remoteWindowStart + relate - NetConstants.WindowSize + 1) % NetConstants.MaxSequence;
+
+                //Clean old data
                 while (_remoteWindowStart != newWindowStart)
                 {
                     _outgoingAcks[_remoteWindowStart % NetConstants.WindowSize] = false;
@@ -202,13 +205,7 @@ namespace LiteNetLib
                 }
             }
 
-            //Process
-            return ProcessValidPacket(packet);
-        }
-
-        private bool ProcessValidPacket(NetPacket packet)
-        {
-            //Normal packet
+            //Final stage - process valid packet
             if (_outgoingAcks[packet.Sequence % NetConstants.WindowSize])
             {
                 _peer.DebugWrite("[RR]ReliableInOrder duplicate");
