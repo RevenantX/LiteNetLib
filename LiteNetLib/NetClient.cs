@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Sockets;
 
 namespace LiteNetLib
 {
@@ -91,7 +92,25 @@ namespace LiteNetLib
         public void Connect(string address, int port)
         {   
             //Parse ip address
-            IPAddress ipAddress = NetUtils.GetHostIP(address);
+            IPAddress ipAddress;
+            if (!IPAddress.TryParse(address, out ipAddress))
+            {
+#if !NETFX_CORE
+                IPHostEntry host = Dns.GetHostEntry(address);
+                foreach (IPAddress ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipAddress = ip;
+                        break;
+                    }
+                }
+#endif
+            }
+            if (ipAddress == null)
+            {
+                throw new Exception("Invalid address: " + address);
+            }
 
             //Create server endpoint
             IPEndPoint ep = new IPEndPoint(ipAddress, port);

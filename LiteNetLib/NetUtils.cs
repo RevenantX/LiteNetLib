@@ -1,31 +1,10 @@
 using System;
 using System.Net;
-using System.Net.Sockets;
 
 namespace LiteNetLib
 {
     static class NetUtils
     {
-        public static IPAddress GetHostIP(string hostname)
-        {
-            IPAddress addr;
-            if (IPAddress.TryParse(hostname, out addr))
-            {
-                return addr;
-            }
-#if !NETFX_CORE
-            IPHostEntry host = Dns.GetHostEntry(hostname);
-            foreach (IPAddress ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    return ip;
-                }
-            }
-#endif
-            return null;
-        }
-
         public static int RelativeSequenceNumber(int number, int expected)
         {
             return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
