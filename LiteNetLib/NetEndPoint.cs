@@ -4,7 +4,17 @@ namespace LiteNetLib
 {
     public class NetEndPoint
     {
-        public IPEndPoint EndPoint;
+        internal IPEndPoint EndPoint;
+
+        public string Host
+        {
+            get { return EndPoint.Address.ToString(); }
+        }
+
+        public int Port
+        {
+            get { return EndPoint.Port; }
+        }
 
         public override bool Equals(object comparand)
         {

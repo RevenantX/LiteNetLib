@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace LiteNetLib
 {
-    public class NetServer : NetBase<NetServer>
+    public class NetServer : NetBase
     {
-        private Dictionary<NetEndPoint, NetPeer> _peers;
-        private int _maxClients;
-        private long _timeout = 5000; //5sec
-        private Queue<NetEndPoint> _peersToRemove;
+        private readonly Dictionary<NetEndPoint, NetPeer> _peers;
+        private readonly int _maxClients;
+        private readonly Queue<NetEndPoint> _peersToRemove;
+        private long _timeout = 5000;
 
         public long DisconnectTimeout
         {

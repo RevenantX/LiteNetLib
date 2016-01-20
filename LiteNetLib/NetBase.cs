@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace LiteNetLib
 {
-    public abstract class NetBase<T> : IPeerListener where T : NetBase<T>
+    public abstract class NetBase
     {
         protected NetSocket _socket;
         protected NetEndPoint _localEndPoint;

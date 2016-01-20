@@ -3,7 +3,7 @@ using System.Net;
 
 namespace LiteNetLib
 {
-    public class NetClient : NetBase<NetClient>
+    public class NetClient : NetBase
     {
         private NetPeer _peer;
         private bool _connected;

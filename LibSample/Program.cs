@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using LiteNetLib;
 
@@ -16,7 +16,7 @@ class Program
         {
             Console.WriteLine("peer disconnected!");
         }
-        else if(netEvent.type == NetEventType.Error)
+        else if (netEvent.type == NetEventType.Error)
         {
             Console.WriteLine("peer eror");
         }
@@ -31,7 +31,7 @@ class Program
             for (int i = 0; i < 4000; i++)
             {
                 byte[] data = new byte[1300];
-                FastBitConverter.GetBytes(data, 0, i+1);
+                FastBitConverter.GetBytes(data, 0, i + 1);
                 netEvent.peer.Send(data, SendOptions.Reliable);
             }
         }

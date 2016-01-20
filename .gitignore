@@ -2,3 +2,5 @@
 *.suo
 LiteNetLib/obj
 LiteNetLib/bin
+LibSample/obj
+LibSample/bin

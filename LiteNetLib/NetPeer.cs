@@ -4,12 +4,6 @@ using System.Diagnostics;
 
 namespace LiteNetLib
 {
-    public interface IPeerListener
-    {
-        void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
-        void ProcessSendError(NetEndPoint endPoint);
-    }
-
     public class NetPeer
     {
         private enum FlowMode
@@ -32,12 +26,13 @@ namespace LiteNetLib
         private int _rttCount;
         private int _badRoundTripTime;
         private int _goodRttCount;
+        private int _ping;
         private ushort _pingSequence;
         private ushort _remotePingSequence;
         private ushort _pongSequence;
 
-        private int _rttUpdateDelay;
-        private int _rttUpdateTimer;
+        private int _pingSendDelay;
+        private int _pingSendTimer;
         private const int RttResetDelay = 1000;
         private int _rttResetTimer;
 
@@ -51,12 +46,12 @@ namespace LiteNetLib
         private readonly ReliableChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
         private readonly long _id;
-        private readonly IPeerListener _peerListener;
+        private readonly NetBase _peerListener;
 
         private readonly object _sendLock = new object();
 
         //DEBUG
-        public ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
+        internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
         public NetEndPoint EndPoint
         {
@@ -71,7 +66,7 @@ namespace LiteNetLib
 
         public int Ping
         {
-            get { return _avgRtt; }
+            get { return _ping; }
         }
 
         public long Id
@@ -79,7 +74,7 @@ namespace LiteNetLib
             get { return _id; }
         }
 
-        public NetPeer(IPeerListener peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
+        public NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
         {
             _id = NetUtils.GetIdFromEndPoint(remoteEndPoint);
             _peerListener = peerListener;
@@ -95,8 +90,8 @@ namespace LiteNetLib
             _avgRtt = 0;
             _rtt = 0;
             _badRoundTripTime = 650;
-            _rttUpdateDelay = 1000;
-            _rttUpdateTimer = 0;
+            _pingSendDelay = 1000;
+            _pingSendTimer = 0;
 
             _pingStopwatch = new Stopwatch();
 
@@ -131,7 +126,7 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
-        public void Send(byte[] data, PacketProperty property)
+        internal void Send(byte[] data, PacketProperty property)
         {
             NetPacket packet = CreatePacket(property);
             packet.Property = property;
@@ -139,14 +134,14 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
-        public void Send(PacketProperty property)
+        internal void Send(PacketProperty property)
         {
             NetPacket packet = CreatePacket(property);
             packet.Property = property;
             SendPacket(packet);
         }
 
-        public void SendPacket(NetPacket packet)
+        internal void SendPacket(NetPacket packet)
         {
             lock (_sendLock)
             {
@@ -182,8 +177,9 @@ namespace LiteNetLib
             }
         }
 
-        public void UpdateRoundTripTime(int roundTripTime)
+        internal void UpdateRoundTripTime(int roundTripTime)
         {
+            //Calc average round trip time
             _rtt += roundTripTime;
             _rttCount++;
             _avgRtt = _rtt/_rttCount;
@@ -209,17 +205,17 @@ namespace LiteNetLib
             }
         }
 
-        public void DebugWrite(string str, params object[] args)
+        internal void DebugWrite(string str, params object[] args)
         {
             NetUtils.DebugWrite(DebugTextColor, str, args);
         }
 
-        public void DebugWriteForce(string str, params object[] args)
+        internal void DebugWriteForce(string str, params object[] args)
         {
             NetUtils.DebugWrite(true, DebugTextColor, str, args);
         }
 
-        public NetPacket CreatePacket(PacketProperty property = PacketProperty.None)
+        internal NetPacket CreatePacket(PacketProperty property = PacketProperty.None)
         {
             lock (_packetPool)
             {
@@ -232,7 +228,7 @@ namespace LiteNetLib
             }
         }
 
-        public void Recycle(NetPacket packet)
+        internal void Recycle(NetPacket packet)
         {
             packet.Data = null;
             lock (_packetPool)
@@ -241,14 +237,14 @@ namespace LiteNetLib
             }
         }
 
-        public void AddIncomingPacket(NetPacket packet)
+        internal void AddIncomingPacket(NetPacket packet)
         {
             _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
             Recycle(packet);
         }
 
         //Process incoming packet
-        public void ProcessPacket(NetPacket packet)
+        internal void ProcessPacket(NetPacket packet)
         {
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
@@ -323,7 +319,7 @@ namespace LiteNetLib
             Recycle(packet);
         }
 
-        public void Update(int deltaTime)
+        internal void Update(int deltaTime)
         {
             int currentSended = 0;
             //Get current flow mode
@@ -371,11 +367,11 @@ namespace LiteNetLib
             }
 
             //Send ping
-            _rttUpdateTimer += deltaTime;
-            if (_rttUpdateTimer >= _rttUpdateDelay)
+            _pingSendTimer += deltaTime;
+            if (_pingSendTimer >= _pingSendDelay)
             {
                 //reset timer
-                _rttUpdateTimer = 0;
+                _pingSendTimer = 0;
 
                 //create packet
                 NetPacket packet = CreatePacket(PacketProperty.Ping);
@@ -394,8 +390,10 @@ namespace LiteNetLib
             _rttResetTimer += deltaTime;
             if (_rttResetTimer >= RttResetDelay)
             {
+                //Ping update
                 _rtt = 0;
                 _rttCount = 0;
+                _ping = _avgRtt / 2;
             }
         }
     }
