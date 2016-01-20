@@ -13,7 +13,7 @@ namespace LiteNetLib
             {
                 return addr;
             }
-
+#if !NETFX_CORE
             IPHostEntry host = Dns.GetHostEntry(hostname);
             foreach (IPAddress ip in host.AddressList)
             {
@@ -22,6 +22,7 @@ namespace LiteNetLib
                     return ip;
                 }
             }
+#endif
             return null;
         }
 
@@ -38,50 +39,41 @@ namespace LiteNetLib
             id |= (long)addr[1] << 8;
             id |= (long)addr[2] << 16;
             id |= (long)addr[3] << 24;
-            id |= (long)ep.EndPoint.Port << 32;
+            id |= (long)ep.Port << 32;
             return id;
         }
 
 #if (DEBUG || UNITY_DEBUG)
         private static readonly object DebugLogLock = new object();
-#endif
 
         public static void DebugWrite(ConsoleColor color, string str, params object[] args)
         {
-            DebugWrite(false, color, str, args);
+#if DEBUG_MESSAGES
+            lock(DebugLogLock)
+            {
+#if UNITY_DEBUG
+                    string debugStr = string.Format(str, args);
+                    UnityEngine.Debug.Log(debugStr);
+#elif !WINDOWS_UWP
+                    Console.ForegroundColor = color;
+                    Console.WriteLine(str, args);
+                    Console.ForegroundColor = ConsoleColor.Gray;
+#endif
+            }
+#endif
         }
 
-        public static void DebugWrite(bool showAlways, ConsoleColor color, string str, params object[] args)
+        public static void DebugWriteForce(ConsoleColor color, string str, params object[] args)
         {
-#if (DEBUG || UNITY_DEBUG)
-            if (showAlways)
+            lock (DebugLogLock)
             {
-                lock (DebugLogLock)
-                {
 #if UNITY_DEBUG
-                    string debugStr = string.Format(str, args);
-                    UnityEngine.Debug.Log(debugStr);
-#else
-                    Console.ForegroundColor = color;
-                    Console.WriteLine(str, args);
-                    Console.ForegroundColor = ConsoleColor.Gray;
-#endif
-                }
-            }
-            else
-            {
-#if (DEBUG || UNITY_DEBUG) && DEBUG_MESSAGES
-                lock (DebugLogLock)
-                {
-#if UNITY_DEBUG
-                    string debugStr = string.Format(str, args);
-                    UnityEngine.Debug.Log(debugStr);
-#else
-                    Console.ForegroundColor = color;
-                    Console.WriteLine(str, args);
-                    Console.ForegroundColor = ConsoleColor.Gray;
-#endif
-                }
+                string debugStr = string.Format(str, args);
+                UnityEngine.Debug.Log(debugStr);
+#elif !WINDOWS_UWP
+                Console.ForegroundColor = color;
+                Console.WriteLine(str, args);
+                Console.ForegroundColor = ConsoleColor.Gray;
 #endif
             }
 #endif

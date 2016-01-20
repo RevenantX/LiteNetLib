@@ -123,6 +123,7 @@ namespace LiteNetLib
                     _connectAttempts++;
                     if (_connectAttempts > _maxConnectAttempts)
                     {
+                        EnqueueEvent(null, null, NetEventType.Disconnect);
                         Stop();
                     }
                     else
@@ -131,10 +132,8 @@ namespace LiteNetLib
                     }
                 }
             }
-            else
-            {
-                _peer.Update(deltaTime);
-            }
+
+            _peer.Update(deltaTime);
         }
 
         internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)

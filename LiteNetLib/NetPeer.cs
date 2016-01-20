@@ -141,7 +141,7 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
-        internal void SendPacket(NetPacket packet)
+        private void SendPacket(NetPacket packet)
         {
             lock (_sendLock)
             {
@@ -161,15 +161,15 @@ namespace LiteNetLib
                         break;
                     case PacketProperty.AckReliable:
                     case PacketProperty.AckReliableOrdered:
-                    case PacketProperty.Connect:
-                    case PacketProperty.Disconnect:
                     case PacketProperty.None:
                         DebugWrite("[RS]Packet simple");
                         _outgoingQueue.Enqueue(packet);
                         break;
                     case PacketProperty.Ping:
                     case PacketProperty.Pong:
-                        _socket.SendTo(packet, _remoteEndPoint);
+                    case PacketProperty.Connect:
+                    case PacketProperty.Disconnect:
+                        _socket.SendTo(packet.ToByteArray(), _remoteEndPoint);
                         break;
                     default:
                         throw new Exception("Unknown packet property: " + packet.Property);
@@ -212,7 +212,7 @@ namespace LiteNetLib
 
         internal void DebugWriteForce(string str, params object[] args)
         {
-            NetUtils.DebugWrite(true, DebugTextColor, str, args);
+            NetUtils.DebugWriteForce(DebugTextColor, str, args);
         }
 
         internal NetPacket CreatePacket(PacketProperty property = PacketProperty.None)
@@ -346,7 +346,7 @@ namespace LiteNetLib
                         break;
                 }
                     
-                if (_socket.SendTo(packet, _remoteEndPoint) == -1)
+                if (_socket.SendTo(packet.ToByteArray(), _remoteEndPoint) == -1)
                 {
                     _peerListener.ProcessSendError(_remoteEndPoint);
                     return;

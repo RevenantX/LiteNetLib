@@ -50,11 +50,6 @@ namespace LiteNetLib
             }
         }
 
-        public override bool Start(int port)
-        {
-            return base.Start(port);
-        }
-
         public override void Stop()
         {
             foreach (NetPeer netPeer in _peers.Values)
