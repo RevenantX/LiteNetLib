@@ -8,6 +8,11 @@ namespace LiteNetLib
         private NetPeer _peer;
         private bool _connected;
         private long _id;
+        private int _maxConnectAttempts = 10;
+        private int _connectAttempts;
+        private int _connectTimer;
+        private int _reconnectDelay = 500;
+        private bool _waitForConnect;
 
         public long Id
         {
@@ -93,19 +98,42 @@ namespace LiteNetLib
 
             //Force close connection
             CloseConnection(true);
+
             //Create reliable connection
             _peer = new NetPeer(this, _socket, ep);
             _peer.DebugTextColor = ConsoleColor.Yellow;
             _peer.BadRoundTripTime = UpdateTime * 2 + 250;
             _peer.Send(PacketProperty.Connect);
+
+            _connectAttempts = 0;
+            _waitForConnect = true;
         }
 
         protected override void PostProcessEvent(int deltaTime)
         {
-            if (_peer != null)
+            if (_peer == null)
+                return;
+
+            if (_waitForConnect)
+            {
+                _connectTimer += deltaTime;
+                if (_connectTimer > _reconnectDelay)
+                {
+                    _connectTimer = 0;
+                    _connectAttempts++;
+                    if (_connectAttempts > _maxConnectAttempts)
+                    {
+                        Stop();
+                    }
+                    else
+                    {
+                        _peer.Send(PacketProperty.Connect);
+                    }
+                }
+            }
+            else
             {
                 _peer.Update(deltaTime);
-                //Console.WriteLine("PQ: {0}, RQ: {1}", _peer.GetConnection().PendingAckQueue, _peer.GetConnection().ReceivedQueueSize);
             }
         }
 
@@ -150,6 +178,7 @@ namespace LiteNetLib
             if (packet.Property == PacketProperty.Connect)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
+                _waitForConnect = false;
                 _connected = true;
                 EnqueueEvent(_peer, null, NetEventType.Connect);
                 return;
