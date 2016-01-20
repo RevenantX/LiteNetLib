@@ -170,7 +170,10 @@ namespace LiteNetLib
                     case PacketProperty.Pong:
                     case PacketProperty.Connect:
                     case PacketProperty.Disconnect:
-                        _socket.SendTo(packet.ToByteArray(), _remoteEndPoint);
+                        if (_socket.SendTo(packet.ToByteArray(), _remoteEndPoint) == -1)
+                        {
+                            _peerListener.ProcessSendError(_remoteEndPoint);
+                        }
                         break;
                     default:
                         throw new Exception("Unknown packet property: " + packet.Property);

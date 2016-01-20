@@ -15,8 +15,15 @@ namespace LiteNetLib
         private readonly AutoResetEvent _autoResetEvent = new AutoResetEvent(false);
         private readonly SocketAsyncEventArgs _sendSocketArgs = new SocketAsyncEventArgs();
         private readonly SocketAsyncEventArgs _receiveSocketArgs = new SocketAsyncEventArgs();
+        private readonly byte[] _asyncReceiveBuffer = new byte[NetConstants.MaxPacketSize];
+        private bool _gotResult = true;
 
-        private void EventComplete(object o, SocketAsyncEventArgs args)
+        private void ReceiveComplete(object o, SocketAsyncEventArgs args)
+        {
+            _gotResult = true;
+        }
+
+        private void SendComplete(object o, SocketAsyncEventArgs args)
         {
             _autoResetEvent.Set();
         }
@@ -37,8 +44,9 @@ namespace LiteNetLib
 
             //_udpSocket.DontFragment = true;
 #if NETFX_CORE
-            _sendSocketArgs.Completed += EventComplete;
-            _receiveSocketArgs.Completed += EventComplete;
+            _sendSocketArgs.Completed += SendComplete;
+            _receiveSocketArgs.Completed += ReceiveComplete;
+            _receiveSocketArgs.SetBuffer(_asyncReceiveBuffer, 0, _asyncReceiveBuffer.Length);
 #endif
         }
 
@@ -100,11 +108,26 @@ namespace LiteNetLib
             try
             {        
 #if NETFX_CORE
-                _receiveSocketArgs.SetBuffer(_receiveBuffer, 0, _receiveBuffer.Length);
-                _udpSocket.ReceiveFromAsync(_receiveSocketArgs);
-                _autoResetEvent.WaitOne(1);
+                if (!_gotResult)
+                {
+                    return 0;
+                }
+
+                //get last result if available
                 result = _receiveSocketArgs.BytesTransferred;
-                remoteEndPoint = (IPEndPoint)_receiveSocketArgs.RemoteEndPoint;
+                if (result > 0)
+                {
+                    Buffer.BlockCopy(_asyncReceiveBuffer, 0, _receiveBuffer, 0, result);
+                }
+                if (_receiveSocketArgs.RemoteEndPoint != null)
+                {
+                    remoteEndPoint = (IPEndPoint)_receiveSocketArgs.RemoteEndPoint;
+                }
+
+                //start new operation
+                _gotResult = false;
+                _receiveSocketArgs.RemoteEndPoint = remoteEndPoint;
+                _udpSocket.ReceiveFromAsync(_receiveSocketArgs);
 #else
                 EndPoint p = remoteEndPoint;
                 result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref p);

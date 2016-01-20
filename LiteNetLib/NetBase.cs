@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
-using System.Threading.Tasks;
 #if NETFX_CORE
 using Windows.System.Threading;
-using System;
+using Windows.Foundation;
+using System.Threading.Tasks;
 #else
 using System.Threading;
 #endif
@@ -17,10 +17,11 @@ namespace LiteNetLib
         protected IPEndPoint _localEndPoint;
 
 #if NETFX_CORE
-        private ThreadPoolTimer _threadPoolTimer;
+        private IAsyncAction _updateAction;
 #else
         private Thread _thread;
 #endif
+
         private int _updateTime;
         private bool _running;
         private IPEndPoint _remoteEndPoint;
@@ -57,7 +58,7 @@ namespace LiteNetLib
                 _tickWatch.Start();
                 _running = true;
 #if NETFX_CORE
-                _threadPoolTimer = ThreadPoolTimer.CreatePeriodicTimer(Update, TimeSpan.FromMilliseconds(_updateTime));
+                _updateAction = ThreadPool.RunAsync(Update);
 #else
                 _thread.Start();
 #endif
@@ -95,9 +96,7 @@ namespace LiteNetLib
             if (_running)
             {
                 _running = false;
-#if NETFX_CORE
-                _threadPoolTimer.Cancel();
-#else
+#if !NETFX_CORE
                 _thread.Join(1000);
 #endif
                 _socket.Close();
@@ -145,19 +144,22 @@ namespace LiteNetLib
 
         //Update function
 #if NETFX_CORE
-        private void Update(ThreadPoolTimer timer)
+        private void Update(IAsyncAction operation)
         {
-            //Init timer
-            long startTime = _tickWatch.ElapsedMilliseconds;
-
-            while(_tickWatch.ElapsedMilliseconds - startTime < _updateTime && _running)
+            while (_running)
             {
-                ReceiveLogic();
-                Task.Delay(1).Wait();
-            }
+                //Init timer
+                long startTime = _tickWatch.ElapsedMilliseconds;
 
-            //PostProcess
-            PostProcessEvent(_updateTime);
+                while (_tickWatch.ElapsedMilliseconds - startTime < _updateTime && _running)
+                {
+                    ReceiveLogic();
+                    Task.Delay(1).Wait();
+                }
+
+                //PostProcess
+                PostProcessEvent(_updateTime);
+            }
         }
 #else
         private void Update()

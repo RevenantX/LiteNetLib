@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Net;
 
 namespace LiteNetLib
@@ -33,7 +34,9 @@ namespace LiteNetLib
 #if UNITY_DEBUG
                     string debugStr = string.Format(str, args);
                     UnityEngine.Debug.Log(debugStr);
-#elif !WINDOWS_UWP
+#elif NETFX_CORE
+                    Debug.WriteLine(str, args);
+#else
                     Console.ForegroundColor = color;
                     Console.WriteLine(str, args);
                     Console.ForegroundColor = ConsoleColor.Gray;
@@ -49,7 +52,9 @@ namespace LiteNetLib
 #if UNITY_DEBUG
                 string debugStr = string.Format(str, args);
                 UnityEngine.Debug.Log(debugStr);
-#elif !WINDOWS_UWP
+#elif NETFX_CORE
+                Debug.WriteLine(str, args);
+#else
                 Console.ForegroundColor = color;
                 Console.WriteLine(str, args);
                 Console.ForegroundColor = ConsoleColor.Gray;
