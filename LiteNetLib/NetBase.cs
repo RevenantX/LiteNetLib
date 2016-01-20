@@ -16,11 +16,13 @@ namespace LiteNetLib
         private NetEndPoint _remoteEndPoint;
         private Stopwatch _tickWatch;
         private Queue<NetEvent> _netEventsQueue;
+        private Stack<NetEvent> _netEventsPool; 
 
         protected NetBase()
         {
             _tickWatch = new Stopwatch();
             _netEventsQueue = new Queue<NetEvent>();
+            _netEventsPool = new Stack<NetEvent>();
             _remoteEndPoint = new NetEndPoint(IPAddress.Any, 0);
             _updateTime = 100;
             _thread = new Thread(Update);
@@ -46,6 +48,27 @@ namespace LiteNetLib
                 return true;
             }
             return false;
+        }
+
+        protected NetEvent GetOrCreateNetEvent()
+        {
+            if (_netEventsPool.Count > 0)
+            {
+                lock (_netEventsPool)
+                {
+                    return _netEventsPool.Pop();
+                }
+            }
+            return new NetEvent();
+        }
+
+        public void Recycle(NetEvent netEvent)
+        {
+            lock (_netEventsPool)
+            {
+                netEvent.Data = null;
+                _netEventsPool.Push(netEvent);
+            }
         }
 
         /// <summary>
@@ -78,11 +101,13 @@ namespace LiteNetLib
             get { return _running; }
         }
 
-        protected void EnqueueEvent(NetEvent netEvent)
+        protected void EnqueueEvent(NetPeer peer, byte[] data, NetEventType type)
         {
+            NetEvent evt = GetOrCreateNetEvent();
+            evt.Init(peer, data, type);
             lock (_netEventsQueue)
             {
-                _netEventsQueue.Enqueue(netEvent);
+                _netEventsQueue.Enqueue(evt);
             }
         }
 
@@ -126,11 +151,7 @@ namespace LiteNetLib
                         {
                             //NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
 
-                            NetEvent netEvent = ProcessError();
-                            if (netEvent != null)
-                            {
-                                EnqueueEvent(netEvent);
-                            }
+                            ProcessError();
                             _running = false;
                             _socket.Close();
                             return;
@@ -145,15 +166,15 @@ namespace LiteNetLib
             }
         }
 
-        protected virtual NetEvent ProcessError()
+        protected virtual void ProcessError()
         {
-            return new NetEvent(null, null, NetEventType.Error);
+            EnqueueEvent(null, null, NetEventType.Error);
         }
 
         protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
 
-        public abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
-        public abstract void ProcessSendError(NetEndPoint endPoint);
+        internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
+        internal abstract void ProcessSendError(NetEndPoint endPoint);
     }
 }

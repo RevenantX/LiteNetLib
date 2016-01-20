@@ -66,10 +66,10 @@ namespace LiteNetLib
             base.Stop();
         }
 
-        protected override NetEvent ProcessError()
+        protected override void ProcessError()
         {
             _peers.Clear();
-            return base.ProcessError();
+            base.ProcessError();
         }
 
         protected override void PostProcessEvent(int deltaTime)
@@ -79,7 +79,7 @@ namespace LiteNetLib
             {
                 if (netPeer.Ping > _timeout)
                 {
-                    EnqueueEvent(new NetEvent(netPeer, null, NetEventType.Disconnect));
+                    EnqueueEvent(netPeer, null, NetEventType.Disconnect);
                     RemovePeer(netPeer);
                 }
                 else
@@ -93,21 +93,21 @@ namespace LiteNetLib
             }
         }
 
-        public override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
+        internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
-                EnqueueEvent(new NetEvent(_peers[remoteEndPoint], packet.Data, NetEventType.Receive));
+                EnqueueEvent(_peers[remoteEndPoint], packet.Data, NetEventType.Receive);
             }
         }
 
-        public override void ProcessSendError(NetEndPoint remoteEndPoint)
+        internal override void ProcessSendError(NetEndPoint remoteEndPoint)
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
                 NetPeer peer = _peers[remoteEndPoint];
 
-                EnqueueEvent(new NetEvent(peer, null, NetEventType.Disconnect));
+                EnqueueEvent(peer, null, NetEventType.Disconnect);
                 RemovePeer(peer);
             }
         }
@@ -132,7 +132,7 @@ namespace LiteNetLib
                 if (packet.Property == PacketProperty.Disconnect)
                 {
                     RemovePeer(netPeer);
-                    EnqueueEvent(new NetEvent(netPeer, null, NetEventType.Disconnect));
+                    EnqueueEvent(netPeer, null, NetEventType.Disconnect);
                 }
                 else
                 {
@@ -160,7 +160,7 @@ namespace LiteNetLib
 
                 _peers.Add(remoteEndPoint, netPeer);
 
-                EnqueueEvent(new NetEvent(netPeer, null, NetEventType.Connect));
+                EnqueueEvent(netPeer, null, NetEventType.Connect);
             }
         }
 

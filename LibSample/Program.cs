@@ -8,15 +8,15 @@ class Program
 
     public static void ServerEvent(NetEvent netEvent)
     {
-        if (netEvent.type == NetEventType.Receive)
+        if (netEvent.Type == NetEventType.Receive)
         {
-            netEvent.peer.Send(netEvent.data, SendOptions.Reliable);
+            netEvent.Peer.Send(netEvent.Data, SendOptions.Reliable);
         }
-        else if (netEvent.type == NetEventType.Disconnect)
+        else if (netEvent.Type == NetEventType.Disconnect)
         {
             Console.WriteLine("peer disconnected!");
         }
-        else if (netEvent.type == NetEventType.Error)
+        else if (netEvent.Type == NetEventType.Error)
         {
             Console.WriteLine("peer eror");
         }
@@ -24,7 +24,7 @@ class Program
 
     public static void ClientEvent(NetEvent netEvent)
     {
-        if (netEvent.type == NetEventType.Connect)
+        if (netEvent.Type == NetEventType.Connect)
         {
             Console.WriteLine("CliConnected");
 
@@ -32,12 +32,12 @@ class Program
             {
                 byte[] data = new byte[1300];
                 FastBitConverter.GetBytes(data, 0, i + 1);
-                netEvent.peer.Send(data, SendOptions.Reliable);
+                netEvent.Peer.Send(data, SendOptions.Reliable);
             }
         }
-        else if (netEvent.type == NetEventType.Receive)
+        else if (netEvent.Type == NetEventType.Receive)
         {
-            int dt = BitConverter.ToInt32(netEvent.data, 0);
+            int dt = BitConverter.ToInt32(netEvent.Data, 0);
             _messagesReceivedCount++;
             Console.WriteLine("CNT: {0}, DT: {1}", _messagesReceivedCount, dt);
             if (_messagesReceivedCount != dt)
@@ -45,11 +45,11 @@ class Program
                 //Console.WriteLine("DIFF DIFF DIFF DIFF DIFF DIFF DIFF");
             }
         }
-        else if (netEvent.type == NetEventType.Error)
+        else if (netEvent.Type == NetEventType.Error)
         {
             Console.WriteLine("Connection error!");
         }
-        else if (netEvent.type == NetEventType.Disconnect)
+        else if (netEvent.Type == NetEventType.Disconnect)
         {
             Console.WriteLine("Disconnected from server!");
         }
@@ -70,10 +70,12 @@ class Program
             while ((evt = client.GetNextEvent()) != null)
             {
                 ClientEvent(evt);
+                client.Recycle(evt);
             }
             while ((evt = server.GetNextEvent()) != null)
             {
                 ServerEvent(evt);
+                server.Recycle(evt);
             }
             Thread.Sleep(10);
         }

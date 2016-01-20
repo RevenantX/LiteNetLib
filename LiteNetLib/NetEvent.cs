@@ -11,15 +11,15 @@ namespace LiteNetLib
 
     public class NetEvent
     {
-        public NetPeer peer;
-        public byte[] data;
-        public NetEventType type;
+        public NetPeer Peer;
+        public byte[] Data;
+        public NetEventType Type;
 
-        public NetEvent(NetPeer peer, byte[] data, NetEventType type)
+        internal void Init(NetPeer peer, byte[] data, NetEventType type)
         {
-            this.peer = peer;
-            this.data = data;
-            this.type = type;
+            Peer = peer;
+            Data = data;
+            Type = type;
         }
     }
 }

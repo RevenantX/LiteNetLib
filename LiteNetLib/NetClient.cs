@@ -65,16 +65,16 @@ namespace LiteNetLib
             base.Stop();
         }
 
-        protected override NetEvent ProcessError()
+        protected override void ProcessError()
         {
             if (_peer != null)
             {
                 CloseConnection(true);
-                return new NetEvent(null, null, NetEventType.Error);
+                EnqueueEvent(null, null, NetEventType.Error);
             }
             else
             {
-                return base.ProcessError();
+                base.ProcessError();
             }
         }
 
@@ -109,17 +109,17 @@ namespace LiteNetLib
             }
         }
 
-        public override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
+        internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
-            EnqueueEvent(new NetEvent(_peer, packet.Data, NetEventType.Receive));
+            EnqueueEvent(_peer, packet.Data, NetEventType.Receive);
             //_peer.Recycle(packet);
         }
 
-        public override void ProcessSendError(NetEndPoint remoteEndPoint)
+        internal override void ProcessSendError(NetEndPoint remoteEndPoint)
         {
             Stop();
-            EnqueueEvent(new NetEvent(null, null, NetEventType.Error));
+            EnqueueEvent(null, null, NetEventType.Error);
         }
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
@@ -143,7 +143,7 @@ namespace LiteNetLib
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
                 CloseConnection(true);
-                EnqueueEvent(new NetEvent(null, null, NetEventType.Disconnect));
+                EnqueueEvent(null, null, NetEventType.Disconnect);
                 return;
             }
 
@@ -151,7 +151,7 @@ namespace LiteNetLib
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
                 _connected = true;
-                EnqueueEvent(new NetEvent(_peer, null, NetEventType.Connect));
+                EnqueueEvent(_peer, null, NetEventType.Connect);
                 return;
             }
 
