@@ -43,12 +43,12 @@ namespace LiteNetLib
         }
 
         //Bind socket to port
-        public bool Bind(NetEndPoint ep)
+        public bool Bind(IPEndPoint ep)
         {            
             try
             {
-                _udpSocket.Bind(ep.EndPoint);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.EndPoint.Port);
+                _udpSocket.Bind(ep);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);
                 return true;
             }
             catch (SocketException ex)
@@ -59,18 +59,18 @@ namespace LiteNetLib
         }
 
         //Send to
-        public int SendTo(byte[] data, NetEndPoint remoteEndPoint)
+        public int SendTo(byte[] data, IPEndPoint remoteEndPoint)
         {
             try
             {
 #if NETFX_CORE
                 _sendSocketArgs.SetBuffer(data, 0, data.Length);
-                _sendSocketArgs.RemoteEndPoint = remoteEndPoint.EndPoint;
+                _sendSocketArgs.RemoteEndPoint = remoteEndPoint;
                 _udpSocket.SendToAsync(_sendSocketArgs);
                 _autoResetEvent.WaitOne();
                 int result = _sendSocketArgs.BytesTransferred;
 #else
-                int result = _udpSocket.SendTo(data, remoteEndPoint.EndPoint);
+                int result = _udpSocket.SendTo(data, remoteEndPoint);
 #endif
 
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
@@ -84,7 +84,7 @@ namespace LiteNetLib
         }
 
         //Receive from
-        public int ReceiveFrom(ref byte[] data, ref NetEndPoint remoteEndPoint, ref int errorCode)
+        public int ReceiveFrom(ref byte[] data, ref IPEndPoint remoteEndPoint, ref int errorCode)
         {
 #if !NETFX_CORE
             //wait for data
@@ -104,11 +104,11 @@ namespace LiteNetLib
                 _udpSocket.ReceiveFromAsync(_receiveSocketArgs);
                 _autoResetEvent.WaitOne(1);
                 result = _receiveSocketArgs.BytesTransferred;
-                remoteEndPoint.EndPoint = (IPEndPoint)_receiveSocketArgs.RemoteEndPoint;
+                remoteEndPoint = (IPEndPoint)_receiveSocketArgs.RemoteEndPoint;
 #else
-                EndPoint p = remoteEndPoint.EndPoint;
+                EndPoint p = remoteEndPoint;
                 result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref p);
-                remoteEndPoint.EndPoint = (IPEndPoint)p;
+                remoteEndPoint = (IPEndPoint)p;
 #endif
             }
             catch (SocketException ex)

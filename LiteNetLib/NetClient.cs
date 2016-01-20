@@ -94,7 +94,7 @@ namespace LiteNetLib
             IPAddress ipAddress = NetUtils.GetHostIP(address);
 
             //Create server endpoint
-            NetEndPoint ep = new NetEndPoint(ipAddress, port);
+            IPEndPoint ep = new IPEndPoint(ipAddress, port);
 
             //Force close connection
             CloseConnection(true);
@@ -136,20 +136,20 @@ namespace LiteNetLib
             _peer.Update(deltaTime);
         }
 
-        internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
+        internal override void ReceiveFromPeer(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
             EnqueueEvent(_peer, packet.Data, NetEventType.Receive);
             //_peer.Recycle(packet);
         }
 
-        internal override void ProcessSendError(NetEndPoint remoteEndPoint)
+        internal override void ProcessSendError(IPEndPoint remoteEndPoint)
         {
             Stop();
             EnqueueEvent(null, null, NetEventType.Error);
         }
 
-        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
+        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, IPEndPoint remoteEndPoint)
         {
             if (_peer == null)
 				return;

@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace LiteNetLib
 {
     public class NetServer : NetBase
     {
-        private readonly Dictionary<NetEndPoint, NetPeer> _peers;
+        private readonly Dictionary<IPEndPoint, NetPeer> _peers;
         private readonly int _maxClients;
-        private readonly Queue<NetEndPoint> _peersToRemove;
+        private readonly Queue<IPEndPoint> _peersToRemove;
         private long _timeout = 5000;
 
         public long DisconnectTimeout
@@ -18,8 +19,8 @@ namespace LiteNetLib
 
         public NetServer(int maxClients)
         {
-            _peers = new Dictionary<NetEndPoint, NetPeer>(maxClients);
-            _peersToRemove = new Queue<NetEndPoint>(maxClients);
+            _peers = new Dictionary<IPEndPoint, NetPeer>(maxClients);
+            _peersToRemove = new Queue<IPEndPoint>(maxClients);
             _maxClients = maxClients;
         }
 
@@ -88,7 +89,7 @@ namespace LiteNetLib
             }
         }
 
-        internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
+        internal override void ReceiveFromPeer(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
@@ -96,7 +97,7 @@ namespace LiteNetLib
             }
         }
 
-        internal override void ProcessSendError(NetEndPoint remoteEndPoint)
+        internal override void ProcessSendError(IPEndPoint remoteEndPoint)
         {
             if (_peers.ContainsKey(remoteEndPoint))
             {
@@ -107,7 +108,7 @@ namespace LiteNetLib
             }
         }
 
-        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
+        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, IPEndPoint remoteEndPoint)
         {
             NetPacket packet;
             //Check peers

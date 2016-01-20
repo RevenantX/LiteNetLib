@@ -14,7 +14,7 @@ namespace LiteNetLib
     public abstract class NetBase
     {
         protected NetSocket _socket;
-        protected NetEndPoint _localEndPoint;
+        protected IPEndPoint _localEndPoint;
 
 #if NETFX_CORE
         private ThreadPoolTimer _threadPoolTimer;
@@ -23,7 +23,7 @@ namespace LiteNetLib
 #endif
         private int _updateTime;
         private bool _running;
-        private NetEndPoint _remoteEndPoint;
+        private IPEndPoint _remoteEndPoint;
         private readonly Stopwatch _tickWatch;
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool; 
@@ -33,7 +33,7 @@ namespace LiteNetLib
             _tickWatch = new Stopwatch();
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
-            _remoteEndPoint = new NetEndPoint(IPAddress.Any, 0);
+            _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
             _updateTime = 100;
 #if !NETFX_CORE
             _thread = new Thread(Update);
@@ -51,7 +51,7 @@ namespace LiteNetLib
             {
                 return false;
             }
-            _localEndPoint = new NetEndPoint(IPAddress.Any, port);
+            _localEndPoint = new IPEndPoint(IPAddress.Any, port);
             if (_socket.Bind(_localEndPoint))
             {
                 _tickWatch.Start();
@@ -212,10 +212,10 @@ namespace LiteNetLib
             EnqueueEvent(null, null, NetEventType.Error);
         }
 
-        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
+        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, IPEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
 
-        internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
-        internal abstract void ProcessSendError(NetEndPoint endPoint);
+        internal abstract void ReceiveFromPeer(NetPacket packet, IPEndPoint endPoint);
+        internal abstract void ProcessSendError(IPEndPoint endPoint);
     }
 }

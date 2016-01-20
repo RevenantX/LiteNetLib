@@ -42,7 +42,6 @@
     <Compile Include="FastBitConverter.cs" />
     <Compile Include="INetChannel.cs" />
     <Compile Include="NetConstants.cs" />
-    <Compile Include="NetEndPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NetBase.cs" />
     <Compile Include="NetClient.cs" />

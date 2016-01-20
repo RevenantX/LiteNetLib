@@ -31,10 +31,10 @@ namespace LiteNetLib
             return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
         }
 
-        public static long GetIdFromEndPoint(NetEndPoint ep)
+        public static long GetIdFromEndPoint(IPEndPoint ep)
         {
             long id = 0;
-            byte[] addr = ep.EndPoint.Address.GetAddressBytes();
+            byte[] addr = ep.Address.GetAddressBytes();
             id |= (long)addr[0];
             id |= (long)addr[1] << 8;
             id |= (long)addr[2] << 16;

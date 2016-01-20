@@ -122,9 +122,6 @@
     <Compile Include="..\LiteNetLib\NetConstants.cs">
       <Link>NetConstants.cs</Link>
     </Compile>
-    <Compile Include="..\LiteNetLib\NetEndPoint.cs">
-      <Link>NetEndPoint.cs</Link>
-    </Compile>
     <Compile Include="..\LiteNetLib\NetEvent.cs">
       <Link>NetEvent.cs</Link>
     </Compile>
