@@ -147,20 +147,17 @@ namespace LiteNetLib
 #if NETFX_CORE
         private void Update(ThreadPoolTimer timer)
         {
-            while (_running)
+            //Init timer
+            long startTime = _tickWatch.ElapsedMilliseconds;
+
+            while(_tickWatch.ElapsedMilliseconds - startTime < _updateTime && _running)
             {
-                //Init timer
-                long startTime = _tickWatch.ElapsedMilliseconds;
-
-                while(_tickWatch.ElapsedMilliseconds - startTime < _updateTime && _running)
-                {
-                    ReceiveLogic();
-                    Task.Delay(1).Wait();
-                }
-
-                //PostProcess
-                PostProcessEvent(_updateTime);
+                ReceiveLogic();
+                Task.Delay(1).Wait();
             }
+
+            //PostProcess
+            PostProcessEvent(_updateTime);
         }
 #else
         private void Update()
