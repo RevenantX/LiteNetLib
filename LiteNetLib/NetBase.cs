@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
-#if NETFX_CORE
+#if WINRT
 using Windows.System.Threading;
 using Windows.Foundation;
 using System.Threading.Tasks;
+using Windows.Networking.Sockets;
 #else
 using System.Threading;
 #endif
@@ -15,19 +16,18 @@ namespace LiteNetLib
     public abstract class NetBase
     {
         protected NetSocket _socket;
-        protected IPEndPoint _localEndPoint;
+        protected NetEndPoint _localEndPoint;
 
-#if NETFX_CORE
-        private ThreadPoolTimer _updateAction;
-        private IAsyncAction _receiveAction;
+#if WINRT
+        private IAsyncAction _updateAction;
 #else
         private Thread _logicThread;
         private Thread _receiveThread;
+        private NetEndPoint _remoteEndPoint;
 #endif
 
         private int _updateTime;
         private bool _running;
-        private IPEndPoint _remoteEndPoint;
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool; 
 
@@ -35,13 +35,16 @@ namespace LiteNetLib
         {
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
-            _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            
             _updateTime = 100;
-#if !NETFX_CORE
+            
+#if WINRT
+            _socket = new NetSocket(ReceiveLogic);
+#else
             _logicThread = new Thread(UpdateLogic);
             _receiveThread = new Thread(ReceiveLogic);
-#endif
             _socket = new NetSocket();
+#endif
         }
 
         /// <summary>
@@ -54,13 +57,14 @@ namespace LiteNetLib
             {
                 return false;
             }
-            _localEndPoint = new IPEndPoint(IPAddress.Any, port);
+
+            _localEndPoint = new NetEndPoint(port);
+
             if (_socket.Bind(_localEndPoint))
             {
                 _running = true;
-#if NETFX_CORE
-                _updateAction = ThreadPoolTimer.CreatePeriodicTimer(a => PostProcessEvent(_updateTime), TimeSpan.FromMilliseconds(_updateTime));
-                _receiveAction = ThreadPool.RunAsync(a => ReceiveLogic());
+#if WINRT
+                _updateAction = ThreadPool.RunAsync(a => UpdateLogic(), WorkItemPriority.Normal, WorkItemOptions.TimeSliced);
 #else
                 _logicThread.Start();
                 _receiveThread.Start();
@@ -99,7 +103,7 @@ namespace LiteNetLib
             if (_running)
             {
                 _running = false;
-#if !NETFX_CORE
+#if !WINRT
                 _logicThread.Join(2000);
                 _receiveThread.Join(2000);
 #endif
@@ -147,17 +151,30 @@ namespace LiteNetLib
         }
 
         //Update function
-#if !NETFX_CORE
+
         private void UpdateLogic()
         {
             while (_running)
             {
                 PostProcessEvent(_updateTime);
+#if WINRT
+                Task.Delay(_updateTime).Wait();
+#else
                 Thread.Sleep(_updateTime);
+#endif
             }
         }
-#endif
 
+#if WINRT
+        private readonly byte[] _reusableBuffer = new byte[NetConstants.MaxPacketSize];
+        private void ReceiveLogic(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
+        {
+            var dr = args.GetDataReader();
+            uint count = dr.UnconsumedBufferLength;
+            dr.ReadBytes(_reusableBuffer);
+            ReceiveFromSocket(_reusableBuffer, (int)count, new NetEndPoint(args.RemoteAddress, args.RemotePort));
+        }
+#else
         private void ReceiveLogic()
         {
             while (_running)
@@ -186,16 +203,17 @@ namespace LiteNetLib
                 }
             }
         }
+#endif
 
         protected virtual void ProcessError()
         {
             EnqueueEvent(null, null, NetEventType.Error);
         }
 
-        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, IPEndPoint remoteEndPoint);
+        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
 
-        internal abstract void ReceiveFromPeer(NetPacket packet, IPEndPoint endPoint);
-        internal abstract void ProcessSendError(IPEndPoint endPoint);
+        internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
+        internal abstract void ProcessSendError(NetEndPoint endPoint);
     }
 }

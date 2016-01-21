@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Threading;
 
 namespace LiteNetLib
 {
@@ -42,7 +43,7 @@ namespace LiteNetLib
 
         private readonly int[] _flowModes;
         private readonly Stopwatch _pingStopwatch;
-        private readonly IPEndPoint _remoteEndPoint;
+        private readonly NetEndPoint _remoteEndPoint;
         private readonly ReliableChannel _reliableOrderedChannel;
         private readonly ReliableChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
@@ -54,7 +55,7 @@ namespace LiteNetLib
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
-        public IPEndPoint EndPoint
+        public NetEndPoint EndPoint
         {
             get { return _remoteEndPoint; }
         }
@@ -75,9 +76,9 @@ namespace LiteNetLib
             get { return _id; }
         }
 
-        public NetPeer(NetBase peerListener, NetSocket socket, IPEndPoint remoteEndPoint)
+        public NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
         {
-            _id = NetUtils.GetIdFromEndPoint(remoteEndPoint);
+            _id = remoteEndPoint.GetId();
             _peerListener = peerListener;
             
             _socket = socket;

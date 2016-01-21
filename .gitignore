@@ -2,7 +2,7 @@
 *.suo
 LiteNetLib/obj
 LiteNetLib/bin
-LiteNetLibUWP/obj
-LiteNetLibUWP/bin
+LiteNetLibWin81/obj
+LiteNetLibWin81/bin
 LibSample/obj
 LibSample/bin

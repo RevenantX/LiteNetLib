@@ -26,7 +26,7 @@ class Program
     {
         if (netEvent.Type == NetEventType.Connect)
         {
-            Console.WriteLine("Client connected: {0}:{1}", netEvent.Peer.EndPoint.Address, netEvent.Peer.EndPoint.Port);
+            Console.WriteLine("Client connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
 
             for (int i = 0; i < 4000; i++)
             {

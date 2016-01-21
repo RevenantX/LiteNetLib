@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace LiteNetLib
 {
@@ -11,50 +10,24 @@ namespace LiteNetLib
         private readonly byte[] _receiveBuffer = new byte[NetConstants.MaxPacketSize];
         private readonly Socket _udpSocket;               //Udp socket
 
-#if NETFX_CORE
-        private readonly AutoResetEvent _sendEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _receiveEvent = new AutoResetEvent(false);
-        private readonly SocketAsyncEventArgs _sendSocketArgs = new SocketAsyncEventArgs();
-        private readonly SocketAsyncEventArgs _receiveSocketArgs = new SocketAsyncEventArgs();
-
-        private void ReceiveComplete(object o, SocketAsyncEventArgs args)
-        {
-            _receiveEvent.Set();
-        }
-
-        private void SendComplete(object o, SocketAsyncEventArgs args)
-        {
-            _sendEvent.Set();
-        }
-#endif
-
         //Socket constructor
         public NetSocket()
         {
             _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-#if NETFX_CORE
-            _udpSocket.Ttl = 255;
-#else
             _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 255);
             _udpSocket.Blocking = false;
-#endif
             _udpSocket.ReceiveBufferSize = BufferSize;
             _udpSocket.SendBufferSize = BufferSize;
 
             //_udpSocket.DontFragment = true;
-#if NETFX_CORE
-            _sendSocketArgs.Completed += SendComplete;
-            _receiveSocketArgs.Completed += ReceiveComplete;
-            _receiveSocketArgs.SetBuffer(_receiveBuffer, 0, _receiveBuffer.Length);
-#endif
         }
 
         //Bind socket to port
-        public bool Bind(IPEndPoint ep)
+        public bool Bind(NetEndPoint ep)
         {            
             try
             {
-                _udpSocket.Bind(ep);
+                _udpSocket.Bind(ep.EndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);
                 return true;
             }
@@ -66,21 +39,12 @@ namespace LiteNetLib
         }
 
         //Send to
-        public int SendTo(byte[] data, IPEndPoint remoteEndPoint)
+        public int SendTo(byte[] data, NetEndPoint remoteEndPoint)
         {
             try
             {
-#if NETFX_CORE
-                _sendSocketArgs.SetBuffer(data, 0, data.Length);
-                _sendSocketArgs.RemoteEndPoint = remoteEndPoint;
-                _udpSocket.SendToAsync(_sendSocketArgs);
-                _sendEvent.WaitOne();
-                int result = _sendSocketArgs.BytesTransferred;
-#else
-                int result = _udpSocket.SendTo(data, remoteEndPoint);
-#endif
-
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
+                int result = _udpSocket.SendTo(data, remoteEndPoint.EndPoint);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint.EndPoint, result);
                 return result;
             }
             catch (Exception ex)
@@ -91,41 +55,28 @@ namespace LiteNetLib
         }
 
         //Receive from
-        public int ReceiveFrom(ref byte[] data, ref IPEndPoint remoteEndPoint, ref int errorCode)
+        public int ReceiveFrom(ref byte[] data, ref NetEndPoint remoteEndPoint, ref int errorCode)
         {
-#if !NETFX_CORE
+
             //wait for data
             if (!_udpSocket.Poll(10000, SelectMode.SelectRead))
             {
                 return 0;
             }
-#endif
 
             int result;
 
             //Reading data
             try
             {
-#if NETFX_CORE
-                _receiveSocketArgs.RemoteEndPoint = remoteEndPoint;
-                _udpSocket.ReceiveFromAsync(_receiveSocketArgs);
-                _receiveEvent.WaitOne();
-                //get last result if available
-                result = _receiveSocketArgs.BytesTransferred;
-                if (_receiveSocketArgs.RemoteEndPoint != null)
-                {
-                    remoteEndPoint = (IPEndPoint)_receiveSocketArgs.RemoteEndPoint;
-                }
-#else
-                EndPoint p = remoteEndPoint;
+                EndPoint p = remoteEndPoint.EndPoint;
                 result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref p);
-                remoteEndPoint = (IPEndPoint)p;
-#endif
+                remoteEndPoint = new NetEndPoint((IPEndPoint)p);
             }
             catch (SocketException ex)
             {
                 NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Error code: {0} - {1}", ex.SocketErrorCode, ex.ToString());
-                errorCode = (int)ex.SocketErrorCode;
+                errorCode = (int) ex.SocketErrorCode;
                 return -1;
             }
 
@@ -153,11 +104,7 @@ namespace LiteNetLib
         //Close socket
         public void Close()
         {
-#if NETFX_CORE
-            _udpSocket.Shutdown(SocketShutdown.Both);
-#else
             _udpSocket.Close();
-#endif
         }
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Net;
+#if !WINRT
 using System.Net.Sockets;
+#endif
 
 namespace LiteNetLib
 {
@@ -30,7 +32,7 @@ namespace LiteNetLib
             bool result = base.Start(port);
             if (result)
             {
-                _id = NetUtils.GetIdFromEndPoint(_localEndPoint);
+                _id = _localEndPoint.GetId();
             }
             return result;
         }
@@ -90,30 +92,9 @@ namespace LiteNetLib
         /// <param name="address">Server IP or hostname</param>
         /// <param name="port">Server Port</param>
         public void Connect(string address, int port)
-        {   
-            //Parse ip address
-            IPAddress ipAddress;
-            if (!IPAddress.TryParse(address, out ipAddress))
-            {
-#if !NETFX_CORE
-                IPHostEntry host = Dns.GetHostEntry(address);
-                foreach (IPAddress ip in host.AddressList)
-                {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        ipAddress = ip;
-                        break;
-                    }
-                }
-#endif
-            }
-            if (ipAddress == null)
-            {
-                throw new Exception("Invalid address: " + address);
-            }
-
+        {
             //Create server endpoint
-            IPEndPoint ep = new IPEndPoint(ipAddress, port);
+            NetEndPoint ep = new NetEndPoint(address, port);
 
             //Force close connection
             CloseConnection(true);
@@ -144,31 +125,31 @@ namespace LiteNetLib
                     {
                         EnqueueEvent(null, null, NetEventType.Disconnect);
                         Stop();
+                        return;
                     }
-                    else
-                    {
-                        _peer.Send(PacketProperty.Connect);
-                    }
+
+                    //else
+                    _peer.Send(PacketProperty.Connect);
                 }
             }
 
-            _peer.Update(deltaTime);
+             _peer.Update(deltaTime);
         }
 
-        internal override void ReceiveFromPeer(NetPacket packet, IPEndPoint remoteEndPoint)
+        internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
             EnqueueEvent(_peer, packet.Data, NetEventType.Receive);
             //_peer.Recycle(packet);
         }
 
-        internal override void ProcessSendError(IPEndPoint remoteEndPoint)
+        internal override void ProcessSendError(NetEndPoint remoteEndPoint)
         {
             Stop();
             EnqueueEvent(null, null, NetEventType.Error);
         }
 
-        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, IPEndPoint remoteEndPoint)
+        protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
             if (_peer == null)
 				return;
