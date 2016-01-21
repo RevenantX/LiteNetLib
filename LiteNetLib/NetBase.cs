@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net;
 #if WINRT
 using Windows.System.Threading;
 using Windows.Foundation;
@@ -21,8 +18,8 @@ namespace LiteNetLib
 #if WINRT
         private IAsyncAction _updateAction;
 #else
-        private Thread _logicThread;
-        private Thread _receiveThread;
+        private readonly Thread _logicThread;
+        private readonly Thread _receiveThread;
         private NetEndPoint _remoteEndPoint;
 #endif
 

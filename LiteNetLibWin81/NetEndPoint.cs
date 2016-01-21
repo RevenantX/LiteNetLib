@@ -16,7 +16,7 @@ namespace LiteNetLib
         internal NetEndPoint(int port)
         {
             HostName = null;
-            PortStr = "";
+            PortStr = port.ToString();
             Port = port;
         }
 
