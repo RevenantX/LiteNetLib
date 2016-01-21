@@ -12,20 +12,19 @@ namespace LiteNetLib
         private readonly Socket _udpSocket;               //Udp socket
 
 #if NETFX_CORE
-        private readonly AutoResetEvent _autoResetEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _sendEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _receiveEvent = new AutoResetEvent(false);
         private readonly SocketAsyncEventArgs _sendSocketArgs = new SocketAsyncEventArgs();
         private readonly SocketAsyncEventArgs _receiveSocketArgs = new SocketAsyncEventArgs();
-        private readonly byte[] _asyncReceiveBuffer = new byte[NetConstants.MaxPacketSize];
-        private bool _gotResult = true;
 
         private void ReceiveComplete(object o, SocketAsyncEventArgs args)
         {
-            _gotResult = true;
+            _receiveEvent.Set();
         }
 
         private void SendComplete(object o, SocketAsyncEventArgs args)
         {
-            _autoResetEvent.Set();
+            _sendEvent.Set();
         }
 #endif
 
@@ -46,7 +45,7 @@ namespace LiteNetLib
 #if NETFX_CORE
             _sendSocketArgs.Completed += SendComplete;
             _receiveSocketArgs.Completed += ReceiveComplete;
-            _receiveSocketArgs.SetBuffer(_asyncReceiveBuffer, 0, _asyncReceiveBuffer.Length);
+            _receiveSocketArgs.SetBuffer(_receiveBuffer, 0, _receiveBuffer.Length);
 #endif
         }
 
@@ -75,7 +74,7 @@ namespace LiteNetLib
                 _sendSocketArgs.SetBuffer(data, 0, data.Length);
                 _sendSocketArgs.RemoteEndPoint = remoteEndPoint;
                 _udpSocket.SendToAsync(_sendSocketArgs);
-                _autoResetEvent.WaitOne();
+                _sendEvent.WaitOne();
                 int result = _sendSocketArgs.BytesTransferred;
 #else
                 int result = _udpSocket.SendTo(data, remoteEndPoint);
@@ -96,7 +95,7 @@ namespace LiteNetLib
         {
 #if !NETFX_CORE
             //wait for data
-            if (!_udpSocket.Poll(1000, SelectMode.SelectRead))
+            if (!_udpSocket.Poll(10000, SelectMode.SelectRead))
             {
                 return 0;
             }
@@ -106,28 +105,17 @@ namespace LiteNetLib
 
             //Reading data
             try
-            {        
+            {
 #if NETFX_CORE
-                if (!_gotResult)
-                {
-                    return 0;
-                }
-
+                _receiveSocketArgs.RemoteEndPoint = remoteEndPoint;
+                _udpSocket.ReceiveFromAsync(_receiveSocketArgs);
+                _receiveEvent.WaitOne();
                 //get last result if available
                 result = _receiveSocketArgs.BytesTransferred;
-                if (result > 0)
-                {
-                    Buffer.BlockCopy(_asyncReceiveBuffer, 0, _receiveBuffer, 0, result);
-                }
                 if (_receiveSocketArgs.RemoteEndPoint != null)
                 {
                     remoteEndPoint = (IPEndPoint)_receiveSocketArgs.RemoteEndPoint;
                 }
-
-                //start new operation
-                _gotResult = false;
-                _receiveSocketArgs.RemoteEndPoint = remoteEndPoint;
-                _udpSocket.ReceiveFromAsync(_receiveSocketArgs);
 #else
                 EndPoint p = remoteEndPoint;
                 result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref p);
@@ -136,16 +124,9 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                if (ex.SocketErrorCode == SocketError.WouldBlock)
-                {
-                    return 0;
-                }
-                else
-                {
-                    NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Error code: {0} - {1}", ex.SocketErrorCode, ex.ToString());
-                    errorCode = (int)ex.SocketErrorCode;
-                    return -1;
-                }
+                NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Error code: {0} - {1}", ex.SocketErrorCode, ex.ToString());
+                errorCode = (int)ex.SocketErrorCode;
+                return -1;
             }
 
             //All ok!

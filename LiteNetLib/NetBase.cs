@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
@@ -17,27 +18,28 @@ namespace LiteNetLib
         protected IPEndPoint _localEndPoint;
 
 #if NETFX_CORE
-        private IAsyncAction _updateAction;
+        private ThreadPoolTimer _updateAction;
+        private IAsyncAction _receiveAction;
 #else
-        private Thread _thread;
+        private Thread _logicThread;
+        private Thread _receiveThread;
 #endif
 
         private int _updateTime;
         private bool _running;
         private IPEndPoint _remoteEndPoint;
-        private readonly Stopwatch _tickWatch;
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool; 
 
         protected NetBase()
         {
-            _tickWatch = new Stopwatch();
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
             _remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
             _updateTime = 100;
 #if !NETFX_CORE
-            _thread = new Thread(Update);
+            _logicThread = new Thread(UpdateLogic);
+            _receiveThread = new Thread(ReceiveLogic);
 #endif
             _socket = new NetSocket();
         }
@@ -55,12 +57,13 @@ namespace LiteNetLib
             _localEndPoint = new IPEndPoint(IPAddress.Any, port);
             if (_socket.Bind(_localEndPoint))
             {
-                _tickWatch.Start();
                 _running = true;
 #if NETFX_CORE
-                _updateAction = ThreadPool.RunAsync(Update);
+                _updateAction = ThreadPoolTimer.CreatePeriodicTimer(a => PostProcessEvent(_updateTime), TimeSpan.FromMilliseconds(_updateTime));
+                _receiveAction = ThreadPool.RunAsync(a => ReceiveLogic());
 #else
-                _thread.Start();
+                _logicThread.Start();
+                _receiveThread.Start();
 #endif
                 return true;
             }
@@ -97,7 +100,8 @@ namespace LiteNetLib
             {
                 _running = false;
 #if !NETFX_CORE
-                _thread.Join(1000);
+                _logicThread.Join(2000);
+                _receiveThread.Join(2000);
 #endif
                 _socket.Close();
             }
@@ -143,70 +147,44 @@ namespace LiteNetLib
         }
 
         //Update function
-#if NETFX_CORE
-        private void Update(IAsyncAction operation)
+#if !NETFX_CORE
+        private void UpdateLogic()
         {
             while (_running)
             {
-                //Init timer
-                long startTime = _tickWatch.ElapsedMilliseconds;
-
-                while (_tickWatch.ElapsedMilliseconds - startTime < _updateTime && _running)
-                {
-                    ReceiveLogic();
-                    Task.Delay(1).Wait();
-                }
-
-                //PostProcess
                 PostProcessEvent(_updateTime);
-            }
-        }
-#else
-        private void Update()
-        {
-            while (_running)
-            {
-                //Init timer
-                long startTime = _tickWatch.ElapsedMilliseconds;
-
-                while(_tickWatch.ElapsedMilliseconds - startTime < _updateTime && _running)
-                {
-                    ReceiveLogic();
-                    Thread.Sleep(1);
-                }
-
-                //PostProcess
-                PostProcessEvent(_updateTime);
+                Thread.Sleep(_updateTime);
             }
         }
 #endif
 
-        private bool ReceiveLogic()
+        private void ReceiveLogic()
         {
-            int errorCode = 0;
-
-            //Receive some info
-            byte[] reusableBuffer = null;
-            int result = _socket.ReceiveFrom(ref reusableBuffer, ref _remoteEndPoint, ref errorCode);
-
-            if (result > 0)
+            while (_running)
             {
-                //ProcessEvents
-                ReceiveFromSocket(reusableBuffer, result, _remoteEndPoint);
-            }
-            else if (result < 0)
-            {
-                //If not 10054
-                if (errorCode != 10054)
+                int errorCode = 0;
+
+                //Receive some info
+                byte[] reusableBuffer = null;
+                int result = _socket.ReceiveFrom(ref reusableBuffer, ref _remoteEndPoint, ref errorCode);
+
+                if (result > 0)
                 {
-                    //NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
-                    ProcessError();
-                    _running = false;
-                    _socket.Close();
-                    return false;
+                    //ProcessEvents
+                    ReceiveFromSocket(reusableBuffer, result, _remoteEndPoint);
+                }
+                else if (result < 0)
+                {
+                    //If not 10054
+                    if (errorCode != 10054)
+                    {
+                        //NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
+                        ProcessError();
+                        _running = false;
+                        _socket.Close();
+                    }
                 }
             }
-            return true;
         }
 
         protected virtual void ProcessError()
