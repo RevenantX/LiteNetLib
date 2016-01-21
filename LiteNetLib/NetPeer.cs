@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
-using System.Threading;
 
 namespace LiteNetLib
 {

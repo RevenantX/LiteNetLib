@@ -5,7 +5,7 @@ using Windows.Networking.Sockets;
 
 namespace LiteNetLib
 {
-    public class NetEndPoint
+    public class NetEndPoint : IEquatable<NetEndPoint>
     {
         public string Host { get { return HostName.DisplayName; } }
         public int Port { get; private set; }
@@ -20,6 +20,11 @@ namespace LiteNetLib
             Port = port;
         }
 
+        public bool Equals(NetEndPoint other)
+        {
+            return HostName.DisplayName.Equals(other.HostName.DisplayName) && PortStr.Equals(other.PortStr);
+        }
+
         public override bool Equals(object obj)
         {
             if (!(obj is NetEndPoint))
@@ -27,7 +32,7 @@ namespace LiteNetLib
                 return false;
             }
             NetEndPoint other = (NetEndPoint) obj;
-            return HostName.Equals(other.HostName) && PortStr.Equals(other.PortStr);
+            return HostName.DisplayName.Equals(other.HostName.DisplayName) && PortStr.Equals(other.PortStr);
         }
 
         public override int GetHashCode()
@@ -51,6 +56,10 @@ namespace LiteNetLib
                 var task = Task.Run(async () => await DatagramSocket.GetEndpointPairsAsync(HostName, "0"));
                 task.Wait();
                 hostIp = task.Result[0].RemoteHostName.CanonicalName;
+                if (hostIp.Contains(":"))
+                {
+                    return hostIp.GetHashCode() ^ Port;
+                }
             }
             long id = 0;
             string[] ip = hostIp.Split('.');

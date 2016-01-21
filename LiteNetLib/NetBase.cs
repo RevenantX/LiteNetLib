@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 #if WINRT
+using Windows.Storage.Streams;
 using Windows.System.Threading;
 using Windows.Foundation;
 using System.Threading.Tasks;
 using Windows.Networking.Sockets;
+using System.Runtime.InteropServices.WindowsRuntime;
 #else
 using System.Threading;
 #endif
@@ -17,6 +20,8 @@ namespace LiteNetLib
 
 #if WINRT
         private IAsyncAction _updateAction;
+        private readonly byte[] _reusableBuffer;
+        private IBuffer _buffer;
 #else
         private readonly Thread _logicThread;
         private readonly Thread _receiveThread;
@@ -34,10 +39,13 @@ namespace LiteNetLib
             _netEventsPool = new Stack<NetEvent>();
             
             _updateTime = 100;
-            
+
 #if WINRT
+            _reusableBuffer = new byte[NetConstants.MaxPacketSize];
+            _buffer = _reusableBuffer.AsBuffer();
             _socket = new NetSocket(ReceiveLogic);
 #else
+            _remoteEndPoint = new NetEndPoint(0);
             _logicThread = new Thread(UpdateLogic);
             _receiveThread = new Thread(ReceiveLogic);
             _socket = new NetSocket();
@@ -163,13 +171,16 @@ namespace LiteNetLib
         }
 
 #if WINRT
-        private readonly byte[] _reusableBuffer = new byte[NetConstants.MaxPacketSize];
         private void ReceiveLogic(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
-            var dr = args.GetDataReader();
-            uint count = dr.UnconsumedBufferLength;
-            dr.ReadBytes(_reusableBuffer);
-            ReceiveFromSocket(_reusableBuffer, (int)count, new NetEndPoint(args.RemoteAddress, args.RemotePort));
+            var task = Task.Run(async () => 
+            {
+                var outputSteam = args.GetDataStream();
+                return await outputSteam.ReadAsync(_buffer, _buffer.Length, InputStreamOptions.None);
+            });
+            task.Wait();
+
+            ReceiveFromSocket(_reusableBuffer, (int)task.Result.Length, new NetEndPoint(args.RemoteAddress, args.RemotePort));
         }
 #else
         private void ReceiveLogic()
