@@ -28,7 +28,7 @@ class Program
         {
             Console.WriteLine("Client connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
 
-            for (int i = 0; i < 20000; i++)
+            for (int i = 0; i < 4000; i++)
             {
                 byte[] data = new byte[1300];
                 FastBitConverter.GetBytes(data, 0, i + 1);
@@ -39,7 +39,7 @@ class Program
         {
             int dt = BitConverter.ToInt32(netEvent.Data, 0);
             _messagesReceivedCount++;
-            if(_messagesReceivedCount % 1000 == 0)
+            //if(_messagesReceivedCount % 1000 == 0)
                 Console.WriteLine("CNT: {0}, DT: {1}", _messagesReceivedCount, dt);
             if (_messagesReceivedCount != dt)
             {

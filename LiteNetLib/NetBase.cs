@@ -74,27 +74,6 @@ namespace LiteNetLib
             return false;
         }
 
-        protected NetEvent GetOrCreateNetEvent()
-        {
-            if (_netEventsPool.Count > 0)
-            {
-                lock (_netEventsPool)
-                {
-                    return _netEventsPool.Pop();
-                }
-            }
-            return new NetEvent();
-        }
-
-        public void Recycle(NetEvent netEvent)
-        {
-            lock (_netEventsPool)
-            {
-                netEvent.Data = null;
-                _netEventsPool.Push(netEvent);
-            }
-        }
-
         /// <summary>
         /// Stop updating thread and listening
         /// </summary>
@@ -130,11 +109,32 @@ namespace LiteNetLib
 
         protected void EnqueueEvent(NetPeer peer, byte[] data, NetEventType type)
         {
-            NetEvent evt = GetOrCreateNetEvent();
+            NetEvent evt;
+            if (_netEventsPool.Count > 0)
+            {
+                lock (_netEventsPool)
+                {
+                    evt = _netEventsPool.Pop();
+                }
+            }
+            else
+            {
+                evt = new NetEvent();
+            }
             evt.Init(peer, data, type);
             lock (_netEventsQueue)
             {
                 _netEventsQueue.Enqueue(evt);
+            }
+        }
+
+        public void Recycle(NetEvent netEvent)
+        {
+            lock (_netEventsPool)
+            {
+                netEvent.Data = null;
+                netEvent.Peer = null;
+                _netEventsPool.Push(netEvent);
             }
         }
 

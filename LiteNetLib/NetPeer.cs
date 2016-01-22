@@ -120,25 +120,18 @@ namespace LiteNetLib
                     packet.Property = PacketProperty.None;
                     break;
             }
-
             SendPacket(packet);
         }
 
-        internal void Send(byte[] data, PacketProperty property)
+        internal void Send(PacketProperty property, int sequence = 0)
         {
             NetPacket packet = GetOrCreatePacket(property);
             packet.Property = property;
-            packet.Data = data;
+            packet.Sequence = 0;
             SendPacket(packet);
         }
 
-        internal void Send(PacketProperty property)
-        {
-            NetPacket packet = GetOrCreatePacket(property);
-            packet.Property = property;
-            SendPacket(packet);
-        }
-
+        //from user thread, our thread, or recv?
         private void SendPacket(NetPacket packet)
         {
             switch (packet.Property)
@@ -221,21 +214,27 @@ namespace LiteNetLib
 
         internal NetPacket GetOrCreatePacket(PacketProperty property = PacketProperty.None)
         {
-            lock (_packetPool)
+            NetPacket packet;
+            if (_packetPool.Count > 0)
             {
-                var packet = _packetPool.Count > 0
-                   ? _packetPool.Pop()
-                   : new NetPacket();
-
-                packet.Property = property;
-                return packet;
+                lock (_packetPool)
+                {
+                    packet = _packetPool.Pop();
+                }
             }
+            else
+            {
+                packet = new NetPacket();
+            }
+            packet.Property = property;
+            return packet;
         }
 
         internal void Recycle(NetPacket packet)
         {
             lock (_packetPool)
             {
+                packet.Data = null;
                 _packetPool.Push(packet);
             }
         }
@@ -247,8 +246,14 @@ namespace LiteNetLib
         }
 
         //Process incoming packet
+        private Random r = new Random(1231);
         internal void ProcessPacket(NetPacket packet)
         {
+            if (r.Next(6) == 0)
+            {
+                Recycle(packet);
+                return;
+            }
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
             {
@@ -259,9 +264,8 @@ namespace LiteNetLib
                         break;
                     }
                     _remotePingSequence = packet.Sequence;
-                    NetPacket pongPacket = GetOrCreatePacket(PacketProperty.Pong);
-                    pongPacket.Sequence = packet.Sequence;
-                    SendPacket(pongPacket);
+                    Recycle(packet);
+                    Send(PacketProperty.Pong, _remotePingSequence);
                     break;
 
                 //If we get pong, calculate ping time and rtt
@@ -275,51 +279,40 @@ namespace LiteNetLib
                     _pingStopwatch.Reset();
                     UpdateRoundTripTime(rtt);
                     DebugWrite("[PP]Ping: {0}", rtt);
+                    Recycle(packet);
                     break;
 
                 //Process ack
                 case PacketProperty.AckReliable:
                     _reliableUnorderedChannel.ProcessAck(packet.Data);
+                    Recycle(packet);
                     break;
 
                 case PacketProperty.AckReliableOrdered:
                     _reliableOrderedChannel.ProcessAck(packet.Data);
+                    Recycle(packet);
                     break;
 
                 //Process in order packets
                 case PacketProperty.Sequenced:
-                    if (_sequencedChannel.ProcessPacket(packet))
-                    {
-                        //do not recycle
-                        return;
-                    }
+                    _sequencedChannel.ProcessPacket(packet);
                     break;
 
                 case PacketProperty.Reliable:
-                    if (_reliableUnorderedChannel.ProcessPacket(packet))
-                    {
-                        //do not recycle
-                        return;
-                    }
+                    _reliableUnorderedChannel.ProcessPacket(packet);
                     break;
 
                 case PacketProperty.ReliableOrdered:
-                    if (_reliableOrderedChannel.ProcessPacket(packet))
-                    {
-                        //do not recycle
-                        return;
-                    }
+                    _reliableOrderedChannel.ProcessPacket(packet);
                     break;
 
                 //Simple packet without acks
                 case PacketProperty.None:
                 case PacketProperty.Connect:
                 case PacketProperty.Disconnect:
-                    _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
-                    return; //do not recycle
+                    AddIncomingPacket(packet);
+                    return;
             }
-
-            Recycle(packet);
         }
 
         internal void Update(int deltaTime)
@@ -364,7 +357,8 @@ namespace LiteNetLib
                     }
                     return;
                 }
-                if (packet.Property != PacketProperty.Reliable && packet.Property != PacketProperty.ReliableOrdered)
+                if (packet.Property != PacketProperty.Reliable && 
+                    packet.Property != PacketProperty.ReliableOrdered)
                 {
                     Recycle(packet);
                 }
