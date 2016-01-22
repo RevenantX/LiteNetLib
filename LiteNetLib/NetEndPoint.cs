@@ -35,6 +35,11 @@ namespace LiteNetLib
             EndPoint = new IPEndPoint(IPAddress.Any, port);
         }
 
+        internal NetEndPoint Clone()
+        {
+            return new NetEndPoint(EndPoint);
+        }
+
         internal NetEndPoint(string hostStr, int port)
         {
             IPAddress ipAddress;

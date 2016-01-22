@@ -57,7 +57,6 @@ namespace LiteNetLib
         //Receive from
         public int ReceiveFrom(ref byte[] data, ref NetEndPoint remoteEndPoint, ref int errorCode)
         {
-
             //wait for data
             if (!_udpSocket.Poll(10000, SelectMode.SelectRead))
             {

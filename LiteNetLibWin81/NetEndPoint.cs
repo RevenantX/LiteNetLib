@@ -10,14 +10,19 @@ namespace LiteNetLib
         public string Host { get { return HostName.DisplayName; } }
         public int Port { get; private set; }
 
-        internal readonly HostName HostName;
-        internal readonly string PortStr;
+        internal HostName HostName;
+        internal string PortStr;
 
         internal NetEndPoint(int port)
         {
             HostName = null;
             PortStr = port.ToString();
             Port = port;
+        }
+
+        internal NetEndPoint Clone()
+        {
+            return new NetEndPoint(HostName, PortStr);
         }
 
         public override bool Equals(object obj)
@@ -80,6 +85,13 @@ namespace LiteNetLib
             HostName = hostName;
             Port = int.Parse(port);
             PortStr = port;
+        }
+
+        public void Set(HostName remoteAddress, string remotePort)
+        {
+            HostName = remoteAddress;
+            Port = int.Parse(remotePort);
+            PortStr = remotePort;
         }
     }
 }

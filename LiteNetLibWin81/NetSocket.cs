@@ -24,19 +24,12 @@ namespace LiteNetLib
         //Bind socket to port
         public bool Bind(NetEndPoint ep)
         {
-            var task = Task.Run(async () => await BindAsync(ep));
-            task.Wait();
-            return task.Result;
-        }
-
-        private async Task<bool> BindAsync(NetEndPoint ep)
-        {
             try
             {
                 if (ep.HostName == null)
-                    await _datagramSocket.BindServiceNameAsync(ep.PortStr);
+                    _datagramSocket.BindServiceNameAsync(ep.PortStr).GetResults();
                 else
-                    await _datagramSocket.BindEndpointAsync(ep.HostName, ep.PortStr);
+                    _datagramSocket.BindEndpointAsync(ep.HostName, ep.PortStr).GetResults();
             }
             catch (Exception)
             {
@@ -48,9 +41,7 @@ namespace LiteNetLib
         //Send to
         public int SendTo(byte[] data, NetEndPoint remoteEndPoint)
         {
-            var task = Task.Run(async () => await SendToAsync(data, remoteEndPoint));
-            task.Wait();
-            return task.Result;
+            return SendToAsync(data, remoteEndPoint).Result;
         }
 
         private async Task<int> SendToAsync(byte[] data, NetEndPoint remoteEndPoint)

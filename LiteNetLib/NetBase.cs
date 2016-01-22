@@ -171,20 +171,12 @@ namespace LiteNetLib
         }
 
 #if WINRT
+        private readonly NetEndPoint _tempEndPoint = new NetEndPoint(0);
         private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
-            var task = Task.Run(async () =>
-            {
-                var inputStream = args.GetDataStream();
-                return await inputStream.ReadAsync(_buffer, _buffer.Capacity, InputStreamOptions.None);
-            });
-            task.Wait();
-            ReceiveFromSocket(_reusableBuffer, (int)task.Result.Length, new NetEndPoint(args.RemoteAddress, args.RemotePort));
-
-            //var dr = args.GetDataReader();
-            //uint count = dr.UnconsumedBufferLength;
-            //var buffer = dr.DetachBuffer();
-            //ReceiveFromSocket(buffer.ToArray(), (int)count, new NetEndPoint(args.RemoteAddress, args.RemotePort));
+            _tempEndPoint.Set(args.RemoteAddress, args.RemotePort);
+            var result = args.GetDataStream().ReadAsync(_buffer, _buffer.Capacity, InputStreamOptions.None).GetResults();
+            ReceiveFromSocket(_reusableBuffer, (int)result.Length, _tempEndPoint);
         }
 #else
         private void ReceiveLogic()

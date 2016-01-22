@@ -148,13 +148,13 @@ namespace LiteNetLib
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request: accepting");
                 //Getting new id for peer
-
-                netPeer = new NetPeer(this, _socket, remoteEndPoint);
+                NetEndPoint peerEndPoint = remoteEndPoint.Clone();
+                netPeer = new NetPeer(this, _socket, peerEndPoint);
                 netPeer.BadRoundTripTime = UpdateTime * 2 + 250;
                 netPeer.Recycle(packet);
                 netPeer.Send(PacketProperty.Connect);
 
-                _peers.Add(remoteEndPoint, netPeer);
+                _peers.Add(peerEndPoint, netPeer);
 
                 EnqueueEvent(netPeer, null, NetEventType.Connect);
             }
