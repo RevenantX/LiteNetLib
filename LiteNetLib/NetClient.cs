@@ -18,11 +18,6 @@ namespace LiteNetLib
             get { return _id; }
         }
 
-        public NetClient()
-        {
-
-        }
-
         public override bool Start(int port)
         {
             bool result = base.Start(port);
@@ -37,9 +32,9 @@ namespace LiteNetLib
         /// Returns client NetPeer
         /// </summary>
         /// <returns></returns>
-        public NetPeer GetPeer()
+        public NetPeer Peer
         {
-            return _peer;
+            get { return _peer; }
         }
 
         /// <summary>
