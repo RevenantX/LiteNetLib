@@ -246,14 +246,8 @@ namespace LiteNetLib
         }
 
         //Process incoming packet
-        private Random r = new Random(1231);
         internal void ProcessPacket(NetPacket packet)
         {
-            if (r.Next(6) == 0)
-            {
-                Recycle(packet);
-                return;
-            }
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
             {
