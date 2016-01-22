@@ -1,14 +1,13 @@
-using System;
 using System.Collections.Generic;
+using System.Threading;
 #if WINRT
+using System;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
 using Windows.Foundation;
 using System.Threading.Tasks;
 using Windows.Networking.Sockets;
 using System.Runtime.InteropServices.WindowsRuntime;
-#else
-using System.Threading;
 #endif
 
 namespace LiteNetLib
@@ -156,14 +155,15 @@ namespace LiteNetLib
         }
 
         //Update function
-
+        private readonly ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
         private void UpdateLogic()
         {
             while (_running)
             {
                 PostProcessEvent(_updateTime);
 #if WINRT
-                Task.Delay(_updateTime).Wait();
+                //Task.Delay(_updateTime).Wait();
+                _manualResetEvent.WaitOne(_updateTime);
 #else
                 Thread.Sleep(_updateTime);
 #endif
@@ -175,7 +175,9 @@ namespace LiteNetLib
         private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
             _tempEndPoint.Set(args.RemoteAddress, args.RemotePort);
-            var result = args.GetDataStream().ReadAsync(_buffer, _buffer.Capacity, InputStreamOptions.None).GetResults();
+            var task = Task.Run(async () => await args.GetDataStream().ReadAsync(_buffer, _buffer.Capacity, InputStreamOptions.None));
+            task.Wait();
+            var result = task.Result;
             ReceiveFromSocket(_reusableBuffer, (int)result.Length, _tempEndPoint);
         }
 #else

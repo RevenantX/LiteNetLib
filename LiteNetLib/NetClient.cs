@@ -154,7 +154,7 @@ namespace LiteNetLib
             if (_peer == null)
 				return;
 
-            NetPacket packet = _peer.CreatePacket();
+            NetPacket packet = _peer.GetOrCreatePacket();
             if (!packet.FromBytes(reusableBuffer, count))
             {
                 _peer.Recycle(packet);

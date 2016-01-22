@@ -28,7 +28,7 @@ class Program
         {
             Console.WriteLine("Client connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
 
-            for (int i = 0; i < 4000; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 byte[] data = new byte[1300];
                 FastBitConverter.GetBytes(data, 0, i + 1);

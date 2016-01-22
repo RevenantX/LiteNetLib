@@ -41,22 +41,18 @@ namespace LiteNetLib
         //Send to
         public int SendTo(byte[] data, NetEndPoint remoteEndPoint)
         {
-            return SendToAsync(data, remoteEndPoint).Result;
-        }
-
-        private async Task<int> SendToAsync(byte[] data, NetEndPoint remoteEndPoint)
-        {
             try
             {
                 IOutputStream stream;
                 if (!_peers.TryGetValue(remoteEndPoint, out stream))
                 {
-                    stream = await _datagramSocket.GetOutputStreamAsync(remoteEndPoint.HostName, remoteEndPoint.PortStr);
+                    stream = _datagramSocket.GetOutputStreamAsync(remoteEndPoint.HostName, remoteEndPoint.PortStr).GetResults();
                     _peers.Add(remoteEndPoint, stream);
                 }
 
-                uint result = await stream.WriteAsync(data.AsBuffer());
-                return (int)result;
+                var task = Task.Run(async () => await stream.WriteAsync(data.AsBuffer()));
+                task.Wait();
+                return (int) task.Result;
             }
             catch (Exception)
             {

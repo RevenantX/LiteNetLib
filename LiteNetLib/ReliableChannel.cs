@@ -158,7 +158,7 @@ namespace LiteNetLib
         {
             //_peer.DebugWriteForce("[RR]SendAcks");
             //Init packet
-            NetPacket p = _peer.CreatePacket();
+            NetPacket p = _peer.GetOrCreatePacket();
             p.Property = _ordered ? PacketProperty.AckReliableOrdered : PacketProperty.AckReliable;
             p.Data = new byte[10];
 

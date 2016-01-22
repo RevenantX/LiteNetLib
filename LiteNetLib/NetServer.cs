@@ -115,7 +115,7 @@ namespace LiteNetLib
             //Check peers
             if (_peers.TryGetValue(remoteEndPoint, out netPeer))
             {
-                packet = netPeer.CreatePacket();
+                packet = netPeer.GetOrCreatePacket();
 
                 //Bad packet check
                 if (!packet.FromBytes(reusableBuffer, count))

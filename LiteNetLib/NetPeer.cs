@@ -104,7 +104,7 @@ namespace LiteNetLib
 
         public void Send(byte[] data, SendOptions options)
         {
-            NetPacket packet = CreatePacket();
+            NetPacket packet = GetOrCreatePacket();
             packet.Data = data;
 
             switch (options)
@@ -128,7 +128,7 @@ namespace LiteNetLib
 
         internal void Send(byte[] data, PacketProperty property)
         {
-            NetPacket packet = CreatePacket(property);
+            NetPacket packet = GetOrCreatePacket(property);
             packet.Property = property;
             packet.Data = data;
             SendPacket(packet);
@@ -136,7 +136,7 @@ namespace LiteNetLib
 
         internal void Send(PacketProperty property)
         {
-            NetPacket packet = CreatePacket(property);
+            NetPacket packet = GetOrCreatePacket(property);
             packet.Property = property;
             SendPacket(packet);
         }
@@ -218,7 +218,7 @@ namespace LiteNetLib
             NetUtils.DebugWriteForce(DebugTextColor, str, args);
         }
 
-        internal NetPacket CreatePacket(PacketProperty property = PacketProperty.None)
+        internal NetPacket GetOrCreatePacket(PacketProperty property = PacketProperty.None)
         {
             lock (_packetPool)
             {
@@ -233,7 +233,6 @@ namespace LiteNetLib
 
         internal void Recycle(NetPacket packet)
         {
-            packet.Data = null;
             lock (_packetPool)
             {
                 _packetPool.Push(packet);
@@ -259,7 +258,7 @@ namespace LiteNetLib
                         break;
                     }
                     _remotePingSequence = packet.Sequence;
-                    NetPacket pongPacket = CreatePacket(PacketProperty.Pong);
+                    NetPacket pongPacket = GetOrCreatePacket(PacketProperty.Pong);
                     pongPacket.Sequence = packet.Sequence;
                     SendPacket(pongPacket);
                     break;
@@ -354,6 +353,10 @@ namespace LiteNetLib
                     _peerListener.ProcessSendError(_remoteEndPoint);
                     return;
                 }
+                if (packet.Property != PacketProperty.Reliable && packet.Property != PacketProperty.ReliableOrdered)
+                {
+                    Recycle(packet);
+                }
                 currentSended++;
             }
 
@@ -377,7 +380,7 @@ namespace LiteNetLib
                 _pingSendTimer = 0;
 
                 //create packet
-                NetPacket packet = CreatePacket(PacketProperty.Ping);
+                NetPacket packet = GetOrCreatePacket(PacketProperty.Ping);
                 packet.Sequence = _pingSequence;
                 _pingSequence++;
 
