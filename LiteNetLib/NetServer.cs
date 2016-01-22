@@ -91,30 +91,30 @@ namespace LiteNetLib
 
         internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
-            if (_peers.ContainsKey(remoteEndPoint))
+            NetPeer fromPeer;
+            if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
             {
-                EnqueueEvent(_peers[remoteEndPoint], packet.Data, NetEventType.Receive);
+                EnqueueEvent(fromPeer, packet.Data, NetEventType.Receive);
             }
         }
 
         internal override void ProcessSendError(NetEndPoint remoteEndPoint)
         {
-            if (_peers.ContainsKey(remoteEndPoint))
+            NetPeer fromPeer;
+            if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
             {
-                NetPeer peer = _peers[remoteEndPoint];
-
-                EnqueueEvent(peer, null, NetEventType.Disconnect);
-                RemovePeer(peer);
+                EnqueueEvent(fromPeer, null, NetEventType.Disconnect);
+                RemovePeer(fromPeer);
             }
         }
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
             NetPacket packet;
+            NetPeer netPeer;
             //Check peers
-            if (_peers.ContainsKey(remoteEndPoint))
+            if (_peers.TryGetValue(remoteEndPoint, out netPeer))
             {
-                NetPeer netPeer = _peers[remoteEndPoint];
                 packet = netPeer.CreatePacket();
 
                 //Bad packet check
@@ -149,7 +149,7 @@ namespace LiteNetLib
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request: accepting");
                 //Getting new id for peer
 
-                NetPeer netPeer = new NetPeer(this, _socket, remoteEndPoint);
+                netPeer = new NetPeer(this, _socket, remoteEndPoint);
                 netPeer.BadRoundTripTime = UpdateTime * 2 + 250;
                 netPeer.Recycle(packet);
                 netPeer.Send(PacketProperty.Connect);

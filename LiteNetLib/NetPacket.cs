@@ -58,19 +58,29 @@ namespace LiteNetLib
             //Sequence
             if (IsSequenced(Property))
             {
+                if (packetSize < NetConstants.SequencedHeaderSize)
+                    return false;
+
                 Sequence = BitConverter.ToUInt16(data, 1);
                 dataLenght -= NetConstants.SequencedHeaderSize;
                 dataStart = NetConstants.SequencedHeaderSize;
             }
             else
             {
+                if (packetSize < NetConstants.HeaderSize)
+                    return false;
+
                 dataLenght -= NetConstants.HeaderSize;
                 dataStart = NetConstants.HeaderSize;
             }
 
             //Reading other data
-            Data = new byte[dataLenght];
-            Buffer.BlockCopy(data, dataStart, Data, 0, dataLenght);
+            if (dataLenght > 0)
+            {
+                Data = new byte[dataLenght];
+                Buffer.BlockCopy(data, dataStart, Data, 0, dataLenght);
+            }
+     
             return true;
         }
 

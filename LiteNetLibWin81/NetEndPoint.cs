@@ -27,12 +27,12 @@ namespace LiteNetLib
                 return false;
             }
             NetEndPoint other = (NetEndPoint) obj;
-            return HostName.Equals(other.HostName) && PortStr.Equals(other.PortStr);
+            return HostName.IsEqual(other.HostName) && PortStr.Equals(other.PortStr);
         }
 
         public override int GetHashCode()
         {
-            return HostName.GetHashCode() ^ PortStr.GetHashCode();
+            return HostName.CanonicalName.GetHashCode() ^ PortStr.GetHashCode();
         }
 
         internal long GetId()
@@ -68,7 +68,9 @@ namespace LiteNetLib
 
         internal NetEndPoint(string hostName, int port)
         {
-            HostName = new HostName(hostName);
+            var task = Task.Run(async () => await DatagramSocket.GetEndpointPairsAsync(new HostName(hostName), port.ToString()));
+            task.Wait();
+            HostName = task.Result[0].RemoteHostName;
             Port = port;
             PortStr = port.ToString();
         }

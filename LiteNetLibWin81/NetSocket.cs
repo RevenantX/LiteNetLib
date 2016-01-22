@@ -17,6 +17,7 @@ namespace LiteNetLib
         public NetSocket(TypedEventHandler<DatagramSocket, DatagramSocketMessageReceivedEventArgs> onReceive)
         {
             _datagramSocket = new DatagramSocket();
+            _datagramSocket.Control.DontFragment = true;
             _datagramSocket.MessageReceived += onReceive;
         }
 
