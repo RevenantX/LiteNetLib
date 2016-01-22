@@ -11,7 +11,7 @@ namespace LiteNetLib
     public class NetSocket
     {
         private readonly DatagramSocket _datagramSocket;
-        private readonly Dictionary<NetEndPoint, IOutputStream> _peers = new Dictionary<NetEndPoint, IOutputStream>();
+        private readonly Dictionary<NetEndPoint, DataWriter> _peers = new Dictionary<NetEndPoint, DataWriter>();
 
         //Socket constructor
         public NetSocket(TypedEventHandler<DatagramSocket, DatagramSocketMessageReceivedEventArgs> onReceive)
@@ -43,16 +43,20 @@ namespace LiteNetLib
         {
             try
             {
-                IOutputStream stream;
-                if (!_peers.TryGetValue(remoteEndPoint, out stream))
+                DataWriter writer;
+                if (!_peers.TryGetValue(remoteEndPoint, out writer))
                 {
-                    stream = _datagramSocket.GetOutputStreamAsync(remoteEndPoint.HostName, remoteEndPoint.PortStr).GetResults();
-                    _peers.Add(remoteEndPoint, stream);
+                    var outputStream =
+                        _datagramSocket.GetOutputStreamAsync(remoteEndPoint.HostName, remoteEndPoint.PortStr)
+                            .AsTask()
+                            .Result;
+                    writer = new DataWriter(outputStream);
+                    _peers.Add(remoteEndPoint, writer);
                 }
 
-                var task = Task.Run(async () => await stream.WriteAsync(data.AsBuffer()));
-                task.Wait();
-                return (int) task.Result;
+                writer.WriteBytes(data);
+                var res = writer.StoreAsync().AsTask().Result;
+                return (int)res;
             }
             catch (Exception)
             {

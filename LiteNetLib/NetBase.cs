@@ -19,8 +19,6 @@ namespace LiteNetLib
 
 #if WINRT
         private IAsyncAction _updateAction;
-        private readonly byte[] _reusableBuffer;
-        private IBuffer _buffer;
 #else
         private readonly Thread _logicThread;
         private readonly Thread _receiveThread;
@@ -40,8 +38,6 @@ namespace LiteNetLib
             _updateTime = 100;
 
 #if WINRT
-            _reusableBuffer = new byte[NetConstants.MaxPacketSize];
-            _buffer = _reusableBuffer.AsBuffer();
             _socket = new NetSocket(OnMessageReceived);
 #else
             _remoteEndPoint = new NetEndPoint(0);
@@ -174,11 +170,15 @@ namespace LiteNetLib
         private readonly NetEndPoint _tempEndPoint = new NetEndPoint(0);
         private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
-            _tempEndPoint.Set(args.RemoteAddress, args.RemotePort);
-            var task = Task.Run(async () => await args.GetDataStream().ReadAsync(_buffer, _buffer.Capacity, InputStreamOptions.None));
-            task.Wait();
-            var result = task.Result;
-            ReceiveFromSocket(_reusableBuffer, (int)result.Length, _tempEndPoint);
+            var dataReader = args.GetDataReader();
+            uint count = dataReader.UnconsumedBufferLength;
+            if (count > 0)
+            {
+                byte[] data = new byte[count];
+                dataReader.ReadBytes(data);
+                _tempEndPoint.Set(args.RemoteAddress, args.RemotePort);
+                ReceiveFromSocket(data, data.Length, _tempEndPoint);
+            }
         }
 #else
         private void ReceiveLogic()
