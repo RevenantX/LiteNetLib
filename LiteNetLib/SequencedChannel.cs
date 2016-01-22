@@ -2,12 +2,12 @@ using System.Collections.Generic;
 
 namespace LiteNetLib
 {
-    class SequencedChannel : INetChannel
+    sealed class SequencedChannel
     {
         private ushort _localSequence;
         private ushort _remoteSequence;
-        private Queue<NetPacket> _outgoingPackets;
-        private NetPeer _peer;
+        private readonly Queue<NetPacket> _outgoingPackets;
+        private readonly NetPeer _peer;
 
         public SequencedChannel(NetPeer peer)
         {

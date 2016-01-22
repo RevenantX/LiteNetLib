@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace LiteNetLib
 {
-    public class ReliableChannel : INetChannel
+    sealed class ReliableChannel
     {
         //For reliable inOrder
         private ushort _localSeqence;

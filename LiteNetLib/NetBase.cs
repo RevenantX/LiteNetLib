@@ -121,7 +121,9 @@ namespace LiteNetLib
             {
                 evt = new NetEvent();
             }
-            evt.Init(peer, data, type);
+            evt.Peer = peer;
+            evt.Data = data;
+            evt.Type = type;
             lock (_netEventsQueue)
             {
                 _netEventsQueue.Enqueue(evt);

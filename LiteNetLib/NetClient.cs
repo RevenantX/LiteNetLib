@@ -1,12 +1,8 @@
 using System;
-using System.Net;
-#if !WINRT
-using System.Net.Sockets;
-#endif
 
 namespace LiteNetLib
 {
-    public class NetClient : NetBase
+    public sealed class NetClient : NetBase
     {
         private NetPeer _peer;
         private bool _connected;

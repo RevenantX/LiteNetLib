@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace LiteNetLib
 {
-    public class NetPeer
+    public sealed class NetPeer
     {
         private enum FlowMode
         {

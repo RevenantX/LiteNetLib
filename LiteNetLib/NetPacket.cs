@@ -2,7 +2,7 @@ using System;
 
 namespace LiteNetLib
 {
-    public enum PacketProperty : byte
+    enum PacketProperty : byte
     {
         None,
         Reliable,
@@ -16,7 +16,7 @@ namespace LiteNetLib
         Disconnect
     }
 
-    public class NetPacket
+    sealed class NetPacket
     {
         //Header
         public PacketProperty Property; //1 1

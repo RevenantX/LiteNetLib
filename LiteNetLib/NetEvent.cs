@@ -9,17 +9,10 @@ namespace LiteNetLib
         Error
     }
 
-    public class NetEvent
+    public sealed class NetEvent
     {
-        public NetPeer Peer;
-        public byte[] Data;
-        public NetEventType Type;
-
-        internal void Init(NetPeer peer, byte[] data, NetEventType type)
-        {
-            Peer = peer;
-            Data = data;
-            Type = type;
-        }
+        public NetPeer Peer { get; internal set; }
+        public byte[] Data { get; internal set; }
+        public NetEventType Type { get; internal set; }
     }
 }

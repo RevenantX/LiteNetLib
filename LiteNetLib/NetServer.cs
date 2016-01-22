@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 
 namespace LiteNetLib
 {
-    public class NetServer : NetBase
+    public sealed class NetServer : NetBase
     {
         private readonly Dictionary<NetEndPoint, NetPeer> _peers;
         private readonly int _maxClients;

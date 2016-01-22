@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 namespace LiteNetLib
 {
-    public class NetEndPoint
+    public sealed class NetEndPoint
     {
         public string Host { get { return EndPoint.Address.ToString(); } }
         public int Port { get { return EndPoint.Port; } }
