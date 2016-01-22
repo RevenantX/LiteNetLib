@@ -17,7 +17,10 @@ namespace LiteNetLib
 
         public void AddToQueue(NetPacket packet)
         {
-            _outgoingPackets.Enqueue(packet);
+            lock (_outgoingPackets)
+            {
+                _outgoingPackets.Enqueue(packet);
+            }
         }
 
         public NetPacket GetQueuedPacket()
@@ -26,9 +29,13 @@ namespace LiteNetLib
                 return null;
 
             _localSequence++;
-            var p =  _outgoingPackets.Dequeue();
-            p.Sequence = _localSequence;
-            return p;
+            NetPacket packet;
+            lock (_outgoingPackets)
+            {
+                packet = _outgoingPackets.Dequeue();
+            }
+            packet.Sequence = _localSequence;
+            return packet;
         }
 
         public bool ProcessPacket(NetPacket packet)

@@ -97,7 +97,10 @@ namespace LiteNetLib
 
         public void AddToQueue(NetPacket packet)
         {
-            _outgoingPackets.Enqueue(packet);
+            lock (_outgoingPackets)
+            {
+                _outgoingPackets.Enqueue(packet);
+            }
         }
 
         public NetPacket GetQueuedPacket()
@@ -114,7 +117,11 @@ namespace LiteNetLib
                 int relate = NetUtils.RelativeSequenceNumber(_localSeqence, _localWindowStart);
                 if (relate < NetConstants.WindowSize)
                 {
-                    NetPacket packet = _outgoingPackets.Dequeue();
+                    NetPacket packet;
+                    lock (_outgoingPackets)
+                    {
+                        packet = _outgoingPackets.Dequeue();
+                    }
                     packet.Sequence = _localSeqence;
                     packet.TimeStamp = 0;
                     _pendingPackets[_localSeqence % NetConstants.WindowSize] = packet;

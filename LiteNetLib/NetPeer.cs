@@ -48,8 +48,6 @@ namespace LiteNetLib
         private readonly long _id;
         private readonly NetBase _peerListener;
 
-        private readonly object _sendLock = new object();
-
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
@@ -143,40 +141,43 @@ namespace LiteNetLib
 
         private void SendPacket(NetPacket packet)
         {
-            lock (_sendLock)
+            switch (packet.Property)
             {
-                switch (packet.Property)
-                {
-                    case PacketProperty.Reliable:
-                        //DebugWrite("[RS]Packet reliable");
-                        _reliableUnorderedChannel.AddToQueue(packet);
-                        break;
-                    case PacketProperty.Sequenced:
-                        //DebugWrite("[RS]Packet sequenced");
-                        _sequencedChannel.AddToQueue(packet);
-                        break;
-                    case PacketProperty.ReliableOrdered:
-                        //DebugWrite("[RS]Packet reliable ordered");
-                        _reliableOrderedChannel.AddToQueue(packet);
-                        break;
-                    case PacketProperty.AckReliable:
-                    case PacketProperty.AckReliableOrdered:
-                    case PacketProperty.None:
-                        DebugWrite("[RS]Packet simple");
+                case PacketProperty.Reliable:
+                    //DebugWrite("[RS]Packet reliable");
+                    _reliableUnorderedChannel.AddToQueue(packet);
+                    break;
+                case PacketProperty.Sequenced:
+                    //DebugWrite("[RS]Packet sequenced");
+                    _sequencedChannel.AddToQueue(packet);
+                    break;
+                case PacketProperty.ReliableOrdered:
+                    //DebugWrite("[RS]Packet reliable ordered");
+                    _reliableOrderedChannel.AddToQueue(packet);
+                    break;
+                case PacketProperty.AckReliable:
+                case PacketProperty.AckReliableOrdered:
+                case PacketProperty.None:
+                    DebugWrite("[RS]Packet simple");
+                    lock (_outgoingQueue)
+                    {
                         _outgoingQueue.Enqueue(packet);
-                        break;
-                    case PacketProperty.Ping:
-                    case PacketProperty.Pong:
-                    case PacketProperty.Connect:
-                    case PacketProperty.Disconnect:
-                        if (_socket.SendTo(packet.ToByteArray(), _remoteEndPoint) == -1)
+                    }
+                    break;
+                case PacketProperty.Ping:
+                case PacketProperty.Pong:
+                case PacketProperty.Connect:
+                case PacketProperty.Disconnect:
+                    if (_socket.SendTo(packet.ToByteArray(), _remoteEndPoint) == -1)
+                    {
+                        lock (_peerListener)
                         {
                             _peerListener.ProcessSendError(_remoteEndPoint);
                         }
-                        break;
-                    default:
-                        throw new Exception("Unknown packet property: " + packet.Property);
-                }
+                    }
+                    break;
+                default:
+                    throw new Exception("Unknown packet property: " + packet.Property);
             }
         }
 
@@ -343,14 +344,24 @@ namespace LiteNetLib
                 if (packet == null)
                 {
                     if (_outgoingQueue.Count > 0)
-                        packet = _outgoingQueue.Dequeue();
+                    {
+                        lock (_outgoingQueue)
+                        {
+                            packet = _outgoingQueue.Dequeue();
+                        }
+                    }
                     else
+                    {
                         break;
+                    }
                 }
                     
                 if (_socket.SendTo(packet.ToByteArray(), _remoteEndPoint) == -1)
                 {
-                    _peerListener.ProcessSendError(_remoteEndPoint);
+                    lock (_peerListener)
+                    {
+                        _peerListener.ProcessSendError(_remoteEndPoint);
+                    }
                     return;
                 }
                 if (packet.Property != PacketProperty.Reliable && packet.Property != PacketProperty.ReliableOrdered)
