@@ -4,13 +4,12 @@ using System.Net.Sockets;
 
 namespace LiteNetLib
 {
-    public class NetSocket
+    sealed class NetSocket
     {
         private const int BufferSize = 131071;
         private readonly byte[] _receiveBuffer = new byte[NetConstants.MaxPacketSize];
-        private readonly Socket _udpSocket;               //Udp socket
+        private readonly Socket _udpSocket;
 
-        //Socket constructor
         public NetSocket()
         {
             _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -22,7 +21,6 @@ namespace LiteNetLib
             //_udpSocket.DontFragment = true;
         }
 
-        //Bind socket to port
         public bool Bind(NetEndPoint ep)
         {            
             try
@@ -38,7 +36,6 @@ namespace LiteNetLib
             }
         }
 
-        //Send to
         public int SendTo(byte[] data, NetEndPoint remoteEndPoint)
         {
             try
@@ -54,7 +51,6 @@ namespace LiteNetLib
             }
         }
 
-        //Receive from
         public int ReceiveFrom(ref byte[] data, ref NetEndPoint remoteEndPoint, ref int errorCode)
         {
             //wait for data
@@ -100,7 +96,6 @@ namespace LiteNetLib
             return result;
         }
 
-        //Close socket
         public void Close()
         {
             _udpSocket.Close();

@@ -72,7 +72,7 @@ namespace LiteNetLib
             get { return _id; }
         }
 
-        public NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
+        internal NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
         {
             _id = remoteEndPoint.GetId();
             _peerListener = peerListener;

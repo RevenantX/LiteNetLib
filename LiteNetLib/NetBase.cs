@@ -14,7 +14,7 @@ namespace LiteNetLib
 {
     public abstract class NetBase
     {
-        protected NetSocket _socket;
+        internal NetSocket _socket;
         protected NetEndPoint _localEndPoint;
 
 #if WINRT

@@ -6,7 +6,7 @@ using Windows.Storage.Streams;
 
 namespace LiteNetLib
 {
-    public class NetSocket
+    sealed class NetSocket
     {
         private readonly DatagramSocket _datagramSocket;
         private readonly Dictionary<NetEndPoint, DataWriter> _peers = new Dictionary<NetEndPoint, DataWriter>();
