@@ -137,15 +137,15 @@ namespace LiteNetLib
             switch (packet.Property)
             {
                 case PacketProperty.Reliable:
-                    //DebugWrite("[RS]Packet reliable");
+                    DebugWrite("[RS]Packet reliable");
                     _reliableUnorderedChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.Sequenced:
-                    //DebugWrite("[RS]Packet sequenced");
+                    DebugWrite("[RS]Packet sequenced");
                     _sequencedChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.ReliableOrdered:
-                    //DebugWrite("[RS]Packet reliable ordered");
+                    DebugWrite("[RS]Packet reliable ordered");
                     _reliableOrderedChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.AckReliable:
@@ -202,11 +202,13 @@ namespace LiteNetLib
             }
         }
 
+        [Conditional("DEBUG_MESSAGES")]
         internal void DebugWrite(string str, params object[] args)
         {
             NetUtils.DebugWrite(DebugTextColor, str, args);
         }
 
+        [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
         internal void DebugWriteForce(string str, params object[] args)
         {
             NetUtils.DebugWriteForce(DebugTextColor, str, args);
