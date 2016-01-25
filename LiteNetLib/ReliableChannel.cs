@@ -35,7 +35,7 @@ namespace LiteNetLib
             _peer = peer;
             _ordered = ordered;
 
-            _outgoingPackets = new Queue<NetPacket>();
+            _outgoingPackets = new Queue<NetPacket>(_windowSize);
 
             _outgoingAcks = new bool[_windowSize];
             _pendingPackets = new NetPacket[_windowSize];
