@@ -51,7 +51,7 @@ namespace LiteNetLib
             {
                 if (!force)
                 {
-                    _peer.Send(PacketProperty.Disconnect);
+                    _peer.CreateAndSend(PacketProperty.Disconnect);
                 }
                 _peer = null;
             }
@@ -94,7 +94,7 @@ namespace LiteNetLib
             _peer = new NetPeer(this, _socket, ep);
             _peer.DebugTextColor = ConsoleColor.Yellow;
             _peer.BadRoundTripTime = UpdateTime * 2 + 250;
-            _peer.Send(PacketProperty.Connect);
+            _peer.CreateAndSend(PacketProperty.Connect);
 
             _connectAttempts = 0;
             _waitForConnect = true;
@@ -120,7 +120,7 @@ namespace LiteNetLib
                     }
 
                     //else
-                    _peer.Send(PacketProperty.Connect);
+                    _peer.CreateAndSend(PacketProperty.Connect);
                 }
             }
 
@@ -130,7 +130,7 @@ namespace LiteNetLib
         internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
-            EnqueueEvent(_peer, packet.Data, NetEventType.Receive);
+            EnqueueEvent(_peer, packet.GetPacketData(), NetEventType.Receive);
             //_peer.Recycle(packet);
         }
 
@@ -145,7 +145,7 @@ namespace LiteNetLib
             if (_peer == null)
 				return;
 
-            NetPacket packet = _peer.GetOrCreatePacket();
+            NetPacket packet = _peer.GetPacketFromPool(init: false);
             if (!packet.FromBytes(reusableBuffer, count))
             {
                 _peer.Recycle(packet);

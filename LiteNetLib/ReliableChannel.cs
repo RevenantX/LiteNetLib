@@ -55,26 +55,28 @@ namespace LiteNetLib
         }
 
         //ProcessAck in packet
-        public void ProcessAck(byte[] acksData)
+        public void ProcessAck(NetPacket packet)
         {
-            ushort ackWindowStart = BitConverter.ToUInt16(acksData, 0);
-            
+            ushort ackWindowStart = packet.Sequence;
+            byte[] acksData = packet.RawData;
+
             if (NetUtils.RelativeSequenceNumber(ackWindowStart, _localWindowStart) <= -_windowSize)
             {
                 _peer.DebugWrite("[PA]Old acks");
                 return;
             }
-            ulong acks = BitConverter.ToUInt64(acksData, 2);
+
             _peer.DebugWrite("[PA]AcksStart: {0}", ackWindowStart);
 
-            for (int i = 0; i < 64; i++) //TODO: _windowSize
+            for (int i = 0; i < _windowSize; i++)
             {
                 int ackSequence = ackWindowStart + i;
 
                 if (ackSequence < _localWindowStart)
                     continue;
-                if ( (acks & (1ul << i)) == 0 )
+                if ( (acksData[NetConstants.SequencedHeaderSize + i/8] & (1 << i%8)) == 0 )
                     continue;
+
 
                 int storeIdx = ackSequence % _windowSize;
                 if (ackSequence == _localWindowStart)
@@ -166,32 +168,38 @@ namespace LiteNetLib
         private NetPacket SendAcks()
         {
             //_peer.DebugWriteForce("[RR]SendAcks");
+
             //Init packet
-            NetPacket p = _peer.GetOrCreatePacket();
-            p.Property = _ordered ? PacketProperty.AckReliableOrdered : PacketProperty.AckReliable;
-            p.Data = new byte[10];
+            NetPacket p = _peer.GetPacketFromPool(
+                _ordered ? PacketProperty.AckReliableOrdered : PacketProperty.AckReliable,
+                _windowSize / 8);
+            
+            //For quick access
+            byte[] data = p.RawData; //window start + acks size
 
             //Put window start
-            FastBitConverter.GetBytes(p.Data, 0, _remoteWindowStart);
+            p.Sequence = (ushort)_remoteWindowStart;
 
             //Put acks
-            ulong acks = 0;
-            int start = _remoteWindowStart % _windowSize;
-            int idx = start;
-            int bit = 0;
+            int startAckIndex = _remoteWindowStart % _windowSize;
+            int currentAckIndex = startAckIndex;
+            int currentBit = 0;
+            int currentByte = NetConstants.SequencedHeaderSize;
             do
             {
-                if (_outgoingAcks[idx])
+                if (_outgoingAcks[currentAckIndex])
                 {
-                    acks = acks | (1ul << bit);
+                    data[currentByte] |= (byte)(1 << currentBit);
                 }
 
-                bit++;
-                idx = (idx + 1) % _windowSize;
-            } while (idx != start);
-
-            //save to data
-            FastBitConverter.GetBytes(p.Data, 2, acks);
+                currentBit++;
+                if (currentBit == 8)
+                {
+                    currentByte++;
+                    currentBit = 0;
+                }
+                currentAckIndex = (currentAckIndex + 1) % _windowSize;
+            } while (currentAckIndex != startAckIndex);
 
             return p;
         }

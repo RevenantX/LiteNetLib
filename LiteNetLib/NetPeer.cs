@@ -110,32 +110,36 @@ namespace LiteNetLib
 
         public void Send(byte[] data, SendOptions options)
         {
-            NetPacket packet = GetOrCreatePacket();
-            packet.Data = data;
-
+            NetPacket packet;
             switch (options)
             {
                 case SendOptions.Reliable:
-                    packet.Property = PacketProperty.Reliable;
+                    packet = GetPacketFromPool(PacketProperty.Reliable, data.Length);
                     break;
                 case SendOptions.Sequenced:
-                    packet.Property = PacketProperty.Sequenced;
+                    packet = GetPacketFromPool(PacketProperty.Sequenced, data.Length);
                     break;
                 case SendOptions.ReliableOrdered:
-                    packet.Property = PacketProperty.ReliableOrdered;
+                    packet = GetPacketFromPool(PacketProperty.ReliableOrdered, data.Length);
                     break;
                 default:
-                    packet.Property = PacketProperty.None;
+                    packet = GetPacketFromPool(PacketProperty.None, data.Length);
                     break;
             }
+            packet.PutData(data);
             SendPacket(packet);
         }
 
-        internal void Send(PacketProperty property, int sequence = 0)
+        internal void CreateAndSend(PacketProperty property)
         {
-            NetPacket packet = GetOrCreatePacket(property);
-            packet.Property = property;
-            packet.Sequence = 0;
+            NetPacket packet = GetPacketFromPool(property);
+            SendPacket(packet);
+        }
+
+        internal void CreateAndSend(PacketProperty property, ushort sequence)
+        {
+            NetPacket packet = GetPacketFromPool(property);
+            packet.Sequence = sequence;
             SendPacket(packet);
         }
 
@@ -169,13 +173,14 @@ namespace LiteNetLib
                 case PacketProperty.Pong:
                 case PacketProperty.Connect:
                 case PacketProperty.Disconnect:
-                    if (_socket.SendTo(packet.ToByteArray(), _remoteEndPoint) == -1)
+                    if (_socket.SendTo(packet.RawData, _remoteEndPoint) == -1)
                     {
                         lock (_peerListener)
                         {
                             _peerListener.ProcessSendError(_remoteEndPoint);
                         }
                     }
+                    Recycle(packet);
                     break;
                 default:
                     throw new Exception("Unknown packet property: " + packet.Property);
@@ -222,21 +227,22 @@ namespace LiteNetLib
             NetUtils.DebugWriteForce(DebugTextColor, str, args);
         }
 
-        internal NetPacket GetOrCreatePacket(PacketProperty property = PacketProperty.None)
+        internal NetPacket GetPacketFromPool(PacketProperty property = PacketProperty.None, int size=0, bool init=true)
         {
-            NetPacket packet;
-            if (_packetPool.Count > 0)
+            NetPacket packet = null;
+            lock (_packetPool)
             {
-                lock (_packetPool)
+                if (_packetPool.Count > 0)
                 {
                     packet = _packetPool.Pop();
                 }
             }
-            else
+            if(packet == null)
             {
                 packet = new NetPacket();
             }
-            packet.Property = property;
+            if(init)
+                packet.Init(property, size);
             return packet;
         }
 
@@ -244,7 +250,7 @@ namespace LiteNetLib
         {
             lock (_packetPool)
             {
-                packet.Data = null;
+                packet.RawData = null;
                 _packetPool.Push(packet);
             }
         }
@@ -269,7 +275,9 @@ namespace LiteNetLib
                     }
                     _remotePingSequence = packet.Sequence;
                     Recycle(packet);
-                    Send(PacketProperty.Pong, _remotePingSequence);
+
+                    //send
+                    CreateAndSend(PacketProperty.Pong, _remotePingSequence);
                     break;
 
                 //If we get pong, calculate ping time and rtt
@@ -288,12 +296,12 @@ namespace LiteNetLib
 
                 //Process ack
                 case PacketProperty.AckReliable:
-                    _reliableUnorderedChannel.ProcessAck(packet.Data);
+                    _reliableUnorderedChannel.ProcessAck(packet);
                     Recycle(packet);
                     break;
 
                 case PacketProperty.AckReliableOrdered:
-                    _reliableOrderedChannel.ProcessAck(packet.Data);
+                    _reliableOrderedChannel.ProcessAck(packet);
                     Recycle(packet);
                     break;
 
@@ -353,7 +361,7 @@ namespace LiteNetLib
                     }
                 }
                     
-                if (_socket.SendTo(packet.ToByteArray(), _remoteEndPoint) == -1)
+                if (_socket.SendTo(packet.RawData, _remoteEndPoint) == -1)
                 {
                     lock (_peerListener)
                     {
@@ -388,14 +396,9 @@ namespace LiteNetLib
                 //reset timer
                 _pingSendTimer = 0;
 
-                //create packet
-                NetPacket packet = GetOrCreatePacket(PacketProperty.Ping);
-                packet.Sequence = _pingSequence;
+                //send ping
+                CreateAndSend(PacketProperty.Ping, _pingSequence);
                 _pingSequence++;
-
-                //send
-                SendPacket(packet);
-                Recycle(packet);
 
                 //reset timer
                 _pingStopwatch.Restart();

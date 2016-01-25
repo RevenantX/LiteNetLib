@@ -45,7 +45,7 @@ namespace LiteNetLib
         {
             if (peer != null && _peers.ContainsKey(peer.EndPoint))
             {
-                peer.Send(PacketProperty.Disconnect);
+                peer.CreateAndSend(PacketProperty.Disconnect);
                 RemovePeer(peer);
             }
         }
@@ -54,7 +54,7 @@ namespace LiteNetLib
         {
             foreach (NetPeer netPeer in _peers.Values)
             {
-                netPeer.Send(PacketProperty.Disconnect);
+                netPeer.CreateAndSend(PacketProperty.Disconnect);
             }
             _peers.Clear();
 
@@ -93,7 +93,7 @@ namespace LiteNetLib
             NetPeer fromPeer;
             if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
             {
-                EnqueueEvent(fromPeer, packet.Data, NetEventType.Receive);
+                EnqueueEvent(fromPeer, packet.GetPacketData(), NetEventType.Receive);
             }
         }
 
@@ -114,7 +114,7 @@ namespace LiteNetLib
             //Check peers
             if (_peers.TryGetValue(remoteEndPoint, out netPeer))
             {
-                packet = netPeer.GetOrCreatePacket();
+                packet = netPeer.GetPacketFromPool(init: false);
 
                 //Bad packet check
                 if (!packet.FromBytes(reusableBuffer, count))
@@ -151,7 +151,7 @@ namespace LiteNetLib
                 netPeer = new NetPeer(this, _socket, peerEndPoint);
                 netPeer.BadRoundTripTime = UpdateTime * 2 + 250;
                 netPeer.Recycle(packet);
-                netPeer.Send(PacketProperty.Connect);
+                netPeer.CreateAndSend(PacketProperty.Connect);
 
                 _peers.Add(peerEndPoint, netPeer);
 
