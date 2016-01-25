@@ -48,6 +48,8 @@ namespace LiteNetLib
         private readonly long _id;
         private readonly NetBase _peerListener;
 
+        private int _windowSize = NetConstants.DefaultWindowSize;
+
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
@@ -65,6 +67,12 @@ namespace LiteNetLib
         public int Ping
         {
             get { return _ping; }
+        }
+
+        public int PingSendDelay
+        {
+            get { return _pingSendDelay; }
+            set { _pingSendDelay = value; }
         }
 
         public long Id
@@ -93,8 +101,8 @@ namespace LiteNetLib
 
             _pingStopwatch = new Stopwatch();
 
-            _reliableOrderedChannel = new ReliableChannel(this, true);
-            _reliableUnorderedChannel = new ReliableChannel(this, false);
+            _reliableOrderedChannel = new ReliableChannel(this, true, _windowSize);
+            _reliableUnorderedChannel = new ReliableChannel(this, false, _windowSize);
             _sequencedChannel = new SequencedChannel(this);
 
             _packetPool = new Stack<NetPacket>();
