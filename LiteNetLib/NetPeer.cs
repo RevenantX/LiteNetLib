@@ -18,7 +18,6 @@ namespace LiteNetLib
         private int _flowTimer;
 
         private readonly NetSocket _socket;              //Udp socket
-        private readonly Queue<NetPacket> _outgoingQueue;//Queue for sending packets
         private readonly Stack<NetPacket> _packetPool;   //Pool for packets
 
         private int _rtt;                                //round trip time
@@ -45,6 +44,7 @@ namespace LiteNetLib
         private readonly ReliableChannel _reliableOrderedChannel;
         private readonly ReliableChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
+        private readonly SimpleChannel _simpleChannel;
         private readonly long _id;
         private readonly NetBase _peerListener;
 
@@ -88,7 +88,6 @@ namespace LiteNetLib
             _socket = socket;
             _remoteEndPoint = remoteEndPoint;
 
-            _outgoingQueue = new Queue<NetPacket>();
             _flowModes = new int[2];
             _flowModes[0] = 64 / 4; //bad
             _flowModes[1] = 64;     //good
@@ -104,6 +103,7 @@ namespace LiteNetLib
             _reliableOrderedChannel = new ReliableChannel(this, true, _windowSize);
             _reliableUnorderedChannel = new ReliableChannel(this, false, _windowSize);
             _sequencedChannel = new SequencedChannel(this);
+            _simpleChannel = new SimpleChannel(this);
 
             _packetPool = new Stack<NetPacket>();
         }
@@ -164,22 +164,13 @@ namespace LiteNetLib
                 case PacketProperty.AckReliableOrdered:
                 case PacketProperty.None:
                     DebugWrite("[RS]Packet simple");
-                    lock (_outgoingQueue)
-                    {
-                        _outgoingQueue.Enqueue(packet);
-                    }
+                    _simpleChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
                 case PacketProperty.Connect:
                 case PacketProperty.Disconnect:
-                    if (_socket.SendTo(packet.RawData, _remoteEndPoint) == -1)
-                    {
-                        lock (_peerListener)
-                        {
-                            _peerListener.ProcessSendError(_remoteEndPoint);
-                        }
-                    }
+                    SendRawData(packet.RawData);
                     Recycle(packet);
                     break;
                 default:
@@ -271,6 +262,7 @@ namespace LiteNetLib
                 case PacketProperty.Ping:
                     if (NetUtils.RelativeSequenceNumber(packet.Sequence, _remotePingSequence) < 0)
                     {
+                        Recycle(packet);
                         break;
                     }
                     _remotePingSequence = packet.Sequence;
@@ -284,6 +276,7 @@ namespace LiteNetLib
                 case PacketProperty.Pong:
                     if (NetUtils.RelativeSequenceNumber(packet.Sequence, _pongSequence) < 0)
                     {
+                        Recycle(packet);
                         break;
                     }
                     _pongSequence = packet.Sequence;
@@ -327,54 +320,45 @@ namespace LiteNetLib
             }
         }
 
+        internal bool SendRawData(byte[] data)
+        {
+            if (_socket.SendTo(data, _remoteEndPoint) == -1)
+            {
+                lock (_peerListener)
+                {
+                    _peerListener.ProcessSendError(_remoteEndPoint);
+                }
+                return false;
+            }
+            return true;
+        }
+
         internal void Update(int deltaTime)
         {
-            int currentSended = 0;
             //Get current flow mode
-            int maxSendPacketsCount = _flowModes[(int) _currentFlowMode];
+            int maxSendPacketsCount = _flowModes[(int)_currentFlowMode];
             int availableSendPacketsCount = maxSendPacketsCount - _sendedPacketsCount;
-            int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime)/ FlowUpdateTime);
+            int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime) / FlowUpdateTime);
 
             DebugWrite("[UPDATE]Delta: {0}ms, MaxSend: {1}", deltaTime, currentMaxSend);
 
             //Pending send
+            int currentSended = 0;
             while (currentSended < currentMaxSend)
             {
                 //Get one of packets
-                NetPacket packet = _reliableOrderedChannel.GetQueuedPacket();
-                if (packet == null)
-                    packet = _reliableUnorderedChannel.GetQueuedPacket();
-                if (packet == null)
-                    packet = _sequencedChannel.GetQueuedPacket();
-                if (packet == null)
+                if (_reliableOrderedChannel.SendNextPacket() ||
+                    _reliableUnorderedChannel.SendNextPacket() ||
+                    _sequencedChannel.SendNextPacket() ||
+                    _simpleChannel.SendNextPacket())
                 {
-                    if (_outgoingQueue.Count > 0)
-                    {
-                        lock (_outgoingQueue)
-                        {
-                            packet = _outgoingQueue.Dequeue();
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    currentSended++;
                 }
-                    
-                if (_socket.SendTo(packet.RawData, _remoteEndPoint) == -1)
+                else
                 {
-                    lock (_peerListener)
-                    {
-                        _peerListener.ProcessSendError(_remoteEndPoint);
-                    }
-                    return;
+                    //no outgoing packets
+                    break;
                 }
-                if (packet.Property != PacketProperty.Reliable && 
-                    packet.Property != PacketProperty.ReliableOrdered)
-                {
-                    Recycle(packet);
-                }
-                currentSended++;
             }
 
             //Increase counter

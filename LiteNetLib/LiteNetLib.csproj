@@ -53,6 +53,7 @@
     <Compile Include="NetUtils.cs" />
     <Compile Include="SequencedChannel.cs" />
     <Compile Include="ReliableChannel.cs" />
+    <Compile Include="SimpleChannel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
