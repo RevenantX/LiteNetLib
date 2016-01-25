@@ -35,7 +35,7 @@ namespace LiteNetLib
         private const int RttResetDelay = 1000;
         private int _rttResetTimer;
 
-        private const int FlowUpdateTime = 100;
+        private const int FlowUpdateTime = 1000;
         private const int ThrottleIncreaseThreshold = 32;
 
         private readonly int[] _flowModes;
@@ -89,8 +89,8 @@ namespace LiteNetLib
             _remoteEndPoint = remoteEndPoint;
 
             _flowModes = new int[2];
-            _flowModes[0] = 64 / 4; //bad
-            _flowModes[1] = 64;     //good
+            _flowModes[0] = 640 / 4; //bad
+            _flowModes[1] = 640;     //good
 
             _avgRtt = 0;
             _rtt = 0;
