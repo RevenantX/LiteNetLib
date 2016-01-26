@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
+using LiteNetLib.Utils;
+
 #if WINRT
 using System;
 using Windows.Storage.Streams;
@@ -29,7 +31,9 @@ namespace LiteNetLib
         private int _updateTime;
         private bool _running;
         private readonly Queue<NetEvent> _netEventsQueue;
-        private readonly Stack<NetEvent> _netEventsPool; 
+        private readonly Stack<NetEvent> _netEventsPool;
+
+        public bool UnconnectedMessagesEnabled = false;
 
         protected NetBase()
         {
@@ -83,6 +87,53 @@ namespace LiteNetLib
             p.Init(PacketProperty.UnconnectedMessage, message.Length);
             p.PutData(message);
             return _socket.SendTo(p.RawData, remoteEndPoint) > 0;
+        }
+
+        public void NatIntroduce(
+            NetEndPoint hostInternal,
+            NetEndPoint hostExternal,
+            NetEndPoint clientInternal,
+            NetEndPoint clientExternal,
+            string additionalInfo)
+        {
+            NetPacket p = new NetPacket();
+            NetDataWriter dw = new NetDataWriter();
+
+            //First packet
+            dw.Put(hostInternal);
+            dw.Put(hostExternal);
+            dw.Put(additionalInfo);
+
+            p.Init(PacketProperty.NatPunchResponse, dw.Length);
+            p.PutData(dw);
+            _socket.SendTo(p.RawData, clientExternal);
+
+            //Second packet
+            dw.Reset();
+            dw.Put(clientInternal);
+            dw.Put(clientExternal);
+            dw.Put(additionalInfo);
+
+            p.Init(PacketProperty.NatPunchResponse, dw.Length);
+            p.PutData(dw);
+            _socket.SendTo(p.RawData, hostExternal);
+        }
+
+        public void SendNatPunchRequest(NetEndPoint masterServerEndPoint, string additionalInfo)
+        {
+            if (!_running)
+                return;
+
+            //prepare outgoing data
+            NetDataWriter dw = new NetDataWriter();
+            dw.Put(_localEndPoint);
+            dw.Put(additionalInfo);
+
+            //prepare packet
+            NetPacket p = new NetPacket();
+            p.Init(PacketProperty.NatPunchRequest, dw.Length);
+            p.PutData(dw);
+            _socket.SendTo(p.RawData, masterServerEndPoint);
         }
 
         /// <summary>

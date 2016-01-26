@@ -115,7 +115,8 @@ namespace LiteNetLib
             //Check unconnected
             if (NetPacket.ComparePacketProperty(reusableBuffer, PacketProperty.UnconnectedMessage))
             {
-                EnqueueEvent(remoteEndPoint, NetPacket.GetUnconnectedData(reusableBuffer, count), NetEventType.ReceiveUnconnected);
+                if(UnconnectedMessagesEnabled)
+                    EnqueueEvent(remoteEndPoint, NetPacket.GetUnconnectedData(reusableBuffer, count), NetEventType.ReceiveUnconnected);
                 return;
             }
 

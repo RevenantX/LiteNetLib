@@ -142,6 +142,12 @@ namespace LiteNetLib.Utils
             _position += bytesCount;
         }
 
+        public void Put(NetEndPoint endPoint)
+        {
+            Put(endPoint.Host);
+            Put(endPoint.Port);
+        }
+
         public void Put(string value, int maxLength)
         {
             int length = value.Length > maxLength ? maxLength : value.Length;

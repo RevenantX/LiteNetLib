@@ -70,6 +70,13 @@ namespace LiteNetLib.Utils
             get { return _maxLength - _position; }
         }
 
+        public NetEndPoint GetNetEndPoint()
+        {
+            string host = GetString(1000);
+            int port = GetInt();
+            return new NetEndPoint(host, port);
+        }
+
         public byte GetByte()
         {
             byte res = _data[_position];
