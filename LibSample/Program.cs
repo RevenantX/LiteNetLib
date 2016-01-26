@@ -68,9 +68,11 @@ class Program
     static void Main(string[] args)
     {
         NetServer server = new NetServer(2);
+        server.UnconnectedMessagesEnabled = true;
         server.Start(9050);
 
         NetClient client = new NetClient();
+        client.UnconnectedMessagesEnabled = true;
         client.Start(9051);
         client.Connect("localhost", 9050);
         client.Stop();

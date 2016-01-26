@@ -56,55 +56,47 @@ public sealed class FastBitConverter
 #endif
     }
 
-    public int GetBytes(byte[] bytes, int startIndex, double value)
+    public void GetBytes(byte[] bytes, int startIndex, double value)
     {
         _doubleHelper[0] = value;
         Buffer.BlockCopy(_doubleHelper, 0, _ulongHelper, 0, 8);
         WriteLittleEndian(bytes, startIndex, _ulongHelper[0]);
-        return 8;
     }
 
-    public int GetBytes(byte[] bytes, int startIndex, float value)
+    public void GetBytes(byte[] bytes, int startIndex, float value)
     {
         _floatHelper[0] = value;
         Buffer.BlockCopy(_floatHelper, 0, _intHelper, 0, 4);
         WriteLittleEndian(bytes, startIndex, _intHelper[0]);
-        return 4;
     }
 
-    public static int GetBytes(byte[] bytes, int startIndex, short value)
+    public static void GetBytes(byte[] bytes, int startIndex, short value)
     {
         WriteLittleEndian(bytes, startIndex, value);
-        return 2;
     }
 
-    public static int GetBytes(byte[] bytes, int startIndex, ushort value)
+    public static void GetBytes(byte[] bytes, int startIndex, ushort value)
     {
         WriteLittleEndian(bytes, startIndex, (short)value);
-        return 2;
     }
 
-    public static int GetBytes(byte[] bytes, int startIndex, int value)
+    public static void GetBytes(byte[] bytes, int startIndex, int value)
     {
         WriteLittleEndian(bytes, startIndex, value);
-        return 4;
     }
 
-    public static int GetBytes(byte[] bytes, int startIndex, uint value)
+    public static void GetBytes(byte[] bytes, int startIndex, uint value)
     {
         WriteLittleEndian(bytes, startIndex, (int)value);
-        return 4;
     }
 
-    public static int GetBytes(byte[] bytes, int startIndex, long value)
+    public static void GetBytes(byte[] bytes, int startIndex, long value)
     {
         WriteLittleEndian(bytes, startIndex, (ulong)value);
-        return 8;
     }
 
-    public static int GetBytes(byte[] bytes, int startIndex, ulong value)
+    public static void GetBytes(byte[] bytes, int startIndex, ulong value)
     {
         WriteLittleEndian(bytes, startIndex, value);
-        return 8;
     }
 }

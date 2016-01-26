@@ -99,7 +99,8 @@ namespace LiteNetLib
             NetPacket p = new NetPacket();
             NetDataWriter dw = new NetDataWriter();
 
-            //First packet
+            //First packet (server)
+            dw.Put((byte)0);
             dw.Put(hostInternal);
             dw.Put(hostExternal);
             dw.Put(additionalInfo);
@@ -108,8 +109,9 @@ namespace LiteNetLib
             p.PutData(dw);
             _socket.SendTo(p.RawData, clientExternal);
 
-            //Second packet
+            //Second packet (client)
             dw.Reset();
+            dw.Put((byte)1);
             dw.Put(clientInternal);
             dw.Put(clientExternal);
             dw.Put(additionalInfo);
