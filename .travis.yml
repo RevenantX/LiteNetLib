@@ -3,4 +3,4 @@ solution: LiteNetLib.sln
 install:
   - nuget restore LiteNetLib.sln
 script:
-  - xbuild /p:Configuration=Release LiteNetLib.sln
+  - xbuild /p:Configuration=Release /target:LiteNetLib,LibSample LiteNetLib.sln 
