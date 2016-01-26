@@ -25,6 +25,11 @@ namespace LiteNetLib
             return EndPoint.Equals(((NetEndPoint)obj).EndPoint);
         }
 
+        public override string ToString()
+        {
+            return EndPoint.ToString();
+        }
+
         public override int GetHashCode()
         {
             return EndPoint.GetHashCode();
@@ -40,7 +45,7 @@ namespace LiteNetLib
             return new NetEndPoint(EndPoint);
         }
 
-        internal NetEndPoint(string hostStr, int port)
+        public NetEndPoint(string hostStr, int port)
         {
             IPAddress ipAddress;
             if (!IPAddress.TryParse(hostStr, out ipAddress))

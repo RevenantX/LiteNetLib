@@ -13,12 +13,13 @@ namespace LiteNetLib
         Ping,
         Pong,
         Connect,
-        Disconnect
+        Disconnect,
+        UnconnectedMessage
     }
 
     sealed class NetPacket
     {
-        const int PropertiesCount = 10;
+        const int PropertiesCount = 11;
         //Header
         public PacketProperty Property //1 1
         {
@@ -50,6 +51,28 @@ namespace LiteNetLib
             Buffer.BlockCopy(data, 0, RawData, GetHeaderSize(Property), data.Length);
         }
 
+        public static bool GetPacketProperty(byte[] data, out PacketProperty property)
+        {
+            byte properyByte = data[0];
+            if (properyByte >= PropertiesCount)
+            {
+                property = PacketProperty.None;
+                return false;
+            }
+            property = (PacketProperty)properyByte;
+            return true;
+        }
+
+        public static bool ComparePacketProperty(byte[] data, PacketProperty check)
+        {
+            PacketProperty property;
+            if (GetPacketProperty(data, out property))
+            {
+                return property == check;
+            }
+            return false;
+        }
+
         static int GetHeaderSize(PacketProperty property)
         {
             return IsSequenced(property)
@@ -70,7 +93,16 @@ namespace LiteNetLib
         {
             return property != PacketProperty.Connect &&
                    property != PacketProperty.Disconnect &&
-                   property != PacketProperty.None;
+                   property != PacketProperty.None &&
+                   property != PacketProperty.UnconnectedMessage;
+        }
+
+        public static byte[] GetUnconnectedData(byte[] raw, int count)
+        {
+            int size = count - NetConstants.HeaderSize;
+            byte[] data = new byte[size];
+            Buffer.BlockCopy(raw, 1, data, 0, size);
+            return data;
         }
 
         //Packet contstructor from byte array

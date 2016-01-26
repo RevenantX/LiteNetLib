@@ -64,7 +64,7 @@ namespace LiteNetLib
         protected override void ProcessError()
         {
             _peers.Clear();
-            base.ProcessError();
+            EnqueueEvent(NetEventType.Error);
         }
 
         protected override void PostProcessEvent(int deltaTime)
@@ -111,6 +111,14 @@ namespace LiteNetLib
         {
             NetPacket packet;
             NetPeer netPeer;
+
+            //Check unconnected
+            if (NetPacket.ComparePacketProperty(reusableBuffer, PacketProperty.UnconnectedMessage))
+            {
+                EnqueueEvent(remoteEndPoint, NetPacket.GetUnconnectedData(reusableBuffer, count), NetEventType.ReceiveUnconnected);
+                return;
+            }
+
             //Check peers
             if (_peers.TryGetValue(remoteEndPoint, out netPeer))
             {
@@ -143,6 +151,7 @@ namespace LiteNetLib
                 //Bad packet
                 return;
             }
+
             if (_peers.Count < _maxClients && packet.Property == PacketProperty.Connect)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request: accepting");

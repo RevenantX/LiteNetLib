@@ -8,16 +8,10 @@ namespace LiteNetLib
     {
         private const int BufferSize = 131071;
         private readonly byte[] _receiveBuffer = new byte[NetConstants.MaxPacketSize];
-        private readonly Socket _udpSocket;
+        private Socket _udpSocket;
 
         public NetSocket()
         {
-            _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 255);
-            _udpSocket.Blocking = false;
-            _udpSocket.ReceiveBufferSize = BufferSize;
-            _udpSocket.SendBufferSize = BufferSize;
-
             //_udpSocket.DontFragment = true;
         }
 
@@ -25,6 +19,12 @@ namespace LiteNetLib
         {            
             try
             {
+                _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 255);
+                _udpSocket.Blocking = false;
+                _udpSocket.ReceiveBufferSize = BufferSize;
+                _udpSocket.SendBufferSize = BufferSize;
+                _udpSocket.EnableBroadcast = true;
                 _udpSocket.Bind(ep.EndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);
                 return true;
@@ -99,6 +99,7 @@ namespace LiteNetLib
         public void Close()
         {
             _udpSocket.Close();
+            _udpSocket = null;
         }
     }
 }

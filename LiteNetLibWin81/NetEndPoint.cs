@@ -53,7 +53,7 @@ namespace LiteNetLib
             }
             else
             {
-                var task = Task.Run(async () => await DatagramSocket.GetEndpointPairsAsync(HostName, "0"));
+                var task = DatagramSocket.GetEndpointPairsAsync(HostName, "0").AsTask();
                 task.Wait();
                 var remoteHostName = task.Result[0].RemoteHostName;
                 hostIp = task.Result[0].RemoteHostName.CanonicalName;
@@ -72,9 +72,14 @@ namespace LiteNetLib
             return id;
         }
 
-        internal NetEndPoint(string hostName, int port)
+        public override string ToString()
         {
-            var task = Task.Run(async () => await DatagramSocket.GetEndpointPairsAsync(new HostName(hostName), port.ToString()));
+            return HostName.CanonicalName + ":" + PortStr;
+        }
+
+        public NetEndPoint(string hostName, int port)
+        {
+            var task = DatagramSocket.GetEndpointPairsAsync(new HostName(hostName), port.ToString()).AsTask();
             task.Wait();
             HostName = task.Result[0].RemoteHostName;
             Port = port;
@@ -88,7 +93,7 @@ namespace LiteNetLib
             PortStr = port;
         }
 
-        public void Set(HostName remoteAddress, string remotePort)
+        internal void Set(HostName remoteAddress, string remotePort)
         {
             HostName = remoteAddress;
             Port = int.Parse(remotePort);

@@ -6,6 +6,7 @@ namespace LiteNetLib
         Connect,
         Disconnect,
         Receive,
+        ReceiveUnconnected,
         Error
     }
 
@@ -14,5 +15,6 @@ namespace LiteNetLib
         public NetPeer Peer { get; internal set; }
         public byte[] Data { get; internal set; }
         public NetEventType Type { get; internal set; }
+        public NetEndPoint RemoteEndPoint { get; internal set; }
     }
 }

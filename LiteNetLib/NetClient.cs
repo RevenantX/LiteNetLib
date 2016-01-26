@@ -66,14 +66,10 @@ namespace LiteNetLib
 
         protected override void ProcessError()
         {
+            EnqueueEvent(NetEventType.Error);
             if (_peer != null)
             {
                 CloseConnection(true);
-                EnqueueEvent(null, null, NetEventType.Error);
-            }
-            else
-            {
-                base.ProcessError();
             }
         }
 
@@ -114,7 +110,7 @@ namespace LiteNetLib
                     _connectAttempts++;
                     if (_connectAttempts > _maxConnectAttempts)
                     {
-                        EnqueueEvent(null, null, NetEventType.Disconnect);
+                        EnqueueEvent(NetEventType.Disconnect);
                         Stop();
                         return;
                     }
@@ -131,37 +127,48 @@ namespace LiteNetLib
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
             EnqueueEvent(_peer, packet.GetPacketData(), NetEventType.Receive);
-            //_peer.Recycle(packet);
         }
 
         internal override void ProcessSendError(NetEndPoint remoteEndPoint)
         {
             Stop();
-            EnqueueEvent(null, null, NetEventType.Error);
+            EnqueueEvent(remoteEndPoint, null, NetEventType.Error);
         }
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
-            if (_peer == null)
-				return;
-
-            NetPacket packet = _peer.GetPacketFromPool(init: false);
-            if (!packet.FromBytes(reusableBuffer, count))
+            //Check unconnected
+            if (NetPacket.ComparePacketProperty(reusableBuffer, PacketProperty.UnconnectedMessage))
             {
-                _peer.Recycle(packet);
+                EnqueueEvent(remoteEndPoint, NetPacket.GetUnconnectedData(reusableBuffer, count), NetEventType.ReceiveUnconnected);
+                return;
             }
 
+            //Check peer
+            if (_peer == null)
+            {
+                return;
+            }
+
+            //Check endpoint 
             if (!_peer.EndPoint.Equals(remoteEndPoint))
             {
                 NetUtils.DebugWrite(ConsoleColor.DarkCyan, "[NC] Bad EndPoint " + remoteEndPoint);
                 return;
             }
 
+            //Parse packet
+            NetPacket packet = _peer.GetPacketFromPool(init: false);
+            if (!packet.FromBytes(reusableBuffer, count))
+            {
+                _peer.Recycle(packet);
+            }
+
             if (packet.Property == PacketProperty.Disconnect)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
                 CloseConnection(true);
-                EnqueueEvent(null, null, NetEventType.Disconnect);
+                EnqueueEvent(NetEventType.Disconnect);
                 return;
             }
 

@@ -18,10 +18,11 @@ namespace LiteNetLib
         protected NetEndPoint _localEndPoint;
 
 #if WINRT
+        private readonly ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
         private IAsyncAction _updateAction;
 #else
-        private readonly Thread _logicThread;
-        private readonly Thread _receiveThread;
+        private Thread _logicThread;
+        private Thread _receiveThread;
         private NetEndPoint _remoteEndPoint;
 #endif
 
@@ -41,8 +42,6 @@ namespace LiteNetLib
             _socket = new NetSocket(OnMessageReceived);
 #else
             _remoteEndPoint = new NetEndPoint(0);
-            _logicThread = new Thread(UpdateLogic);
-            _receiveThread = new Thread(ReceiveLogic);
             _socket = new NetSocket();
 #endif
         }
@@ -66,12 +65,24 @@ namespace LiteNetLib
 #if WINRT
                 _updateAction = ThreadPool.RunAsync(a => UpdateLogic(), WorkItemPriority.Normal, WorkItemOptions.TimeSliced);
 #else
+                _logicThread = new Thread(UpdateLogic);
+                _receiveThread = new Thread(ReceiveLogic);
                 _logicThread.Start();
                 _receiveThread.Start();
 #endif
                 return true;
             }
             return false;
+        }
+
+        public bool SendUnconnectedMessage(byte[] message, NetEndPoint remoteEndPoint)
+        {
+            if (!_running)
+                return false;
+            NetPacket p = new NetPacket();
+            p.Init(PacketProperty.UnconnectedMessage, message.Length);
+            p.PutData(message);
+            return _socket.SendTo(p.RawData, remoteEndPoint) > 0;
         }
 
         /// <summary>
@@ -83,8 +94,10 @@ namespace LiteNetLib
             {
                 _running = false;
 #if !WINRT
-                _logicThread.Join(2000);
-                _receiveThread.Join(2000);
+                _logicThread.Join();
+                _receiveThread.Join();
+                _logicThread = null;
+                _receiveThread = null;
 #endif
                 _socket.Close();
             }
@@ -107,7 +120,22 @@ namespace LiteNetLib
             get { return _running; }
         }
 
+        protected void EnqueueEvent(NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
+        {
+            EnqueueEvent(null, remoteEndPoint, data, type);
+        }
+
         protected void EnqueueEvent(NetPeer peer, byte[] data, NetEventType type)
+        {
+            EnqueueEvent(peer, peer.EndPoint, data, type);
+        }
+
+        protected void EnqueueEvent(NetEventType type)
+        {
+            EnqueueEvent(null, null, null, type);
+        }
+
+        protected void EnqueueEvent(NetPeer peer, NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
         {
             NetEvent evt;
             if (_netEventsPool.Count > 0)
@@ -124,6 +152,7 @@ namespace LiteNetLib
             evt.Peer = peer;
             evt.Data = data;
             evt.Type = type;
+            evt.RemoteEndPoint = remoteEndPoint;
             lock (_netEventsQueue)
             {
                 _netEventsQueue.Enqueue(evt);
@@ -153,14 +182,12 @@ namespace LiteNetLib
         }
 
         //Update function
-        private readonly ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
         private void UpdateLogic()
         {
             while (_running)
             {
                 PostProcessEvent(_updateTime);
 #if WINRT
-                //Task.Delay(_updateTime).Wait();
                 _manualResetEvent.WaitOne(_updateTime);
 #else
                 Thread.Sleep(_updateTime);
@@ -213,10 +240,7 @@ namespace LiteNetLib
         }
 #endif
 
-        protected virtual void ProcessError()
-        {
-            EnqueueEvent(null, null, NetEventType.Error);
-        }
+        protected abstract void ProcessError();
 
         protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
