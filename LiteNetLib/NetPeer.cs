@@ -4,22 +4,23 @@ using System.Diagnostics;
 
 namespace LiteNetLib
 {
+    public enum FlowMode
+    {
+        Bad,
+        Good
+    }
+
     public sealed class NetPeer
     {
-        private enum FlowMode
-        {
-            Bad,
-            Good
-        }
-
         //Flow control
         private FlowMode _currentFlowMode;
         private int _sendedPacketsCount;
         private int _flowTimer;
+        private const int FlowUpdateTime = 1000;
+        private const int ThrottleIncreaseThreshold = 32;
+        private readonly int[] _flowModes;
 
-        private readonly NetSocket _socket;              //Udp socket
-        private readonly Stack<NetPacket> _packetPool;   //Pool for packets
-
+        //Ping and RTT
         private int _rtt;                                //round trip time
         private int _avgRtt;
         private int _rttCount;
@@ -35,18 +36,20 @@ namespace LiteNetLib
         private const int RttResetDelay = 1000;
         private int _rttResetTimer;
 
-        private const int FlowUpdateTime = 1000;
-        private const int ThrottleIncreaseThreshold = 32;
-
-        private readonly int[] _flowModes;
         private readonly Stopwatch _pingStopwatch;
+
+        //Common
+        private readonly NetSocket _socket;              
+        private readonly Stack<NetPacket> _packetPool;
         private readonly NetEndPoint _remoteEndPoint;
+        private readonly long _id;
+        private readonly NetBase _peerListener;
+
+        //Channels
         private readonly ReliableChannel _reliableOrderedChannel;
         private readonly ReliableChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
         private readonly SimpleChannel _simpleChannel;
-        private readonly long _id;
-        private readonly NetBase _peerListener;
 
         private int _windowSize = NetConstants.DefaultWindowSize;
 
@@ -73,6 +76,11 @@ namespace LiteNetLib
         {
             get { return _pingSendDelay; }
             set { _pingSendDelay = value; }
+        }
+
+        public FlowMode CurrentFlowMode
+        {
+            get { return _currentFlowMode; }
         }
 
         public long Id
