@@ -80,6 +80,12 @@
     <Compile Include="..\LiteNetLib\SimpleChannel.cs">
       <Link>SimpleChannel.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\Utils\NetDataReader.cs">
+      <Link>Utils\NetDataReader.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Utils\NetDataWriter.cs">
+      <Link>Utils\NetDataWriter.cs</Link>
+    </Compile>
     <Compile Include="ConsoleColor.cs" />
     <Compile Include="NetEndPoint.cs" />
     <Compile Include="NetSocket.cs" />

@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using LiteNetLib;
+using LiteNetLib.Utils;
 
 class Program
 {
@@ -11,8 +12,8 @@ class Program
         switch (netEvent.Type)
         {
             case NetEventType.ReceiveUnconnected:
-                var data = netEvent.Data;
-                Console.WriteLine("ReceiveUnconnected: {0},{1},{2}", data[0], data[1], data[2]);
+                NetDataReader dr = new NetDataReader(netEvent.Data);
+                Console.WriteLine("ReceiveUnconnected: {0}", dr.GetString(100));
                 break;
 
             case NetEventType.Receive:
@@ -75,7 +76,10 @@ class Program
         client.Stop();
         client.Start(9051);
         client.Connect("localhost", 9050);
-        client.SendUnconnectedMessage(new byte[] {1, 2, 3}, new NetEndPoint("localhost", 9050));
+
+        NetDataWriter dw = new NetDataWriter();
+        dw.Put("HELLO! ПРИВЕТ!");
+        client.SendUnconnectedMessage(dw.CopyData(), new NetEndPoint("localhost", 9050));
 
         while (!Console.KeyAvailable)
         {
