@@ -29,7 +29,6 @@ namespace LiteNetLib
         private int _ping;
         private ushort _pingSequence;
         private ushort _remotePingSequence;
-        private ushort _pongSequence;
 
         private int _pingSendDelay;
         private int _pingSendTimer;
@@ -291,12 +290,12 @@ namespace LiteNetLib
 
                 //If we get pong, calculate ping time and rtt
                 case PacketProperty.Pong:
-                    if (NetUtils.RelativeSequenceNumber(packet.Sequence, _pongSequence) < 0)
+                    if (NetUtils.RelativeSequenceNumber(packet.Sequence, _pingSequence) < 0)
                     {
                         Recycle(packet);
                         break;
                     }
-                    _pongSequence = packet.Sequence;
+                    _pingSequence = packet.Sequence;
                     int rtt = (int) _pingStopwatch.ElapsedMilliseconds;
                     _pingStopwatch.Reset();
                     UpdateRoundTripTime(rtt);
@@ -399,7 +398,6 @@ namespace LiteNetLib
 
                 //send ping
                 CreateAndSend(PacketProperty.Ping, _pingSequence);
-                _pingSequence++;
 
                 //reset timer
                 _pingStopwatch.Restart();
