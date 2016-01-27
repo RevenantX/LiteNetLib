@@ -52,7 +52,7 @@ namespace LiteNetLib
             _socket = new NetSocket();
 #endif
 
-            NatPunchModule = new NatPunchModule(this, _socket);
+            NatPunchModule = new NatPunchModule(this);
         }
 
         /// <summary>
