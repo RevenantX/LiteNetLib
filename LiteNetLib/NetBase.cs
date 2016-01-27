@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using LiteNetLib.Utils;
@@ -286,10 +287,10 @@ namespace LiteNetLib
                     //If not 10054
                     if (errorCode != 10054)
                     {
-                        //NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
+                        NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
                         ProcessError();
-                        _running = false;
-                        Socket.Close();
+                        Stop();
+                        return;
                     }
                 }
             }

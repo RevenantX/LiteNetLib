@@ -56,7 +56,10 @@ namespace LiteNetLib
             {
                 netPeer.CreateAndSend(PacketProperty.Disconnect);
             }
-            _peers.Clear();
+            lock (_peers)
+            {
+                _peers.Clear();
+            }
 
             base.Stop();
         }
