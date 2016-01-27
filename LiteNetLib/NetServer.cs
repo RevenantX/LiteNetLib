@@ -70,21 +70,24 @@ namespace LiteNetLib
         protected override void PostProcessEvent(int deltaTime)
         {
             //Process acks
-            foreach (NetPeer netPeer in _peers.Values)
+            lock (_peers)
             {
-                if (netPeer.TimeSinceLastPacket > _timeout)
+                foreach (NetPeer netPeer in _peers.Values)
                 {
-                    EnqueueEvent(netPeer, null, NetEventType.Disconnect);
-                    RemovePeer(netPeer);
+                    if (netPeer.TimeSinceLastPacket > _timeout)
+                    {
+                        EnqueueEvent(netPeer, null, NetEventType.Disconnect);
+                        RemovePeer(netPeer);
+                    }
+                    else
+                    {
+                        netPeer.Update(deltaTime);
+                    }
                 }
-                else
+                while (_peersToRemove.Count > 0)
                 {
-                    netPeer.Update(deltaTime);
+                    _peers.Remove(_peersToRemove.Dequeue());
                 }
-            }
-            while (_peersToRemove.Count > 0)
-            {
-                _peers.Remove(_peersToRemove.Dequeue());
             }
         }
 
@@ -154,7 +157,10 @@ namespace LiteNetLib
                 netPeer.Recycle(packet);
                 netPeer.CreateAndSend(PacketProperty.Connect);
 
-                _peers.Add(peerEndPoint, netPeer);
+                lock (_peers)
+                {
+                    _peers.Add(peerEndPoint, netPeer);
+                }
 
                 EnqueueEvent(netPeer, null, NetEventType.Connect);
             }
