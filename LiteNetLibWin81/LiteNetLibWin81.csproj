@@ -47,6 +47,9 @@
     <Compile Include="..\LiteNetLib\FastBitConverter.cs">
       <Link>FastBitConverter.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\NatPunchModule.cs">
+      <Link>NatPunchModule.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\NetBase.cs">
       <Link>NetBase.cs</Link>
     </Compile>

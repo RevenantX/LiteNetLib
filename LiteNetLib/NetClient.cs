@@ -137,14 +137,6 @@ namespace LiteNetLib
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
-            //Check unconnected
-            if (NetPacket.ComparePacketProperty(reusableBuffer, PacketProperty.UnconnectedMessage))
-            {
-                if(UnconnectedMessagesEnabled)
-                    EnqueueEvent(remoteEndPoint, NetPacket.GetUnconnectedData(reusableBuffer, count), NetEventType.ReceiveUnconnected);
-                return;
-            }
-
             //Check peer
             if (_peer == null)
             {

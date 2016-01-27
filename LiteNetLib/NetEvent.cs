@@ -1,3 +1,5 @@
+using LiteNetLib.Utils;
+
 namespace LiteNetLib
 {
     public enum NetEventType
@@ -7,13 +9,14 @@ namespace LiteNetLib
         Disconnect,
         Receive,
         ReceiveUnconnected,
-        Error
+        Error,
+        NatIntroductionSuccess
     }
 
     public sealed class NetEvent
     {
         public NetPeer Peer { get; internal set; }
-        public byte[] Data { get; internal set; }
+        public NetDataReader DataReader { get; internal set; }
         public NetEventType Type { get; internal set; }
         public NetEndPoint RemoteEndPoint { get; internal set; }
     }

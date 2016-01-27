@@ -16,8 +16,9 @@ namespace LiteNetLib
         Connect,
         Disconnect,
         UnconnectedMessage,
-        NatPunchRequest,
-        NatPunchResponse
+        NatIntroductionRequest,
+        NatIntroduction,
+        NatPunchMessage
     }
 
     sealed class NetPacket
@@ -49,14 +50,16 @@ namespace LiteNetLib
             Property = property;
         }
 
+        public void Init(PacketProperty property, NetDataWriter dataWriter)
+        {
+            RawData = new byte[GetHeaderSize(property) + dataWriter.Length];
+            Property = property;
+            Buffer.BlockCopy(dataWriter.Data, 0, RawData, GetHeaderSize(Property), dataWriter.Length);
+        }
+
         public void PutData(byte[] data)
         {
             Buffer.BlockCopy(data, 0, RawData, GetHeaderSize(Property), data.Length);
-        }
-
-        public void PutData(NetDataWriter dataWriter)
-        {
-            Buffer.BlockCopy(dataWriter.Data, 0, RawData, GetHeaderSize(Property), dataWriter.Length);
         }
 
         public static bool GetPacketProperty(byte[] data, out PacketProperty property)

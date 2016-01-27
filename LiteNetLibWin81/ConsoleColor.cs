@@ -10,5 +10,6 @@ namespace LiteNetLib
         public static readonly ConsoleColor Blue = new ConsoleColor();
         public static readonly ConsoleColor DarkRed = new ConsoleColor();
         public static readonly ConsoleColor Red = new ConsoleColor();
+        public static readonly ConsoleColor Green = new ConsoleColor();
     }
 }
