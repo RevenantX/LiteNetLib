@@ -87,7 +87,7 @@ namespace LiteNetLib
 
             _avgRtt = 0;
             _rtt = 0;
-            _pingSendDelay = 1000;
+            _pingSendDelay = NetConstants.DefaultPingSendDelay;
             _pingSendTimer = 0;
 
             _pingStopwatch = new Stopwatch();
@@ -171,7 +171,7 @@ namespace LiteNetLib
             }
         }
 
-        internal void UpdateRoundTripTime(int roundTripTime)
+        private void UpdateRoundTripTime(int roundTripTime)
         {
             //Calc average round trip time
             _rtt += roundTripTime;
@@ -348,8 +348,8 @@ namespace LiteNetLib
             DebugWrite("[UPDATE]Delta: {0}ms, MaxSend: {1}", deltaTime, currentMaxSend);
 
             //Pending acks
-            _reliableOrderedChannel.SendAcks((ushort)deltaTime);
-            _reliableUnorderedChannel.SendAcks((ushort)deltaTime);
+            _reliableOrderedChannel.SendAcks();
+            _reliableUnorderedChannel.SendAcks();
 
             //Pending send
             int currentSended = 0;
@@ -401,8 +401,8 @@ namespace LiteNetLib
             if (_rttResetTimer >= RttResetDelay)
             {
                 //Ping update
-                _rtt = 0;
-                _rttCount = 0;
+                _rtt = _avgRtt;
+                _rttCount = 1;
                 _ping = _avgRtt / 2;
             }
         }

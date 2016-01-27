@@ -25,7 +25,7 @@ namespace LiteNetLib
 
         private readonly Stopwatch _packetTimeStopwatch;
 
-        private const long ResendDelay = 300;
+        private long _resendDelay = 1000;
         private const int BitsInByte = 8;
         private readonly bool _ordered;
         private readonly int _windowSize;
@@ -62,7 +62,6 @@ namespace LiteNetLib
         public void ProcessAck(NetPacket packet)
         {
             ushort ackWindowStart = packet.Sequence;
-            ushort delay = BitConverter.ToUInt16(packet.RawData, NetConstants.SequencedHeaderSize);
 
             //check relevance
             if (NetUtils.RelativeSequenceNumber(ackWindowStart, _localWindowStart) <= -_windowSize)
@@ -73,7 +72,7 @@ namespace LiteNetLib
 
             byte[] acksData = packet.RawData;
             _peer.DebugWrite("[PA]AcksStart: {0}", ackWindowStart);
-            int startByte = NetConstants.SequencedHeaderSize + 2;
+            int startByte = NetConstants.SequencedHeaderSize;
 
             _pendingPacketsAccess.WaitOne();
             for (int i = 0; i < _windowSize; i++)
@@ -98,7 +97,6 @@ namespace LiteNetLib
                 {
                     NetPacket removed = _pendingPackets[storeIdx];
                     _pendingPackets[storeIdx] = null;
-                    _peer.UpdateRoundTripTime((int)(_packetTimeStopwatch.ElapsedMilliseconds - removed.TimeStamp - delay));
                     _peer.Recycle(removed);
 
                     _peer.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", ackSequence);
@@ -163,7 +161,7 @@ namespace LiteNetLib
                 if (currentPacket != null)
                 {
                     long packetHoldTime = currentTime - currentPacket.TimeStamp;
-                    if (currentPacket.TimeStamp == 0 || packetHoldTime > ResendDelay)
+                    if (currentPacket.TimeStamp == 0 || packetHoldTime > _resendDelay)
                     {
                         //Setup timestamp or resend
                         currentPacket.TimeStamp = currentTime;
@@ -186,7 +184,12 @@ namespace LiteNetLib
             return sendResult;
         }
 
-        public void SendAcks(ushort delay)
+        public void Update(int deltaTime)
+        {
+            _resendDelay = deltaTime*4;
+        }
+
+        public void SendAcks()
         {
             if (!_mustSendAcks)
                 return;
@@ -195,8 +198,7 @@ namespace LiteNetLib
             _peer.DebugWrite("[RR]SendAcks");
 
             //Init packet
-            int ackBytes = (_windowSize - 1) / BitsInByte + 1;
-            int bytesCount = ackBytes + 2;
+            int bytesCount = (_windowSize - 1) / BitsInByte + 1;
             PacketProperty property = _ordered ? PacketProperty.AckReliableOrdered : PacketProperty.AckReliable;
             var acksPacket = _peer.GetPacketFromPool(property, bytesCount);
 
@@ -206,14 +208,11 @@ namespace LiteNetLib
             //Put window start
             acksPacket.Sequence = (ushort)_remoteWindowStart;
 
-            //Put delay
-            FastBitConverter.GetBytes(data, NetConstants.SequencedHeaderSize, delay);
-
             //Put acks
             int startAckIndex = _remoteWindowStart % _windowSize;
             int currentAckIndex = startAckIndex;
             int currentBit = 0;
-            int currentByte = NetConstants.SequencedHeaderSize + 2;
+            int currentByte = NetConstants.SequencedHeaderSize;
             do 
             {
                 if (_outgoingAcks[currentAckIndex])
