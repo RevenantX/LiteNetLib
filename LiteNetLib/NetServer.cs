@@ -112,13 +112,6 @@ namespace LiteNetLib
             NetPacket packet;
             NetPeer netPeer;
 
-            //Check unconnected
-            if (NetPacket.ComparePacketProperty(reusableBuffer, PacketProperty.UnconnectedMessage))
-            {
-                EnqueueEvent(remoteEndPoint, NetPacket.GetUnconnectedData(reusableBuffer, count), NetEventType.ReceiveUnconnected);
-                return;
-            }
-
             //Check peers
             if (_peers.TryGetValue(remoteEndPoint, out netPeer))
             {

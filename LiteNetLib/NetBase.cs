@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
+using LiteNetLib.Utils;
+
 #if WINRT
 using System;
 using Windows.Storage.Streams;
@@ -29,7 +31,12 @@ namespace LiteNetLib
         private int _updateTime;
         private bool _running;
         private readonly Queue<NetEvent> _netEventsQueue;
-        private readonly Stack<NetEvent> _netEventsPool; 
+        private readonly Stack<NetEvent> _netEventsPool;
+
+        public bool UnconnectedMessagesEnabled = false;
+        public bool NatPunchEnabled = false;
+
+        public readonly NatPunchModule NatPunchModule;
 
         protected NetBase()
         {
@@ -44,6 +51,8 @@ namespace LiteNetLib
             _remoteEndPoint = new NetEndPoint(0);
             _socket = new NetSocket();
 #endif
+
+            NatPunchModule = new NatPunchModule(this, _socket);
         }
 
         /// <summary>
@@ -120,22 +129,27 @@ namespace LiteNetLib
             get { return _running; }
         }
 
-        protected void EnqueueEvent(NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
+        public NetEndPoint LocalEndPoint
+        {
+            get { return _localEndPoint; }
+        }
+
+        internal void EnqueueEvent(NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
         {
             EnqueueEvent(null, remoteEndPoint, data, type);
         }
 
-        protected void EnqueueEvent(NetPeer peer, byte[] data, NetEventType type)
+        internal void EnqueueEvent(NetPeer peer, byte[] data, NetEventType type)
         {
             EnqueueEvent(peer, peer.EndPoint, data, type);
         }
 
-        protected void EnqueueEvent(NetEventType type)
+        internal void EnqueueEvent(NetEventType type)
         {
             EnqueueEvent(null, null, null, type);
         }
 
-        protected void EnqueueEvent(NetPeer peer, NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
+        internal void EnqueueEvent(NetPeer peer, NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
         {
             NetEvent evt;
             if (_netEventsPool.Count > 0)
@@ -148,9 +162,12 @@ namespace LiteNetLib
             else
             {
                 evt = new NetEvent();
+                evt.DataReader = new NetDataReader();
             }
+            if (data != null)
+                evt.DataReader.SetSource(data);
+
             evt.Peer = peer;
-            evt.Data = data;
             evt.Type = type;
             evt.RemoteEndPoint = remoteEndPoint;
             lock (_netEventsQueue)
@@ -163,7 +180,7 @@ namespace LiteNetLib
         {
             lock (_netEventsPool)
             {
-                netEvent.Data = null;
+                netEvent.DataReader.Clear();
                 netEvent.Peer = null;
                 _netEventsPool.Push(netEvent);
             }
@@ -206,7 +223,7 @@ namespace LiteNetLib
                 byte[] data = new byte[count];
                 dataReader.ReadBytes(data);
                 _tempEndPoint.Set(args.RemoteAddress, args.RemotePort);
-                ReceiveFromSocket(data, data.Length, _tempEndPoint);
+                DataReceived(data, data.Length, _tempEndPoint);
             }
         }
 #else
@@ -223,7 +240,7 @@ namespace LiteNetLib
                 if (result > 0)
                 {
                     //ProcessEvents
-                    ReceiveFromSocket(reusableBuffer, result, _remoteEndPoint);
+                    DataReceived(reusableBuffer, result, _remoteEndPoint);
                 }
                 else if (result < 0)
                 {
@@ -239,6 +256,32 @@ namespace LiteNetLib
             }
         }
 #endif
+
+        private void DataReceived(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
+        {
+            //Try get packet property
+            PacketProperty property;
+            if (!NetPacket.GetPacketProperty(reusableBuffer, out property))
+                return;
+
+            //Check unconnected
+            switch (property)
+            {
+                case PacketProperty.UnconnectedMessage:
+                    if (UnconnectedMessagesEnabled)
+                        EnqueueEvent(remoteEndPoint, NetPacket.GetUnconnectedData(reusableBuffer, count), NetEventType.ReceiveUnconnected);
+                    return;
+                case PacketProperty.NatIntroduction:
+                case PacketProperty.NatIntroductionRequest:
+                case PacketProperty.NatPunchMessage:
+                    if(NatPunchEnabled)
+                        NatPunchModule.ProcessMessage(remoteEndPoint, property, NetPacket.GetUnconnectedData(reusableBuffer, count));
+                    return;
+            }
+
+            //other
+            ReceiveFromSocket(reusableBuffer, count, remoteEndPoint);
+        }
 
         protected abstract void ProcessError();
 

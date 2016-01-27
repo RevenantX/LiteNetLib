@@ -12,12 +12,12 @@ class Program
         switch (netEvent.Type)
         {
             case NetEventType.ReceiveUnconnected:
-                NetDataReader dr = new NetDataReader(netEvent.Data);
-                Console.WriteLine("ReceiveUnconnected: {0}", dr.GetString(100));
+                Console.WriteLine("ReceiveUnconnected: {0}", netEvent.DataReader.GetString(100));
                 break;
 
             case NetEventType.Receive:
-                netEvent.Peer.Send(netEvent.Data, SendOptions.Reliable);
+                //echo
+                netEvent.Peer.Send(netEvent.DataReader.Data, SendOptions.Reliable);
                 break;
 
             case NetEventType.Disconnect:
@@ -49,7 +49,7 @@ class Program
                 //    netEvent.Peer.Send(data, SendOptions.Reliable);
                 //}
             case NetEventType.Receive:
-                int dt = BitConverter.ToInt32(netEvent.Data, 0);
+                int dt = netEvent.DataReader.GetInt();
                 _messagesReceivedCount++;
                 if(_messagesReceivedCount % 1000 == 0)
                     Console.WriteLine("CNT: {0}, DT: {1}", _messagesReceivedCount, dt);
@@ -68,9 +68,11 @@ class Program
     static void Main(string[] args)
     {
         NetServer server = new NetServer(2);
+        server.UnconnectedMessagesEnabled = true;
         server.Start(9050);
 
         NetClient client = new NetClient();
+        client.UnconnectedMessagesEnabled = true;
         client.Start(9051);
         client.Connect("localhost", 9050);
         client.Stop();

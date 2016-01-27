@@ -70,6 +70,13 @@ namespace LiteNetLib.Utils
             get { return _maxLength - _position; }
         }
 
+        public NetEndPoint GetNetEndPoint()
+        {
+            string host = GetString(1000);
+            int port = GetInt();
+            return new NetEndPoint(host, port);
+        }
+
         public byte GetByte()
         {
             byte res = _data[_position];
@@ -166,16 +173,29 @@ namespace LiteNetLib.Utils
             return result;
         }
 
-        public void GetArray(byte[] destination)
+        public byte[] GetBytes()
+        {
+            byte[] outgoingData = new byte[AvailableBytes];
+            Buffer.BlockCopy(_data, _position, outgoingData, 0, AvailableBytes);
+            _position = _data.Length;
+            return outgoingData;
+        }
+
+        public void GetBytes(byte[] destination)
         {
             Buffer.BlockCopy(_data, _position, destination, 0, AvailableBytes);
             _position = _data.Length;
         }
 
-        public void GetArray(byte[] destination, int lenght)
+        public void GetBytes(byte[] destination, int lenght)
         {
             Buffer.BlockCopy(_data, _position, destination, 0, lenght);
             _position += lenght;
+        }
+
+        public void Clear()
+        {
+            _data = null;
         }
     }
 }

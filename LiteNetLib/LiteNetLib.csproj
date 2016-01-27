@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FastBitConverter.cs" />
+    <Compile Include="NatPunchModule.cs" />
     <Compile Include="NetConstants.cs" />
     <Compile Include="NetEndPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

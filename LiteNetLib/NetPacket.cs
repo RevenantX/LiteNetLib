@@ -1,4 +1,5 @@
 using System;
+using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
@@ -14,12 +15,15 @@ namespace LiteNetLib
         Pong,
         Connect,
         Disconnect,
-        UnconnectedMessage
+        UnconnectedMessage,
+        NatIntroductionRequest,
+        NatIntroduction,
+        NatPunchMessage
     }
 
     sealed class NetPacket
     {
-        const int PropertiesCount = 11;
+        const int PropertiesCount = 13;
         //Header
         public PacketProperty Property //1 1
         {
@@ -44,6 +48,13 @@ namespace LiteNetLib
         {
             RawData = new byte[GetHeaderSize(property) + dataSize];
             Property = property;
+        }
+
+        public void Init(PacketProperty property, NetDataWriter dataWriter)
+        {
+            RawData = new byte[GetHeaderSize(property) + dataWriter.Length];
+            Property = property;
+            Buffer.BlockCopy(dataWriter.Data, 0, RawData, GetHeaderSize(Property), dataWriter.Length);
         }
 
         public void PutData(byte[] data)

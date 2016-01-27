@@ -9,17 +9,27 @@ namespace LiteNetLib.Utils
         protected int _position;
         protected int _maxLength;
         protected readonly FastBitConverter _fastBitConverter = new FastBitConverter();
+        protected bool _autoResize;
 
         public NetDataWriter()
         {
             _maxLength = 64;
             _data = new byte[_maxLength];
+            _autoResize = true;
         }
 
-        public NetDataWriter(int initialSize)
+        public NetDataWriter(bool autoResize)
+        {
+            _maxLength = 64;
+            _data = new byte[_maxLength];
+            _autoResize = autoResize;
+        }
+
+        public NetDataWriter(bool autoResize, int initialSize)
         {
             _maxLength = initialSize;
             _data = new byte[_maxLength];
+            _autoResize = autoResize;
         }
 
         public void ResizeIfNeed(int newSize)
@@ -64,69 +74,96 @@ namespace LiteNetLib.Utils
 
         public void Put(double value)
         {
-            _position += _fastBitConverter.GetBytes(_data, _position, value);
+            if(_autoResize)
+                ResizeIfNeed(_position + 8);
+            _fastBitConverter.GetBytes(_data, _position, value);
+            _position += 8;
         }
 
         public void Put(float value)
         {
-            _position += _fastBitConverter.GetBytes(_data, _position, value);
+            if (_autoResize)
+                ResizeIfNeed(_position + 4);
+            _fastBitConverter.GetBytes(_data, _position, value);
+            _position += 4;
         }
 
         public void Put(long value)
         {
-            _position += FastBitConverter.GetBytes(_data, _position, value);
+            if (_autoResize)
+                ResizeIfNeed(_position + 8);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 8;
         }
 
         public void Put(ulong value)
         {
-            _position += FastBitConverter.GetBytes(_data, _position, value);
+            if (_autoResize)
+                ResizeIfNeed(_position + 8);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 8;
         }
 
         public void Put(int value)
         {
-            _position += FastBitConverter.GetBytes(_data, _position, value);
+            if (_autoResize)
+                ResizeIfNeed(_position + 4);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 4;
         }
 
         public void Put(uint value)
         {
-            _position += FastBitConverter.GetBytes(_data, _position, value);
+            if (_autoResize)
+                ResizeIfNeed(_position + 4);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 4;
         }
 
         public void Put(ushort value)
         {
-            _position += FastBitConverter.GetBytes(_data, _position, value);
+            if (_autoResize)
+                ResizeIfNeed(_position + 2);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 2;
         }
 
         public void Put(short value)
         {
-            _position += FastBitConverter.GetBytes(_data, _position, value);
+            if (_autoResize)
+                ResizeIfNeed(_position + 2);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 2;
         }
 
         public void Put(sbyte value)
         {
+            if (_autoResize)
+                ResizeIfNeed(_position + 1);
             _data[_position] = (byte)value;
             _position++;
         }
 
         public void Put(byte value)
         {
+            if (_autoResize)
+                ResizeIfNeed(_position + 1);
             _data[_position] = value;
             _position++;
         }
 
         public void Put(byte[] data, int offset, int length)
         {
+            if (_autoResize)
+                ResizeIfNeed(_position + length);
             Buffer.BlockCopy(data, offset, _data, _position, length);
             _position += length;
         }
 
-        public void Put(byte[] data, int length)
-        {
-            Put(data, 0, length);
-        }
-
         public void Put(bool value)
         {
+            if (_autoResize)
+                ResizeIfNeed(_position + 1);
             _data[_position] = (byte)(value ? 1 : 0);
             _position++;
         }
@@ -135,11 +172,19 @@ namespace LiteNetLib.Utils
         {
             //put bytes count
             int bytesCount = Encoding.UTF8.GetByteCount(value);
+            if (_autoResize)
+                ResizeIfNeed(_position + bytesCount);
             Put(bytesCount);
 
             //put string
             Encoding.UTF8.GetBytes(value, 0, value.Length, _data, _position);
             _position += bytesCount;
+        }
+
+        public void Put(NetEndPoint endPoint)
+        {
+            Put(endPoint.Host);
+            Put(endPoint.Port);
         }
 
         public void Put(string value, int maxLength)
@@ -152,6 +197,8 @@ namespace LiteNetLib.Utils
 
             //calculate max count
             int bytesCount = Encoding.UTF8.GetByteCount(value);
+            if (_autoResize)
+                ResizeIfNeed(_position + bytesCount);
 
             //put bytes count
             Put(bytesCount);
