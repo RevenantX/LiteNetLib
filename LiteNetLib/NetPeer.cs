@@ -37,6 +37,7 @@ namespace LiteNetLib
         private int _rttResetTimer;
 
         private readonly Stopwatch _pingStopwatch;
+        private readonly Stopwatch _lastPacketStopwatch;
 
         //Common
         private readonly NetSocket _socket;              
@@ -88,6 +89,11 @@ namespace LiteNetLib
             get { return _id; }
         }
 
+        public long TimeSinceLastPacket
+        {
+            get { return _lastPacketStopwatch.ElapsedMilliseconds; }
+        }
+
         internal NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
         {
             _id = remoteEndPoint.GetId();
@@ -107,6 +113,7 @@ namespace LiteNetLib
             _pingSendTimer = 0;
 
             _pingStopwatch = new Stopwatch();
+            _lastPacketStopwatch = new Stopwatch();
 
             _reliableOrderedChannel = new ReliableChannel(this, true, _windowSize);
             _reliableUnorderedChannel = new ReliableChannel(this, false, _windowSize);
@@ -263,6 +270,8 @@ namespace LiteNetLib
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
+            _lastPacketStopwatch.Restart();
+
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
             {

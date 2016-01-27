@@ -13,7 +13,7 @@ namespace LiteNetLib
         public long DisconnectTimeout
         {
             get { return _timeout; }
-            set { _timeout = DisconnectTimeout; }
+            set { _timeout = value; }
         }
 
         public NetServer(int maxClients)
@@ -72,7 +72,7 @@ namespace LiteNetLib
             //Process acks
             foreach (NetPeer netPeer in _peers.Values)
             {
-                if (netPeer.Ping > _timeout)
+                if (netPeer.TimeSinceLastPacket > _timeout)
                 {
                     EnqueueEvent(netPeer, null, NetEventType.Disconnect);
                     RemovePeer(netPeer);

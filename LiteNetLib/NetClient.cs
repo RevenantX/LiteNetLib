@@ -12,6 +12,13 @@ namespace LiteNetLib
         private int _connectTimer;
         private int _reconnectDelay = 500;
         private bool _waitForConnect;
+        private long _timeout = 5000;
+
+        public long DisconnectTimeout
+        {
+            get { return _timeout; }
+            set { _timeout = value; }
+        }
 
         public long Id
         {
@@ -56,6 +63,10 @@ namespace LiteNetLib
                 _peer = null;
             }
             _connected = false;
+            _connectTimer = 0;
+            _connectAttempts = 0;
+            _waitForConnect = false;
+            _id = 0;
         }
 
         public override void Stop()
@@ -120,7 +131,13 @@ namespace LiteNetLib
                 }
             }
 
-             _peer.Update(deltaTime);
+            _peer.Update(deltaTime);
+
+            if (_peer.TimeSinceLastPacket > _timeout)
+            {
+                Stop();
+                EnqueueEvent(NetEventType.Disconnect);
+            }
         }
 
         internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
@@ -132,7 +149,7 @@ namespace LiteNetLib
         internal override void ProcessSendError(NetEndPoint remoteEndPoint)
         {
             Stop();
-            EnqueueEvent(remoteEndPoint, null, NetEventType.Error);
+            EnqueueEvent(NetEventType.Error);
         }
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
