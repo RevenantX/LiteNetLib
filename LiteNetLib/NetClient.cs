@@ -25,6 +25,11 @@ namespace LiteNetLib
             get { return _id; }
         }
 
+        public bool Start()
+        {
+            return Start(0);
+        }
+
         public override bool Start(int port)
         {
             bool result = base.Start(port);
@@ -98,9 +103,8 @@ namespace LiteNetLib
             CloseConnection(true);
 
             //Create reliable connection
-            _peer = new NetPeer(this, _socket, ep);
+            _peer = new NetPeer(this, Socket, ep);
             _peer.DebugTextColor = ConsoleColor.Yellow;
-            _peer.BadRoundTripTime = UpdateTime * 2 + 250;
             _peer.CreateAndSend(PacketProperty.Connect);
 
             _connectAttempts = 0;

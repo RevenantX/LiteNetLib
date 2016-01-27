@@ -3,20 +3,23 @@ using System.Threading;
 using LiteNetLib.Utils;
 
 #if WINRT
-using System;
-using Windows.Storage.Streams;
 using Windows.System.Threading;
 using Windows.Foundation;
-using System.Threading.Tasks;
 using Windows.Networking.Sockets;
-using System.Runtime.InteropServices.WindowsRuntime;
 #endif
 
 namespace LiteNetLib
 {
+    sealed class FlowMode
+    {
+        public int PacketsPerSecond;
+        public int StartRTT;
+    }
+
     public abstract class NetBase
     {
-        internal NetSocket _socket;
+        internal readonly NetSocket Socket;
+        private readonly List<FlowMode> _flowModes;
         protected NetEndPoint _localEndPoint;
 
 #if WINRT
@@ -33,23 +36,68 @@ namespace LiteNetLib
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
 
+        //config section
         public bool UnconnectedMessagesEnabled = false;
         public bool NatPunchEnabled = false;
+
+        /// <summary>
+        /// Process and send packets delay
+        /// </summary>
+        public int UpdateTime
+        {
+            set { _updateTime = value; }
+            get { return _updateTime; }
+        }
+
+        public void AddFlowMode(int startRtt, int packetsPerSecond)
+        {
+            var fm = new FlowMode {PacketsPerSecond = packetsPerSecond, StartRTT = startRtt};
+
+            if (_flowModes.Count > 0 && startRtt < _flowModes[0].StartRTT)
+            {
+                _flowModes.Insert(0, fm);
+            }
+            else
+            {
+                _flowModes.Add(fm);
+            }
+        }
+
+        internal int GetPacketsPerSecond(int flowMode)
+        {
+            if (flowMode < 0)
+                return NetConstants.PacketsPerSecondMax;
+            return _flowModes[flowMode].PacketsPerSecond;
+        }
+
+        internal int GetMaxFlowMode()
+        {
+            return _flowModes.Count - 1;
+        }
+
+        internal int GetStartRtt(int flowMode)
+        {
+            if (flowMode < 0)
+                return 0;
+            return _flowModes[flowMode].StartRTT;
+        }
 
         public readonly NatPunchModule NatPunchModule;
 
         protected NetBase()
         {
+            _flowModes = new List<FlowMode>();
+
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
             
             _updateTime = 100;
 
 #if WINRT
-            _socket = new NetSocket(OnMessageReceived);
+            Socket = new NetSocket(OnMessageReceived);
 #else
             _remoteEndPoint = new NetEndPoint(0);
-            _socket = new NetSocket();
+            Socket = new NetSocket();
 #endif
 
             NatPunchModule = new NatPunchModule(this);
@@ -68,7 +116,7 @@ namespace LiteNetLib
 
             _localEndPoint = new NetEndPoint(port);
 
-            if (_socket.Bind(_localEndPoint))
+            if (Socket.Bind(_localEndPoint))
             {
                 _running = true;
 #if WINRT
@@ -91,7 +139,7 @@ namespace LiteNetLib
             NetPacket p = new NetPacket();
             p.Init(PacketProperty.UnconnectedMessage, message.Length);
             p.PutData(message);
-            return _socket.SendTo(p.RawData, remoteEndPoint) > 0;
+            return Socket.SendTo(p.RawData, remoteEndPoint) > 0;
         }
 
         /// <summary>
@@ -108,17 +156,8 @@ namespace LiteNetLib
                 _logicThread = null;
                 _receiveThread = null;
 #endif
-                _socket.Close();
+                Socket.Close();
             }
-        }
-
-        /// <summary>
-        /// Process and send packets delay
-        /// </summary>
-        public int UpdateTime
-        {
-            set { _updateTime = value; }
-            get { return _updateTime; }
         }
 
         /// <summary>
@@ -235,7 +274,7 @@ namespace LiteNetLib
 
                 //Receive some info
                 byte[] reusableBuffer = null;
-                int result = _socket.ReceiveFrom(ref reusableBuffer, ref _remoteEndPoint, ref errorCode);
+                int result = Socket.ReceiveFrom(ref reusableBuffer, ref _remoteEndPoint, ref errorCode);
 
                 if (result > 0)
                 {
@@ -250,7 +289,7 @@ namespace LiteNetLib
                         //NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
                         ProcessError();
                         _running = false;
-                        _socket.Close();
+                        Socket.Close();
                     }
                 }
             }

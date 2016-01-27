@@ -4,27 +4,17 @@ using System.Diagnostics;
 
 namespace LiteNetLib
 {
-    public enum FlowMode
-    {
-        Bad,
-        Good
-    }
-
     public sealed class NetPeer
     {
         //Flow control
-        private FlowMode _currentFlowMode;
-        private int _sendedPacketsCount;
+        private int _currentFlowMode;
+        private int _sendedPacketsCount;                    
         private int _flowTimer;
-        private const int FlowUpdateTime = 1000;
-        private const int ThrottleIncreaseThreshold = 32;
-        private readonly int[] _flowModes;
 
         //Ping and RTT
         private int _rtt;                                //round trip time
         private int _avgRtt;
         private int _rttCount;
-        private int _badRoundTripTime;
         private int _goodRttCount;
         private int _ping;
         private ushort _pingSequence;
@@ -61,12 +51,6 @@ namespace LiteNetLib
             get { return _remoteEndPoint; }
         }
 
-        public int BadRoundTripTime
-        {
-            get { return _badRoundTripTime; }
-            set { _badRoundTripTime = value; }
-        }
-
         public int Ping
         {
             get { return _ping; }
@@ -78,7 +62,7 @@ namespace LiteNetLib
             set { _pingSendDelay = value; }
         }
 
-        public FlowMode CurrentFlowMode
+        public int CurrentFlowMode
         {
             get { return _currentFlowMode; }
         }
@@ -101,13 +85,8 @@ namespace LiteNetLib
             _socket = socket;
             _remoteEndPoint = remoteEndPoint;
 
-            _flowModes = new int[2];
-            _flowModes[0] = 640 / 4; //bad
-            _flowModes[1] = 640;     //good
-
             _avgRtt = 0;
             _rtt = 0;
-            _badRoundTripTime = 650;
             _pingSendDelay = 1000;
             _pingSendTimer = 0;
 
@@ -199,23 +178,33 @@ namespace LiteNetLib
             _rttCount++;
             _avgRtt = _rtt/_rttCount;
 
-            if (_avgRtt < _badRoundTripTime)
+            //flowmode 0 = fastest
+            //flowmode max = lowest
+
+            if (_avgRtt < _peerListener.GetStartRtt(_currentFlowMode - 1))
             {
+                if (_currentFlowMode <= 0)
+                {
+                    //Already maxed
+                    return;
+                }
+
                 _goodRttCount++;
-                if (_goodRttCount > ThrottleIncreaseThreshold && _currentFlowMode != FlowMode.Good)
+                if (_goodRttCount > NetConstants.FlowIncreaseThreshold)
                 {
                     _goodRttCount = 0;
-                    DebugWrite("[PA]Enabled good flow mode, RTT: {0}", _avgRtt);
-                    _currentFlowMode = FlowMode.Good;
+                    _currentFlowMode--;
+
+                    DebugWriteForce("[PA]Increased flow speed, RTT: {0}, PPS: {1}", _avgRtt, _peerListener.GetPacketsPerSecond(_currentFlowMode));
                 }
             }
-            else
+            else if(_avgRtt > _peerListener.GetStartRtt(_currentFlowMode))
             {
                 _goodRttCount = 0;
-                if (_currentFlowMode != FlowMode.Bad)
+                if (_currentFlowMode < _peerListener.GetMaxFlowMode())
                 {
-                    DebugWrite("[PA]Enabled bad flow mode, RTT: {0}", _avgRtt);
-                    _currentFlowMode = FlowMode.Bad;
+                    _currentFlowMode++;
+                    DebugWriteForce("[PA]Decreased flow speed, RTT: {0}, PPS: {1}", _avgRtt, _peerListener.GetPacketsPerSecond(_currentFlowMode));
                 }
             }
         }
@@ -352,11 +341,15 @@ namespace LiteNetLib
         internal void Update(int deltaTime)
         {
             //Get current flow mode
-            int maxSendPacketsCount = _flowModes[(int)_currentFlowMode];
+            int maxSendPacketsCount = _peerListener.GetPacketsPerSecond(_currentFlowMode);
             int availableSendPacketsCount = maxSendPacketsCount - _sendedPacketsCount;
-            int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime) / FlowUpdateTime);
+            int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime) / NetConstants.FlowUpdateTime);
 
             DebugWrite("[UPDATE]Delta: {0}ms, MaxSend: {1}", deltaTime, currentMaxSend);
+
+            //Pending acks
+            _reliableOrderedChannel.SendAcks((ushort)deltaTime);
+            _reliableUnorderedChannel.SendAcks((ushort)deltaTime);
 
             //Pending send
             int currentSended = 0;
@@ -382,7 +375,7 @@ namespace LiteNetLib
 
             //ResetFlowTimer
             _flowTimer += deltaTime;
-            if (_flowTimer >= FlowUpdateTime)
+            if (_flowTimer >= NetConstants.FlowUpdateTime)
             {
                 DebugWrite("[UPDATE]Reset flow timer, _sendedPackets - {0}", _sendedPacketsCount);
                 _sendedPacketsCount = 0;

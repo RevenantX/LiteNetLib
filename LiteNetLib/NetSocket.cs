@@ -99,6 +99,7 @@ namespace LiteNetLib
         public void Close()
         {
             _udpSocket.Close();
+            _udpSocket.Dispose();
             _udpSocket = null;
         }
     }

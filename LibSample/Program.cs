@@ -40,18 +40,18 @@ class Program
         {
             case NetEventType.Connect:
                 Console.WriteLine("Client connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
+                for (int i = 0; i < 10000; i++)
+                {
+                    byte[] data = new byte[1300];
+                    FastBitConverter.GetBytes(data, 0, i + 1);
+                    netEvent.Peer.Send(data, SendOptions.Reliable);
+                }
                 break;
 
-            //for (int i = 0; i < 2000; i++)
-                //{
-                //    byte[] data = new byte[1300];
-                //    FastBitConverter.GetBytes(data, 0, i + 1);
-                //    netEvent.Peer.Send(data, SendOptions.Reliable);
-                //}
             case NetEventType.Receive:
                 int dt = netEvent.DataReader.GetInt();
                 _messagesReceivedCount++;
-                if(_messagesReceivedCount % 1000 == 0)
+                if(_messagesReceivedCount % 100 == 0)
                     Console.WriteLine("CNT: {0}, DT: {1}", _messagesReceivedCount, dt);
                 break;
 
@@ -68,15 +68,21 @@ class Program
     static void Main(string[] args)
     {
         NetServer server = new NetServer(2);
+        server.AddFlowMode(1, 2000);
+        server.AddFlowMode(10, 800);
+        server.AddFlowMode(100, 10);
         server.UnconnectedMessagesEnabled = true;
         server.Start(9050);
 
         NetClient client = new NetClient();
+        client.AddFlowMode(1, 2000);
+        client.AddFlowMode(10, 800);
+        client.AddFlowMode(100, 10);
         client.UnconnectedMessagesEnabled = true;
-        client.Start(9051);
+        client.Start();
         client.Connect("localhost", 9050);
         client.Stop();
-        client.Start(9051);
+        client.Start();
         client.Connect("localhost", 9050);
 
         NetDataWriter dw = new NetDataWriter();
