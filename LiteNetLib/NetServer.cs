@@ -73,10 +73,12 @@ namespace LiteNetLib
             base.Stop();
         }
 
-        protected override void ProcessError()
+        protected override void ProcessError(string errorMessage)
         {
             _peers.Clear();
-            EnqueueEvent(NetEventType.Error);
+            var netEvent = CreateEvent(NetEventType.Error);
+            netEvent.AdditionalInfo = errorMessage;
+            EnqueueEvent(netEvent);
         }
 
         protected override void PostProcessEvent(int deltaTime)
@@ -88,7 +90,11 @@ namespace LiteNetLib
                 {
                     if (netPeer.TimeSinceLastPacket > _timeout)
                     {
-                        EnqueueEvent(netPeer, null, NetEventType.Disconnect);
+                        var netEvent = CreateEvent(NetEventType.Disconnect);
+                        netEvent.Peer = netPeer;
+                        netEvent.RemoteEndPoint = netPeer.EndPoint;
+                        netEvent.AdditionalInfo = "Timeout";
+                        EnqueueEvent(netEvent);
                         RemovePeer(netPeer);
                     }
                     else
@@ -108,16 +114,24 @@ namespace LiteNetLib
             NetPeer fromPeer;
             if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
             {
-                EnqueueEvent(fromPeer, packet.GetPacketData(), NetEventType.Receive);
+                var netEvent = CreateEvent(NetEventType.Receive);
+                netEvent.Peer = fromPeer;
+                netEvent.RemoteEndPoint = fromPeer.EndPoint;
+                netEvent.DataReader.SetSource(packet.GetPacketData());
+                EnqueueEvent(netEvent);
             }
         }
 
-        internal override void ProcessSendError(NetEndPoint remoteEndPoint)
+        internal override void ProcessSendError(NetEndPoint remoteEndPoint, string errorMessage)
         {
             NetPeer fromPeer;
             if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
             {
-                EnqueueEvent(fromPeer, null, NetEventType.Disconnect);
+                var netEvent = CreateEvent(NetEventType.Disconnect);
+                netEvent.Peer = fromPeer;
+                netEvent.RemoteEndPoint = fromPeer.EndPoint;
+                netEvent.AdditionalInfo = "Peer send error: " + errorMessage;
+                EnqueueEvent(netEvent);
                 RemovePeer(fromPeer);
             }
         }
@@ -143,7 +157,11 @@ namespace LiteNetLib
                 if (packet.Property == PacketProperty.Disconnect)
                 {
                     RemovePeer(netPeer);
-                    EnqueueEvent(netPeer, null, NetEventType.Disconnect);
+                    var netEvent = CreateEvent(NetEventType.Disconnect);
+                    netEvent.Peer = netPeer;
+                    netEvent.RemoteEndPoint = netPeer.EndPoint;
+                    netEvent.AdditionalInfo = "successfuly disconnected";
+                    EnqueueEvent(netEvent);
                 }
                 else
                 {
@@ -174,7 +192,10 @@ namespace LiteNetLib
                     _peers.Add(peerEndPoint, netPeer);
                 }
 
-                EnqueueEvent(netPeer, null, NetEventType.Connect);
+                var netEvent = CreateEvent(NetEventType.Connect);
+                netEvent.Peer = netPeer;
+                netEvent.RemoteEndPoint = netPeer.EndPoint;
+                EnqueueEvent(netEvent);
             }
         }
 

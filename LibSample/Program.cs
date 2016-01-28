@@ -71,7 +71,7 @@ class Program
         server.UnconnectedMessagesEnabled = true;
         server.Start(9050);
         server.Stop();
-        server.Start(9050);
+        //server.Start(9050);
 
         NetClient client = new NetClient();
         client.UnconnectedMessagesEnabled = true;
@@ -101,7 +101,7 @@ class Program
             Thread.Sleep(10);
         }
 
-        server.Stop();
+        //server.Stop();
         client.Stop();
     }
 }

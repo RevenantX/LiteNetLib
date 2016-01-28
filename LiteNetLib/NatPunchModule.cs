@@ -85,7 +85,9 @@ namespace LiteNetLib
                     NetUtils.DebugWrite(ConsoleColor.Green, "NAT punch received from {0} we're client, so we've succeeded - additional info: {1}", senderEndPoint, additionalInfo);
 
                     //Release punch success to client; enabling him to Connect() to msg.Sender if token is ok
-                    _netBase.EnqueueEvent(senderEndPoint, null, NetEventType.NatIntroductionSuccess);
+                    var netEvent = _netBase.CreateEvent(NetEventType.NatIntroductionSuccess);
+                    netEvent.RemoteEndPoint = senderEndPoint;
+                    _netBase.EnqueueEvent(netEvent);
 
                     //send a return punch just for good measure
                     dw.Put((byte)0);

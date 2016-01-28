@@ -179,22 +179,7 @@ namespace LiteNetLib
             get { return _localEndPoint; }
         }
 
-        internal void EnqueueEvent(NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
-        {
-            EnqueueEvent(null, remoteEndPoint, data, type);
-        }
-
-        internal void EnqueueEvent(NetPeer peer, byte[] data, NetEventType type)
-        {
-            EnqueueEvent(peer, peer.EndPoint, data, type);
-        }
-
-        internal void EnqueueEvent(NetEventType type)
-        {
-            EnqueueEvent(null, null, null, type);
-        }
-
-        internal void EnqueueEvent(NetPeer peer, NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
+        internal NetEvent CreateEvent(NetEventType type)
         {
             NetEvent evt;
             if (_netEventsPool.Count > 0)
@@ -209,12 +194,12 @@ namespace LiteNetLib
                 evt = new NetEvent();
                 evt.DataReader = new NetDataReader();
             }
-            if (data != null)
-                evt.DataReader.SetSource(data);
-
-            evt.Peer = peer;
             evt.Type = type;
-            evt.RemoteEndPoint = remoteEndPoint;
+            return evt;
+        }
+
+        internal void EnqueueEvent(NetEvent evt)
+        {
             lock (_netEventsQueue)
             {
                 _netEventsQueue.Enqueue(evt);
@@ -227,6 +212,8 @@ namespace LiteNetLib
             {
                 netEvent.DataReader.Clear();
                 netEvent.Peer = null;
+                netEvent.AdditionalInfo = string.Empty;
+                netEvent.RemoteEndPoint = null;
                 _netEventsPool.Push(netEvent);
             }
         }
@@ -293,7 +280,7 @@ namespace LiteNetLib
                     if (errorCode != 10054)
                     {
                         NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
-                        ProcessError();
+                        ProcessError("Receive socket error: " + errorCode);
                         Stop();
                         return;
                     }
@@ -314,7 +301,12 @@ namespace LiteNetLib
             {
                 case PacketProperty.UnconnectedMessage:
                     if (UnconnectedMessagesEnabled)
-                        EnqueueEvent(remoteEndPoint, NetPacket.GetUnconnectedData(reusableBuffer, count), NetEventType.ReceiveUnconnected);
+                    {
+                        var netEvent = CreateEvent(NetEventType.ReceiveUnconnected);
+                        netEvent.RemoteEndPoint = remoteEndPoint;
+                        netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
+                        EnqueueEvent(netEvent);
+                    }
                     return;
                 case PacketProperty.NatIntroduction:
                 case PacketProperty.NatIntroductionRequest:
@@ -328,12 +320,12 @@ namespace LiteNetLib
             ReceiveFromSocket(reusableBuffer, count, remoteEndPoint);
         }
 
-        protected abstract void ProcessError();
+        protected abstract void ProcessError(string errorMessage);
 
         protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
 
         internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
-        internal abstract void ProcessSendError(NetEndPoint endPoint);
+        internal abstract void ProcessSendError(NetEndPoint endPoint, string errorMessage);
     }
 }

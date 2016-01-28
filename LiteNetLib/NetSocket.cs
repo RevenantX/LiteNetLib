@@ -38,11 +38,24 @@ namespace LiteNetLib
 
         public int SendTo(byte[] data, NetEndPoint remoteEndPoint)
         {
+            int unusedErrorCode = 0;
+            return SendTo(data, remoteEndPoint, ref unusedErrorCode);
+        }
+
+        public int SendTo(byte[] data, NetEndPoint remoteEndPoint, ref int errorCode)
+        {
             try
             {
                 int result = _udpSocket.SendTo(data, remoteEndPoint.EndPoint);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint.EndPoint, result);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint.EndPoint,
+                    result);
                 return result;
+            }
+            catch (SocketException ex)
+            {
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]" + ex);
+                errorCode = ex.ErrorCode;
+                return -1;
             }
             catch (Exception ex)
             {
@@ -99,7 +112,6 @@ namespace LiteNetLib
         public void Close()
         {
             _udpSocket.Close();
-            _udpSocket.Dispose();
             _udpSocket = null;
         }
     }

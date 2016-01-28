@@ -20,6 +20,11 @@ namespace LiteNetLib
             set { _timeout = value; }
         }
 
+        public int Ping
+        {
+            get { return _peer == null ? 0 : _peer.Ping; }
+        }
+
         public long Id
         {
             get { return _id; }
@@ -80,9 +85,11 @@ namespace LiteNetLib
             base.Stop();
         }
 
-        protected override void ProcessError()
+        protected override void ProcessError(string errorMessage)
         {
-            EnqueueEvent(NetEventType.Error);
+            var netEvent = CreateEvent(NetEventType.Disconnect);
+            netEvent.AdditionalInfo = errorMessage;
+            EnqueueEvent(netEvent);
             if (_peer != null)
             {
                 CloseConnection(true);
@@ -125,7 +132,9 @@ namespace LiteNetLib
                     _connectAttempts++;
                     if (_connectAttempts > _maxConnectAttempts)
                     {
-                        EnqueueEvent(NetEventType.Disconnect);
+                        var netEvent = CreateEvent(NetEventType.Disconnect);
+                        netEvent.AdditionalInfo = "connection timeout";
+                        EnqueueEvent(netEvent);
                         Stop();
                         return;
                     }
@@ -140,20 +149,28 @@ namespace LiteNetLib
             if (_peer.TimeSinceLastPacket > _timeout)
             {
                 Stop();
-                EnqueueEvent(NetEventType.Disconnect);
+                var netEvent = CreateEvent(NetEventType.Disconnect);
+                netEvent.AdditionalInfo = "Timeout";
+                EnqueueEvent(netEvent);
             }
         }
 
         internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
-            EnqueueEvent(_peer, packet.GetPacketData(), NetEventType.Receive);
+            var netEvent = CreateEvent(NetEventType.Receive);
+            netEvent.DataReader.SetSource(packet.GetPacketData());
+            netEvent.Peer = _peer;
+            netEvent.RemoteEndPoint = remoteEndPoint;
+            EnqueueEvent(netEvent);
         }
 
-        internal override void ProcessSendError(NetEndPoint remoteEndPoint)
+        internal override void ProcessSendError(NetEndPoint remoteEndPoint, string errorMessage)
         {
             Stop();
-            EnqueueEvent(NetEventType.Error);
+            var netEvent = CreateEvent(NetEventType.Error);
+            netEvent.AdditionalInfo = errorMessage;
+            EnqueueEvent(netEvent);
         }
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
@@ -182,7 +199,9 @@ namespace LiteNetLib
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
                 CloseConnection(true);
-                EnqueueEvent(NetEventType.Disconnect);
+                var disconnectEvent = CreateEvent(NetEventType.Disconnect);
+                disconnectEvent.AdditionalInfo = "Received disconnection from server";
+                EnqueueEvent(disconnectEvent);
                 return;
             }
 
@@ -191,7 +210,10 @@ namespace LiteNetLib
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
                 _waitForConnect = false;
                 _connected = true;
-                EnqueueEvent(_peer, null, NetEventType.Connect);
+                var connectEvent = CreateEvent(NetEventType.Connect);
+                connectEvent.Peer = _peer;
+                connectEvent.RemoteEndPoint = _peer.EndPoint;
+                EnqueueEvent(connectEvent);
                 return;
             }
 

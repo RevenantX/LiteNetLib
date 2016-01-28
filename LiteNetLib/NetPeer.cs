@@ -263,7 +263,8 @@ namespace LiteNetLib
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
-            _lastPacketStopwatch.Restart();
+            _lastPacketStopwatch.Reset();
+            _lastPacketStopwatch.Start();
 
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
@@ -332,11 +333,12 @@ namespace LiteNetLib
 
         internal bool SendRawData(byte[] data)
         {
-            if (_socket.SendTo(data, _remoteEndPoint) == -1)
+            int errorCode = 0;
+            if (_socket.SendTo(data, _remoteEndPoint, ref errorCode) == -1)
             {
                 lock (_peerListener)
                 {
-                    _peerListener.ProcessSendError(_remoteEndPoint);
+                    _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
                 }
                 return false;
             }
@@ -398,7 +400,8 @@ namespace LiteNetLib
                 CreateAndSend(PacketProperty.Ping, _pingSequence);
 
                 //reset timer
-                _pingStopwatch.Restart();
+                _pingStopwatch.Reset();
+                _pingStopwatch.Start();
             }
 
             //reset rtt
