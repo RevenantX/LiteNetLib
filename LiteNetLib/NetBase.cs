@@ -135,11 +135,16 @@ namespace LiteNetLib
 
         public bool SendUnconnectedMessage(byte[] message, NetEndPoint remoteEndPoint)
         {
+            return SendUnconnectedMessage(message, message.Length, remoteEndPoint);
+        }
+
+        public bool SendUnconnectedMessage(byte[] message, int length, NetEndPoint remoteEndPoint)
+        {
             if (!_running)
                 return false;
             NetPacket p = new NetPacket();
-            p.Init(PacketProperty.UnconnectedMessage, message.Length);
-            p.PutData(message);
+            p.Init(PacketProperty.UnconnectedMessage, length);
+            p.PutData(message, length);
             return Socket.SendTo(p.RawData, remoteEndPoint) > 0;
         }
 

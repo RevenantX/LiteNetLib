@@ -23,14 +23,23 @@ namespace LiteNetLib
             _maxClients = maxClients;
         }
 
+        public int PeersCount
+        {
+            get { return _peers.Count; }
+        }
+
         public NetPeer[] GetPeers()
         {
-            NetPeer[] peers = new NetPeer[_peers.Count];
+            NetPeer[] peers;
 
-            int num = 0;
-            foreach (NetPeer netPeer in _peers.Values)
+            lock (_peers)
             {
-                peers[num++] = netPeer;
+                peers = new NetPeer[_peers.Count];
+                int num = 0;
+                foreach (NetPeer netPeer in _peers.Values)
+                {
+                    peers[num++] = netPeer;
+                }
             }
 
             return peers;
@@ -169,21 +178,21 @@ namespace LiteNetLib
             }
         }
 
-        public void SendToClients(byte[] data, SendOptions options)
+        public void SendToClients(byte[] data, int length, SendOptions options)
         {
             foreach (NetPeer netPeer in _peers.Values)
             {
-                netPeer.Send(data, options);
+                netPeer.Send(data, length, options);
             }
         }
 
-        public void SendToClients(byte[] data, SendOptions options, NetPeer excludePeer)
+        public void SendToClients(byte[] data, int length, SendOptions options, NetPeer excludePeer)
 		{
 			foreach (NetPeer netPeer in _peers.Values)
 			{
 				if(netPeer != excludePeer)
 				{
-                    netPeer.Send(data, options);
+                    netPeer.Send(data, length, options);
 				}
 			}
 		}

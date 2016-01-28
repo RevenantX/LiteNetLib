@@ -103,23 +103,28 @@ namespace LiteNetLib
 
         public void Send(byte[] data, SendOptions options)
         {
+            Send(data, data.Length, options);
+        }
+
+        public void Send(byte[] data, int length, SendOptions options)
+        {
             NetPacket packet;
             switch (options)
             {
-                case SendOptions.Reliable:
-                    packet = GetPacketFromPool(PacketProperty.Reliable, data.Length);
+                case SendOptions.ReliableUnordered:
+                    packet = GetPacketFromPool(PacketProperty.Reliable, length);
                     break;
                 case SendOptions.Sequenced:
-                    packet = GetPacketFromPool(PacketProperty.Sequenced, data.Length);
+                    packet = GetPacketFromPool(PacketProperty.Sequenced, length);
                     break;
                 case SendOptions.ReliableOrdered:
-                    packet = GetPacketFromPool(PacketProperty.ReliableOrdered, data.Length);
+                    packet = GetPacketFromPool(PacketProperty.ReliableOrdered, length);
                     break;
                 default:
-                    packet = GetPacketFromPool(PacketProperty.None, data.Length);
+                    packet = GetPacketFromPool(PacketProperty.None, length);
                     break;
             }
-            packet.PutData(data);
+            packet.PutData(data, length);
             SendPacket(packet);
         }
 

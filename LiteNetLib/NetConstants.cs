@@ -2,8 +2,8 @@ namespace LiteNetLib
 {
     public enum SendOptions
     {
-        None,
-        Reliable,
+        Unreliable,
+        ReliableUnordered,
         Sequenced,
         ReliableOrdered
     }

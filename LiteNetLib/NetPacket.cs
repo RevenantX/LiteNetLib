@@ -57,9 +57,9 @@ namespace LiteNetLib
             Buffer.BlockCopy(dataWriter.Data, 0, RawData, GetHeaderSize(Property), dataWriter.Length);
         }
 
-        public void PutData(byte[] data)
+        public void PutData(byte[] data, int length)
         {
-            Buffer.BlockCopy(data, 0, RawData, GetHeaderSize(Property), data.Length);
+            Buffer.BlockCopy(data, 0, RawData, GetHeaderSize(Property), length);
         }
 
         public static bool GetPacketProperty(byte[] data, out PacketProperty property)

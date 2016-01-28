@@ -17,7 +17,7 @@ class Program
 
             case NetEventType.Receive:
                 //echo
-                netEvent.Peer.Send(netEvent.DataReader.Data, SendOptions.Reliable);
+                netEvent.Peer.Send(netEvent.DataReader.Data, SendOptions.ReliableUnordered);
                 break;
 
             case NetEventType.Disconnect:
@@ -44,7 +44,7 @@ class Program
                 {
                     byte[] data = new byte[1300];
                     FastBitConverter.GetBytes(data, 0, i + 1);
-                    netEvent.Peer.Send(data, SendOptions.Reliable);
+                    netEvent.Peer.Send(data, SendOptions.ReliableUnordered);
                 }
                 break;
 
