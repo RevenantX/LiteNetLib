@@ -68,21 +68,17 @@ class Program
     static void Main(string[] args)
     {
         NetServer server = new NetServer(2);
-        server.AddFlowMode(1, 2000);
-        server.AddFlowMode(10, 800);
-        server.AddFlowMode(100, 10);
         server.UnconnectedMessagesEnabled = true;
+        server.Start(9050);
+        server.Stop();
         server.Start(9050);
 
         NetClient client = new NetClient();
-        client.AddFlowMode(1, 2000);
-        client.AddFlowMode(10, 800);
-        client.AddFlowMode(100, 10);
         client.UnconnectedMessagesEnabled = true;
-        client.Start();
+        client.Start(9051);
         client.Connect("localhost", 9050);
         client.Stop();
-        client.Start();
+        client.Start(9051);
         client.Connect("localhost", 9050);
 
         NetDataWriter dw = new NetDataWriter();
