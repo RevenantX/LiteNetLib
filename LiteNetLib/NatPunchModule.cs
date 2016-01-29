@@ -8,10 +8,12 @@ namespace LiteNetLib
     public sealed class NatPunchModule
     {
         private readonly NetBase _netBase;
+        private readonly NetSocket _socket;
 
-        internal NatPunchModule(NetBase netBase)
+        internal NatPunchModule(NetBase netBase, NetSocket socket)
         {
             _netBase = netBase;
+            _socket = socket;
         }
 
         public void NatIntroduce(
@@ -31,7 +33,7 @@ namespace LiteNetLib
             dw.Put(additionalInfo);
 
             p.Init(PacketProperty.NatIntroduction, dw);
-            _netBase.Socket.SendTo(p.RawData, clientExternal);
+            _socket.SendTo(p.RawData, clientExternal);
 
             //Second packet (client)
             dw.Reset();
@@ -41,7 +43,7 @@ namespace LiteNetLib
             dw.Put(additionalInfo);
 
             p.Init(PacketProperty.NatIntroduction, dw);
-            _netBase.Socket.SendTo(p.RawData, hostExternal);
+            _socket.SendTo(p.RawData, hostExternal);
         }
 
         public void SendNatIntroduceRequest(NetEndPoint masterServerEndPoint, string additionalInfo)
@@ -57,7 +59,7 @@ namespace LiteNetLib
             //prepare packet
             NetPacket p = new NetPacket();
             p.Init(PacketProperty.NatIntroductionRequest, dw);
-            _netBase.Socket.SendTo(p.RawData, masterServerEndPoint);
+            _socket.SendTo(p.RawData, masterServerEndPoint);
         }
 
         internal void ProcessMessage(NetEndPoint senderEndPoint, PacketProperty property, byte[] data)
@@ -94,7 +96,7 @@ namespace LiteNetLib
                     dw.Put(additionalInfo);
                     NetPacket packet = new NetPacket();
                     packet.Init(PacketProperty.NatPunchMessage, dw);
-                    _netBase.Socket.SendTo(packet.RawData, senderEndPoint);
+                    _socket.SendTo(packet.RawData, senderEndPoint);
                     break;
             }
         }

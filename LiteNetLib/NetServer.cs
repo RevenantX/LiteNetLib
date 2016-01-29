@@ -183,7 +183,7 @@ namespace LiteNetLib
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request: accepting");
                 //Getting new id for peer
                 NetEndPoint peerEndPoint = remoteEndPoint.Clone();
-                netPeer = new NetPeer(this, Socket, peerEndPoint);
+                netPeer = CreatePeer(peerEndPoint);
                 netPeer.Recycle(packet);
                 netPeer.CreateAndSend(PacketProperty.Connect);
 
@@ -194,7 +194,7 @@ namespace LiteNetLib
 
                 var netEvent = CreateEvent(NetEventType.Connect);
                 netEvent.Peer = netPeer;
-                netEvent.RemoteEndPoint = netPeer.EndPoint;
+                netEvent.RemoteEndPoint = peerEndPoint;
                 EnqueueEvent(netEvent);
             }
         }

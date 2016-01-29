@@ -6,7 +6,6 @@ namespace LiteNetLib
     {
         private NetPeer _peer;
         private bool _connected;
-        private long _id;
         private int _maxConnectAttempts = 10;
         private int _connectAttempts;
         private int _connectTimer;
@@ -25,11 +24,6 @@ namespace LiteNetLib
             get { return _peer == null ? 0 : _peer.Ping; }
         }
 
-        public long Id
-        {
-            get { return _id; }
-        }
-
         public bool Start()
         {
             return Start(0);
@@ -40,7 +34,7 @@ namespace LiteNetLib
             bool result = base.Start(port);
             if (result)
             {
-                _id = _localEndPoint.GetId();
+                //_id = _localEndPoint.GetId();
             }
             return result;
         }
@@ -76,7 +70,6 @@ namespace LiteNetLib
             _connectTimer = 0;
             _connectAttempts = 0;
             _waitForConnect = false;
-            _id = 0;
         }
 
         public override void Stop()
@@ -110,7 +103,7 @@ namespace LiteNetLib
             CloseConnection(true);
 
             //Create reliable connection
-            _peer = new NetPeer(this, Socket, ep);
+            _peer = CreatePeer(ep);
             _peer.DebugTextColor = ConsoleColor.Yellow;
             _peer.CreateAndSend(PacketProperty.Connect);
 

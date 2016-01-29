@@ -19,9 +19,9 @@ namespace LiteNetLib
 
     public abstract class NetBase
     {
-        internal readonly NetSocket Socket;
+        private readonly NetSocket _socket;
         private readonly List<FlowMode> _flowModes;
-        protected NetEndPoint _localEndPoint;
+        private NetEndPoint _localEndPoint;
 
 #if WINRT
         private readonly ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
@@ -95,13 +95,18 @@ namespace LiteNetLib
             _updateTime = 100;
 
 #if WINRT
-            Socket = new NetSocket(OnMessageReceived);
+            _socket = new NetSocket(OnMessageReceived);
 #else
             _remoteEndPoint = new NetEndPoint(0);
-            Socket = new NetSocket();
+            _socket = new NetSocket();
 #endif
 
-            NatPunchModule = new NatPunchModule(this);
+            NatPunchModule = new NatPunchModule(this, _socket);
+        }
+
+        protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
+        {
+            return new NetPeer(this, _socket, remoteEndPoint);
         }
 
         /// <summary>
@@ -117,7 +122,7 @@ namespace LiteNetLib
 
             _localEndPoint = new NetEndPoint(port);
 
-            if (Socket.Bind(_localEndPoint))
+            if (_socket.Bind(_localEndPoint))
             {
                 _running = true;
 #if WINRT
@@ -145,7 +150,7 @@ namespace LiteNetLib
             NetPacket p = new NetPacket();
             p.Init(PacketProperty.UnconnectedMessage, length);
             p.PutData(message, length);
-            return Socket.SendTo(p.RawData, remoteEndPoint) > 0;
+            return _socket.SendTo(p.RawData, remoteEndPoint) > 0;
         }
 
         /// <summary>
@@ -162,7 +167,7 @@ namespace LiteNetLib
                 _logicThread = null;
                 _receiveThread = null;
 #endif
-                Socket.Close();
+                _socket.Close();
             }
         }
 
@@ -267,7 +272,7 @@ namespace LiteNetLib
 
                 //Receive some info
                 byte[] reusableBuffer = null;
-                int result = Socket.ReceiveFrom(ref reusableBuffer, ref _remoteEndPoint, ref errorCode);
+                int result = _socket.ReceiveFrom(ref reusableBuffer, ref _remoteEndPoint, ref errorCode);
 
                 if (result > 0)
                 {
@@ -321,7 +326,6 @@ namespace LiteNetLib
         }
 
         protected abstract void ProcessError(string errorMessage);
-
         protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
 
