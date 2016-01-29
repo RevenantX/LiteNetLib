@@ -39,6 +39,12 @@ namespace LiteNetLib
         //Send to
         public int SendTo(byte[] data, NetEndPoint remoteEndPoint)
         {
+            int errorCode = 0;
+            return SendTo(data, remoteEndPoint, ref errorCode);
+        }
+
+        public int SendTo(byte[] data, NetEndPoint remoteEndPoint, ref int errorCode)
+        {
             try
             {
                 DataWriter writer;
