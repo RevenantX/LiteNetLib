@@ -17,6 +17,7 @@ namespace LiteNetLib
         public const ushort HalfMaxSequence = MaxSequence / 2;
         public const int MaxPacketSize = 1432;
         public const int MaxPacketDataSize = MaxPacketSize - HeaderSize;
+        public const int MaxSequencedPacketDataSize = MaxPacketSize - SequencedHeaderSize;
 
         //peer specific
         public const int FlowUpdateTime = 1000;
