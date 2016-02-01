@@ -20,11 +20,6 @@ namespace LiteNetLib
             Port = port;
         }
 
-        internal NetEndPoint Clone()
-        {
-            return new NetEndPoint(HostName, PortStr);
-        }
-
         public override bool Equals(object obj)
         {
             if (!(obj is NetEndPoint))

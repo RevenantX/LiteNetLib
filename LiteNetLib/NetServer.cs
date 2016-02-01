@@ -202,8 +202,7 @@ namespace LiteNetLib
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request: accepting");
                 //Getting new id for peer
-                NetEndPoint peerEndPoint = remoteEndPoint.Clone();
-                netPeer = CreatePeer(peerEndPoint);
+                netPeer = CreatePeer(remoteEndPoint);
 
                 //response with id
                 long connectionId = NetPeer.GetConnectId(packet);
@@ -214,13 +213,13 @@ namespace LiteNetLib
 
                 lock (_peers)
                 {
-                    _peers.Add(peerEndPoint, netPeer);
-                    _peerConnectionIds.Add(peerEndPoint, connectionId);
+                    _peers.Add(remoteEndPoint, netPeer);
+                    _peerConnectionIds.Add(remoteEndPoint, connectionId);
                 }
 
                 var netEvent = CreateEvent(NetEventType.Connect);
                 netEvent.Peer = netPeer;
-                netEvent.RemoteEndPoint = peerEndPoint;
+                netEvent.RemoteEndPoint = remoteEndPoint;
                 netEvent.AdditionalInfo = connectionId.ToString();
                 EnqueueEvent(netEvent);
             }

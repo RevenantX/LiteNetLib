@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using LiteNetLib.Utils;
@@ -6,7 +5,8 @@ using LiteNetLib.Utils;
 #if WINRT
 using Windows.System.Threading;
 using Windows.Foundation;
-using Windows.Networking.Sockets;
+#else
+using System;
 #endif
 
 namespace LiteNetLib
@@ -24,13 +24,15 @@ namespace LiteNetLib
         private NetEndPoint _localEndPoint;
 
 #if WINRT
-        private readonly ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
+        private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
+        private readonly ManualResetEvent _receiveWaiter = new ManualResetEvent(false);
         private IAsyncAction _updateAction;
+        private IAsyncAction _receiveAction;
 #else
         private Thread _logicThread;
         private Thread _receiveThread;
-        private NetEndPoint _remoteEndPoint;
 #endif
+        private NetEndPoint _remoteEndPoint;
 
         private int _updateTime;
         private bool _running;
@@ -95,15 +97,10 @@ namespace LiteNetLib
             
             _updateTime = 100;
 
-#if WINRT
-            _socket = new NetSocket(OnMessageReceived);
-#else
             _remoteEndPoint = new NetEndPoint(0);
             _socket = new NetSocket();
-#endif
 
             NatPunchModule = new NatPunchModule(this, _socket);
-            NtpSyncModule = new NtpSyncModule(this, _socket);
         }
 
         protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
@@ -128,7 +125,15 @@ namespace LiteNetLib
             {
                 _running = true;
 #if WINRT
-                _updateAction = ThreadPool.RunAsync(a => UpdateLogic(), WorkItemPriority.Normal, WorkItemOptions.TimeSliced);
+                _updateAction = ThreadPool.RunAsync(
+                    a => UpdateLogic(), 
+                    WorkItemPriority.Normal, 
+                    WorkItemOptions.TimeSliced);
+
+                _receiveAction = ThreadPool.RunAsync(
+                    a => ReceiveLogic(), 
+                    WorkItemPriority.Normal,
+                    WorkItemOptions.TimeSliced);
 #else
                 _logicThread = new Thread(UpdateLogic);
                 _receiveThread = new Thread(ReceiveLogic);
@@ -246,28 +251,13 @@ namespace LiteNetLib
             {
                 PostProcessEvent(_updateTime);
 #if WINRT
-                _manualResetEvent.WaitOne(_updateTime);
+                _updateWaiter.WaitOne(_updateTime);
 #else
                 Thread.Sleep(_updateTime);
 #endif
             }
         }
 
-#if WINRT
-        private readonly NetEndPoint _tempEndPoint = new NetEndPoint(0);
-        private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
-        {
-            var dataReader = args.GetDataReader();
-            uint count = dataReader.UnconsumedBufferLength;
-            if (count > 0)
-            {
-                byte[] data = new byte[count];
-                dataReader.ReadBytes(data);
-                _tempEndPoint.Set(args.RemoteAddress, args.RemotePort);
-                DataReceived(data, data.Length, _tempEndPoint);
-            }
-        }
-#else
         private void ReceiveLogic()
         {
             while (_running)
@@ -295,9 +285,11 @@ namespace LiteNetLib
                         return;
                     }
                 }
+#if WINRT
+                _receiveWaiter.WaitOne(1);
+#endif
             }
         }
-#endif
 
         private void DataReceived(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {

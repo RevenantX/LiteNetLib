@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Windows.Foundation;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 
@@ -10,13 +9,38 @@ namespace LiteNetLib
     {
         private readonly DatagramSocket _datagramSocket;
         private readonly Dictionary<NetEndPoint, DataWriter> _peers = new Dictionary<NetEndPoint, DataWriter>();
+        private readonly Queue<IncomingData> _incomingData = new Queue<IncomingData>();
+
+        private struct IncomingData
+        {
+            public NetEndPoint EndPoint;
+            public byte[] Data;
+        }
 
         //Socket constructor
-        public NetSocket(TypedEventHandler<DatagramSocket, DatagramSocketMessageReceivedEventArgs> onReceive)
+        public NetSocket()
         {
             _datagramSocket = new DatagramSocket();
             _datagramSocket.Control.DontFragment = true;
-            _datagramSocket.MessageReceived += onReceive;
+            _datagramSocket.MessageReceived += OnMessageReceived;
+        }
+
+        
+        private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
+        {
+            var dataReader = args.GetDataReader();
+            uint count = dataReader.UnconsumedBufferLength;
+            if (count > 0)
+            {
+                byte[] data = new byte[count];
+                dataReader.ReadBytes(data);
+                _incomingData.Enqueue(
+                    new IncomingData
+                    {
+                        EndPoint = new NetEndPoint(args.RemoteAddress, args.RemotePort),
+                        Data = data
+                    });
+            }
         }
 
         //Bind socket to port
@@ -66,6 +90,16 @@ namespace LiteNetLib
             {
                 return -1;
             }
+        }
+
+        public int ReceiveFrom(ref byte[] data, ref NetEndPoint remoteEndPoint, ref int errorCode)
+        {
+            if (_incomingData.Count == 0)
+                return 0;
+            var incomingData = _incomingData.Dequeue();
+            data = incomingData.Data;
+            remoteEndPoint = incomingData.EndPoint;
+            return data.Length;
         }
 
         //Close socket
