@@ -25,7 +25,6 @@ namespace LiteNetLib
 
 #if WINRT
         private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
-        private readonly ManualResetEvent _receiveWaiter = new ManualResetEvent(false);
         private IAsyncAction _updateAction;
         private IAsyncAction _receiveAction;
 #else
@@ -44,8 +43,6 @@ namespace LiteNetLib
         public bool NatPunchEnabled = false;
 
         public readonly NatPunchModule NatPunchModule;
-        public readonly NtpSyncModule NtpSyncModule;
-
         /// <summary>
         /// Process and send packets delay
         /// </summary>
@@ -285,9 +282,6 @@ namespace LiteNetLib
                         return;
                     }
                 }
-#if WINRT
-                _receiveWaiter.WaitOne(1);
-#endif
             }
         }
 

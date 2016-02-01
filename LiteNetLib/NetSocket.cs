@@ -10,6 +10,8 @@ namespace LiteNetLib
         private readonly byte[] _receiveBuffer = new byte[NetConstants.MaxPacketSize];
         private Socket _udpSocket;
 
+        public int ReceiveTimeout = 10;
+
         public NetSocket()
         {
             //_udpSocket.DontFragment = true;
@@ -67,7 +69,7 @@ namespace LiteNetLib
         public int ReceiveFrom(ref byte[] data, ref NetEndPoint remoteEndPoint, ref int errorCode)
         {
             //wait for data
-            if (!_udpSocket.Poll(10000, SelectMode.SelectRead))
+            if (!_udpSocket.Poll(ReceiveTimeout * 1000, SelectMode.SelectRead))
             {
                 return 0;
             }

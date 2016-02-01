@@ -67,6 +67,13 @@ class Program
 
     static void Main(string[] args)
     {
+        NtpSyncModule ntpSync = new NtpSyncModule("pool.ntp.org");
+        ntpSync.GetNetworkTime();
+        if (ntpSync.SyncedTime.HasValue)
+        {
+            Console.WriteLine("Synced time test: " + ntpSync.SyncedTime.Value);
+        }
+
         NetServer server = new NetServer(2);
         server.UnconnectedMessagesEnabled = true;
         server.Start(9050);

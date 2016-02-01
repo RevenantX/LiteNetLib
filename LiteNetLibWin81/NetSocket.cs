@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 
@@ -10,12 +11,15 @@ namespace LiteNetLib
         private readonly DatagramSocket _datagramSocket;
         private readonly Dictionary<NetEndPoint, DataWriter> _peers = new Dictionary<NetEndPoint, DataWriter>();
         private readonly Queue<IncomingData> _incomingData = new Queue<IncomingData>();
+        private readonly AutoResetEvent _receiveWaiter = new AutoResetEvent(false);
 
         private struct IncomingData
         {
             public NetEndPoint EndPoint;
             public byte[] Data;
         }
+
+        public int ReceiveTimeout = 10;
 
         //Socket constructor
         public NetSocket()
@@ -40,6 +44,7 @@ namespace LiteNetLib
                         EndPoint = new NetEndPoint(args.RemoteAddress, args.RemotePort),
                         Data = data
                     });
+                _receiveWaiter.Set();
             }
         }
 
@@ -94,6 +99,7 @@ namespace LiteNetLib
 
         public int ReceiveFrom(ref byte[] data, ref NetEndPoint remoteEndPoint, ref int errorCode)
         {
+            _receiveWaiter.WaitOne(ReceiveTimeout);
             if (_incomingData.Count == 0)
                 return 0;
             var incomingData = _incomingData.Dequeue();
