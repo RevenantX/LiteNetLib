@@ -220,7 +220,7 @@ namespace LiteNetLib
                     _goodRttCount = 0;
                     _currentFlowMode--;
 
-                    DebugWriteForce("[PA]Increased flow speed, RTT: {0}, PPS: {1}", _avgRtt, _peerListener.GetPacketsPerSecond(_currentFlowMode));
+                    DebugWrite("[PA]Increased flow speed, RTT: {0}, PPS: {1}", _avgRtt, _peerListener.GetPacketsPerSecond(_currentFlowMode));
                 }
             }
             else if(_avgRtt > _peerListener.GetStartRtt(_currentFlowMode))
@@ -229,7 +229,7 @@ namespace LiteNetLib
                 if (_currentFlowMode < _peerListener.GetMaxFlowMode())
                 {
                     _currentFlowMode++;
-                    DebugWriteForce("[PA]Decreased flow speed, RTT: {0}, PPS: {1}", _avgRtt, _peerListener.GetPacketsPerSecond(_currentFlowMode));
+                    DebugWrite("[PA]Decreased flow speed, RTT: {0}, PPS: {1}", _avgRtt, _peerListener.GetPacketsPerSecond(_currentFlowMode));
                 }
             }
         }
@@ -296,6 +296,7 @@ namespace LiteNetLib
                         Recycle(packet);
                         break;
                     }
+                    DebugWrite("[PP]Ping receive, send pong");
                     _remotePingSequence = packet.Sequence;
                     Recycle(packet);
 
@@ -344,10 +345,12 @@ namespace LiteNetLib
 
                 //Simple packet without acks
                 case PacketProperty.None:
-                case PacketProperty.Connect:
-                case PacketProperty.Disconnect:
                     AddIncomingPacket(packet);
                     return;
+
+                default:
+                    DebugWriteForce("Error! Unexpected packet type: " + packet.Property);
+                    break;
             }
         }
 
@@ -413,6 +416,8 @@ namespace LiteNetLib
             _pingSendTimer += deltaTime;
             if (_pingSendTimer >= _pingSendDelay)
             {
+                DebugWrite("[PP] Send ping...");
+
                 //reset timer
                 _pingSendTimer = 0;
 

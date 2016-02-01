@@ -183,7 +183,7 @@ namespace LiteNetLib
                     netPeer.SendConnect(_peerConnectionIds[remoteEndPoint]);
                     netPeer.Recycle(packet);
                 }
-                else if(packet.IsClientData()) //throw out garbage packets
+                else //throw out garbage packets
                 {
                     netPeer.ProcessPacket(packet);
                 }

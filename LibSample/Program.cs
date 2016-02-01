@@ -40,9 +40,9 @@ class Program
         {
             case NetEventType.Connect:
                 Console.WriteLine("[Client] connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
-                for (int i = 0; i < 10000; i++)
+                for (int i = 0; i < 1000; i++)
                 {
-                    byte[] data = new byte[1300];
+                    byte[] data = new byte[NetConstants.MaxSequencedPacketDataSize];
                     FastBitConverter.GetBytes(data, 0, i + 1);
                     netEvent.Peer.Send(data, SendOptions.ReliableUnordered);
                 }
@@ -51,8 +51,7 @@ class Program
             case NetEventType.Receive:
                 int dt = netEvent.DataReader.GetInt();
                 _messagesReceivedCount++;
-                if(_messagesReceivedCount % 100 == 0)
-                    Console.WriteLine("CNT: {0}, DT: {1}", _messagesReceivedCount, dt);
+                Console.WriteLine("CNT: {0}, DT: {1}", _messagesReceivedCount, dt);
                 break;
 
             case NetEventType.Error:
