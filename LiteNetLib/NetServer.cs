@@ -6,6 +6,7 @@ namespace LiteNetLib
     public sealed class NetServer : NetBase
     {
         private readonly Dictionary<NetEndPoint, NetPeer> _peers;
+        private readonly Dictionary<NetEndPoint, long> _peerConnectionIds; 
         private readonly int _maxClients;
         private readonly Queue<NetEndPoint> _peersToRemove;
         private long _timeout = 5000;
@@ -18,7 +19,8 @@ namespace LiteNetLib
 
         public NetServer(int maxClients)
         {
-            _peers = new Dictionary<NetEndPoint, NetPeer>(maxClients);
+            _peers = new Dictionary<NetEndPoint, NetPeer>();
+            _peerConnectionIds = new Dictionary<NetEndPoint, long>();
             _peersToRemove = new Queue<NetEndPoint>(maxClients);
             _maxClients = maxClients;
         }
@@ -65,17 +67,22 @@ namespace LiteNetLib
             {
                 netPeer.CreateAndSend(PacketProperty.Disconnect);
             }
+            ClearPeers();
+            base.Stop();
+        }
+
+        private void ClearPeers()
+        {
             lock (_peers)
             {
                 _peers.Clear();
+                _peerConnectionIds.Clear();
             }
-
-            base.Stop();
         }
 
         protected override void ProcessError(string errorMessage)
         {
-            _peers.Clear();
+            ClearPeers();
             var netEvent = CreateEvent(NetEventType.Error);
             netEvent.AdditionalInfo = errorMessage;
             EnqueueEvent(netEvent);
@@ -104,7 +111,9 @@ namespace LiteNetLib
                 }
                 while (_peersToRemove.Count > 0)
                 {
-                    _peers.Remove(_peersToRemove.Dequeue());
+                    var ep = _peersToRemove.Dequeue();
+                    _peers.Remove(ep);
+                    _peerConnectionIds.Remove(ep);
                 }
             }
         }
@@ -156,12 +165,23 @@ namespace LiteNetLib
                 //Send
                 if (packet.Property == PacketProperty.Disconnect)
                 {
+                    if (NetPeer.GetConnectId(packet) != _peerConnectionIds[remoteEndPoint])
+                    {
+                        //Old or incorrect disconnect
+                        netPeer.Recycle(packet);
+                        return;
+                    }
                     RemovePeer(netPeer);
                     var netEvent = CreateEvent(NetEventType.Disconnect);
                     netEvent.Peer = netPeer;
                     netEvent.RemoteEndPoint = netPeer.EndPoint;
                     netEvent.AdditionalInfo = "successfuly disconnected";
                     EnqueueEvent(netEvent);
+                }
+                else if (packet.Property == PacketProperty.Connect) //response with connect
+                {
+                    netPeer.SendConnect(_peerConnectionIds[remoteEndPoint]);
+                    netPeer.Recycle(packet);
                 }
                 else if(packet.IsClientData()) //throw out garbage packets
                 {
@@ -184,17 +204,24 @@ namespace LiteNetLib
                 //Getting new id for peer
                 NetEndPoint peerEndPoint = remoteEndPoint.Clone();
                 netPeer = CreatePeer(peerEndPoint);
+
+                //response with id
+                long connectionId = NetPeer.GetConnectId(packet);
+                netPeer.SendConnect(connectionId);
+
+                //clean incoming packet
                 netPeer.Recycle(packet);
-                netPeer.CreateAndSend(PacketProperty.Connect);
 
                 lock (_peers)
                 {
                     _peers.Add(peerEndPoint, netPeer);
+                    _peerConnectionIds.Add(peerEndPoint, connectionId);
                 }
 
                 var netEvent = CreateEvent(NetEventType.Connect);
                 netEvent.Peer = netPeer;
                 netEvent.RemoteEndPoint = peerEndPoint;
+                netEvent.AdditionalInfo = connectionId.ToString();
                 EnqueueEvent(netEvent);
             }
         }

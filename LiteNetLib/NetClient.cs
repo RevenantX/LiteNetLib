@@ -12,6 +12,7 @@ namespace LiteNetLib
         private int _reconnectDelay = 500;
         private bool _waitForConnect;
         private long _timeout = 5000;
+        private long _connectId;
 
         public long DisconnectTimeout
         {
@@ -60,7 +61,7 @@ namespace LiteNetLib
         {
             if (_peer != null && !force)
             {
-                _peer.CreateAndSend(PacketProperty.Disconnect);
+                _peer.SendDisconnect(_connectId);
             }
             _peer = null;
             _connected = false;
@@ -97,6 +98,9 @@ namespace LiteNetLib
             {
                 throw new Exception("Client is not running");
             }
+            //Create connect id for proper connection
+            _connectId = DateTime.UtcNow.Ticks;
+
             //Create server endpoint
             NetEndPoint ep = new NetEndPoint(address, port);
 
@@ -106,7 +110,9 @@ namespace LiteNetLib
             //Create reliable connection
             _peer = CreatePeer(ep);
             _peer.DebugTextColor = ConsoleColor.Yellow;
-            _peer.CreateAndSend(PacketProperty.Connect);
+
+            //Create connection packet and send
+            _peer.SendConnect(_connectId);
 
             _connectAttempts = 0;
             _waitForConnect = true;
@@ -141,7 +147,7 @@ namespace LiteNetLib
                     }
 
                     //else
-                    _peer.CreateAndSend(PacketProperty.Connect);
+                    _peer.SendConnect(_connectId);
                 }
             }
 
@@ -208,12 +214,20 @@ namespace LiteNetLib
 
             if (packet.Property == PacketProperty.Connect)
             {
+                //get id
+                if (NetPeer.GetConnectId(packet) != _connectId)
+                {
+                    return;
+                }
+
+                //connection things
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
                 _waitForConnect = false;
                 _connected = true;
                 var connectEvent = CreateEvent(NetEventType.Connect);
                 connectEvent.Peer = _peer;
                 connectEvent.RemoteEndPoint = _peer.EndPoint;
+                connectEvent.AdditionalInfo = _connectId.ToString();
                 EnqueueEvent(connectEvent);
                 return;
             }
