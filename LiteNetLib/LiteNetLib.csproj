@@ -43,6 +43,7 @@
     <Compile Include="NatPunchModule.cs" />
     <Compile Include="NetConstants.cs" />
     <Compile Include="NetEndPoint.cs" />
+    <Compile Include="NtpSyncModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NetBase.cs" />
     <Compile Include="NetClient.cs" />

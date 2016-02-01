@@ -100,6 +100,15 @@ namespace LiteNetLib
             return data;
         }
 
+        public bool IsClientData()
+        {
+            var property = Property;
+            return property == PacketProperty.Reliable ||
+                   property == PacketProperty.ReliableOrdered ||
+                   property == PacketProperty.None ||
+                   property == PacketProperty.Sequenced;
+        }
+
         public static bool IsSequenced(PacketProperty property)
         {
             return property != PacketProperty.Connect &&

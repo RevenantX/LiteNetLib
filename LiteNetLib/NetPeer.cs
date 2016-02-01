@@ -92,6 +92,7 @@ namespace LiteNetLib
 
             _pingStopwatch = new Stopwatch();
             _lastPacketStopwatch = new Stopwatch();
+            _lastPacketStopwatch.Start();
 
             _reliableOrderedChannel = new ReliableChannel(this, true, _windowSize);
             _reliableUnorderedChannel = new ReliableChannel(this, false, _windowSize);

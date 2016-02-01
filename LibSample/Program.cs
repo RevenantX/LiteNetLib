@@ -12,7 +12,7 @@ class Program
         switch (netEvent.Type)
         {
             case NetEventType.ReceiveUnconnected:
-                Console.WriteLine("ReceiveUnconnected: {0}", netEvent.DataReader.GetString(100));
+                Console.WriteLine("[Server] ReceiveUnconnected: {0}", netEvent.DataReader.GetString(100));
                 break;
 
             case NetEventType.Receive:
@@ -21,15 +21,15 @@ class Program
                 break;
 
             case NetEventType.Disconnect:
-                Console.WriteLine("Peer disconnected: " + netEvent.RemoteEndPoint);
+                Console.WriteLine("[Server] Peer disconnected: " + netEvent.RemoteEndPoint + ", reason: " + netEvent.AdditionalInfo);
                 break;
 
             case NetEventType.Connect:
-                Console.WriteLine("Peer connected: " + netEvent.RemoteEndPoint);
+                Console.WriteLine("[Server] Peer connected: " + netEvent.RemoteEndPoint);
                 break;
 
             case NetEventType.Error:
-                Console.WriteLine("peer eror");
+                Console.WriteLine("[Server] peer eror");
                 break;
         }
     }
@@ -39,7 +39,7 @@ class Program
         switch (netEvent.Type)
         {
             case NetEventType.Connect:
-                Console.WriteLine("Client connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
+                Console.WriteLine("[Client] connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
                 for (int i = 0; i < 10000; i++)
                 {
                     byte[] data = new byte[1300];
@@ -56,11 +56,11 @@ class Program
                 break;
 
             case NetEventType.Error:
-                Console.WriteLine("Connection error!");
+                Console.WriteLine("[Client] connection error!");
                 break;
 
             case NetEventType.Disconnect:
-                Console.WriteLine("Disconnected from server!");
+                Console.WriteLine("[Client] disconnected: " + netEvent.AdditionalInfo);
                 break;
         }
     }
@@ -70,15 +70,12 @@ class Program
         NetServer server = new NetServer(2);
         server.UnconnectedMessagesEnabled = true;
         server.Start(9050);
-        server.Stop();
-        //server.Start(9050);
 
         NetClient client = new NetClient();
         client.UnconnectedMessagesEnabled = true;
-        client.Start(9051);
+        client.Start();
         client.Connect("localhost", 9050);
-        client.Stop();
-        client.Start(9051);
+        client.Disconnect();
         client.Connect("localhost", 9050);
 
         NetDataWriter dw = new NetDataWriter();
@@ -101,7 +98,7 @@ class Program
             Thread.Sleep(10);
         }
 
-        //server.Stop();
+        server.Stop();
         client.Stop();
     }
 }

@@ -58,14 +58,11 @@ namespace LiteNetLib
 
         private void CloseConnection(bool force)
         {
-            if (_peer != null)
+            if (_peer != null && !force)
             {
-                if (!force)
-                {
-                    _peer.CreateAndSend(PacketProperty.Disconnect);
-                }
-                _peer = null;
+                _peer.CreateAndSend(PacketProperty.Disconnect);
             }
+            _peer = null;
             _connected = false;
             _connectTimer = 0;
             _connectAttempts = 0;
@@ -96,6 +93,10 @@ namespace LiteNetLib
         /// <param name="port">Server Port</param>
         public void Connect(string address, int port)
         {
+            if (!IsRunning)
+            {
+                throw new Exception("Client is not running");
+            }
             //Create server endpoint
             NetEndPoint ep = new NetEndPoint(address, port);
 
@@ -109,6 +110,13 @@ namespace LiteNetLib
 
             _connectAttempts = 0;
             _waitForConnect = true;
+        }
+
+        public void Disconnect()
+        {
+            var netEvent = CreateEvent(NetEventType.Disconnect);
+            EnqueueEvent(netEvent);
+            CloseConnection(false);
         }
 
         protected override void PostProcessEvent(int deltaTime)

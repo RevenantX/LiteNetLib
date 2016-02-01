@@ -41,6 +41,9 @@ namespace LiteNetLib
         public bool UnconnectedMessagesEnabled = false;
         public bool NatPunchEnabled = false;
 
+        public readonly NatPunchModule NatPunchModule;
+        public readonly NtpSyncModule NtpSyncModule;
+
         /// <summary>
         /// Process and send packets delay
         /// </summary>
@@ -83,8 +86,6 @@ namespace LiteNetLib
             return _flowModes[flowMode].StartRTT;
         }
 
-        public readonly NatPunchModule NatPunchModule;
-
         protected NetBase()
         {
             _flowModes = new List<FlowMode>();
@@ -102,6 +103,7 @@ namespace LiteNetLib
 #endif
 
             NatPunchModule = new NatPunchModule(this, _socket);
+            NtpSyncModule = new NtpSyncModule(this, _socket);
         }
 
         protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
@@ -162,8 +164,10 @@ namespace LiteNetLib
             {
                 _running = false;
 #if !WINRT
-                _logicThread.Join();
-                _receiveThread.Join();
+                if(Thread.CurrentThread != _logicThread)
+                    _logicThread.Join();
+                if(Thread.CurrentThread != _receiveThread)
+                    _receiveThread.Join();
                 _logicThread = null;
                 _receiveThread = null;
 #endif
@@ -281,8 +285,9 @@ namespace LiteNetLib
                 }
                 else if (result < 0)
                 {
-                    //If not 10054
-                    if (errorCode != 10054)
+                    //10054 - remote close (not error)
+                    //10040 - message too long
+                    if (errorCode != 10054 && errorCode != 10040)
                     {
                         NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
                         ProcessError("Receive socket error: " + errorCode);

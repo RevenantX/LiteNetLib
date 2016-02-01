@@ -163,7 +163,7 @@ namespace LiteNetLib
                     netEvent.AdditionalInfo = "successfuly disconnected";
                     EnqueueEvent(netEvent);
                 }
-                else
+                else if(packet.IsClientData()) //throw out garbage packets
                 {
                     netPeer.ProcessPacket(packet);
                 }
