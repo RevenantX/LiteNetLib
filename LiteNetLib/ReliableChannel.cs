@@ -25,7 +25,7 @@ namespace LiteNetLib
 
         private readonly Stopwatch _packetTimeStopwatch;
 
-        private long _resendDelay = 1000;
+        private long _resendDelay = 500;
         private const int BitsInByte = 8;
         private readonly bool _ordered;
         private readonly int _windowSize;
