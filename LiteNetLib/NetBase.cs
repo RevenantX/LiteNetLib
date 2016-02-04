@@ -4,7 +4,6 @@ using LiteNetLib.Utils;
 
 #if WINRT
 using Windows.System.Threading;
-using Windows.Foundation;
 #else
 using System;
 #endif
@@ -14,7 +13,7 @@ namespace LiteNetLib
     sealed class FlowMode
     {
         public int PacketsPerSecond;
-        public int StartRTT;
+        public int StartRtt;
     }
 
     public abstract class NetBase
@@ -25,8 +24,6 @@ namespace LiteNetLib
 
 #if WINRT
         private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
-        private IAsyncAction _updateAction;
-        private IAsyncAction _receiveAction;
 #else
         private Thread _logicThread;
         private Thread _receiveThread;
@@ -54,9 +51,9 @@ namespace LiteNetLib
 
         public void AddFlowMode(int startRtt, int packetsPerSecond)
         {
-            var fm = new FlowMode {PacketsPerSecond = packetsPerSecond, StartRTT = startRtt};
+            var fm = new FlowMode {PacketsPerSecond = packetsPerSecond, StartRtt = startRtt};
 
-            if (_flowModes.Count > 0 && startRtt < _flowModes[0].StartRTT)
+            if (_flowModes.Count > 0 && startRtt < _flowModes[0].StartRtt)
             {
                 _flowModes.Insert(0, fm);
             }
@@ -82,7 +79,7 @@ namespace LiteNetLib
         {
             if (flowMode < 0 || _flowModes.Count == 0)
                 return 0;
-            return _flowModes[flowMode].StartRTT;
+            return _flowModes[flowMode].StartRtt;
         }
 
         protected NetBase()
@@ -122,15 +119,15 @@ namespace LiteNetLib
             {
                 _running = true;
 #if WINRT
-                _updateAction = ThreadPool.RunAsync(
+                ThreadPool.RunAsync(
                     a => UpdateLogic(), 
                     WorkItemPriority.Normal, 
-                    WorkItemOptions.TimeSliced);
+                    WorkItemOptions.TimeSliced).GetResults();
 
-                _receiveAction = ThreadPool.RunAsync(
+                ThreadPool.RunAsync(
                     a => ReceiveLogic(), 
                     WorkItemPriority.Normal,
-                    WorkItemOptions.TimeSliced);
+                    WorkItemOptions.TimeSliced).GetResults();
 #else
                 _logicThread = new Thread(UpdateLogic);
                 _receiveThread = new Thread(ReceiveLogic);

@@ -40,18 +40,37 @@ class Program
         {
             case NetEventType.Connect:
                 Console.WriteLine("[Client] connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
-                for (int i = 0; i < 1000; i++)
+
+                NetDataWriter dataWriter = new NetDataWriter();
+                for (int i = 0; i < 100; i++)
                 {
-                    byte[] data = new byte[NetConstants.MaxSequencedPacketDataSize];
-                    FastBitConverter.GetBytes(data, 0, i + 1);
-                    netEvent.Peer.Send(data, SendOptions.ReliableUnordered);
+                    dataWriter.Reset();
+                    dataWriter.Put(0);
+                    dataWriter.Put(i);
+                    netEvent.Peer.Send(dataWriter, SendOptions.ReliableUnordered);
+
+                    dataWriter.Reset();
+                    dataWriter.Put(1);
+                    dataWriter.Put(i);
+                    netEvent.Peer.Send(dataWriter, SendOptions.ReliableOrdered);
+
+                    dataWriter.Reset();
+                    dataWriter.Put(2);
+                    dataWriter.Put(i);
+                    netEvent.Peer.Send(dataWriter, SendOptions.Sequenced);
+
+                    dataWriter.Reset();
+                    dataWriter.Put(3);
+                    dataWriter.Put(i);
+                    netEvent.Peer.Send(dataWriter, SendOptions.Unreliable);
                 }
                 break;
 
             case NetEventType.Receive:
-                int dt = netEvent.DataReader.GetInt();
+                int type = netEvent.DataReader.GetInt();
+                int num = netEvent.DataReader.GetInt();
                 _messagesReceivedCount++;
-                Console.WriteLine("CNT: {0}, DT: {1}", _messagesReceivedCount, dt);
+                Console.WriteLine("CNT: {0}, TYPE: {1}, NUM: {2}", _messagesReceivedCount, type, num);
                 break;
 
             case NetEventType.Error:

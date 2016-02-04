@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
@@ -105,6 +106,11 @@ namespace LiteNetLib
         public void Send(byte[] data, SendOptions options)
         {
             Send(data, data.Length, options);
+        }
+
+        public void Send(NetDataWriter dataWriter, SendOptions options)
+        {
+            Send(dataWriter.Data, dataWriter.Length, options);
         }
 
         public void Send(byte[] data, int length, SendOptions options)

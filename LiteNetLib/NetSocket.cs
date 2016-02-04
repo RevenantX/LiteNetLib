@@ -12,11 +12,6 @@ namespace LiteNetLib
 
         public int ReceiveTimeout = 10;
 
-        public NetSocket()
-        {
-            //_udpSocket.DontFragment = true;
-        }
-
         public bool Bind(NetEndPoint ep)
         {            
             try
