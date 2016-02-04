@@ -4,5 +4,7 @@ LiteNetLib/obj
 LiteNetLib/bin
 LiteNetLibWin81/obj
 LiteNetLibWin81/bin
-LibSample/obj
-LibSample/bin
+LibServerSample/obj
+LibServerSample/bin
+LibClientSample/obj
+LibClientSample/bin
