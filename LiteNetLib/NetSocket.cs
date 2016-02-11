@@ -6,8 +6,8 @@ namespace LiteNetLib
 {
     sealed class NetSocket
     {
-        private const int BufferSize = 131071;
-        private readonly byte[] _receiveBuffer = new byte[NetConstants.MaxPacketSize];
+        private const int BufferSize = ushort.MaxValue;
+        private readonly byte[] _receiveBuffer = new byte[NetConstants.PacketSizeLimit];
         private Socket _udpSocket;
 
         public int ReceiveTimeout = 10;
@@ -21,6 +21,7 @@ namespace LiteNetLib
                 _udpSocket.Blocking = false;
                 _udpSocket.ReceiveBufferSize = BufferSize;
                 _udpSocket.SendBufferSize = BufferSize;
+                _udpSocket.DontFragment = true;
                 _udpSocket.EnableBroadcast = true;
                 _udpSocket.Bind(ep.EndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);

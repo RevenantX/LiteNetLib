@@ -30,7 +30,6 @@ namespace LiteNetLib
 #endif
         private NetEndPoint _remoteEndPoint;
 
-        private int _updateTime;
         private bool _running;
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
@@ -38,16 +37,11 @@ namespace LiteNetLib
         //config section
         public bool UnconnectedMessagesEnabled = false;
         public bool NatPunchEnabled = false;
+        public int UpdateTime = 100;
+        public int ReliableResendTime = 500;
 
+        //modules
         public readonly NatPunchModule NatPunchModule;
-        /// <summary>
-        /// Process and send packets delay
-        /// </summary>
-        public int UpdateTime
-        {
-            set { _updateTime = value; }
-            get { return _updateTime; }
-        }
 
         public void AddFlowMode(int startRtt, int packetsPerSecond)
         {
@@ -88,8 +82,6 @@ namespace LiteNetLib
 
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
-            
-            _updateTime = 100;
 
             _remoteEndPoint = new NetEndPoint(0);
             _socket = new NetSocket();
@@ -243,11 +235,11 @@ namespace LiteNetLib
         {
             while (_running)
             {
-                PostProcessEvent(_updateTime);
+                PostProcessEvent(UpdateTime);
 #if WINRT
-                _updateWaiter.WaitOne(_updateTime);
+                _updateWaiter.WaitOne(UpdateTime);
 #else
-                Thread.Sleep(_updateTime);
+                Thread.Sleep(UpdateTime);
 #endif
             }
         }
@@ -270,8 +262,8 @@ namespace LiteNetLib
                 else if (result < 0)
                 {
                     //10054 - remote close (not error)
-                    //10040 - message too long
-                    if (errorCode != 10054 && errorCode != 10040)
+                    //10040 - message too long (impossible now)
+                    if (errorCode != 10054)
                     {
                         NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
                         ProcessError("Receive socket error: " + errorCode);

@@ -68,7 +68,7 @@ namespace LibClientSample
             client.Connect("localhost", 9050);
 
             NetDataWriter dw = new NetDataWriter();
-            dw.Put("HELLO! ������!");
+            dw.Put("HELLO! ПРИВЕТ!");
             client.SendUnconnectedMessage(dw.CopyData(), new NetEndPoint("localhost", 9050));
 
             while (!Console.KeyAvailable)

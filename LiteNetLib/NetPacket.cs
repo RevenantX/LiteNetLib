@@ -5,25 +5,28 @@ namespace LiteNetLib
 {
     enum PacketProperty : byte
     {
-        None,
-        Reliable,
-        Sequenced,
-        ReliableOrdered,
-        AckReliable,
-        AckReliableOrdered,
-        Ping,
-        Pong,
-        Connect,
-        Disconnect,
-        UnconnectedMessage,
-        NatIntroductionRequest,
-        NatIntroduction,
-        NatPunchMessage
+        None,                   //0
+        Reliable,               //1
+        Sequenced,              //2
+        ReliableOrdered,        //3
+        AckReliable,            //4
+        AckReliableOrdered,     //5
+        Ping,                   //6
+        Pong,                   //7
+        Connect,                //8
+        Disconnect,             //9
+        UnconnectedMessage,     //10
+        NatIntroductionRequest, //11
+        NatIntroduction,        //12
+        NatPunchMessage,        //13
+        MtuCheck,               //14
+        MaxMtuReached           //15
     }
 
     sealed class NetPacket
     {
-        const int PropertiesCount = 13;
+        const int LastProperty = 15;
+
         //Header
         public PacketProperty Property //1 1
         {
@@ -65,7 +68,7 @@ namespace LiteNetLib
         public static bool GetPacketProperty(byte[] data, out PacketProperty property)
         {
             byte properyByte = data[0];
-            if (properyByte >= PropertiesCount)
+            if (properyByte > LastProperty)
             {
                 property = PacketProperty.None;
                 return false;
@@ -111,10 +114,13 @@ namespace LiteNetLib
 
         public static bool IsSequenced(PacketProperty property)
         {
-            return property != PacketProperty.Connect &&
-                   property != PacketProperty.Disconnect &&
-                   property != PacketProperty.None &&
-                   property != PacketProperty.UnconnectedMessage;
+            return property == PacketProperty.ReliableOrdered ||
+                property == PacketProperty.Reliable ||
+                property == PacketProperty.Sequenced ||
+                property == PacketProperty.Ping ||
+                property == PacketProperty.Pong ||
+                property == PacketProperty.AckReliable ||
+                property == PacketProperty.AckReliableOrdered;
         }
 
         public static byte[] GetUnconnectedData(byte[] raw, int count)
@@ -129,7 +135,7 @@ namespace LiteNetLib
         public bool FromBytes(byte[] data, int packetSize)
         {
             //Reading property
-            if (data[0] >= PropertiesCount || packetSize > NetConstants.MaxPacketSize)
+            if (data[0] > LastProperty || packetSize > NetConstants.PacketSizeLimit)
                 return false;
             RawData = new byte[packetSize];
             Buffer.BlockCopy(data, 0, RawData, 0, packetSize);
