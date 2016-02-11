@@ -367,6 +367,7 @@ namespace LiteNetLib
 
                 //MTU auto increase
                 case PacketProperty.MtuCheck:
+                    //increase
                     if (_mtuIdx < NetConstants.PossibleMtu.Length - 1)
                     {
                         DebugWriteForce("MTU check. Increase to: " + packet.RawData.Length);
@@ -376,12 +377,14 @@ namespace LiteNetLib
                         }
                         _mtu = NetConstants.PossibleMtu[_mtuIdx];
                         _mtuCheckAttempts = 0;
-                        if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
-                        {
-                            var p = GetPacketFromPool(PacketProperty.MaxMtuReached);
-                            SendPacket(p);
-                            _finishMtu = true;
-                        }
+                    }
+
+                    //maxed. send info
+                    if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
+                    {
+                        var p = GetPacketFromPool(PacketProperty.MaxMtuReached);
+                        SendPacket(p);
+                        _finishMtu = true;
                     }
                     return;
 
