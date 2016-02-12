@@ -28,13 +28,13 @@ namespace LiteNetLib
         const int LastProperty = 15;
 
         //Header
-        public PacketProperty Property //1 1
+        public PacketProperty Property
         {
             get { return (PacketProperty)(RawData[0] & 0x7F); }
             set { RawData[0] = (byte)((RawData[0] & 0x80) | ((byte)value & 0x7F)); }
         }
 
-        public ushort Sequence //2 3
+        public ushort Sequence
         {
             get { return BitConverter.ToUInt16(RawData, 1); }
             set { FastBitConverter.GetBytes(RawData, 1, value); }
@@ -50,6 +50,24 @@ namespace LiteNetLib
                 else
                     RawData[0] &= 0x7F; //unset first bit
             }
+        }
+
+        public ushort FragmentId
+        {
+            get { return BitConverter.ToUInt16(RawData, 3); }
+            set { FastBitConverter.GetBytes(RawData, 3, value); }
+        }
+
+        public uint FragmentPart
+        {
+            get { return BitConverter.ToUInt32(RawData, 5); }
+            set { FastBitConverter.GetBytes(RawData, 5, value); }
+        }
+
+        public uint FragmentsTotal
+        {
+            get { return BitConverter.ToUInt32(RawData, 9); }
+            set { FastBitConverter.GetBytes(RawData, 9, value); }
         }
 
         //Data
@@ -74,6 +92,11 @@ namespace LiteNetLib
             Buffer.BlockCopy(data, 0, RawData, GetHeaderSize(Property), length);
         }
 
+        public void PutData(byte[] data, int start, int length)
+        {
+            Buffer.BlockCopy(data, start, RawData, GetHeaderSize(Property), length);
+        }
+
         public static bool GetPacketProperty(byte[] data, out PacketProperty property)
         {
             byte properyByte = data[0];
@@ -96,11 +119,16 @@ namespace LiteNetLib
             return false;
         }
 
-        static int GetHeaderSize(PacketProperty property)
+        public static int GetHeaderSize(PacketProperty property)
         {
             return IsSequenced(property)
                 ? NetConstants.SequencedHeaderSize
                 : NetConstants.HeaderSize;
+        }
+
+        public int GetHeaderSize()
+        {
+            return GetHeaderSize(Property);
         }
 
         public byte[] GetPacketData()

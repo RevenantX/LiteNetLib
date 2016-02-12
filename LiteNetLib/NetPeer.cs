@@ -13,7 +13,7 @@ namespace LiteNetLib
         private int _flowTimer;
 
         //Ping and RTT
-        private int _rtt;                                //round trip time
+        private int _rtt;
         private int _avgRtt;
         private int _rttCount;
         private int _goodRttCount;
@@ -45,7 +45,7 @@ namespace LiteNetLib
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
-        private int _mtuIdx = 0;
+        private int _mtuIdx;
         private bool _finishMtu;
         private int _mtuCheckTimer;
         private int _mtuCheckAttempts;
@@ -54,7 +54,55 @@ namespace LiteNetLib
         private readonly object _mtuMutex = new object();
 
         //Fragment
-         
+        private class IncomingFragments
+        {
+            public NetPacket[] Fragments;
+            public int ReceivedCount;
+            public int TotalSize;
+        }
+        private ushort _fragmentId;
+        private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
+
+        private void ProcessFragmentedPacket(NetPacket p)
+        {
+            //Get needed array from dictionary
+            ushort packetFragId = p.FragmentId;
+            IncomingFragments incomingFragments;
+            if (!_holdedFragments.TryGetValue(packetFragId, out incomingFragments))
+            {
+                incomingFragments = new IncomingFragments
+                {
+                    Fragments = new NetPacket[p.FragmentsTotal]
+                };
+            }
+
+            //Cache
+            var fragments = incomingFragments.Fragments;
+
+            //Fill array
+            fragments[p.FragmentPart] = p;
+
+            //Increase data count
+            incomingFragments.ReceivedCount++;
+            int dataOffset = p.GetHeaderSize() - NetConstants.FragmentHeaderSize;
+            incomingFragments.TotalSize += p.RawData.Length - dataOffset;
+
+            //Check for finish
+            if (incomingFragments.ReceivedCount != fragments.Length)
+                return;
+
+            NetPacket resultingPacket = GetPacketFromPool(p.Property, incomingFragments.TotalSize);
+            for (int i = 0; i < incomingFragments.ReceivedCount; i++)
+            {
+                resultingPacket.PutData(fragments[i].RawData, dataOffset, p.RawData.Length - dataOffset);
+                Recycle(fragments[i]);
+                fragments[i] = null;
+            }
+
+            _peerListener.ReceiveFromPeer(resultingPacket, _remoteEndPoint);
+            Recycle(resultingPacket);
+            _holdedFragments.Remove(p.FragmentId);
+        }
 
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
@@ -85,6 +133,11 @@ namespace LiteNetLib
             get { return _id; }
         }
 
+        public int Mtu
+        {
+            get { return _mtu; }
+        }
+
         public long TimeSinceLastPacket
         {
             get { return _lastPacketStopwatch.ElapsedMilliseconds; }
@@ -113,20 +166,32 @@ namespace LiteNetLib
             _simpleChannel = new SimpleChannel(this);
 
             _packetPool = new Stack<NetPacket>();
+            _holdedFragments = new Dictionary<ushort, IncomingFragments>();
         }
 
         public void Send(byte[] data, SendOptions options)
         {
-            Send(data, data.Length, options);
+            Send(data, 0, data.Length, options);
         }
 
         public void Send(NetDataWriter dataWriter, SendOptions options)
         {
-            Send(dataWriter.Data, dataWriter.Length, options);
+            Send(dataWriter.Data, 0, dataWriter.Length, options);
         }
 
-        public void Send(byte[] data, int length, SendOptions options)
+        public void Send(byte[] data, int start, int length, SendOptions options)
         {
+            //if (length > _mtu)
+            //{
+            //    int packetsCount = NetUtils.GetDividedPacketsCount(length, _mtu);
+            //    for (int i = 0; i < packetsCount; i++)
+            //    {
+            //        byte[] fragmentedData = new byte[];
+            //        Send();
+            //    }
+            //    return;
+            //}
+
             NetPacket packet;
             switch (options)
             {
@@ -143,7 +208,7 @@ namespace LiteNetLib
                     packet = GetPacketFromPool(PacketProperty.None, length);
                     break;
             }
-            packet.PutData(data, length);
+            packet.PutData(data, start, length);
             SendPacket(packet);
         }
 
@@ -296,8 +361,15 @@ namespace LiteNetLib
 
         internal void AddIncomingPacket(NetPacket packet)
         {
-            _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
-            Recycle(packet);
+            if (packet.IsFragmented)
+            {
+                ProcessFragmentedPacket(packet);
+            }
+            else
+            {
+                _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
+                Recycle(packet);
+            }
         }
 
         private void ProcessMtuPacket(NetPacket packet)

@@ -5,9 +5,14 @@ namespace LiteNetLib
 {
     static class NetUtils
     {
-        internal static int RelativeSequenceNumber(int number, int expected)
+        public static int RelativeSequenceNumber(int number, int expected)
         {
             return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
+        }
+
+        public static int GetDividedPacketsCount(int size, int mtu)
+        {
+            return (size/mtu) + (size%mtu == 0 ? 0 : 1);
         }
 
         private static readonly object DebugLogLock = new object();
