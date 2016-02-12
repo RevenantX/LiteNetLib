@@ -20,7 +20,7 @@ namespace LiteNetLib
         NatIntroduction,        //12
         NatPunchMessage,        //13
         MtuCheck,               //14
-        MaxMtuReached           //15
+        MtuOk                   //15
     }
 
     sealed class NetPacket
@@ -40,11 +40,20 @@ namespace LiteNetLib
             set { FastBitConverter.GetBytes(RawData, 1, value); }
         }
 
+        public bool Fragment
+        {
+            get { return (RawData[0] & 0x80) != 0; }
+            set
+            {
+                if (value)
+                    RawData[0] |= 0x80; //set first bit
+                else
+                    RawData[0] &= 0x7F; //unset first bit
+            }
+        }
+
         //Data
         public byte[] RawData;
-
-        //Additional info!
-        public long TimeStamp;
 
         //Packet constructor
         public void Init(PacketProperty property, int dataSize)

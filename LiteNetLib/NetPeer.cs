@@ -51,7 +51,10 @@ namespace LiteNetLib
         private int _mtuCheckAttempts;
         private const int MtuCheckDelay = 1000;
         private const int MaxMtuCheckAttempts = 10;
-        private object _mtuMutex = new object();
+        private readonly object _mtuMutex = new object();
+
+        //Fragment
+         
 
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
@@ -204,7 +207,7 @@ namespace LiteNetLib
                 case PacketProperty.Connect:
                 case PacketProperty.Disconnect:
                 case PacketProperty.MtuCheck:
-                case PacketProperty.MaxMtuReached:
+                case PacketProperty.MtuOk:
                     SendRawData(packet.RawData);
                     Recycle(packet);
                     break;
@@ -297,6 +300,43 @@ namespace LiteNetLib
             Recycle(packet);
         }
 
+        private void ProcessMtuPacket(NetPacket packet)
+        {
+            //MTU auto increase
+            if (packet.Property == PacketProperty.MtuCheck)
+            {
+                if (_mtuIdx < NetConstants.PossibleMtu.Length - 1 && packet.RawData.Length > _mtu)
+                {
+                    DebugWriteForce("MTU check. Increase to: " + packet.RawData.Length);
+                    lock (_mtuMutex)
+                    {
+                        _mtuIdx++;
+                    }
+                    _mtu = NetConstants.PossibleMtu[_mtuIdx];
+                    _mtuCheckAttempts = 0;
+                }
+
+                var p = GetPacketFromPool(PacketProperty.MtuOk);
+                p.RawData[1] = (byte) _mtuIdx;
+                SendPacket(p);
+            }
+            else //MtuOk
+            {
+                lock (_mtuMutex)
+                {
+                    _mtuIdx = packet.RawData[1];
+                }
+                _mtu = NetConstants.PossibleMtu[_mtuIdx];
+                DebugWriteForce("MTU ok. Increase to: " + _mtu);
+            }
+
+            //maxed.
+            if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
+            {
+                _finishMtu = true;
+            }
+        }
+
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
@@ -365,37 +405,9 @@ namespace LiteNetLib
                     AddIncomingPacket(packet);
                     return;
 
-                //MTU auto increase
                 case PacketProperty.MtuCheck:
-                    //increase
-                    if (_mtuIdx < NetConstants.PossibleMtu.Length - 1)
-                    {
-                        DebugWriteForce("MTU check. Increase to: " + packet.RawData.Length);
-                        lock (_mtuMutex)
-                        {
-                            _mtuIdx++;
-                        }
-                        _mtu = NetConstants.PossibleMtu[_mtuIdx];
-                        _mtuCheckAttempts = 0;
-                    }
-
-                    //maxed. send info
-                    if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
-                    {
-                        var p = GetPacketFromPool(PacketProperty.MaxMtuReached);
-                        SendPacket(p);
-                        _finishMtu = true;
-                    }
-                    return;
-
-                case PacketProperty.MaxMtuReached:
-                    lock (_mtuMutex)
-                    {
-                        _mtuIdx = NetConstants.PossibleMtu.Length - 1;
-                    }
-                    _mtu = NetConstants.PossibleMtu[_mtuIdx];
-                    _finishMtu = true;
-                    DebugWriteForce("MTU max. Increase to: " + _mtu);
+                case PacketProperty.MtuOk:
+                    ProcessMtuPacket(packet);
                     break;
 
                 default:

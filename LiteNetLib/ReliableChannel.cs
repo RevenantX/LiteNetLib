@@ -6,13 +6,25 @@ namespace LiteNetLib
 {
     sealed class ReliableChannel
     {
+        struct PendingPacket
+        {
+            public NetPacket Packet;
+            public uint TimeStamp;
+            public bool NotEmpty { get { return Packet != null; } }
+            public void Clear()
+            {
+                Packet = null;
+                TimeStamp = 0;
+            }
+        }
+
         //For reliable inOrder
         private ushort _localSeqence;
         private uint _remoteSequence;
 
         private readonly Queue<NetPacket> _outgoingPackets;
         private readonly bool[] _outgoingAcks;               //for send acks
-        private readonly NetPacket[] _pendingPackets;        //for unacked packets and duplicates
+        private readonly PendingPacket[] _pendingPackets;        //for unacked packets and duplicates
         private readonly NetPacket[] _receivedPackets;       //for order
         private readonly bool[] _earlyReceived;              //for unordered
  
@@ -41,7 +53,7 @@ namespace LiteNetLib
             _outgoingPackets = new Queue<NetPacket>(_windowSize);
 
             _outgoingAcks = new bool[_windowSize];
-            _pendingPackets = new NetPacket[_windowSize];
+            _pendingPackets = new PendingPacket[_windowSize];
 
             if (_ordered)
                 _receivedPackets = new NetPacket[_windowSize];
@@ -92,10 +104,10 @@ namespace LiteNetLib
 
                 int storeIdx = ackSequence % _windowSize;
 
-                if (_pendingPackets[storeIdx] != null)
+                if (_pendingPackets[storeIdx].NotEmpty)
                 {
-                    NetPacket removed = _pendingPackets[storeIdx];
-                    _pendingPackets[storeIdx] = null;
+                    NetPacket removed = _pendingPackets[storeIdx].Packet;
+                    _pendingPackets[storeIdx].Clear();
                     _peer.Recycle(removed);
 
                     _peer.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", ackSequence);
@@ -130,9 +142,8 @@ namespace LiteNetLib
                         packet = _outgoingPackets.Dequeue();
                     }
                     packet.Sequence = _localSeqence;
-                    packet.TimeStamp = 0;
 
-                    _pendingPackets[_localSeqence % _windowSize] = packet;
+                    _pendingPackets[_localSeqence % _windowSize].Packet = packet;
                     _localSeqence++;
                 }
                 else
@@ -151,33 +162,32 @@ namespace LiteNetLib
             ProcessQueuedPackets();
 
             //send
-            NetPacket currentPacket;
+            PendingPacket currentPacket;
+            bool packetSearch = true;
             int startQueueIndex = _queueIndex;
             do
             {
                 currentPacket = _pendingPackets[_queueIndex];
                 //check send time
-                if (currentPacket != null)
+                if (currentPacket.NotEmpty)
                 {
                     long packetHoldTime = currentTime - currentPacket.TimeStamp;
                     if (currentPacket.TimeStamp == 0 || packetHoldTime > _resendDelay)
                     {
                         //Setup timestamp or resend
-                        currentPacket.TimeStamp = currentTime;
-                    }
-                    else
-                    {
-                        currentPacket = null;
+                        currentPacket.TimeStamp = (uint)currentTime;
+                        _pendingPackets[_queueIndex] = currentPacket;
+                        packetSearch = false;
                     }
                 }
 
                 _queueIndex = (_queueIndex + 1) % _windowSize;
-            } while (currentPacket == null && _queueIndex != startQueueIndex);
+            } while (packetSearch && _queueIndex != startQueueIndex);
 
             bool sendResult = false;
-            if (currentPacket != null)
+            if (currentPacket.NotEmpty)
             {
-                sendResult = _peer.SendRawData(currentPacket.RawData);
+                sendResult = _peer.SendRawData(currentPacket.Packet.RawData);
             }
             _pendingPacketsAccess.Set();
             return sendResult;
