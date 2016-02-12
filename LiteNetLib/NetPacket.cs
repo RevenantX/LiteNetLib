@@ -40,7 +40,7 @@ namespace LiteNetLib
             set { FastBitConverter.GetBytes(RawData, 1, value); }
         }
 
-        public bool Fragmented
+        public bool IsFragmented
         {
             get { return (RawData[0] & 0x80) != 0; }
             set
