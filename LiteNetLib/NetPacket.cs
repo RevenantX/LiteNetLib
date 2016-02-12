@@ -30,8 +30,8 @@ namespace LiteNetLib
         //Header
         public PacketProperty Property //1 1
         {
-            get { return (PacketProperty)RawData[0]; }
-            set { RawData[0] = (byte)value; }
+            get { return (PacketProperty)(RawData[0] & 0x7F); }
+            set { RawData[0] = (byte)((RawData[0] & 0x80) | ((byte)value & 0x7F)); }
         }
 
         public ushort Sequence //2 3
@@ -40,7 +40,7 @@ namespace LiteNetLib
             set { FastBitConverter.GetBytes(RawData, 1, value); }
         }
 
-        public bool Fragment
+        public bool Fragmented
         {
             get { return (RawData[0] & 0x80) != 0; }
             set
