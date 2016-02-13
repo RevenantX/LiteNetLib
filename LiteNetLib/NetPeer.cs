@@ -63,66 +63,6 @@ namespace LiteNetLib
         private ushort _fragmentId;
         private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
 
-        private void ProcessFragmentedPacket(NetPacket p)
-        {
-            DebugWrite("Fragment. Id: {0}, Part: {1}, Total: {2}", p.FragmentId, p.FragmentPart, p.FragmentsTotal);
-            //Get needed array from dictionary
-            ushort packetFragId = p.FragmentId;
-            IncomingFragments incomingFragments;
-            if (!_holdedFragments.TryGetValue(packetFragId, out incomingFragments))
-            {
-                incomingFragments = new IncomingFragments
-                {
-                    Fragments = new NetPacket[p.FragmentsTotal]
-                };
-                _holdedFragments.Add(packetFragId, incomingFragments);
-            }
-
-            //Cache
-            var fragments = incomingFragments.Fragments;
-
-            //Fill array
-            fragments[p.FragmentPart] = p;
-
-            //Increase received fragments count
-            incomingFragments.ReceivedCount++;
-
-            //Increase total size
-            int dataOffset = p.GetHeaderSize() + NetConstants.FragmentHeaderSize;
-            incomingFragments.TotalSize += p.RawData.Length - dataOffset;
-
-            //Check for finish
-            if (incomingFragments.ReceivedCount != fragments.Length)
-                return;
-
-            DebugWrite("Received all fragments!");
-            NetPacket resultingPacket = GetPacketFromPool(p.Property, incomingFragments.TotalSize);
-            int resultingPacketOffset = resultingPacket.GetHeaderSize();
-            int firstFragmentSize = fragments[0].RawData.Length - dataOffset;
-            for (int i = 0; i < incomingFragments.ReceivedCount; i++)
-            {
-                //Create resulting big packet
-                int fragmentSize = fragments[i].RawData.Length - dataOffset;
-                Buffer.BlockCopy(
-                    fragments[i].RawData, 
-                    dataOffset, 
-                    resultingPacket.RawData, 
-                    resultingPacketOffset + firstFragmentSize * i, 
-                    fragmentSize);
-
-                //Free memory
-                Recycle(fragments[i]);
-                fragments[i] = null;
-            }
-
-            //Send to process
-            _peerListener.ReceiveFromPeer(resultingPacket, _remoteEndPoint);
-
-            //Clear memory
-            Recycle(resultingPacket);
-            _holdedFragments.Remove(packetFragId);
-        }
-
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
@@ -421,16 +361,71 @@ namespace LiteNetLib
             }
         }
 
-        internal void AddIncomingPacket(NetPacket packet)
+        internal void AddIncomingPacket(NetPacket p)
         {
-            if (packet.IsFragmented)
+            if (p.IsFragmented)
             {
-                ProcessFragmentedPacket(packet);
+                DebugWrite("Fragment. Id: {0}, Part: {1}, Total: {2}", p.FragmentId, p.FragmentPart, p.FragmentsTotal);
+                //Get needed array from dictionary
+                ushort packetFragId = p.FragmentId;
+                IncomingFragments incomingFragments;
+                if (!_holdedFragments.TryGetValue(packetFragId, out incomingFragments))
+                {
+                    incomingFragments = new IncomingFragments
+                    {
+                        Fragments = new NetPacket[p.FragmentsTotal]
+                    };
+                    _holdedFragments.Add(packetFragId, incomingFragments);
+                }
+
+                //Cache
+                var fragments = incomingFragments.Fragments;
+
+                //Fill array
+                fragments[p.FragmentPart] = p;
+
+                //Increase received fragments count
+                incomingFragments.ReceivedCount++;
+
+                //Increase total size
+                int dataOffset = p.GetHeaderSize() + NetConstants.FragmentHeaderSize;
+                incomingFragments.TotalSize += p.RawData.Length - dataOffset;
+
+                //Check for finish
+                if (incomingFragments.ReceivedCount != fragments.Length)
+                    return;
+
+                DebugWrite("Received all fragments!");
+                NetPacket resultingPacket = GetPacketFromPool(p.Property, incomingFragments.TotalSize);
+                int resultingPacketOffset = resultingPacket.GetHeaderSize();
+                int firstFragmentSize = fragments[0].RawData.Length - dataOffset;
+                for (int i = 0; i < incomingFragments.ReceivedCount; i++)
+                {
+                    //Create resulting big packet
+                    int fragmentSize = fragments[i].RawData.Length - dataOffset;
+                    Buffer.BlockCopy(
+                        fragments[i].RawData,
+                        dataOffset,
+                        resultingPacket.RawData,
+                        resultingPacketOffset + firstFragmentSize * i,
+                        fragmentSize);
+
+                    //Free memory
+                    Recycle(fragments[i]);
+                    fragments[i] = null;
+                }
+
+                //Send to process
+                _peerListener.ReceiveFromPeer(resultingPacket, _remoteEndPoint);
+
+                //Clear memory
+                Recycle(resultingPacket);
+                _holdedFragments.Remove(packetFragId);
             }
-            else
+            else //Just simple packet
             {
-                _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
-                Recycle(packet);
+                _peerListener.ReceiveFromPeer(p, _remoteEndPoint);
+                Recycle(p);
             }
         }
 
