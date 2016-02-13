@@ -170,7 +170,9 @@ namespace LiteNetLib
             {
                 //TODO: fix later
                 if (options == SendOptions.Sequenced || options == SendOptions.Unreliable)
-                    return;
+                {
+                    throw new Exception("Unreliable packet size > allowed (" + (_mtu - headerSize) + ")");
+                }
                 
                 int packetFullSize = _mtu - headerSize;
                 int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
