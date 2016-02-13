@@ -188,6 +188,7 @@ namespace LiteNetLib
             if (currentPacket.NotEmpty)
             {
                 sendResult = _peer.SendRawData(currentPacket.Packet.RawData);
+                _peer.DebugWrite("[RR]Sended: {0}", sendResult);
             }
             _pendingPacketsAccess.Set();
             return sendResult;

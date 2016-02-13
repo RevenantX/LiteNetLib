@@ -142,7 +142,7 @@ namespace LiteNetLib
                 return false;
             NetPacket p = new NetPacket();
             p.Init(PacketProperty.UnconnectedMessage, length);
-            p.PutData(message, length);
+            p.PutData(message, 0, length);
             return _socket.SendTo(p.RawData, remoteEndPoint) > 0;
         }
 

@@ -150,16 +150,16 @@ namespace LiteNetLib
                     _peer.SendConnect(_connectId);
                 }
             }
-
-            _peer.Update(deltaTime);
-
-            if (_peer.TimeSinceLastPacket > _timeout)
+            else if (_peer.TimeSinceLastPacket > _timeout)
             {
                 Stop();
                 var netEvent = CreateEvent(NetEventType.Disconnect);
                 netEvent.AdditionalInfo = "Timeout";
                 EnqueueEvent(netEvent);
+                return;
             }
+
+            _peer.Update(deltaTime);
         }
 
         internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)

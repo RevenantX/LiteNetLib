@@ -87,19 +87,15 @@ namespace LiteNetLib
             Buffer.BlockCopy(dataWriter.Data, 0, RawData, GetHeaderSize(Property), dataWriter.Length);
         }
 
-        public void PutData(byte[] data, int length)
-        {
-            Buffer.BlockCopy(data, 0, RawData, GetHeaderSize(Property), length);
-        }
-
         public void PutData(byte[] data, int start, int length)
         {
-            Buffer.BlockCopy(data, start, RawData, GetHeaderSize(Property), length);
+            int packetStart = GetHeaderSize(Property) + (IsFragmented ? NetConstants.FragmentHeaderSize : 0);
+            Buffer.BlockCopy(data, start, RawData, packetStart, length);
         }
 
         public static bool GetPacketProperty(byte[] data, out PacketProperty property)
         {
-            byte properyByte = data[0];
+            byte properyByte = (byte)(data[0] & 0x7F);
             if (properyByte > LastProperty)
             {
                 property = PacketProperty.None;
@@ -172,7 +168,7 @@ namespace LiteNetLib
         public bool FromBytes(byte[] data, int packetSize)
         {
             //Reading property
-            if (data[0] > LastProperty || packetSize > NetConstants.PacketSizeLimit)
+            if ((data[0] & 0x7F) > LastProperty || packetSize > NetConstants.PacketSizeLimit)
                 return false;
             RawData = new byte[packetSize];
             Buffer.BlockCopy(data, 0, RawData, 0, packetSize);

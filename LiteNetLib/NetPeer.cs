@@ -65,6 +65,7 @@ namespace LiteNetLib
 
         private void ProcessFragmentedPacket(NetPacket p)
         {
+            DebugWrite("Fragment. Id: {0}, Part: {1}, Total: {2}", p.FragmentId, p.FragmentPart, p.FragmentsTotal);
             //Get needed array from dictionary
             ushort packetFragId = p.FragmentId;
             IncomingFragments incomingFragments;
@@ -74,6 +75,7 @@ namespace LiteNetLib
                 {
                     Fragments = new NetPacket[p.FragmentsTotal]
                 };
+                _holdedFragments.Add(packetFragId, incomingFragments);
             }
 
             //Cache
@@ -82,26 +84,43 @@ namespace LiteNetLib
             //Fill array
             fragments[p.FragmentPart] = p;
 
-            //Increase data count
+            //Increase received fragments count
             incomingFragments.ReceivedCount++;
-            int dataOffset = p.GetHeaderSize() - NetConstants.FragmentHeaderSize;
+
+            //Increase total size
+            int dataOffset = p.GetHeaderSize() + NetConstants.FragmentHeaderSize;
             incomingFragments.TotalSize += p.RawData.Length - dataOffset;
 
             //Check for finish
             if (incomingFragments.ReceivedCount != fragments.Length)
                 return;
 
+            DebugWrite("Received all fragments!");
             NetPacket resultingPacket = GetPacketFromPool(p.Property, incomingFragments.TotalSize);
+            int resultingPacketOffset = resultingPacket.GetHeaderSize();
+            int firstFragmentSize = fragments[0].RawData.Length - dataOffset;
             for (int i = 0; i < incomingFragments.ReceivedCount; i++)
             {
-                resultingPacket.PutData(fragments[i].RawData, dataOffset, p.RawData.Length - dataOffset);
+                //Create resulting big packet
+                int fragmentSize = fragments[i].RawData.Length - dataOffset;
+                Buffer.BlockCopy(
+                    fragments[i].RawData, 
+                    dataOffset, 
+                    resultingPacket.RawData, 
+                    resultingPacketOffset + firstFragmentSize * i, 
+                    fragmentSize);
+
+                //Free memory
                 Recycle(fragments[i]);
                 fragments[i] = null;
             }
 
+            //Send to process
             _peerListener.ReceiveFromPeer(resultingPacket, _remoteEndPoint);
+
+            //Clear memory
             Recycle(resultingPacket);
-            _holdedFragments.Remove(p.FragmentId);
+            _holdedFragments.Remove(packetFragId);
         }
 
         //DEBUG
@@ -169,6 +188,27 @@ namespace LiteNetLib
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
         }
 
+        private static PacketProperty SendOptionsToProperty(SendOptions options)
+        {
+            switch (options)
+            {
+                case SendOptions.ReliableUnordered:
+                    return PacketProperty.Reliable;
+                case SendOptions.Sequenced:
+                    return PacketProperty.Sequenced;
+                case SendOptions.ReliableOrdered:
+                    return PacketProperty.ReliableOrdered;
+                default:
+                    return PacketProperty.None;
+            }
+        }
+
+        public int GetMaxSinglePacketSize(SendOptions options)
+        {
+            var packetProperty = SendOptionsToProperty(options);
+            return _mtu - NetPacket.GetHeaderSize(packetProperty);
+        }
+
         public void Send(byte[] data, SendOptions options)
         {
             Send(data, 0, data.Length, options);
@@ -181,33 +221,52 @@ namespace LiteNetLib
 
         public void Send(byte[] data, int start, int length, SendOptions options)
         {
-            //if (length > _mtu)
-            //{
-            //    int packetsCount = NetUtils.GetDividedPacketsCount(length, _mtu);
-            //    for (int i = 0; i < packetsCount; i++)
-            //    {
-            //        byte[] fragmentedData = new byte[];
-            //        Send();
-            //    }
-            //    return;
-            //}
+            //Prepare
+            PacketProperty property = SendOptionsToProperty(options);
+            int headerSize = NetPacket.GetHeaderSize(property);
 
-            NetPacket packet;
-            switch (options)
+            //Check fragmentation
+            if (length + headerSize > _mtu)
             {
-                case SendOptions.ReliableUnordered:
-                    packet = GetPacketFromPool(PacketProperty.Reliable, length);
-                    break;
-                case SendOptions.Sequenced:
-                    packet = GetPacketFromPool(PacketProperty.Sequenced, length);
-                    break;
-                case SendOptions.ReliableOrdered:
-                    packet = GetPacketFromPool(PacketProperty.ReliableOrdered, length);
-                    break;
-                default:
-                    packet = GetPacketFromPool(PacketProperty.None, length);
-                    break;
+                //TODO: fix later
+                if (options == SendOptions.Sequenced || options == SendOptions.Unreliable)
+                    return;
+                
+                int packetFullSize = _mtu - headerSize;
+                int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
+
+                int fullPacketsCount = length / packetDataSize;
+                int lastPacketSize = length % packetDataSize;
+                int totalPackets = fullPacketsCount + (lastPacketSize == 0 ? 0 : 1);
+
+                for (int i = 0; i < fullPacketsCount; i++)
+                {
+                    NetPacket p = GetPacketFromPool(property, packetFullSize);
+                    p.FragmentId = _fragmentId;
+                    p.FragmentPart = (uint)i;
+                    p.FragmentsTotal = (uint)totalPackets;
+                    p.IsFragmented = true;
+                    p.PutData(data, i * packetDataSize, packetDataSize);
+                    SendPacket(p);
+                }
+                
+                if (lastPacketSize > 0)
+                {
+                    NetPacket p = GetPacketFromPool(property, lastPacketSize + NetConstants.FragmentHeaderSize);
+                    p.FragmentId = _fragmentId;
+                    p.FragmentPart = (uint)fullPacketsCount; //last
+                    p.FragmentsTotal = (uint)totalPackets;
+                    p.IsFragmented = true;
+                    p.PutData(data, fullPacketsCount * packetDataSize, lastPacketSize);
+                    SendPacket(p);
+                }
+
+                _fragmentId++;             
+                return;
             }
+
+            //Else just send
+            NetPacket packet = GetPacketFromPool(property, length);
             packet.PutData(data, start, length);
             SendPacket(packet);
         }
@@ -218,7 +277,7 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
-        internal void CreateAndSend(PacketProperty property, ushort sequence)
+        private void CreateAndSend(PacketProperty property, ushort sequence)
         {
             NetPacket packet = GetPacketFromPool(property);
             packet.Sequence = sequence;
@@ -354,6 +413,9 @@ namespace LiteNetLib
         {
             lock (_packetPool)
             {
+                if(packet.RawData != null)
+                    packet.IsFragmented = false;
+
                 packet.RawData = null;
                 _packetPool.Push(packet);
             }
@@ -379,7 +441,7 @@ namespace LiteNetLib
             {
                 if (_mtuIdx < NetConstants.PossibleMtu.Length - 1 && packet.RawData.Length > _mtu)
                 {
-                    DebugWriteForce("MTU check. Increase to: " + packet.RawData.Length);
+                    DebugWrite("MTU check. Increase to: " + packet.RawData.Length);
                     lock (_mtuMutex)
                     {
                         _mtuIdx++;
@@ -388,7 +450,7 @@ namespace LiteNetLib
                     _mtuCheckAttempts = 0;
                 }
 
-                var p = GetPacketFromPool(PacketProperty.MtuOk);
+                var p = GetPacketFromPool(PacketProperty.MtuOk, 1);
                 p.RawData[1] = (byte) _mtuIdx;
                 SendPacket(p);
             }
@@ -399,7 +461,7 @@ namespace LiteNetLib
                     _mtuIdx = packet.RawData[1];
                 }
                 _mtu = NetConstants.PossibleMtu[_mtuIdx];
-                DebugWriteForce("MTU ok. Increase to: " + _mtu);
+                DebugWrite("MTU ok. Increase to: " + _mtu);
             }
 
             //maxed.
@@ -414,7 +476,7 @@ namespace LiteNetLib
         {
             _lastPacketStopwatch.Reset();
             _lastPacketStopwatch.Start();
-
+            
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
             {

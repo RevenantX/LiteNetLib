@@ -229,7 +229,7 @@ namespace LiteNetLib
         {
             foreach (NetPeer netPeer in _peers.Values)
             {
-                netPeer.Send(data, length, options);
+                netPeer.Send(data, 0, length, options);
             }
         }
 
@@ -239,7 +239,7 @@ namespace LiteNetLib
 			{
 				if(netPeer != excludePeer)
 				{
-                    netPeer.Send(data, length, options);
+                    netPeer.Send(data, 0, length, options);
 				}
 			}
 		}

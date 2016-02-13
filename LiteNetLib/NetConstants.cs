@@ -35,6 +35,6 @@ namespace LiteNetLib
         public const int FlowUpdateTime = 1000;
         public const int FlowIncreaseThreshold = 4;
         public const int PacketsPerSecondMax = 65535;
-        public const int DefaultPingSendDelay = 500;
+        public const int DefaultPingSendDelay = 1000;
     }
 }
