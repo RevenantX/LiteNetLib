@@ -12,6 +12,7 @@ namespace LiteNetLib
             public DateTime TimeStamp;
             public bool Sended;
             public bool NotEmpty { get { return Packet != null; } }
+            public bool Empty { get { return Packet == null; } }
 
             public NetPacket GetAndClear()
             {
@@ -165,26 +166,28 @@ namespace LiteNetLib
 
             //send
             PendingPacket currentPacket;
-            bool packetSearch = true;
             int startQueueIndex = _queueIndex;
             do
             {
                 currentPacket = _pendingPackets[_queueIndex];
+                if(currentPacket.Empty)
+                    continue;
+
                 //check send time
-                if (currentPacket != null)
+                int packetHoldTime = (int) (currentTime - currentPacket.TimeStamp).TotalMilliseconds;
+                if (!currentPacket.Sended || packetHoldTime > _resendDelay)
                 {
-                    int packetHoldTime = (int) (currentTime - currentPacket.TimeStamp).TotalMilliseconds;
-                    if (!currentPacket.Sended || packetHoldTime > _resendDelay)
-                    {
-                        //Setup timestamp or resend
-                        currentPacket.Sended = true;
-                        currentPacket.TimeStamp = currentTime;
-                        packetSearch = false;
-                    }
+                    //Setup timestamp or resend
+                    currentPacket.Sended = true;
+                    currentPacket.TimeStamp = currentTime;
+                }
+                else
+                {
+                    currentPacket = null;
                 }
 
                 _queueIndex = (_queueIndex + 1) % _windowSize;
-            } while (packetSearch && _queueIndex != startQueueIndex);
+            } while (currentPacket == null && _queueIndex != startQueueIndex);
 
             bool sendResult = false;
             if (currentPacket != null && currentPacket.NotEmpty)
