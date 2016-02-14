@@ -6,16 +6,19 @@ namespace LiteNetLib
 {
     sealed class ReliableChannel
     {
-        struct PendingPacket
+        class PendingPacket
         {
             public NetPacket Packet;
             public DateTime TimeStamp;
             public bool Sended;
             public bool NotEmpty { get { return Packet != null; } }
-            public void Clear()
+
+            public NetPacket GetAndClear()
             {
-                Sended = false;
+                var packet = Packet;
                 Packet = null;
+                Sended = false;
+                return packet;
             }
         }
 
@@ -25,7 +28,7 @@ namespace LiteNetLib
 
         private readonly Queue<NetPacket> _outgoingPackets;
         private readonly bool[] _outgoingAcks;               //for send acks
-        private readonly PendingPacket[] _pendingPackets;        //for unacked packets and duplicates
+        private readonly PendingPacket[] _pendingPackets;    //for unacked packets and duplicates
         private readonly NetPacket[] _receivedPackets;       //for order
         private readonly bool[] _earlyReceived;              //for unordered
  
@@ -53,6 +56,10 @@ namespace LiteNetLib
 
             _outgoingAcks = new bool[_windowSize];
             _pendingPackets = new PendingPacket[_windowSize];
+            for (int i = 0; i < _pendingPackets.Length; i++)
+            {
+                _pendingPackets[i] = new PendingPacket();
+            }
 
             if (_ordered)
                 _receivedPackets = new NetPacket[_windowSize];
@@ -102,8 +109,7 @@ namespace LiteNetLib
 
                 if (_pendingPackets[storeIdx].NotEmpty)
                 {
-                    NetPacket removed = _pendingPackets[storeIdx].Packet;
-                    _pendingPackets[storeIdx].Clear();
+                    NetPacket removed = _pendingPackets[storeIdx].GetAndClear();
                     _peer.Recycle(removed);
 
                     _peer.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", ackSequence);
@@ -165,7 +171,7 @@ namespace LiteNetLib
             {
                 currentPacket = _pendingPackets[_queueIndex];
                 //check send time
-                if (currentPacket.NotEmpty)
+                if (currentPacket != null)
                 {
                     int packetHoldTime = (int) (currentTime - currentPacket.TimeStamp).TotalMilliseconds;
                     if (!currentPacket.Sended || packetHoldTime > _resendDelay)
@@ -173,7 +179,6 @@ namespace LiteNetLib
                         //Setup timestamp or resend
                         currentPacket.Sended = true;
                         currentPacket.TimeStamp = currentTime;
-                        _pendingPackets[_queueIndex] = currentPacket;
                         packetSearch = false;
                     }
                 }
@@ -182,7 +187,7 @@ namespace LiteNetLib
             } while (packetSearch && _queueIndex != startQueueIndex);
 
             bool sendResult = false;
-            if (currentPacket.NotEmpty)
+            if (currentPacket != null && currentPacket.NotEmpty)
             {
                 sendResult = _peer.SendRawData(currentPacket.Packet.RawData);
                 _peer.DebugWrite("[RR]Sended: {0}", sendResult);
