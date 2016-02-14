@@ -25,8 +25,8 @@ namespace LiteNetLib
         private const int RttResetDelay = 1000;
         private int _rttResetTimer;
 
-        private readonly Stopwatch _pingStopwatch;
-        private readonly Stopwatch _lastPacketStopwatch;
+        private DateTime _pingTimeStart;
+        private DateTime _lastPacketReceivedStart;
 
         //Common
         private readonly NetSocket _socket;              
@@ -97,9 +97,9 @@ namespace LiteNetLib
             get { return _mtu; }
         }
 
-        public long TimeSinceLastPacket
+        public int TimeSinceLastPacket
         {
-            get { return _lastPacketStopwatch.ElapsedMilliseconds; }
+            get { return (int)(DateTime.UtcNow - _lastPacketReceivedStart).TotalMilliseconds; }
         }
 
         internal NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
@@ -114,10 +114,6 @@ namespace LiteNetLib
             _rtt = 0;
             _pingSendDelay = NetConstants.DefaultPingSendDelay;
             _pingSendTimer = 0;
-
-            _pingStopwatch = new Stopwatch();
-            _lastPacketStopwatch = new Stopwatch();
-            _lastPacketStopwatch.Start();
 
             _reliableOrderedChannel = new ReliableChannel(this, true, _windowSize);
             _reliableUnorderedChannel = new ReliableChannel(this, false, _windowSize);
@@ -468,12 +464,16 @@ namespace LiteNetLib
             }
         }
 
+        internal void StartConnectionTimer()
+        {
+            _lastPacketReceivedStart = DateTime.UtcNow;
+        }
+
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
-            _lastPacketStopwatch.Reset();
-            _lastPacketStopwatch.Start();
-            
+            _lastPacketReceivedStart = DateTime.UtcNow;
+
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
             {
@@ -500,8 +500,7 @@ namespace LiteNetLib
                         break;
                     }
                     _pingSequence = packet.Sequence;
-                    int rtt = (int) _pingStopwatch.ElapsedMilliseconds;
-                    _pingStopwatch.Reset();
+                    int rtt = (int)(DateTime.UtcNow - _pingTimeStart).TotalMilliseconds;
                     UpdateRoundTripTime(rtt);
                     DebugWrite("[PP]Ping: {0}", rtt);
                     Recycle(packet);
@@ -618,8 +617,7 @@ namespace LiteNetLib
                 CreateAndSend(PacketProperty.Ping, _pingSequence);
 
                 //reset timer
-                _pingStopwatch.Reset();
-                _pingStopwatch.Start();
+                _pingTimeStart = DateTime.UtcNow;
             }
 
             //RTT - round trip time

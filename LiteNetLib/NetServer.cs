@@ -97,6 +97,7 @@ namespace LiteNetLib
                 {
                     if (netPeer.TimeSinceLastPacket > _timeout)
                     {
+                        netPeer.DebugWrite("Disconnect by timeout: {0} > {1}", netPeer.TimeSinceLastPacket, _timeout);
                         var netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
                         netEvent.RemoteEndPoint = netPeer.EndPoint;
@@ -180,6 +181,7 @@ namespace LiteNetLib
                 }
                 else if (packet.Property == PacketProperty.Connect) //response with connect
                 {
+                    netPeer.StartConnectionTimer();
                     netPeer.SendConnect(_peerConnectionIds[remoteEndPoint]);
                     netPeer.Recycle(packet);
                 }

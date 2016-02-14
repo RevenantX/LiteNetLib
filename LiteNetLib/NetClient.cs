@@ -229,6 +229,8 @@ namespace LiteNetLib
                 connectEvent.RemoteEndPoint = _peer.EndPoint;
                 connectEvent.AdditionalInfo = _connectId.ToString();
                 EnqueueEvent(connectEvent);
+
+                _peer.StartConnectionTimer();
                 return;
             }
 

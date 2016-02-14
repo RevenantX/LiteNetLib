@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 
 namespace LiteNetLib
@@ -9,12 +9,13 @@ namespace LiteNetLib
         struct PendingPacket
         {
             public NetPacket Packet;
-            public uint TimeStamp;
+            public DateTime TimeStamp;
+            public bool Sended;
             public bool NotEmpty { get { return Packet != null; } }
             public void Clear()
             {
+                Sended = false;
                 Packet = null;
-                TimeStamp = 0;
             }
         }
 
@@ -33,8 +34,6 @@ namespace LiteNetLib
         private readonly NetPeer _peer;
         private int _queueIndex;
         private bool _mustSendAcks;
-
-        private readonly Stopwatch _packetTimeStopwatch;
 
         private long _resendDelay = 500;
         private const int BitsInByte = 8;
@@ -64,9 +63,6 @@ namespace LiteNetLib
             _localSeqence = 0;
             _remoteSequence = 0;
             _remoteWindowStart = 0;
-
-            _packetTimeStopwatch = new Stopwatch();
-            _packetTimeStopwatch.Start();
         }
 
         //ProcessAck in packet
@@ -156,7 +152,7 @@ namespace LiteNetLib
         public bool SendNextPacket()
         {
             //check sending acks
-            long currentTime = _packetTimeStopwatch.ElapsedMilliseconds;
+            DateTime currentTime = DateTime.UtcNow;
 
             _pendingPacketsAccess.WaitOne();
             ProcessQueuedPackets();
@@ -171,11 +167,12 @@ namespace LiteNetLib
                 //check send time
                 if (currentPacket.NotEmpty)
                 {
-                    long packetHoldTime = currentTime - currentPacket.TimeStamp;
-                    if (currentPacket.TimeStamp == 0 || packetHoldTime > _resendDelay)
+                    int packetHoldTime = (int) (currentTime - currentPacket.TimeStamp).TotalMilliseconds;
+                    if (!currentPacket.Sended || packetHoldTime > _resendDelay)
                     {
                         //Setup timestamp or resend
-                        currentPacket.TimeStamp = (uint)currentTime;
+                        currentPacket.Sended = true;
+                        currentPacket.TimeStamp = currentTime;
                         _pendingPackets[_queueIndex] = currentPacket;
                         packetSearch = false;
                     }
