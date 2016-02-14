@@ -166,31 +166,29 @@ namespace LiteNetLib
 
             //send
             PendingPacket currentPacket;
+            bool packetFound = false;
             int startQueueIndex = _queueIndex;
             do
             {
                 currentPacket = _pendingPackets[_queueIndex];
-                if(currentPacket.Empty)
-                    continue;
-
-                //check send time
-                int packetHoldTime = (int) (currentTime - currentPacket.TimeStamp).TotalMilliseconds;
-                if (!currentPacket.Sended || packetHoldTime > _resendDelay)
+                if (currentPacket.NotEmpty)
                 {
-                    //Setup timestamp or resend
-                    currentPacket.Sended = true;
-                    currentPacket.TimeStamp = currentTime;
-                }
-                else
-                {
-                    currentPacket = null;
+                    //check send time
+                    int packetHoldTime = (int)(currentTime - currentPacket.TimeStamp).TotalMilliseconds;
+                    if (!currentPacket.Sended || packetHoldTime > _resendDelay)
+                    {
+                        //Setup timestamp or resend
+                        currentPacket.Sended = true;
+                        currentPacket.TimeStamp = currentTime;
+                        packetFound = true;
+                    }
                 }
 
                 _queueIndex = (_queueIndex + 1) % _windowSize;
-            } while (currentPacket == null && _queueIndex != startQueueIndex);
+            } while (!packetFound && _queueIndex != startQueueIndex);
 
             bool sendResult = false;
-            if (currentPacket != null && currentPacket.NotEmpty)
+            if (packetFound)
             {
                 sendResult = _peer.SendRawData(currentPacket.Packet.RawData);
                 _peer.DebugWrite("[RR]Sended: {0}", sendResult);
