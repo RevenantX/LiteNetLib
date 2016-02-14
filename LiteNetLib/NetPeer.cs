@@ -551,9 +551,12 @@ namespace LiteNetLib
             int errorCode = 0;
             if (_socket.SendTo(data, _remoteEndPoint, ref errorCode) == -1)
             {
-                lock (_peerListener)
+                if (errorCode != 0)
                 {
-                    _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
+                    lock (_peerListener)
+                    {
+                        _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
+                    }
                 }
                 return false;
             }

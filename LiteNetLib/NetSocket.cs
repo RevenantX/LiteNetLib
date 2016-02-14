@@ -44,6 +44,9 @@ namespace LiteNetLib
         {
             try
             {
+                if (!_udpSocket.Poll(1000, SelectMode.SelectWrite))
+                    return -1;
+
                 int result = _udpSocket.SendTo(data, remoteEndPoint.EndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint.EndPoint,
                     result);
