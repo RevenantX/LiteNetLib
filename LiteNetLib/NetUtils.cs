@@ -27,7 +27,7 @@ namespace LiteNetLib
                     UnityEngine.Debug.Log(debugStr);
 #elif WINRT
                     Debug.WriteLine(str, args);
-#else
+#elif !UNITY
                     Console.ForegroundColor = color;
                     Console.WriteLine(str, args);
                     Console.ForegroundColor = ConsoleColor.Gray;
@@ -45,7 +45,7 @@ namespace LiteNetLib
                 UnityEngine.Debug.Log(debugStr);
 #elif WINRT
                 Debug.WriteLine(str, args);
-#else
+#elif !UNITY
                 Console.ForegroundColor = color;
                 Console.WriteLine(str, args);
                 Console.ForegroundColor = ConsoleColor.Gray;
