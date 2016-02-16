@@ -469,9 +469,25 @@ namespace LiteNetLib
             _lastPacketReceivedStart = DateTime.UtcNow;
         }
 
+#if DEBUG
+        private readonly Random _packetLossRandom = new Random();
+        private int _packetLossChance = 50;
+#endif
+
+        private bool SimulatePacketLoss()
+        {
+#if DEBUG
+            return _packetLossRandom.Next(100/_packetLossChance) == 0;
+#else
+            return false;
+#endif
+        }
+
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
+            if(SimulatePacketLoss())
+                return;
             _lastPacketReceivedStart = DateTime.UtcNow;
 
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);

@@ -9,16 +9,14 @@ namespace LiteNetLib
         class PendingPacket
         {
             public NetPacket Packet;
-            public DateTime TimeStamp;
-            public bool Sended;
+            public DateTime? TimeStamp;
             public bool NotEmpty { get { return Packet != null; } }
-            public bool Empty { get { return Packet == null; } }
 
             public NetPacket GetAndClear()
             {
                 var packet = Packet;
                 Packet = null;
-                Sended = false;
+                TimeStamp = null;
                 return packet;
             }
         }
@@ -39,7 +37,7 @@ namespace LiteNetLib
         private int _queueIndex;
         private bool _mustSendAcks;
 
-        private long _resendDelay = 500;
+        private double _resendDelay = 500;
         private const int BitsInByte = 8;
         private readonly bool _ordered;
         private readonly int _windowSize;
@@ -174,13 +172,23 @@ namespace LiteNetLib
                 if (currentPacket.NotEmpty)
                 {
                     //check send time
-                    int packetHoldTime = (int)(currentTime - currentPacket.TimeStamp).TotalMilliseconds;
-                    if (!currentPacket.Sended || packetHoldTime > _resendDelay)
+                    if(currentPacket.TimeStamp.HasValue)
                     {
-                        //Setup timestamp or resend
-                        currentPacket.Sended = true;
-                        currentPacket.TimeStamp = currentTime;
+                        double packetHoldTime = (currentTime - currentPacket.TimeStamp.Value).TotalMilliseconds;
+                        if (packetHoldTime > _resendDelay)
+                        {
+                            _peer.DebugWrite("[RR]Resend: {0}", (int)packetHoldTime);
+                            packetFound = true;
+                        }
+                    }
+                    else
+                    {
                         packetFound = true;
+                    }
+
+                    if (packetFound)
+                    {
+                        currentPacket.TimeStamp = currentTime;
                     }
                 }
 
