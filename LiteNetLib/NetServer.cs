@@ -57,6 +57,11 @@ namespace LiteNetLib
             if (peer != null && _peers.ContainsKey(peer.EndPoint))
             {
                 peer.CreateAndSend(PacketProperty.Disconnect);
+                var netEvent = CreateEvent(NetEventType.Disconnect);
+                netEvent.Peer = peer;
+                netEvent.RemoteEndPoint = peer.EndPoint;
+                netEvent.AdditionalInfo = "Server disconnect called";
+                EnqueueEvent(netEvent);
                 RemovePeer(peer);
             }
         }
