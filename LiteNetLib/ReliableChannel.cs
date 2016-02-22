@@ -90,7 +90,7 @@ namespace LiteNetLib
             _pendingPacketsAccess.WaitOne();
             for (int i = 0; i < _windowSize; i++)
             {
-                int ackSequence = ackWindowStart + i;
+                int ackSequence = (ackWindowStart + i) % NetConstants.MaxSequence;
                 if (NetUtils.RelativeSequenceNumber(ackSequence, _localWindowStart) < 0)
                     continue;
 
@@ -145,7 +145,7 @@ namespace LiteNetLib
                     packet.Sequence = _localSeqence;
 
                     _pendingPackets[_localSeqence % _windowSize].Packet = packet;
-                    _localSeqence++;
+                    _localSeqence = (ushort)((_localSeqence + 1) % NetConstants.MaxSequence);
                 }
                 else
                 {

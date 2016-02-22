@@ -471,7 +471,7 @@ namespace LiteNetLib
 
 #if DEBUG
         private readonly Random _packetLossRandom = new Random();
-        private int _packetLossChance = 50;
+        private int _packetLossChance = 10;
 #endif
 
         private bool SimulatePacketLoss()
