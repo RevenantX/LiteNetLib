@@ -12,7 +12,7 @@ namespace LiteNetLib
         private readonly int _maxClients;
         private readonly Queue<NetEndPoint> _peersToRemove;
         private long _timeout = 5000;
-        private string _connectKey;
+        private readonly string _connectKey;
 
         public long DisconnectTimeout
         {
@@ -53,7 +53,11 @@ namespace LiteNetLib
 
         private void RemovePeer(NetPeer peer)
         {
-            _peersToRemove.Enqueue(peer.EndPoint);
+            lock (_peers)
+            {
+                _peers.Remove(peer.EndPoint);
+                _peerConnectionIds.Remove(peer.EndPoint);
+            }
         }
 
         public void DisconnectPeer(NetPeer peer)
@@ -64,7 +68,7 @@ namespace LiteNetLib
                 var netEvent = CreateEvent(NetEventType.Disconnect);
                 netEvent.Peer = peer;
                 netEvent.RemoteEndPoint = peer.EndPoint;
-                netEvent.AdditionalInfo = "Server disconnect called";
+                netEvent.AdditionalInfo = "Disconnect peer called";
                 EnqueueEvent(netEvent);
                 RemovePeer(peer);
             }
@@ -112,7 +116,7 @@ namespace LiteNetLib
                         netEvent.RemoteEndPoint = netPeer.EndPoint;
                         netEvent.AdditionalInfo = "Timeout";
                         EnqueueEvent(netEvent);
-                        RemovePeer(netPeer);
+                        _peersToRemove.Enqueue(netPeer.EndPoint);
                     }
                     else
                     {

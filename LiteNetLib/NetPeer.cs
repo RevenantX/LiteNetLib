@@ -13,6 +13,7 @@ namespace LiteNetLib
         private int _flowTimer;
 
         //Ping and RTT
+        private int _ping;
         private int _rtt;
         private int _avgRtt;
         private int _rttCount;
@@ -73,7 +74,7 @@ namespace LiteNetLib
 
         public int Ping
         {
-            get { return _rtt; }
+            get { return _ping; }
         }
 
         public int PingSendDelay
@@ -607,7 +608,7 @@ namespace LiteNetLib
             _pingSendTimer += deltaTime;
             if (_pingSendTimer >= _pingSendDelay)
             {
-                DebugWrite("[PP] Send ping...");
+                DebugWriteForce("[PP] Send ping...");
 
                 //reset timer
                 _pingSendTimer = 0;
@@ -626,6 +627,7 @@ namespace LiteNetLib
                 _rttResetTimer = 0;
                 //Rtt update
                 _rtt = _avgRtt;
+                _ping = _avgRtt;
                 _rttCount = 1;
             }
 
@@ -656,6 +658,7 @@ namespace LiteNetLib
                     }
                 }
             }
+            //MTU - end
         }
     }
 }

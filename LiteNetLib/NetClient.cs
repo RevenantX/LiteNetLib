@@ -139,6 +139,7 @@ namespace LiteNetLib
         public void Disconnect()
         {
             var netEvent = CreateEvent(NetEventType.Disconnect);
+            netEvent.AdditionalInfo = "Disconnect method called";
             EnqueueEvent(netEvent);
             CloseConnection(false);
         }

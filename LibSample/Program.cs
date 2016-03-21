@@ -7,7 +7,7 @@ class Program
 {
     //private static int _messagesReceivedCount = 0;
 
-    private static void ClientEvent(NetEvent netEvent)
+    private static void ClientEvent(NetClient client, NetEvent netEvent)
     {
         switch (netEvent.Type)
         {
@@ -53,6 +53,8 @@ class Program
                 {
                     Console.WriteLine("TestFrag: {0}, {1}", netEvent.Data[0], netEvent.Data[13217]);
                 }
+                client.Disconnect();
+                client.Connect("127.0.0.1", 9050, "myapp1");
                 break;
 
             case NetEventType.Error:
@@ -129,7 +131,7 @@ class Program
             NetEvent evt;
             while ((evt = client.GetNextEvent()) != null)
             {
-                ClientEvent(evt);
+                ClientEvent(client, evt);
                 client.Recycle(evt);
             }
             while ((evt = server.GetNextEvent()) != null)
@@ -142,5 +144,8 @@ class Program
 
         client.Stop();
         server.Stop();
+        Console.ReadKey();
+        Console.WriteLine("Press any key to exit");
+        Console.ReadKey();
     }
 }
