@@ -222,25 +222,6 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
-        internal void SendConnect(long id)
-        {
-            var connectPacket = GetPacketFromPool(PacketProperty.Connect, 8);
-            FastBitConverter.GetBytes(connectPacket.RawData, 1, id);
-            SendRawData(connectPacket.RawData);
-        }
-
-        internal void SendDisconnect(long id)
-        {
-            var disconnectPacket = GetPacketFromPool(PacketProperty.Disconnect, 8);
-            FastBitConverter.GetBytes(disconnectPacket.RawData, 1, id);
-            SendRawData(disconnectPacket.RawData);
-        }
-
-        internal static long GetConnectId(NetPacket connectPacket)
-        {
-            return BitConverter.ToInt64(connectPacket.RawData, 1);
-        }
-
         //from user thread, our thread, or recv?
         private void SendPacket(NetPacket packet)
         {
@@ -266,7 +247,6 @@ namespace LiteNetLib
                     break;
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
-                case PacketProperty.Connect:
                 case PacketProperty.Disconnect:
                 case PacketProperty.MtuCheck:
                 case PacketProperty.MtuOk:

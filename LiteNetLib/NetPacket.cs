@@ -13,19 +13,20 @@ namespace LiteNetLib
         AckReliableOrdered,     //5
         Ping,                   //6
         Pong,                   //7
-        Connect,                //8
-        Disconnect,             //9
-        UnconnectedMessage,     //10
-        NatIntroductionRequest, //11
-        NatIntroduction,        //12
-        NatPunchMessage,        //13
-        MtuCheck,               //14
-        MtuOk                   //15
+        ConnectRequest,         //8
+        ConnectAccept,          //9
+        Disconnect,             //10
+        UnconnectedMessage,     //11
+        NatIntroductionRequest, //12
+        NatIntroduction,        //13
+        NatPunchMessage,        //14
+        MtuCheck,               //15
+        MtuOk                   //16
     }
 
     sealed class NetPacket
     {
-        const int LastProperty = 15;
+        const int LastProperty = 16;
 
         //Header
         public PacketProperty Property
@@ -78,6 +79,14 @@ namespace LiteNetLib
         {
             RawData = new byte[GetHeaderSize(property) + dataSize];
             Property = property;
+        }
+
+        //Always not fragmented
+        public static byte[] CreateRawPacket(PacketProperty property, int dataSize)
+        {
+            byte[] rawData = new byte[GetHeaderSize(property) + dataSize];
+            rawData[0] = (byte) property;
+            return rawData;
         }
 
         public void Init(PacketProperty property, NetDataWriter dataWriter)

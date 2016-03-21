@@ -5,7 +5,7 @@ using LiteNetLib.Utils;
 
 class Program
 {
-    private static int _messagesReceivedCount = 0;
+    //private static int _messagesReceivedCount = 0;
 
     private static void ClientEvent(NetEvent netEvent)
     {
@@ -109,7 +109,7 @@ class Program
         }
 
         //Server
-        NetServer server = new NetServer(2);
+        NetServer server = new NetServer(2, "myapp1");
         server.UnconnectedMessagesEnabled = true;
         server.Start(9050);
 
@@ -117,7 +117,7 @@ class Program
         NetClient client = new NetClient();
         client.UnconnectedMessagesEnabled = true;
         client.Start();
-        client.Connect("localhost", 9050);
+        client.Connect("localhost", 9050, "myapp1");
 
         //Test unconnected
         NetDataWriter dw = new NetDataWriter();

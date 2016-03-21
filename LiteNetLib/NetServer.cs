@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
+using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
     public sealed class NetServer : NetBase
     {
         private readonly Dictionary<NetEndPoint, NetPeer> _peers;
-        private readonly Dictionary<NetEndPoint, long> _peerConnectionIds; 
+        private readonly Dictionary<NetEndPoint, ulong> _peerConnectionIds; 
         private readonly int _maxClients;
         private readonly Queue<NetEndPoint> _peersToRemove;
         private long _timeout = 5000;
+        private string _connectKey;
 
         public long DisconnectTimeout
         {
@@ -17,12 +20,13 @@ namespace LiteNetLib
             set { _timeout = value; }
         }
 
-        public NetServer(int maxClients)
+        public NetServer(int maxClients, string key)
         {
             _peers = new Dictionary<NetEndPoint, NetPeer>();
-            _peerConnectionIds = new Dictionary<NetEndPoint, long>();
+            _peerConnectionIds = new Dictionary<NetEndPoint, ulong>();
             _peersToRemove = new Queue<NetEndPoint>(maxClients);
             _maxClients = maxClients;
+            _connectKey = key;
         }
 
         public int PeersCount
@@ -151,6 +155,18 @@ namespace LiteNetLib
             }
         }
 
+        private void SendConnectAccept(NetPeer peer, ulong id)
+        {
+            //Make initial packet
+            var connectPacket = NetPacket.CreateRawPacket(PacketProperty.ConnectAccept, 8);
+
+            //Add data
+            FastBitConverter.GetBytes(connectPacket, 1, id);
+
+            //Send raw
+            peer.SendRawData(connectPacket);
+        }
+
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
             NetPacket packet;
@@ -171,7 +187,7 @@ namespace LiteNetLib
                 //Send
                 if (packet.Property == PacketProperty.Disconnect)
                 {
-                    if (NetPeer.GetConnectId(packet) != _peerConnectionIds[remoteEndPoint])
+                    if (BitConverter.ToUInt64(packet.RawData, 1) != _peerConnectionIds[remoteEndPoint])
                     {
                         //Old or incorrect disconnect
                         netPeer.Recycle(packet);
@@ -184,10 +200,18 @@ namespace LiteNetLib
                     netEvent.AdditionalInfo = "successfuly disconnected";
                     EnqueueEvent(netEvent);
                 }
-                else if (packet.Property == PacketProperty.Connect) //response with connect
+                else if (packet.Property == PacketProperty.ConnectRequest) //response with connect
                 {
+                    ulong lastId = _peerConnectionIds[remoteEndPoint];
+                    ulong newId = BitConverter.ToUInt64(packet.RawData, 1);
+                    if (newId > lastId)
+                    {
+                        _peerConnectionIds[remoteEndPoint] = newId;
+                    }
+
                     netPeer.StartConnectionTimer();
-                    netPeer.SendConnect(_peerConnectionIds[remoteEndPoint]);
+                    NetUtils.DebugWrite(ConsoleColor.Blue, "ConnectRequest LastId: {0}, NewId: {1}", lastId, newId);
+                    SendConnectAccept(netPeer, _peerConnectionIds[remoteEndPoint]);
                     netPeer.Recycle(packet);
                 }
                 else //throw out garbage packets
@@ -205,15 +229,24 @@ namespace LiteNetLib
                 return;
             }
 
-            if (_peers.Count < _maxClients && packet.Property == PacketProperty.Connect)
+            if (_peers.Count < _maxClients && packet.Property == PacketProperty.ConnectRequest)
             {
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request: accepting");
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request");
+
+                string peerKey = Encoding.UTF8.GetString(packet.RawData, 9, packet.RawData.Length - 9);
+                if (peerKey != _connectKey)
+                {
+                    NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NS] Peer connect reject. Invalid key: " + peerKey);
+                    return;
+                }
+
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Peer connect accepting");
                 //Getting new id for peer
                 netPeer = CreatePeer(remoteEndPoint);
 
                 //response with id
-                long connectionId = NetPeer.GetConnectId(packet);
-                netPeer.SendConnect(connectionId);
+                ulong connectionId = BitConverter.ToUInt64(packet.RawData, 1);
+                //SendConnectAccept(netPeer, connectionId);
 
                 //clean incoming packet
                 netPeer.Recycle(packet);

@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
@@ -12,7 +14,8 @@ namespace LiteNetLib
         private int _reconnectDelay = 500;
         private bool _waitForConnect;
         private long _timeout = 5000;
-        private long _connectId;
+        private ulong _connectId;
+        private string _connectKey;
 
         public long DisconnectTimeout
         {
@@ -28,16 +31,6 @@ namespace LiteNetLib
         public bool Start()
         {
             return Start(0);
-        }
-
-        public override bool Start(int port)
-        {
-            bool result = base.Start(port);
-            if (result)
-            {
-                //_id = _localEndPoint.GetId();
-            }
-            return result;
         }
 
         /// <summary>
@@ -61,7 +54,10 @@ namespace LiteNetLib
         {
             if (_peer != null && !force)
             {
-                _peer.SendDisconnect(_connectId);
+                //Send disconnect data
+                var disconnectPacket = NetPacket.CreateRawPacket(PacketProperty.Disconnect, 8);
+                FastBitConverter.GetBytes(disconnectPacket, 1, _connectId);
+                _peer.SendRawData(disconnectPacket);
             }
             _peer = null;
             _connected = false;
@@ -92,14 +88,20 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="address">Server IP or hostname</param>
         /// <param name="port">Server Port</param>
-        public void Connect(string address, int port)
+        /// <param name="key">Game key for authorization</param>
+        public void Connect(string address, int port, string key)
         {
+            if (key.Length > 256)
+            {
+                throw new Exception("Connect key length > 256!");
+            }
             if (!IsRunning)
             {
                 throw new Exception("Client is not running");
             }
             //Create connect id for proper connection
-            _connectId = DateTime.UtcNow.Ticks;
+            _connectId = (ulong)DateTime.UtcNow.Ticks;
+            _connectKey = key;
 
             //Create server endpoint
             NetEndPoint ep = new NetEndPoint(address, port);
@@ -112,10 +114,26 @@ namespace LiteNetLib
             _peer.DebugTextColor = ConsoleColor.Yellow;
 
             //Create connection packet and send
-            _peer.SendConnect(_connectId);
+            SendConnectRequest();
 
             _connectAttempts = 0;
             _waitForConnect = true;
+        }
+
+        private void SendConnectRequest()
+        {
+            //Get connect key bytes
+            byte[] keyData = Encoding.UTF8.GetBytes(_connectKey);
+
+            //Make initial packet
+            var connectPacket = NetPacket.CreateRawPacket(PacketProperty.ConnectRequest, 8+keyData.Length);
+
+            //Add data
+            FastBitConverter.GetBytes(connectPacket, 1, _connectId);
+            Buffer.BlockCopy(keyData, 0, connectPacket, 9, keyData.Length);
+
+            //Send raw
+            _peer.SendRawData(connectPacket);
         }
 
         public void Disconnect()
@@ -146,8 +164,8 @@ namespace LiteNetLib
                         return;
                     }
 
-                    //else
-                    _peer.SendConnect(_connectId);
+                    //else send connect again
+                    SendConnectRequest();
                 }
             }
             else if (_peer.TimeSinceLastPacket > _timeout)
@@ -212,10 +230,10 @@ namespace LiteNetLib
                 return;
             }
 
-            if (packet.Property == PacketProperty.Connect)
+            if (packet.Property == PacketProperty.ConnectAccept)
             {
                 //get id
-                if (NetPeer.GetConnectId(packet) != _connectId)
+                if (BitConverter.ToUInt64(packet.RawData, 1) != _connectId)
                 {
                     return;
                 }

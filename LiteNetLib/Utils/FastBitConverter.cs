@@ -24,7 +24,7 @@ namespace LiteNetLib.Utils
             public float Afloat;
         }
 
-        public static void WriteLittleEndian(byte[] buffer, int offset, ulong data)
+        private static void WriteLittleEndian(byte[] buffer, int offset, ulong data)
         {
 #if BIGENDIAN
             buffer[offset + 7] = (byte)(data);
@@ -47,7 +47,7 @@ namespace LiteNetLib.Utils
 #endif
         }
 
-        public static void WriteLittleEndian(byte[] buffer, int offset, int data)
+        private static void WriteLittleEndian(byte[] buffer, int offset, int data)
         {
 #if BIGENDIAN
             buffer[offset + 3] = (byte)(data);

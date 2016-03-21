@@ -1,5 +1,7 @@
 *.userprefs
 *.suo
+.idea
+*.iml
 LiteNetLib/obj
 LiteNetLib/bin
 LiteNetLibWin81/obj
