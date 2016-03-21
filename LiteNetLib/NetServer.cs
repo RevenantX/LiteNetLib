@@ -250,7 +250,7 @@ namespace LiteNetLib
 
                 //response with id
                 ulong connectionId = BitConverter.ToUInt64(packet.RawData, 1);
-                //SendConnectAccept(netPeer, connectionId);
+                SendConnectAccept(netPeer, connectionId);
 
                 //clean incoming packet
                 netPeer.Recycle(packet);
