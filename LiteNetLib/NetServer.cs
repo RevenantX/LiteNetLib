@@ -240,7 +240,7 @@ namespace LiteNetLib
                 string peerKey = Encoding.UTF8.GetString(packet.RawData, 9, packet.RawData.Length - 9);
                 if (peerKey != _connectKey)
                 {
-                    NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NS] Peer connect reject. Invalid key: " + peerKey);
+                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Peer connect reject. Invalid key: " + peerKey);
                     return;
                 }
 

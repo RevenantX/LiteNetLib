@@ -608,7 +608,7 @@ namespace LiteNetLib
             _pingSendTimer += deltaTime;
             if (_pingSendTimer >= _pingSendDelay)
             {
-                DebugWriteForce("[PP] Send ping...");
+                DebugWrite("[PP] Send ping...");
 
                 //reset timer
                 _pingSendTimer = 0;
