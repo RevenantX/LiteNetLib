@@ -7,7 +7,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>LiteNetLib</RootNamespace>
     <AssemblyName>LiteNetLib</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -38,10 +39,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FastBitConverter.cs" />
+    <Compile Include="Utils\FastBitConverter.cs" />
     <Compile Include="NatPunchModule.cs" />
     <Compile Include="NetConstants.cs" />
     <Compile Include="NetEndPoint.cs" />
+    <Compile Include="NtpSyncModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NetBase.cs" />
     <Compile Include="NetClient.cs" />

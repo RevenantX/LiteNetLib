@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
@@ -6,26 +8,29 @@ namespace LiteNetLib
     {
         private NetPeer _peer;
         private bool _connected;
-        private long _id;
         private int _maxConnectAttempts = 10;
         private int _connectAttempts;
         private int _connectTimer;
         private int _reconnectDelay = 500;
         private bool _waitForConnect;
+        private long _timeout = 5000;
+        private ulong _connectId;
+        private string _connectKey;
 
-        public long Id
+        public long DisconnectTimeout
         {
-            get { return _id; }
+            get { return _timeout; }
+            set { _timeout = value; }
         }
 
-        public override bool Start(int port)
+        public int Ping
         {
-            bool result = base.Start(port);
-            if (result)
-            {
-                _id = _localEndPoint.GetId();
-            }
-            return result;
+            get { return _peer == null ? 0 : _peer.Ping; }
+        }
+
+        public bool Start()
+        {
+            return Start(0);
         }
 
         /// <summary>
@@ -47,15 +52,18 @@ namespace LiteNetLib
 
         private void CloseConnection(bool force)
         {
-            if (_peer != null)
+            if (_peer != null && !force)
             {
-                if (!force)
-                {
-                    _peer.CreateAndSend(PacketProperty.Disconnect);
-                }
-                _peer = null;
+                //Send disconnect data
+                var disconnectPacket = NetPacket.CreateRawPacket(PacketProperty.Disconnect, 8);
+                FastBitConverter.GetBytes(disconnectPacket, 1, _connectId);
+                _peer.SendRawData(disconnectPacket);
             }
+            _peer = null;
             _connected = false;
+            _connectTimer = 0;
+            _connectAttempts = 0;
+            _waitForConnect = false;
         }
 
         public override void Stop()
@@ -64,9 +72,11 @@ namespace LiteNetLib
             base.Stop();
         }
 
-        protected override void ProcessError()
+        protected override void ProcessError(string errorMessage)
         {
-            EnqueueEvent(NetEventType.Error);
+            var netEvent = CreateEvent(NetEventType.Disconnect);
+            netEvent.AdditionalInfo = errorMessage;
+            EnqueueEvent(netEvent);
             if (_peer != null)
             {
                 CloseConnection(true);
@@ -78,8 +88,21 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="address">Server IP or hostname</param>
         /// <param name="port">Server Port</param>
-        public void Connect(string address, int port)
+        /// <param name="key">Game key for authorization</param>
+        public void Connect(string address, int port, string key)
         {
+            if (key.Length > 256)
+            {
+                throw new Exception("Connect key length > 256!");
+            }
+            if (!IsRunning)
+            {
+                throw new Exception("Client is not running");
+            }
+            //Create connect id for proper connection
+            _connectId = (ulong)DateTime.UtcNow.Ticks;
+            _connectKey = key;
+
             //Create server endpoint
             NetEndPoint ep = new NetEndPoint(address, port);
 
@@ -87,13 +110,38 @@ namespace LiteNetLib
             CloseConnection(true);
 
             //Create reliable connection
-            _peer = new NetPeer(this, _socket, ep);
+            _peer = CreatePeer(ep);
             _peer.DebugTextColor = ConsoleColor.Yellow;
-            _peer.BadRoundTripTime = UpdateTime * 2 + 250;
-            _peer.CreateAndSend(PacketProperty.Connect);
+
+            //Create connection packet and send
+            SendConnectRequest();
 
             _connectAttempts = 0;
             _waitForConnect = true;
+        }
+
+        private void SendConnectRequest()
+        {
+            //Get connect key bytes
+            byte[] keyData = Encoding.UTF8.GetBytes(_connectKey);
+
+            //Make initial packet
+            var connectPacket = NetPacket.CreateRawPacket(PacketProperty.ConnectRequest, 8+keyData.Length);
+
+            //Add data
+            FastBitConverter.GetBytes(connectPacket, 1, _connectId);
+            Buffer.BlockCopy(keyData, 0, connectPacket, 9, keyData.Length);
+
+            //Send raw
+            _peer.SendRawData(connectPacket);
+        }
+
+        public void Disconnect()
+        {
+            var netEvent = CreateEvent(NetEventType.Disconnect);
+            netEvent.AdditionalInfo = "Disconnect method called";
+            EnqueueEvent(netEvent);
+            CloseConnection(false);
         }
 
         protected override void PostProcessEvent(int deltaTime)
@@ -110,29 +158,45 @@ namespace LiteNetLib
                     _connectAttempts++;
                     if (_connectAttempts > _maxConnectAttempts)
                     {
-                        EnqueueEvent(NetEventType.Disconnect);
+                        var netEvent = CreateEvent(NetEventType.Disconnect);
+                        netEvent.AdditionalInfo = "connection timeout";
+                        EnqueueEvent(netEvent);
                         Stop();
                         return;
                     }
 
-                    //else
-                    _peer.CreateAndSend(PacketProperty.Connect);
+                    //else send connect again
+                    SendConnectRequest();
                 }
             }
+            else if (_peer.TimeSinceLastPacket > _timeout)
+            {
+                Stop();
+                var netEvent = CreateEvent(NetEventType.Disconnect);
+                netEvent.AdditionalInfo = "Timeout";
+                EnqueueEvent(netEvent);
+                return;
+            }
 
-             _peer.Update(deltaTime);
+            _peer.Update(deltaTime);
         }
 
         internal override void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received message");
-            EnqueueEvent(_peer, packet.GetPacketData(), NetEventType.Receive);
+            var netEvent = CreateEvent(NetEventType.Receive);
+            netEvent.DataReader.SetSource(packet.GetPacketData());
+            netEvent.Peer = _peer;
+            netEvent.RemoteEndPoint = remoteEndPoint;
+            EnqueueEvent(netEvent);
         }
 
-        internal override void ProcessSendError(NetEndPoint remoteEndPoint)
+        internal override void ProcessSendError(NetEndPoint remoteEndPoint, string errorMessage)
         {
             Stop();
-            EnqueueEvent(remoteEndPoint, null, NetEventType.Error);
+            var netEvent = CreateEvent(NetEventType.Error);
+            netEvent.AdditionalInfo = errorMessage;
+            EnqueueEvent(netEvent);
         }
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
@@ -161,16 +225,31 @@ namespace LiteNetLib
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
                 CloseConnection(true);
-                EnqueueEvent(NetEventType.Disconnect);
+                var disconnectEvent = CreateEvent(NetEventType.Disconnect);
+                disconnectEvent.AdditionalInfo = "Received disconnection from server";
+                EnqueueEvent(disconnectEvent);
                 return;
             }
 
-            if (packet.Property == PacketProperty.Connect)
+            if (packet.Property == PacketProperty.ConnectAccept)
             {
+                //get id
+                if (BitConverter.ToUInt64(packet.RawData, 1) != _connectId)
+                {
+                    return;
+                }
+
+                //connection things
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
                 _waitForConnect = false;
                 _connected = true;
-                EnqueueEvent(_peer, null, NetEventType.Connect);
+                var connectEvent = CreateEvent(NetEventType.Connect);
+                connectEvent.Peer = _peer;
+                connectEvent.RemoteEndPoint = _peer.EndPoint;
+                connectEvent.AdditionalInfo = _connectId.ToString();
+                EnqueueEvent(connectEvent);
+
+                _peer.StartConnectionTimer();
                 return;
             }
 

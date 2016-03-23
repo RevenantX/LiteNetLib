@@ -5,49 +5,88 @@ namespace LiteNetLib
 {
     enum PacketProperty : byte
     {
-        None,
-        Reliable,
-        Sequenced,
-        ReliableOrdered,
-        AckReliable,
-        AckReliableOrdered,
-        Ping,
-        Pong,
-        Connect,
-        Disconnect,
-        UnconnectedMessage,
-        NatIntroductionRequest,
-        NatIntroduction,
-        NatPunchMessage
+        None,                   //0
+        Reliable,               //1
+        Sequenced,              //2
+        ReliableOrdered,        //3
+        AckReliable,            //4
+        AckReliableOrdered,     //5
+        Ping,                   //6
+        Pong,                   //7
+        ConnectRequest,         //8
+        ConnectAccept,          //9
+        Disconnect,             //10
+        UnconnectedMessage,     //11
+        NatIntroductionRequest, //12
+        NatIntroduction,        //13
+        NatPunchMessage,        //14
+        MtuCheck,               //15
+        MtuOk                   //16
     }
 
     sealed class NetPacket
     {
-        const int PropertiesCount = 13;
+        const int LastProperty = 16;
+
         //Header
-        public PacketProperty Property //1 1
+        public PacketProperty Property
         {
-            get { return (PacketProperty)RawData[0]; }
-            set { RawData[0] = (byte)value; }
+            get { return (PacketProperty)(RawData[0] & 0x7F); }
+            set { RawData[0] = (byte)((RawData[0] & 0x80) | ((byte)value & 0x7F)); }
         }
 
-        public ushort Sequence //2 3
+        public ushort Sequence
         {
             get { return BitConverter.ToUInt16(RawData, 1); }
             set { FastBitConverter.GetBytes(RawData, 1, value); }
         }
 
+        public bool IsFragmented
+        {
+            get { return (RawData[0] & 0x80) != 0; }
+            set
+            {
+                if (value)
+                    RawData[0] |= 0x80; //set first bit
+                else
+                    RawData[0] &= 0x7F; //unset first bit
+            }
+        }
+
+        public ushort FragmentId
+        {
+            get { return BitConverter.ToUInt16(RawData, 3); }
+            set { FastBitConverter.GetBytes(RawData, 3, value); }
+        }
+
+        public uint FragmentPart
+        {
+            get { return BitConverter.ToUInt32(RawData, 5); }
+            set { FastBitConverter.GetBytes(RawData, 5, value); }
+        }
+
+        public uint FragmentsTotal
+        {
+            get { return BitConverter.ToUInt32(RawData, 9); }
+            set { FastBitConverter.GetBytes(RawData, 9, value); }
+        }
+
         //Data
         public byte[] RawData;
-
-        //Additional info!
-        public long TimeStamp;
 
         //Packet constructor
         public void Init(PacketProperty property, int dataSize)
         {
             RawData = new byte[GetHeaderSize(property) + dataSize];
             Property = property;
+        }
+
+        //Always not fragmented
+        public static byte[] CreateRawPacket(PacketProperty property, int dataSize)
+        {
+            byte[] rawData = new byte[GetHeaderSize(property) + dataSize];
+            rawData[0] = (byte) property;
+            return rawData;
         }
 
         public void Init(PacketProperty property, NetDataWriter dataWriter)
@@ -57,15 +96,16 @@ namespace LiteNetLib
             Buffer.BlockCopy(dataWriter.Data, 0, RawData, GetHeaderSize(Property), dataWriter.Length);
         }
 
-        public void PutData(byte[] data)
+        public void PutData(byte[] data, int start, int length)
         {
-            Buffer.BlockCopy(data, 0, RawData, GetHeaderSize(Property), data.Length);
+            int packetStart = GetHeaderSize(Property) + (IsFragmented ? NetConstants.FragmentHeaderSize : 0);
+            Buffer.BlockCopy(data, start, RawData, packetStart, length);
         }
 
         public static bool GetPacketProperty(byte[] data, out PacketProperty property)
         {
-            byte properyByte = data[0];
-            if (properyByte >= PropertiesCount)
+            byte properyByte = (byte)(data[0] & 0x7F);
+            if (properyByte > LastProperty)
             {
                 property = PacketProperty.None;
                 return false;
@@ -84,11 +124,16 @@ namespace LiteNetLib
             return false;
         }
 
-        static int GetHeaderSize(PacketProperty property)
+        public static int GetHeaderSize(PacketProperty property)
         {
             return IsSequenced(property)
                 ? NetConstants.SequencedHeaderSize
                 : NetConstants.HeaderSize;
+        }
+
+        public int GetHeaderSize()
+        {
+            return GetHeaderSize(Property);
         }
 
         public byte[] GetPacketData()
@@ -100,12 +145,24 @@ namespace LiteNetLib
             return data;
         }
 
+        public bool IsClientData()
+        {
+            var property = Property;
+            return property == PacketProperty.Reliable ||
+                   property == PacketProperty.ReliableOrdered ||
+                   property == PacketProperty.None ||
+                   property == PacketProperty.Sequenced;
+        }
+
         public static bool IsSequenced(PacketProperty property)
         {
-            return property != PacketProperty.Connect &&
-                   property != PacketProperty.Disconnect &&
-                   property != PacketProperty.None &&
-                   property != PacketProperty.UnconnectedMessage;
+            return property == PacketProperty.ReliableOrdered ||
+                property == PacketProperty.Reliable ||
+                property == PacketProperty.Sequenced ||
+                property == PacketProperty.Ping ||
+                property == PacketProperty.Pong ||
+                property == PacketProperty.AckReliable ||
+                property == PacketProperty.AckReliableOrdered;
         }
 
         public static byte[] GetUnconnectedData(byte[] raw, int count)
@@ -120,7 +177,7 @@ namespace LiteNetLib
         public bool FromBytes(byte[] data, int packetSize)
         {
             //Reading property
-            if (data[0] >= PropertiesCount || packetSize > NetConstants.MaxPacketSize)
+            if ((data[0] & 0x7F) > LastProperty || packetSize > NetConstants.PacketSizeLimit)
                 return false;
             RawData = new byte[packetSize];
             Buffer.BlockCopy(data, 0, RawData, 0, packetSize);

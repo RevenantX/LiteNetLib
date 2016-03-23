@@ -3,56 +3,95 @@ using System.Threading;
 using LiteNetLib.Utils;
 
 #if WINRT
-using System;
-using Windows.Storage.Streams;
 using Windows.System.Threading;
-using Windows.Foundation;
-using System.Threading.Tasks;
-using Windows.Networking.Sockets;
-using System.Runtime.InteropServices.WindowsRuntime;
+#else
+using System;
 #endif
 
 namespace LiteNetLib
 {
+    sealed class FlowMode
+    {
+        public int PacketsPerSecond;
+        public int StartRtt;
+    }
+
     public abstract class NetBase
     {
-        internal NetSocket _socket;
-        protected NetEndPoint _localEndPoint;
+        private readonly NetSocket _socket;
+        private readonly List<FlowMode> _flowModes;
+        private NetEndPoint _localEndPoint;
 
 #if WINRT
-        private readonly ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
-        private IAsyncAction _updateAction;
+        private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
 #else
         private Thread _logicThread;
         private Thread _receiveThread;
-        private NetEndPoint _remoteEndPoint;
 #endif
+        private NetEndPoint _remoteEndPoint;
 
-        private int _updateTime;
         private bool _running;
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
 
+        //config section
         public bool UnconnectedMessagesEnabled = false;
         public bool NatPunchEnabled = false;
+        public int UpdateTime = 100;
+        public int ReliableResendTime = 500;
 
+        //modules
         public readonly NatPunchModule NatPunchModule;
+
+        public void AddFlowMode(int startRtt, int packetsPerSecond)
+        {
+            var fm = new FlowMode {PacketsPerSecond = packetsPerSecond, StartRtt = startRtt};
+
+            if (_flowModes.Count > 0 && startRtt < _flowModes[0].StartRtt)
+            {
+                _flowModes.Insert(0, fm);
+            }
+            else
+            {
+                _flowModes.Add(fm);
+            }
+        }
+
+        internal int GetPacketsPerSecond(int flowMode)
+        {
+            if (flowMode < 0 || _flowModes.Count == 0)
+                return NetConstants.PacketsPerSecondMax;
+            return _flowModes[flowMode].PacketsPerSecond;
+        }
+
+        internal int GetMaxFlowMode()
+        {
+            return _flowModes.Count - 1;
+        }
+
+        internal int GetStartRtt(int flowMode)
+        {
+            if (flowMode < 0 || _flowModes.Count == 0)
+                return 0;
+            return _flowModes[flowMode].StartRtt;
+        }
 
         protected NetBase()
         {
+            _flowModes = new List<FlowMode>();
+
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
-            
-            _updateTime = 100;
 
-#if WINRT
-            _socket = new NetSocket(OnMessageReceived);
-#else
             _remoteEndPoint = new NetEndPoint(0);
             _socket = new NetSocket();
-#endif
 
             NatPunchModule = new NatPunchModule(this, _socket);
+        }
+
+        protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
+        {
+            return new NetPeer(this, _socket, remoteEndPoint);
         }
 
         /// <summary>
@@ -72,7 +111,15 @@ namespace LiteNetLib
             {
                 _running = true;
 #if WINRT
-                _updateAction = ThreadPool.RunAsync(a => UpdateLogic(), WorkItemPriority.Normal, WorkItemOptions.TimeSliced);
+                ThreadPool.RunAsync(
+                    a => UpdateLogic(), 
+                    WorkItemPriority.Normal, 
+                    WorkItemOptions.TimeSliced).GetResults();
+
+                ThreadPool.RunAsync(
+                    a => ReceiveLogic(), 
+                    WorkItemPriority.Normal,
+                    WorkItemOptions.TimeSliced).GetResults();
 #else
                 _logicThread = new Thread(UpdateLogic);
                 _receiveThread = new Thread(ReceiveLogic);
@@ -86,11 +133,16 @@ namespace LiteNetLib
 
         public bool SendUnconnectedMessage(byte[] message, NetEndPoint remoteEndPoint)
         {
+            return SendUnconnectedMessage(message, message.Length, remoteEndPoint);
+        }
+
+        public bool SendUnconnectedMessage(byte[] message, int length, NetEndPoint remoteEndPoint)
+        {
             if (!_running)
                 return false;
             NetPacket p = new NetPacket();
-            p.Init(PacketProperty.UnconnectedMessage, message.Length);
-            p.PutData(message);
+            p.Init(PacketProperty.UnconnectedMessage, length);
+            p.PutData(message, 0, length);
             return _socket.SendTo(p.RawData, remoteEndPoint) > 0;
         }
 
@@ -103,22 +155,15 @@ namespace LiteNetLib
             {
                 _running = false;
 #if !WINRT
-                _logicThread.Join();
-                _receiveThread.Join();
+                if(Thread.CurrentThread != _logicThread)
+                    _logicThread.Join();
+                if(Thread.CurrentThread != _receiveThread)
+                    _receiveThread.Join();
                 _logicThread = null;
                 _receiveThread = null;
 #endif
                 _socket.Close();
             }
-        }
-
-        /// <summary>
-        /// Process and send packets delay
-        /// </summary>
-        public int UpdateTime
-        {
-            set { _updateTime = value; }
-            get { return _updateTime; }
         }
 
         /// <summary>
@@ -134,22 +179,7 @@ namespace LiteNetLib
             get { return _localEndPoint; }
         }
 
-        internal void EnqueueEvent(NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
-        {
-            EnqueueEvent(null, remoteEndPoint, data, type);
-        }
-
-        internal void EnqueueEvent(NetPeer peer, byte[] data, NetEventType type)
-        {
-            EnqueueEvent(peer, peer.EndPoint, data, type);
-        }
-
-        internal void EnqueueEvent(NetEventType type)
-        {
-            EnqueueEvent(null, null, null, type);
-        }
-
-        internal void EnqueueEvent(NetPeer peer, NetEndPoint remoteEndPoint, byte[] data, NetEventType type)
+        internal NetEvent CreateEvent(NetEventType type)
         {
             NetEvent evt;
             if (_netEventsPool.Count > 0)
@@ -164,12 +194,12 @@ namespace LiteNetLib
                 evt = new NetEvent();
                 evt.DataReader = new NetDataReader();
             }
-            if (data != null)
-                evt.DataReader.SetSource(data);
-
-            evt.Peer = peer;
             evt.Type = type;
-            evt.RemoteEndPoint = remoteEndPoint;
+            return evt;
+        }
+
+        internal void EnqueueEvent(NetEvent evt)
+        {
             lock (_netEventsQueue)
             {
                 _netEventsQueue.Enqueue(evt);
@@ -182,6 +212,8 @@ namespace LiteNetLib
             {
                 netEvent.DataReader.Clear();
                 netEvent.Peer = null;
+                netEvent.AdditionalInfo = string.Empty;
+                netEvent.RemoteEndPoint = null;
                 _netEventsPool.Push(netEvent);
             }
         }
@@ -203,30 +235,15 @@ namespace LiteNetLib
         {
             while (_running)
             {
-                PostProcessEvent(_updateTime);
+                PostProcessEvent(UpdateTime);
 #if WINRT
-                _manualResetEvent.WaitOne(_updateTime);
+                _updateWaiter.WaitOne(UpdateTime);
 #else
-                Thread.Sleep(_updateTime);
+                Thread.Sleep(UpdateTime);
 #endif
             }
         }
 
-#if WINRT
-        private readonly NetEndPoint _tempEndPoint = new NetEndPoint(0);
-        private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
-        {
-            var dataReader = args.GetDataReader();
-            uint count = dataReader.UnconsumedBufferLength;
-            if (count > 0)
-            {
-                byte[] data = new byte[count];
-                dataReader.ReadBytes(data);
-                _tempEndPoint.Set(args.RemoteAddress, args.RemotePort);
-                DataReceived(data, data.Length, _tempEndPoint);
-            }
-        }
-#else
         private void ReceiveLogic()
         {
             while (_running)
@@ -244,18 +261,18 @@ namespace LiteNetLib
                 }
                 else if (result < 0)
                 {
-                    //If not 10054
+                    //10054 - remote close (not error)
+                    //10040 - message too long (impossible now)
                     if (errorCode != 10054)
                     {
-                        //NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
-                        ProcessError();
-                        _running = false;
-                        _socket.Close();
+                        NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
+                        ProcessError("Receive socket error: " + errorCode);
+                        Stop();
+                        return;
                     }
                 }
             }
         }
-#endif
 
         private void DataReceived(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
@@ -269,7 +286,12 @@ namespace LiteNetLib
             {
                 case PacketProperty.UnconnectedMessage:
                     if (UnconnectedMessagesEnabled)
-                        EnqueueEvent(remoteEndPoint, NetPacket.GetUnconnectedData(reusableBuffer, count), NetEventType.ReceiveUnconnected);
+                    {
+                        var netEvent = CreateEvent(NetEventType.ReceiveUnconnected);
+                        netEvent.RemoteEndPoint = remoteEndPoint;
+                        netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
+                        EnqueueEvent(netEvent);
+                    }
                     return;
                 case PacketProperty.NatIntroduction:
                 case PacketProperty.NatIntroductionRequest:
@@ -283,12 +305,11 @@ namespace LiteNetLib
             ReceiveFromSocket(reusableBuffer, count, remoteEndPoint);
         }
 
-        protected abstract void ProcessError();
-
+        protected abstract void ProcessError(string errorMessage);
         protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
 
         internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
-        internal abstract void ProcessSendError(NetEndPoint endPoint);
+        internal abstract void ProcessSendError(NetEndPoint endPoint, string errorMessage);
     }
 }

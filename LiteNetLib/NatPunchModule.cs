@@ -8,12 +8,12 @@ namespace LiteNetLib
     public sealed class NatPunchModule
     {
         private readonly NetBase _netBase;
-        private readonly NetSocket _netSocket;
+        private readonly NetSocket _socket;
 
-        internal NatPunchModule(NetBase netBase, NetSocket netSocket)
+        internal NatPunchModule(NetBase netBase, NetSocket socket)
         {
             _netBase = netBase;
-            _netSocket = netSocket;
+            _socket = socket;
         }
 
         public void NatIntroduce(
@@ -33,7 +33,7 @@ namespace LiteNetLib
             dw.Put(additionalInfo);
 
             p.Init(PacketProperty.NatIntroduction, dw);
-            _netSocket.SendTo(p.RawData, clientExternal);
+            _socket.SendTo(p.RawData, clientExternal);
 
             //Second packet (client)
             dw.Reset();
@@ -43,7 +43,7 @@ namespace LiteNetLib
             dw.Put(additionalInfo);
 
             p.Init(PacketProperty.NatIntroduction, dw);
-            _netSocket.SendTo(p.RawData, hostExternal);
+            _socket.SendTo(p.RawData, hostExternal);
         }
 
         public void SendNatIntroduceRequest(NetEndPoint masterServerEndPoint, string additionalInfo)
@@ -59,7 +59,7 @@ namespace LiteNetLib
             //prepare packet
             NetPacket p = new NetPacket();
             p.Init(PacketProperty.NatIntroductionRequest, dw);
-            _netSocket.SendTo(p.RawData, masterServerEndPoint);
+            _socket.SendTo(p.RawData, masterServerEndPoint);
         }
 
         internal void ProcessMessage(NetEndPoint senderEndPoint, PacketProperty property, byte[] data)
@@ -87,14 +87,16 @@ namespace LiteNetLib
                     NetUtils.DebugWrite(ConsoleColor.Green, "NAT punch received from {0} we're client, so we've succeeded - additional info: {1}", senderEndPoint, additionalInfo);
 
                     //Release punch success to client; enabling him to Connect() to msg.Sender if token is ok
-                    _netBase.EnqueueEvent(senderEndPoint, null, NetEventType.NatIntroductionSuccess);
+                    var netEvent = _netBase.CreateEvent(NetEventType.NatIntroductionSuccess);
+                    netEvent.RemoteEndPoint = senderEndPoint;
+                    _netBase.EnqueueEvent(netEvent);
 
                     //send a return punch just for good measure
                     dw.Put((byte)0);
                     dw.Put(additionalInfo);
                     NetPacket packet = new NetPacket();
                     packet.Init(PacketProperty.NatPunchMessage, dw);
-                    _netSocket.SendTo(packet.RawData, senderEndPoint);
+                    _socket.SendTo(packet.RawData, senderEndPoint);
                     break;
             }
         }

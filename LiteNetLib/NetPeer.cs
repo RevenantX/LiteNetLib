@@ -1,42 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    public enum FlowMode
-    {
-        Bad,
-        Good
-    }
-
     public sealed class NetPeer
     {
         //Flow control
-        private FlowMode _currentFlowMode;
-        private int _sendedPacketsCount;
+        private int _currentFlowMode;
+        private int _sendedPacketsCount;                    
         private int _flowTimer;
-        private const int FlowUpdateTime = 1000;
-        private const int ThrottleIncreaseThreshold = 32;
-        private readonly int[] _flowModes;
 
         //Ping and RTT
-        private int _rtt;                                //round trip time
+        private int _ping;
+        private int _rtt;
         private int _avgRtt;
         private int _rttCount;
-        private int _badRoundTripTime;
         private int _goodRttCount;
-        private int _ping;
         private ushort _pingSequence;
         private ushort _remotePingSequence;
-        private ushort _pongSequence;
 
         private int _pingSendDelay;
         private int _pingSendTimer;
         private const int RttResetDelay = 1000;
         private int _rttResetTimer;
 
-        private readonly Stopwatch _pingStopwatch;
+        private DateTime _pingTimeStart;
+        private DateTime _lastPacketReceivedStart;
 
         //Common
         private readonly NetSocket _socket;              
@@ -53,18 +44,32 @@ namespace LiteNetLib
 
         private int _windowSize = NetConstants.DefaultWindowSize;
 
+        //MTU
+        private int _mtu = NetConstants.PossibleMtu[0];
+        private int _mtuIdx;
+        private bool _finishMtu;
+        private int _mtuCheckTimer;
+        private int _mtuCheckAttempts;
+        private const int MtuCheckDelay = 1000;
+        private const int MaxMtuCheckAttempts = 10;
+        private readonly object _mtuMutex = new object();
+
+        //Fragment
+        private class IncomingFragments
+        {
+            public NetPacket[] Fragments;
+            public int ReceivedCount;
+            public int TotalSize;
+        }
+        private ushort _fragmentId;
+        private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
+
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
         public NetEndPoint EndPoint
         {
             get { return _remoteEndPoint; }
-        }
-
-        public int BadRoundTripTime
-        {
-            get { return _badRoundTripTime; }
-            set { _badRoundTripTime = value; }
         }
 
         public int Ping
@@ -78,7 +83,7 @@ namespace LiteNetLib
             set { _pingSendDelay = value; }
         }
 
-        public FlowMode CurrentFlowMode
+        public int CurrentFlowMode
         {
             get { return _currentFlowMode; }
         }
@@ -86,6 +91,16 @@ namespace LiteNetLib
         public long Id
         {
             get { return _id; }
+        }
+
+        public int Mtu
+        {
+            get { return _mtu; }
+        }
+
+        public int TimeSinceLastPacket
+        {
+            get { return (int)(DateTime.UtcNow - _lastPacketReceivedStart).TotalMilliseconds; }
         }
 
         internal NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
@@ -96,17 +111,10 @@ namespace LiteNetLib
             _socket = socket;
             _remoteEndPoint = remoteEndPoint;
 
-            _flowModes = new int[2];
-            _flowModes[0] = 640 / 4; //bad
-            _flowModes[1] = 640;     //good
-
             _avgRtt = 0;
             _rtt = 0;
-            _badRoundTripTime = 650;
-            _pingSendDelay = 1000;
+            _pingSendDelay = NetConstants.DefaultPingSendDelay;
             _pingSendTimer = 0;
-
-            _pingStopwatch = new Stopwatch();
 
             _reliableOrderedChannel = new ReliableChannel(this, true, _windowSize);
             _reliableUnorderedChannel = new ReliableChannel(this, false, _windowSize);
@@ -114,27 +122,91 @@ namespace LiteNetLib
             _simpleChannel = new SimpleChannel(this);
 
             _packetPool = new Stack<NetPacket>();
+            _holdedFragments = new Dictionary<ushort, IncomingFragments>();
+        }
+
+        private static PacketProperty SendOptionsToProperty(SendOptions options)
+        {
+            switch (options)
+            {
+                case SendOptions.ReliableUnordered:
+                    return PacketProperty.Reliable;
+                case SendOptions.Sequenced:
+                    return PacketProperty.Sequenced;
+                case SendOptions.ReliableOrdered:
+                    return PacketProperty.ReliableOrdered;
+                default:
+                    return PacketProperty.None;
+            }
+        }
+
+        public int GetMaxSinglePacketSize(SendOptions options)
+        {
+            var packetProperty = SendOptionsToProperty(options);
+            return _mtu - NetPacket.GetHeaderSize(packetProperty);
         }
 
         public void Send(byte[] data, SendOptions options)
         {
-            NetPacket packet;
-            switch (options)
+            Send(data, 0, data.Length, options);
+        }
+
+        public void Send(NetDataWriter dataWriter, SendOptions options)
+        {
+            Send(dataWriter.Data, 0, dataWriter.Length, options);
+        }
+
+        public void Send(byte[] data, int start, int length, SendOptions options)
+        {
+            //Prepare
+            PacketProperty property = SendOptionsToProperty(options);
+            int headerSize = NetPacket.GetHeaderSize(property);
+
+            //Check fragmentation
+            if (length + headerSize > _mtu)
             {
-                case SendOptions.Reliable:
-                    packet = GetPacketFromPool(PacketProperty.Reliable, data.Length);
-                    break;
-                case SendOptions.Sequenced:
-                    packet = GetPacketFromPool(PacketProperty.Sequenced, data.Length);
-                    break;
-                case SendOptions.ReliableOrdered:
-                    packet = GetPacketFromPool(PacketProperty.ReliableOrdered, data.Length);
-                    break;
-                default:
-                    packet = GetPacketFromPool(PacketProperty.None, data.Length);
-                    break;
+                //TODO: fix later
+                if (options == SendOptions.Sequenced || options == SendOptions.Unreliable)
+                {
+                    throw new Exception("Unreliable packet size > allowed (" + (_mtu - headerSize) + ")");
+                }
+                
+                int packetFullSize = _mtu - headerSize;
+                int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
+
+                int fullPacketsCount = length / packetDataSize;
+                int lastPacketSize = length % packetDataSize;
+                int totalPackets = fullPacketsCount + (lastPacketSize == 0 ? 0 : 1);
+
+                for (int i = 0; i < fullPacketsCount; i++)
+                {
+                    NetPacket p = GetPacketFromPool(property, packetFullSize);
+                    p.FragmentId = _fragmentId;
+                    p.FragmentPart = (uint)i;
+                    p.FragmentsTotal = (uint)totalPackets;
+                    p.IsFragmented = true;
+                    p.PutData(data, i * packetDataSize, packetDataSize);
+                    SendPacket(p);
+                }
+                
+                if (lastPacketSize > 0)
+                {
+                    NetPacket p = GetPacketFromPool(property, lastPacketSize + NetConstants.FragmentHeaderSize);
+                    p.FragmentId = _fragmentId;
+                    p.FragmentPart = (uint)fullPacketsCount; //last
+                    p.FragmentsTotal = (uint)totalPackets;
+                    p.IsFragmented = true;
+                    p.PutData(data, fullPacketsCount * packetDataSize, lastPacketSize);
+                    SendPacket(p);
+                }
+
+                _fragmentId++;             
+                return;
             }
-            packet.PutData(data);
+
+            //Else just send
+            NetPacket packet = GetPacketFromPool(property, length);
+            packet.PutData(data, start, length);
             SendPacket(packet);
         }
 
@@ -144,7 +216,7 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
-        internal void CreateAndSend(PacketProperty property, ushort sequence)
+        private void CreateAndSend(PacketProperty property, ushort sequence)
         {
             NetPacket packet = GetPacketFromPool(property);
             packet.Sequence = sequence;
@@ -176,8 +248,9 @@ namespace LiteNetLib
                     break;
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
-                case PacketProperty.Connect:
                 case PacketProperty.Disconnect:
+                case PacketProperty.MtuCheck:
+                case PacketProperty.MtuOk:
                     SendRawData(packet.RawData);
                     Recycle(packet);
                     break;
@@ -186,30 +259,40 @@ namespace LiteNetLib
             }
         }
 
-        internal void UpdateRoundTripTime(int roundTripTime)
+        private void UpdateRoundTripTime(int roundTripTime)
         {
             //Calc average round trip time
             _rtt += roundTripTime;
             _rttCount++;
             _avgRtt = _rtt/_rttCount;
 
-            if (_avgRtt < _badRoundTripTime)
+            //flowmode 0 = fastest
+            //flowmode max = lowest
+
+            if (_avgRtt < _peerListener.GetStartRtt(_currentFlowMode - 1))
             {
+                if (_currentFlowMode <= 0)
+                {
+                    //Already maxed
+                    return;
+                }
+
                 _goodRttCount++;
-                if (_goodRttCount > ThrottleIncreaseThreshold && _currentFlowMode != FlowMode.Good)
+                if (_goodRttCount > NetConstants.FlowIncreaseThreshold)
                 {
                     _goodRttCount = 0;
-                    DebugWrite("[PA]Enabled good flow mode, RTT: {0}", _avgRtt);
-                    _currentFlowMode = FlowMode.Good;
+                    _currentFlowMode--;
+
+                    DebugWrite("[PA]Increased flow speed, RTT: {0}, PPS: {1}", _avgRtt, _peerListener.GetPacketsPerSecond(_currentFlowMode));
                 }
             }
-            else
+            else if(_avgRtt > _peerListener.GetStartRtt(_currentFlowMode))
             {
                 _goodRttCount = 0;
-                if (_currentFlowMode != FlowMode.Bad)
+                if (_currentFlowMode < _peerListener.GetMaxFlowMode())
                 {
-                    DebugWrite("[PA]Enabled bad flow mode, RTT: {0}", _avgRtt);
-                    _currentFlowMode = FlowMode.Bad;
+                    _currentFlowMode++;
+                    DebugWrite("[PA]Decreased flow speed, RTT: {0}, PPS: {1}", _avgRtt, _peerListener.GetPacketsPerSecond(_currentFlowMode));
                 }
             }
         }
@@ -249,20 +332,145 @@ namespace LiteNetLib
         {
             lock (_packetPool)
             {
+                if(packet.RawData != null)
+                    packet.IsFragmented = false;
+
                 packet.RawData = null;
                 _packetPool.Push(packet);
             }
         }
 
-        internal void AddIncomingPacket(NetPacket packet)
+        internal void AddIncomingPacket(NetPacket p)
         {
-            _peerListener.ReceiveFromPeer(packet, _remoteEndPoint);
-            Recycle(packet);
+            if (p.IsFragmented)
+            {
+                DebugWrite("Fragment. Id: {0}, Part: {1}, Total: {2}", p.FragmentId, p.FragmentPart, p.FragmentsTotal);
+                //Get needed array from dictionary
+                ushort packetFragId = p.FragmentId;
+                IncomingFragments incomingFragments;
+                if (!_holdedFragments.TryGetValue(packetFragId, out incomingFragments))
+                {
+                    incomingFragments = new IncomingFragments
+                    {
+                        Fragments = new NetPacket[p.FragmentsTotal]
+                    };
+                    _holdedFragments.Add(packetFragId, incomingFragments);
+                }
+
+                //Cache
+                var fragments = incomingFragments.Fragments;
+
+                //Fill array
+                fragments[p.FragmentPart] = p;
+
+                //Increase received fragments count
+                incomingFragments.ReceivedCount++;
+
+                //Increase total size
+                int dataOffset = p.GetHeaderSize() + NetConstants.FragmentHeaderSize;
+                incomingFragments.TotalSize += p.RawData.Length - dataOffset;
+
+                //Check for finish
+                if (incomingFragments.ReceivedCount != fragments.Length)
+                    return;
+
+                DebugWrite("Received all fragments!");
+                NetPacket resultingPacket = GetPacketFromPool(p.Property, incomingFragments.TotalSize);
+                int resultingPacketOffset = resultingPacket.GetHeaderSize();
+                int firstFragmentSize = fragments[0].RawData.Length - dataOffset;
+                for (int i = 0; i < incomingFragments.ReceivedCount; i++)
+                {
+                    //Create resulting big packet
+                    int fragmentSize = fragments[i].RawData.Length - dataOffset;
+                    Buffer.BlockCopy(
+                        fragments[i].RawData,
+                        dataOffset,
+                        resultingPacket.RawData,
+                        resultingPacketOffset + firstFragmentSize * i,
+                        fragmentSize);
+
+                    //Free memory
+                    Recycle(fragments[i]);
+                    fragments[i] = null;
+                }
+
+                //Send to process
+                _peerListener.ReceiveFromPeer(resultingPacket, _remoteEndPoint);
+
+                //Clear memory
+                Recycle(resultingPacket);
+                _holdedFragments.Remove(packetFragId);
+            }
+            else //Just simple packet
+            {
+                _peerListener.ReceiveFromPeer(p, _remoteEndPoint);
+                Recycle(p);
+            }
+        }
+
+        private void ProcessMtuPacket(NetPacket packet)
+        {
+            //MTU auto increase
+            if (packet.Property == PacketProperty.MtuCheck)
+            {
+                if (_mtuIdx < NetConstants.PossibleMtu.Length - 1 && packet.RawData.Length > _mtu)
+                {
+                    DebugWrite("MTU check. Increase to: " + packet.RawData.Length);
+                    lock (_mtuMutex)
+                    {
+                        _mtuIdx++;
+                    }
+                    _mtu = NetConstants.PossibleMtu[_mtuIdx];
+                    _mtuCheckAttempts = 0;
+                }
+
+                var p = GetPacketFromPool(PacketProperty.MtuOk, 1);
+                p.RawData[1] = (byte) _mtuIdx;
+                SendPacket(p);
+            }
+            else //MtuOk
+            {
+                lock (_mtuMutex)
+                {
+                    _mtuIdx = packet.RawData[1];
+                }
+                _mtu = NetConstants.PossibleMtu[_mtuIdx];
+                DebugWrite("MTU ok. Increase to: " + _mtu);
+            }
+
+            //maxed.
+            if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
+            {
+                _finishMtu = true;
+            }
+        }
+
+        internal void StartConnectionTimer()
+        {
+            _lastPacketReceivedStart = DateTime.UtcNow;
+        }
+
+#if DEBUG_LOSS
+        private readonly Random _packetLossRandom = new Random();
+        private int _packetLossChance = 10;
+#endif
+
+        private bool SimulatePacketLoss()
+        {
+#if DEBUG_LOSS
+            return _packetLossRandom.Next(100/_packetLossChance) == 0;
+#else
+            return false;
+#endif
         }
 
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
+            if(SimulatePacketLoss())
+                return;
+            _lastPacketReceivedStart = DateTime.UtcNow;
+
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
             {
@@ -273,6 +481,7 @@ namespace LiteNetLib
                         Recycle(packet);
                         break;
                     }
+                    DebugWrite("[PP]Ping receive, send pong");
                     _remotePingSequence = packet.Sequence;
                     Recycle(packet);
 
@@ -282,14 +491,13 @@ namespace LiteNetLib
 
                 //If we get pong, calculate ping time and rtt
                 case PacketProperty.Pong:
-                    if (NetUtils.RelativeSequenceNumber(packet.Sequence, _pongSequence) < 0)
+                    if (NetUtils.RelativeSequenceNumber(packet.Sequence, _pingSequence) < 0)
                     {
                         Recycle(packet);
                         break;
                     }
-                    _pongSequence = packet.Sequence;
-                    int rtt = (int) _pingStopwatch.ElapsedMilliseconds;
-                    _pingStopwatch.Reset();
+                    _pingSequence = packet.Sequence;
+                    int rtt = (int)(DateTime.UtcNow - _pingTimeStart).TotalMilliseconds;
                     UpdateRoundTripTime(rtt);
                     DebugWrite("[PP]Ping: {0}", rtt);
                     Recycle(packet);
@@ -321,20 +529,31 @@ namespace LiteNetLib
 
                 //Simple packet without acks
                 case PacketProperty.None:
-                case PacketProperty.Connect:
-                case PacketProperty.Disconnect:
                     AddIncomingPacket(packet);
                     return;
+
+                case PacketProperty.MtuCheck:
+                case PacketProperty.MtuOk:
+                    ProcessMtuPacket(packet);
+                    break;
+
+                default:
+                    DebugWriteForce("Error! Unexpected packet type: " + packet.Property);
+                    break;
             }
         }
 
         internal bool SendRawData(byte[] data)
         {
-            if (_socket.SendTo(data, _remoteEndPoint) == -1)
+            int errorCode = 0;
+            if (_socket.SendTo(data, _remoteEndPoint, ref errorCode) == -1)
             {
-                lock (_peerListener)
+                if (errorCode != 0)
                 {
-                    _peerListener.ProcessSendError(_remoteEndPoint);
+                    lock (_peerListener)
+                    {
+                        _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
+                    }
                 }
                 return false;
             }
@@ -344,11 +563,15 @@ namespace LiteNetLib
         internal void Update(int deltaTime)
         {
             //Get current flow mode
-            int maxSendPacketsCount = _flowModes[(int)_currentFlowMode];
+            int maxSendPacketsCount = _peerListener.GetPacketsPerSecond(_currentFlowMode);
             int availableSendPacketsCount = maxSendPacketsCount - _sendedPacketsCount;
-            int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime) / FlowUpdateTime);
+            int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime) / NetConstants.FlowUpdateTime);
 
             DebugWrite("[UPDATE]Delta: {0}ms, MaxSend: {1}", deltaTime, currentMaxSend);
+
+            //Pending acks
+            _reliableOrderedChannel.SendAcks();
+            _reliableUnorderedChannel.SendAcks();
 
             //Pending send
             int currentSended = 0;
@@ -374,7 +597,7 @@ namespace LiteNetLib
 
             //ResetFlowTimer
             _flowTimer += deltaTime;
-            if (_flowTimer >= FlowUpdateTime)
+            if (_flowTimer >= NetConstants.FlowUpdateTime)
             {
                 DebugWrite("[UPDATE]Reset flow timer, _sendedPackets - {0}", _sendedPacketsCount);
                 _sendedPacketsCount = 0;
@@ -385,26 +608,57 @@ namespace LiteNetLib
             _pingSendTimer += deltaTime;
             if (_pingSendTimer >= _pingSendDelay)
             {
+                DebugWrite("[PP] Send ping...");
+
                 //reset timer
                 _pingSendTimer = 0;
 
                 //send ping
                 CreateAndSend(PacketProperty.Ping, _pingSequence);
-                _pingSequence++;
 
                 //reset timer
-                _pingStopwatch.Restart();
+                _pingTimeStart = DateTime.UtcNow;
             }
 
-            //reset rtt
+            //RTT - round trip time
             _rttResetTimer += deltaTime;
             if (_rttResetTimer >= RttResetDelay)
             {
-                //Ping update
-                _rtt = 0;
-                _rttCount = 0;
-                _ping = _avgRtt / 2;
+                _rttResetTimer = 0;
+                //Rtt update
+                _rtt = _avgRtt;
+                _ping = _avgRtt;
+                _rttCount = 1;
             }
+
+            //MTU - Maximum transmission unit
+            if (!_finishMtu)
+            {
+                _mtuCheckTimer += deltaTime;
+                if (_mtuCheckTimer >= MtuCheckDelay)
+                {
+                    _mtuCheckTimer = 0;
+                    _mtuCheckAttempts++;
+                    if (_mtuCheckAttempts >= MaxMtuCheckAttempts)
+                    {
+                        _finishMtu = true;
+                    }
+                    else
+                    {
+                        lock (_mtuMutex)
+                        {
+                            //Send increased packet
+                            if (_mtuIdx < NetConstants.PossibleMtu.Length - 1)
+                            {
+                                int newMtu = NetConstants.PossibleMtu[_mtuIdx + 1] - NetConstants.HeaderSize;
+                                var p = GetPacketFromPool(PacketProperty.MtuCheck, newMtu);
+                                SendPacket(p);
+                            }
+                        }
+                    }
+                }
+            }
+            //MTU - end
         }
     }
 }

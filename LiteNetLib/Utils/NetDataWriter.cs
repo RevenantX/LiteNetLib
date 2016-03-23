@@ -8,7 +8,6 @@ namespace LiteNetLib.Utils
         protected byte[] _data;
         protected int _position;
         protected int _maxLength;
-        protected readonly FastBitConverter _fastBitConverter = new FastBitConverter();
         protected bool _autoResize;
 
         public NetDataWriter()
@@ -76,7 +75,7 @@ namespace LiteNetLib.Utils
         {
             if(_autoResize)
                 ResizeIfNeed(_position + 8);
-            _fastBitConverter.GetBytes(_data, _position, value);
+            FastBitConverter.GetBytes(_data, _position, value);
             _position += 8;
         }
 
@@ -84,7 +83,7 @@ namespace LiteNetLib.Utils
         {
             if (_autoResize)
                 ResizeIfNeed(_position + 4);
-            _fastBitConverter.GetBytes(_data, _position, value);
+            FastBitConverter.GetBytes(_data, _position, value);
             _position += 4;
         }
 

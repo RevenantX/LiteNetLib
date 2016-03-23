@@ -44,9 +44,6 @@
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\LiteNetLib\FastBitConverter.cs">
-      <Link>FastBitConverter.cs</Link>
-    </Compile>
     <Compile Include="..\LiteNetLib\NatPunchModule.cs">
       <Link>NatPunchModule.cs</Link>
     </Compile>
@@ -74,6 +71,9 @@
     <Compile Include="..\LiteNetLib\NetUtils.cs">
       <Link>NetUtils.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\NtpSyncModule.cs">
+      <Link>NtpSyncModule.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\ReliableChannel.cs">
       <Link>ReliableChannel.cs</Link>
     </Compile>
@@ -82,6 +82,9 @@
     </Compile>
     <Compile Include="..\LiteNetLib\SimpleChannel.cs">
       <Link>SimpleChannel.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Utils\FastBitConverter.cs">
+      <Link>Utils\FastBitConverter.cs</Link>
     </Compile>
     <Compile Include="..\LiteNetLib\Utils\NetDataReader.cs">
       <Link>Utils\NetDataReader.cs</Link>
