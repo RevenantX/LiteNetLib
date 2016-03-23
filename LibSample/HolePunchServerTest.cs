@@ -26,7 +26,7 @@ namespace LibSample
 
     class HolePunchServerTest
     {
-        private const int ServerPort = 48291;
+        private const int ServerPort = 48292;
         private static readonly TimeSpan KickTime = new TimeSpan(0, 0, 6);
 
         private readonly Dictionary<string, WaitPeer> _waitingPeers = new Dictionary<string, WaitPeer>();
