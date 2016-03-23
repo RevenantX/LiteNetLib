@@ -107,7 +107,7 @@ namespace LiteNetLib
 
             _localEndPoint = new NetEndPoint(port);
 
-            if (_socket.Bind(_localEndPoint))
+            if (_socket.Bind(ref _localEndPoint))
             {
                 _running = true;
 #if WINRT

@@ -49,7 +49,7 @@ namespace LiteNetLib
         }
 
         //Bind socket to port
-        public bool Bind(NetEndPoint ep)
+        public bool Bind(ref NetEndPoint ep)
         {
             try
             {
@@ -57,6 +57,8 @@ namespace LiteNetLib
                     _datagramSocket.BindServiceNameAsync(ep.PortStr).GetResults();
                 else
                     _datagramSocket.BindEndpointAsync(ep.HostName, ep.PortStr).GetResults();
+
+                ep = new NetEndPoint(_datagramSocket.Information.LocalAddress, _datagramSocket.Information.LocalPort);
             }
             catch (Exception)
             {

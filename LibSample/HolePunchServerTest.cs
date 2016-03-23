@@ -32,8 +32,10 @@ namespace LibSample
         private readonly Dictionary<string, WaitPeer> _waitingPeers = new Dictionary<string, WaitPeer>();
         private readonly List<string> _peersToRemove = new List<string>();
         private NetBase _puncher;
+        private NetBase _c1;
+        private NetBase _c2;
 
-        void RequestIntroduction(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token)
+        private void RequestIntroduction(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token)
         {
             WaitPeer wpeer;
             if (_waitingPeers.TryGetValue(token, out wpeer))
@@ -73,12 +75,35 @@ namespace LibSample
             }
         }
 
+        private void PunchSuccessC1(NetEndPoint targetEndPoint)
+        {
+            Console.WriteLine("SuccessC1: " + targetEndPoint);
+        }
+
+        private void PunchSuccessC2(NetEndPoint targetEndPoint)
+        {
+            Console.WriteLine("SuccessC2: " + targetEndPoint);
+        }
+
         public void Run()
         {
+            _c1 = new NetBase();
+            _c1.NatPunchEnabled = true;
+            _c1.NatPunchModule.OnNatIntroductionSuccess += PunchSuccessC1;
+            _c1.Start(0);
+
+            _c2 = new NetBase();
+            _c2.NatPunchEnabled = true;
+            _c2.NatPunchModule.OnNatIntroductionSuccess += PunchSuccessC2;
+            _c2.Start(0);
+
             _puncher = new NetBase();
             _puncher.Start(ServerPort);
             _puncher.NatPunchEnabled = true;
             _puncher.NatPunchModule.OnNatIntroductionRequest += RequestIntroduction;
+
+            _c1.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
+            _c2.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
 
             // keep going until ESCAPE is pressed
             Console.WriteLine("Press ESC to quit");
@@ -105,6 +130,8 @@ namespace LibSample
                 Thread.Sleep(10);
             }
 
+            _c1.Stop();
+            _c2.Stop();
             _puncher.Stop();
         }
     }
