@@ -16,7 +16,7 @@ namespace LiteNetLib
         public int StartRtt;
     }
 
-    public abstract class NetBase
+    public class NetBase
     {
         private readonly NetSocket _socket;
         private readonly List<FlowMode> _flowModes;
@@ -179,7 +179,7 @@ namespace LiteNetLib
             get { return _localEndPoint; }
         }
 
-        internal NetEvent CreateEvent(NetEventType type)
+        protected NetEvent CreateEvent(NetEventType type)
         {
             NetEvent evt;
             if (_netEventsPool.Count > 0)
@@ -305,11 +305,33 @@ namespace LiteNetLib
             ReceiveFromSocket(reusableBuffer, count, remoteEndPoint);
         }
 
-        protected abstract void ProcessError(string errorMessage);
-        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
-        protected abstract void PostProcessEvent(int deltaTime);
+        protected virtual void ProcessError(string errorMessage)
+        {
+            var netEvent = CreateEvent(NetEventType.Error);
+            netEvent.AdditionalInfo = errorMessage;
+            EnqueueEvent(netEvent);
+        }
 
-        internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
-        internal abstract void ProcessSendError(NetEndPoint endPoint, string errorMessage);
+        protected virtual void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
+        {
+            //ignore because we can accept only not connected messages and nat messages
+        }
+
+        protected virtual void PostProcessEvent(int deltaTime)
+        {
+            
+        }
+
+        internal virtual void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint)
+        {
+
+        }
+
+        internal virtual void ProcessSendError(NetEndPoint endPoint, string errorMessage)
+        {
+            var netEvent = CreateEvent(NetEventType.Error);
+            netEvent.AdditionalInfo = string.Format("Send error to {0}: {1}", endPoint, errorMessage);
+            EnqueueEvent(netEvent);
+        }
     }
 }

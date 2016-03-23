@@ -89,11 +89,21 @@ namespace LiteNetLib
             return rawData;
         }
 
+        public static byte[] CreateRawPacket(PacketProperty property, NetDataWriter dataWriter)
+        {
+            int headerSize = GetHeaderSize(property);
+            byte[] rawData = new byte[headerSize + dataWriter.Length];
+            rawData[0] = (byte)property;
+            Buffer.BlockCopy(dataWriter.Data, 0, rawData, headerSize, dataWriter.Length);
+            return rawData;
+        }
+
         public void Init(PacketProperty property, NetDataWriter dataWriter)
         {
-            RawData = new byte[GetHeaderSize(property) + dataWriter.Length];
+            int headerSize = GetHeaderSize(property);
+            RawData = new byte[headerSize + dataWriter.Length];
             Property = property;
-            Buffer.BlockCopy(dataWriter.Data, 0, RawData, GetHeaderSize(Property), dataWriter.Length);
+            Buffer.BlockCopy(dataWriter.Data, 0, RawData, headerSize, dataWriter.Length);
         }
 
         public void PutData(byte[] data, int start, int length)

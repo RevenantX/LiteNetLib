@@ -9,8 +9,7 @@ namespace LiteNetLib
         Disconnect,
         Receive,
         ReceiveUnconnected,
-        Error,
-        NatIntroductionSuccess
+        Error
     }
 
     public sealed class NetEvent
