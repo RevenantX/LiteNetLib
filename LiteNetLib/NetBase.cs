@@ -76,7 +76,7 @@ namespace LiteNetLib
             return _flowModes[flowMode].StartRtt;
         }
 
-        protected NetBase()
+        public NetBase()
         {
             _flowModes = new List<FlowMode>();
 
