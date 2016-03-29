@@ -1,5 +1,5 @@
+#if WINRT
 using System;
-using System.Threading.Tasks;
 using Windows.Networking;
 using Windows.Networking.Sockets;
 
@@ -96,3 +96,4 @@ namespace LiteNetLib
         }
     }
 }
+#endif

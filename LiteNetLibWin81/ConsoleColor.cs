@@ -1,3 +1,4 @@
+#if WINRT
 namespace LiteNetLib
 {
     public struct ConsoleColor
@@ -13,3 +14,4 @@ namespace LiteNetLib
         public static readonly ConsoleColor Green = new ConsoleColor();
     }
 }
+#endif
