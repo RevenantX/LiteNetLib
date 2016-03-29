@@ -95,7 +95,7 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Start updating thread and listening on selected port
+        /// Start logic thread and listening on selected port
         /// </summary>
         /// <param name="port">port to listen</param>
         public virtual bool Start(int port)
@@ -131,6 +131,12 @@ namespace LiteNetLib
             return false;
         }
 
+        /// <summary>
+        /// Send message without connection
+        /// </summary>
+        /// <param name="message">Raw data</param>
+        /// <param name="remoteEndPoint">Packet destination</param>
+        /// <returns>Operation result</returns>
         public bool SendUnconnectedMessage(byte[] message, NetEndPoint remoteEndPoint)
         {
             return SendUnconnectedMessage(message, message.Length, remoteEndPoint);

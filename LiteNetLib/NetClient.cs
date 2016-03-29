@@ -28,6 +28,10 @@ namespace LiteNetLib
             get { return _peer == null ? 0 : _peer.Ping; }
         }
 
+        /// <summary>
+        /// Start client socket and logic at any available port
+        /// </summary>
+        /// <returns></returns>
         public bool Start()
         {
             return Start(0);
