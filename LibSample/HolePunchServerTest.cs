@@ -75,14 +75,14 @@ namespace LibSample
             }
         }
 
-        private void PunchSuccessC1(NetEndPoint targetEndPoint)
+        private void PunchSuccessC1(NetEndPoint targetEndPoint, string token)
         {
-            Console.WriteLine("SuccessC1: " + targetEndPoint);
+            Console.WriteLine("SuccessC1: " + targetEndPoint + ", Token: " + token);
         }
 
-        private void PunchSuccessC2(NetEndPoint targetEndPoint)
+        private void PunchSuccessC2(NetEndPoint targetEndPoint, string token)
         {
-            Console.WriteLine("SuccessC2: " + targetEndPoint);
+            Console.WriteLine("SuccessC2: " + targetEndPoint + ", Token: " + token);
         }
 
         public void Run()

@@ -16,7 +16,7 @@ namespace LiteNetLib
         public delegate void NatIntroductionRequestDelegate(
             NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token);
 
-        public delegate void NatIntroductionSuccessDelegate(NetEndPoint targetEndPoint);
+        public delegate void NatIntroductionSuccessDelegate(NetEndPoint targetEndPoint, string token);
 
         public event NatIntroductionRequestDelegate OnNatIntroductionRequest;
         public event NatIntroductionSuccessDelegate OnNatIntroductionSuccess;
@@ -64,7 +64,7 @@ namespace LiteNetLib
             //prepare outgoing data
             NetDataWriter dw = new NetDataWriter();
             dw.Put(_netBase.LocalEndPoint);
-            dw.Put(additionalInfo, 256);
+            dw.Put(additionalInfo, MaxTokenLength);
 
             //prepare packet
             _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatIntroductionRequest, dw), masterServerEndPoint);
@@ -80,14 +80,14 @@ namespace LiteNetLib
             }
 
             NetDataWriter dw = new NetDataWriter();
-            string additionalInfo = dr.GetString(1000);
+            string additionalInfo = dr.GetString(MaxTokenLength);
 
             NetUtils.DebugWriteForce(ConsoleColor.Green, "NAT punch received from {0} we're client, so we've succeeded - additional info: {1}", senderEndPoint, additionalInfo);
 
             //Release punch success to client; enabling him to Connect() to msg.Sender if token is ok
             if (OnNatIntroductionSuccess != null)
             {
-                OnNatIntroductionSuccess(senderEndPoint);
+                OnNatIntroductionSuccess(senderEndPoint, additionalInfo);
             }
 
             //send a return punch just for good measure
@@ -96,13 +96,13 @@ namespace LiteNetLib
             _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, dw), senderEndPoint);
         }
 
-        private void HandleNatIntroduction(NetEndPoint senderEndPoint, NetDataReader dr)
+        private void HandleNatIntroduction(NetDataReader dr)
         {
             // read intro
             byte hostByte = dr.GetByte();
             NetEndPoint remoteInternal = dr.GetNetEndPoint();
             NetEndPoint remoteExternal = dr.GetNetEndPoint();
-            string token = dr.GetString(256);
+            string token = dr.GetString(MaxTokenLength);
             bool isHost = (hostByte == HostByte);
 
             NetUtils.DebugWriteForce(ConsoleColor.Cyan, "NAT introduction received; we are designated " + (isHost ? "host" : "client"));
@@ -147,7 +147,7 @@ namespace LiteNetLib
                     break;
                 case PacketProperty.NatIntroduction:
                     //We got introduce and must punch
-                    HandleNatIntroduction(senderEndPoint, dr);
+                    HandleNatIntroduction(dr);
                     break;
                 case PacketProperty.NatPunchMessage:
                     //We got punch and can connect

@@ -4,7 +4,6 @@ namespace LiteNetLib
 {
     public enum NetEventType
     {
-        None,
         Connect,
         Disconnect,
         Receive,
