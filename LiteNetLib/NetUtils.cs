@@ -12,7 +12,7 @@ namespace LiteNetLib
 
         public static int GetDividedPacketsCount(int size, int mtu)
         {
-            return (size/mtu) + (size%mtu == 0 ? 0 : 1);
+            return (size / mtu) + (size % mtu == 0 ? 0 : 1);
         }
 
         private static readonly object DebugLogLock = new object();
@@ -20,17 +20,17 @@ namespace LiteNetLib
         [Conditional("DEBUG_MESSAGES")]
         internal static void DebugWrite(ConsoleColor color, string str, params object[] args)
         {
-            lock(DebugLogLock)
+            lock (DebugLogLock)
             {
-#if UNITY_DEBUG
+#if UNITY
                     string debugStr = string.Format(str, args);
                     UnityEngine.Debug.Log(debugStr);
 #elif WINRT
                     Debug.WriteLine(str, args);
-#elif !UNITY
-                    Console.ForegroundColor = color;
-                    Console.WriteLine(str, args);
-                    Console.ForegroundColor = ConsoleColor.Gray;
+#else
+                Console.ForegroundColor = color;
+                Console.WriteLine(str, args);
+                Console.ForegroundColor = ConsoleColor.Gray;
 #endif
             }
         }
@@ -40,12 +40,12 @@ namespace LiteNetLib
         {
             lock (DebugLogLock)
             {
-#if UNITY_DEBUG
+#if UNITY
                 string debugStr = string.Format(str, args);
                 UnityEngine.Debug.Log(debugStr);
 #elif WINRT
                 Debug.WriteLine(str, args);
-#elif !UNITY
+#else
                 Console.ForegroundColor = color;
                 Console.WriteLine(str, args);
                 Console.ForegroundColor = ConsoleColor.Gray;
