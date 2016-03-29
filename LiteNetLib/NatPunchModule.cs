@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using LiteNetLib.Utils;
 
 //Some code parts taked from lidgren-network-gen3
@@ -7,8 +8,23 @@ namespace LiteNetLib
 {
     public sealed class NatPunchModule
     {
+        struct RequestEventData
+        {
+            public NetEndPoint LocalEndPoint;
+            public NetEndPoint RemoteEndPoint;
+            public string Token;
+        }
+
+        struct SuccessEventData
+        {
+            public NetEndPoint TargetEndPoint;
+            public string Token;
+        }
+
         private readonly NetBase _netBase;
         private readonly NetSocket _socket;
+        private readonly Queue<RequestEventData> _requestEvents;
+        private readonly Queue<SuccessEventData> _successEvents; 
         private const byte HostByte = 1;
         private const byte ClientByte = 0;
         public const int MaxTokenLength = 256;
@@ -25,6 +41,8 @@ namespace LiteNetLib
         {
             _netBase = netBase;
             _socket = socket;
+            _requestEvents = new Queue<RequestEventData>();
+            _successEvents = new Queue<SuccessEventData>();
         }
 
         public void NatIntroduce(
@@ -56,6 +74,32 @@ namespace LiteNetLib
             _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatIntroduction, dw), hostExternal);
         }
 
+        public void Update()
+        {
+            lock (_successEvents)
+            {
+                while (_successEvents.Count > 0)
+                {
+                    var evt = _successEvents.Dequeue();
+                    if (OnNatIntroductionSuccess != null)
+                    {
+                        OnNatIntroductionSuccess(evt.TargetEndPoint, evt.Token);
+                    }
+                }
+            }
+            lock (_requestEvents)
+            {
+                while (_requestEvents.Count > 0)
+                {
+                    var evt = _requestEvents.Dequeue();
+                    if (OnNatIntroductionRequest != null)
+                    {
+                        OnNatIntroductionRequest(evt.LocalEndPoint, evt.RemoteEndPoint, evt.Token);
+                    }
+                }
+            }
+        }
+
         public void SendNatIntroduceRequest(NetEndPoint masterServerEndPoint, string additionalInfo)
         {
             if (!_netBase.IsRunning)
@@ -85,9 +129,9 @@ namespace LiteNetLib
             NetUtils.DebugWriteForce(ConsoleColor.Green, "NAT punch received from {0} we're client, so we've succeeded - additional info: {1}", senderEndPoint, additionalInfo);
 
             //Release punch success to client; enabling him to Connect() to msg.Sender if token is ok
-            if (OnNatIntroductionSuccess != null)
+            lock (_successEvents)
             {
-                OnNatIntroductionSuccess(senderEndPoint, additionalInfo);
+                _successEvents.Enqueue(new SuccessEventData { TargetEndPoint = senderEndPoint, Token = additionalInfo });
             }
 
             //send a return punch just for good measure
@@ -129,9 +173,14 @@ namespace LiteNetLib
         {
             NetEndPoint localEp = dr.GetNetEndPoint();
             string token = dr.GetString(MaxTokenLength);
-            if (OnNatIntroductionRequest != null)
+            lock (_requestEvents)
             {
-                OnNatIntroductionRequest(localEp, senderEndPoint, token);
+                _requestEvents.Enqueue(new RequestEventData
+                {
+                    LocalEndPoint = localEp,
+                    RemoteEndPoint = senderEndPoint,
+                    Token = token
+                });
             }
         }
 

@@ -26,7 +26,7 @@ namespace LibSample
 
     class HolePunchServerTest
     {
-        private const int ServerPort = 48292;
+        private const int ServerPort = 49292;
         private static readonly TimeSpan KickTime = new TimeSpan(0, 0, 6);
 
         private readonly Dictionary<string, WaitPeer> _waitingPeers = new Dictionary<string, WaitPeer>();
@@ -90,26 +90,28 @@ namespace LibSample
             _c1 = new NetBase();
             _c1.NatPunchEnabled = true;
             _c1.NatPunchModule.OnNatIntroductionSuccess += PunchSuccessC1;
-            _c1.Start(0);
+            //_c1.Start(0);
 
             _c2 = new NetBase();
             _c2.NatPunchEnabled = true;
             _c2.NatPunchModule.OnNatIntroductionSuccess += PunchSuccessC2;
-            _c2.Start(0);
+            //_c2.Start(0);
 
             _puncher = new NetBase();
             _puncher.Start(ServerPort);
             _puncher.NatPunchEnabled = true;
             _puncher.NatPunchModule.OnNatIntroductionRequest += RequestIntroduction;
 
-            _c1.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
-            _c2.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
+            //_c1.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
+            //_c2.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
 
             // keep going until ESCAPE is pressed
             Console.WriteLine("Press ESC to quit");
             while (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Escape)
             {
                 DateTime nowTime = DateTime.Now;
+
+                _puncher.NatPunchModule.Update();
                 //check old peers
                 foreach (var waitPeer in _waitingPeers)
                 {
