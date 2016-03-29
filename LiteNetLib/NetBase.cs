@@ -39,6 +39,7 @@ namespace LiteNetLib
         public bool NatPunchEnabled = false;
         public int UpdateTime = 100;
         public int ReliableResendTime = 500;
+        public int PingInterval = NetConstants.DefaultPingInterval;
 
         //modules
         public readonly NatPunchModule NatPunchModule;
@@ -91,7 +92,9 @@ namespace LiteNetLib
 
         protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
         {
-            return new NetPeer(this, _socket, remoteEndPoint);
+            var peer = new NetPeer(this, _socket, remoteEndPoint);
+            peer.PingInterval = PingInterval;
+            return peer;
         }
 
         /// <summary>
