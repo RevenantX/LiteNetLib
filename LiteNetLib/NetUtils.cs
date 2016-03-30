@@ -25,7 +25,7 @@ namespace LiteNetLib
 
         public static string GetLocalIP()
         {
-#if WINRT
+#if WINRT && !UNITY_EDITOR
             foreach (HostName localHostName in NetworkInformation.GetHostNames())
             {
                 if (localHostName.IPInformation != null)
