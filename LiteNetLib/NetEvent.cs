@@ -8,7 +8,8 @@ namespace LiteNetLib
         Disconnect,
         Receive,
         ReceiveUnconnected,
-        Error
+        Error,
+        ConnectionLatencyUpdated
     }
 
     public sealed class NetEvent
@@ -19,5 +20,6 @@ namespace LiteNetLib
         public NetEventType Type { get; internal set; }
         public NetEndPoint RemoteEndPoint { get; internal set; }
         public string AdditionalInfo { get; internal set; }
+        public int Latency { get; internal set; }
     }
 }

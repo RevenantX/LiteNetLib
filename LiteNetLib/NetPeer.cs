@@ -627,6 +627,7 @@ namespace LiteNetLib
                 //Rtt update
                 _rtt = _avgRtt;
                 _ping = _avgRtt;
+                _peerListener.ConnectionLatencyUpdated(this, _ping);
                 _rttCount = 1;
             }
 

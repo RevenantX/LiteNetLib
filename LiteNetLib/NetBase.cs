@@ -97,6 +97,14 @@ namespace LiteNetLib
             return peer;
         }
 
+        internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
+        {
+            var evt = CreateEvent(NetEventType.ConnectionLatencyUpdated);
+            evt.Peer = fromPeer;
+            evt.Latency = latency;
+            EnqueueEvent(evt);
+        }
+
         /// <summary>
         /// Start logic thread and listening on selected port
         /// </summary>
