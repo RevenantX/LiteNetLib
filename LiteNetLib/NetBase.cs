@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using LiteNetLib.Utils;
 
-#if WINRT
+#if WINRT && !UNITY_EDITOR
 using Windows.System.Threading;
 #else
 using System;
@@ -22,7 +22,7 @@ namespace LiteNetLib
         private readonly List<FlowMode> _flowModes;
         private NetEndPoint _localEndPoint;
 
-#if WINRT
+#if WINRT && !UNITY_EDITOR
         private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
 #else
         private Thread _logicThread;
@@ -113,7 +113,7 @@ namespace LiteNetLib
             if (_socket.Bind(ref _localEndPoint))
             {
                 _running = true;
-#if WINRT
+#if WINRT && !UNITY_EDITOR
                 ThreadPool.RunAsync(
                     a => UpdateLogic(), 
                     WorkItemPriority.Normal, 
@@ -163,7 +163,7 @@ namespace LiteNetLib
             if (_running)
             {
                 _running = false;
-#if !WINRT
+#if !WINRT || UNITY_EDITOR
                 if(Thread.CurrentThread != _logicThread)
                     _logicThread.Join();
                 if(Thread.CurrentThread != _receiveThread)
@@ -245,7 +245,7 @@ namespace LiteNetLib
             while (_running)
             {
                 PostProcessEvent(UpdateTime);
-#if WINRT
+#if WINRT && !UNITY_EDITOR
                 _updateWaiter.WaitOne(UpdateTime);
 #else
                 Thread.Sleep(UpdateTime);

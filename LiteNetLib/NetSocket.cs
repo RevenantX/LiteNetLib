@@ -1,4 +1,4 @@
-#if !WINRT
+#if !WINRT || UNITY_EDITOR
 using System;
 using System.Net;
 using System.Net.Sockets;

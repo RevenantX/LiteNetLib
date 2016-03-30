@@ -1,4 +1,4 @@
-#if WINRT
+#if WINRT && !UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.Threading;

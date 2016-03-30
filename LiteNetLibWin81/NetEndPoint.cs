@@ -1,4 +1,4 @@
-#if WINRT
+#if WINRT && !UNITY_EDITOR
 using System;
 using Windows.Networking;
 using Windows.Networking.Sockets;
