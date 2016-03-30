@@ -107,7 +107,10 @@ namespace LiteNetLib
 
             //prepare outgoing data
             NetDataWriter dw = new NetDataWriter();
-            dw.Put(_netBase.LocalEndPoint);
+            string networkIp = NetUtils.GetLocalIP();
+            int networkPort = _netBase.LocalEndPoint.Port;
+            NetEndPoint localEndPoint = new NetEndPoint(networkIp, networkPort);
+            dw.Put(localEndPoint);
             dw.Put(additionalInfo, MaxTokenLength);
 
             //prepare packet
