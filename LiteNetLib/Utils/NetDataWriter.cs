@@ -39,7 +39,7 @@ namespace LiteNetLib.Utils
                 {
                     _maxLength *= 2;
                 }
-                _data = new byte[_maxLength];
+                Array.Resize(ref _data, _maxLength);
             }
         }
 
@@ -172,7 +172,7 @@ namespace LiteNetLib.Utils
             //put bytes count
             int bytesCount = Encoding.UTF8.GetByteCount(value);
             if (_autoResize)
-                ResizeIfNeed(_position + bytesCount);
+                ResizeIfNeed(_position + bytesCount + 4);
             Put(bytesCount);
 
             //put string
