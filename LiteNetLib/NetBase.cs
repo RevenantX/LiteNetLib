@@ -16,7 +16,7 @@ namespace LiteNetLib
         public int StartRtt;
     }
 
-    public abstract class NetBase
+    public class NetBase
     {
         private readonly NetSocket _socket;
         private readonly List<FlowMode> _flowModes;
@@ -39,6 +39,7 @@ namespace LiteNetLib
         public bool NatPunchEnabled = false;
         public int UpdateTime = 100;
         public int ReliableResendTime = 500;
+        public int PingInterval = NetConstants.DefaultPingInterval;
 
         //modules
         public readonly NatPunchModule NatPunchModule;
@@ -76,7 +77,7 @@ namespace LiteNetLib
             return _flowModes[flowMode].StartRtt;
         }
 
-        protected NetBase()
+        public NetBase()
         {
             _flowModes = new List<FlowMode>();
 
@@ -91,11 +92,13 @@ namespace LiteNetLib
 
         protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
         {
-            return new NetPeer(this, _socket, remoteEndPoint);
+            var peer = new NetPeer(this, _socket, remoteEndPoint);
+            peer.PingInterval = PingInterval;
+            return peer;
         }
 
         /// <summary>
-        /// Start updating thread and listening on selected port
+        /// Start logic thread and listening on selected port
         /// </summary>
         /// <param name="port">port to listen</param>
         public virtual bool Start(int port)
@@ -107,7 +110,7 @@ namespace LiteNetLib
 
             _localEndPoint = new NetEndPoint(port);
 
-            if (_socket.Bind(_localEndPoint))
+            if (_socket.Bind(ref _localEndPoint))
             {
                 _running = true;
 #if WINRT
@@ -131,6 +134,12 @@ namespace LiteNetLib
             return false;
         }
 
+        /// <summary>
+        /// Send message without connection
+        /// </summary>
+        /// <param name="message">Raw data</param>
+        /// <param name="remoteEndPoint">Packet destination</param>
+        /// <returns>Operation result</returns>
         public bool SendUnconnectedMessage(byte[] message, NetEndPoint remoteEndPoint)
         {
             return SendUnconnectedMessage(message, message.Length, remoteEndPoint);
@@ -179,7 +188,7 @@ namespace LiteNetLib
             get { return _localEndPoint; }
         }
 
-        internal NetEvent CreateEvent(NetEventType type)
+        protected NetEvent CreateEvent(NetEventType type)
         {
             NetEvent evt;
             if (_netEventsPool.Count > 0)
@@ -305,11 +314,33 @@ namespace LiteNetLib
             ReceiveFromSocket(reusableBuffer, count, remoteEndPoint);
         }
 
-        protected abstract void ProcessError(string errorMessage);
-        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
-        protected abstract void PostProcessEvent(int deltaTime);
+        protected virtual void ProcessError(string errorMessage)
+        {
+            var netEvent = CreateEvent(NetEventType.Error);
+            netEvent.AdditionalInfo = errorMessage;
+            EnqueueEvent(netEvent);
+        }
 
-        internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
-        internal abstract void ProcessSendError(NetEndPoint endPoint, string errorMessage);
+        protected virtual void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
+        {
+            //ignore because we can accept only not connected messages and nat messages
+        }
+
+        protected virtual void PostProcessEvent(int deltaTime)
+        {
+            
+        }
+
+        internal virtual void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint)
+        {
+
+        }
+
+        internal virtual void ProcessSendError(NetEndPoint endPoint, string errorMessage)
+        {
+            var netEvent = CreateEvent(NetEventType.Error);
+            netEvent.AdditionalInfo = string.Format("Send error to {0}: {1}", endPoint, errorMessage);
+            EnqueueEvent(netEvent);
+        }
     }
 }

@@ -269,23 +269,42 @@ namespace LiteNetLib
             }
         }
 
-        public void SendToClients(byte[] data, int length, SendOptions options)
+        public void SendToClients(byte[] data, SendOptions options)
         {
             foreach (NetPeer netPeer in _peers.Values)
             {
-                netPeer.Send(data, 0, length, options);
+                netPeer.Send(data, options);
             }
         }
 
-        public void SendToClients(byte[] data, int length, SendOptions options, NetPeer excludePeer)
+        public void SendToClients(byte[] data, int start, int length, SendOptions options)
+        {
+            foreach (NetPeer netPeer in _peers.Values)
+            {
+                netPeer.Send(data, start, length, options);
+            }
+        }
+
+        public void SendToClients(byte[] data, SendOptions options, NetPeer excludePeer)
 		{
 			foreach (NetPeer netPeer in _peers.Values)
 			{
 				if(netPeer != excludePeer)
 				{
-                    netPeer.Send(data, 0, length, options);
+                    netPeer.Send(data, options);
 				}
 			}
 		}
+
+        public void SendToClients(byte[] data, int start, int length, SendOptions options, NetPeer excludePeer)
+        {
+            foreach (NetPeer netPeer in _peers.Values)
+            {
+                if (netPeer != excludePeer)
+                {
+                    netPeer.Send(data, start, length, options);
+                }
+            }
+        }
     }
 }

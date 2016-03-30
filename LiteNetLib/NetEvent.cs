@@ -4,13 +4,11 @@ namespace LiteNetLib
 {
     public enum NetEventType
     {
-        None,
         Connect,
         Disconnect,
         Receive,
         ReceiveUnconnected,
-        Error,
-        NatIntroductionSuccess
+        Error
     }
 
     public sealed class NetEvent

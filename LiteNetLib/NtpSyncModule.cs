@@ -11,7 +11,8 @@ namespace LiteNetLib
         public NtpSyncModule(string ntpServer)
         {
             _socket = new NetSocket();
-            _socket.Bind(new NetEndPoint(0));
+            NetEndPoint ourEndPoint = new NetEndPoint(0);
+            _socket.Bind(ref ourEndPoint);
             _socket.ReceiveTimeout = 3000;
             _ntpEndPoint = new NetEndPoint(ntpServer, 123);
             SyncedTime = null;

@@ -1,3 +1,4 @@
+#if !WINRT
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -12,7 +13,7 @@ namespace LiteNetLib
 
         public int ReceiveTimeout = 10;
 
-        public bool Bind(NetEndPoint ep)
+        public bool Bind(ref NetEndPoint ep)
         {            
             try
             {
@@ -24,6 +25,7 @@ namespace LiteNetLib
                 _udpSocket.DontFragment = true;
                 _udpSocket.EnableBroadcast = true;
                 _udpSocket.Bind(ep.EndPoint);
+                ep = new NetEndPoint((IPEndPoint)_udpSocket.LocalEndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);
                 return true;
             }
@@ -117,3 +119,4 @@ namespace LiteNetLib
         }
     }
 }
+#endif

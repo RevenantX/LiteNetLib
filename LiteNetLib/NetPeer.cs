@@ -21,7 +21,7 @@ namespace LiteNetLib
         private ushort _pingSequence;
         private ushort _remotePingSequence;
 
-        private int _pingSendDelay;
+        private int _pingInterval;
         private int _pingSendTimer;
         private const int RttResetDelay = 1000;
         private int _rttResetTimer;
@@ -77,10 +77,10 @@ namespace LiteNetLib
             get { return _ping; }
         }
 
-        public int PingSendDelay
+        public int PingInterval
         {
-            get { return _pingSendDelay; }
-            set { _pingSendDelay = value; }
+            get { return _pingInterval; }
+            set { _pingInterval = value; }
         }
 
         public int CurrentFlowMode
@@ -113,7 +113,6 @@ namespace LiteNetLib
 
             _avgRtt = 0;
             _rtt = 0;
-            _pingSendDelay = NetConstants.DefaultPingSendDelay;
             _pingSendTimer = 0;
 
             _reliableOrderedChannel = new ReliableChannel(this, true, _windowSize);
@@ -606,7 +605,7 @@ namespace LiteNetLib
 
             //Send ping
             _pingSendTimer += deltaTime;
-            if (_pingSendTimer >= _pingSendDelay)
+            if (_pingSendTimer >= _pingInterval)
             {
                 DebugWrite("[PP] Send ping...");
 

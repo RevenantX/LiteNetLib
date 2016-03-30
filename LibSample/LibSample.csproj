@@ -37,6 +37,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EchoMessagesTest.cs" />
+    <Compile Include="FragmentTest.cs" />
+    <Compile Include="HolePunchServerTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

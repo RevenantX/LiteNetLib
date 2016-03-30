@@ -197,7 +197,7 @@ namespace LiteNetLib.Utils
             //calculate max count
             int bytesCount = Encoding.UTF8.GetByteCount(value);
             if (_autoResize)
-                ResizeIfNeed(_position + bytesCount);
+                ResizeIfNeed(_position + bytesCount + 4);
 
             //put bytes count
             Put(bytesCount);

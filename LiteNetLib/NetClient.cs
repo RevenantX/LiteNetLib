@@ -28,6 +28,10 @@ namespace LiteNetLib
             get { return _peer == null ? 0 : _peer.Ping; }
         }
 
+        /// <summary>
+        /// Start client socket and logic at any available port
+        /// </summary>
+        /// <returns></returns>
         public bool Start()
         {
             return Start(0);
@@ -91,6 +95,13 @@ namespace LiteNetLib
         /// <param name="key">Game key for authorization</param>
         public void Connect(string address, int port, string key)
         {
+            //Create target endpoint
+            NetEndPoint ep = new NetEndPoint(address, port);
+            Connect(ep, key);
+        }
+
+        public void Connect(NetEndPoint target, string key)
+        {
             if (key.Length > 256)
             {
                 throw new Exception("Connect key length > 256!");
@@ -103,14 +114,11 @@ namespace LiteNetLib
             _connectId = (ulong)DateTime.UtcNow.Ticks;
             _connectKey = key;
 
-            //Create server endpoint
-            NetEndPoint ep = new NetEndPoint(address, port);
-
             //Force close connection
             CloseConnection(true);
 
             //Create reliable connection
-            _peer = CreatePeer(ep);
+            _peer = CreatePeer(target);
             _peer.DebugTextColor = ConsoleColor.Yellow;
 
             //Create connection packet and send
