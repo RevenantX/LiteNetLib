@@ -1,11 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using LiteNetLib.Utils;
 
 #if WINRT && !UNITY_EDITOR
 using Windows.System.Threading;
-#else
-using System;
 #endif
 
 namespace LiteNetLib
@@ -125,12 +124,12 @@ namespace LiteNetLib
                 ThreadPool.RunAsync(
                     a => UpdateLogic(), 
                     WorkItemPriority.Normal, 
-                    WorkItemOptions.TimeSliced).GetResults();
+                    WorkItemOptions.TimeSliced).AsTask();
 
                 ThreadPool.RunAsync(
                     a => ReceiveLogic(), 
                     WorkItemPriority.Normal,
-                    WorkItemOptions.TimeSliced).GetResults();
+                    WorkItemOptions.TimeSliced).AsTask();
 #else
                 _logicThread = new Thread(UpdateLogic);
                 _receiveThread = new Thread(ReceiveLogic);
