@@ -161,6 +161,9 @@ namespace LiteNetLib
 
         private void SendConnectAccept(NetPeer peer, ulong id)
         {
+            //Reset connection timer
+            peer.StartConnectionTimer();
+
             //Make initial packet
             var connectPacket = NetPacket.CreateRawPacket(PacketProperty.ConnectAccept, 8);
 
@@ -212,8 +215,7 @@ namespace LiteNetLib
                     {
                         _peerConnectionIds[remoteEndPoint] = newId;
                     }
-
-                    netPeer.StartConnectionTimer();
+                    
                     NetUtils.DebugWrite(ConsoleColor.Blue, "ConnectRequest LastId: {0}, NewId: {1}", lastId, newId);
                     SendConnectAccept(netPeer, _peerConnectionIds[remoteEndPoint]);
                     netPeer.Recycle(packet);
