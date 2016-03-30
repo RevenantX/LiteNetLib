@@ -1,3 +1,4 @@
+#if !WINRT
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -118,3 +119,4 @@ namespace LiteNetLib
         }
     }
 }
+#endif
