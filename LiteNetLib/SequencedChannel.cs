@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace LiteNetLib
 {
-    sealed class SequencedChannel
+    internal sealed class SequencedChannel
     {
         private ushort _localSequence;
         private ushort _remoteSequence;

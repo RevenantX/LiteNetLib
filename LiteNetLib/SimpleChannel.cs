@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace LiteNetLib
 {
-    sealed class SimpleChannel
+    internal sealed class SimpleChannel
     {
         private readonly Queue<NetPacket> _outgoingPackets;
         private readonly NetPeer _peer;

@@ -4,9 +4,9 @@ using System.Threading;
 
 namespace LiteNetLib
 {
-    sealed class ReliableChannel
+    internal sealed class ReliableChannel
     {
-        class PendingPacket
+        private class PendingPacket
         {
             public NetPacket Packet;
             public DateTime? TimeStamp;
