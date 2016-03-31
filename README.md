@@ -2,7 +2,7 @@
 
 Lite reliable UDP library.
 
-Features
+### Features
 
 * Simple connection handling
 * Helper classes for sending and reading messages
@@ -17,7 +17,7 @@ Features
 * UDP NAT hole punching
 * NTP time requests
 * Small CPU and RAM usage
-* Unity3d support (you can use library source in projecct)
+* Unity3d support (you can use library source in project)
 * Universal Windows Platform (Windows 8.1 and Windows 10 including phones) support
 
 ### Build status
