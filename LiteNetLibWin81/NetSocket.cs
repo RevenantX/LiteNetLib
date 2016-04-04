@@ -7,7 +7,7 @@ using Windows.Storage.Streams;
 
 namespace LiteNetLib
 {
-    sealed class NetSocket
+    internal sealed class NetSocket
     {
         private readonly DatagramSocket _datagramSocket;
         private readonly Dictionary<NetEndPoint, DataWriter> _peers = new Dictionary<NetEndPoint, DataWriter>();
@@ -111,15 +111,25 @@ namespace LiteNetLib
             return data.Length;
         }
 
+        internal void RemovePeer(NetEndPoint ep)
+        {
+            _peers.Remove(ep);
+        }
+
         //Close socket
         public void Close()
+        {
+            ClearPeers();
+            _datagramSocket.Dispose();
+        }
+
+        internal void ClearPeers()
         {
             foreach (var dataWriter in _peers)
             {
                 dataWriter.Value.Dispose();
             }
             _peers.Clear();
-            _datagramSocket.Dispose();
         }
     }
 }

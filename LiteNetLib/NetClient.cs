@@ -68,6 +68,7 @@ namespace LiteNetLib
             _connectTimer = 0;
             _connectAttempts = 0;
             _waitForConnect = false;
+            SocketClearPeers();
         }
 
         public override void Stop()

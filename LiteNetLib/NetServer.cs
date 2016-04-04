@@ -57,6 +57,7 @@ namespace LiteNetLib
             {
                 _peers.Remove(peer.EndPoint);
                 _peerConnectionIds.Remove(peer.EndPoint);
+                SocketRemovePeer(peer.EndPoint);
             }
         }
 

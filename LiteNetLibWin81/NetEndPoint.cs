@@ -37,26 +37,38 @@ namespace LiteNetLib
 
         internal long GetId()
         {
-            string hostIp;
+            //Check locals
             if (HostName == null)
             {
-                hostIp = "0.0.0.0";
+                return ParseIpToId("0.0.0.0");
             }
-            else if (HostName.DisplayName == "localhost")
+
+            if (HostName.DisplayName == "localhost")
             {
-                hostIp = "127.0.0.1";
+                return ParseIpToId("127.0.0.1");
             }
-            else
+
+            //Check remote
+            string hostIp = string.Empty;
+            var task = DatagramSocket.GetEndpointPairsAsync(HostName, "0").AsTask();
+            task.Wait();
+
+            //IPv4
+            foreach (var endpointPair in task.Result)
             {
-                var task = DatagramSocket.GetEndpointPairsAsync(HostName, "0").AsTask();
-                task.Wait();
-                var remoteHostName = task.Result[0].RemoteHostName;
-                hostIp = task.Result[0].RemoteHostName.CanonicalName;
-                if (remoteHostName.Type == HostNameType.DomainName || remoteHostName.Type == HostNameType.Ipv6)
+                hostIp = endpointPair.RemoteHostName.CanonicalName;
+                if (endpointPair.RemoteHostName.Type == HostNameType.Ipv4)
                 {
-                    return hostIp.GetHashCode() ^ Port;
+                    return ParseIpToId(hostIp);
                 }
             }
+
+            //Else
+            return hostIp.GetHashCode() ^ Port;
+        }
+
+        private long ParseIpToId(string hostIp)
+        {
             long id = 0;
             string[] ip = hostIp.Split('.');
             id |= long.Parse(ip[0]);

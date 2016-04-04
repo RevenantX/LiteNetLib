@@ -89,6 +89,20 @@ namespace LiteNetLib
             NatPunchModule = new NatPunchModule(this, _socket);
         }
 
+        protected void SocketClearPeers()
+        {
+#if WINRT && !UNITY_EDITOR
+            _socket.ClearPeers();
+#endif
+        }
+
+        protected void SocketRemovePeer(NetEndPoint ep)
+        {
+#if WINRT && !UNITY_EDITOR
+            _socket.RemovePeer(ep);
+#endif
+        }
+
         protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
         {
             var peer = new NetPeer(this, _socket, remoteEndPoint);
