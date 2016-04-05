@@ -10,6 +10,7 @@ namespace LiteNetLib
         private const int BufferSize = ushort.MaxValue;
         private readonly byte[] _receiveBuffer = new byte[NetConstants.PacketSizeLimit];
         private Socket _udpSocket;
+        private EndPoint _bufferEndPoint = new IPEndPoint(0,0);
 
         public int ReceiveTimeout = 10;
 
@@ -80,9 +81,11 @@ namespace LiteNetLib
             //Reading data
             try
             {
-                EndPoint p = remoteEndPoint.EndPoint;
-                result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref p);
-                remoteEndPoint = new NetEndPoint((IPEndPoint)p);
+                result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref _bufferEndPoint);
+                if (!remoteEndPoint.EndPoint.Equals(_bufferEndPoint))
+                {
+                    remoteEndPoint = new NetEndPoint((IPEndPoint)_bufferEndPoint);
+                }
             }
             catch (SocketException ex)
             {

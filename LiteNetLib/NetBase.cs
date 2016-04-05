@@ -17,6 +17,16 @@ namespace LiteNetLib
 
     public class NetBase
     {
+#if DEBUG
+        private struct IncomingData
+        {
+            public byte[] Data;
+            public NetEndPoint EndPoint;
+            public DateTime TimeWhenGet;
+        }
+        private readonly LinkedList<IncomingData> _pingSimulationList = new LinkedList<IncomingData>(); 
+#endif
+
         private readonly NetSocket _socket;
         private readonly List<FlowMode> _flowModes;
         private NetEndPoint _localEndPoint;
@@ -32,6 +42,7 @@ namespace LiteNetLib
         private bool _running;
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
+        private readonly Random _randomGenerator = new Random();
 
         //config section
         public bool UnconnectedMessagesEnabled = false;
@@ -39,6 +50,10 @@ namespace LiteNetLib
         public int UpdateTime = 100;
         public int ReliableResendTime = 500;
         public int PingInterval = NetConstants.DefaultPingInterval;
+        public bool SimulatePacketLoss = false;
+        public bool SimulateLatency = false;
+        public int SimulationPacketLossChance = 10;
+        public int SimulationMaxLatency = 100;
 
         //modules
         public readonly NatPunchModule NatPunchModule;
@@ -286,6 +301,32 @@ namespace LiteNetLib
 
                 if (result > 0)
                 {
+#if DEBUG
+                    bool receivePacket = true;
+
+                    if (SimulatePacketLoss && _randomGenerator.Next(100 / SimulationPacketLossChance) == 0)
+                    {
+                        receivePacket = false;
+                    }
+                    else if (SimulateLatency)
+                    {
+                        int latency = _randomGenerator.Next(SimulationMaxLatency);
+                        if (latency > 5)
+                        {
+                            byte[] holdedData = new byte[result];
+                            Buffer.BlockCopy(reusableBuffer, 0, holdedData, 0, result);
+                            _pingSimulationList.AddFirst(new IncomingData
+                            {
+                                Data = holdedData,
+                                EndPoint = _remoteEndPoint,
+                                TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
+                            });
+                            receivePacket = false;
+                        }
+                    }
+
+                    if(receivePacket) //DataReceived
+#endif
                     //ProcessEvents
                     DataReceived(reusableBuffer, result, _remoteEndPoint);
                 }
@@ -301,6 +342,28 @@ namespace LiteNetLib
                         return;
                     }
                 }
+#if DEBUG
+                if (SimulateLatency)
+                {
+                    var node = _pingSimulationList.First;
+                    var time = DateTime.UtcNow;
+                    while (node != null)
+                    {
+                        var incomingData = node.Value;
+                        if (incomingData.TimeWhenGet <= time)
+                        {
+                            DataReceived(incomingData.Data, incomingData.Data.Length, incomingData.EndPoint);
+                            var nodeToRemove = node;
+                            node = node.Next;
+                            _pingSimulationList.Remove(nodeToRemove);
+                        }
+                        else
+                        {
+                            node = node.Next;
+                        }
+                    }
+                }
+#endif
             }
         }
 

@@ -18,6 +18,7 @@ class Program
         HolePunchServerTest holePunchServerTest = new HolePunchServerTest();
         EchoMessagesTest echoMessagesTest = new EchoMessagesTest();
 
-        holePunchServerTest.Run();
+        //holePunchServerTest.Run();
+        echoMessagesTest.Run();
     }
 }

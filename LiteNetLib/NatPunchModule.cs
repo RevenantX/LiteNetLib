@@ -129,7 +129,7 @@ namespace LiteNetLib
             NetDataWriter dw = new NetDataWriter();
             string additionalInfo = dr.GetString(MaxTokenLength);
 
-            NetUtils.DebugWriteForce(ConsoleColor.Green, "NAT punch received from {0} we're client, so we've succeeded - additional info: {1}", senderEndPoint, additionalInfo);
+            NetUtils.DebugWrite(ConsoleColor.Green, "[NAT] punch received from {0} we're client, so we've succeeded - additional info: {1}", senderEndPoint, additionalInfo);
 
             //Release punch success to client; enabling him to Connect() to msg.Sender if token is ok
             lock (_successEvents)
@@ -152,7 +152,7 @@ namespace LiteNetLib
             string token = dr.GetString(MaxTokenLength);
             bool isHost = (hostByte == HostByte);
 
-            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "NAT introduction received; we are designated " + (isHost ? "host" : "client"));
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] introduction received; we are designated " + (isHost ? "host" : "client"));
 
             NetPacket punch = new NetPacket();
             NetDataWriter writer = new NetDataWriter();
@@ -162,14 +162,14 @@ namespace LiteNetLib
             writer.Put(hostByte);
             writer.Put(token);
             _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteInternal);
-            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "NAT punch sent to " + remoteInternal);
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] punch sent to " + remoteInternal);
 
             // send external punch
             writer.Reset();
             writer.Put(hostByte);
             writer.Put(token);
             _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteExternal);
-            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "NAT punch sent to " + remoteExternal);
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] punch sent to " + remoteExternal);
         }
 
         private void HandleNatIntroductionRequest(NetEndPoint senderEndPoint, NetDataReader dr)

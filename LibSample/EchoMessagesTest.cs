@@ -17,7 +17,7 @@ namespace LibSample
                     Console.WriteLine("[Client] connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
 
                     NetDataWriter dataWriter = new NetDataWriter();
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 5; i++)
                     {
                         dataWriter.Reset();
                         dataWriter.Put(0);
@@ -45,7 +45,7 @@ namespace LibSample
                     int type = netEvent.DataReader.GetInt();
                     int num = netEvent.DataReader.GetInt();
                     _messagesReceivedCount++;
-                    Console.WriteLine("CNT: {0}, TYPE: {1}, NUM: {2}", _messagesReceivedCount, type, num);
+                    Console.WriteLine("[{0}] CNT: {1}, TYPE: {2}, NUM: {3}", client.Peer.Id, _messagesReceivedCount, type, num);
                     break;
 
                 case NetEventType.Error:
@@ -58,7 +58,7 @@ namespace LibSample
             }
         }
 
-        private static void ServerEvent(NetEvent netEvent)
+        private static void ServerEvent(NetServer server, NetEvent netEvent)
         {
             switch (netEvent.Type)
             {
@@ -78,6 +78,11 @@ namespace LibSample
 
                 case NetEventType.Connect:
                     Console.WriteLine("[Server] Peer connected: " + netEvent.RemoteEndPoint);
+                    var peers = server.GetPeers();
+                    foreach (var netPeer in peers)
+                    {
+                        Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);
+                    }
                     break;
 
                 case NetEventType.Error:
@@ -90,32 +95,42 @@ namespace LibSample
         {
             //Server
             NetServer server = new NetServer(2, "myapp1");
-            server.UnconnectedMessagesEnabled = true;
             server.Start(9050);
 
             //Client
-            NetClient client = new NetClient();
-            client.UnconnectedMessagesEnabled = true;
-            client.Start();
-            client.Connect("localhost", 9050, "myapp1");
+            NetClient client1 = new NetClient();
+            client1.Start();
+            client1.Connect("localhost", 9050, "myapp1");
+            client1.SimulateLatency = true;
+            client1.SimulationMaxLatency = 1500;
+
+            NetClient client2 = new NetClient();
+            client2.Start();
+            client2.Connect("localhost", 9050, "myapp1");
 
             while (!Console.KeyAvailable)
             {
                 NetEvent evt;
-                while ((evt = client.GetNextEvent()) != null)
+                while ((evt = client1.GetNextEvent()) != null)
                 {
-                    ClientEvent(client, evt);
-                    client.Recycle(evt);
+                    ClientEvent(client1, evt);
+                    client1.Recycle(evt);
+                }
+                while ((evt = client2.GetNextEvent()) != null)
+                {
+                    ClientEvent(client2, evt);
+                    client2.Recycle(evt);
                 }
                 while ((evt = server.GetNextEvent()) != null)
                 {
-                    ServerEvent(evt);
+                    ServerEvent(server, evt);
                     server.Recycle(evt);
                 }
                 Thread.Sleep(15);
             }
 
-            client.Stop();
+            client1.Stop();
+            client2.Stop();
             server.Stop();
             Console.ReadKey();
             Console.WriteLine("Press any key to exit");
