@@ -134,6 +134,14 @@ namespace LiteNetLib
         }
 
         /// <summary>
+        /// Start logic thread and listening on available port
+        /// </summary>
+        public bool Start()
+        {
+            return Start(0);
+        }
+
+        /// <summary>
         /// Start logic thread and listening on selected port
         /// </summary>
         /// <param name="port">port to listen</param>
@@ -178,16 +186,24 @@ namespace LiteNetLib
         /// <returns>Operation result</returns>
         public bool SendUnconnectedMessage(byte[] message, NetEndPoint remoteEndPoint)
         {
-            return SendUnconnectedMessage(message, message.Length, remoteEndPoint);
+            return SendUnconnectedMessage(message, 0, message.Length, remoteEndPoint);
         }
 
-        public bool SendUnconnectedMessage(byte[] message, int length, NetEndPoint remoteEndPoint)
+        /// <summary>
+        /// Send message without connection
+        /// </summary>
+        /// <param name="message">Raw data</param>
+        /// <param name="start">data start</param>
+        /// <param name="length">data length</param>
+        /// <param name="remoteEndPoint">Packet destination</param>
+        /// <returns>Operation result</returns>
+        public bool SendUnconnectedMessage(byte[] message, int start, int length, NetEndPoint remoteEndPoint)
         {
             if (!_running)
                 return false;
             NetPacket p = new NetPacket();
             p.Init(PacketProperty.UnconnectedMessage, length);
-            p.PutData(message, 0, length);
+            p.PutData(message, start, length);
             return _socket.SendTo(p.RawData, remoteEndPoint) > 0;
         }
 
@@ -219,6 +235,9 @@ namespace LiteNetLib
             get { return _running; }
         }
 
+        /// <summary>
+        /// Returns local EndPoint (host and port)
+        /// </summary>
         public NetEndPoint LocalEndPoint
         {
             get { return _localEndPoint; }
@@ -251,6 +270,10 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Recycle processed event for performance and reuse
+        /// </summary>
+        /// <param name="netEvent">event to recycle</param>
         public void Recycle(NetEvent netEvent)
         {
             lock (_netEventsPool)
@@ -263,6 +286,10 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Receive next available event from queue
+        /// </summary>
+        /// <returns>New event if exists or null</returns>
         public NetEvent GetNextEvent()
         {
             if (_netEventsQueue.Count > 0)

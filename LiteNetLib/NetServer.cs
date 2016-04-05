@@ -20,6 +20,11 @@ namespace LiteNetLib
             set { _timeout = value; }
         }
 
+        /// <summary>
+        /// Creates server object
+        /// </summary>
+        /// <param name="maxClients">Maximum clients</param>
+        /// <param name="key">Application key to identify connecting clients</param>
         public NetServer(int maxClients, string key)
         {
             _peers = new Dictionary<NetEndPoint, NetPeer>();
@@ -34,14 +39,18 @@ namespace LiteNetLib
             get { return _peers.Count; }
         }
 
+        /// <summary>
+        /// Get copy of current connected peers
+        /// </summary>
+        /// <returns>Array with connected peers</returns>
         public NetPeer[] GetPeers()
         {
             NetPeer[] peers;
+            int num = 0;
 
             lock (_peers)
             {
                 peers = new NetPeer[_peers.Count];
-                int num = 0;
                 foreach (NetPeer netPeer in _peers.Values)
                 {
                     peers[num++] = netPeer;
@@ -61,6 +70,10 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Disconnect peer from server
+        /// </summary>
+        /// <param name="peer">peer to disconnect</param>
         public void DisconnectPeer(NetPeer peer)
         {
             if (peer != null && _peers.ContainsKey(peer.EndPoint))
@@ -77,6 +90,7 @@ namespace LiteNetLib
 
         public override void Stop()
         {
+            lock (_peers)
             foreach (NetPeer netPeer in _peers.Values)
             {
                 netPeer.CreateAndSend(PacketProperty.Disconnect);
@@ -274,6 +288,7 @@ namespace LiteNetLib
 
         public void SendToClients(byte[] data, SendOptions options)
         {
+            lock (_peers)
             foreach (NetPeer netPeer in _peers.Values)
             {
                 netPeer.Send(data, options);
@@ -282,6 +297,7 @@ namespace LiteNetLib
 
         public void SendToClients(byte[] data, int start, int length, SendOptions options)
         {
+            lock (_peers)
             foreach (NetPeer netPeer in _peers.Values)
             {
                 netPeer.Send(data, start, length, options);
@@ -290,7 +306,8 @@ namespace LiteNetLib
 
         public void SendToClients(byte[] data, SendOptions options, NetPeer excludePeer)
 		{
-			foreach (NetPeer netPeer in _peers.Values)
+            lock (_peers)
+            foreach (NetPeer netPeer in _peers.Values)
 			{
 				if(netPeer != excludePeer)
 				{
@@ -301,6 +318,7 @@ namespace LiteNetLib
 
         public void SendToClients(byte[] data, int start, int length, SendOptions options, NetPeer excludePeer)
         {
+            lock (_peers)
             foreach (NetPeer netPeer in _peers.Values)
             {
                 if (netPeer != excludePeer)

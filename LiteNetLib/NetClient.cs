@@ -28,15 +28,6 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Start client socket and logic at any available port
-        /// </summary>
-        /// <returns></returns>
-        public bool Start()
-        {
-            return Start(0);
-        }
-
-        /// <summary>
         /// Returns client NetPeer
         /// </summary>
         /// <returns></returns>
