@@ -16,6 +16,7 @@ Lite reliable UDP library.
 * Automatic MTU detection
 * UDP NAT hole punching
 * NTP time requests
+* Packet loss and latency simulation
 * Small CPU and RAM usage
 * Unity3d support (you can use library source in project)
 * Universal Windows Platform (Windows 8.1 and Windows 10 including phones) support
