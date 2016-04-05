@@ -45,7 +45,7 @@ namespace LibSample
                     int type = netEvent.DataReader.GetInt();
                     int num = netEvent.DataReader.GetInt();
                     _messagesReceivedCount++;
-                    Console.WriteLine("[{0}] CNT: {1}, TYPE: {2}, NUM: {3}", client.Peer.Id, _messagesReceivedCount, type, num);
+                    Console.WriteLine("[{0}] CNT: {1}, TYPE: {2}, NUM: {3}", client.LocalEndPoint.Port, _messagesReceivedCount, type, num);
                     break;
 
                 case NetEventType.Error:

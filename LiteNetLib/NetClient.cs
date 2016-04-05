@@ -12,7 +12,6 @@ namespace LiteNetLib
         private int _connectAttempts;
         private int _connectTimer;
         private int _reconnectDelay = 500;
-        private bool _waitForConnect;
         private long _timeout = 5000;
         private ulong _connectId;
         private string _connectKey;
@@ -67,7 +66,6 @@ namespace LiteNetLib
             _connected = false;
             _connectTimer = 0;
             _connectAttempts = 0;
-            _waitForConnect = false;
             SocketClearPeers();
         }
 
@@ -111,12 +109,13 @@ namespace LiteNetLib
             {
                 throw new Exception("Client is not running");
             }
-            //Create connect id for proper connection
-            _connectId = (ulong)DateTime.UtcNow.Ticks;
-            _connectKey = key;
 
             //Force close connection
             CloseConnection(true);
+
+            //Create connect id for proper connection
+            _connectId = (ulong)DateTime.UtcNow.Ticks;
+            _connectKey = key;
 
             //Create reliable connection
             _peer = CreatePeer(target);
@@ -126,7 +125,6 @@ namespace LiteNetLib
             SendConnectRequest();
 
             _connectAttempts = 0;
-            _waitForConnect = true;
         }
 
         private void SendConnectRequest()
@@ -158,7 +156,7 @@ namespace LiteNetLib
             if (_peer == null)
                 return;
 
-            if (_waitForConnect)
+            if (!_connected)
             {
                 _connectTimer += deltaTime;
                 if (_connectTimer > _reconnectDelay)
@@ -240,7 +238,7 @@ namespace LiteNetLib
                 return;
             }
 
-            if (packet.Property == PacketProperty.ConnectAccept)
+            if (packet.Property == PacketProperty.ConnectAccept && !_connected)
             {
                 //get id
                 if (BitConverter.ToUInt64(packet.RawData, 1) != _connectId)
@@ -250,7 +248,6 @@ namespace LiteNetLib
 
                 //connection things
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
-                _waitForConnect = false;
                 _connected = true;
                 var connectEvent = CreateEvent(NetEventType.Connect);
                 connectEvent.Peer = _peer;
