@@ -24,7 +24,7 @@ namespace LibSample
         }
     }
 
-    class HolePunchServerTest
+    class HolePunchServerTest : INatPunchListener
     {
         private const int ServerPort = 49292;
         private static readonly TimeSpan KickTime = new TimeSpan(0, 0, 6);
@@ -35,7 +35,7 @@ namespace LibSample
         private NetBase _c1;
         private NetBase _c2;
 
-        private void RequestIntroduction(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionRequest(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token)
         {
             WaitPeer wpeer;
             if (_waitingPeers.TryGetValue(token, out wpeer))
@@ -75,32 +75,29 @@ namespace LibSample
             }
         }
 
-        private void PunchSuccessC1(NetEndPoint targetEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionSuccess(NetEndPoint targetEndPoint, string token)
         {
-            Console.WriteLine("SuccessC1: " + targetEndPoint + ", Token: " + token);
-        }
-
-        private void PunchSuccessC2(NetEndPoint targetEndPoint, string token)
-        {
-            Console.WriteLine("SuccessC2: " + targetEndPoint + ", Token: " + token);
+            Console.WriteLine("Success: " + targetEndPoint + ", Token: " + token);
         }
 
         public void Run()
         {
-            _c1 = new NetBase();
+            EventBasedNetListener netListener = new EventBasedNetListener();
+
+            _c1 = new NetBase(netListener);
             _c1.NatPunchEnabled = true;
-            _c1.NatPunchModule.OnNatIntroductionSuccess += PunchSuccessC1;
+            _c1.NatPunchModule.Init(this);
             //_c1.Start(0);
 
-            _c2 = new NetBase();
+            _c2 = new NetBase(netListener);
             _c2.NatPunchEnabled = true;
-            _c2.NatPunchModule.OnNatIntroductionSuccess += PunchSuccessC2;
+            _c2.NatPunchModule.Init(this);
             //_c2.Start(0);
 
-            _puncher = new NetBase();
+            _puncher = new NetBase(netListener);
             _puncher.Start(ServerPort);
             _puncher.NatPunchEnabled = true;
-            _puncher.NatPunchModule.OnNatIntroductionRequest += RequestIntroduction;
+            _puncher.NatPunchModule.Init(this);
 
             //_c1.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
             //_c2.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
@@ -111,7 +108,7 @@ namespace LibSample
             {
                 DateTime nowTime = DateTime.Now;
 
-                _puncher.NatPunchModule.Update();
+                _puncher.NatPunchModule.PollEvents();
                 //check old peers
                 foreach (var waitPeer in _waitingPeers)
                 {

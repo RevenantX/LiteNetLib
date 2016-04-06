@@ -9,123 +9,156 @@ namespace LibSample
     {
         private static int _messagesReceivedCount = 0;
 
-        private static void ClientEvent(NetClient client, NetEvent netEvent)
+        private class ClientListener : INetEventListener
         {
-            switch (netEvent.Type)
+            public void OnPeerConnected(NetPeer peer)
             {
-                case NetEventType.Connect:
-                    Console.WriteLine("[Client] connected: {0}:{1}", netEvent.Peer.EndPoint.Host, netEvent.Peer.EndPoint.Port);
+                Console.WriteLine("[Client] connected to: {0}:{1}", peer.EndPoint.Host, peer.EndPoint.Port);
 
-                    NetDataWriter dataWriter = new NetDataWriter();
-                    for (int i = 0; i < 5; i++)
-                    {
-                        dataWriter.Reset();
-                        dataWriter.Put(0);
-                        dataWriter.Put(i);
-                        netEvent.Peer.Send(dataWriter, SendOptions.ReliableUnordered);
+                NetDataWriter dataWriter = new NetDataWriter();
+                for (int i = 0; i < 5; i++)
+                {
+                    dataWriter.Reset();
+                    dataWriter.Put(0);
+                    dataWriter.Put(i);
+                    peer.Send(dataWriter, SendOptions.ReliableUnordered);
 
-                        dataWriter.Reset();
-                        dataWriter.Put(1);
-                        dataWriter.Put(i);
-                        netEvent.Peer.Send(dataWriter, SendOptions.ReliableOrdered);
+                    dataWriter.Reset();
+                    dataWriter.Put(1);
+                    dataWriter.Put(i);
+                    peer.Send(dataWriter, SendOptions.ReliableOrdered);
 
-                        dataWriter.Reset();
-                        dataWriter.Put(2);
-                        dataWriter.Put(i);
-                        netEvent.Peer.Send(dataWriter, SendOptions.Sequenced);
+                    dataWriter.Reset();
+                    dataWriter.Put(2);
+                    dataWriter.Put(i);
+                    peer.Send(dataWriter, SendOptions.Sequenced);
 
-                        dataWriter.Reset();
-                        dataWriter.Put(3);
-                        dataWriter.Put(i);
-                        netEvent.Peer.Send(dataWriter, SendOptions.Unreliable);
-                    }
-                    break;
+                    dataWriter.Reset();
+                    dataWriter.Put(3);
+                    dataWriter.Put(i);
+                    peer.Send(dataWriter, SendOptions.Unreliable);
+                }
 
-                case NetEventType.Receive:
-                    int type = netEvent.DataReader.GetInt();
-                    int num = netEvent.DataReader.GetInt();
+                //And test fragment
+                byte[] testData = new byte[13218];
+                testData[0] = 192;
+                testData[13217] = 31;
+                peer.Send(testData, SendOptions.ReliableOrdered);
+            }
+
+            public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+            {
+                Console.WriteLine("[Client] disconnected: " + additionalInfo);
+            }
+
+            public void OnNetworkError(NetEndPoint endPoint, string error)
+            {
+                Console.WriteLine("[Client] error! " + error);
+            }
+
+            public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
+            {
+                if (reader.AvailableBytes == 13218)
+                {
+                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", peer.Handler.LocalEndPoint.Port, reader.Data[0], reader.Data[13217]);
+                }
+                else
+                {
+                    int type = reader.GetInt();
+                    int num = reader.GetInt();
                     _messagesReceivedCount++;
-                    Console.WriteLine("[{0}] CNT: {1}, TYPE: {2}, NUM: {3}", client.LocalEndPoint.Port, _messagesReceivedCount, type, num);
-                    break;
-
-                case NetEventType.Error:
-                    Console.WriteLine("[Client] connection error!");
-                    break;
-
-                case NetEventType.Disconnect:
-                    Console.WriteLine("[Client] disconnected: " + netEvent.AdditionalInfo);
-                    break;
+                    Console.WriteLine("[{0}] CNT: {1}, TYPE: {2}, NUM: {3}", peer.Handler.LocalEndPoint.Port, _messagesReceivedCount, type, num);
+                }
             }
-        }
 
-        private static void ServerEvent(NetServer server, NetEvent netEvent)
-        {
-            switch (netEvent.Type)
+            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader)
             {
-                case NetEventType.ReceiveUnconnected:
-                    Console.WriteLine("[Server] ReceiveUnconnected: {0}", netEvent.DataReader.GetString(100));
-                    break;
 
-                case NetEventType.Receive:
-                    //echo
-                    netEvent.Peer.Send(netEvent.DataReader.Data, SendOptions.ReliableUnordered);
+            }
 
-                    break;
-
-                case NetEventType.Disconnect:
-                    Console.WriteLine("[Server] Peer disconnected: " + netEvent.RemoteEndPoint + ", reason: " + netEvent.AdditionalInfo);
-                    break;
-
-                case NetEventType.Connect:
-                    Console.WriteLine("[Server] Peer connected: " + netEvent.RemoteEndPoint);
-                    var peers = server.GetPeers();
-                    foreach (var netPeer in peers)
-                    {
-                        Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);
-                    }
-                    break;
-
-                case NetEventType.Error:
-                    Console.WriteLine("[Server] peer eror");
-                    break;
+            public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
+            {
+                
             }
         }
+
+        private class ServerListener : INetEventListener
+        {
+            public NetServer Server;
+
+            public void OnPeerConnected(NetPeer peer)
+            {
+                Console.WriteLine("[Server] Peer connected: " + peer.EndPoint);
+                var peers = Server.GetPeers();
+                foreach (var netPeer in peers)
+                {
+                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);
+                }
+            }
+
+            public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+            {
+                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + additionalInfo);
+            }
+
+            public void OnNetworkError(NetEndPoint endPoint, string error)
+            {
+                Console.WriteLine("[Server] error: " + error);
+            }
+
+            public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
+            {
+                //echo
+                peer.Send(reader.Data, SendOptions.ReliableUnordered);
+
+                //fragment log
+                if (reader.AvailableBytes == 13218)
+                {
+                    Console.WriteLine("[Server] TestFrag: {0}, {1}", reader.Data[0], reader.Data[13217]);
+                }
+            }
+
+            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader)
+            {
+                Console.WriteLine("[Server] ReceiveUnconnected: {0}", reader.GetString(100));
+            }
+
+            public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
+            {
+
+            }
+        }
+
+        private ClientListener _clientListener;
+        private ServerListener _serverListener;
 
         public void Run()
         {
             //Server
-            NetServer server = new NetServer(2, "myapp1");
+            _serverListener = new ServerListener();
+
+            NetServer server = new NetServer(_serverListener, 2, "myapp1");
             server.Start(9050);
+            _serverListener.Server = server;
 
             //Client
-            NetClient client1 = new NetClient();
+            _clientListener = new ClientListener();
+
+            NetClient client1 = new NetClient(_clientListener);
             client1.Start();
             client1.Connect("localhost", 9050, "myapp1");
             client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
 
-            NetClient client2 = new NetClient();
+            NetClient client2 = new NetClient(_clientListener);
             client2.Start();
             client2.Connect("localhost", 9050, "myapp1");
 
             while (!Console.KeyAvailable)
             {
-                NetEvent evt;
-                while ((evt = client1.GetNextEvent()) != null)
-                {
-                    ClientEvent(client1, evt);
-                    client1.Recycle(evt);
-                }
-                while ((evt = client2.GetNextEvent()) != null)
-                {
-                    ClientEvent(client2, evt);
-                    client2.Recycle(evt);
-                }
-                while ((evt = server.GetNextEvent()) != null)
-                {
-                    ServerEvent(server, evt);
-                    server.Recycle(evt);
-                }
+                client1.PollEvents();
+                client2.PollEvents();
+                server.PollEvents();
                 Thread.Sleep(15);
             }
 

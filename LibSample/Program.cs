@@ -14,7 +14,6 @@ class Program
             Console.WriteLine("Synced time test: " + ntpSync.SyncedTime.Value);
         }
 
-        FragmentTest fragmentTest = new FragmentTest();
         HolePunchServerTest holePunchServerTest = new HolePunchServerTest();
         EchoMessagesTest echoMessagesTest = new EchoMessagesTest();
 

@@ -44,6 +44,9 @@
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\LiteNetLib\INetEventListener.cs">
+      <Link>INetEventListener.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\NatPunchModule.cs">
       <Link>NatPunchModule.cs</Link>
     </Compile>
@@ -55,9 +58,6 @@
     </Compile>
     <Compile Include="..\LiteNetLib\NetConstants.cs">
       <Link>NetConstants.cs</Link>
-    </Compile>
-    <Compile Include="..\LiteNetLib\NetEvent.cs">
-      <Link>NetEvent.cs</Link>
     </Compile>
     <Compile Include="..\LiteNetLib\NetPacket.cs">
       <Link>NetPacket.cs</Link>

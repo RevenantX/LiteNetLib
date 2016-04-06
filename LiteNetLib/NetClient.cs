@@ -16,6 +16,11 @@ namespace LiteNetLib
         private ulong _connectId;
         private string _connectKey;
 
+        public NetClient(INetEventListener listener) : base(listener)
+        {
+
+        }
+
         public long DisconnectTimeout
         {
             get { return _timeout; }
@@ -192,9 +197,7 @@ namespace LiteNetLib
         internal override void ProcessSendError(NetEndPoint remoteEndPoint, string errorMessage)
         {
             Stop();
-            var netEvent = CreateEvent(NetEventType.Error);
-            netEvent.AdditionalInfo = errorMessage;
-            EnqueueEvent(netEvent);
+            base.ProcessSendError(remoteEndPoint, errorMessage);
         }
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
@@ -229,8 +232,13 @@ namespace LiteNetLib
                 return;
             }
 
-            if (packet.Property == PacketProperty.ConnectAccept && !_connected)
+            if (packet.Property == PacketProperty.ConnectAccept)
             {
+                if (_connected)
+                {
+                    return;
+                }
+
                 //get id
                 if (BitConverter.ToUInt64(packet.RawData, 1) != _connectId)
                 {
@@ -242,8 +250,6 @@ namespace LiteNetLib
                 _connected = true;
                 var connectEvent = CreateEvent(NetEventType.Connect);
                 connectEvent.Peer = _peer;
-                connectEvent.RemoteEndPoint = _peer.EndPoint;
-                connectEvent.AdditionalInfo = _connectId.ToString();
                 EnqueueEvent(connectEvent);
 
                 _peer.StartConnectionTimer();

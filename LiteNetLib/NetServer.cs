@@ -25,7 +25,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="maxClients">Maximum clients</param>
         /// <param name="key">Application key to identify connecting clients</param>
-        public NetServer(int maxClients, string key)
+        public NetServer(INetEventListener listener, int maxClients, string key) : base(listener)
         {
             _peers = new Dictionary<NetEndPoint, NetPeer>();
             _peerConnectionIds = new Dictionary<NetEndPoint, ulong>();
@@ -81,7 +81,6 @@ namespace LiteNetLib
                 peer.CreateAndSend(PacketProperty.Disconnect);
                 var netEvent = CreateEvent(NetEventType.Disconnect);
                 netEvent.Peer = peer;
-                netEvent.RemoteEndPoint = peer.EndPoint;
                 netEvent.AdditionalInfo = "Disconnect peer called";
                 EnqueueEvent(netEvent);
                 RemovePeer(peer);
@@ -128,7 +127,6 @@ namespace LiteNetLib
                         netPeer.DebugWrite("Disconnect by timeout: {0} > {1}", netPeer.TimeSinceLastPacket, _timeout);
                         var netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
-                        netEvent.RemoteEndPoint = netPeer.EndPoint;
                         netEvent.AdditionalInfo = "Timeout";
                         EnqueueEvent(netEvent);
                         _peersToRemove.Enqueue(netPeer.EndPoint);
@@ -167,7 +165,6 @@ namespace LiteNetLib
             {
                 var netEvent = CreateEvent(NetEventType.Disconnect);
                 netEvent.Peer = fromPeer;
-                netEvent.RemoteEndPoint = fromPeer.EndPoint;
                 netEvent.AdditionalInfo = "Peer send error: " + errorMessage;
                 EnqueueEvent(netEvent);
                 RemovePeer(fromPeer);
@@ -218,7 +215,6 @@ namespace LiteNetLib
                     RemovePeer(netPeer);
                     var netEvent = CreateEvent(NetEventType.Disconnect);
                     netEvent.Peer = netPeer;
-                    netEvent.RemoteEndPoint = netPeer.EndPoint;
                     netEvent.AdditionalInfo = "successfuly disconnected";
                     EnqueueEvent(netEvent);
                 }
@@ -280,8 +276,6 @@ namespace LiteNetLib
 
                 var netEvent = CreateEvent(NetEventType.Connect);
                 netEvent.Peer = netPeer;
-                netEvent.RemoteEndPoint = remoteEndPoint;
-                netEvent.AdditionalInfo = connectionId.ToString();
                 EnqueueEvent(netEvent);
             }
         }

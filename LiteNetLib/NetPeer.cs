@@ -103,6 +103,11 @@ namespace LiteNetLib
             get { return (int)(DateTime.UtcNow - _lastPacketReceivedStart).TotalMilliseconds; }
         }
 
+        public NetBase Handler
+        {
+            get { return _peerListener; }
+        }
+
         internal NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
         {
             _id = remoteEndPoint.GetId();
