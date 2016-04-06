@@ -97,18 +97,7 @@ namespace LiteNetLib
             //All ok!
             NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Recieved data from {0}, result: {1}", remoteEndPoint.ToString(), result);
 
-            //Detecting bad data
-            if (result == 0)
-            {
-                NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (0)");
-                return 0;
-            }
-
-            if (result < NetConstants.HeaderSize)
-            {
-                NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (D<HS)");
-                return 0;
-            }
+            //Assign data
             data = _receiveBuffer;
 
             //Creating packet from data
