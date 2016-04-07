@@ -65,25 +65,29 @@ namespace LiteNetLib
 
         internal long GetId()
         {
-            long id = 0;
             byte[] addr = EndPoint.Address.GetAddressBytes();
+            long id = 0;
 
-            if (addr.Length == 8) //IPv4
+            if (addr.Length == 4) //IPv4
             {
-                id |= (long)addr[0];
+                id = addr[0];
                 id |= (long)addr[1] << 8;
                 id |= (long)addr[2] << 16;
                 id |= (long)addr[3] << 24;
+                id |= (long)EndPoint.Port << 32;
             }
             else if (addr.Length == 16) //IPv6
             {
-                id |= (long)(addr[0] ^ addr[4]);
-                id |= (long)(addr[1] ^ addr[5]) << 8;
-                id |= (long)(addr[2] ^ addr[6]) << 16;
-                id |= (long)(addr[3] ^ addr[7]) << 24;
+                id = addr[0] ^ addr[8];
+                id |= (long)(addr[1] ^ addr[9]) << 8;
+                id |= (long)(addr[2] ^ addr[10]) << 16;
+                id |= (long)(addr[3] ^ addr[11]) << 24;
+                id |= (long)(addr[4] ^ addr[12]) << 32;
+                id |= (long)(addr[5] ^ addr[13]) << 40;
+                id |= (long)(addr[6] ^ addr[14]) << 48;
+                id |= (long)(Port ^ addr[7] ^ addr[15]) << 56;
             }
 
-            id |= (long)EndPoint.Port << 32;
             return id;
         }
     }

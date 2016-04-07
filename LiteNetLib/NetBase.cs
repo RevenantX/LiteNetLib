@@ -125,13 +125,13 @@ namespace LiteNetLib
 
         public NetBase(INetEventListener listener, ConnectionAddressType addressType)
         {
+            _socket = new NetSocket(addressType);
             _addressType = addressType;
             _netEventListener = listener;
             _flowModes = new List<FlowMode>();
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
             _remoteEndPoint = new NetEndPoint(_addressType, 0);
-            
             NatPunchModule = new NatPunchModule(this, _socket);
         }
 
@@ -184,7 +184,6 @@ namespace LiteNetLib
             }
 
             _localEndPoint = new NetEndPoint(_addressType, port);
-            _socket = new NetSocket(_addressType);
             if (_socket.Bind(ref _localEndPoint))
             {
                 _running = true;

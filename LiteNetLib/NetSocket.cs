@@ -12,23 +12,28 @@ namespace LiteNetLib
         private Socket _udpSocket;
         private EndPoint _bufferEndPoint;
         private const int SocketTTL = 255;
+        private readonly AddressFamily _socketAddressFamily;
 
         public int ReceiveTimeout = 10;
 
         public NetSocket(ConnectionAddressType addrType)
         {
-            var socketAddressFamily = 
+            _socketAddressFamily = 
                 addrType == ConnectionAddressType.IPv4 ? 
                 AddressFamily.InterNetwork : 
                 AddressFamily.InterNetworkV6;
-            _udpSocket = new Socket(socketAddressFamily, SocketType.Dgram, ProtocolType.Udp);
-            if (addrType == ConnectionAddressType.IPv4)
+        }
+
+        public bool Bind(ref NetEndPoint ep)
+        {
+            _udpSocket = new Socket(_socketAddressFamily, SocketType.Dgram, ProtocolType.Udp);
+            if (_socketAddressFamily == AddressFamily.InterNetwork) //IPv4
             {
                 _bufferEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 _udpSocket.DontFragment = true;
                 _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
             }
-            else
+            else //IPv6
             {
                 _bufferEndPoint = new IPEndPoint(IPAddress.IPv6Any, 0);
                 _udpSocket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.HopLimit, SocketTTL);
@@ -36,12 +41,9 @@ namespace LiteNetLib
             _udpSocket.Blocking = false;
             _udpSocket.ReceiveBufferSize = BufferSize;
             _udpSocket.SendBufferSize = BufferSize;
-            
-            _udpSocket.EnableBroadcast = true;
-        }
 
-        public bool Bind(ref NetEndPoint ep)
-        {            
+            _udpSocket.EnableBroadcast = true;
+
             try
             {
                 _udpSocket.Bind(ep.EndPoint);

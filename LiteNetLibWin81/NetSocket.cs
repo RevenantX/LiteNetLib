@@ -9,7 +9,7 @@ namespace LiteNetLib
 {
     internal sealed class NetSocket
     {
-        private readonly DatagramSocket _datagramSocket;
+        private DatagramSocket _datagramSocket;
         private readonly Dictionary<NetEndPoint, DataWriter> _peers = new Dictionary<NetEndPoint, DataWriter>();
         private readonly Queue<IncomingData> _incomingData = new Queue<IncomingData>();
         private readonly AutoResetEvent _receiveWaiter = new AutoResetEvent(false);
@@ -25,9 +25,7 @@ namespace LiteNetLib
         //Socket constructor
         public NetSocket(ConnectionAddressType connectionAddressType)
         {
-            _datagramSocket = new DatagramSocket();
-            _datagramSocket.Control.DontFragment = true;
-            _datagramSocket.MessageReceived += OnMessageReceived;
+
         }
         
         private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
@@ -51,6 +49,10 @@ namespace LiteNetLib
         //Bind socket to port
         public bool Bind(ref NetEndPoint ep)
         {
+            _datagramSocket = new DatagramSocket();
+            _datagramSocket.Control.DontFragment = true;
+            _datagramSocket.MessageReceived += OnMessageReceived;
+
             try
             {
                 if (ep.HostName == null)
@@ -119,7 +121,9 @@ namespace LiteNetLib
         public void Close()
         {
             ClearPeers();
+            _datagramSocket.MessageReceived -= OnMessageReceived;
             _datagramSocket.Dispose();
+            _datagramSocket = null;
         }
 
         internal void ClearPeers()
