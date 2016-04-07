@@ -5,12 +5,13 @@ using System.Net.Sockets;
 
 namespace LiteNetLib
 {
-    sealed class NetSocket
+    internal sealed class NetSocket
     {
         private const int BufferSize = ushort.MaxValue;
         private readonly byte[] _receiveBuffer = new byte[NetConstants.PacketSizeLimit];
         private Socket _udpSocket;
         private EndPoint _bufferEndPoint = new IPEndPoint(0,0);
+        private const int SocketTTL = 255;
 
         public int ReceiveTimeout = 10;
 
@@ -19,7 +20,7 @@ namespace LiteNetLib
             try
             {
                 _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 255);
+                _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
                 _udpSocket.Blocking = false;
                 _udpSocket.ReceiveBufferSize = BufferSize;
                 _udpSocket.SendBufferSize = BufferSize;
