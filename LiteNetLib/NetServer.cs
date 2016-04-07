@@ -11,14 +11,7 @@ namespace LiteNetLib
         private readonly Dictionary<NetEndPoint, ulong> _peerConnectionIds; 
         private readonly int _maxClients;
         private readonly Queue<NetEndPoint> _peersToRemove;
-        private long _timeout = 5000;
         private readonly string _connectKey;
-
-        public long DisconnectTimeout
-        {
-            get { return _timeout; }
-            set { _timeout = value; }
-        }
 
         /// <summary>
         /// Creates server object
@@ -127,9 +120,9 @@ namespace LiteNetLib
             {
                 foreach (NetPeer netPeer in _peers.Values)
                 {
-                    if (netPeer.TimeSinceLastPacket > _timeout)
+                    if (netPeer.TimeSinceLastPacket > DisconnectTimeout)
                     {
-                        netPeer.DebugWrite("Disconnect by timeout: {0} > {1}", netPeer.TimeSinceLastPacket, _timeout);
+                        netPeer.DebugWrite("Disconnect by timeout: {0} > {1}", netPeer.TimeSinceLastPacket, DisconnectTimeout);
                         var netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
                         netEvent.AdditionalInfo = "Timeout";

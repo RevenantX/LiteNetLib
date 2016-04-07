@@ -78,6 +78,7 @@ namespace LiteNetLib
         public int UpdateTime = 100;
         public int ReliableResendTime = 500;
         public int PingInterval = NetConstants.DefaultPingInterval;
+        public long DisconnectTimeout = 5000;
         public bool SimulatePacketLoss = false;
         public bool SimulateLatency = false;
         public int SimulationPacketLossChance = 10;

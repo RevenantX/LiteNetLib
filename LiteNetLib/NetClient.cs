@@ -12,7 +12,6 @@ namespace LiteNetLib
         private int _connectAttempts;
         private int _connectTimer;
         private int _reconnectDelay = 500;
-        private long _timeout = 5000;
         private ulong _connectId;
         private string _connectKey;
 
@@ -24,12 +23,6 @@ namespace LiteNetLib
         public NetClient(INetEventListener listener, ConnectionAddressType addressType) : base(listener, addressType)
         {
 
-        }
-
-        public long DisconnectTimeout
-        {
-            get { return _timeout; }
-            set { _timeout = value; }
         }
 
         public int Ping
@@ -177,7 +170,7 @@ namespace LiteNetLib
                     SendConnectRequest();
                 }
             }
-            else if (_peer.TimeSinceLastPacket > _timeout)
+            else if (_peer.TimeSinceLastPacket > DisconnectTimeout)
             {
                 Stop();
                 var netEvent = CreateEvent(NetEventType.Disconnect);
