@@ -25,7 +25,12 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="maxClients">Maximum clients</param>
         /// <param name="key">Application key to identify connecting clients</param>
-        public NetServer(INetEventListener listener, int maxClients, string key) : base(listener)
+        public NetServer(INetEventListener listener, int maxClients, string key) : this(listener, ConnectionAddressType.IPv4, maxClients, key)
+        {
+   
+        }
+
+        public NetServer(INetEventListener listener, ConnectionAddressType addressType, int maxClients, string key) : base(listener, addressType)
         {
             _peers = new Dictionary<NetEndPoint, NetPeer>();
             _peerConnectionIds = new Dictionary<NetEndPoint, ulong>();

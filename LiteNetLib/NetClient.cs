@@ -21,6 +21,11 @@ namespace LiteNetLib
 
         }
 
+        public NetClient(INetEventListener listener, ConnectionAddressType addressType) : base(listener, addressType)
+        {
+
+        }
+
         public long DisconnectTimeout
         {
             get { return _timeout; }
@@ -196,7 +201,8 @@ namespace LiteNetLib
 
         internal override void ProcessSendError(NetEndPoint remoteEndPoint, string errorMessage)
         {
-            Stop();
+            CloseConnection(true);
+            base.Stop();
             base.ProcessSendError(remoteEndPoint, errorMessage);
         }
 

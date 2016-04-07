@@ -538,10 +538,7 @@ namespace LiteNetLib
             {
                 if (errorCode != 0)
                 {
-                    lock (_peerListener)
-                    {
-                        _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
-                    }
+                    _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
                 }
                 return false;
             }

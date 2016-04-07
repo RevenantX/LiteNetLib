@@ -10,22 +10,40 @@ namespace LiteNetLib
         private const int BufferSize = ushort.MaxValue;
         private readonly byte[] _receiveBuffer = new byte[NetConstants.PacketSizeLimit];
         private Socket _udpSocket;
-        private EndPoint _bufferEndPoint = new IPEndPoint(0,0);
+        private EndPoint _bufferEndPoint;
         private const int SocketTTL = 255;
 
         public int ReceiveTimeout = 10;
+
+        public NetSocket(ConnectionAddressType addrType)
+        {
+            var socketAddressFamily = 
+                addrType == ConnectionAddressType.IPv4 ? 
+                AddressFamily.InterNetwork : 
+                AddressFamily.InterNetworkV6;
+            _udpSocket = new Socket(socketAddressFamily, SocketType.Dgram, ProtocolType.Udp);
+            if (addrType == ConnectionAddressType.IPv4)
+            {
+                _bufferEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                _udpSocket.DontFragment = true;
+                _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
+            }
+            else
+            {
+                _bufferEndPoint = new IPEndPoint(IPAddress.IPv6Any, 0);
+                _udpSocket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.HopLimit, SocketTTL);
+            }
+            _udpSocket.Blocking = false;
+            _udpSocket.ReceiveBufferSize = BufferSize;
+            _udpSocket.SendBufferSize = BufferSize;
+            
+            _udpSocket.EnableBroadcast = true;
+        }
 
         public bool Bind(ref NetEndPoint ep)
         {            
             try
             {
-                _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
-                _udpSocket.Blocking = false;
-                _udpSocket.ReceiveBufferSize = BufferSize;
-                _udpSocket.SendBufferSize = BufferSize;
-                _udpSocket.DontFragment = true;
-                _udpSocket.EnableBroadcast = true;
                 _udpSocket.Bind(ep.EndPoint);
                 ep = new NetEndPoint((IPEndPoint)_udpSocket.LocalEndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);

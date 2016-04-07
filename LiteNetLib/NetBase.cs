@@ -7,6 +7,12 @@ using LiteNetLib.Utils;
 using Windows.System.Threading;
 #endif
 
+public enum ConnectionAddressType
+{
+    IPv4,
+    IPv6
+}
+
 namespace LiteNetLib
 {
     internal sealed class FlowMode
@@ -47,9 +53,10 @@ namespace LiteNetLib
         private readonly LinkedList<IncomingData> _pingSimulationList = new LinkedList<IncomingData>(); 
 #endif
 
-        private readonly NetSocket _socket;
+        private NetSocket _socket;
         private readonly List<FlowMode> _flowModes;
         private NetEndPoint _localEndPoint;
+        private readonly ConnectionAddressType _addressType;
 
 #if WINRT && !UNITY_EDITOR
         private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
@@ -112,14 +119,19 @@ namespace LiteNetLib
             return _flowModes[flowMode].StartRtt;
         }
 
-        public NetBase(INetEventListener listener)
+        public NetBase(INetEventListener listener) : this(listener, ConnectionAddressType.IPv4)
         {
+        }
+
+        public NetBase(INetEventListener listener, ConnectionAddressType addressType)
+        {
+            _addressType = addressType;
             _netEventListener = listener;
             _flowModes = new List<FlowMode>();
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
-            _remoteEndPoint = new NetEndPoint(0);
-            _socket = new NetSocket();
+            _remoteEndPoint = new NetEndPoint(_addressType, 0);
+            
             NatPunchModule = new NatPunchModule(this, _socket);
         }
 
@@ -171,8 +183,8 @@ namespace LiteNetLib
                 return false;
             }
 
-            _localEndPoint = new NetEndPoint(port);
-
+            _localEndPoint = new NetEndPoint(_addressType, port);
+            _socket = new NetSocket(_addressType);
             if (_socket.Bind(ref _localEndPoint))
             {
                 _running = true;
@@ -243,6 +255,7 @@ namespace LiteNetLib
                 _receiveThread = null;
 #endif
                 _socket.Close();
+                _socket = null;
             }
         }
 

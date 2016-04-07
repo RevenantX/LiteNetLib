@@ -13,7 +13,7 @@ namespace LiteNetLib
         internal readonly HostName HostName;
         internal readonly string PortStr;
 
-        internal NetEndPoint(int port)
+        internal NetEndPoint(ConnectionAddressType addressType, int port)
         {
             HostName = null;
             PortStr = port.ToString();

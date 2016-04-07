@@ -36,9 +36,9 @@ namespace LiteNetLib
             return EndPoint.GetHashCode();
         }
 
-        internal NetEndPoint(int port)
+        internal NetEndPoint(ConnectionAddressType addressType, int port)
         {
-            EndPoint = new IPEndPoint(IPAddress.Any, port);
+            EndPoint = new IPEndPoint(addressType == ConnectionAddressType.IPv4 ? IPAddress.Any : IPAddress.IPv6Any, port);
         }
 
         public NetEndPoint(string hostStr, int port)
@@ -67,10 +67,22 @@ namespace LiteNetLib
         {
             long id = 0;
             byte[] addr = EndPoint.Address.GetAddressBytes();
-            id |= (long)addr[0];
-            id |= (long)addr[1] << 8;
-            id |= (long)addr[2] << 16;
-            id |= (long)addr[3] << 24;
+
+            if (addr.Length == 8) //IPv4
+            {
+                id |= (long)addr[0];
+                id |= (long)addr[1] << 8;
+                id |= (long)addr[2] << 16;
+                id |= (long)addr[3] << 24;
+            }
+            else if (addr.Length == 16) //IPv6
+            {
+                id |= (long)(addr[0] ^ addr[4]);
+                id |= (long)(addr[1] ^ addr[5]) << 8;
+                id |= (long)(addr[2] ^ addr[6]) << 16;
+                id |= (long)(addr[3] ^ addr[7]) << 24;
+            }
+
             id |= (long)EndPoint.Port << 32;
             return id;
         }

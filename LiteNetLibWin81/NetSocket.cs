@@ -23,13 +23,12 @@ namespace LiteNetLib
         public int ReceiveTimeout = 10;
 
         //Socket constructor
-        public NetSocket()
+        public NetSocket(ConnectionAddressType connectionAddressType)
         {
             _datagramSocket = new DatagramSocket();
             _datagramSocket.Control.DontFragment = true;
             _datagramSocket.MessageReceived += OnMessageReceived;
         }
-
         
         private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
