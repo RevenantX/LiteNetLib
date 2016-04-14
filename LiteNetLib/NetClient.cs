@@ -42,7 +42,7 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Returns true if client connected to server
+        /// Returns true if client connected
         /// </summary>
         public bool IsConnected
         {
@@ -65,9 +65,12 @@ namespace LiteNetLib
             SocketClearPeers();
         }
 
+        /// <summary>
+        /// Force closes connection and stop all threads.
+        /// </summary>
         public override void Stop()
         {
-            CloseConnection(false);
+            CloseConnection(true);
             base.Stop();
         }
 
@@ -100,9 +103,11 @@ namespace LiteNetLib
             {
                 throw new Exception("Client is not running");
             }
-
-            //Force close connection
-            CloseConnection(true);
+            if (_peer != null)
+            {
+                //Already connected
+                return;
+            }
 
             //Create connect id for proper connection
             _connectId = (ulong)DateTime.UtcNow.Ticks;
@@ -195,38 +200,32 @@ namespace LiteNetLib
             base.ProcessSendError(remoteEndPoint, errorMessage);
         }
 
+        private void ProcessConnectAccept()
+        {
+            if (_connected)
+                return;
+
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
+            _connected = true;
+            var connectEvent = CreateEvent(NetEventType.Connect);
+            connectEvent.Peer = _peer;
+            EnqueueEvent(connectEvent);
+            _peer.StartConnectionTimer();
+        }
+
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
-            //Check peer
-            if (_peer == null)
-            {
-                return;
-            }
-
-            //Check endpoint 
-            if (!_peer.EndPoint.Equals(remoteEndPoint))
-            {
-                NetUtils.DebugWrite(ConsoleColor.DarkCyan, "[NC] Bad EndPoint " + remoteEndPoint);
-                return;
-            }
-
             //Parse packet
-            NetPacket packet = _peer.GetPacketFromPool(init: false);
+            //Peer null when P2P connection packets
+            NetPacket packet = _peer == null ? new NetPacket() : _peer.GetPacketFromPool(init: false);
             if (!packet.FromBytes(reusableBuffer, count))
             {
-                _peer.Recycle(packet);
-            }
-
-            if (packet.Property == PacketProperty.Disconnect)
-            {
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
-                CloseConnection(true);
-                var disconnectEvent = CreateEvent(NetEventType.Disconnect);
-                disconnectEvent.AdditionalInfo = "Received disconnection from server";
-                EnqueueEvent(disconnectEvent);
+                if(_peer != null)
+                    _peer.Recycle(packet);
                 return;
             }
 
+            //Check P2P mode
             if (PeerToPeerMode && packet.Property == PacketProperty.ConnectRequest)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received peer connect request");
@@ -244,12 +243,45 @@ namespace LiteNetLib
                 var connectPacket = NetPacket.CreateRawPacket(PacketProperty.ConnectAccept, 8);
                 Buffer.BlockCopy(packet.RawData, 1, connectPacket, 1, 8);
 
+                //Check our peer and create
+                if (_peer == null)
+                {
+                    //Create connect id for proper connection
+                    Connect(remoteEndPoint);
+                }
+
                 //Send raw
                 _peer.SendRawData(connectPacket);
 
                 //clean incoming packet
                 _peer.Recycle(packet);
 
+                //We connected
+                ProcessConnectAccept();
+
+                return;
+            }
+
+            //Check peer
+            if (_peer == null)
+            {
+                return;
+            }
+
+            //Check endpoint 
+            if (!_peer.EndPoint.Equals(remoteEndPoint))
+            {
+                NetUtils.DebugWriteForce(ConsoleColor.DarkCyan, "[NC] Bad EndPoint " + remoteEndPoint);
+                return;
+            }
+
+            if (packet.Property == PacketProperty.Disconnect)
+            {
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
+                CloseConnection(true);
+                var disconnectEvent = CreateEvent(NetEventType.Disconnect);
+                disconnectEvent.AdditionalInfo = "Received disconnection from server";
+                EnqueueEvent(disconnectEvent);
                 return;
             }
 
@@ -260,20 +292,14 @@ namespace LiteNetLib
                     return;
                 }
 
-                //get id
+                //check connection id
                 if (BitConverter.ToUInt64(packet.RawData, 1) != _connectId)
                 {
                     return;
                 }
 
                 //connection things
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
-                _connected = true;
-                var connectEvent = CreateEvent(NetEventType.Connect);
-                connectEvent.Peer = _peer;
-                EnqueueEvent(connectEvent);
-
-                _peer.StartConnectionTimer();
+                ProcessConnectAccept();
                 return;
             }
 

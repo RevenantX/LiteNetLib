@@ -94,7 +94,7 @@ namespace LibSample
             natPunchListener1.NatIntroductionSuccess += (point, token) =>
             {
                 Console.WriteLine("Success C1. Connecting to C2");
-                _c1.Connect(point);
+                //_c1.Connect(point);
             };
 
             natPunchListener2.NatIntroductionSuccess += (point, token) =>
@@ -107,13 +107,13 @@ namespace LibSample
             _c1.PeerToPeerMode = true;
             _c1.NatPunchEnabled = true;
             _c1.NatPunchModule.Init(natPunchListener1);
-            _c1.Start(0);
+            _c1.Start();
 
             _c2 = new NetClient(netListener, "gamekey");
             _c2.PeerToPeerMode = true;
             _c2.NatPunchEnabled = true;
             _c2.NatPunchModule.Init(natPunchListener2);
-            _c2.Start(0);
+            _c2.Start();
 
             _puncher = new NetClient(netListener, "notneed");
             _puncher.Start(ServerPort);
