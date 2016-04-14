@@ -13,7 +13,7 @@ namespace LiteNetLib
         private int _connectTimer;
         private int _reconnectDelay = 500;
         private ulong _connectId;
-        private string _connectKey;
+        private readonly string _connectKey;
 
         public bool PeerToPeerMode;
 
