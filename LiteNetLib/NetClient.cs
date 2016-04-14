@@ -15,14 +15,16 @@ namespace LiteNetLib
         private ulong _connectId;
         private string _connectKey;
 
-        public NetClient(INetEventListener listener) : base(listener)
-        {
+        public bool PeerToPeerMode;
 
+        public NetClient(INetEventListener listener, string connectKey) : base(listener)
+        {
+            _connectKey = connectKey;
         }
 
-        public NetClient(INetEventListener listener, ConnectionAddressType addressType) : base(listener, addressType)
+        public NetClient(INetEventListener listener, string connectKey, ConnectionAddressType addressType) : base(listener, addressType)
         {
-
+            _connectKey = connectKey;
         }
 
         public int Ping
@@ -81,24 +83,19 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Connect to NetServer
+        /// Connect to NetServer or NetClient with PeerToPeerMode
         /// </summary>
         /// <param name="address">Server IP or hostname</param>
         /// <param name="port">Server Port</param>
-        /// <param name="key">Game key for authorization</param>
-        public void Connect(string address, int port, string key)
+        public void Connect(string address, int port)
         {
             //Create target endpoint
             NetEndPoint ep = new NetEndPoint(address, port);
-            Connect(ep, key);
+            Connect(ep);
         }
 
-        public void Connect(NetEndPoint target, string key)
+        public void Connect(NetEndPoint target)
         {
-            if (key.Length > 256)
-            {
-                throw new Exception("Connect key length > 256!");
-            }
             if (!IsRunning)
             {
                 throw new Exception("Client is not running");
@@ -109,7 +106,6 @@ namespace LiteNetLib
 
             //Create connect id for proper connection
             _connectId = (ulong)DateTime.UtcNow.Ticks;
-            _connectKey = key;
 
             //Create reliable connection
             _peer = CreatePeer(target);
@@ -228,6 +224,32 @@ namespace LiteNetLib
                 var disconnectEvent = CreateEvent(NetEventType.Disconnect);
                 disconnectEvent.AdditionalInfo = "Received disconnection from server";
                 EnqueueEvent(disconnectEvent);
+                return;
+            }
+
+            if (PeerToPeerMode && packet.Property == PacketProperty.ConnectRequest)
+            {
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received peer connect request");
+
+                string peerKey = Encoding.UTF8.GetString(packet.RawData, 9, packet.RawData.Length - 9);
+                if (peerKey != _connectKey)
+                {
+                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Peer connect reject. Invalid key: " + peerKey);
+                    return;
+                }
+
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Peer connect accepting");
+
+                //Make initial packet and put id from received packet
+                var connectPacket = NetPacket.CreateRawPacket(PacketProperty.ConnectAccept, 8);
+                Buffer.BlockCopy(packet.RawData, 1, connectPacket, 1, 8);
+
+                //Send raw
+                _peer.SendRawData(connectPacket);
+
+                //clean incoming packet
+                _peer.Recycle(packet);
+
                 return;
             }
 

@@ -149,20 +149,20 @@ namespace LibSample
             //Client
             _clientListener = new ClientListener();
 
-            NetClient client1 = new NetClient(_clientListener, ConnectionAddressType.IPv6);
+            NetClient client1 = new NetClient(_clientListener, "myapp1", ConnectionAddressType.IPv6);
             if (!client1.Start())
             {
                 Console.WriteLine("Client1 start failed");
 
                 return;
             }
-            client1.Connect("::1", 9050, "myapp1");
+            client1.Connect("::1", 9050);
             client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
 
-            NetClient client2 = new NetClient(_clientListener, ConnectionAddressType.IPv6);
+            NetClient client2 = new NetClient(_clientListener, "myapp1", ConnectionAddressType.IPv6);
             client2.Start();
-            client2.Connect("::1", 9050, "myapp1");
+            client2.Connect("::1", 9050);
 
             while (!Console.KeyAvailable)
             {

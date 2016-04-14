@@ -21,7 +21,7 @@ namespace LiteNetLib
         public int StartRtt;
     }
 
-    public class NetBase
+    public abstract class NetBase
     {
         protected enum NetEventType
         {
@@ -473,18 +473,9 @@ namespace LiteNetLib
             EnqueueEvent(netEvent);
         }
 
-        protected virtual void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
-        {
-            //ignore because we can accept only not connected messages and nat messages
-        }
-
-        protected virtual void PostProcessEvent(int deltaTime)
-        {
-        }
-
-        internal virtual void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint)
-        {
-        }
+        protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
+        protected abstract void PostProcessEvent(int deltaTime);
+        internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
 
         internal virtual void ProcessSendError(NetEndPoint endPoint, string errorMessage)
         {
