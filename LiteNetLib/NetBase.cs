@@ -120,11 +120,11 @@ namespace LiteNetLib
             return _flowModes[flowMode].StartRtt;
         }
 
-        public NetBase(INetEventListener listener) : this(listener, ConnectionAddressType.IPv4)
+        protected NetBase(INetEventListener listener) : this(listener, ConnectionAddressType.IPv4)
         {
         }
 
-        public NetBase(INetEventListener listener, ConnectionAddressType addressType)
+        protected NetBase(INetEventListener listener, ConnectionAddressType addressType)
         {
             _socket = new NetSocket(addressType);
             _addressType = addressType;
@@ -184,10 +184,12 @@ namespace LiteNetLib
                 return false;
             }
 
+            _netEventsQueue.Clear();
             _localEndPoint = new NetEndPoint(_addressType, port);
-            if (_socket.Bind(ref _localEndPoint))
-            {
-                _running = true;
+            if (!_socket.Bind(ref _localEndPoint))
+                return false;
+
+            _running = true;
 #if WINRT && !UNITY_EDITOR
                 ThreadPool.RunAsync(
                     a => UpdateLogic(), 
@@ -199,14 +201,12 @@ namespace LiteNetLib
                     WorkItemPriority.Normal,
                     WorkItemOptions.TimeSliced).AsTask();
 #else
-                _logicThread = new Thread(UpdateLogic);
-                _receiveThread = new Thread(ReceiveLogic);
-                _logicThread.Start();
-                _receiveThread.Start();
+            _logicThread = new Thread(UpdateLogic);
+            _receiveThread = new Thread(ReceiveLogic);
+            _logicThread.Start();
+            _receiveThread.Start();
 #endif
-                return true;
-            }
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -304,15 +304,14 @@ namespace LiteNetLib
 
         public void PollEvents()
         {
-            if (_netEventsQueue.Count == 0 || _netEventListener == null || !_running)
+            if (_netEventsQueue.Count == 0 || _netEventListener == null)
                 return;
 
-            NetEvent evt;
             lock (_netEventsQueue) lock(_netEventsPool)
             {
-                while (_netEventsQueue.Count > 0 && _running)
+                while (_netEventsQueue.Count > 0)
                 {
-                    evt = _netEventsQueue.Dequeue();
+                    var evt = _netEventsQueue.Dequeue();
                     switch (evt.Type)
                     {
                         case NetEventType.Connect:

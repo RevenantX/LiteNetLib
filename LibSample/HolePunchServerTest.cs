@@ -91,6 +91,11 @@ namespace LibSample
                 Console.WriteLine("PeerConnected: " + peer.EndPoint.ToString());
             };
 
+            netListener.PeerDisconnectedEvent += (peer, s) =>
+            {
+                Console.WriteLine("PeerDisconnected: " + s);
+            };
+
             natPunchListener1.NatIntroductionSuccess += (point, token) =>
             {
                 Console.WriteLine("Success C1. Connecting to C2");
@@ -125,8 +130,23 @@ namespace LibSample
 
             // keep going until ESCAPE is pressed
             Console.WriteLine("Press ESC to quit");
-            while (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Escape)
+
+            while (true)
             {
+                if (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey().Key;
+                    if (key == ConsoleKey.Escape)
+                    {
+                        break;
+                    }
+                    else if (key == ConsoleKey.A)
+                    {
+                        Console.WriteLine("C1 stopped");
+                        _c1.Stop();
+                    }
+                }
+                
                 DateTime nowTime = DateTime.Now;
 
                 _c1.NatPunchModule.PollEvents();
@@ -134,6 +154,7 @@ namespace LibSample
                 _puncher.NatPunchModule.PollEvents();
                 _c1.PollEvents();
                 _c2.PollEvents();
+
                 //check old peers
                 foreach (var waitPeer in _waitingPeers)
                 {
