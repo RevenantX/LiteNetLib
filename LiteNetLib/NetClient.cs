@@ -6,16 +6,16 @@ namespace LiteNetLib
 {
     public sealed class NetClient : NetBase
     {
+        public int ReconnectDelay = 500;
+        public int MaxConnectAttempts = 10;
+        public bool PeerToPeerMode;
+
         private NetPeer _peer;
         private bool _connected;
-        private int _maxConnectAttempts = 10;
         private int _connectAttempts;
         private int _connectTimer;
-        private int _reconnectDelay = 500;
         private ulong _connectId;
         private readonly string _connectKey;
-
-        public bool PeerToPeerMode;
 
         public NetClient(INetEventListener listener, string connectKey) : base(listener)
         {
@@ -154,11 +154,11 @@ namespace LiteNetLib
             if (!_connected)
             {
                 _connectTimer += deltaTime;
-                if (_connectTimer > _reconnectDelay)
+                if (_connectTimer > ReconnectDelay)
                 {
                     _connectTimer = 0;
                     _connectAttempts++;
-                    if (_connectAttempts > _maxConnectAttempts)
+                    if (_connectAttempts > MaxConnectAttempts)
                     {
                         var netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.AdditionalInfo = "connection timeout";
