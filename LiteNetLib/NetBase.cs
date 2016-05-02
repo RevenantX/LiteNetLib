@@ -191,15 +191,15 @@ namespace LiteNetLib
 
             _running = true;
 #if WINRT && !UNITY_EDITOR
-                ThreadPool.RunAsync(
-                    a => UpdateLogic(), 
-                    WorkItemPriority.Normal, 
-                    WorkItemOptions.TimeSliced).AsTask();
+            ThreadPool.RunAsync(
+                a => UpdateLogic(), 
+                WorkItemPriority.Normal, 
+                WorkItemOptions.TimeSliced).AsTask();
 
-                ThreadPool.RunAsync(
-                    a => ReceiveLogic(), 
-                    WorkItemPriority.Normal,
-                    WorkItemOptions.TimeSliced).AsTask();
+            ThreadPool.RunAsync(
+                a => ReceiveLogic(), 
+                WorkItemPriority.Normal,
+                WorkItemOptions.TimeSliced).AsTask();
 #else
             _logicThread = new Thread(UpdateLogic);
             _receiveThread = new Thread(ReceiveLogic);
@@ -255,7 +255,6 @@ namespace LiteNetLib
                 _receiveThread = null;
 #endif
                 _socket.Close();
-                _socket = null;
             }
         }
 
@@ -307,38 +306,43 @@ namespace LiteNetLib
             if (_netEventsQueue.Count == 0 || _netEventListener == null)
                 return;
 
-            lock (_netEventsQueue) lock(_netEventsPool)
+            while (_netEventsQueue.Count > 0)
             {
-                while (_netEventsQueue.Count > 0)
+                NetEvent evt;
+                lock (_netEventsQueue)
                 {
-                    var evt = _netEventsQueue.Dequeue();
-                    switch (evt.Type)
-                    {
-                        case NetEventType.Connect:
-                            _netEventListener.OnPeerConnected(evt.Peer);
-                            break;
-                        case NetEventType.Disconnect:
-                            _netEventListener.OnPeerDisconnected(evt.Peer, evt.AdditionalInfo);
-                            break;
-                        case NetEventType.Receive:
-                            _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader);
-                            break;
-                        case NetEventType.ReceiveUnconnected:
-                            _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader);
-                            break;
-                        case NetEventType.Error:
-                            _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.AdditionalInfo);
-                            break;
-                        case NetEventType.ConnectionLatencyUpdated:
-                            _netEventListener.OnNetworkLatencyUpdate(evt.Peer, evt.Latency);
-                            break;
-                    }
+                    evt = _netEventsQueue.Dequeue();
+                }
+                switch (evt.Type)
+                {
+                    case NetEventType.Connect:
+                        _netEventListener.OnPeerConnected(evt.Peer);
+                        break;
+                    case NetEventType.Disconnect:
+                        _netEventListener.OnPeerDisconnected(evt.Peer, evt.AdditionalInfo);
+                        break;
+                    case NetEventType.Receive:
+                        _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader);
+                        break;
+                    case NetEventType.ReceiveUnconnected:
+                        _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader);
+                        break;
+                    case NetEventType.Error:
+                        _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.AdditionalInfo);
+                        break;
+                    case NetEventType.ConnectionLatencyUpdated:
+                        _netEventListener.OnNetworkLatencyUpdate(evt.Peer, evt.Latency);
+                        break;
+                }
 
-                    //Recycle
-                    evt.DataReader.Clear();
-                    evt.Peer = null;
-                    evt.AdditionalInfo = string.Empty;
-                    evt.RemoteEndPoint = null;
+                //Recycle
+                evt.DataReader.Clear();
+                evt.Peer = null;
+                evt.AdditionalInfo = string.Empty;
+                evt.RemoteEndPoint = null;
+
+                lock (_netEventsPool)
+                {
                     _netEventsPool.Push(evt);
                 }
             }
