@@ -120,10 +120,13 @@ namespace LiteNetLib
         //Close socket
         public void Close()
         {
-            ClearPeers();
             _datagramSocket.MessageReceived -= OnMessageReceived;
             _datagramSocket.Dispose();
             _datagramSocket = null;
+
+            _receiveWaiter.Reset();
+            ClearPeers();
+            _incomingData.Clear();
         }
 
         internal void ClearPeers()
