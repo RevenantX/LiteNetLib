@@ -334,12 +334,9 @@ namespace LiteNetLib
 
         internal void Recycle(NetPacket packet)
         {
+            packet.RawData = null;
             lock (_packetPool)
             {
-                if(packet.RawData != null)
-                    packet.IsFragmented = false;
-
-                packet.RawData = null;
                 _packetPool.Push(packet);
             }
         }

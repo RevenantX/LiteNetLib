@@ -53,7 +53,7 @@ namespace LiteNetLib
         private readonly LinkedList<IncomingData> _pingSimulationList = new LinkedList<IncomingData>(); 
 #endif
 
-        private NetSocket _socket;
+        private readonly NetSocket _socket;
         private readonly List<FlowMode> _flowModes;
         private NetEndPoint _localEndPoint;
         private readonly ConnectionAddressType _addressType;
@@ -303,9 +303,6 @@ namespace LiteNetLib
 
         public void PollEvents()
         {
-            if (_netEventsQueue.Count == 0 || _netEventListener == null)
-                return;
-
             while (_netEventsQueue.Count > 0)
             {
                 NetEvent evt;
@@ -404,8 +401,8 @@ namespace LiteNetLib
                 else if (result < 0)
                 {
                     //10054 - remote close (not error)
-                    //10040 - message too long (impossible now)
-                    if (errorCode != 10054)
+                    //10040 - message too long (just for protection)
+                    if (errorCode != 10054 && errorCode != 10040)
                     {
                         NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
                         ProcessError("Receive socket error: " + errorCode);

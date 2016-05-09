@@ -70,8 +70,8 @@ namespace LiteNetLib
         /// </summary>
         public override void Stop()
         {
-            CloseConnection(true);
             base.Stop();
+            CloseConnection(true); 
         }
 
         protected override void ProcessError(string errorMessage)
