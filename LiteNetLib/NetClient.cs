@@ -49,20 +49,31 @@ namespace LiteNetLib
             get { return _connected; }
         }
 
-        private void CloseConnection(bool force)
+        private void CloseConnection(bool force, string info)
         {
-            if (_peer != null && !force)
+            //Close threads
+            base.Stop();
+
+            //Send goodbye
+            if (_peer != null && !force && _connected)
             {
                 //Send disconnect data
                 var disconnectPacket = NetPacket.CreateRawPacket(PacketProperty.Disconnect, 8);
                 FastBitConverter.GetBytes(disconnectPacket, 1, _connectId);
                 _peer.SendRawData(disconnectPacket);
             }
+
+            //Clear data
             _peer = null;
             _connected = false;
             _connectTimer = 0;
             _connectAttempts = 0;
             SocketClearPeers();
+
+            //Send event to Listener
+            var netEvent = CreateEvent(NetEventType.Disconnect);
+            netEvent.AdditionalInfo = info;
+            EnqueueEvent(netEvent);
         }
 
         /// <summary>
@@ -70,19 +81,12 @@ namespace LiteNetLib
         /// </summary>
         public override void Stop()
         {
-            base.Stop();
-            CloseConnection(true); 
+            CloseConnection(false, "Stop method called"); 
         }
 
         protected override void ProcessError(string errorMessage)
         {
-            var netEvent = CreateEvent(NetEventType.Disconnect);
-            netEvent.AdditionalInfo = errorMessage;
-            EnqueueEvent(netEvent);
-            if (_peer != null)
-            {
-                CloseConnection(true);
-            }
+            CloseConnection(true, errorMessage);
         }
 
         /// <summary>
@@ -138,14 +142,6 @@ namespace LiteNetLib
             _peer.SendRawData(connectPacket);
         }
 
-        public void Disconnect()
-        {
-            var netEvent = CreateEvent(NetEventType.Disconnect);
-            netEvent.AdditionalInfo = "Disconnect method called";
-            EnqueueEvent(netEvent);
-            CloseConnection(false);
-        }
-
         protected override void PostProcessEvent(int deltaTime)
         {
             if (_peer == null)
@@ -160,10 +156,7 @@ namespace LiteNetLib
                     _connectAttempts++;
                     if (_connectAttempts > MaxConnectAttempts)
                     {
-                        var netEvent = CreateEvent(NetEventType.Disconnect);
-                        netEvent.AdditionalInfo = "connection timeout";
-                        EnqueueEvent(netEvent);
-                        Stop();
+                        CloseConnection(true, "connection timeout");
                         return;
                     }
 
@@ -173,10 +166,7 @@ namespace LiteNetLib
             }
             else if (_peer.TimeSinceLastPacket > DisconnectTimeout)
             {
-                Stop();
-                var netEvent = CreateEvent(NetEventType.Disconnect);
-                netEvent.AdditionalInfo = "Timeout";
-                EnqueueEvent(netEvent);
+                CloseConnection(true, "Timeout");
                 return;
             }
 
@@ -195,7 +185,7 @@ namespace LiteNetLib
 
         internal override void ProcessSendError(NetEndPoint remoteEndPoint, string errorMessage)
         {
-            CloseConnection(true);
+            CloseConnection(true, errorMessage);
             base.Stop();
             base.ProcessSendError(remoteEndPoint, errorMessage);
         }
@@ -278,10 +268,7 @@ namespace LiteNetLib
             if (packet.Property == PacketProperty.Disconnect)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
-                CloseConnection(true);
-                var disconnectEvent = CreateEvent(NetEventType.Disconnect);
-                disconnectEvent.AdditionalInfo = "Received disconnection from server";
-                EnqueueEvent(disconnectEvent);
+                CloseConnection(true, "Received disconnection from server");
                 return;
             }
 

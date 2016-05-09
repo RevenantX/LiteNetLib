@@ -404,7 +404,7 @@ namespace LiteNetLib
                     //10040 - message too long (just for protection)
                     if (errorCode != 10054 && errorCode != 10040)
                     {
-                        NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error!");
+                        NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error: " + errorCode);
                         ProcessError("Receive socket error: " + errorCode);
                         Stop();
                         return;

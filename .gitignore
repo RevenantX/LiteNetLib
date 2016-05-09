@@ -8,3 +8,4 @@ LiteNetLibWin81/obj
 LiteNetLibWin81/bin
 LibSample/obj
 LibSample/bin
+*.DotSettings.user
