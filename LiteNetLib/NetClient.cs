@@ -16,6 +16,7 @@ namespace LiteNetLib
         private int _connectTimer;
         private ulong _connectId;
         private readonly string _connectKey;
+        private readonly object _connectionCloseLock = new object();
 
         public NetClient(INetEventListener listener, string connectKey) : base(listener)
         {
@@ -51,29 +52,36 @@ namespace LiteNetLib
 
         private void CloseConnection(bool force, string info)
         {
-            //Close threads
-            base.Stop();
-
-            //Send goodbye
-            if (_peer != null && !force && _connected)
+            lock (_connectionCloseLock)
             {
-                //Send disconnect data
-                var disconnectPacket = NetPacket.CreateRawPacket(PacketProperty.Disconnect, 8);
-                FastBitConverter.GetBytes(disconnectPacket, 1, _connectId);
-                _peer.SendRawData(disconnectPacket);
+                //Nothing to do
+                if (!IsRunning)
+                    return;
+
+                //Send goodbye
+                if (_peer != null && !force && _connected)
+                {
+                    //Send disconnect data
+                    var disconnectPacket = NetPacket.CreateRawPacket(PacketProperty.Disconnect, 8);
+                    FastBitConverter.GetBytes(disconnectPacket, 1, _connectId);
+                    _peer.SendRawData(disconnectPacket);
+                }
+
+                //Close threads and socket close
+                base.Stop();
+
+                //Clear data
+                _peer = null;
+                _connected = false;
+                _connectTimer = 0;
+                _connectAttempts = 0;
+                SocketClearPeers();
+
+                //Send event to Listener
+                var netEvent = CreateEvent(NetEventType.Disconnect);
+                netEvent.AdditionalInfo = info;
+                EnqueueEvent(netEvent);
             }
-
-            //Clear data
-            _peer = null;
-            _connected = false;
-            _connectTimer = 0;
-            _connectAttempts = 0;
-            SocketClearPeers();
-
-            //Send event to Listener
-            var netEvent = CreateEvent(NetEventType.Disconnect);
-            netEvent.AdditionalInfo = info;
-            EnqueueEvent(netEvent);
         }
 
         /// <summary>
