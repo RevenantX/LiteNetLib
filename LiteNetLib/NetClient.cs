@@ -193,8 +193,7 @@ namespace LiteNetLib
 
         internal override void ProcessSendError(NetEndPoint remoteEndPoint, string errorMessage)
         {
-            CloseConnection(true, errorMessage);
-            base.Stop();
+            CloseConnection(true, "Send error: " + errorMessage);
             base.ProcessSendError(remoteEndPoint, errorMessage);
         }
 
