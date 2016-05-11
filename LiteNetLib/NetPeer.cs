@@ -533,9 +533,14 @@ namespace LiteNetLib
             int errorCode = 0;
             if (_socket.SendTo(data, _remoteEndPoint, ref errorCode) == -1)
             {
-                if (errorCode != 0)
+                //10040 message to long... need to check
+                if (errorCode != 0 && errorCode != 10040)
                 {
                     _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
+                }
+                else if (errorCode == 10040)
+                {
+                    DebugWriteForce("[SRD] 10040, datalen: " + data.Length);
                 }
                 return false;
             }
