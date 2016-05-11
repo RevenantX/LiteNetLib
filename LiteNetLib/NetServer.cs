@@ -71,11 +71,9 @@ namespace LiteNetLib
 
         private void RemovePeer(NetPeer peer)
         {
-            lock (_peers)
+            lock (_peersToRemove)
             {
-                _peers.Remove(peer.EndPoint);
-                _peerConnectionIds.Remove(peer.EndPoint);
-                SocketRemovePeer(peer.EndPoint);
+                _peersToRemove.Enqueue(peer.EndPoint);
             }
         }
 
@@ -138,18 +136,26 @@ namespace LiteNetLib
                         netEvent.Peer = netPeer;
                         netEvent.AdditionalInfo = "Timeout";
                         EnqueueEvent(netEvent);
-                        _peersToRemove.Enqueue(netPeer.EndPoint);
+
+                        lock (_peersToRemove)
+                        {
+                            _peersToRemove.Enqueue(netPeer.EndPoint);
+                        }
                     }
                     else
                     {
                         netPeer.Update(deltaTime);
                     }
                 }
-                while (_peersToRemove.Count > 0)
+                lock (_peersToRemove)
                 {
-                    var ep = _peersToRemove.Dequeue();
-                    _peers.Remove(ep);
-                    _peerConnectionIds.Remove(ep);
+                    while (_peersToRemove.Count > 0)
+                    {
+                        var ep = _peersToRemove.Dequeue();
+                        _peers.Remove(ep);
+                        _peerConnectionIds.Remove(ep);
+                        SocketRemovePeer(ep);
+                    }
                 }
             }
         }
