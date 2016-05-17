@@ -1,5 +1,4 @@
 using System.Diagnostics;
-
 #if WINRT && !UNITY_EDITOR
 using Windows.Networking;
 using Windows.Networking.Connectivity;
@@ -7,6 +6,7 @@ using Windows.Networking.Connectivity;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.NetworkInformation;
 #endif
 
 namespace LiteNetLib
@@ -23,7 +23,35 @@ namespace LiteNetLib
             return (size / mtu) + (size % mtu == 0 ? 0 : 1);
         }
 
-        public static string GetLocalIP()
+        public static void PrintInterfaceInfos()
+        {
+#if !WINRT || UNITY_EDITOR
+            try
+            {
+                foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            DebugWriteForce(
+                                ConsoleColor.Green,
+                                "Interface: {0}, Type: {1}, Ip: {2}",
+                                ni.Name,
+                                ni.NetworkInterfaceType.ToString(),
+                                ip.Address.ToString());
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                DebugWriteForce(ConsoleColor.Red, "Error while getting interface infos: {0}", e.ToString());
+            }
+#endif
+        }
+
+        public static string GetLocalIp(ConnectionAddressType connectionAddressType)
         {
 #if WINRT && !UNITY_EDITOR
             foreach (HostName localHostName in NetworkInformation.GetHostNames())
@@ -37,16 +65,25 @@ namespace LiteNetLib
                 }
             }
 #else
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
+            var addrFamily =
+                connectionAddressType == ConnectionAddressType.IPv4
+                    ? AddressFamily.InterNetwork
+                    : AddressFamily.InterNetworkV6;
+
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                if(ni.OperationalStatus != OperationalStatus.Up || ni.NetworkInterfaceType == NetworkInterfaceType.Loopback)
+                    continue;
+                foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
                 {
-                    return ip.ToString();
+                    if (ip.Address.AddressFamily == addrFamily)
+                    {
+                        return ip.Address.ToString();
+                    }
                 }
             }
 #endif
-            return "127.0.0.1";
+            return connectionAddressType == ConnectionAddressType.IPv4 ? "127.0.0.1" : "::1";
         }
 
         private static readonly object DebugLogLock = new object();

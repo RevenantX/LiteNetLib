@@ -129,7 +129,7 @@ namespace LiteNetLib
 
             //prepare outgoing data
             NetDataWriter dw = new NetDataWriter();
-            string networkIp = NetUtils.GetLocalIP();
+            string networkIp = NetUtils.GetLocalIp(ConnectionAddressType.IPv4);
             int networkPort = _netBase.LocalEndPoint.Port;
             NetEndPoint localEndPoint = new NetEndPoint(networkIp, networkPort);
             dw.Put(localEndPoint);
@@ -167,21 +167,21 @@ namespace LiteNetLib
             NetEndPoint remoteExternal = dr.GetNetEndPoint();
             string token = dr.GetString(MaxTokenLength);
 
-            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] introduction received; we are designated " + (hostByte == HostByte ? "host" : "client"));
+            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NAT] introduction received; we are designated " + (hostByte == HostByte ? "host" : "client"));
             NetDataWriter writer = new NetDataWriter();
 
             // send internal punch
             writer.Put(hostByte);
             writer.Put(token);
             _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteInternal);
-            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] punch sent to " + remoteInternal);
+            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NAT] internal punch sent to " + remoteInternal);
 
             // send external punch
             writer.Reset();
             writer.Put(hostByte);
             writer.Put(token);
             _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteExternal);
-            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] punch sent to " + remoteExternal);
+            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NAT] exrernal punch sent to " + remoteExternal);
         }
 
         private void HandleNatIntroductionRequest(NetEndPoint senderEndPoint, NetDataReader dr)
