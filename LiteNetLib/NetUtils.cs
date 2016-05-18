@@ -32,14 +32,16 @@ namespace LiteNetLib
                 {
                     foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
                     {
-                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork ||
+                            ip.Address.AddressFamily == AddressFamily.InterNetworkV6)
                         {
                             DebugWriteForce(
                                 ConsoleColor.Green,
-                                "Interface: {0}, Type: {1}, Ip: {2}",
+                                "Interface: {0}, Type: {1}, Ip: {2}, OpStatus: {3}",
                                 ni.Name,
                                 ni.NetworkInterfaceType.ToString(),
-                                ip.Address.ToString());
+                                ip.Address.ToString(),
+                                ni.OperationalStatus.ToString());
                         }
                     }
                 }
@@ -70,18 +72,24 @@ namespace LiteNetLib
                     ? AddressFamily.InterNetwork
                     : AddressFamily.InterNetworkV6;
 
+            IPAddress lastAddress = null;
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if(ni.OperationalStatus != OperationalStatus.Up || ni.NetworkInterfaceType == NetworkInterfaceType.Loopback)
+                if(ni.NetworkInterfaceType == NetworkInterfaceType.Loopback)
                     continue;
                 foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
                 {
-                    if (ip.Address.AddressFamily == addrFamily)
-                    {
+                    if (ip.Address.AddressFamily != addrFamily)
+                        continue;
+
+                    if (ni.OperationalStatus == OperationalStatus.Up)
                         return ip.Address.ToString();
-                    }
+
+                    lastAddress = ip.Address;
                 }
             }
+            if (lastAddress != null)
+                return lastAddress.ToString();
 #endif
             return connectionAddressType == ConnectionAddressType.IPv4 ? "127.0.0.1" : "::1";
         }
