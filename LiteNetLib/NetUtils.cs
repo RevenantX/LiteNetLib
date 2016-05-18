@@ -102,10 +102,9 @@ namespace LiteNetLib
             lock (DebugLogLock)
             {
 #if UNITY
-                    string debugStr = string.Format(str, args);
-                    UnityEngine.Debug.Log(debugStr);
+                UnityEngine.Debug.LogFormat(str, args);
 #elif WINRT
-                    Debug.WriteLine(str, args);
+                Debug.WriteLine(str, args);
 #else
                 Console.ForegroundColor = color;
                 Console.WriteLine(str, args);
@@ -120,8 +119,7 @@ namespace LiteNetLib
             lock (DebugLogLock)
             {
 #if UNITY
-                string debugStr = string.Format(str, args);
-                UnityEngine.Debug.Log(debugStr);
+                UnityEngine.Debug.LogFormat(str, args);
 #elif WINRT
                 Debug.WriteLine(str, args);
 #else
