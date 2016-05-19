@@ -71,25 +71,45 @@ namespace LiteNetLib
                 connectionAddressType == ConnectionAddressType.IPv4
                     ? AddressFamily.InterNetwork
                     : AddressFamily.InterNetworkV6;
-
             IPAddress lastAddress = null;
-            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+
+            try
             {
-                if(ni.NetworkInterfaceType == NetworkInterfaceType.Loopback)
-                    continue;
-                foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
                 {
-                    if (ip.Address.AddressFamily != addrFamily)
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback)
                         continue;
+                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily != addrFamily)
+                            continue;
 
-                    if (ni.OperationalStatus == OperationalStatus.Up)
-                        return ip.Address.ToString();
+                        if (ni.OperationalStatus == OperationalStatus.Up)
+                            return ip.Address.ToString();
 
-                    lastAddress = ip.Address;
+                        lastAddress = ip.Address;
+                    }
+                }
+                if (lastAddress != null)
+                    return lastAddress.ToString();
+            }
+            catch
+            {
+                //ignored
+            }
+
+            //Fallback mode
+            if (lastAddress == null)
+            {
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+                foreach (IPAddress ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == addrFamily)
+                    {
+                        return ip.ToString();
+                    }
                 }
             }
-            if (lastAddress != null)
-                return lastAddress.ToString();
 #endif
             return connectionAddressType == ConnectionAddressType.IPv4 ? "127.0.0.1" : "::1";
         }
