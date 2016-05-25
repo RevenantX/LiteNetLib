@@ -203,7 +203,9 @@ namespace LiteNetLib
 #else
             _logicThread = new Thread(UpdateLogic);
             _receiveThread = new Thread(ReceiveLogic);
+            _logicThread.IsBackground = true;
             _logicThread.Start();
+            _receiveThread.IsBackground = true;
             _receiveThread.Start();
 #endif
             return true;
