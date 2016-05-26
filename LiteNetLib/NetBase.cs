@@ -7,14 +7,14 @@ using LiteNetLib.Utils;
 using Windows.System.Threading;
 #endif
 
-public enum ConnectionAddressType
-{
-    IPv4,
-    IPv6
-}
-
 namespace LiteNetLib
 {
+    public enum ConnectionAddressType
+    {
+        IPv4,
+        IPv6
+    }
+
     internal sealed class FlowMode
     {
         public int PacketsPerSecond;
