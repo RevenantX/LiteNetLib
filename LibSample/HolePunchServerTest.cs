@@ -98,35 +98,35 @@ namespace LibSample
 
             natPunchListener1.NatIntroductionSuccess += (point, token) =>
             {
-                Console.WriteLine("Success C1. Connecting to C2");
-                //_c1.Connect(point);
+                Console.WriteLine("Success C1. Connecting to C2: {0}", point);
+                _c1.Connect(point);
             };
 
             natPunchListener2.NatIntroductionSuccess += (point, token) =>
             {
-                Console.WriteLine("Success C2. Connecting to C1");
+                Console.WriteLine("Success C2. Connecting to C1: {0}", point);
                 _c2.Connect(point);
             };
 
-            _c1 = new NetClient(netListener, "gamekey");
+            _c1 = new NetClient(netListener, "gamekey", ConnectionAddressType.IPv6);
             _c1.PeerToPeerMode = true;
             _c1.NatPunchEnabled = true;
             _c1.NatPunchModule.Init(natPunchListener1);
             _c1.Start();
 
-            _c2 = new NetClient(netListener, "gamekey");
+            _c2 = new NetClient(netListener, "gamekey", ConnectionAddressType.IPv6);
             _c2.PeerToPeerMode = true;
             _c2.NatPunchEnabled = true;
             _c2.NatPunchModule.Init(natPunchListener2);
             _c2.Start();
 
-            _puncher = new NetClient(netListener, "notneed");
+            _puncher = new NetClient(netListener, "notneed", ConnectionAddressType.IPv6);
             _puncher.Start(ServerPort);
             _puncher.NatPunchEnabled = true;
             _puncher.NatPunchModule.Init(this);
 
-            _c1.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
-            _c2.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
+            _c1.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("::1", ServerPort), "token1");
+            _c2.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("::1", ServerPort), "token1");
 
             // keep going until ESCAPE is pressed
             Console.WriteLine("Press ESC to quit");

@@ -87,6 +87,11 @@ namespace LiteNetLib
         //modules
         public readonly NatPunchModule NatPunchModule;
 
+        public ConnectionAddressType AddressType
+        {
+            get { return _addressType; }
+        }
+
         public void AddFlowMode(int startRtt, int packetsPerSecond)
         {
             var fm = new FlowMode {PacketsPerSecond = packetsPerSecond, StartRtt = startRtt};
