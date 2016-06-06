@@ -36,7 +36,6 @@ namespace LiteNetLib
             else //IPv6
             {
                 _bufferEndPoint = new IPEndPoint(IPAddress.IPv6Any, 0);
-                _udpSocket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.HopLimit, SocketTTL);
             }
             _udpSocket.Blocking = false;
             _udpSocket.ReceiveBufferSize = BufferSize;
