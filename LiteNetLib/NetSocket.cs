@@ -52,7 +52,11 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                NetUtils.DebugWrite(ConsoleColor.Red, "[B]Bind exception: {0}", ex.ToString());
+                NetUtils.DebugWriteError("[B]Bind exception: {0}", ex.ToString());
+                //TODO: very temporary hack for iOS (Unity3D)
+                if (ex.ErrorCode == 10047)
+                    return true;
+
                 return false;
             }
         }
@@ -77,13 +81,13 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]" + ex);
+                NetUtils.DebugWriteError("[S]" + ex);
                 errorCode = ex.ErrorCode;
                 return -1;
             }
             catch (Exception ex)
             {
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]" + ex);
+                NetUtils.DebugWriteError("[S]" + ex);
                 return -1;
             }
         }
@@ -109,13 +113,13 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Error code: {0} - {1}", ex.SocketErrorCode, ex.ToString());
+                NetUtils.DebugWriteError("[R]Error code: {0} - {1}", ex.SocketErrorCode, ex.ToString());
                 errorCode = (int) ex.SocketErrorCode;
                 return -1;
             }
 
             //All ok!
-            NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Recieved data from {0}, result: {1}", remoteEndPoint.ToString(), result);
+            NetUtils.DebugWriteError("[R]Recieved data from {0}, result: {1}", remoteEndPoint.ToString(), result);
 
             //Assign data
             data = _receiveBuffer;

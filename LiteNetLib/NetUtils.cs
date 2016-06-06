@@ -136,18 +136,13 @@ namespace LiteNetLib
         [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
         internal static void DebugWriteForce(ConsoleColor color, string str, params object[] args)
         {
-            lock (DebugLogLock)
-            {
-#if UNITY
-                UnityEngine.Debug.LogFormat(str, args);
-#elif WINRT
-                Debug.WriteLine(str, args);
-#else
-                Console.ForegroundColor = color;
-                Console.WriteLine(str, args);
-                Console.ForegroundColor = ConsoleColor.Gray;
-#endif
-            }
+            DebugWrite(color, str, args);
+        }
+
+        [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
+        internal static void DebugWriteError(string str, params object[] args)
+        {
+            DebugWrite(ConsoleColor.Red, str, args);
         }
     }
 }
