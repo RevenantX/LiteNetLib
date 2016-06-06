@@ -9,6 +9,15 @@ namespace LiteNetLib
     {
         public string Host { get { return EndPoint.Address.ToString(); } }
         public int Port { get { return EndPoint.Port; } }
+        public ConnectionAddressType AddressType
+        {
+            get
+            {
+                return EndPoint.AddressFamily == AddressFamily.InterNetwork
+                    ? ConnectionAddressType.IPv4
+                    : ConnectionAddressType.IPv6;
+            }
+        }
 
         internal readonly IPEndPoint EndPoint;
 
@@ -49,7 +58,8 @@ namespace LiteNetLib
                 IPHostEntry host = Dns.GetHostEntry(hostStr);
                 foreach (IPAddress ip in host.AddressList)
                 {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    if (ip.AddressFamily == AddressFamily.InterNetwork || 
+                        ip.AddressFamily == AddressFamily.InterNetworkV6)
                     {
                         ipAddress = ip;
                         break;

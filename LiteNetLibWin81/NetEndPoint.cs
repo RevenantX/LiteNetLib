@@ -9,6 +9,15 @@ namespace LiteNetLib
     {
         public string Host { get { return HostName.DisplayName; } }
         public int Port { get; private set; }
+        public ConnectionAddressType AddressType
+        {
+            get
+            {
+                return HostName.Type == HostNameType.Ipv4
+                    ? ConnectionAddressType.IPv4
+                    : ConnectionAddressType.IPv6;
+            }
+        }
 
         internal readonly HostName HostName;
         internal readonly string PortStr;
