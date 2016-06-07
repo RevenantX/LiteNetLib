@@ -55,7 +55,10 @@ namespace LiteNetLib
                 NetUtils.DebugWriteError("[B]Bind exception: {0}", ex.ToString());
                 //TODO: very temporary hack for iOS (Unity3D)
                 if (ex.ErrorCode == 10047)
+                {
+                    ep = new NetEndPoint((IPEndPoint)_udpSocket.LocalEndPoint);
                     return true;
+                }
 
                 return false;
             }
