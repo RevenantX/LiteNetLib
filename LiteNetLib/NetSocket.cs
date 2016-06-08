@@ -14,7 +14,7 @@ namespace LiteNetLib
         private const int SocketTTL = 255;
         private readonly AddressFamily _socketAddressFamily;
 
-        public int ReceiveTimeout = 10;
+        public int ReceiveTimeout = 1000;
 
         public NetSocket(ConnectionAddressType addrType)
         {
