@@ -122,7 +122,7 @@ namespace LiteNetLib
             }
 
             //All ok!
-            NetUtils.DebugWriteError("[R]Recieved data from {0}, result: {1}", remoteEndPoint.ToString(), result);
+            NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Recieved data from {0}, result: {1}", remoteEndPoint.ToString(), result);
 
             //Assign data
             data = _receiveBuffer;

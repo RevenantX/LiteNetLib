@@ -230,6 +230,17 @@ namespace LiteNetLib
         /// <summary>
         /// Send message without connection
         /// </summary>
+        /// <param name="writer">Data serializer</param>
+        /// <param name="remoteEndPoint">Packet destination</param>
+        /// <returns>Operation result</returns>
+        public bool SendUnconnectedMessage(NetDataWriter writer, NetEndPoint remoteEndPoint)
+        {
+            return SendUnconnectedMessage(writer.Data, 0, writer.Length, remoteEndPoint);
+        }
+
+        /// <summary>
+        /// Send message without connection
+        /// </summary>
         /// <param name="message">Raw data</param>
         /// <param name="start">data start</param>
         /// <param name="length">data length</param>

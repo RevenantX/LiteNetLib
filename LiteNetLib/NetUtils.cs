@@ -116,8 +116,7 @@ namespace LiteNetLib
 
         private static readonly object DebugLogLock = new object();
 
-        [Conditional("DEBUG_MESSAGES")]
-        internal static void DebugWrite(ConsoleColor color, string str, params object[] args)
+        private static void DebugWriteLogic(ConsoleColor color, string str, params object[] args)
         {
             lock (DebugLogLock)
             {
@@ -133,16 +132,22 @@ namespace LiteNetLib
             }
         }
 
+        [Conditional("DEBUG_MESSAGES")]
+        internal static void DebugWrite(ConsoleColor color, string str, params object[] args)
+        {
+            DebugWriteLogic(color, str, args);
+        }
+
         [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
         internal static void DebugWriteForce(ConsoleColor color, string str, params object[] args)
         {
-            DebugWrite(color, str, args);
+            DebugWriteLogic(color, str, args);
         }
 
         [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
         internal static void DebugWriteError(string str, params object[] args)
         {
-            DebugWrite(ConsoleColor.Red, str, args);
+            DebugWriteLogic(ConsoleColor.Red, str, args);
         }
     }
 }
