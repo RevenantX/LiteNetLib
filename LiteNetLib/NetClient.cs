@@ -105,7 +105,7 @@ namespace LiteNetLib
         public void Connect(string address, int port)
         {
             //Create target endpoint
-            NetEndPoint ep = new NetEndPoint(address, port);
+            NetEndPoint ep = new NetEndPoint(address, port, AddressType);
             Connect(ep);
         }
 

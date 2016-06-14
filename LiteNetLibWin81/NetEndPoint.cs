@@ -102,6 +102,11 @@ namespace LiteNetLib
             PortStr = port.ToString();
         }
 
+        public NetEndPoint(string hostName, int port, ConnectionAddressType addressType) : this(hostName, port)
+        {
+            
+        }
+
         internal NetEndPoint(HostName hostName, string port)
         {
             HostName = hostName;

@@ -10,11 +10,11 @@ namespace LiteNetLib
 
         public NtpSyncModule(string ntpServer)
         {
-            _socket = new NetSocket(ConnectionAddressType.IPv4);
-            NetEndPoint ourEndPoint = new NetEndPoint(ConnectionAddressType.IPv4, 0);
+            _ntpEndPoint = new NetEndPoint(ntpServer, 123);
+            _socket = new NetSocket(_ntpEndPoint.AddressType);
+            NetEndPoint ourEndPoint = new NetEndPoint(_ntpEndPoint.AddressType, 0);
             _socket.Bind(ref ourEndPoint);
             _socket.ReceiveTimeout = 3000;
-            _ntpEndPoint = new NetEndPoint(ntpServer, 123);
             SyncedTime = null;
         }
 

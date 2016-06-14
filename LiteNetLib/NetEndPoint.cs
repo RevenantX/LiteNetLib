@@ -55,16 +55,41 @@ namespace LiteNetLib
             IPAddress ipAddress;
             if (!IPAddress.TryParse(hostStr, out ipAddress))
             {
-                IPHostEntry host = Dns.GetHostEntry(hostStr);
-                foreach (IPAddress ip in host.AddressList)
+                ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
+                if (ipAddress == null)
                 {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork || 
-                        ip.AddressFamily == AddressFamily.InterNetworkV6)
-                    {
-                        ipAddress = ip;
-                        break;
-                    }
+                    ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetwork);
                 }
+            }
+            if (ipAddress == null)
+            {
+                throw new Exception("Invalid address: " + hostStr);
+            }
+            EndPoint = new IPEndPoint(ipAddress, port);
+        }
+
+        private IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily)
+        {
+            IPHostEntry host = Dns.GetHostEntry(hostStr);
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == addressFamily)
+                {
+                    return ip;
+                }
+            }
+            return null;
+        }
+
+        public NetEndPoint(string hostStr, int port, ConnectionAddressType addressType)
+        {
+            IPAddress ipAddress;
+            if (!IPAddress.TryParse(hostStr, out ipAddress))
+            {
+                ipAddress = ResolveAddress(hostStr,
+                    addressType == ConnectionAddressType.IPv4
+                        ? AddressFamily.InterNetwork
+                        : AddressFamily.InterNetworkV6);
             }
             if (ipAddress == null)
             {
