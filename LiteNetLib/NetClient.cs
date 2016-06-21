@@ -203,11 +203,11 @@ namespace LiteNetLib
                 return;
 
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
+            _peer.StartConnectionTimer();
             _connected = true;
             var connectEvent = CreateEvent(NetEventType.Connect);
             connectEvent.Peer = _peer;
             EnqueueEvent(connectEvent);
-            _peer.StartConnectionTimer();
         }
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
