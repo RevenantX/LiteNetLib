@@ -9,3 +9,5 @@ LiteNetLibWin81/bin
 LibSample/obj
 LibSample/bin
 *.DotSettings.user
+LiteNetLibSampleUnity.CSharp.csproj
+LiteNetLibSampleUnity.sln
