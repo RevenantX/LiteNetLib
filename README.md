@@ -74,7 +74,7 @@ client.Stop();
 
 * **UnconnectedMessagesEnabled**
  * enable messages receiving without connection. (with SendUnconnectedMessage method)
- * default value: false
+ * default value: **false**
 * **NatPunchEnabled**
  * enable nat punch messages
  * default value: **false**
