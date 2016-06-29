@@ -103,7 +103,7 @@ client.Stop();
  * maximum simulated latency ( it will be random from 0 to value )
  * default value: **100 msec**
 
-## Only client
+### Only client
 * **ReconnectDelay**
  * delay betwen connection attempts
  * default value: **500 msec**
