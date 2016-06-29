@@ -72,43 +72,43 @@ client.Stop();
 
 ### Client and server setting description
 
-* UnconnectedMessagesEnabled
+* **UnconnectedMessagesEnabled**
  * enable messages receiving without connection. (with SendUnconnectedMessage method)
  * default value: false
-* NatPunchEnabled 
+* **NatPunchEnabled**
  * enable nat punch messages
- * default value: false
-* UpdateTime
+ * default value: **false**
+* **UpdateTime**
  * library logic update (and send) period in milliseconds
- * default value: 100 msec. For games you can use 15 msec (66 ticks per second)
-* ReliableResendTime
+ * default value: **100 msec**. For games you can use 15 msec (66 ticks per second)
+* **ReliableResendTime**
  * time for resending lost reliable packets in milliseconds
- * default value: 500 msec. Set that value to 4x-5x update time ( if UpdateTime = 15 then ReliableResendTime = 75 )
-* PingInterval
+ * default value: **500 msec**. Set that value to 4x-5x update time ( if UpdateTime = 15 then ReliableResendTime = 75 )
+* **PingInterval**
  * Interval for latency detection and checking connection
- * default value: 1000 msec.
-* DisconnectTimeout
+ * default value: **1000 msec**.
+* **DisconnectTimeout**
  * if client or server doesn't receive any packet from remote peer during this time then connection will be closed
- * default value: 5000 msec.
-* SimulatePacketLoss 
+ * default value: **5000 msec**.
+* **SimulatePacketLoss**
  * simulate packet loss by dropping random amout of packets. Works only in DEBUG mode
- * default value: false
-* SimulateLatency
+ * default value: **false**
+* **SimulateLatency**
  * simulate latency by holding packets for random time
- * default value: false
-* SimulationPacketLossChance = 10
+ * default value: **false**
+* **SimulationPacketLossChance**
  * chance of packet loss when simulation enabled. value in percents.
- * default value: 10 (%)
-* SimulationMaxLatency = 100
+ * default value: **10 (%)**
+* **SimulationMaxLatency**
  * maximum simulated latency ( it will be random from 0 to value )
- * default value: 100 msec
+ * default value: **100 msec**
 ## Only client
-* ReconnectDelay
+* **ReconnectDelay**
  * delay betwen connection attempts
- * default value: 500 msec
-* MaxConnectAttempts
+ * default value: **500 msec**
+* **MaxConnectAttempts**
  * maximum connection attempts before client stops and call disconnect event.
- * default value: 10
-* PeerToPeerMode
+ * default value: **10**
+* **PeerToPeerMode**
  * allows client connect to other client
- * default value: false
+ * default value: **false**
