@@ -295,6 +295,15 @@ namespace LiteNetLib
             }
         }
 
+        public void SendToClients(NetDataWriter writer, SendOptions options)
+        {
+            lock (_peers)
+            foreach (NetPeer netPeer in _peers.Values)
+            {
+                netPeer.Send(writer, options);
+            }
+        }
+
         public void SendToClients(byte[] data, SendOptions options)
         {
             lock (_peers)
@@ -310,6 +319,18 @@ namespace LiteNetLib
             foreach (NetPeer netPeer in _peers.Values)
             {
                 netPeer.Send(data, start, length, options);
+            }
+        }
+
+        public void SendToClients(NetDataWriter writer, SendOptions options, NetPeer excludePeer)
+        {
+            lock (_peers)
+            foreach (NetPeer netPeer in _peers.Values)
+            {
+                if (netPeer != excludePeer)
+                {
+                    netPeer.Send(writer, options);
+                }
             }
         }
 
