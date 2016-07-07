@@ -84,6 +84,9 @@ namespace LiteNetLib
         public int SimulationPacketLossChance = 10;
         public int SimulationMaxLatency = 100;
 
+        //experimental
+        public bool UnsyncedEvents = false;
+
         //modules
         public readonly NatPunchModule NatPunchModule;
 
@@ -313,14 +316,60 @@ namespace LiteNetLib
 
         protected void EnqueueEvent(NetEvent evt)
         {
-            lock (_netEventsQueue)
+            if (UnsyncedEvents)
             {
-                _netEventsQueue.Enqueue(evt);
+                ProcessEvent(evt);
+            }
+            else
+            {
+                lock (_netEventsQueue)
+                {
+                    _netEventsQueue.Enqueue(evt);
+                }
+            }
+        }
+
+        private void ProcessEvent(NetEvent evt)
+        {
+            switch (evt.Type)
+            {
+                case NetEventType.Connect:
+                    _netEventListener.OnPeerConnected(evt.Peer);
+                    break;
+                case NetEventType.Disconnect:
+                    _netEventListener.OnPeerDisconnected(evt.Peer, evt.AdditionalInfo);
+                    break;
+                case NetEventType.Receive:
+                    _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader);
+                    break;
+                case NetEventType.ReceiveUnconnected:
+                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader);
+                    break;
+                case NetEventType.Error:
+                    _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.AdditionalInfo);
+                    break;
+                case NetEventType.ConnectionLatencyUpdated:
+                    _netEventListener.OnNetworkLatencyUpdate(evt.Peer, evt.Latency);
+                    break;
+            }
+
+            //Recycle
+            evt.DataReader.Clear();
+            evt.Peer = null;
+            evt.AdditionalInfo = string.Empty;
+            evt.RemoteEndPoint = null;
+
+            lock (_netEventsPool)
+            {
+                _netEventsPool.Push(evt);
             }
         }
 
         public void PollEvents()
         {
+            if (UnsyncedEvents)
+                return;
+
             while (_netEventsQueue.Count > 0)
             {
                 NetEvent evt;
@@ -328,38 +377,7 @@ namespace LiteNetLib
                 {
                     evt = _netEventsQueue.Dequeue();
                 }
-                switch (evt.Type)
-                {
-                    case NetEventType.Connect:
-                        _netEventListener.OnPeerConnected(evt.Peer);
-                        break;
-                    case NetEventType.Disconnect:
-                        _netEventListener.OnPeerDisconnected(evt.Peer, evt.AdditionalInfo);
-                        break;
-                    case NetEventType.Receive:
-                        _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader);
-                        break;
-                    case NetEventType.ReceiveUnconnected:
-                        _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader);
-                        break;
-                    case NetEventType.Error:
-                        _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.AdditionalInfo);
-                        break;
-                    case NetEventType.ConnectionLatencyUpdated:
-                        _netEventListener.OnNetworkLatencyUpdate(evt.Peer, evt.Latency);
-                        break;
-                }
-
-                //Recycle
-                evt.DataReader.Clear();
-                evt.Peer = null;
-                evt.AdditionalInfo = string.Empty;
-                evt.RemoteEndPoint = null;
-
-                lock (_netEventsPool)
-                {
-                    _netEventsPool.Push(evt);
-                }
+                ProcessEvent(evt);
             }
         }
 
