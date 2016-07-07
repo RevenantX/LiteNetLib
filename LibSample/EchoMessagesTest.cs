@@ -137,7 +137,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetServer server = new NetServer(_serverListener, ConnectionAddressType.IPv6, 2, "myapp1");
+            NetServer server = new NetServer(_serverListener, 2, "myapp1");
             if (!server.Start(9050))
             {
                 Console.WriteLine("Server start failed");
@@ -149,7 +149,7 @@ namespace LibSample
             //Client
             _clientListener = new ClientListener();
 
-            NetClient client1 = new NetClient(_clientListener, "myapp1", ConnectionAddressType.IPv6);
+            NetClient client1 = new NetClient(_clientListener, "myapp1");
             if (!client1.Start())
             {
                 Console.WriteLine("Client1 start failed");
@@ -160,7 +160,7 @@ namespace LibSample
             client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
 
-            NetClient client2 = new NetClient(_clientListener, "myapp1", ConnectionAddressType.IPv6);
+            NetClient client2 = new NetClient(_clientListener, "myapp1");
             client2.Start();
             client2.Connect("::1", 9050);
 

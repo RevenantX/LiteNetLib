@@ -23,11 +23,6 @@ namespace LiteNetLib
             _connectKey = connectKey;
         }
 
-        public NetClient(INetEventListener listener, string connectKey, ConnectionAddressType addressType) : base(listener, addressType)
-        {
-            _connectKey = connectKey;
-        }
-
         public int Ping
         {
             get { return _peer == null ? 0 : _peer.Ping; }
@@ -105,7 +100,7 @@ namespace LiteNetLib
         public void Connect(string address, int port)
         {
             //Create target endpoint
-            NetEndPoint ep = new NetEndPoint(address, port, AddressType);
+            NetEndPoint ep = new NetEndPoint(address, port);
             Connect(ep);
         }
 

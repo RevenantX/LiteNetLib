@@ -108,19 +108,19 @@ namespace LibSample
                 _c2.Connect(point);
             };
 
-            _c1 = new NetClient(netListener, "gamekey", ConnectionAddressType.IPv6);
+            _c1 = new NetClient(netListener, "gamekey");
             _c1.PeerToPeerMode = true;
             _c1.NatPunchEnabled = true;
             _c1.NatPunchModule.Init(natPunchListener1);
             _c1.Start();
 
-            _c2 = new NetClient(netListener, "gamekey", ConnectionAddressType.IPv6);
+            _c2 = new NetClient(netListener, "gamekey");
             _c2.PeerToPeerMode = true;
             _c2.NatPunchEnabled = true;
             _c2.NatPunchModule.Init(natPunchListener2);
             _c2.Start();
 
-            _puncher = new NetClient(netListener, "notneed", ConnectionAddressType.IPv6);
+            _puncher = new NetClient(netListener, "notneed");
             _puncher.Start(ServerPort);
             _puncher.NatPunchEnabled = true;
             _puncher.NatPunchModule.Init(this);

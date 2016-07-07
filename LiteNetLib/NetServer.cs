@@ -19,19 +19,7 @@ namespace LiteNetLib
         /// <param name="listener">Listener of server events</param>
         /// <param name="maxClients">Maximum clients</param>
         /// <param name="key">Application key to identify connecting clients</param>
-        public NetServer(INetEventListener listener, int maxClients, string key) : this(listener, ConnectionAddressType.Dual, maxClients, key)
-        {
-   
-        }
-
-        /// <summary>
-        /// Creates server object
-        /// </summary>
-        /// <param name="listener">Listener of server events</param>
-        /// <param name="addressType">Type of connection IPv4 or IPv6</param>
-        /// <param name="maxClients">Maximum clients</param>
-        /// <param name="key">Application key to identify connecting clients</param>
-        public NetServer(INetEventListener listener, ConnectionAddressType addressType, int maxClients, string key) : base(listener, addressType)
+        public NetServer(INetEventListener listener, int maxClients, string key) : base(listener)
         {
             _peers = new Dictionary<NetEndPoint, NetPeer>();
             _peerConnectionIds = new Dictionary<NetEndPoint, ulong>();

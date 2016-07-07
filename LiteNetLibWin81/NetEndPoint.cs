@@ -9,20 +9,10 @@ namespace LiteNetLib
     {
         public string Host { get { return HostName.DisplayName; } }
         public int Port { get; private set; }
-        public ConnectionAddressType AddressType
-        {
-            get
-            {
-                return HostName.Type == HostNameType.Ipv4
-                    ? ConnectionAddressType.IPv4
-                    : ConnectionAddressType.IPv6;
-            }
-        }
-
         internal readonly HostName HostName;
         internal readonly string PortStr;
 
-        internal NetEndPoint(ConnectionAddressType addressType, int port)
+        internal NetEndPoint(int port)
         {
             HostName = null;
             PortStr = port.ToString();
@@ -100,11 +90,6 @@ namespace LiteNetLib
             HostName = task.Result[0].RemoteHostName;
             Port = port;
             PortStr = port.ToString();
-        }
-
-        public NetEndPoint(string hostName, int port, ConnectionAddressType addressType) : this(hostName, port)
-        {
-            
         }
 
         internal NetEndPoint(HostName hostName, string port)

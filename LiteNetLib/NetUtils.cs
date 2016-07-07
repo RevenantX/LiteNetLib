@@ -53,24 +53,17 @@ namespace LiteNetLib
 #endif
         }
 
-        public static string GetLocalIp(ConnectionAddressType connectionAddressType)
+        public static string GetLocalIp()
         {
 #if WINRT && !UNITY_EDITOR
             foreach (HostName localHostName in NetworkInformation.GetHostNames())
             {
                 if (localHostName.IPInformation != null)
                 {
-                    if (localHostName.Type == HostNameType.Ipv4)
-                    {
-                        return localHostName.ToString();
-                    }
+                    return localHostName.ToString();
                 }
             }
 #else
-            var addrFamily =
-                connectionAddressType == ConnectionAddressType.IPv4
-                    ? AddressFamily.InterNetwork
-                    : AddressFamily.InterNetworkV6;
             IPAddress lastAddress = null;
 
             try
@@ -81,9 +74,6 @@ namespace LiteNetLib
                         continue;
                     foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
                     {
-                        if (ip.Address.AddressFamily != addrFamily)
-                            continue;
-
                         if (ni.OperationalStatus == OperationalStatus.Up)
                             return ip.Address.ToString();
 
@@ -104,14 +94,11 @@ namespace LiteNetLib
                 var host = Dns.GetHostEntry(Dns.GetHostName());
                 foreach (IPAddress ip in host.AddressList)
                 {
-                    if (ip.AddressFamily == addrFamily)
-                    {
-                        return ip.ToString();
-                    }
+                    return ip.ToString();
                 }
             }
 #endif
-            return connectionAddressType == ConnectionAddressType.IPv4 ? "127.0.0.1" : "::1";
+            return "::1";
         }
 
         private static readonly object DebugLogLock = new object();
