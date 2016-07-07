@@ -86,6 +86,7 @@ namespace LiteNetLib
                 port = _localEndPoint.Port;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
+            _udpSocketv6.DontFragment = true;
             _udpSocketv6.Blocking = false;
             _udpSocketv6.ReceiveBufferSize = BufferSize;
             _udpSocketv6.SendBufferSize = BufferSize;
