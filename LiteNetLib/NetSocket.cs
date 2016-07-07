@@ -38,7 +38,7 @@ namespace LiteNetLib
             while (_running)
             {
                 //wait for data
-                if (!socket.Poll(1000, SelectMode.SelectRead))
+                if (!socket.Poll(100000, SelectMode.SelectRead))
                 {
                     continue;
                 }
@@ -133,13 +133,13 @@ namespace LiteNetLib
                 int result;
                 if (remoteEndPoint.EndPoint.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    if (!_udpSocketv4.Poll(1000, SelectMode.SelectWrite))
+                    if (!_udpSocketv4.Poll(5000, SelectMode.SelectWrite))
                         return -1;
                     result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
                 }
                 else
                 {
-                    if (!_udpSocketv6.Poll(1000, SelectMode.SelectWrite))
+                    if (!_udpSocketv6.Poll(5000, SelectMode.SelectWrite))
                         return -1;
                     result = _udpSocketv6.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
                 }
