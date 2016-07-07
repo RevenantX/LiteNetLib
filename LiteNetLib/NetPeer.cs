@@ -103,6 +103,11 @@ namespace LiteNetLib
             get { return (int)(DateTime.UtcNow - _lastPacketReceivedStart).TotalMilliseconds; }
         }
 
+        public NetBase Handler
+        {
+            get { return _peerListener; }
+        }
+
         internal NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
         {
             _id = remoteEndPoint.GetId();
@@ -329,12 +334,9 @@ namespace LiteNetLib
 
         internal void Recycle(NetPacket packet)
         {
+            packet.RawData = null;
             lock (_packetPool)
             {
-                if(packet.RawData != null)
-                    packet.IsFragmented = false;
-
-                packet.RawData = null;
                 _packetPool.Push(packet);
             }
         }
@@ -449,25 +451,9 @@ namespace LiteNetLib
             _lastPacketReceivedStart = DateTime.UtcNow;
         }
 
-#if DEBUG_LOSS
-        private readonly Random _packetLossRandom = new Random();
-        private int _packetLossChance = 10;
-#endif
-
-        private bool SimulatePacketLoss()
-        {
-#if DEBUG_LOSS
-            return _packetLossRandom.Next(100/_packetLossChance) == 0;
-#else
-            return false;
-#endif
-        }
-
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
-            if(SimulatePacketLoss())
-                return;
             _lastPacketReceivedStart = DateTime.UtcNow;
 
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
@@ -547,12 +533,14 @@ namespace LiteNetLib
             int errorCode = 0;
             if (_socket.SendTo(data, _remoteEndPoint, ref errorCode) == -1)
             {
-                if (errorCode != 0)
+                //10040 message to long... need to check
+                if (errorCode != 0 && errorCode != 10040)
                 {
-                    lock (_peerListener)
-                    {
-                        _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
-                    }
+                    _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
+                }
+                else if (errorCode == 10040)
+                {
+                    DebugWriteForce("[SRD] 10040, datalen: " + data.Length);
                 }
                 return false;
             }
@@ -627,6 +615,7 @@ namespace LiteNetLib
                 //Rtt update
                 _rtt = _avgRtt;
                 _ping = _avgRtt;
+                _peerListener.ConnectionLatencyUpdated(this, _ping);
                 _rttCount = 1;
             }
 

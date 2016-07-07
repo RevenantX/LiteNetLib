@@ -1,4 +1,4 @@
-#if WINRT
+#if WINRT && !UNITY_EDITOR
 using System;
 using Windows.Networking;
 using Windows.Networking.Sockets;
@@ -9,11 +9,20 @@ namespace LiteNetLib
     {
         public string Host { get { return HostName.DisplayName; } }
         public int Port { get; private set; }
+        public ConnectionAddressType AddressType
+        {
+            get
+            {
+                return HostName.Type == HostNameType.Ipv4
+                    ? ConnectionAddressType.IPv4
+                    : ConnectionAddressType.IPv6;
+            }
+        }
 
-        internal HostName HostName;
-        internal string PortStr;
+        internal readonly HostName HostName;
+        internal readonly string PortStr;
 
-        internal NetEndPoint(int port)
+        internal NetEndPoint(ConnectionAddressType addressType, int port)
         {
             HostName = null;
             PortStr = port.ToString();
@@ -37,26 +46,38 @@ namespace LiteNetLib
 
         internal long GetId()
         {
-            string hostIp;
+            //Check locals
             if (HostName == null)
             {
-                hostIp = "0.0.0.0";
+                return ParseIpToId("0.0.0.0");
             }
-            else if (HostName.DisplayName == "localhost")
+
+            if (HostName.DisplayName == "localhost")
             {
-                hostIp = "127.0.0.1";
+                return ParseIpToId("127.0.0.1");
             }
-            else
+
+            //Check remote
+            string hostIp = string.Empty;
+            var task = DatagramSocket.GetEndpointPairsAsync(HostName, "0").AsTask();
+            task.Wait();
+
+            //IPv4
+            foreach (var endpointPair in task.Result)
             {
-                var task = DatagramSocket.GetEndpointPairsAsync(HostName, "0").AsTask();
-                task.Wait();
-                var remoteHostName = task.Result[0].RemoteHostName;
-                hostIp = task.Result[0].RemoteHostName.CanonicalName;
-                if (remoteHostName.Type == HostNameType.DomainName || remoteHostName.Type == HostNameType.Ipv6)
+                hostIp = endpointPair.RemoteHostName.CanonicalName;
+                if (endpointPair.RemoteHostName.Type == HostNameType.Ipv4)
                 {
-                    return hostIp.GetHashCode() ^ Port;
+                    return ParseIpToId(hostIp);
                 }
             }
+
+            //Else
+            return hostIp.GetHashCode() ^ Port;
+        }
+
+        private long ParseIpToId(string hostIp)
+        {
             long id = 0;
             string[] ip = hostIp.Split('.');
             id |= long.Parse(ip[0]);
@@ -81,18 +102,16 @@ namespace LiteNetLib
             PortStr = port.ToString();
         }
 
+        public NetEndPoint(string hostName, int port, ConnectionAddressType addressType) : this(hostName, port)
+        {
+            
+        }
+
         internal NetEndPoint(HostName hostName, string port)
         {
             HostName = hostName;
             Port = int.Parse(port);
             PortStr = port;
-        }
-
-        internal void Set(HostName remoteAddress, string remotePort)
-        {
-            HostName = remoteAddress;
-            Port = int.Parse(remotePort);
-            PortStr = remotePort;
         }
     }
 }

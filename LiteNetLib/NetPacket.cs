@@ -3,7 +3,7 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    enum PacketProperty : byte
+    internal enum PacketProperty : byte
     {
         None,                   //0
         Reliable,               //1
@@ -24,9 +24,9 @@ namespace LiteNetLib
         MtuOk                   //16
     }
 
-    sealed class NetPacket
+    internal sealed class NetPacket
     {
-        const int LastProperty = 16;
+        private const int LastProperty = 16;
 
         //Header
         public PacketProperty Property

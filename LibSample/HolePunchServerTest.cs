@@ -24,18 +24,18 @@ namespace LibSample
         }
     }
 
-    class HolePunchServerTest
+    class HolePunchServerTest : INatPunchListener
     {
-        private const int ServerPort = 49292;
+        private const int ServerPort = 50010;
         private static readonly TimeSpan KickTime = new TimeSpan(0, 0, 6);
 
         private readonly Dictionary<string, WaitPeer> _waitingPeers = new Dictionary<string, WaitPeer>();
         private readonly List<string> _peersToRemove = new List<string>();
-        private NetBase _puncher;
-        private NetBase _c1;
-        private NetBase _c2;
+        private NetClient _puncher;
+        private NetClient _c1;
+        private NetClient _c2;
 
-        private void RequestIntroduction(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionRequest(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token)
         {
             WaitPeer wpeer;
             if (_waitingPeers.TryGetValue(token, out wpeer))
@@ -75,43 +75,86 @@ namespace LibSample
             }
         }
 
-        private void PunchSuccessC1(NetEndPoint targetEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionSuccess(NetEndPoint targetEndPoint, string token)
         {
-            Console.WriteLine("SuccessC1: " + targetEndPoint + ", Token: " + token);
-        }
-
-        private void PunchSuccessC2(NetEndPoint targetEndPoint, string token)
-        {
-            Console.WriteLine("SuccessC2: " + targetEndPoint + ", Token: " + token);
+            //Ignore we are server
         }
 
         public void Run()
         {
-            _c1 = new NetBase();
+            EventBasedNetListener netListener = new EventBasedNetListener();
+            EventBasedNatPunchListener natPunchListener1 = new EventBasedNatPunchListener();
+            EventBasedNatPunchListener natPunchListener2 = new EventBasedNatPunchListener();
+
+            netListener.PeerConnectedEvent += peer =>
+            {
+                Console.WriteLine("PeerConnected: " + peer.EndPoint.ToString());
+            };
+
+            netListener.PeerDisconnectedEvent += (peer, s) =>
+            {
+                Console.WriteLine("PeerDisconnected: " + s);
+            };
+
+            natPunchListener1.NatIntroductionSuccess += (point, token) =>
+            {
+                Console.WriteLine("Success C1. Connecting to C2: {0}", point);
+                _c1.Connect(point);
+            };
+
+            natPunchListener2.NatIntroductionSuccess += (point, token) =>
+            {
+                Console.WriteLine("Success C2. Connecting to C1: {0}", point);
+                _c2.Connect(point);
+            };
+
+            _c1 = new NetClient(netListener, "gamekey", ConnectionAddressType.IPv6);
+            _c1.PeerToPeerMode = true;
             _c1.NatPunchEnabled = true;
-            _c1.NatPunchModule.OnNatIntroductionSuccess += PunchSuccessC1;
-            //_c1.Start(0);
+            _c1.NatPunchModule.Init(natPunchListener1);
+            _c1.Start();
 
-            _c2 = new NetBase();
+            _c2 = new NetClient(netListener, "gamekey", ConnectionAddressType.IPv6);
+            _c2.PeerToPeerMode = true;
             _c2.NatPunchEnabled = true;
-            _c2.NatPunchModule.OnNatIntroductionSuccess += PunchSuccessC2;
-            //_c2.Start(0);
+            _c2.NatPunchModule.Init(natPunchListener2);
+            _c2.Start();
 
-            _puncher = new NetBase();
+            _puncher = new NetClient(netListener, "notneed", ConnectionAddressType.IPv6);
             _puncher.Start(ServerPort);
             _puncher.NatPunchEnabled = true;
-            _puncher.NatPunchModule.OnNatIntroductionRequest += RequestIntroduction;
+            _puncher.NatPunchModule.Init(this);
 
-            //_c1.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
-            //_c2.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("localhost", ServerPort), "token1");
+            _c1.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("::1", ServerPort), "token1");
+            _c2.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("::1", ServerPort), "token1");
 
             // keep going until ESCAPE is pressed
             Console.WriteLine("Press ESC to quit");
-            while (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Escape)
+
+            while (true)
             {
+                if (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey().Key;
+                    if (key == ConsoleKey.Escape)
+                    {
+                        break;
+                    }
+                    else if (key == ConsoleKey.A)
+                    {
+                        Console.WriteLine("C1 stopped");
+                        _c1.Stop();
+                    }
+                }
+                
                 DateTime nowTime = DateTime.Now;
 
-                _puncher.NatPunchModule.Update();
+                _c1.NatPunchModule.PollEvents();
+                _c2.NatPunchModule.PollEvents();
+                _puncher.NatPunchModule.PollEvents();
+                _c1.PollEvents();
+                _c2.PollEvents();
+
                 //check old peers
                 foreach (var waitPeer in _waitingPeers)
                 {

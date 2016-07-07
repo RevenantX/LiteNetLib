@@ -14,10 +14,10 @@ class Program
             Console.WriteLine("Synced time test: " + ntpSync.SyncedTime.Value);
         }
 
-        FragmentTest fragmentTest = new FragmentTest();
-        HolePunchServerTest holePunchServerTest = new HolePunchServerTest();
+        //HolePunchServerTest holePunchServerTest = new HolePunchServerTest();
         EchoMessagesTest echoMessagesTest = new EchoMessagesTest();
 
-        holePunchServerTest.Run();
+        //holePunchServerTest.Run();
+        echoMessagesTest.Run();
     }
 }

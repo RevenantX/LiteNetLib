@@ -1,29 +1,50 @@
-#if !WINRT
+#if !WINRT || UNITY_EDITOR
 using System;
 using System.Net;
 using System.Net.Sockets;
 
 namespace LiteNetLib
 {
-    sealed class NetSocket
+    internal sealed class NetSocket
     {
         private const int BufferSize = ushort.MaxValue;
         private readonly byte[] _receiveBuffer = new byte[NetConstants.PacketSizeLimit];
         private Socket _udpSocket;
+        private EndPoint _bufferEndPoint;
+        private const int SocketTTL = 255;
+        private readonly AddressFamily _socketAddressFamily;
 
-        public int ReceiveTimeout = 10;
+        public int ReceiveTimeout = 1000;
+
+        public NetSocket(ConnectionAddressType addrType)
+        {
+            _socketAddressFamily = 
+                addrType == ConnectionAddressType.IPv4 ? 
+                AddressFamily.InterNetwork : 
+                AddressFamily.InterNetworkV6;
+        }
 
         public bool Bind(ref NetEndPoint ep)
-        {            
+        {
+            _udpSocket = new Socket(_socketAddressFamily, SocketType.Dgram, ProtocolType.Udp);
+            if (_socketAddressFamily == AddressFamily.InterNetwork) //IPv4
+            {
+                _bufferEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                _udpSocket.DontFragment = true;
+                _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
+            }
+            else //IPv6
+            {
+                _bufferEndPoint = new IPEndPoint(IPAddress.IPv6Any, 0);
+            }
+            _udpSocket.Blocking = false;
+            _udpSocket.ReceiveBufferSize = BufferSize;
+            _udpSocket.SendBufferSize = BufferSize;
+
+            _udpSocket.EnableBroadcast = true;
+
             try
             {
-                _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, 255);
-                _udpSocket.Blocking = false;
-                _udpSocket.ReceiveBufferSize = BufferSize;
-                _udpSocket.SendBufferSize = BufferSize;
-                _udpSocket.DontFragment = true;
-                _udpSocket.EnableBroadcast = true;
                 _udpSocket.Bind(ep.EndPoint);
                 ep = new NetEndPoint((IPEndPoint)_udpSocket.LocalEndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);
@@ -31,7 +52,14 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                NetUtils.DebugWrite(ConsoleColor.Red, "[B]Bind exception: {0}", ex.ToString());
+                NetUtils.DebugWriteError("[B]Bind exception: {0}", ex.ToString());
+                //TODO: very temporary hack for iOS (Unity3D)
+                if (ex.ErrorCode == 10047)
+                {
+                    ep = new NetEndPoint((IPEndPoint)_udpSocket.LocalEndPoint);
+                    return true;
+                }
+
                 return false;
             }
         }
@@ -56,13 +84,13 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]" + ex);
+                NetUtils.DebugWriteError("[S]" + ex);
                 errorCode = ex.ErrorCode;
                 return -1;
             }
             catch (Exception ex)
             {
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]" + ex);
+                NetUtils.DebugWriteError("[S]" + ex);
                 return -1;
             }
         }
@@ -80,32 +108,23 @@ namespace LiteNetLib
             //Reading data
             try
             {
-                EndPoint p = remoteEndPoint.EndPoint;
-                result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref p);
-                remoteEndPoint = new NetEndPoint((IPEndPoint)p);
+                result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref _bufferEndPoint);
+                if (!remoteEndPoint.EndPoint.Equals(_bufferEndPoint))
+                {
+                    remoteEndPoint = new NetEndPoint((IPEndPoint)_bufferEndPoint);
+                }
             }
             catch (SocketException ex)
             {
-                NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Error code: {0} - {1}", ex.SocketErrorCode, ex.ToString());
+                NetUtils.DebugWriteError("[R]Error code: {0} - {1}", ex.SocketErrorCode, ex.ToString());
                 errorCode = (int) ex.SocketErrorCode;
                 return -1;
             }
 
             //All ok!
-            NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Recieved data from {0}, result: {1}", remoteEndPoint.ToString(), result);
+            NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Recieved data from {0}, result: {1}", remoteEndPoint.ToString(), result);
 
-            //Detecting bad data
-            if (result == 0)
-            {
-                NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (0)");
-                return 0;
-            }
-
-            if (result < NetConstants.HeaderSize)
-            {
-                NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Bad data (D<HS)");
-                return 0;
-            }
+            //Assign data
             data = _receiveBuffer;
 
             //Creating packet from data

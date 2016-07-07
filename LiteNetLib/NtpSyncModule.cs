@@ -10,11 +10,11 @@ namespace LiteNetLib
 
         public NtpSyncModule(string ntpServer)
         {
-            _socket = new NetSocket();
-            NetEndPoint ourEndPoint = new NetEndPoint(0);
+            _ntpEndPoint = new NetEndPoint(ntpServer, 123);
+            _socket = new NetSocket(_ntpEndPoint.AddressType);
+            NetEndPoint ourEndPoint = new NetEndPoint(_ntpEndPoint.AddressType, 0);
             _socket.Bind(ref ourEndPoint);
             _socket.ReceiveTimeout = 3000;
-            _ntpEndPoint = new NetEndPoint(ntpServer, 123);
             SyncedTime = null;
         }
 
@@ -33,7 +33,7 @@ namespace LiteNetLib
             _socket.SendTo(ntpData, _ntpEndPoint);
 
             //receive
-            NetEndPoint endPoint = new NetEndPoint(0);
+            NetEndPoint endPoint = new NetEndPoint(ConnectionAddressType.IPv4, 0);
             int errorCode = 0;
             if (_socket.ReceiveFrom(ref ntpData, ref endPoint, ref errorCode) > 0 && endPoint.Equals(_ntpEndPoint))
             {

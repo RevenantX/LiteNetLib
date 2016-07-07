@@ -1,4 +1,4 @@
-#if WINRT
+#if WINRT && !UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -7,9 +7,9 @@ using Windows.Storage.Streams;
 
 namespace LiteNetLib
 {
-    sealed class NetSocket
+    internal sealed class NetSocket
     {
-        private readonly DatagramSocket _datagramSocket;
+        private DatagramSocket _datagramSocket;
         private readonly Dictionary<NetEndPoint, DataWriter> _peers = new Dictionary<NetEndPoint, DataWriter>();
         private readonly Queue<IncomingData> _incomingData = new Queue<IncomingData>();
         private readonly AutoResetEvent _receiveWaiter = new AutoResetEvent(false);
@@ -23,13 +23,10 @@ namespace LiteNetLib
         public int ReceiveTimeout = 10;
 
         //Socket constructor
-        public NetSocket()
+        public NetSocket(ConnectionAddressType connectionAddressType)
         {
-            _datagramSocket = new DatagramSocket();
-            _datagramSocket.Control.DontFragment = true;
-            _datagramSocket.MessageReceived += OnMessageReceived;
-        }
 
+        }
         
         private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
@@ -52,6 +49,10 @@ namespace LiteNetLib
         //Bind socket to port
         public bool Bind(ref NetEndPoint ep)
         {
+            _datagramSocket = new DatagramSocket();
+            _datagramSocket.Control.DontFragment = true;
+            _datagramSocket.MessageReceived += OnMessageReceived;
+
             try
             {
                 if (ep.HostName == null)
@@ -111,15 +112,30 @@ namespace LiteNetLib
             return data.Length;
         }
 
+        internal void RemovePeer(NetEndPoint ep)
+        {
+            _peers.Remove(ep);
+        }
+
         //Close socket
         public void Close()
+        {
+            _datagramSocket.MessageReceived -= OnMessageReceived;
+            _datagramSocket.Dispose();
+            _datagramSocket = null;
+
+            _receiveWaiter.Reset();
+            ClearPeers();
+            _incomingData.Clear();
+        }
+
+        internal void ClearPeers()
         {
             foreach (var dataWriter in _peers)
             {
                 dataWriter.Value.Dispose();
             }
             _peers.Clear();
-            _datagramSocket.Dispose();
         }
     }
 }
