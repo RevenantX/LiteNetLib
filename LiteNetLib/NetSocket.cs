@@ -31,7 +31,7 @@ namespace LiteNetLib
 
         private void ReceiveLogic(object state)
         {
-            Socket socket = (Socket) state;
+            Socket socket = (Socket)state;
             EndPoint bufferEndPoint = new IPEndPoint(socket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
             NetEndPoint bufferNetEndPoint = new NetEndPoint((IPEndPoint)bufferEndPoint);
 
@@ -93,9 +93,11 @@ namespace LiteNetLib
 
             _running = true;
             _threadv4 = new Thread(ReceiveLogic);
-            _threadv4.Start();
+            _threadv4.IsBackground = true;
+            _threadv4.Start(_udpSocketv4);
             _threadv6 = new Thread(ReceiveLogic);
-            _threadv6.Start();
+            _threadv6.IsBackground = true;
+            _threadv6.Start(_udpSocketv6);
 
             return true;
         }

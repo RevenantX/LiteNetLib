@@ -83,6 +83,7 @@ namespace LiteNetLib
             }
             catch (Exception)
             {
+                errorCode = -1;
                 return -1;
             }
         }
