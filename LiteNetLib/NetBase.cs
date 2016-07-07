@@ -384,6 +384,30 @@ namespace LiteNetLib
         {
             while (_running)
             {
+#if DEBUG
+                if (SimulateLatency)
+                {
+                    var node = _pingSimulationList.First;
+                    var time = DateTime.UtcNow;
+                    while (node != null)
+                    {
+                        var incomingData = node.Value;
+                        if (incomingData.TimeWhenGet <= time)
+                        {
+                            DataReceived(incomingData.Data, incomingData.Data.Length, incomingData.EndPoint);
+                            var nodeToRemove = node;
+                            node = node.Next;
+
+                            lock (_pingSimulationList)
+                                _pingSimulationList.Remove(nodeToRemove);
+                        }
+                        else
+                        {
+                            node = node.Next;
+                        }
+                    }
+                }
+#endif
                 PostProcessEvent(UpdateTime);
 #if WINRT && !UNITY_EDITOR
                 _updateWaiter.WaitOne(UpdateTime);
@@ -412,10 +436,12 @@ namespace LiteNetLib
                     {
                         byte[] holdedData = new byte[length];
                         Buffer.BlockCopy(data, 0, holdedData, 0, length);
-                        _pingSimulationList.AddFirst(new IncomingData
-                        {
-                            Data = holdedData, EndPoint = remoteEndPoint, TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
-                        });
+
+                        lock(_pingSimulationList)
+                            _pingSimulationList.AddFirst(new IncomingData
+                            {
+                                Data = holdedData, EndPoint = remoteEndPoint, TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
+                            });
                         receivePacket = false;
                     }
                 }
@@ -434,31 +460,8 @@ namespace LiteNetLib
                     NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error: " + errorCode);
                     ProcessError("Receive socket error: " + errorCode);
                     Stop();
-                    return;
                 }
             }
-#if DEBUG
-            if (SimulateLatency)
-            {
-                var node = _pingSimulationList.First;
-                var time = DateTime.UtcNow;
-                while (node != null)
-                {
-                    var incomingData = node.Value;
-                    if (incomingData.TimeWhenGet <= time)
-                    {
-                        DataReceived(incomingData.Data, incomingData.Data.Length, incomingData.EndPoint);
-                        var nodeToRemove = node;
-                        node = node.Next;
-                        _pingSimulationList.Remove(nodeToRemove);
-                    }
-                    else
-                    {
-                        node = node.Next;
-                    }
-                }
-            }
-#endif
         }
 
         private void DataReceived(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)

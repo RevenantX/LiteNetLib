@@ -77,9 +77,13 @@ namespace LiteNetLib
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(IPAddress.Any, port)))
             {
-                _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv6.LocalEndPoint);
                 return false;
             }
+            _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv4.LocalEndPoint);
+
+            //Use one port for two sockets
+            if (port == 0)
+                port = _localEndPoint.Port;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv6.Blocking = false;
@@ -107,7 +111,7 @@ namespace LiteNetLib
             try
             {
                 socket.Bind(ep);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
             }
             catch (SocketException ex)
             {

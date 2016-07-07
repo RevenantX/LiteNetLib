@@ -11,7 +11,7 @@ namespace LiteNetLib
         private DatagramSocket _datagramSocket;
         private readonly Dictionary<NetEndPoint, Stream> _peers = new Dictionary<NetEndPoint, Stream>();
         private readonly NetBase.OnMessageReceived _onMessageReceived;
-        private readonly byte[] _buffer = new byte[65535];
+        private readonly byte[] _buffer = new byte[NetConstants.PacketSizeLimit];
         private NetEndPoint _bufferEndPoint;
         private NetEndPoint _localEndPoint;
 
