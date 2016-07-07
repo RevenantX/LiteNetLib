@@ -19,7 +19,7 @@ namespace LiteNetLib
         /// <param name="listener">Listener of server events</param>
         /// <param name="maxClients">Maximum clients</param>
         /// <param name="key">Application key to identify connecting clients</param>
-        public NetServer(INetEventListener listener, int maxClients, string key) : this(listener, ConnectionAddressType.IPv4, maxClients, key)
+        public NetServer(INetEventListener listener, int maxClients, string key) : this(listener, ConnectionAddressType.Dual, maxClients, key)
         {
    
         }

@@ -12,7 +12,8 @@ namespace LiteNetLib
     public enum ConnectionAddressType
     {
         IPv4,
-        IPv6
+        IPv6,
+        Dual
     }
 
     internal sealed class FlowMode
@@ -128,7 +129,7 @@ namespace LiteNetLib
             return _flowModes[flowMode].StartRtt;
         }
 
-        protected NetBase(INetEventListener listener) : this(listener, ConnectionAddressType.IPv4)
+        protected NetBase(INetEventListener listener) : this(listener, ConnectionAddressType.Dual)
         {
         }
 

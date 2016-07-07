@@ -9,46 +9,66 @@ namespace LiteNetLib
     {
         private const int BufferSize = ushort.MaxValue;
         private readonly byte[] _receiveBuffer = new byte[NetConstants.PacketSizeLimit];
-        private Socket _udpSocket;
-        private EndPoint _bufferEndPoint;
+        private Socket _udpSocketv4;
+        private Socket _udpSocketv6;
+        private EndPoint _bufferEndPointv4;
+        private EndPoint _bufferEndPointv6;
         private const int SocketTTL = 255;
-        private readonly AddressFamily _socketAddressFamily;
+        private readonly ConnectionAddressType _connectionAddressType;
 
         public int ReceiveTimeout = 1000;
 
         public NetSocket(ConnectionAddressType addrType)
         {
-            _socketAddressFamily = 
-                addrType == ConnectionAddressType.IPv4 ? 
-                AddressFamily.InterNetwork : 
-                AddressFamily.InterNetworkV6;
+            _connectionAddressType = addrType;
         }
 
-        public bool Bind(ref NetEndPoint ep)
+        public bool Bind()
         {
-            _udpSocket = new Socket(_socketAddressFamily, SocketType.Dgram, ProtocolType.Udp);
-            if (_socketAddressFamily == AddressFamily.InterNetwork) //IPv4
+            if (_connectionAddressType == ConnectionAddressType.IPv4 ||
+                _connectionAddressType == ConnectionAddressType.Dual)
             {
-                _bufferEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                _udpSocket.DontFragment = true;
-                _udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
+                _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                _udpSocketv4.DontFragment = true;
+                _udpSocketv4.Blocking = false;
+                _udpSocketv4.ReceiveBufferSize = BufferSize;
+                _udpSocketv4.SendBufferSize = BufferSize;
+                _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
+
+                _bufferEndPointv4 = new IPEndPoint(IPAddress.Any, 0);
+
+
+                if (!BindSocket(_udpSocketv4, new IPEndPoint(IPAddress.Any, 0)))
+                {
+                    return false;
+                }
             }
-            else //IPv6
+
+            if (_connectionAddressType == ConnectionAddressType.IPv6 ||
+                _connectionAddressType == ConnectionAddressType.Dual)
             {
-                _bufferEndPoint = new IPEndPoint(IPAddress.IPv6Any, 0);
+                _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
+                _udpSocketv6.Blocking = false;
+                _udpSocketv6.ReceiveBufferSize = BufferSize;
+                _udpSocketv6.SendBufferSize = BufferSize;
+
+                _bufferEndPointv6 = new IPEndPoint(IPAddress.IPv6Any, 0);
+
+                if(!BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, 0)))
+                {
+                    return false;
+                }
             }
-            _udpSocket.Blocking = false;
-            _udpSocket.ReceiveBufferSize = BufferSize;
-            _udpSocket.SendBufferSize = BufferSize;
 
-            _udpSocket.EnableBroadcast = true;
+            return true;
+        }
 
+        private bool BindSocket(Socket socket, EndPoint ep)
+        {
             try
             {
-                _udpSocket.Bind(ep.EndPoint);
-                ep = new NetEndPoint((IPEndPoint)_udpSocket.LocalEndPoint);
+                socket.Bind(ep);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ep.Port);
-                return true;
             }
             catch (SocketException ex)
             {
@@ -56,12 +76,11 @@ namespace LiteNetLib
                 //TODO: very temporary hack for iOS (Unity3D)
                 if (ex.ErrorCode == 10047)
                 {
-                    ep = new NetEndPoint((IPEndPoint)_udpSocket.LocalEndPoint);
                     return true;
                 }
-
                 return false;
             }
+            return true;
         }
 
         public int SendTo(byte[] data, NetEndPoint remoteEndPoint)
@@ -78,8 +97,7 @@ namespace LiteNetLib
                     return -1;
 
                 int result = _udpSocket.SendTo(data, remoteEndPoint.EndPoint);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint.EndPoint,
-                    result);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint.EndPoint, result);
                 return result;
             }
             catch (SocketException ex)
@@ -98,7 +116,7 @@ namespace LiteNetLib
         public int ReceiveFrom(ref byte[] data, ref NetEndPoint remoteEndPoint, ref int errorCode)
         {
             //wait for data
-            if (!_udpSocket.Poll(ReceiveTimeout * 1000, SelectMode.SelectRead))
+            if (!_udpSocket.Poll(ReceiveTimeout*1000, SelectMode.SelectRead))
             {
                 return 0;
             }
@@ -111,7 +129,7 @@ namespace LiteNetLib
                 result = _udpSocket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref _bufferEndPoint);
                 if (!remoteEndPoint.EndPoint.Equals(_bufferEndPoint))
                 {
-                    remoteEndPoint = new NetEndPoint((IPEndPoint)_bufferEndPoint);
+                    remoteEndPoint = new NetEndPoint((IPEndPoint) _bufferEndPoint);
                 }
             }
             catch (SocketException ex)
@@ -133,9 +151,18 @@ namespace LiteNetLib
 
         public void Close()
         {
-            _udpSocket.Close();
-            _udpSocket = null;
+            if (_udpSocketv4 != null)
+            {
+                _udpSocketv4.Close();
+                _udpSocketv4 = null;
+            }
+            if (_udpSocketv6 != null)
+            {
+                _udpSocketv6.Close();
+                _udpSocketv6 = null;
+            }
         }
     }
 }
+
 #endif
