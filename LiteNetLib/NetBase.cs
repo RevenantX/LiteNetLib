@@ -241,9 +241,8 @@ namespace LiteNetLib
             if (!_running)
                 return false;
 
-            bool result;
             int errorCode = 0;
-            result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode) > 0;
+            bool result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode) > 0;
 
             //10040 message to long... need to check
             if (errorCode != 0 && errorCode != 10040)

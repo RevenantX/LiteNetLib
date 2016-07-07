@@ -9,7 +9,6 @@ namespace LiteNetLib
     internal sealed class NetSocket
     {
         private const int BufferSize = ushort.MaxValue;
-        private readonly byte[] _receiveBuffer = new byte[NetConstants.PacketSizeLimit];
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
         private NetEndPoint _localEndPoint;
@@ -34,6 +33,7 @@ namespace LiteNetLib
             Socket socket = (Socket)state;
             EndPoint bufferEndPoint = new IPEndPoint(socket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
             NetEndPoint bufferNetEndPoint = new NetEndPoint((IPEndPoint)bufferEndPoint);
+            byte[] receiveBuffer = new byte[NetConstants.PacketSizeLimit];
 
             while (_running)
             {
@@ -48,7 +48,7 @@ namespace LiteNetLib
                 //Reading data
                 try
                 {
-                    result = socket.ReceiveFrom(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
+                    result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
                     if (!bufferNetEndPoint.EndPoint.Equals(bufferEndPoint))
                     {
                         bufferNetEndPoint = new NetEndPoint((IPEndPoint)bufferEndPoint);
@@ -63,18 +63,18 @@ namespace LiteNetLib
 
                 //All ok!
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Recieved data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
-                _onMessageReceived(_receiveBuffer, result, 0, bufferNetEndPoint);
+                _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
             }
         }
 
         public bool Bind(int port)
         {
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _udpSocketv4.DontFragment = true;
             _udpSocketv4.Blocking = false;
             _udpSocketv4.ReceiveBufferSize = BufferSize;
             _udpSocketv4.SendBufferSize = BufferSize;
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
+            _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DontFragment, true);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(IPAddress.Any, port)))
             {
                 return false;
@@ -86,7 +86,6 @@ namespace LiteNetLib
                 port = _localEndPoint.Port;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
-            _udpSocketv6.DontFragment = true;
             _udpSocketv6.Blocking = false;
             _udpSocketv6.ReceiveBufferSize = BufferSize;
             _udpSocketv6.SendBufferSize = BufferSize;

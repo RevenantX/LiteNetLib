@@ -165,14 +165,14 @@ namespace LiteNetLib
             NetEndPoint remoteExternal = dr.GetNetEndPoint();
             string token = dr.GetString(MaxTokenLength);
 
-            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NAT] introduction received; we are designated " + (hostByte == HostByte ? "host" : "client"));
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] introduction received; we are designated " + (hostByte == HostByte ? "host" : "client"));
             NetDataWriter writer = new NetDataWriter();
 
             // send internal punch
             writer.Put(hostByte);
             writer.Put(token);
             _netBase.SendRaw(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteInternal);
-            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NAT] internal punch sent to " + remoteInternal);
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] internal punch sent to " + remoteInternal);
 
             // send external punch
             writer.Reset();
