@@ -9,12 +9,6 @@ using Windows.System.Threading;
 
 namespace LiteNetLib
 {
-    public enum ConnectionAddressType
-    {
-        IPv4,
-        IPv6
-    }
-
     internal sealed class FlowMode
     {
         public int PacketsPerSecond;
@@ -23,6 +17,8 @@ namespace LiteNetLib
 
     public abstract class NetBase
     {
+        public delegate void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint);
+
         protected enum NetEventType
         {
             Connect,
@@ -55,16 +51,12 @@ namespace LiteNetLib
 
         private readonly NetSocket _socket;
         private readonly List<FlowMode> _flowModes;
-        private NetEndPoint _localEndPoint;
-        private readonly ConnectionAddressType _addressType;
 
 #if WINRT && !UNITY_EDITOR
         private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
 #else
         private Thread _logicThread;
-        private Thread _receiveThread;
 #endif
-        private NetEndPoint _remoteEndPoint;
 
         private bool _running;
         private readonly Queue<NetEvent> _netEventsQueue;
@@ -89,11 +81,6 @@ namespace LiteNetLib
 
         //modules
         public readonly NatPunchModule NatPunchModule;
-
-        public ConnectionAddressType AddressType
-        {
-            get { return _addressType; }
-        }
 
         public void AddFlowMode(int startRtt, int packetsPerSecond)
         {
@@ -128,19 +115,13 @@ namespace LiteNetLib
             return _flowModes[flowMode].StartRtt;
         }
 
-        protected NetBase(INetEventListener listener) : this(listener, ConnectionAddressType.IPv4)
+        protected NetBase(INetEventListener listener)
         {
-        }
-
-        protected NetBase(INetEventListener listener, ConnectionAddressType addressType)
-        {
-            _socket = new NetSocket(addressType);
-            _addressType = addressType;
+            _socket = new NetSocket(ReceiveLogic);
             _netEventListener = listener;
             _flowModes = new List<FlowMode>();
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
-            _remoteEndPoint = new NetEndPoint(_addressType, 0);
             NatPunchModule = new NatPunchModule(this, _socket);
         }
 
@@ -193,8 +174,7 @@ namespace LiteNetLib
             }
 
             _netEventsQueue.Clear();
-            _localEndPoint = new NetEndPoint(_addressType, port);
-            if (!_socket.Bind(ref _localEndPoint))
+            if (!_socket.Bind(port))
                 return false;
 
             _running = true;
@@ -203,18 +183,10 @@ namespace LiteNetLib
                 a => UpdateLogic(), 
                 WorkItemPriority.Normal, 
                 WorkItemOptions.TimeSliced).AsTask();
-
-            ThreadPool.RunAsync(
-                a => ReceiveLogic(), 
-                WorkItemPriority.Normal,
-                WorkItemOptions.TimeSliced).AsTask();
 #else
             _logicThread = new Thread(UpdateLogic);
-            _receiveThread = new Thread(ReceiveLogic);
             _logicThread.IsBackground = true;
             _logicThread.Start();
-            _receiveThread.IsBackground = true;
-            _receiveThread.Start();
 #endif
             return true;
         }
@@ -256,7 +228,35 @@ namespace LiteNetLib
             NetPacket p = new NetPacket();
             p.Init(PacketProperty.UnconnectedMessage, length);
             p.PutData(message, start, length);
-            return _socket.SendTo(p.RawData, remoteEndPoint) > 0;
+            return SendRaw(p.RawData, 0, p.RawData.Length, remoteEndPoint);
+        }
+
+        internal bool SendRaw(byte[] message, NetEndPoint remoteEndPoint)
+        {
+            return SendRaw(message, 0, message.Length, remoteEndPoint);
+        }
+
+        internal bool SendRaw(byte[] message, int start, int length, NetEndPoint remoteEndPoint)
+        {
+            if (!_running)
+                return false;
+
+            int errorCode = 0;
+            bool result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode) > 0;
+
+            //10040 message to long... need to check
+            if (errorCode != 0 && errorCode != 10040)
+            {
+                ProcessSendError(remoteEndPoint, errorCode.ToString());
+                return false;
+            }
+            else if (errorCode == 10040)
+            {
+                NetUtils.DebugWriteForce(ConsoleColor.Red, "[SRD] 10040, datalen: {0}", length);
+                return false;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -270,10 +270,7 @@ namespace LiteNetLib
 #if !WINRT || UNITY_EDITOR
                 if(Thread.CurrentThread != _logicThread)
                     _logicThread.Join();
-                if(Thread.CurrentThread != _receiveThread)
-                    _receiveThread.Join();
                 _logicThread = null;
-                _receiveThread = null;
 #endif
                 _socket.Close();
             }
@@ -292,7 +289,7 @@ namespace LiteNetLib
         /// </summary>
         public NetEndPoint LocalEndPoint
         {
-            get { return _localEndPoint; }
+            get { return _socket.LocalEndPoint; }
         }
 
         protected NetEvent CreateEvent(NetEventType type)
@@ -386,66 +383,6 @@ namespace LiteNetLib
         {
             while (_running)
             {
-                PostProcessEvent(UpdateTime);
-#if WINRT && !UNITY_EDITOR
-                _updateWaiter.WaitOne(UpdateTime);
-#else
-                Thread.Sleep(UpdateTime);
-#endif
-            }
-        }
-
-        private void ReceiveLogic()
-        {
-            while (_running)
-            {
-                int errorCode = 0;
-
-                //Receive some info
-                byte[] reusableBuffer = null;
-                int result = _socket.ReceiveFrom(ref reusableBuffer, ref _remoteEndPoint, ref errorCode);
-
-                if (result > 0)
-                {
-#if DEBUG
-                    bool receivePacket = true;
-
-                    if (SimulatePacketLoss && _randomGenerator.Next(100/SimulationPacketLossChance) == 0)
-                    {
-                        receivePacket = false;
-                    }
-                    else if (SimulateLatency)
-                    {
-                        int latency = _randomGenerator.Next(SimulationMaxLatency);
-                        if (latency > 5)
-                        {
-                            byte[] holdedData = new byte[result];
-                            Buffer.BlockCopy(reusableBuffer, 0, holdedData, 0, result);
-                            _pingSimulationList.AddFirst(new IncomingData
-                            {
-                                Data = holdedData, EndPoint = _remoteEndPoint, TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
-                            });
-                            receivePacket = false;
-                        }
-                    }
-
-                    if (receivePacket) //DataReceived
-#endif
-                        //ProcessEvents
-                        DataReceived(reusableBuffer, result, _remoteEndPoint);
-                }
-                else if (result < 0)
-                {
-                    //10054 - remote close (not error)
-                    //10040 - message too long (just for protection)
-                    if (errorCode != 10054 && errorCode != 10040)
-                    {
-                        NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error: " + errorCode);
-                        ProcessError("Receive socket error: " + errorCode);
-                        Stop();
-                        return;
-                    }
-                }
 #if DEBUG
                 if (SimulateLatency)
                 {
@@ -459,7 +396,9 @@ namespace LiteNetLib
                             DataReceived(incomingData.Data, incomingData.Data.Length, incomingData.EndPoint);
                             var nodeToRemove = node;
                             node = node.Next;
-                            _pingSimulationList.Remove(nodeToRemove);
+
+                            lock (_pingSimulationList)
+                                _pingSimulationList.Remove(nodeToRemove);
                         }
                         else
                         {
@@ -468,6 +407,59 @@ namespace LiteNetLib
                     }
                 }
 #endif
+                PostProcessEvent(UpdateTime);
+#if WINRT && !UNITY_EDITOR
+                _updateWaiter.WaitOne(UpdateTime);
+#else
+                Thread.Sleep(UpdateTime);
+#endif
+            }
+        }
+
+        private void ReceiveLogic(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint)
+        {
+            //Receive some info
+            if (errorCode == 0)
+            {
+#if DEBUG
+                bool receivePacket = true;
+
+                if (SimulatePacketLoss && _randomGenerator.Next(100/SimulationPacketLossChance) == 0)
+                {
+                    receivePacket = false;
+                }
+                else if (SimulateLatency)
+                {
+                    int latency = _randomGenerator.Next(SimulationMaxLatency);
+                    if (latency > 5)
+                    {
+                        byte[] holdedData = new byte[length];
+                        Buffer.BlockCopy(data, 0, holdedData, 0, length);
+
+                        lock(_pingSimulationList)
+                            _pingSimulationList.AddFirst(new IncomingData
+                            {
+                                Data = holdedData, EndPoint = remoteEndPoint, TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
+                            });
+                        receivePacket = false;
+                    }
+                }
+
+                if (receivePacket) //DataReceived
+#endif
+                    //ProcessEvents
+                    DataReceived(data, length, remoteEndPoint);
+            }
+            else
+            {
+                //10054 - remote close (not error)
+                //10040 - message too long (just for protection)
+                if (errorCode != 10054 && errorCode != 10040)
+                {
+                    NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error: " + errorCode);
+                    ProcessError("Receive socket error: " + errorCode);
+                    Stop();
+                }
             }
         }
 

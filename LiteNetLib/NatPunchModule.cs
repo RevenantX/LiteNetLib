@@ -49,7 +49,6 @@ namespace LiteNetLib
         }
 
         private readonly NetBase _netBase;
-        private readonly NetSocket _socket;
         private readonly Queue<RequestEventData> _requestEvents;
         private readonly Queue<SuccessEventData> _successEvents; 
         private const byte HostByte = 1;
@@ -61,7 +60,6 @@ namespace LiteNetLib
         internal NatPunchModule(NetBase netBase, NetSocket socket)
         {
             _netBase = netBase;
-            _socket = socket;
             _requestEvents = new Queue<RequestEventData>();
             _successEvents = new Queue<SuccessEventData>();
         }
@@ -87,7 +85,7 @@ namespace LiteNetLib
             dw.Put(hostExternal);
             dw.Put(additionalInfo, MaxTokenLength);
 
-            _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatIntroduction, dw), clientExternal);
+            _netBase.SendRaw(NetPacket.CreateRawPacket(PacketProperty.NatIntroduction, dw), clientExternal);
 
             //Second packet (client)
             //send to server
@@ -97,7 +95,7 @@ namespace LiteNetLib
             dw.Put(clientExternal);
             dw.Put(additionalInfo, MaxTokenLength);
 
-            _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatIntroduction, dw), hostExternal);
+            _netBase.SendRaw(NetPacket.CreateRawPacket(PacketProperty.NatIntroduction, dw), hostExternal);
         }
 
         public void PollEvents()
@@ -129,14 +127,14 @@ namespace LiteNetLib
 
             //prepare outgoing data
             NetDataWriter dw = new NetDataWriter();
-            string networkIp = NetUtils.GetLocalIp(_netBase.AddressType);
+            string networkIp = NetUtils.GetLocalIp();
             int networkPort = _netBase.LocalEndPoint.Port;
             NetEndPoint localEndPoint = new NetEndPoint(networkIp, networkPort);
             dw.Put(localEndPoint);
             dw.Put(additionalInfo, MaxTokenLength);
 
             //prepare packet
-            _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatIntroductionRequest, dw), masterServerEndPoint);
+            _netBase.SendRaw(NetPacket.CreateRawPacket(PacketProperty.NatIntroductionRequest, dw), masterServerEndPoint);
         }
 
         private void HandleNatPunch(NetEndPoint senderEndPoint, NetDataReader dr)
@@ -167,20 +165,20 @@ namespace LiteNetLib
             NetEndPoint remoteExternal = dr.GetNetEndPoint();
             string token = dr.GetString(MaxTokenLength);
 
-            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NAT] introduction received; we are designated " + (hostByte == HostByte ? "host" : "client"));
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] introduction received; we are designated " + (hostByte == HostByte ? "host" : "client"));
             NetDataWriter writer = new NetDataWriter();
 
             // send internal punch
             writer.Put(hostByte);
             writer.Put(token);
-            _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteInternal);
-            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NAT] internal punch sent to " + remoteInternal);
+            _netBase.SendRaw(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteInternal);
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] internal punch sent to " + remoteInternal);
 
             // send external punch
             writer.Reset();
             writer.Put(hostByte);
             writer.Put(token);
-            _socket.SendTo(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteExternal);
+            _netBase.SendRaw(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteExternal);
             NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NAT] exrernal punch sent to " + remoteExternal);
         }
 

@@ -23,11 +23,6 @@ namespace LiteNetLib
             _connectKey = connectKey;
         }
 
-        public NetClient(INetEventListener listener, string connectKey, ConnectionAddressType addressType) : base(listener, addressType)
-        {
-            _connectKey = connectKey;
-        }
-
         public int Ping
         {
             get { return _peer == null ? 0 : _peer.Ping; }
@@ -64,7 +59,7 @@ namespace LiteNetLib
                     //Send disconnect data
                     var disconnectPacket = NetPacket.CreateRawPacket(PacketProperty.Disconnect, 8);
                     FastBitConverter.GetBytes(disconnectPacket, 1, _connectId);
-                    _peer.SendRawData(disconnectPacket);
+                    SendRaw(disconnectPacket, _peer.EndPoint);
                 }
 
                 //Close threads and socket close
@@ -105,7 +100,7 @@ namespace LiteNetLib
         public void Connect(string address, int port)
         {
             //Create target endpoint
-            NetEndPoint ep = new NetEndPoint(address, port, AddressType);
+            NetEndPoint ep = new NetEndPoint(address, port);
             Connect(ep);
         }
 
@@ -123,6 +118,7 @@ namespace LiteNetLib
 
             //Create connect id for proper connection
             _connectId = (ulong)DateTime.UtcNow.Ticks;
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}", _connectId);
 
             //Create reliable connection
             _peer = CreatePeer(target);
@@ -147,7 +143,7 @@ namespace LiteNetLib
             Buffer.BlockCopy(keyData, 0, connectPacket, 9, keyData.Length);
 
             //Send raw
-            _peer.SendRawData(connectPacket);
+            SendRaw(connectPacket, _peer.EndPoint);
         }
 
         protected override void PostProcessEvent(int deltaTime)
@@ -248,7 +244,7 @@ namespace LiteNetLib
                 }
 
                 //Send raw
-                _peer.SendRawData(connectPacket);
+                SendRaw(connectPacket, remoteEndPoint);
 
                 //clean incoming packet
                 _peer.Recycle(packet);

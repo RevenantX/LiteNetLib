@@ -29,8 +29,7 @@ namespace LiteNetLib
         private DateTime _pingTimeStart;
         private DateTime _lastPacketReceivedStart;
 
-        //Common
-        private readonly NetSocket _socket;              
+        //Common            
         private readonly Stack<NetPacket> _packetPool;
         private readonly NetEndPoint _remoteEndPoint;
         private readonly long _id;
@@ -113,7 +112,6 @@ namespace LiteNetLib
             _id = remoteEndPoint.GetId();
             _peerListener = peerListener;
             
-            _socket = socket;
             _remoteEndPoint = remoteEndPoint;
 
             _avgRtt = 0;
@@ -530,21 +528,7 @@ namespace LiteNetLib
 
         internal bool SendRawData(byte[] data)
         {
-            int errorCode = 0;
-            if (_socket.SendTo(data, _remoteEndPoint, ref errorCode) == -1)
-            {
-                //10040 message to long... need to check
-                if (errorCode != 0 && errorCode != 10040)
-                {
-                    _peerListener.ProcessSendError(_remoteEndPoint, errorCode.ToString());
-                }
-                else if (errorCode == 10040)
-                {
-                    DebugWriteForce("[SRD] 10040, datalen: " + data.Length);
-                }
-                return false;
-            }
-            return true;
+            return _peerListener.SendRaw(data, 0, data.Length, _remoteEndPoint);
         }
 
         internal void Update(int deltaTime)

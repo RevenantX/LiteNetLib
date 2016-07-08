@@ -9,15 +9,6 @@ namespace LiteNetLib
     {
         public string Host { get { return EndPoint.Address.ToString(); } }
         public int Port { get { return EndPoint.Port; } }
-        public ConnectionAddressType AddressType
-        {
-            get
-            {
-                return EndPoint.AddressFamily == AddressFamily.InterNetwork
-                    ? ConnectionAddressType.IPv4
-                    : ConnectionAddressType.IPv6;
-            }
-        }
 
         internal readonly IPEndPoint EndPoint;
 
@@ -43,11 +34,6 @@ namespace LiteNetLib
         public override int GetHashCode()
         {
             return EndPoint.GetHashCode();
-        }
-
-        internal NetEndPoint(ConnectionAddressType addressType, int port)
-        {
-            EndPoint = new IPEndPoint(addressType == ConnectionAddressType.IPv4 ? IPAddress.Any : IPAddress.IPv6Any, port);
         }
 
         public NetEndPoint(string hostStr, int port)
@@ -81,23 +67,6 @@ namespace LiteNetLib
             return null;
         }
 
-        public NetEndPoint(string hostStr, int port, ConnectionAddressType addressType)
-        {
-            IPAddress ipAddress;
-            if (!IPAddress.TryParse(hostStr, out ipAddress))
-            {
-                ipAddress = ResolveAddress(hostStr,
-                    addressType == ConnectionAddressType.IPv4
-                        ? AddressFamily.InterNetwork
-                        : AddressFamily.InterNetworkV6);
-            }
-            if (ipAddress == null)
-            {
-                throw new Exception("Invalid address: " + hostStr);
-            }
-            EndPoint = new IPEndPoint(ipAddress, port);
-        }
-
         internal long GetId()
         {
             byte[] addr = EndPoint.Address.GetAddressBytes();
@@ -116,6 +85,8 @@ namespace LiteNetLib
                 id = addr[0] ^ addr[8];
                 id |= (long)(addr[1] ^ addr[9]) << 8;
                 id |= (long)(addr[2] ^ addr[10]) << 16;
+
+
                 id |= (long)(addr[3] ^ addr[11]) << 24;
                 id |= (long)(addr[4] ^ addr[12]) << 32;
                 id |= (long)(addr[5] ^ addr[13]) << 40;

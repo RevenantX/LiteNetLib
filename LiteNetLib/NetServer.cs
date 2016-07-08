@@ -19,19 +19,7 @@ namespace LiteNetLib
         /// <param name="listener">Listener of server events</param>
         /// <param name="maxClients">Maximum clients</param>
         /// <param name="key">Application key to identify connecting clients</param>
-        public NetServer(INetEventListener listener, int maxClients, string key) : this(listener, ConnectionAddressType.IPv4, maxClients, key)
-        {
-   
-        }
-
-        /// <summary>
-        /// Creates server object
-        /// </summary>
-        /// <param name="listener">Listener of server events</param>
-        /// <param name="addressType">Type of connection IPv4 or IPv6</param>
-        /// <param name="maxClients">Maximum clients</param>
-        /// <param name="key">Application key to identify connecting clients</param>
-        public NetServer(INetEventListener listener, ConnectionAddressType addressType, int maxClients, string key) : base(listener, addressType)
+        public NetServer(INetEventListener listener, int maxClients, string key) : base(listener)
         {
             _peers = new Dictionary<NetEndPoint, NetPeer>();
             _peerConnectionIds = new Dictionary<NetEndPoint, ulong>();
@@ -198,7 +186,7 @@ namespace LiteNetLib
             FastBitConverter.GetBytes(connectPacket, 1, id);
 
             //Send raw
-            peer.SendRawData(connectPacket);
+            SendRaw(connectPacket, peer.EndPoint);
         }
 
         protected override void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
@@ -242,7 +230,7 @@ namespace LiteNetLib
                         _peerConnectionIds[remoteEndPoint] = newId;
                     }
                     
-                    NetUtils.DebugWrite(ConsoleColor.Blue, "ConnectRequest LastId: {0}, NewId: {1}", lastId, newId);
+                    NetUtils.DebugWrite(ConsoleColor.Cyan, "ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", lastId, newId, remoteEndPoint);
                     SendConnectAccept(netPeer, _peerConnectionIds[remoteEndPoint]);
                     netPeer.Recycle(packet);
                 }
@@ -263,8 +251,6 @@ namespace LiteNetLib
 
             if (_peers.Count < _maxClients && packet.Property == PacketProperty.ConnectRequest)
             {
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request");
-
                 string peerKey = Encoding.UTF8.GetString(packet.RawData, 9, packet.RawData.Length - 9);
                 if (peerKey != _connectKey)
                 {
@@ -272,12 +258,14 @@ namespace LiteNetLib
                     return;
                 }
 
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Peer connect accepting");
                 //Getting new id for peer
                 netPeer = CreatePeer(remoteEndPoint);
 
                 //response with id
                 ulong connectionId = BitConverter.ToUInt64(packet.RawData, 1);
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request Id: {0}, EP: {1}", connectionId, remoteEndPoint);
+
+
                 SendConnectAccept(netPeer, connectionId);
 
                 //clean incoming packet
