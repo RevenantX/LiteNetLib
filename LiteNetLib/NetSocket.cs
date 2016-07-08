@@ -56,7 +56,7 @@ namespace LiteNetLib
                 }
                 catch (SocketException ex)
                 {
-                    NetUtils.DebugWriteError("[R]Error code: {0} - {1}", ex.SocketErrorCode, ex.ToString());
+                    NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
                     _onMessageReceived(null, 0, (int)ex.SocketErrorCode, bufferNetEndPoint);
                     continue;
                 }
