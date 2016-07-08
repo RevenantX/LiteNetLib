@@ -242,12 +242,20 @@ namespace LiteNetLib
                     DebugWrite("[RS]Packet reliable ordered");
                     _reliableOrderedChannel.AddToQueue(packet);
                     break;
-                case PacketProperty.AckReliable:
-                case PacketProperty.AckReliableOrdered:
                 case PacketProperty.None:
                     DebugWrite("[RS]Packet simple");
-                    _simpleChannel.AddToQueue(packet);
+                    if (_peerListener.GetMaxFlowMode() == -1)
+                    {
+                        SendRawData(packet.RawData);
+                        Recycle(packet);
+                    }
+                    else
+                    {
+                        _simpleChannel.AddToQueue(packet);
+                    }
                     break;
+                case PacketProperty.AckReliable:
+                case PacketProperty.AckReliableOrdered:
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
                 case PacketProperty.Disconnect:
