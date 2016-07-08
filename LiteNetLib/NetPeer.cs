@@ -179,17 +179,20 @@ namespace LiteNetLib
                 int lastPacketSize = length % packetDataSize;
                 int totalPackets = fullPacketsCount + (lastPacketSize == 0 ? 0 : 1);
 
+                DebugWrite("MTU: {0}, HDR: {1}, PFS: {2}, PDS: {3}, FPC: {4}, LPS: {5}, TP: {6}", 
+                    _mtu, headerSize, packetFullSize, packetDataSize, fullPacketsCount, lastPacketSize, totalPackets);
+
                 if (totalPackets > ushort.MaxValue)
                 {
                     throw new Exception("Too many fragments: " + totalPackets + " > " + ushort.MaxValue);
                 }
 
-                for (int i = 0; i < fullPacketsCount; i++)
+                for (ushort i = 0; i < fullPacketsCount; i++)
                 {
                     NetPacket p = GetPacketFromPool(property, packetFullSize);
                     p.FragmentId = _fragmentId;
-                    p.FragmentPart = (uint)i;
-                    p.FragmentsTotal = (uint)totalPackets;
+                    p.FragmentPart = i;
+                    p.FragmentsTotal = (ushort)totalPackets;
                     p.IsFragmented = true;
                     p.PutData(data, i * packetDataSize, packetDataSize);
                     SendPacket(p);
@@ -199,8 +202,8 @@ namespace LiteNetLib
                 {
                     NetPacket p = GetPacketFromPool(property, lastPacketSize + NetConstants.FragmentHeaderSize);
                     p.FragmentId = _fragmentId;
-                    p.FragmentPart = (uint)fullPacketsCount; //last
-                    p.FragmentsTotal = (uint)totalPackets;
+                    p.FragmentPart = (ushort)fullPacketsCount; //last
+                    p.FragmentsTotal = (ushort)totalPackets;
                     p.IsFragmented = true;
                     p.PutData(data, fullPacketsCount * packetDataSize, lastPacketSize);
                     SendPacket(p);
