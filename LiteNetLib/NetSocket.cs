@@ -81,6 +81,11 @@ namespace LiteNetLib
             }
             _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv4.LocalEndPoint);
 
+            _running = true;
+            _threadv4 = new Thread(ReceiveLogic);
+            _threadv4.IsBackground = true;
+            _threadv4.Start(_udpSocketv4);
+
             //Use one port for two sockets
             if (port == 0)
                 port = _localEndPoint.Port;
@@ -92,16 +97,10 @@ namespace LiteNetLib
             if(BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, port)))
             {
                 _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv6.LocalEndPoint);
+                _threadv6 = new Thread(ReceiveLogic);
+                _threadv6.IsBackground = true;
+                _threadv6.Start(_udpSocketv6);
             }
-
-
-            _running = true;
-            _threadv4 = new Thread(ReceiveLogic);
-            _threadv4.IsBackground = true;
-            _threadv4.Start(_udpSocketv4);
-            _threadv6 = new Thread(ReceiveLogic);
-            _threadv6.IsBackground = true;
-            _threadv6.Start(_udpSocketv6);
 
             return true;
         }
