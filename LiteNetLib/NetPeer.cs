@@ -167,7 +167,6 @@ namespace LiteNetLib
             //Check fragmentation
             if (length + headerSize > _mtu)
             {
-                //TODO: fix later
                 if (options == SendOptions.Sequenced || options == SendOptions.Unreliable)
                 {
                     throw new Exception("Unreliable packet size > allowed (" + (_mtu - headerSize) + ")");
@@ -179,6 +178,11 @@ namespace LiteNetLib
                 int fullPacketsCount = length / packetDataSize;
                 int lastPacketSize = length % packetDataSize;
                 int totalPackets = fullPacketsCount + (lastPacketSize == 0 ? 0 : 1);
+
+                if (totalPackets > ushort.MaxValue)
+                {
+                    throw new Exception("Too many fragments: " + totalPackets + " > " + ushort.MaxValue);
+                }
 
                 for (int i = 0; i < fullPacketsCount; i++)
                 {
