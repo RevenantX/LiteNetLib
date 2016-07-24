@@ -56,7 +56,16 @@ namespace LiteNetLib
                 }
                 catch (SocketException ex)
                 {
-                    NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
+                    if (ex.SocketErrorCode == SocketError.ConnectionReset ||
+                        ex.SocketErrorCode == SocketError.MessageSize)
+                    {
+                        //10040 - message too long
+                        //10054 - remote close (not error)
+                        //Just UDP
+                        NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}", ex.ErrorCode, ex.ToString() );
+                        continue;
+                    }
+                    NetUtils.DebugWriteError("[R]Error code: {0} - {1}", ex.ErrorCode, ex.ToString());
                     _onMessageReceived(null, 0, (int)ex.SocketErrorCode, bufferNetEndPoint);
                     continue;
                 }
@@ -116,7 +125,7 @@ namespace LiteNetLib
             {
                 NetUtils.DebugWriteError("[B]Bind exception: {0}", ex.ToString());
                 //TODO: very temporary hack for iOS (Unity3D)
-                if (ex.ErrorCode == 10047)
+                if (ex.SocketErrorCode == SocketError.AddressFamilyNotSupported)
                 {
                     return true;
                 }
