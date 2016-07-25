@@ -102,6 +102,9 @@ client.Stop();
 * **SimulationMaxLatency**
  * maximum simulated latency ( it will be random from 0 to value )
  * default value: **100 msec**
+* **UnsyncedEvents**
+ * Experimental feature. Events automatically will be called without PollEvents method from another thread
+ * default value: **false**
 
 ### Only client
 * **ReconnectDelay**
