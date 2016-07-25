@@ -141,7 +141,7 @@ namespace LiteNetLib
 
         protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
         {
-            var peer = new NetPeer(this, _socket, remoteEndPoint);
+            var peer = new NetPeer(this, remoteEndPoint);
             peer.PingInterval = PingInterval;
             return peer;
         }

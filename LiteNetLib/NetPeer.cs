@@ -107,7 +107,17 @@ namespace LiteNetLib
             get { return _peerListener; }
         }
 
-        internal NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
+        public int PacketsCountInReliableQueue
+        {
+            get { return _reliableUnorderedChannel.PacketsInQueue; }
+        }
+
+        public int PacketsCountInReliableOrderedQueue
+        {
+            get { return _reliableOrderedChannel.PacketsInQueue; }
+        }
+
+        internal NetPeer(NetBase peerListener, NetEndPoint remoteEndPoint)
         {
             _id = remoteEndPoint.GetId();
             _peerListener = peerListener;

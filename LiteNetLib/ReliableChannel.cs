@@ -44,6 +44,11 @@ namespace LiteNetLib
 
         private readonly AutoResetEvent _pendingPacketsAccess = new AutoResetEvent(true);
 
+        public int PacketsInQueue
+        {
+            get { return _outgoingPackets.Count; }
+        }
+
         //Socket constructor
         public ReliableChannel(NetPeer peer, bool ordered, int windowSize)
         {
