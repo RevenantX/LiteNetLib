@@ -14,7 +14,7 @@ namespace LiteNetLib
         public const int SequencedHeaderSize = 3;
         public const int FragmentHeaderSize = 6;
         public const int DefaultWindowSize = 64;
-        public const ushort MaxSequence = 65535;
+        public const ushort MaxSequence = 32768;
         public const ushort HalfMaxSequence = MaxSequence / 2;
 
         //protocol
