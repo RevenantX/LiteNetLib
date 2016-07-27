@@ -40,15 +40,13 @@ namespace LiteNetLib
             return true;
         }
 
-        public bool ProcessPacket(NetPacket packet)
+        public void ProcessPacket(NetPacket packet)
         {
             if (NetUtils.RelativeSequenceNumber(packet.Sequence, _remoteSequence) > 0)
             {
                 _remoteSequence = packet.Sequence;
                 _peer.AddIncomingPacket(packet);
-                return true;
             }
-            return false;
         }
     }
 }

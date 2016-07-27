@@ -28,7 +28,10 @@ namespace LiteNetLib
         {
             576 - MaxUdpHeaderSize,  //Internet Path MTU for X.25 (RFC 879)
             1492 - MaxUdpHeaderSize, //Ethernet with LLC and SNAP, PPPoE (RFC 1042)
-            1500 - MaxUdpHeaderSize  //Ethernet II (RFC 1191)
+            1500 - MaxUdpHeaderSize, //Ethernet II (RFC 1191)
+            4352 - MaxUdpHeaderSize, //FDDI
+            4464 - MaxUdpHeaderSize, //Token ring
+            7981 - MaxUdpHeaderSize  //WLAN
         };
 
         //peer specific

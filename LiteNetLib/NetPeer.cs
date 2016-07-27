@@ -119,9 +119,8 @@ namespace LiteNetLib
 
         internal NetPeer(NetBase peerListener, NetEndPoint remoteEndPoint)
         {
-            _id = remoteEndPoint.GetId();
             _peerListener = peerListener;
-            
+            _id = remoteEndPoint.GetId();
             _remoteEndPoint = remoteEndPoint;
 
             _avgRtt = 0;
@@ -154,8 +153,7 @@ namespace LiteNetLib
 
         public int GetMaxSinglePacketSize(SendOptions options)
         {
-            var packetProperty = SendOptionsToProperty(options);
-            return _mtu - NetPacket.GetHeaderSize(packetProperty);
+            return _mtu - NetPacket.GetHeaderSize(SendOptionsToProperty(options));
         }
 
         public void Send(byte[] data, SendOptions options)
