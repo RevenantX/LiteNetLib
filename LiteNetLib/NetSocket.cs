@@ -8,7 +8,6 @@ namespace LiteNetLib
 {
     internal sealed class NetSocket
     {
-        private const int BufferSize = ushort.MaxValue;
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
         private NetEndPoint _localEndPoint;
@@ -80,8 +79,8 @@ namespace LiteNetLib
         {
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv4.Blocking = false;
-            _udpSocketv4.ReceiveBufferSize = BufferSize;
-            _udpSocketv4.SendBufferSize = BufferSize;
+            _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
+            _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DontFragment, true);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(IPAddress.Any, port)))
@@ -92,6 +91,7 @@ namespace LiteNetLib
 
             _running = true;
             _threadv4 = new Thread(ReceiveLogic);
+            _threadv4.Name = "SocketThreadv4(" + port + ")";
             _threadv4.IsBackground = true;
             _threadv4.Start(_udpSocketv4);
 
@@ -101,12 +101,13 @@ namespace LiteNetLib
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv6.Blocking = false;
-            _udpSocketv6.ReceiveBufferSize = BufferSize;
-            _udpSocketv6.SendBufferSize = BufferSize;
+            _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
+            _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
             if(BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, port)))
             {
                 _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv6.LocalEndPoint);
                 _threadv6 = new Thread(ReceiveLogic);
+                _threadv6.Name = "SocketThreadv6(" + port + ")";
                 _threadv6.IsBackground = true;
                 _threadv6.Start(_udpSocketv6);
             }

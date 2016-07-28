@@ -317,7 +317,8 @@ namespace LiteNetLib
 
             if (_outgoingAcks[packet.Sequence % _windowSize])
             {
-                _peer.DebugWriteForce("[RR]ReliableInOrder duplicate");
+                _peer.DebugWrite("[RR]ReliableInOrder duplicate");
+                _outgoingAcksAccess.Set();
                 return;
             }
 

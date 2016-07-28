@@ -185,6 +185,7 @@ namespace LiteNetLib
                 WorkItemOptions.TimeSliced).AsTask();
 #else
             _logicThread = new Thread(UpdateLogic);
+            _logicThread.Name = "LogicThread(" + port + ")";
             _logicThread.IsBackground = true;
             _logicThread.Start();
 #endif

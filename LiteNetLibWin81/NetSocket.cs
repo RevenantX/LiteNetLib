@@ -46,6 +46,7 @@ namespace LiteNetLib
         public bool Bind(int port)
         {
             _datagramSocket = new DatagramSocket();
+            _datagramSocket.Control.InboundBufferSizeInBytes = NetConstants.SocketBufferSize;
             _datagramSocket.Control.DontFragment = true;
             _datagramSocket.MessageReceived += OnMessageReceived;
 
