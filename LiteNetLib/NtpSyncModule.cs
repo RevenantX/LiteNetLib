@@ -21,7 +21,10 @@ namespace LiteNetLib
         private void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint)
         {
             if (errorCode != 0)
+            {
+                _waiter.Set();
                 return;
+            }
 
             ulong intPart = (ulong)data[40] << 24 | (ulong)data[41] << 16 | (ulong)data[42] << 8 | (ulong)data[43];
             ulong fractPart = (ulong)data[44] << 24 | (ulong)data[45] << 16 | (ulong)data[46] << 8 | (ulong)data[47];
