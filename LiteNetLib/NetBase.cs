@@ -26,7 +26,9 @@ namespace LiteNetLib
             Receive,
             ReceiveUnconnected,
             Error,
-            ConnectionLatencyUpdated
+            ConnectionLatencyUpdated,
+            DiscoveryRequest,
+            DiscoveryResponse
         }
 
         protected sealed class NetEvent
@@ -78,6 +80,7 @@ namespace LiteNetLib
 
         //experimental
         public bool UnsyncedEvents = false;
+        public bool DiscoveryEnabled = false;
 
         //modules
         public readonly NatPunchModule NatPunchModule;
@@ -226,10 +229,44 @@ namespace LiteNetLib
         {
             if (!_running)
                 return false;
-            NetPacket p = new NetPacket();
-            p.Init(PacketProperty.UnconnectedMessage, length);
-            p.PutData(message, start, length);
-            return SendRaw(p.RawData, 0, p.RawData.Length, remoteEndPoint);
+            var packet = NetPacket.CreateRawPacket(PacketProperty.UnconnectedMessage, message, start, length);
+            return SendRaw(packet, remoteEndPoint);
+        }
+
+        public bool SendDiscoveryRequest(NetDataWriter writer, int port)
+        {
+            return SendDiscoveryRequest(writer.Data, 0, writer.Length, port);
+        }
+
+        public bool SendDiscoveryRequest(byte[] data, int port)
+        {
+            return SendDiscoveryRequest(data, 0, data.Length, port);
+        }
+
+        public bool SendDiscoveryRequest(byte[] data, int start, int length, int port)
+        {
+            if (!_running)
+                return false;
+            var packet = NetPacket.CreateRawPacket(PacketProperty.DiscoveryRequest, data, start, length);
+            return _socket.SendMulticast(packet, 0, packet.Length, port);
+        }
+
+        public bool SendDiscoveryResponse(NetDataWriter writer, NetEndPoint remoteEndPoint)
+        {
+            return SendDiscoveryResponse(writer.Data, 0, writer.Length, remoteEndPoint);
+        }
+
+        public bool SendDiscoveryResponse(byte[] data, NetEndPoint remoteEndPoint)
+        {
+            return SendDiscoveryResponse(data, 0, data.Length, remoteEndPoint);
+        }
+
+        public bool SendDiscoveryResponse(byte[] data, int start, int length, NetEndPoint remoteEndPoint)
+        {
+            if (!_running)
+                return false;
+            var packet = NetPacket.CreateRawPacket(PacketProperty.DiscoveryResponse, data, start, length);
+            return SendRaw(packet, remoteEndPoint);
         }
 
         internal bool SendRaw(byte[] message, NetEndPoint remoteEndPoint)
@@ -341,7 +378,13 @@ namespace LiteNetLib
                     _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader);
                     break;
                 case NetEventType.ReceiveUnconnected:
-                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader);
+                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.Default);
+                    break;
+                case NetEventType.DiscoveryRequest:
+                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryRequest);
+                    break;
+                case NetEventType.DiscoveryResponse:
+                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryResponce);
                     break;
                 case NetEventType.Error:
                     _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.AdditionalInfo);
@@ -469,21 +512,40 @@ namespace LiteNetLib
             //Check unconnected
             switch (property)
             {
+                case PacketProperty.DiscoveryRequest:
+                if(DiscoveryEnabled)
+                {
+                    var netEvent = CreateEvent(NetEventType.DiscoveryRequest);
+                    netEvent.RemoteEndPoint = remoteEndPoint;
+                    netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
+                    EnqueueEvent(netEvent);
+                }
+                return;
+                case PacketProperty.DiscoveryResponse:
+                {
+                    var netEvent = CreateEvent(NetEventType.DiscoveryResponse);
+                    netEvent.RemoteEndPoint = remoteEndPoint;
+                    netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
+                    EnqueueEvent(netEvent);
+                }
+                return;
                 case PacketProperty.UnconnectedMessage:
-                    if (UnconnectedMessagesEnabled)
-                    {
-                        var netEvent = CreateEvent(NetEventType.ReceiveUnconnected);
-                        netEvent.RemoteEndPoint = remoteEndPoint;
-                        netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
-                        EnqueueEvent(netEvent);
-                    }
-                    return;
+                if (UnconnectedMessagesEnabled)
+                {
+                    var netEvent = CreateEvent(NetEventType.ReceiveUnconnected);
+                    netEvent.RemoteEndPoint = remoteEndPoint;
+                    netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
+                    EnqueueEvent(netEvent);
+                }
+                return;
                 case PacketProperty.NatIntroduction:
                 case PacketProperty.NatIntroductionRequest:
                 case PacketProperty.NatPunchMessage:
+                {
                     if (NatPunchEnabled)
                         NatPunchModule.ProcessMessage(remoteEndPoint, property, NetPacket.GetUnconnectedData(reusableBuffer, count));
                     return;
+                }
             }
 
             //other

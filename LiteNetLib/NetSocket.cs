@@ -16,6 +16,8 @@ namespace LiteNetLib
         private Thread _threadv6;
         private readonly NetBase.OnMessageReceived _onMessageReceived;
         private bool _running;
+        private static readonly IPAddress MulticastAddressV4 = IPAddress.Parse("224.0.0.1");
+        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("FF02:0:0:0:0:0:0:1");
 
         public NetEndPoint LocalEndPoint
         {
@@ -83,10 +85,12 @@ namespace LiteNetLib
             _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DontFragment, true);
+
             if (!BindSocket(_udpSocketv4, new IPEndPoint(IPAddress.Any, port)))
             {
                 return false;
             }
+            _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(MulticastAddressV4, IPAddress.Any));
             _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv4.LocalEndPoint);
 
             _running = true;
@@ -103,9 +107,12 @@ namespace LiteNetLib
             _udpSocketv6.Blocking = false;
             _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
-            if(BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, port)))
+
+            if (BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, port)))
             {
                 _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv6.LocalEndPoint);
+                _udpSocketv6.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.AddMembership, new IPv6MulticastOption(MulticastAddressV6));
+
                 _threadv6 = new Thread(ReceiveLogic);
                 _threadv6.Name = "SocketThreadv6(" + port + ")";
                 _threadv6.IsBackground = true;
@@ -130,6 +137,25 @@ namespace LiteNetLib
                 {
                     return true;
                 }
+                return false;
+            }
+            return true;
+        }
+
+        public bool SendMulticast(byte[] data, int offset, int size, int port)
+        {
+            try
+            {
+                int result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(MulticastAddressV4, port));
+                if (result <= 0)
+                    return false;
+                result = _udpSocketv6.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(MulticastAddressV6, port));
+                if (result <= 0)
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                NetUtils.DebugWriteError("[S][MCAST]" + ex);
                 return false;
             }
             return true;

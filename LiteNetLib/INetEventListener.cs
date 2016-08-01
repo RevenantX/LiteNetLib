@@ -3,13 +3,20 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    public enum UnconnectedMessageType
+    {
+        Default,
+        DiscoveryRequest,
+        DiscoveryResponce
+    }
+
     public interface INetEventListener
     {
         void OnPeerConnected(NetPeer peer);
         void OnPeerDisconnected(NetPeer peer, string additionalInfo);
         void OnNetworkError(NetEndPoint endPoint, string error);
         void OnNetworkReceive(NetPeer peer, NetDataReader reader);
-        void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader);
+        void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
         void OnNetworkLatencyUpdate(NetPeer peer, int latency);
     }
 
@@ -19,7 +26,7 @@ namespace LiteNetLib
         public event Action<NetPeer, string> PeerDisconnectedEvent;
         public event Action<NetEndPoint, string> NetworkErrorEvent;
         public event Action<NetPeer, NetDataReader> NetworkReceiveEvent;
-        public event Action<NetEndPoint, NetDataReader> NetworkReceiveUnconnectedEvent;
+        public event Action<NetEndPoint, NetDataReader, UnconnectedMessageType> NetworkReceiveUnconnectedEvent;
         public event Action<NetPeer, int> NetworkLatencyUpdateEvent; 
          
         void INetEventListener.OnPeerConnected(NetPeer peer)
@@ -46,10 +53,10 @@ namespace LiteNetLib
                 NetworkReceiveEvent(peer, reader);
         }
 
-        void INetEventListener.OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader)
+        void INetEventListener.OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
         {
             if (NetworkReceiveUnconnectedEvent != null)
-                NetworkReceiveUnconnectedEvent(remoteEndPoint, reader);
+                NetworkReceiveUnconnectedEvent(remoteEndPoint, reader, messageType);
         }
 
         void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)

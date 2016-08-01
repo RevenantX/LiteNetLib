@@ -15,9 +15,11 @@ class Program
         }
 
         //HolePunchServerTest holePunchServerTest = new HolePunchServerTest();
-        EchoMessagesTest echoMessagesTest = new EchoMessagesTest();
+        //EchoMessagesTest echoMessagesTest = new EchoMessagesTest();
+        BroadcastTest broadcastTest = new BroadcastTest();
 
         //holePunchServerTest.Run();
-        echoMessagesTest.Run();
+        //echoMessagesTest.Run();
+        broadcastTest.Run();
     }
 }

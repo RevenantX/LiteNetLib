@@ -21,12 +21,14 @@ namespace LiteNetLib
         NatIntroduction,        //13
         NatPunchMessage,        //14
         MtuCheck,               //15
-        MtuOk                   //16
+        MtuOk,                  //16
+        DiscoveryRequest,       //17
+        DiscoveryResponse       //18
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 16;
+        private const int LastProperty = 18;
 
         //Header
         public PacketProperty Property
@@ -86,6 +88,15 @@ namespace LiteNetLib
         {
             byte[] rawData = new byte[GetHeaderSize(property) + dataSize];
             rawData[0] = (byte) property;
+            return rawData;
+        }
+
+        public static byte[] CreateRawPacket(PacketProperty property, byte[] data, int start, int count)
+        {
+            int headerSize = GetHeaderSize(property);
+            byte[] rawData = new byte[headerSize + count];
+            rawData[0] = (byte)property;
+            Buffer.BlockCopy(data, start, rawData, headerSize, count);
             return rawData;
         }
 
