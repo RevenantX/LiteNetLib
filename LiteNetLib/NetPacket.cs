@@ -59,16 +59,16 @@ namespace LiteNetLib
             set { FastBitConverter.GetBytes(RawData, 3, value); }
         }
 
-        public uint FragmentPart
+        public ushort FragmentPart
         {
-            get { return BitConverter.ToUInt32(RawData, 5); }
+            get { return BitConverter.ToUInt16(RawData, 5); }
             set { FastBitConverter.GetBytes(RawData, 5, value); }
         }
 
-        public uint FragmentsTotal
+        public ushort FragmentsTotal
         {
-            get { return BitConverter.ToUInt32(RawData, 9); }
-            set { FastBitConverter.GetBytes(RawData, 9, value); }
+            get { return BitConverter.ToUInt16(RawData, 7); }
+            set { FastBitConverter.GetBytes(RawData, 7, value); }
         }
 
         //Data

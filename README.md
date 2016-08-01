@@ -21,7 +21,7 @@ Minimal .NET version - 3.5
 * UDP NAT hole punching
 * NTP time requests
 * Packet loss and latency simulation
-* IPv6 support
+* IPv6 support (dual mode)
 * Small CPU and RAM usage
 * Unity3d support (you can use library source in project)
 * Universal Windows Platform (Windows 8.1 and Windows 10 including phones) support
@@ -102,6 +102,9 @@ client.Stop();
 * **SimulationMaxLatency**
  * maximum simulated latency ( it will be random from 0 to value )
  * default value: **100 msec**
+* **UnsyncedEvents**
+ * Experimental feature. Events automatically will be called without PollEvents method from another thread
+ * default value: **false**
 
 ### Only client
 * **ReconnectDelay**

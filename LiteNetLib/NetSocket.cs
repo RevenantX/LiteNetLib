@@ -8,7 +8,6 @@ namespace LiteNetLib
 {
     internal sealed class NetSocket
     {
-        private const int BufferSize = ushort.MaxValue;
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
         private NetEndPoint _localEndPoint;
@@ -56,7 +55,16 @@ namespace LiteNetLib
                 }
                 catch (SocketException ex)
                 {
-                    NetUtils.DebugWriteError("[R]Error code: {0} - {1}", ex.SocketErrorCode, ex.ToString());
+                    if (ex.SocketErrorCode == SocketError.ConnectionReset ||
+                        ex.SocketErrorCode == SocketError.MessageSize)
+                    {
+                        //10040 - message too long
+                        //10054 - remote close (not error)
+                        //Just UDP
+                        NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}", ex.ErrorCode, ex.ToString() );
+                        continue;
+                    }
+                    NetUtils.DebugWriteError("[R]Error code: {0} - {1}", ex.ErrorCode, ex.ToString());
                     _onMessageReceived(null, 0, (int)ex.SocketErrorCode, bufferNetEndPoint);
                     continue;
                 }
@@ -71,8 +79,8 @@ namespace LiteNetLib
         {
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv4.Blocking = false;
-            _udpSocketv4.ReceiveBufferSize = BufferSize;
-            _udpSocketv4.SendBufferSize = BufferSize;
+            _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
+            _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, SocketTTL);
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DontFragment, true);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(IPAddress.Any, port)))
@@ -81,27 +89,28 @@ namespace LiteNetLib
             }
             _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv4.LocalEndPoint);
 
+            _running = true;
+            _threadv4 = new Thread(ReceiveLogic);
+            _threadv4.Name = "SocketThreadv4(" + port + ")";
+            _threadv4.IsBackground = true;
+            _threadv4.Start(_udpSocketv4);
+
             //Use one port for two sockets
             if (port == 0)
                 port = _localEndPoint.Port;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv6.Blocking = false;
-            _udpSocketv6.ReceiveBufferSize = BufferSize;
-            _udpSocketv6.SendBufferSize = BufferSize;
+            _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
+            _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
             if(BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, port)))
             {
                 _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv6.LocalEndPoint);
+                _threadv6 = new Thread(ReceiveLogic);
+                _threadv6.Name = "SocketThreadv6(" + port + ")";
+                _threadv6.IsBackground = true;
+                _threadv6.Start(_udpSocketv6);
             }
-
-
-            _running = true;
-            _threadv4 = new Thread(ReceiveLogic);
-            _threadv4.IsBackground = true;
-            _threadv4.Start(_udpSocketv4);
-            _threadv6 = new Thread(ReceiveLogic);
-            _threadv6.IsBackground = true;
-            _threadv6.Start(_udpSocketv6);
 
             return true;
         }
@@ -117,7 +126,7 @@ namespace LiteNetLib
             {
                 NetUtils.DebugWriteError("[B]Bind exception: {0}", ex.ToString());
                 //TODO: very temporary hack for iOS (Unity3D)
-                if (ex.ErrorCode == 10047)
+                if (ex.SocketErrorCode == SocketError.AddressFamilyNotSupported)
                 {
                     return true;
                 }

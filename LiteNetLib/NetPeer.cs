@@ -107,11 +107,20 @@ namespace LiteNetLib
             get { return _peerListener; }
         }
 
-        internal NetPeer(NetBase peerListener, NetSocket socket, NetEndPoint remoteEndPoint)
+        public int PacketsCountInReliableQueue
         {
-            _id = remoteEndPoint.GetId();
+            get { return _reliableUnorderedChannel.PacketsInQueue; }
+        }
+
+        public int PacketsCountInReliableOrderedQueue
+        {
+            get { return _reliableOrderedChannel.PacketsInQueue; }
+        }
+
+        internal NetPeer(NetBase peerListener, NetEndPoint remoteEndPoint)
+        {
             _peerListener = peerListener;
-            
+            _id = remoteEndPoint.GetId();
             _remoteEndPoint = remoteEndPoint;
 
             _avgRtt = 0;
@@ -144,8 +153,7 @@ namespace LiteNetLib
 
         public int GetMaxSinglePacketSize(SendOptions options)
         {
-            var packetProperty = SendOptionsToProperty(options);
-            return _mtu - NetPacket.GetHeaderSize(packetProperty);
+            return _mtu - NetPacket.GetHeaderSize(SendOptionsToProperty(options));
         }
 
         public void Send(byte[] data, SendOptions options)
@@ -167,7 +175,6 @@ namespace LiteNetLib
             //Check fragmentation
             if (length + headerSize > _mtu)
             {
-                //TODO: fix later
                 if (options == SendOptions.Sequenced || options == SendOptions.Unreliable)
                 {
                     throw new Exception("Unreliable packet size > allowed (" + (_mtu - headerSize) + ")");
@@ -180,12 +187,20 @@ namespace LiteNetLib
                 int lastPacketSize = length % packetDataSize;
                 int totalPackets = fullPacketsCount + (lastPacketSize == 0 ? 0 : 1);
 
-                for (int i = 0; i < fullPacketsCount; i++)
+                DebugWrite("MTU: {0}, HDR: {1}, PFS: {2}, PDS: {3}, FPC: {4}, LPS: {5}, TP: {6}", 
+                    _mtu, headerSize, packetFullSize, packetDataSize, fullPacketsCount, lastPacketSize, totalPackets);
+
+                if (totalPackets > ushort.MaxValue)
+                {
+                    throw new Exception("Too many fragments: " + totalPackets + " > " + ushort.MaxValue);
+                }
+
+                for (ushort i = 0; i < fullPacketsCount; i++)
                 {
                     NetPacket p = GetPacketFromPool(property, packetFullSize);
                     p.FragmentId = _fragmentId;
-                    p.FragmentPart = (uint)i;
-                    p.FragmentsTotal = (uint)totalPackets;
+                    p.FragmentPart = i;
+                    p.FragmentsTotal = (ushort)totalPackets;
                     p.IsFragmented = true;
                     p.PutData(data, i * packetDataSize, packetDataSize);
                     SendPacket(p);
@@ -195,8 +210,8 @@ namespace LiteNetLib
                 {
                     NetPacket p = GetPacketFromPool(property, lastPacketSize + NetConstants.FragmentHeaderSize);
                     p.FragmentId = _fragmentId;
-                    p.FragmentPart = (uint)fullPacketsCount; //last
-                    p.FragmentsTotal = (uint)totalPackets;
+                    p.FragmentPart = (ushort)fullPacketsCount; //last
+                    p.FragmentsTotal = (ushort)totalPackets;
                     p.IsFragmented = true;
                     p.PutData(data, fullPacketsCount * packetDataSize, lastPacketSize);
                     SendPacket(p);
@@ -242,12 +257,20 @@ namespace LiteNetLib
                     DebugWrite("[RS]Packet reliable ordered");
                     _reliableOrderedChannel.AddToQueue(packet);
                     break;
-                case PacketProperty.AckReliable:
-                case PacketProperty.AckReliableOrdered:
                 case PacketProperty.None:
                     DebugWrite("[RS]Packet simple");
-                    _simpleChannel.AddToQueue(packet);
+                    if (_peerListener.GetMaxFlowMode() == -1)
+                    {
+                        SendRawData(packet.RawData);
+                        Recycle(packet);
+                    }
+                    else
+                    {
+                        _simpleChannel.AddToQueue(packet);
+                    }
                     break;
+                case PacketProperty.AckReliable:
+                case PacketProperty.AckReliableOrdered:
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
                 case PacketProperty.Disconnect:

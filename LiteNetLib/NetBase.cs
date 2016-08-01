@@ -141,7 +141,7 @@ namespace LiteNetLib
 
         protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
         {
-            var peer = new NetPeer(this, _socket, remoteEndPoint);
+            var peer = new NetPeer(this, remoteEndPoint);
             peer.PingInterval = PingInterval;
             return peer;
         }
@@ -185,6 +185,7 @@ namespace LiteNetLib
                 WorkItemOptions.TimeSliced).AsTask();
 #else
             _logicThread = new Thread(UpdateLogic);
+            _logicThread.Name = "LogicThread(" + port + ")";
             _logicThread.IsBackground = true;
             _logicThread.Start();
 #endif
@@ -452,14 +453,9 @@ namespace LiteNetLib
             }
             else
             {
-                //10054 - remote close (not error)
-                //10040 - message too long (just for protection)
-                if (errorCode != 10054 && errorCode != 10040)
-                {
-                    NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error: " + errorCode);
-                    ProcessError("Receive socket error: " + errorCode);
-                    Stop();
-                }
+                NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error: " + errorCode);
+                ProcessError("Receive socket error: " + errorCode);
+                Stop();
             }
         }
 
