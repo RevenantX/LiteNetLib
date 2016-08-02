@@ -71,7 +71,7 @@ public class GameClient : MonoBehaviour, INetEventListener
         _lerpTime = 0f;
     }
 
-    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader)
+    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
     {
        
     }

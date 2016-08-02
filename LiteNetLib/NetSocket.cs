@@ -13,10 +13,12 @@ namespace LiteNetLib
         private NetEndPoint _localEndPoint;
         private Thread _threadv4;
         private Thread _threadv6;
-        private readonly NetBase.OnMessageReceived _onMessageReceived;
         private bool _running;
+        private readonly NetBase.OnMessageReceived _onMessageReceived;
+
         private static readonly IPAddress MulticastAddressV4 = IPAddress.Parse("224.0.0.1");
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("FF02:0:0:0:0:0:0:1");
+        private static readonly bool IPv6Support = Socket.OSSupportsIPv6;
         private const int SocketReceivePollTime = 100000;
         private const int SocketSendPollTime = 5000;
 
@@ -100,9 +102,12 @@ namespace LiteNetLib
             _threadv4.IsBackground = true;
             _threadv4.Start(_udpSocketv4);
 
+            //Check IPv6 support
+            if (!IPv6Support)
+                return true;
+
             //Use one port for two sockets
-            if (port == 0)
-                port = _localEndPoint.Port;
+            port = _localEndPoint.Port;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv6.Blocking = false;
@@ -112,7 +117,18 @@ namespace LiteNetLib
             if (BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, port)))
             {
                 _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv6.LocalEndPoint);
-                _udpSocketv6.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.AddMembership, new IPv6MulticastOption(MulticastAddressV6));
+
+                try
+                {
+                    _udpSocketv6.SetSocketOption(
+                        SocketOptionLevel.IPv6, 
+                        SocketOptionName.AddMembership,
+                        new IPv6MulticastOption(MulticastAddressV6));
+                }
+                catch
+                {
+                    // Unity3d throws exception - ignored
+                }
 
                 _threadv6 = new Thread(ReceiveLogic);
                 _threadv6.Name = "SocketThreadv6(" + port + ")";
@@ -150,9 +166,12 @@ namespace LiteNetLib
                 int result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(MulticastAddressV4, port));
                 if (result <= 0)
                     return false;
-                result = _udpSocketv6.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(MulticastAddressV6, port));
-                if (result <= 0)
-                    return false;
+                if (IPv6Support)
+                {
+                    result = _udpSocketv6.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(MulticastAddressV6, port));
+                    if (result <= 0)
+                        return false;
+                }
             }
             catch (Exception ex)
             {
@@ -166,14 +185,14 @@ namespace LiteNetLib
         {
             try
             {
-                int result;
+                int result = 0;
                 if (remoteEndPoint.EndPoint.AddressFamily == AddressFamily.InterNetwork)
                 {
                     if (!_udpSocketv4.Poll(SocketSendPollTime, SelectMode.SelectWrite))
                         return -1;
                     result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
                 }
-                else
+                else if(IPv6Support)
                 {
                     if (!_udpSocketv6.Poll(SocketSendPollTime, SelectMode.SelectWrite))
                         return -1;
@@ -199,16 +218,19 @@ namespace LiteNetLib
         public void Close()
         {
             _running = false;
+
             if (Thread.CurrentThread != _threadv4)
             {
                 _threadv4.Join();
             }
             _threadv4 = null;
+
             if (Thread.CurrentThread != _threadv6)
             {
                 _threadv6.Join();
             }
             _threadv6 = null;
+
             if (_udpSocketv4 != null)
             {
                 _udpSocketv4.Close();
