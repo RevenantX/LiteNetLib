@@ -384,7 +384,7 @@ namespace LiteNetLib
                     _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryRequest);
                     break;
                 case NetEventType.DiscoveryResponse:
-                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryResponce);
+                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryResponse);
                     break;
                 case NetEventType.Error:
                     _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.AdditionalInfo);

@@ -7,7 +7,7 @@ namespace LiteNetLib
     {
         Default,
         DiscoveryRequest,
-        DiscoveryResponce
+        DiscoveryResponse
     }
 
     public interface INetEventListener

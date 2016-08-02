@@ -9,6 +9,8 @@ namespace LibSample
     {
         private class ClientListener : INetEventListener
         {
+            public NetClient Client;
+
             public void OnPeerConnected(NetPeer peer)
             {
                 Console.WriteLine("[Client] connected to: {0}:{1}", peer.EndPoint.Host, peer.EndPoint.Port);
@@ -32,6 +34,10 @@ namespace LibSample
             public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
             {
                 Console.WriteLine("[Client] ReceiveUnconnected {0}. From: {1}. Data: {2}", messageType, remoteEndPoint, reader.GetString(100));
+                if (messageType == UnconnectedMessageType.DiscoveryResponse)
+                {
+                    Client.Connect(remoteEndPoint);
+                }
             }
 
             public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
@@ -83,7 +89,8 @@ namespace LibSample
             }
         }
 
-        private ClientListener _clientListener;
+        private ClientListener _clientListener1;
+        private ClientListener _clientListener2;
         private ServerListener _serverListener;
 
         public void Run()
@@ -102,9 +109,10 @@ namespace LibSample
             _serverListener.Server = server;
 
             //Client
-            _clientListener = new ClientListener();
+            _clientListener1 = new ClientListener();
 
-            NetClient client1 = new NetClient(_clientListener, "myapp1");
+            NetClient client1 = new NetClient(_clientListener1, "myapp1");
+            _clientListener1.Client = client1;
             client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
             if (!client1.Start())
@@ -114,7 +122,9 @@ namespace LibSample
                 return;
             }
 
-            NetClient client2 = new NetClient(_clientListener, "myapp1");
+            _clientListener2 = new ClientListener();
+            NetClient client2 = new NetClient(_clientListener2, "myapp1");
+            _clientListener2.Client = client2;
             client2.SimulateLatency = true;
             client2.SimulationMaxLatency = 1500;
             client2.Start();
