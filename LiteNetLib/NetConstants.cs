@@ -17,8 +17,11 @@ namespace LiteNetLib
         public const ushort MaxSequence = 32768;
         public const ushort HalfMaxSequence = MaxSequence / 2;
 
-        //protocol
+        //socket
         public const int SocketBufferSize = 1024*1024*2; //2mb
+        public const int SocketTTL = 255;
+
+        //protocol
         public const int MaxUdpHeaderSize = 68;
         public const int PacketSizeLimit = ushort.MaxValue - MaxUdpHeaderSize;
         public const int MinPacketSize = 576 - MaxUdpHeaderSize;

@@ -49,6 +49,7 @@ namespace LiteNetLib
             _datagramSocket = new DatagramSocket();
             _datagramSocket.Control.InboundBufferSizeInBytes = NetConstants.SocketBufferSize;
             _datagramSocket.Control.DontFragment = true;
+            _datagramSocket.Control.OutboundUnicastHopLimit = NetConstants.SocketTTL;
             _datagramSocket.MessageReceived += OnMessageReceived;
 
             try
@@ -129,7 +130,6 @@ namespace LiteNetLib
 
         public void Close()
         {
-            //_datagramSocket.MessageReceived -= OnMessageReceived;
             _datagramSocket.Dispose();
             _datagramSocket = null;
             ClearPeers();
