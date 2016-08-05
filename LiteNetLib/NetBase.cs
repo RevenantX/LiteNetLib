@@ -251,9 +251,9 @@ namespace LiteNetLib
                 ProcessSendError(remoteEndPoint, errorCode.ToString());
                 return false;
             }
-            else if (errorCode == 10040)
+            if (errorCode == 10040)
             {
-                NetUtils.DebugWriteForce(ConsoleColor.Red, "[SRD] 10040, datalen: {0}", length);
+                NetUtils.DebugWrite(ConsoleColor.Red, "[SRD] 10040, datalen: {0}", length);
                 return false;
             }
 

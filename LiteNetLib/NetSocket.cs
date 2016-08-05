@@ -158,7 +158,11 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                NetUtils.DebugWriteError("[S]" + ex);
+                if (ex.SocketErrorCode != SocketError.MessageSize)
+                {
+                    NetUtils.DebugWriteError("[S]" + ex);
+                }
+                
                 errorCode = ex.ErrorCode;
                 return -1;
             }
