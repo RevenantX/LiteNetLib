@@ -17,6 +17,8 @@ namespace LiteNetLib
         private readonly NetBase.OnMessageReceived _onMessageReceived;
         private bool _running;
 
+        private static readonly bool IPv6Support = Socket.OSSupportsIPv6;
+
         public NetEndPoint LocalEndPoint
         {
             get { return _localEndPoint; }
@@ -99,6 +101,10 @@ namespace LiteNetLib
             if (port == 0)
                 port = _localEndPoint.Port;
 
+            //Check IPv6
+            if (!IPv6Support)
+                return true;
+
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv6.Blocking = false;
             _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
@@ -139,14 +145,14 @@ namespace LiteNetLib
         {
             try
             {
-                int result;
+                int result = 0;
                 if (remoteEndPoint.EndPoint.AddressFamily == AddressFamily.InterNetwork)
                 {
                     if (!_udpSocketv4.Poll(5000, SelectMode.SelectWrite))
                         return -1;
                     result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
                 }
-                else
+                else if(_udpSocketv6 != null)
                 {
                     if (!_udpSocketv6.Poll(5000, SelectMode.SelectWrite))
                         return -1;
@@ -176,21 +182,29 @@ namespace LiteNetLib
         public void Close()
         {
             _running = false;
+
+            //Close IPv4
             if (Thread.CurrentThread != _threadv4)
             {
                 _threadv4.Join();
             }
             _threadv4 = null;
-            if (Thread.CurrentThread != _threadv6)
-            {
-                _threadv6.Join();
-            }
-            _threadv6 = null;
             if (_udpSocketv4 != null)
             {
                 _udpSocketv4.Close();
                 _udpSocketv4 = null;
             }
+
+            //No ipv6
+            if (_udpSocketv6 == null)
+                return;
+
+            //Close IPv6
+            if (Thread.CurrentThread != _threadv6)
+            {
+                _threadv6.Join();
+            }
+            _threadv6 = null;
             if (_udpSocketv6 != null)
             {
                 _udpSocketv6.Close();
