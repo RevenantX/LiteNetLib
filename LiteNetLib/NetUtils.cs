@@ -26,6 +26,7 @@ namespace LiteNetLib
         public static void PrintInterfaceInfos()
         {
 #if !WINRT || UNITY_EDITOR
+            DebugWriteForce(ConsoleColor.Green, "IPv6Support: {0}", Socket.OSSupportsIPv6);
             try
             {
                 foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
@@ -53,7 +54,7 @@ namespace LiteNetLib
 #endif
         }
 
-        public static string GetLocalIp()
+        public static string GetLocalIp(bool preferIPv4 = false)
         {
 #if WINRT && !UNITY_EDITOR
             foreach (HostName localHostName in NetworkInformation.GetHostNames())
@@ -65,6 +66,7 @@ namespace LiteNetLib
             }
 #else
             IPAddress lastAddress = null;
+            IPAddress lastAddressV6 = null;
 
             try
             {
@@ -74,14 +76,12 @@ namespace LiteNetLib
                         continue;
                     foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
                     {
-                        if (ni.OperationalStatus == OperationalStatus.Up)
-                            return ip.Address.ToString();
-
-                        lastAddress = ip.Address;
+                        if (ip.Address.AddressFamily == AddressFamily.InterNetworkV6)
+                            lastAddressV6 = ip.Address;
+                        else
+                            lastAddress = ip.Address;
                     }
                 }
-                if (lastAddress != null)
-                    return lastAddress.ToString();
             }
             catch
             {
@@ -89,16 +89,31 @@ namespace LiteNetLib
             }
 
             //Fallback mode
-            if (lastAddress == null)
+            if ((lastAddress == null && lastAddressV6 == null) || (lastAddress == null && preferIPv4))
             {
                 var host = Dns.GetHostEntry(Dns.GetHostName());
                 foreach (IPAddress ip in host.AddressList)
                 {
-                    return ip.ToString();
+                    if (ip.AddressFamily == AddressFamily.InterNetworkV6)
+                        lastAddressV6 = ip;
+                    else
+                        lastAddress = ip;
                 }
             }
+
+            //Prefer IPv4
+            if (preferIPv4 && lastAddress != null)
+            {
+                return lastAddress.ToString();
+            }
+
+            //Try IPv6 then IPv4
+            if (lastAddressV6 != null)
+                return lastAddressV6.ToString();
+            if (lastAddress != null)
+                return lastAddress.ToString();
 #endif
-            return "::1";
+            return preferIPv4 ? "127.0.0.1" : "::1";
         }
 
         private static readonly object DebugLogLock = new object();

@@ -246,7 +246,8 @@ namespace LiteNetLib
             bool result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode) > 0;
 
             //10040 message to long... need to check
-            if (errorCode != 0 && errorCode != 10040)
+            //10065 no route to host
+            if (errorCode != 0 && errorCode != 10040 && errorCode != 10065)
             {
                 ProcessSendError(remoteEndPoint, errorCode.ToString());
                 return false;

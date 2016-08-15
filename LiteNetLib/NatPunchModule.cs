@@ -127,7 +127,7 @@ namespace LiteNetLib
 
             //prepare outgoing data
             NetDataWriter dw = new NetDataWriter();
-            string networkIp = NetUtils.GetLocalIp();
+            string networkIp = NetUtils.GetLocalIp(true);
             int networkPort = _netBase.LocalEndPoint.Port;
             NetEndPoint localEndPoint = new NetEndPoint(networkIp, networkPort);
             dw.Put(localEndPoint);
@@ -179,7 +179,7 @@ namespace LiteNetLib
             writer.Put(hostByte);
             writer.Put(token);
             _netBase.SendRaw(NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer), remoteExternal);
-            NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NAT] exrernal punch sent to " + remoteExternal);
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] external punch sent to " + remoteExternal);
         }
 
         private void HandleNatIntroductionRequest(NetEndPoint senderEndPoint, NetDataReader dr)
