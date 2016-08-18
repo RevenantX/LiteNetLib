@@ -296,18 +296,18 @@ namespace LiteNetLib
 
         protected NetEvent CreateEvent(NetEventType type)
         {
-            NetEvent evt;
-            if (_netEventsPool.Count > 0)
+            NetEvent evt = null;
+
+            lock (_netEventsPool)
             {
-                lock (_netEventsPool)
+                if (_netEventsPool.Count > 0)
                 {
                     evt = _netEventsPool.Pop();
                 }
             }
-            else
+            if(evt == null)
             {
-                evt = new NetEvent();
-                evt.DataReader = new NetDataReader();
+                evt = new NetEvent {DataReader = new NetDataReader()};
             }
             evt.Type = type;
             return evt;
