@@ -38,8 +38,8 @@ namespace LiteNetLib
         private readonly double _resendDelay;
         private readonly bool _ordered;
         private readonly int _windowSize;
-        private readonly AutoResetEvent _pendingPacketsAccess = new AutoResetEvent(true);
-        private readonly AutoResetEvent _outgoingAcksAccess = new AutoResetEvent(true);
+        private readonly object _pendingPacketsAccess = new object();
+        private readonly object _outgoingAcksAccess = new object();
         private const int BitsInByte = 8;
 
         private int _queueIndex;
@@ -97,7 +97,7 @@ namespace LiteNetLib
             _peer.DebugWrite("[PA]AcksStart: {0}", ackWindowStart);
             int startByte = NetConstants.SequencedHeaderSize;
 
-            _pendingPacketsAccess.WaitOne();
+            Monitor.Enter(_pendingPacketsAccess);
             for (int i = 0; i < _windowSize; i++)
             {
                 int ackSequence = (ackWindowStart + i) % NetConstants.MaxSequence;
@@ -135,7 +135,7 @@ namespace LiteNetLib
                     _peer.DebugWrite("[PA]Removing reliableInOrder ack: {0} - false", ackSequence);
                 }
             }
-            _pendingPacketsAccess.Set();
+            Monitor.Exit(_pendingPacketsAccess);
         }
 
         public void AddToQueue(NetPacket packet)
@@ -176,7 +176,7 @@ namespace LiteNetLib
             //check sending acks
             DateTime currentTime = DateTime.UtcNow;
 
-            _pendingPacketsAccess.WaitOne();
+            Monitor.Enter(_pendingPacketsAccess);
             ProcessQueuedPackets();
 
             //send
@@ -214,7 +214,7 @@ namespace LiteNetLib
                 sendResult = _peer.SendRawData(currentPacket.Packet.RawData);
                 _peer.DebugWrite("[RR]Sended: {0}", sendResult);
             }
-            _pendingPacketsAccess.Set();
+            Monitor.Exit(_pendingPacketsAccess);
             return sendResult;
         }
 
@@ -235,7 +235,7 @@ namespace LiteNetLib
             byte[] data = acksPacket.RawData; //window start + acks size
 
             //Put window start
-            _outgoingAcksAccess.WaitOne();
+            Monitor.Enter(_outgoingAcksAccess);
             acksPacket.Sequence = (ushort)_remoteWindowStart;
 
             //Put acks
@@ -258,7 +258,7 @@ namespace LiteNetLib
                 }
                 currentAckIndex = (currentAckIndex + 1) % _windowSize;
             } while (currentAckIndex != startAckIndex);
-            _outgoingAcksAccess.Set();
+            Monitor.Exit(_outgoingAcksAccess);
 
             _peer.SendRawData(acksPacket.RawData);
             _peer.Recycle(acksPacket);
@@ -297,7 +297,7 @@ namespace LiteNetLib
             }
 
             //If very new - move window
-            _outgoingAcksAccess.WaitOne();
+            Monitor.Enter(_outgoingAcksAccess);
             if (relate >= _windowSize)
             {
                 //New window position
@@ -318,13 +318,13 @@ namespace LiteNetLib
             if (_outgoingAcks[packet.Sequence % _windowSize])
             {
                 _peer.DebugWrite("[RR]ReliableInOrder duplicate");
-                _outgoingAcksAccess.Set();
+                Monitor.Exit(_outgoingAcksAccess);
                 return;
             }
 
             //save ack
             _outgoingAcks[packet.Sequence % _windowSize] = true;
-            _outgoingAcksAccess.Set();
+            Monitor.Exit(_outgoingAcksAccess);
 
             //detailed check
             if (packet.Sequence == _remoteSequence)
