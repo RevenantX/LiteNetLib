@@ -47,14 +47,14 @@ public class GameClient : MonoBehaviour, INetEventListener
         Debug.Log("[CLIENT] We connected to " + peer.EndPoint);
     }
 
-    public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+    public void OnPeerDisconnected(NetPeer peer, DisconnectReason reason, int socketErrorCode)
     {
-        Debug.Log("[CLIENT] We disconnected because " + additionalInfo);
+        Debug.Log("[CLIENT] We disconnected because " + reason);
     }
 
-    public void OnNetworkError(NetEndPoint endPoint, string error)
+    public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
     {
-        Debug.Log("[CLIENT] We received error " + error);
+        Debug.Log("[CLIENT] We received error " + socketErrorCode);
     }
 
     public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
@@ -71,7 +71,7 @@ public class GameClient : MonoBehaviour, INetEventListener
         _lerpTime = 0f;
     }
 
-    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader)
+    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
     {
        
     }

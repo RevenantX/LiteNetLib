@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Windows.Networking;
 using Windows.Networking.Sockets;
 
 namespace LiteNetLib
@@ -14,13 +15,14 @@ namespace LiteNetLib
         private readonly byte[] _buffer = new byte[NetConstants.PacketSizeLimit];
         private NetEndPoint _bufferEndPoint;
         private NetEndPoint _localEndPoint;
+        private static readonly HostName MulticastAddressV4 = new HostName(NetConstants.MulticastGroupIPv4);
+        private static readonly HostName MulticastAddressV6 = new HostName(NetConstants.MulticastGroupIPv6);
 
         public NetEndPoint LocalEndPoint
         {
             get { return _localEndPoint; }
         }
 
-        //Socket constructor
         public NetSocket(NetBase.OnMessageReceived onMessageReceived)
         {
             _onMessageReceived = onMessageReceived;
@@ -42,17 +44,19 @@ namespace LiteNetLib
             }
         }
 
-        //Bind socket to port
         public bool Bind(int port)
         {
             _datagramSocket = new DatagramSocket();
             _datagramSocket.Control.InboundBufferSizeInBytes = NetConstants.SocketBufferSize;
             _datagramSocket.Control.DontFragment = true;
+            _datagramSocket.Control.OutboundUnicastHopLimit = NetConstants.SocketTTL;
             _datagramSocket.MessageReceived += OnMessageReceived;
 
             try
             {
                 _datagramSocket.BindServiceNameAsync(port.ToString()).AsTask().Wait();
+                _datagramSocket.JoinMulticastGroup(MulticastAddressV4);
+                _datagramSocket.JoinMulticastGroup(MulticastAddressV6);
                 _localEndPoint = new NetEndPoint(_datagramSocket.Information.LocalAddress, _datagramSocket.Information.LocalPort);
             }
             catch (Exception ex)
@@ -63,7 +67,35 @@ namespace LiteNetLib
             return true;
         }
 
-        //Send to
+        public bool SendMulticast(byte[] data, int offset, int size, int port)
+        {
+            var portString = port.ToString();
+            try
+            {
+                var outputStream =
+                    _datagramSocket.GetOutputStreamAsync(MulticastAddressV4, portString)
+                        .AsTask()
+                        .Result;
+                var writer = outputStream.AsStreamForWrite();
+                writer.Write(data, offset, size);
+                writer.Flush();
+
+                outputStream =
+                    _datagramSocket.GetOutputStreamAsync(MulticastAddressV6, portString)
+                        .AsTask()
+                        .Result;
+                writer = outputStream.AsStreamForWrite();
+                writer.Write(data, offset, size);
+                writer.Flush();
+            }
+            catch (Exception ex)
+            {
+                NetUtils.DebugWriteError("[S][MCAST]" + ex);
+                return false;
+            }
+            return true;
+        }
+
         public int SendTo(byte[] data, int offset, int length, NetEndPoint remoteEndPoint, ref int errorCode)
         {
             try
@@ -96,10 +128,8 @@ namespace LiteNetLib
             _peers.Remove(ep);
         }
 
-        //Close socket
         public void Close()
         {
-            //_datagramSocket.MessageReceived -= OnMessageReceived;
             _datagramSocket.Dispose();
             _datagramSocket = null;
             ClearPeers();

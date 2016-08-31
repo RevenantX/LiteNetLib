@@ -45,16 +45,16 @@ public class GameServer : MonoBehaviour, INetEventListener
         _ourPeer = peer;
     }
 
-    public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+    public void OnPeerDisconnected(NetPeer peer, DisconnectReason reason, int socketErrorCode)
     {
-        Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + additionalInfo);
+        Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + reason);
         if (peer == _ourPeer)
             _ourPeer = null;
     }
 
-    public void OnNetworkError(NetEndPoint endPoint, string error)
+    public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
     {
-        Debug.Log("[SERVER] error " + error);
+        Debug.Log("[SERVER] error " + socketErrorCode);
     }
 
     public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
@@ -62,7 +62,7 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     }
 
-    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader)
+    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
     {
 
     }

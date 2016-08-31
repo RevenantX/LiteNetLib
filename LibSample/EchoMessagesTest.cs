@@ -46,14 +46,14 @@ namespace LibSample
                 peer.Send(testData, SendOptions.ReliableOrdered);
             }
 
-            public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
             {
-                Console.WriteLine("[Client] disconnected: " + additionalInfo);
+                Console.WriteLine("[Client] disconnected: " + disconnectReason);
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, string error)
+            public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
             {
-                Console.WriteLine("[Client] error! " + error);
+                Console.WriteLine("[Client] error! " + socketErrorCode);
             }
 
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
@@ -71,7 +71,7 @@ namespace LibSample
                 }
             }
 
-            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader)
+            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
             {
 
             }
@@ -96,14 +96,14 @@ namespace LibSample
                 }
             }
 
-            public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
             {
-                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + additionalInfo);
+                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + disconnectReason);
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, string error)
+            public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
             {
-                Console.WriteLine("[Server] error: " + error);
+                Console.WriteLine("[Server] error: " + socketErrorCode);
             }
 
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
@@ -118,7 +118,7 @@ namespace LibSample
                 }
             }
 
-            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader)
+            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
             {
                 Console.WriteLine("[Server] ReceiveUnconnected: {0}", reader.GetString(100));
             }
@@ -178,6 +178,21 @@ namespace LibSample
             client2.Stop();
             server.Stop();
             Console.ReadKey();
+            Console.WriteLine("ServStats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}", 
+                server.BytesReceived, 
+                server.PacketsReceived, 
+                server.BytesSent, 
+                server.PacketsSent);
+            Console.WriteLine("Client1Stats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}",
+                client1.BytesReceived,
+                client1.PacketsReceived,
+                client1.BytesSent,
+                client1.PacketsSent);
+            Console.WriteLine("Client2Stats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}",
+                client2.BytesReceived,
+                client2.PacketsReceived,
+                client2.BytesSent,
+                client2.PacketsSent);
             Console.WriteLine("Press any key to exit");
             Console.ReadKey();
         }

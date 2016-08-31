@@ -1,11 +1,14 @@
+#if DEBUG
+#define STATS_ENABLED
+#endif
+#if WINRT && !UNITY_EDITOR
+using Windows.System.Threading;
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using LiteNetLib.Utils;
-
-#if WINRT && !UNITY_EDITOR
-using Windows.System.Threading;
-#endif
 
 namespace LiteNetLib
 {
@@ -17,7 +20,7 @@ namespace LiteNetLib
 
     public abstract class NetBase
     {
-        public delegate void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint);
+        internal delegate void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint);
 
         protected enum NetEventType
         {
@@ -26,17 +29,20 @@ namespace LiteNetLib
             Receive,
             ReceiveUnconnected,
             Error,
-            ConnectionLatencyUpdated
+            ConnectionLatencyUpdated,
+            DiscoveryRequest,
+            DiscoveryResponse
         }
 
         protected sealed class NetEvent
         {
-            public NetPeer Peer { get; internal set; }
-            public NetDataReader DataReader { get; internal set; }
-            public NetEventType Type { get; internal set; }
-            public NetEndPoint RemoteEndPoint { get; internal set; }
-            public string AdditionalInfo { get; internal set; }
-            public int Latency { get; internal set; }
+            public NetPeer Peer;
+            public NetDataReader DataReader;
+            public NetEventType Type;
+            public NetEndPoint RemoteEndPoint;
+            public int SocketErrorCode;
+            public DisconnectReason DisconnectReason;
+            public int Latency;
         }
 
 #if DEBUG
@@ -75,9 +81,14 @@ namespace LiteNetLib
         public bool SimulateLatency = false;
         public int SimulationPacketLossChance = 10;
         public int SimulationMaxLatency = 100;
-
-        //experimental
         public bool UnsyncedEvents = false;
+        public bool DiscoveryEnabled = false;
+
+        //stats
+        public uint PacketsSent { get; private set; }
+        public uint PacketsReceived { get; private set; }
+        public uint BytesSent { get; private set; }
+        public uint BytesReceived { get; private set; }
 
         //modules
         public readonly NatPunchModule NatPunchModule;
@@ -226,10 +237,44 @@ namespace LiteNetLib
         {
             if (!_running)
                 return false;
-            NetPacket p = new NetPacket();
-            p.Init(PacketProperty.UnconnectedMessage, length);
-            p.PutData(message, start, length);
-            return SendRaw(p.RawData, 0, p.RawData.Length, remoteEndPoint);
+            var packet = NetPacket.CreateRawPacket(PacketProperty.UnconnectedMessage, message, start, length);
+            return SendRaw(packet, remoteEndPoint);
+        }
+
+        public bool SendDiscoveryRequest(NetDataWriter writer, int port)
+        {
+            return SendDiscoveryRequest(writer.Data, 0, writer.Length, port);
+        }
+
+        public bool SendDiscoveryRequest(byte[] data, int port)
+        {
+            return SendDiscoveryRequest(data, 0, data.Length, port);
+        }
+
+        public bool SendDiscoveryRequest(byte[] data, int start, int length, int port)
+        {
+            if (!_running)
+                return false;
+            var packet = NetPacket.CreateRawPacket(PacketProperty.DiscoveryRequest, data, start, length);
+            return _socket.SendMulticast(packet, 0, packet.Length, port);
+        }
+
+        public bool SendDiscoveryResponse(NetDataWriter writer, NetEndPoint remoteEndPoint)
+        {
+            return SendDiscoveryResponse(writer.Data, 0, writer.Length, remoteEndPoint);
+        }
+
+        public bool SendDiscoveryResponse(byte[] data, NetEndPoint remoteEndPoint)
+        {
+            return SendDiscoveryResponse(data, 0, data.Length, remoteEndPoint);
+        }
+
+        public bool SendDiscoveryResponse(byte[] data, int start, int length, NetEndPoint remoteEndPoint)
+        {
+            if (!_running)
+                return false;
+            var packet = NetPacket.CreateRawPacket(PacketProperty.DiscoveryResponse, data, start, length);
+            return SendRaw(packet, remoteEndPoint);
         }
 
         internal bool SendRaw(byte[] message, NetEndPoint remoteEndPoint)
@@ -249,7 +294,7 @@ namespace LiteNetLib
             //10065 no route to host
             if (errorCode != 0 && errorCode != 10040 && errorCode != 10065)
             {
-                ProcessSendError(remoteEndPoint, errorCode.ToString());
+                ProcessSendError(remoteEndPoint, errorCode);
                 return false;
             }
             if (errorCode == 10040)
@@ -257,6 +302,10 @@ namespace LiteNetLib
                 NetUtils.DebugWrite(ConsoleColor.Red, "[SRD] 10040, datalen: {0}", length);
                 return false;
             }
+#if STATS_ENABLED
+            PacketsSent++;
+            BytesSent += (uint)length;
+#endif
 
             return result;
         }
@@ -336,16 +385,22 @@ namespace LiteNetLib
                     _netEventListener.OnPeerConnected(evt.Peer);
                     break;
                 case NetEventType.Disconnect:
-                    _netEventListener.OnPeerDisconnected(evt.Peer, evt.AdditionalInfo);
+                    _netEventListener.OnPeerDisconnected(evt.Peer, evt.DisconnectReason, evt.SocketErrorCode);
                     break;
                 case NetEventType.Receive:
                     _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader);
                     break;
                 case NetEventType.ReceiveUnconnected:
-                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader);
+                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.Default);
+                    break;
+                case NetEventType.DiscoveryRequest:
+                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryRequest);
+                    break;
+                case NetEventType.DiscoveryResponse:
+                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryResponse);
                     break;
                 case NetEventType.Error:
-                    _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.AdditionalInfo);
+                    _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.SocketErrorCode);
                     break;
                 case NetEventType.ConnectionLatencyUpdated:
                     _netEventListener.OnNetworkLatencyUpdate(evt.Peer, evt.Latency);
@@ -355,7 +410,7 @@ namespace LiteNetLib
             //Recycle
             evt.DataReader.Clear();
             evt.Peer = null;
-            evt.AdditionalInfo = string.Empty;
+            evt.SocketErrorCode = 0;
             evt.RemoteEndPoint = null;
 
             lock (_netEventsPool)
@@ -454,14 +509,18 @@ namespace LiteNetLib
             }
             else
             {
-                NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error: " + errorCode);
-                ProcessError("Receive socket error: " + errorCode);
+                ProcessReceiveError(errorCode);
                 Stop();
             }
         }
 
         private void DataReceived(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
+#if STATS_ENABLED
+            PacketsReceived++;
+            BytesReceived += (uint) count;
+#endif
+
             //Try get packet property
             PacketProperty property;
             if (!NetPacket.GetPacketProperty(reusableBuffer, out property))
@@ -470,44 +529,63 @@ namespace LiteNetLib
             //Check unconnected
             switch (property)
             {
+                case PacketProperty.DiscoveryRequest:
+                if(DiscoveryEnabled)
+                {
+                    var netEvent = CreateEvent(NetEventType.DiscoveryRequest);
+                    netEvent.RemoteEndPoint = remoteEndPoint;
+                    netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
+                    EnqueueEvent(netEvent);
+                }
+                return;
+                case PacketProperty.DiscoveryResponse:
+                {
+                    var netEvent = CreateEvent(NetEventType.DiscoveryResponse);
+                    netEvent.RemoteEndPoint = remoteEndPoint;
+                    netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
+                    EnqueueEvent(netEvent);
+                }
+                return;
                 case PacketProperty.UnconnectedMessage:
-                    if (UnconnectedMessagesEnabled)
-                    {
-                        var netEvent = CreateEvent(NetEventType.ReceiveUnconnected);
-                        netEvent.RemoteEndPoint = remoteEndPoint;
-                        netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
-                        EnqueueEvent(netEvent);
-                    }
-                    return;
+                if (UnconnectedMessagesEnabled)
+                {
+                    var netEvent = CreateEvent(NetEventType.ReceiveUnconnected);
+                    netEvent.RemoteEndPoint = remoteEndPoint;
+                    netEvent.DataReader.SetSource(NetPacket.GetUnconnectedData(reusableBuffer, count));
+                    EnqueueEvent(netEvent);
+                }
+                return;
                 case PacketProperty.NatIntroduction:
                 case PacketProperty.NatIntroductionRequest:
                 case PacketProperty.NatPunchMessage:
+                {
                     if (NatPunchEnabled)
                         NatPunchModule.ProcessMessage(remoteEndPoint, property, NetPacket.GetUnconnectedData(reusableBuffer, count));
                     return;
+                }
             }
 
             //other
             ReceiveFromSocket(reusableBuffer, count, remoteEndPoint);
         }
 
-        protected virtual void ProcessError(string errorMessage)
+        protected virtual void ProcessReceiveError(int socketErrorCode)
         {
             var netEvent = CreateEvent(NetEventType.Error);
-            netEvent.AdditionalInfo = errorMessage;
+            netEvent.SocketErrorCode = socketErrorCode;
+            EnqueueEvent(netEvent);
+        }
+
+        internal virtual void ProcessSendError(NetEndPoint endPoint, int socketErrorCode)
+        {
+            var netEvent = CreateEvent(NetEventType.Error);
+            netEvent.RemoteEndPoint = endPoint;
+            netEvent.SocketErrorCode = socketErrorCode;
             EnqueueEvent(netEvent);
         }
 
         protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
         internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
-
-        internal virtual void ProcessSendError(NetEndPoint endPoint, string errorMessage)
-        {
-            var netEvent = CreateEvent(NetEventType.Error);
-            netEvent.RemoteEndPoint = endPoint;
-            netEvent.AdditionalInfo = string.Format("Send error to {0}: {1}", endPoint, errorMessage);
-            EnqueueEvent(netEvent);
-        }
     }
 }
