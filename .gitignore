@@ -11,5 +11,5 @@ LibSample/bin
 *.DotSettings.user
 LiteNetLibSampleUnity.CSharp.csproj
 LiteNetLibSampleUnity.sln
-LiteNetLibSampleUnity/Library
 LiteNetLibSampleUnity/Temp
+LiteNetLibSampleUnity/Library

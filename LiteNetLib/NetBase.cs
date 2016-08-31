@@ -283,14 +283,15 @@ namespace LiteNetLib
             bool result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode) > 0;
 
             //10040 message to long... need to check
-            if (errorCode != 0 && errorCode != 10040)
+            //10065 no route to host
+            if (errorCode != 0 && errorCode != 10040 && errorCode != 10065)
             {
                 ProcessSendError(remoteEndPoint, errorCode.ToString());
                 return false;
             }
-            else if (errorCode == 10040)
+            if (errorCode == 10040)
             {
-                NetUtils.DebugWriteForce(ConsoleColor.Red, "[SRD] 10040, datalen: {0}", length);
+                NetUtils.DebugWrite(ConsoleColor.Red, "[SRD] 10040, datalen: {0}", length);
                 return false;
             }
 
@@ -332,18 +333,18 @@ namespace LiteNetLib
 
         protected NetEvent CreateEvent(NetEventType type)
         {
-            NetEvent evt;
-            if (_netEventsPool.Count > 0)
+            NetEvent evt = null;
+
+            lock (_netEventsPool)
             {
-                lock (_netEventsPool)
+                if (_netEventsPool.Count > 0)
                 {
                     evt = _netEventsPool.Pop();
                 }
             }
-            else
+            if(evt == null)
             {
-                evt = new NetEvent();
-                evt.DataReader = new NetDataReader();
+                evt = new NetEvent {DataReader = new NetDataReader()};
             }
             evt.Type = type;
             return evt;

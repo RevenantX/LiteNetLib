@@ -49,12 +49,12 @@ public class GameClient : MonoBehaviour, INetEventListener
 
     public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
     {
-       
+        Debug.Log("[CLIENT] We disconnected because " + additionalInfo);
     }
 
     public void OnNetworkError(NetEndPoint endPoint, string error)
     {
-        
+        Debug.Log("[CLIENT] We received error " + error);
     }
 
     public void OnNetworkReceive(NetPeer peer, NetDataReader reader)

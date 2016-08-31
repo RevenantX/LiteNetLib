@@ -269,12 +269,18 @@ namespace LiteNetLib
                         _simpleChannel.AddToQueue(packet);
                     }
                     break;
+                case PacketProperty.MtuCheck:
+                    if (!SendRawData(packet.RawData))
+                    {
+                        _finishMtu = true;
+                    }
+                    Recycle(packet);
+                    break;
                 case PacketProperty.AckReliable:
                 case PacketProperty.AckReliableOrdered:
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
                 case PacketProperty.Disconnect:
-                case PacketProperty.MtuCheck:
                 case PacketProperty.MtuOk:
                     SendRawData(packet.RawData);
                     Recycle(packet);

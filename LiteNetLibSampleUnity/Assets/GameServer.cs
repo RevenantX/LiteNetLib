@@ -47,13 +47,14 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
     {
-        if(peer == _ourPeer)
+        Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + additionalInfo);
+        if (peer == _ourPeer)
             _ourPeer = null;
     }
 
     public void OnNetworkError(NetEndPoint endPoint, string error)
     {
-
+        Debug.Log("[SERVER] error " + error);
     }
 
     public void OnNetworkReceive(NetPeer peer, NetDataReader reader)

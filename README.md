@@ -24,7 +24,11 @@ Minimal .NET version - 3.5
 * IPv6 support (dual mode)
 * Small CPU and RAM usage
 * Unity3d support (you can use library source in project)
-* Universal Windows Platform (Windows 8.1 and Windows 10 including phones) support
+* Supported platforms:
+ * Windows/Mac/Linux
+ * Android
+ * iOS
+ * Universal Windows (Windows 8.1 and Windows 10 including phones)
 
 ## Usage samples
 

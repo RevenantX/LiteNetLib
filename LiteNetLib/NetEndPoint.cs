@@ -41,7 +41,17 @@ namespace LiteNetLib
             IPAddress ipAddress;
             if (!IPAddress.TryParse(hostStr, out ipAddress))
             {
-                ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
+                if (Socket.OSSupportsIPv6)
+                {
+                    if (hostStr == "localhost")
+                    {
+                        ipAddress = IPAddress.IPv6Loopback;
+                    }
+                    else
+                    {
+                        ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
+                    }
+                }
                 if (ipAddress == null)
                 {
                     ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetwork);

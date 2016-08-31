@@ -204,7 +204,11 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                NetUtils.DebugWriteError("[S]" + ex);
+                if (ex.SocketErrorCode != SocketError.MessageSize)
+                {
+                    NetUtils.DebugWriteError("[S]" + ex);
+                }
+                
                 errorCode = ex.ErrorCode;
                 return -1;
             }
@@ -219,23 +223,28 @@ namespace LiteNetLib
         {
             _running = false;
 
+            //Close IPv4
             if (Thread.CurrentThread != _threadv4)
             {
                 _threadv4.Join();
             }
             _threadv4 = null;
-
-            if (Thread.CurrentThread != _threadv6)
-            {
-                _threadv6.Join();
-            }
-            _threadv6 = null;
-
             if (_udpSocketv4 != null)
             {
                 _udpSocketv4.Close();
                 _udpSocketv4 = null;
             }
+
+            //No ipv6
+            if (_udpSocketv6 == null)
+                return;
+
+            //Close IPv6
+            if (Thread.CurrentThread != _threadv6)
+            {
+                _threadv6.Join();
+            }
+            _threadv6 = null;
             if (_udpSocketv6 != null)
             {
                 _udpSocketv6.Close();
