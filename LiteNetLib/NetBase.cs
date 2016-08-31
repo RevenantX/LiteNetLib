@@ -1,11 +1,14 @@
+#if DEBUG
+#define STATS_ENABLED
+#endif
+#if WINRT && !UNITY_EDITOR
+using Windows.System.Threading;
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using LiteNetLib.Utils;
-
-#if WINRT && !UNITY_EDITOR
-using Windows.System.Threading;
-#endif
 
 namespace LiteNetLib
 {
@@ -17,7 +20,7 @@ namespace LiteNetLib
 
     public abstract class NetBase
     {
-        public delegate void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint);
+        internal delegate void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint);
 
         protected enum NetEventType
         {
@@ -78,10 +81,14 @@ namespace LiteNetLib
         public bool SimulateLatency = false;
         public int SimulationPacketLossChance = 10;
         public int SimulationMaxLatency = 100;
-
-        //experimental
         public bool UnsyncedEvents = false;
         public bool DiscoveryEnabled = false;
+
+        //stats
+        public uint PacketsSent { get; private set; }
+        public uint PacketsReceived { get; private set; }
+        public uint BytesSent { get; private set; }
+        public uint BytesReceived { get; private set; }
 
         //modules
         public readonly NatPunchModule NatPunchModule;
@@ -295,6 +302,10 @@ namespace LiteNetLib
                 NetUtils.DebugWrite(ConsoleColor.Red, "[SRD] 10040, datalen: {0}", length);
                 return false;
             }
+#if STATS_ENABLED
+            PacketsSent++;
+            BytesSent += (uint)length;
+#endif
 
             return result;
         }
@@ -505,6 +516,11 @@ namespace LiteNetLib
 
         private void DataReceived(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
+#if STATS_ENABLED
+            PacketsReceived++;
+            BytesReceived += (uint) count;
+#endif
+
             //Try get packet property
             PacketProperty property;
             if (!NetPacket.GetPacketProperty(reusableBuffer, out property))
