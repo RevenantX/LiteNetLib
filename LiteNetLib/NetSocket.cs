@@ -16,8 +16,8 @@ namespace LiteNetLib
         private bool _running;
         private readonly NetBase.OnMessageReceived _onMessageReceived;
 
-        private static readonly IPAddress MulticastAddressV4 = IPAddress.Parse("224.0.0.1");
-        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("FF02:0:0:0:0:0:0:1");
+        private static readonly IPAddress MulticastAddressV4 = IPAddress.Parse(NetConstants.MulticastGroupIPv4);
+        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse(NetConstants.MulticastGroupIPv6);
         private static readonly bool IPv6Support = Socket.OSSupportsIPv6;
         private const int SocketReceivePollTime = 100000;
         private const int SocketSendPollTime = 5000;

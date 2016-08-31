@@ -46,14 +46,14 @@ namespace LibSample
                 peer.Send(testData, SendOptions.ReliableOrdered);
             }
 
-            public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
             {
-                Console.WriteLine("[Client] disconnected: " + additionalInfo);
+                Console.WriteLine("[Client] disconnected: " + disconnectReason);
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, string error)
+            public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
             {
-                Console.WriteLine("[Client] error! " + error);
+                Console.WriteLine("[Client] error! " + socketErrorCode);
             }
 
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
@@ -96,14 +96,14 @@ namespace LibSample
                 }
             }
 
-            public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
             {
-                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + additionalInfo);
+                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + disconnectReason);
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, string error)
+            public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
             {
-                Console.WriteLine("[Server] error: " + error);
+                Console.WriteLine("[Server] error: " + socketErrorCode);
             }
 
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)

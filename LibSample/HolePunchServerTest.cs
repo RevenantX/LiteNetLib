@@ -91,9 +91,9 @@ namespace LibSample
                 Console.WriteLine("PeerConnected: " + peer.EndPoint.ToString());
             };
 
-            netListener.PeerDisconnectedEvent += (peer, s) =>
+            netListener.PeerDisconnectedEvent += (peer, reason, error) =>
             {
-                Console.WriteLine("PeerDisconnected: " + s);
+                Console.WriteLine("PeerDisconnected: " + reason);
             };
 
             natPunchListener1.NatIntroductionSuccess += (point, token) =>

@@ -13,15 +13,15 @@ namespace LibSample
 
             public void OnPeerConnected(NetPeer peer)
             {
-                Console.WriteLine("[Client] connected to: {0}:{1}", peer.EndPoint.Host, peer.EndPoint.Port);
+                Console.WriteLine("[Client {0}] connected to: {1}:{2}", Client.LocalEndPoint.Port, peer.EndPoint.Host, peer.EndPoint.Port);
             }
 
-            public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
             {
-                Console.WriteLine("[Client] disconnected: " + additionalInfo);
+                Console.WriteLine("[Client] disconnected: " + disconnectReason);
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, string error)
+            public void OnNetworkError(NetEndPoint endPoint, int error)
             {
                 Console.WriteLine("[Client] error! " + error);
             }
@@ -60,14 +60,14 @@ namespace LibSample
                 }
             }
 
-            public void OnPeerDisconnected(NetPeer peer, string additionalInfo)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
             {
-                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + additionalInfo);
+                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + disconnectReason);
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, string error)
+            public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
             {
-                Console.WriteLine("[Server] error: " + error);
+                Console.WriteLine("[Server] error: " + socketErrorCode);
             }
 
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)

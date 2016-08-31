@@ -15,8 +15,8 @@ namespace LiteNetLib
         private readonly byte[] _buffer = new byte[NetConstants.PacketSizeLimit];
         private NetEndPoint _bufferEndPoint;
         private NetEndPoint _localEndPoint;
-        private static readonly HostName MulticastAddressV4 = new HostName("224.0.0.1");
-        private static readonly HostName MulticastAddressV6 = new HostName("FF02:0:0:0:0:0:0:1");
+        private static readonly HostName MulticastAddressV4 = new HostName(NetConstants.MulticastGroupIPv4);
+        private static readonly HostName MulticastAddressV6 = new HostName(NetConstants.MulticastGroupIPv6);
 
         public NetEndPoint LocalEndPoint
         {
