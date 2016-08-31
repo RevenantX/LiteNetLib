@@ -111,6 +111,9 @@ client.Stop();
 * **UnsyncedEvents**
  * Experimental feature. Events automatically will be called without PollEvents method from another thread
  * default value: **false**
+* **DiscoveryEnabled**
+ * Allows receive DiscoveryRequests
+ * default value: **false**
 
 ### Only client
 * **ReconnectDelay**
