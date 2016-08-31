@@ -22,6 +22,8 @@ Minimal .NET version - 3.5
 * NTP time requests
 * Packet loss and latency simulation
 * IPv6 support (dual mode)
+* Connection statisitcs
+* Multicasting (for discovering servers in local network)
 * Small CPU and RAM usage
 * Unity3d support (you can use library source in project)
 * Supported platforms:
