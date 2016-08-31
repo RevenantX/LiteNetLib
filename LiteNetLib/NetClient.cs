@@ -45,7 +45,7 @@ namespace LiteNetLib
             get { return _connected; }
         }
 
-        private void CloseConnection(bool force, string info)
+        private void CloseConnection(bool force, DisconnectReason reason, int socketErrorCode)
         {
             lock (_connectionCloseLock)
             {
@@ -74,7 +74,8 @@ namespace LiteNetLib
 
                 //Send event to Listener
                 var netEvent = CreateEvent(NetEventType.Disconnect);
-                netEvent.AdditionalInfo = info;
+                netEvent.DisconnectReason = reason;
+                netEvent.SocketErrorCode = socketErrorCode;
                 EnqueueEvent(netEvent);
             }
         }
@@ -84,12 +85,13 @@ namespace LiteNetLib
         /// </summary>
         public override void Stop()
         {
-            CloseConnection(false, "Stop method called"); 
+            CloseConnection(false, DisconnectReason.StopCalled, 0); 
         }
 
-        protected override void ProcessError(string errorMessage)
+        protected override void ProcessReceiveError(int socketErrorCode)
         {
-            CloseConnection(true, errorMessage);
+            CloseConnection(true, DisconnectReason.SocketReceiveError, socketErrorCode);
+            base.ProcessReceiveError(socketErrorCode);
         }
 
         /// <summary>
@@ -160,7 +162,7 @@ namespace LiteNetLib
                     _connectAttempts++;
                     if (_connectAttempts > MaxConnectAttempts)
                     {
-                        CloseConnection(true, "connection timeout");
+                        CloseConnection(true, DisconnectReason.ConnectionFailed, 0);
                         return;
                     }
 
@@ -170,7 +172,7 @@ namespace LiteNetLib
             }
             else if (_peer.TimeSinceLastPacket > DisconnectTimeout)
             {
-                CloseConnection(true, "Timeout");
+                CloseConnection(true, DisconnectReason.Timeout, 0);
                 return;
             }
 
@@ -187,10 +189,10 @@ namespace LiteNetLib
             EnqueueEvent(netEvent);
         }
 
-        internal override void ProcessSendError(NetEndPoint remoteEndPoint, string errorMessage)
+        internal override void ProcessSendError(NetEndPoint remoteEndPoint, int socketErrorCode)
         {
-            CloseConnection(true, "Send error: " + errorMessage);
-            base.ProcessSendError(remoteEndPoint, errorMessage);
+            CloseConnection(true, DisconnectReason.SocketSendError, socketErrorCode);
+            base.ProcessSendError(remoteEndPoint, socketErrorCode);
         }
 
         private void ProcessConnectAccept()
@@ -271,7 +273,7 @@ namespace LiteNetLib
             if (packet.Property == PacketProperty.Disconnect)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received disconnection");
-                CloseConnection(true, "Received disconnection from server");
+                CloseConnection(true, DisconnectReason.RemoteConnectionClose, 0);
                 return;
             }
 

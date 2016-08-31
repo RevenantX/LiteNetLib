@@ -33,12 +33,13 @@ namespace LiteNetLib
 
         protected sealed class NetEvent
         {
-            public NetPeer Peer { get; internal set; }
-            public NetDataReader DataReader { get; internal set; }
-            public NetEventType Type { get; internal set; }
-            public NetEndPoint RemoteEndPoint { get; internal set; }
-            public string AdditionalInfo { get; internal set; }
-            public int Latency { get; internal set; }
+            public NetPeer Peer;
+            public NetDataReader DataReader;
+            public NetEventType Type;
+            public NetEndPoint RemoteEndPoint;
+            public int SocketErrorCode;
+            public DisconnectReason DisconnectReason;
+            public int Latency;
         }
 
 #if DEBUG
@@ -286,7 +287,7 @@ namespace LiteNetLib
             //10065 no route to host
             if (errorCode != 0 && errorCode != 10040 && errorCode != 10065)
             {
-                ProcessSendError(remoteEndPoint, errorCode.ToString());
+                ProcessSendError(remoteEndPoint, errorCode);
                 return false;
             }
             if (errorCode == 10040)
@@ -373,7 +374,7 @@ namespace LiteNetLib
                     _netEventListener.OnPeerConnected(evt.Peer);
                     break;
                 case NetEventType.Disconnect:
-                    _netEventListener.OnPeerDisconnected(evt.Peer, evt.AdditionalInfo);
+                    _netEventListener.OnPeerDisconnected(evt.Peer, evt.DisconnectReason, evt.SocketErrorCode);
                     break;
                 case NetEventType.Receive:
                     _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader);
@@ -388,7 +389,7 @@ namespace LiteNetLib
                     _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryResponse);
                     break;
                 case NetEventType.Error:
-                    _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.AdditionalInfo);
+                    _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.SocketErrorCode);
                     break;
                 case NetEventType.ConnectionLatencyUpdated:
                     _netEventListener.OnNetworkLatencyUpdate(evt.Peer, evt.Latency);
@@ -398,7 +399,7 @@ namespace LiteNetLib
             //Recycle
             evt.DataReader.Clear();
             evt.Peer = null;
-            evt.AdditionalInfo = string.Empty;
+            evt.SocketErrorCode = 0;
             evt.RemoteEndPoint = null;
 
             lock (_netEventsPool)
@@ -497,8 +498,7 @@ namespace LiteNetLib
             }
             else
             {
-                NetUtils.DebugWrite(ConsoleColor.Red, "(NB)Socket error: " + errorCode);
-                ProcessError("Receive socket error: " + errorCode);
+                ProcessReceiveError(errorCode);
                 Stop();
             }
         }
@@ -553,23 +553,23 @@ namespace LiteNetLib
             ReceiveFromSocket(reusableBuffer, count, remoteEndPoint);
         }
 
-        protected virtual void ProcessError(string errorMessage)
+        protected virtual void ProcessReceiveError(int socketErrorCode)
         {
             var netEvent = CreateEvent(NetEventType.Error);
-            netEvent.AdditionalInfo = errorMessage;
+            netEvent.SocketErrorCode = socketErrorCode;
+            EnqueueEvent(netEvent);
+        }
+
+        internal virtual void ProcessSendError(NetEndPoint endPoint, int socketErrorCode)
+        {
+            var netEvent = CreateEvent(NetEventType.Error);
+            netEvent.RemoteEndPoint = endPoint;
+            netEvent.SocketErrorCode = socketErrorCode;
             EnqueueEvent(netEvent);
         }
 
         protected abstract void ReceiveFromSocket(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint);
         protected abstract void PostProcessEvent(int deltaTime);
         internal abstract void ReceiveFromPeer(NetPacket packet, NetEndPoint endPoint);
-
-        internal virtual void ProcessSendError(NetEndPoint endPoint, string errorMessage)
-        {
-            var netEvent = CreateEvent(NetEventType.Error);
-            netEvent.RemoteEndPoint = endPoint;
-            netEvent.AdditionalInfo = string.Format("Send error to {0}: {1}", endPoint, errorMessage);
-            EnqueueEvent(netEvent);
-        }
     }
 }

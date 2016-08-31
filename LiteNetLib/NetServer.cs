@@ -76,7 +76,7 @@ namespace LiteNetLib
                 peer.CreateAndSend(PacketProperty.Disconnect);
                 var netEvent = CreateEvent(NetEventType.Disconnect);
                 netEvent.Peer = peer;
-                netEvent.AdditionalInfo = "Disconnect peer called";
+                netEvent.DisconnectReason = DisconnectReason.DisconnectPeerCalled;
                 EnqueueEvent(netEvent);
                 RemovePeer(peer);
             }
@@ -102,11 +102,11 @@ namespace LiteNetLib
             }
         }
 
-        protected override void ProcessError(string errorMessage)
+        protected override void ProcessReceiveError(int socketErrorCode)
         {
             ClearPeers();
             var netEvent = CreateEvent(NetEventType.Error);
-            netEvent.AdditionalInfo = errorMessage;
+            netEvent.SocketErrorCode = socketErrorCode;
             EnqueueEvent(netEvent);
         }
 
@@ -122,7 +122,7 @@ namespace LiteNetLib
                         netPeer.DebugWrite("Disconnect by timeout: {0} > {1}", netPeer.TimeSinceLastPacket, DisconnectTimeout);
                         var netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
-                        netEvent.AdditionalInfo = "Timeout";
+                        netEvent.DisconnectReason = DisconnectReason.Timeout;
                         EnqueueEvent(netEvent);
 
                         lock (_peersToRemove)
@@ -161,17 +161,19 @@ namespace LiteNetLib
             }
         }
 
-        internal override void ProcessSendError(NetEndPoint remoteEndPoint, string errorMessage)
+        internal override void ProcessSendError(NetEndPoint remoteEndPoint, int socketErrorCode)
         {
             NetPeer fromPeer;
             if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
             {
                 var netEvent = CreateEvent(NetEventType.Disconnect);
                 netEvent.Peer = fromPeer;
-                netEvent.AdditionalInfo = "Peer send error: " + errorMessage;
+                netEvent.DisconnectReason = DisconnectReason.SocketSendError;
+                netEvent.SocketErrorCode = socketErrorCode;
                 EnqueueEvent(netEvent);
                 RemovePeer(fromPeer);
             }
+            base.ProcessSendError(remoteEndPoint, socketErrorCode);
         }
 
         private void SendConnectAccept(NetPeer peer, ulong id)
@@ -218,7 +220,7 @@ namespace LiteNetLib
                     RemovePeer(netPeer);
                     var netEvent = CreateEvent(NetEventType.Disconnect);
                     netEvent.Peer = netPeer;
-                    netEvent.AdditionalInfo = "successfuly disconnected";
+                    netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
                     EnqueueEvent(netEvent);
                 }
                 else if (packet.Property == PacketProperty.ConnectRequest) //response with connect
