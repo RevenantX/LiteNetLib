@@ -53,6 +53,7 @@ namespace LiteNetLib
             public DateTime TimeWhenGet;
         }
         private readonly LinkedList<IncomingData> _pingSimulationList = new LinkedList<IncomingData>(); 
+        private readonly Random _randomGenerator = new Random();
 #endif
 
         private readonly NetSocket _socket;
@@ -67,7 +68,6 @@ namespace LiteNetLib
         private bool _running;
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
-        private readonly Random _randomGenerator = new Random();
         private readonly INetEventListener _netEventListener;
 
         //config section
