@@ -12,15 +12,15 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    internal sealed class FlowMode
-    {
-        public int PacketsPerSecond;
-        public int StartRtt;
-    }
-
     public abstract class NetBase
     {
         internal delegate void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint);
+
+        private struct FlowMode
+        {
+            public int PacketsPerSecond;
+            public int StartRtt;
+        }
 
         protected enum NetEventType
         {
