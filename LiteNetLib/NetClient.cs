@@ -75,7 +75,7 @@ namespace LiteNetLib
                 //Send event to Listener
                 var netEvent = CreateEvent(NetEventType.Disconnect);
                 netEvent.DisconnectReason = reason;
-                netEvent.SocketErrorCode = socketErrorCode;
+                netEvent.AdditionalData = socketErrorCode;
                 EnqueueEvent(netEvent);
             }
         }

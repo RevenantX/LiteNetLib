@@ -106,7 +106,7 @@ namespace LiteNetLib
         {
             ClearPeers();
             var netEvent = CreateEvent(NetEventType.Error);
-            netEvent.SocketErrorCode = socketErrorCode;
+            netEvent.AdditionalData = socketErrorCode;
             EnqueueEvent(netEvent);
         }
 
@@ -169,7 +169,7 @@ namespace LiteNetLib
                 var netEvent = CreateEvent(NetEventType.Disconnect);
                 netEvent.Peer = fromPeer;
                 netEvent.DisconnectReason = DisconnectReason.SocketSendError;
-                netEvent.SocketErrorCode = socketErrorCode;
+                netEvent.AdditionalData = socketErrorCode;
                 EnqueueEvent(netEvent);
                 RemovePeer(fromPeer);
             }
