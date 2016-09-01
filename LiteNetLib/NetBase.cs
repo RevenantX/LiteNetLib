@@ -85,10 +85,10 @@ namespace LiteNetLib
         public bool DiscoveryEnabled = false;
 
         //stats
-        public uint PacketsSent { get; private set; }
-        public uint PacketsReceived { get; private set; }
-        public uint BytesSent { get; private set; }
-        public uint BytesReceived { get; private set; }
+        public ulong PacketsSent { get; private set; }
+        public ulong PacketsReceived { get; private set; }
+        public ulong BytesSent { get; private set; }
+        public ulong BytesReceived { get; private set; }
 
         //modules
         public readonly NatPunchModule NatPunchModule;
