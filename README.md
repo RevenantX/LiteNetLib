@@ -105,8 +105,11 @@ client.Stop();
 * **SimulationPacketLossChance**
  * chance of packet loss when simulation enabled. value in percents.
  * default value: **10 (%)**
+* **SimulationMinLatency**
+ * minimum simulated latency
+ * default value: **30 msec**
 * **SimulationMaxLatency**
- * maximum simulated latency ( it will be random from 0 to value )
+ * maximum simulated latency
  * default value: **100 msec**
 * **UnsyncedEvents**
  * Experimental feature. Events automatically will be called without PollEvents method from another thread

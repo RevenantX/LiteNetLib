@@ -79,6 +79,7 @@ namespace LiteNetLib
         public bool SimulatePacketLoss = false;
         public bool SimulateLatency = false;
         public int SimulationPacketLossChance = 10;
+        public int SimulationMinLatency = 30;
         public int SimulationMaxLatency = 100;
         public bool UnsyncedEvents = false;
         public bool DiscoveryEnabled = false;
@@ -486,7 +487,7 @@ namespace LiteNetLib
                 }
                 else if (SimulateLatency)
                 {
-                    int latency = _randomGenerator.Next(SimulationMaxLatency);
+                    int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
                     if (latency > 5)
                     {
                         byte[] holdedData = new byte[length];
