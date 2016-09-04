@@ -64,7 +64,7 @@ client.Start();
 client.Connect("localhost" /* host ip or name */, 9050 /* port */);
 listener.NetworkReceiveEvent += (fromPeer, dataReader) =>
 {
-    Console.WriteLine("We got: {0}", dataReader.GetString(100 /* max length of string */);
+    Console.WriteLine("We got: {0}", dataReader.GetString(100 /* max length of string */));
 };
 
 while (!Console.KeyAvailable)
