@@ -50,7 +50,7 @@ namespace LiteNetLib
         private int _mtuCheckTimer;
         private int _mtuCheckAttempts;
         private const int MtuCheckDelay = 1000;
-        private const int MaxMtuCheckAttempts = 10;
+        private const int MaxMtuCheckAttempts = 4;
         private readonly object _mtuMutex = new object();
 
         //Fragment
@@ -281,6 +281,7 @@ namespace LiteNetLib
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
                 case PacketProperty.Disconnect:
+                case PacketProperty.MtuOk:
                     SendRawData(packet.RawData);
                     Recycle(packet);
                     break;
@@ -437,28 +438,36 @@ namespace LiteNetLib
 
         private void ProcessMtuPacket(NetPacket packet)
         {
-            if (packet.Property == PacketProperty.MtuOk)
-            {
-                DebugWrite("MTU. Ignore old MtuOk packet");
+            if (packet.RawData.Length == 1 || 
+                packet.RawData[1] >= NetConstants.PossibleMtu.Length)
                 return;
-            }
 
             //MTU auto increase
-            if (_mtuIdx < NetConstants.PossibleMtu.Length - 1 && packet.RawData.Length > _mtu)
+            if (packet.Property == PacketProperty.MtuCheck)
             {
-                DebugWrite("MTU check. Increase to: " + packet.RawData.Length);
+                if (packet.RawData.Length != NetConstants.PossibleMtu[packet.RawData[1]])
+                {
+                    return;
+                }
+                _mtuCheckAttempts = 0;
+                DebugWrite("MTU check. Resend: " + packet.RawData[1]);
+                var mtuOkPacket = GetPacketFromPool(PacketProperty.MtuOk, 1);
+                mtuOkPacket.RawData[1] = packet.RawData[1];
+                SendPacket(mtuOkPacket);
+            }
+            else if(packet.RawData[1] > _mtuIdx) //MtuOk
+            {
                 lock (_mtuMutex)
                 {
-                    _mtuIdx++;
+                    _mtuIdx = packet.RawData[1];
+                    _mtu = NetConstants.PossibleMtu[_mtuIdx];
                 }
-                _mtu = NetConstants.PossibleMtu[_mtuIdx];
-                _mtuCheckAttempts = 0;
-            }
-
-            //maxed.
-            if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
-            {
-                _finishMtu = true;
+                //if maxed - finish.
+                if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
+                {
+                    _finishMtu = true;
+                }
+                DebugWrite("MTU ok. Increase to: " + _mtu);
             }
         }
 
@@ -642,6 +651,7 @@ namespace LiteNetLib
                             {
                                 int newMtu = NetConstants.PossibleMtu[_mtuIdx + 1] - NetConstants.HeaderSize;
                                 var p = GetPacketFromPool(PacketProperty.MtuCheck, newMtu);
+                                p.RawData[1] = (byte)(_mtuIdx + 1);
                                 SendPacket(p);
                             }
                         }
