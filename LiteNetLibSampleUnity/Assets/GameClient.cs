@@ -17,7 +17,6 @@ public class GameClient : MonoBehaviour, INetEventListener
     {
         _netClient = new NetClient(this, "sample_app");
 	    _netClient.Start();
-        _netClient.Connect("localhost", 5000);
 	    _netClient.UpdateTime = 15;
     }
 
@@ -25,21 +24,26 @@ public class GameClient : MonoBehaviour, INetEventListener
     {
 	    _netClient.PollEvents();
 
-	    if (_netClient.IsConnected)
-	    {
+        if (_netClient.IsConnected)
+        {
             //Fixed delta set to 0.05
-	        var pos = _clientBallInterpolated.transform.position;
-	        pos.x = Mathf.Lerp(_oldBallPosX, _newBallPosX, _lerpTime);
-	        _clientBallInterpolated.transform.position = pos;
+            var pos = _clientBallInterpolated.transform.position;
+            pos.x = Mathf.Lerp(_oldBallPosX, _newBallPosX, _lerpTime);
+            _clientBallInterpolated.transform.position = pos;
 
             //Basic lerp
-	        _lerpTime += Time.deltaTime / Time.fixedDeltaTime;
-	    }
+            _lerpTime += Time.deltaTime/Time.fixedDeltaTime;
+        }
+        else
+        {
+            _netClient.SendDiscoveryRequest(new byte[] { 1 }, 5000);
+        }
     }
 
     void OnDestroy()
     {
-        _netClient.Stop();
+        if(_netClient != null)
+            _netClient.Stop();
     }
 
     public void OnPeerConnected(NetPeer peer)
@@ -73,7 +77,11 @@ public class GameClient : MonoBehaviour, INetEventListener
 
     public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
     {
-       
+        if (messageType == UnconnectedMessageType.DiscoveryResponse && _netClient.Peer == null)
+        {
+            Debug.Log("[CLIENT] Received discovery response. Connecting to: " + remoteEndPoint);
+            _netClient.Connect(remoteEndPoint);
+        }
     }
 
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)

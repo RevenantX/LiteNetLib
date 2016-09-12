@@ -15,6 +15,7 @@ public class GameServer : MonoBehaviour, INetEventListener
         _dataWriter = new NetDataWriter();
         _netServer = new NetServer(this, 100, "sample_app");
         _netServer.Start(5000);
+        _netServer.DiscoveryEnabled = true;
         _netServer.UpdateTime = 15;
     }
 
@@ -36,7 +37,8 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     void OnDestroy()
     {
-        _netServer.Stop();
+        if(_netServer != null)
+            _netServer.Stop();
     }
 
     public void OnPeerConnected(NetPeer peer)
@@ -64,7 +66,11 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
     {
-
+        if (messageType == UnconnectedMessageType.DiscoveryRequest)
+        {
+            Debug.Log("[SERVER] Received discovery request. Send discovery response");
+            _netServer.SendDiscoveryResponse(new byte[] {1}, remoteEndPoint);
+        }
     }
 
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
