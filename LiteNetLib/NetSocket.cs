@@ -88,11 +88,19 @@ namespace LiteNetLib
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, NetConstants.SocketTTL);
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DontFragment, true);
 
+            try
+            {
+                _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
+            }
+            catch (SocketException e)
+            {
+                NetUtils.DebugWriteError("Broadcast error: {0}", e.ToString());
+            }
+
             if (!BindSocket(_udpSocketv4, new IPEndPoint(IPAddress.Any, port)))
             {
                 return false;
             }
-            _udpSocketv4.EnableBroadcast = true;
             _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv4.LocalEndPoint);
 
             _running = true;
