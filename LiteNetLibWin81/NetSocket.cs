@@ -66,7 +66,7 @@ namespace LiteNetLib
             return true;
         }
 
-        public bool SendMulticast(byte[] data, int offset, int size, int port)
+        public bool SendBroadcast(byte[] data, int offset, int size, int port)
         {
             var portString = port.ToString();
             try
