@@ -16,7 +16,6 @@ namespace LiteNetLib
         private bool _running;
         private readonly NetBase.OnMessageReceived _onMessageReceived;
 
-        private static readonly IPAddress MulticastAddressV4 = IPAddress.Parse(NetConstants.MulticastGroupIPv4);
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse(NetConstants.MulticastGroupIPv6);
         private static readonly bool IPv6Support = Socket.OSSupportsIPv6;
         private const int SocketReceivePollTime = 100000;
@@ -93,7 +92,7 @@ namespace LiteNetLib
             {
                 return false;
             }
-            _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(MulticastAddressV4, IPAddress.Any));
+            _udpSocketv4.EnableBroadcast = true;
             _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv4.LocalEndPoint);
 
             _running = true;
@@ -159,11 +158,11 @@ namespace LiteNetLib
             return true;
         }
 
-        public bool SendMulticast(byte[] data, int offset, int size, int port)
+        public bool SendBroadcast(byte[] data, int offset, int size, int port)
         {
             try
             {
-                int result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(MulticastAddressV4, port));
+                int result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(IPAddress.Broadcast, port));
                 if (result <= 0)
                     return false;
                 if (IPv6Support)

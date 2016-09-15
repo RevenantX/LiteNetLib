@@ -256,7 +256,7 @@ namespace LiteNetLib
             if (!_running)
                 return false;
             var packet = NetPacket.CreateRawPacket(PacketProperty.DiscoveryRequest, data, start, length);
-            return _socket.SendMulticast(packet, 0, packet.Length, port);
+            return _socket.SendBroadcast(packet, 0, packet.Length, port);
         }
 
         public bool SendDiscoveryResponse(NetDataWriter writer, NetEndPoint remoteEndPoint)

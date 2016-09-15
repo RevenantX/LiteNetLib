@@ -15,7 +15,7 @@ namespace LiteNetLib
         private readonly byte[] _buffer = new byte[NetConstants.PacketSizeLimit];
         private NetEndPoint _bufferEndPoint;
         private NetEndPoint _localEndPoint;
-        private static readonly HostName MulticastAddressV4 = new HostName(NetConstants.MulticastGroupIPv4);
+        private static readonly HostName BroadcastAddress = new HostName("255.255.255.255");
         private static readonly HostName MulticastAddressV6 = new HostName(NetConstants.MulticastGroupIPv6);
 
         public NetEndPoint LocalEndPoint
@@ -55,7 +55,6 @@ namespace LiteNetLib
             try
             {
                 _datagramSocket.BindServiceNameAsync(port.ToString()).AsTask().Wait();
-                _datagramSocket.JoinMulticastGroup(MulticastAddressV4);
                 _datagramSocket.JoinMulticastGroup(MulticastAddressV6);
                 _localEndPoint = new NetEndPoint(_datagramSocket.Information.LocalAddress, _datagramSocket.Information.LocalPort);
             }
@@ -73,7 +72,7 @@ namespace LiteNetLib
             try
             {
                 var outputStream =
-                    _datagramSocket.GetOutputStreamAsync(MulticastAddressV4, portString)
+                    _datagramSocket.GetOutputStreamAsync(BroadcastAddress, portString)
                         .AsTask()
                         .Result;
                 var writer = outputStream.AsStreamForWrite();
@@ -118,7 +117,7 @@ namespace LiteNetLib
             catch (Exception ex)
             {
                 NetUtils.DebugWriteError("[S]" + ex);
-                errorCode = -1;
+                errorCode = (int)SocketError.GetStatus(ex.HResult);
                 return -1;
             }
         }
