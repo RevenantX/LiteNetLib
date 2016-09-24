@@ -122,15 +122,23 @@ namespace LiteNetLib
         {
             lock (DebugLogLock)
             {
+
+                if (NetDebug.Logger == null)
+                {
 #if UNITY
-                UnityEngine.Debug.LogFormat(str, args);
+                    UnityEngine.Debug.LogFormat(str, args);
 #elif WINRT
-                Debug.WriteLine(str, args);
+                    Debug.WriteLine(str, args);
 #else
-                Console.ForegroundColor = color;
-                Console.WriteLine(str, args);
-                Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = color;
+                    Console.WriteLine(str, args);
+                    Console.ForegroundColor = ConsoleColor.Gray;
 #endif
+                }
+                else
+                {
+                    NetDebug.Logger.WriteNet(color, str, args);
+                }
             }
         }
 
