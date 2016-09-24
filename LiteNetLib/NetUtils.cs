@@ -13,6 +13,9 @@ namespace LiteNetLib
 {
     static class NetUtils
     {
+        public delegate void NetLoggingEvent(ConsoleColor color, string str, params object[] args);
+        public static event NetLoggingEvent NetLogWrite;
+
         public static int RelativeSequenceNumber(int number, int expected)
         {
             return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
@@ -126,11 +129,12 @@ namespace LiteNetLib
                 UnityEngine.Debug.LogFormat(str, args);
 #elif WINRT
                 Debug.WriteLine(str, args);
-#else
+#elif !NO_CONSOLE
                 Console.ForegroundColor = color;
                 Console.WriteLine(str, args);
                 Console.ForegroundColor = ConsoleColor.Gray;
 #endif
+                NetLogWrite?.Invoke(color, str, args);
             }
         }
 
