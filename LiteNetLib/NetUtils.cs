@@ -123,7 +123,7 @@ namespace LiteNetLib
             lock (DebugLogLock)
             {
 
-                if (NetLog.Logger == null)
+                if (NetDebug.Logger == null)
                 {
 #if UNITY
                     UnityEngine.Debug.LogFormat(str, args);
@@ -137,7 +137,7 @@ namespace LiteNetLib
                 }
                 else
                 {
-                    NetLog.Logger.WriteNet(color, str, args);
+                    NetDebug.Logger.WriteNet(color, str, args);
                 }
             }
         }
