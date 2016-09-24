@@ -125,14 +125,16 @@ namespace LiteNetLib
         {
             lock (DebugLogLock)
             {
+#if !LOG_EVENT_ONLY
 #if UNITY
                 UnityEngine.Debug.LogFormat(str, args);
 #elif WINRT
                 Debug.WriteLine(str, args);
-#elif !NO_CONSOLE
+#else
                 Console.ForegroundColor = color;
                 Console.WriteLine(str, args);
                 Console.ForegroundColor = ConsoleColor.Gray;
+#endif
 #endif
                 NetLogWrite?.Invoke(color, str, args);
             }
