@@ -59,6 +59,9 @@
     <Compile Include="..\LiteNetLib\NetConstants.cs">
       <Link>NetConstants.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\NetDebug.cs">
+      <Link>NetDebug.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\NetPacket.cs">
       <Link>NetPacket.cs</Link>
     </Compile>
