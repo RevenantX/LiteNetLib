@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="INetEventListener.cs" />
-    <Compile Include="NetLog.cs" />
+    <Compile Include="NetDebug.cs" />
     <Compile Include="Utils\FastBitConverter.cs" />
     <Compile Include="NatPunchModule.cs" />
     <Compile Include="NetConstants.cs" />
