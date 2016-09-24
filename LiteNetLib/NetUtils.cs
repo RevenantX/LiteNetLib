@@ -13,8 +13,7 @@ namespace LiteNetLib
 {
     static class NetUtils
     {
-        public delegate void NetLoggingEvent(ConsoleColor color, string str, params object[] args);
-        public static event NetLoggingEvent NetLogWrite;
+        public static INetLogger NetLogger;
 
         public static int RelativeSequenceNumber(int number, int expected)
         {
@@ -125,18 +124,23 @@ namespace LiteNetLib
         {
             lock (DebugLogLock)
             {
-#if !LOG_EVENT_ONLY
+
+                if (NetLogger == null)
+                {
 #if UNITY
-                UnityEngine.Debug.LogFormat(str, args);
+                    UnityEngine.Debug.LogFormat(str, args);
 #elif WINRT
-                Debug.WriteLine(str, args);
+                    Debug.WriteLine(str, args);
 #else
-                Console.ForegroundColor = color;
-                Console.WriteLine(str, args);
-                Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = color;
+                    Console.WriteLine(str, args);
+                    Console.ForegroundColor = ConsoleColor.Gray;
 #endif
-#endif
-                NetLogWrite?.Invoke(color, str, args);
+                }
+                else
+                {
+                    NetLogger.NetLog(color, str, args);
+                }
             }
         }
 
