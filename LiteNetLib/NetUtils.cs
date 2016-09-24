@@ -13,8 +13,6 @@ namespace LiteNetLib
 {
     static class NetUtils
     {
-        public static INetLogger NetLogger;
-
         public static int RelativeSequenceNumber(int number, int expected)
         {
             return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
@@ -125,7 +123,7 @@ namespace LiteNetLib
             lock (DebugLogLock)
             {
 
-                if (NetLogger == null)
+                if (NetLog.Logger == null)
                 {
 #if UNITY
                     UnityEngine.Debug.LogFormat(str, args);
@@ -139,7 +137,7 @@ namespace LiteNetLib
                 }
                 else
                 {
-                    NetLogger.NetLog(color, str, args);
+                    NetLog.Logger.WriteNet(color, str, args);
                 }
             }
         }
