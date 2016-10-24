@@ -2,17 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Networking;
 using Windows.Networking.Sockets;
+using Windows.Storage.Streams;
 
 namespace LiteNetLib
 {
     internal sealed class NetSocket
     {
         private DatagramSocket _datagramSocket;
-        private readonly Dictionary<NetEndPoint, Stream> _peers = new Dictionary<NetEndPoint, Stream>();
+        private readonly Dictionary<NetEndPoint, IOutputStream> _peers = new Dictionary<NetEndPoint, IOutputStream>();
         private readonly NetBase.OnMessageReceived _onMessageReceived;
-        private readonly byte[] _buffer = new byte[NetConstants.PacketSizeLimit];
+        private readonly byte[] _byteBuffer = new byte[NetConstants.PacketSizeLimit];
+        private readonly IBuffer _buffer;
         private NetEndPoint _bufferEndPoint;
         private NetEndPoint _localEndPoint;
         private static readonly HostName BroadcastAddress = new HostName("255.255.255.255");
@@ -26,22 +30,23 @@ namespace LiteNetLib
         public NetSocket(NetBase.OnMessageReceived onMessageReceived)
         {
             _onMessageReceived = onMessageReceived;
+            _buffer = _byteBuffer.AsBuffer();
         }
         
         private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
-            var stream = args.GetDataStream().AsStreamForRead();
-            int count = stream.Read(_buffer, 0, _buffer.Length);
-            if (count > 0)
+            var result = args.GetDataStream().ReadAsync(_buffer, _buffer.Capacity, InputStreamOptions.None).AsTask().Result;
+            int length = (int)result.Length;
+            if (length <= 0)
+                return;
+
+            if (_bufferEndPoint == null ||
+                !_bufferEndPoint.HostName.IsEqual(args.RemoteAddress) ||
+                !_bufferEndPoint.PortStr.Equals(args.RemotePort))
             {
-                if (_bufferEndPoint == null ||
-                    !_bufferEndPoint.HostName.IsEqual(args.RemoteAddress) ||
-                    !_bufferEndPoint.PortStr.Equals(args.RemotePort))
-                {
-                    _bufferEndPoint = new NetEndPoint(args.RemoteAddress, args.RemotePort);
-                }
-                _onMessageReceived(_buffer, count, 0, _bufferEndPoint);
+                _bufferEndPoint = new NetEndPoint(args.RemoteAddress, args.RemotePort);
             }
+            _onMessageReceived(_byteBuffer, length, 0, _bufferEndPoint);
         }
 
         public bool Bind(int port)
@@ -97,27 +102,40 @@ namespace LiteNetLib
 
         public int SendTo(byte[] data, int offset, int length, NetEndPoint remoteEndPoint, ref int errorCode)
         {
+            Task<uint> task = null;
             try
             {
-                Stream writer;
+                IOutputStream writer;
                 if (!_peers.TryGetValue(remoteEndPoint, out writer))
                 {
-                    var outputStream =
+                    writer =
                         _datagramSocket.GetOutputStreamAsync(remoteEndPoint.HostName, remoteEndPoint.PortStr)
                             .AsTask()
                             .Result;
-                    writer = outputStream.AsStreamForWrite();
                     _peers.Add(remoteEndPoint, writer);
                 }
 
-                writer.Write(data, offset, length);
-                writer.Flush();
-                return length;
+                task = writer.WriteAsync(data.AsBuffer(offset, length)).AsTask();
+                return (int)task.Result;
             }
             catch (Exception ex)
             {
-                NetUtils.DebugWriteError("[S]" + ex);
-                errorCode = (int)SocketError.GetStatus(ex.HResult);
+                if (task?.Exception?.InnerExceptions != null)
+                {
+                    ex = task.Exception.InnerException;
+                }
+                var errorStatus = SocketError.GetStatus(ex.HResult);
+                switch (errorStatus)
+                {
+                    case SocketErrorStatus.MessageTooLong:
+                        errorCode = 10040;
+                        break;
+                    default:
+                        errorCode = (int)errorStatus;
+                        NetUtils.DebugWriteError("[S " + errorStatus + "(" + errorCode + ")]" + ex);
+                        break;
+                }
+                
                 return -1;
             }
         }
@@ -136,10 +154,6 @@ namespace LiteNetLib
 
         internal void ClearPeers()
         {
-            foreach (var dataWriter in _peers)
-            {
-                dataWriter.Value.Dispose();
-            }
             _peers.Clear();
         }
     }
