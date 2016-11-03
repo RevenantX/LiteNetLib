@@ -63,6 +63,10 @@ namespace LiteNetLib
         private ushort _fragmentId;
         private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
 
+        //Merging
+        private readonly NetPacket _mergeData = new NetPacket();
+        private int _mergePos;
+
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
@@ -134,6 +138,8 @@ namespace LiteNetLib
 
             _packetPool = new Stack<NetPacket>();
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
+
+            _mergeData.Init(PacketProperty.Merged, NetConstants.PossibleMtu[NetConstants.PossibleMtu.Length - 1]);
         }
 
         private static PacketProperty SendOptionsToProperty(SendOptions options)
@@ -270,7 +276,8 @@ namespace LiteNetLib
                     }
                     break;
                 case PacketProperty.MtuCheck:
-                    if (!SendRawData(packet.RawData))
+                    //Must check result for MTU fix
+                    if (!_peerListener.SendRaw(packet.RawData, 0, packet.RawData.Length, _remoteEndPoint))
                     {
                         _finishMtu = true;
                     }
@@ -484,6 +491,9 @@ namespace LiteNetLib
             DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
             {
+                case PacketProperty.Merged:
+                    //DebugWriteForce("RECEIVE MERGED!");
+                    break;
                 //If we get ping, send pong
                 case PacketProperty.Ping:
                     if (NetUtils.RelativeSequenceNumber(packet.Sequence, _remotePingSequence) < 0)
@@ -553,9 +563,21 @@ namespace LiteNetLib
             }
         }
 
-        internal bool SendRawData(byte[] data)
+        internal void SendRawData(byte[] data)
         {
-            return _peerListener.SendRaw(data, 0, data.Length, _remoteEndPoint);
+            //2 - merge byte + minimal packet size + datalen(ushort)
+            if (_peerListener.MergeEnabled && _mergePos + data.Length + NetConstants.HeaderSize*2 + 2 < _mtu)
+            {
+                FastBitConverter.GetBytes(_mergeData.RawData, _mergePos + NetConstants.HeaderSize, (ushort)data.Length);
+                Buffer.BlockCopy(data, 0, _mergeData.RawData, _mergePos + NetConstants.HeaderSize + 2, data.Length);
+                _mergePos += data.Length + 2;
+
+                DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2));
+            }
+            else
+            {
+                _peerListener.SendRaw(data, 0, data.Length, _remoteEndPoint);
+            }
         }
 
         internal void Update(int deltaTime)
@@ -659,6 +681,13 @@ namespace LiteNetLib
                 }
             }
             //MTU - end
+
+            //Flush
+            if (_mergePos > 0)
+            {
+                _peerListener.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
+                _mergePos = 0;
+            }
         }
     }
 }

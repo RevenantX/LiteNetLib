@@ -207,15 +207,15 @@ namespace LiteNetLib
                 _queueIndex = (_queueIndex + 1) % _windowSize;
             } while (!packetFound && _queueIndex != startQueueIndex);
 
-            bool sendResult = false;
             if (packetFound)
             {
                 currentPacket.TimeStamp = currentTime;
-                sendResult = _peer.SendRawData(currentPacket.Packet.RawData);
-                _peer.DebugWrite("[RR]Sended: {0}", sendResult);
+                _peer.SendRawData(currentPacket.Packet.RawData);
+                _peer.DebugWrite("[RR]Sended");
+                return true;
             }
             Monitor.Exit(_pendingPacketsAccess);
-            return sendResult;
+            return false;
         }
 
         public void SendAcks()

@@ -23,12 +23,13 @@ namespace LiteNetLib
         MtuCheck,               //15
         MtuOk,                  //16
         DiscoveryRequest,       //17
-        DiscoveryResponse       //18
+        DiscoveryResponse,      //18
+        Merged                  //19
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 18;
+        private const int LastProperty = 19;
 
         //Header
         public PacketProperty Property
