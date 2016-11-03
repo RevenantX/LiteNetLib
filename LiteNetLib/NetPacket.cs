@@ -196,13 +196,13 @@ namespace LiteNetLib
         }
 
         //Packet contstructor from byte array
-        public bool FromBytes(byte[] data, int packetSize)
+        public bool FromBytes(byte[] data, int start, int packetSize)
         {
             //Reading property
             if ((data[0] & 0x7F) > LastProperty || packetSize > NetConstants.PacketSizeLimit)
                 return false;
             RawData = new byte[packetSize];
-            Buffer.BlockCopy(data, 0, RawData, 0, packetSize);
+            Buffer.BlockCopy(data, start, RawData, 0, packetSize);
      
             return true;
         }

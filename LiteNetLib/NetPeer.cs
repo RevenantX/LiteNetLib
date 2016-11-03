@@ -66,6 +66,7 @@ namespace LiteNetLib
         //Merging
         private readonly NetPacket _mergeData = new NetPacket();
         private int _mergePos;
+        private int _mergeCount;
 
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
@@ -492,7 +493,20 @@ namespace LiteNetLib
             switch (packet.Property)
             {
                 case PacketProperty.Merged:
-                    //DebugWriteForce("RECEIVE MERGED!");
+                    int pos = NetConstants.HeaderSize;
+                    while (pos < packet.RawData.Length)
+                    {
+                        ushort size = BitConverter.ToUInt16(packet.RawData, pos);
+                        pos += 2;
+                        NetPacket mergedPacket = GetPacketFromPool(init: false);
+                        if (!mergedPacket.FromBytes(packet.RawData, pos, size))
+                        {
+                            Recycle(packet);
+                            break;
+                        }
+                        pos += size;
+                        ProcessPacket(mergedPacket);
+                    }
                     break;
                 //If we get ping, send pong
                 case PacketProperty.Ping:
@@ -566,13 +580,14 @@ namespace LiteNetLib
         internal void SendRawData(byte[] data)
         {
             //2 - merge byte + minimal packet size + datalen(ushort)
-            if (_peerListener.MergeEnabled && _mergePos + data.Length + NetConstants.HeaderSize*2 + 2 < _mtu)
+            if (false && _peerListener.MergeEnabled && _mergePos + data.Length + NetConstants.HeaderSize*2 + 2 < _mtu)
             {
                 FastBitConverter.GetBytes(_mergeData.RawData, _mergePos + NetConstants.HeaderSize, (ushort)data.Length);
                 Buffer.BlockCopy(data, 0, _mergeData.RawData, _mergePos + NetConstants.HeaderSize + 2, data.Length);
                 _mergePos += data.Length + 2;
+                _mergeCount++;
 
-                DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2));
+                //DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2) + ", count: " + _mergeCount);
             }
             else
             {
@@ -687,6 +702,7 @@ namespace LiteNetLib
             {
                 _peerListener.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
                 _mergePos = 0;
+                _mergeCount = 0;
             }
         }
     }

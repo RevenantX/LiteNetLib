@@ -202,7 +202,7 @@ namespace LiteNetLib
                 packet = netPeer.GetPacketFromPool(init: false);
 
                 //Bad packet check
-                if (!packet.FromBytes(reusableBuffer, count))
+                if (!packet.FromBytes(reusableBuffer, 0, count))
                 {
                     netPeer.Recycle(packet);
                     return;
@@ -245,7 +245,7 @@ namespace LiteNetLib
 
             //Else add new peer
             packet = new NetPacket();
-            if (!packet.FromBytes(reusableBuffer, count))
+            if (!packet.FromBytes(reusableBuffer, 0, count))
             {
                 //Bad packet
                 return;
