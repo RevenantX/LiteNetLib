@@ -580,7 +580,7 @@ namespace LiteNetLib
         internal void SendRawData(byte[] data)
         {
             //2 - merge byte + minimal packet size + datalen(ushort)
-            if (false && _peerListener.MergeEnabled && _mergePos + data.Length + NetConstants.HeaderSize*2 + 2 < _mtu)
+            if (_peerListener.MergeEnabled && _mergePos + data.Length + NetConstants.HeaderSize*2 + 2 < _mtu)
             {
                 FastBitConverter.GetBytes(_mergeData.RawData, _mergePos + NetConstants.HeaderSize, (ushort)data.Length);
                 Buffer.BlockCopy(data, 0, _mergeData.RawData, _mergePos + NetConstants.HeaderSize + 2, data.Length);
@@ -700,7 +700,16 @@ namespace LiteNetLib
             //Flush
             if (_mergePos > 0)
             {
-                _peerListener.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
+                if (_mergeCount > 1)
+                {
+                    DebugWrite("Send merged: " + _mergePos + ", count: " + _mergeCount);
+                    _peerListener.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
+                }
+                else
+                {
+                    //Send without length information and merging
+                    _peerListener.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, _remoteEndPoint);
+                }
                 _mergePos = 0;
                 _mergeCount = 0;
             }

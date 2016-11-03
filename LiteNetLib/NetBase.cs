@@ -83,7 +83,7 @@ namespace LiteNetLib
         public int SimulationMaxLatency = 100;
         public bool UnsyncedEvents = false;
         public bool DiscoveryEnabled = false;
-        public bool MergeEnabled = true;
+        public bool MergeEnabled = false;
 
         //stats
         public ulong PacketsSent { get; private set; }
