@@ -117,6 +117,9 @@ client.Stop();
 * **DiscoveryEnabled**
  * Allows receive DiscoveryRequests
  * default value: **false**
+* **MergeEnabled**
+ * Merge small packets into one before sending to reduce outgoing packets count. (May increase a bit outgoing data size)
+ * default value: **false**
 
 ### Only client
 * **ReconnectDelay**
