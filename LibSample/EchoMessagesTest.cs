@@ -150,18 +150,18 @@ namespace LibSample
             _clientListener = new ClientListener();
 
             NetClient client1 = new NetClient(_clientListener, "myapp1");
-            client1.SimulateLatency = true;
+            //client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
+            client1.MergeEnabled = true;
             if (!client1.Start())
             {
                 Console.WriteLine("Client1 start failed");
-
                 return;
             }
             client1.Connect("127.0.0.1", 9050);
 
             NetClient client2 = new NetClient(_clientListener, "myapp1");
-            client2.SimulateLatency = true;
+            //client2.SimulateLatency = true;
             client2.SimulationMaxLatency = 1500;
             client2.Start();
             client2.Connect("::1", 9050);

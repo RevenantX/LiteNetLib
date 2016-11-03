@@ -23,12 +23,13 @@ namespace LiteNetLib
         MtuCheck,               //15
         MtuOk,                  //16
         DiscoveryRequest,       //17
-        DiscoveryResponse       //18
+        DiscoveryResponse,      //18
+        Merged                  //19
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 18;
+        private const int LastProperty = 19;
 
         //Header
         public PacketProperty Property
@@ -195,13 +196,13 @@ namespace LiteNetLib
         }
 
         //Packet contstructor from byte array
-        public bool FromBytes(byte[] data, int packetSize)
+        public bool FromBytes(byte[] data, int start, int packetSize)
         {
             //Reading property
             if ((data[0] & 0x7F) > LastProperty || packetSize > NetConstants.PacketSizeLimit)
                 return false;
             RawData = new byte[packetSize];
-            Buffer.BlockCopy(data, 0, RawData, 0, packetSize);
+            Buffer.BlockCopy(data, start, RawData, 0, packetSize);
      
             return true;
         }

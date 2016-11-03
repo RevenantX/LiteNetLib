@@ -79,6 +79,13 @@ namespace LiteNetLib
         //ProcessAck in packet
         public void ProcessAck(NetPacket packet)
         {
+            int validPacketSize = (_windowSize - 1) / BitsInByte + 1 + NetConstants.SequencedHeaderSize;
+            if (packet.RawData.Length != validPacketSize)
+            {
+                _peer.DebugWriteForce("[PA]Invalid acks packet size");
+                return;
+            }
+
             ushort ackWindowStart = packet.Sequence;
             if (ackWindowStart > NetConstants.MaxSequence)
             {
@@ -207,15 +214,14 @@ namespace LiteNetLib
                 _queueIndex = (_queueIndex + 1) % _windowSize;
             } while (!packetFound && _queueIndex != startQueueIndex);
 
-            bool sendResult = false;
             if (packetFound)
             {
                 currentPacket.TimeStamp = currentTime;
-                sendResult = _peer.SendRawData(currentPacket.Packet.RawData);
-                _peer.DebugWrite("[RR]Sended: {0}", sendResult);
+                _peer.SendRawData(currentPacket.Packet.RawData);
+                _peer.DebugWrite("[RR]Sended");
             }
             Monitor.Exit(_pendingPacketsAccess);
-            return sendResult;
+            return packetFound;
         }
 
         public void SendAcks()

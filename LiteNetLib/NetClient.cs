@@ -213,7 +213,7 @@ namespace LiteNetLib
             //Parse packet
             //Peer null when P2P connection packets
             NetPacket packet = _peer == null ? new NetPacket() : _peer.GetPacketFromPool(init: false);
-            if (!packet.FromBytes(reusableBuffer, count))
+            if (!packet.FromBytes(reusableBuffer, 0, count))
             {
                 if(_peer != null)
                     _peer.Recycle(packet);
