@@ -11,7 +11,7 @@ namespace LiteNetLib
 
     public enum DisconnectReason
     {
-        StopCalled,
+        DisconnectCalled,
         SocketReceiveError,
         ConnectionFailed,
         Timeout,

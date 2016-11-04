@@ -1,9 +1,6 @@
 #if DEBUG
 #define STATS_ENABLED
 #endif
-#if WINRT && !UNITY_EDITOR
-using Windows.System.Threading;
-#endif
 
 using System;
 using System.Collections.Generic;
@@ -58,11 +55,7 @@ namespace LiteNetLib
         private readonly NetSocket _socket;
         private readonly List<FlowMode> _flowModes;
 
-#if WINRT && !UNITY_EDITOR
-        private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
-#else
-        private Thread _logicThread;
-#endif
+        private NetThread _logicThread;
 
         private bool _running;
         private readonly Queue<NetEvent> _netEventsQueue;
@@ -196,10 +189,7 @@ namespace LiteNetLib
                 WorkItemPriority.Normal, 
                 WorkItemOptions.TimeSliced).AsTask();
 #else
-            _logicThread = new Thread(UpdateLogic);
-            _logicThread.Name = "LogicThread(" + port + ")";
-            _logicThread.IsBackground = true;
-            _logicThread.Start();
+            _logicThread = new NetThread("LogicThread(" + port + ")", UpdateTime, UpdateLogic);
 #endif
             return true;
         }
@@ -319,11 +309,8 @@ namespace LiteNetLib
             if (_running)
             {
                 _running = false;
-#if !WINRT || UNITY_EDITOR
-                if(Thread.CurrentThread != _logicThread)
-                    _logicThread.Join();
+                _logicThread.Stop();
                 _logicThread = null;
-#endif
                 _socket.Close();
             }
         }
@@ -511,7 +498,6 @@ namespace LiteNetLib
             else
             {
                 ProcessReceiveError(errorCode);
-                Stop();
             }
         }
 

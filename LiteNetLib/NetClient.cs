@@ -62,9 +62,6 @@ namespace LiteNetLib
                     SendRaw(disconnectPacket, _peer.EndPoint);
                 }
 
-                //Close threads and socket close
-                base.Stop();
-
                 //Clear data
                 _peer = null;
                 _connected = false;
@@ -85,13 +82,26 @@ namespace LiteNetLib
         /// </summary>
         public override void Stop()
         {
-            CloseConnection(false, DisconnectReason.StopCalled, 0); 
+            CloseConnection(true, DisconnectReason.DisconnectCalled, 0);
+            base.Stop();
         }
 
         protected override void ProcessReceiveError(int socketErrorCode)
         {
             CloseConnection(true, DisconnectReason.SocketReceiveError, socketErrorCode);
             base.ProcessReceiveError(socketErrorCode);
+        }
+
+        /// <summary>
+        /// Disconnect from NetServer
+        /// </summary>
+        public void Disconnect()
+        {
+            if (!_connected)
+            {
+                return;
+            }
+            CloseConnection(false, DisconnectReason.DisconnectCalled, 0);
         }
 
         /// <summary>
