@@ -62,6 +62,9 @@
     <Compile Include="..\LiteNetLib\NetDebug.cs">
       <Link>NetDebug.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\NetEndPoint.cs">
+      <Link>NetEndPoint.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\NetPacket.cs">
       <Link>NetPacket.cs</Link>
     </Compile>
@@ -70,6 +73,12 @@
     </Compile>
     <Compile Include="..\LiteNetLib\NetServer.cs">
       <Link>NetServer.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\NetSocket.cs">
+      <Link>NetSocket.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\NetThread.cs">
+      <Link>NetThread.cs</Link>
     </Compile>
     <Compile Include="..\LiteNetLib\NetUtils.cs">
       <Link>NetUtils.cs</Link>
@@ -95,9 +104,6 @@
     <Compile Include="..\LiteNetLib\Utils\NetDataWriter.cs">
       <Link>Utils\NetDataWriter.cs</Link>
     </Compile>
-    <Compile Include="ConsoleColor.cs" />
-    <Compile Include="NetEndPoint.cs" />
-    <Compile Include="NetSocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
