@@ -266,15 +266,7 @@ namespace LiteNetLib
                     break;
                 case PacketProperty.None:
                     DebugWrite("[RS]Packet simple");
-                    if (_peerListener.GetMaxFlowMode() == -1)
-                    {
-                        SendRawData(packet.RawData);
-                        Recycle(packet);
-                    }
-                    else
-                    {
-                        _simpleChannel.AddToQueue(packet);
-                    }
+                    _simpleChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.MtuCheck:
                     //Must check result for MTU fix
@@ -599,8 +591,17 @@ namespace LiteNetLib
         {
             //Get current flow mode
             int maxSendPacketsCount = _peerListener.GetPacketsPerSecond(_currentFlowMode);
-            int availableSendPacketsCount = maxSendPacketsCount - _sendedPacketsCount;
-            int currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime) / NetConstants.FlowUpdateTime);
+            int currentMaxSend;
+
+            if (maxSendPacketsCount > 0)
+            {
+                int availableSendPacketsCount = maxSendPacketsCount - _sendedPacketsCount;
+                currentMaxSend = Math.Min(availableSendPacketsCount, (maxSendPacketsCount*deltaTime)/NetConstants.FlowUpdateTime);
+            }
+            else
+            {
+                currentMaxSend = int.MaxValue;
+            }
 
             DebugWrite("[UPDATE]Delta: {0}ms, MaxSend: {1}", deltaTime, currentMaxSend);
 

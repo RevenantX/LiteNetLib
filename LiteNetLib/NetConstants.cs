@@ -43,7 +43,6 @@ namespace LiteNetLib
         //peer specific
         public const int FlowUpdateTime = 1000;
         public const int FlowIncreaseThreshold = 4;
-        public const int PacketsPerSecondMax = 4000000; //from the ceiling
         public const int DefaultPingInterval = 1000;
     }
 }

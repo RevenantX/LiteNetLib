@@ -103,7 +103,7 @@ namespace LiteNetLib
         internal int GetPacketsPerSecond(int flowMode)
         {
             if (flowMode < 0 || _flowModes.Count == 0)
-                return NetConstants.PacketsPerSecondMax;
+                return 0;
             return _flowModes[flowMode].PacketsPerSecond;
         }
 
