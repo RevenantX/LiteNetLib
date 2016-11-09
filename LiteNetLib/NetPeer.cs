@@ -154,7 +154,7 @@ namespace LiteNetLib
                 case SendOptions.ReliableOrdered:
                     return PacketProperty.ReliableOrdered;
                 default:
-                    return PacketProperty.None;
+                    return PacketProperty.Unreliable;
             }
         }
 
@@ -264,7 +264,7 @@ namespace LiteNetLib
                     DebugWrite("[RS]Packet reliable ordered");
                     _reliableOrderedChannel.AddToQueue(packet);
                     break;
-                case PacketProperty.None:
+                case PacketProperty.Unreliable:
                     DebugWrite("[RS]Packet simple");
                     _simpleChannel.AddToQueue(packet);
                     break;
@@ -340,7 +340,7 @@ namespace LiteNetLib
             NetUtils.DebugWriteForce(DebugTextColor, str, args);
         }
 
-        internal NetPacket GetPacketFromPool(PacketProperty property = PacketProperty.None, int size=0, bool init=true)
+        internal NetPacket GetPacketFromPool(PacketProperty property = PacketProperty.Unreliable, int size=0, bool init=true)
         {
             NetPacket packet = null;
             lock (_packetPool)
@@ -554,7 +554,7 @@ namespace LiteNetLib
                     break;
 
                 //Simple packet without acks
-                case PacketProperty.None:
+                case PacketProperty.Unreliable:
                     AddIncomingPacket(packet);
                     return;
 

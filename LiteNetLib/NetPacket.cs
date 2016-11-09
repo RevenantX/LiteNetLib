@@ -5,7 +5,7 @@ namespace LiteNetLib
 {
     internal enum PacketProperty : byte
     {
-        None,                   //0
+        Unreliable,             //0
         Reliable,               //1
         Sequenced,              //2
         ReliableOrdered,        //3
@@ -129,7 +129,7 @@ namespace LiteNetLib
             byte properyByte = (byte)(data[0] & 0x7F);
             if (properyByte > LastProperty)
             {
-                property = PacketProperty.None;
+                property = PacketProperty.Unreliable;
                 return false;
             }
             property = (PacketProperty)properyByte;
@@ -172,7 +172,7 @@ namespace LiteNetLib
             var property = Property;
             return property == PacketProperty.Reliable ||
                    property == PacketProperty.ReliableOrdered ||
-                   property == PacketProperty.None ||
+                   property == PacketProperty.Unreliable ||
                    property == PacketProperty.Sequenced;
         }
 
