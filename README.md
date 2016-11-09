@@ -8,6 +8,9 @@ Minimal .NET version - 3.5
 
 ## Features
 
+* Lightweight
+ * Small CPU and RAM usage
+ * Small packet size overhead ( 1 byte for unrealiable, 2 bytes for reliable packets )
 * Simple connection handling
 * Helper classes for sending and reading messages
 * Different send mechanics
@@ -16,6 +19,7 @@ Minimal .NET version - 3.5
  * Ordered but unreliable with duplication prevention
  * Simple UDP packets without order and reliability
 * Packet flow control
+* Automatic small packets merging ( if enabled )
 * Automatic fragmentation of reliable packets
 * Automatic MTU detection
 * UDP NAT hole punching
@@ -24,10 +28,9 @@ Minimal .NET version - 3.5
 * IPv6 support (dual mode)
 * Connection statisitcs
 * Multicasting (for discovering servers in local network)
-* Small CPU and RAM usage
 * Unity3d support (you can use library source in project)
 * Supported platforms:
- * Windows/Mac/Linux
+ * Windows/Mac/Linux (.net and Mono)
  * Android
  * iOS
  * Universal Windows (Windows 8.1 and Windows 10 including phones)
