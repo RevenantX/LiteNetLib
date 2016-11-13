@@ -10,7 +10,7 @@ Minimal .NET version - 3.5
 
 * Lightweight
  * Small CPU and RAM usage
- * Small packet size overhead ( 1 byte for unrealiable, 2 bytes for reliable packets )
+ * Small packet size overhead ( 1 byte for unrealiable, 3 bytes for reliable packets )
 * Simple connection handling
 * Helper classes for sending and reading messages
 * Different send mechanics
