@@ -54,9 +54,8 @@ namespace LiteNetLib
         private readonly NetSocket _socket;
         private readonly List<FlowMode> _flowModes;
 
-        private NetThread _logicThread;
+        private readonly NetThread _logicThread;
 
-        private bool _running;
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
         private readonly INetEventListener _netEventListener;
@@ -64,7 +63,7 @@ namespace LiteNetLib
         //config section
         public bool UnconnectedMessagesEnabled = false;
         public bool NatPunchEnabled = false;
-        public int UpdateTime = 100;
+        public int UpdateTime { get { return _logicThread.SleepTime; } set { _logicThread.SleepTime = value; } }
         public int ReliableResendTime = 500;
         public int PingInterval = NetConstants.DefaultPingInterval;
         public long DisconnectTimeout = 5000;
@@ -76,6 +75,8 @@ namespace LiteNetLib
         public bool UnsyncedEvents = false;
         public bool DiscoveryEnabled = false;
         public bool MergeEnabled = false;
+
+        private const int DefaultUpdateTime = 15;
 
         //stats
         public ulong PacketsSent { get; private set; }
@@ -121,6 +122,7 @@ namespace LiteNetLib
 
         protected NetBase(INetEventListener listener)
         {
+            _logicThread = new NetThread("LogicThread", DefaultUpdateTime, UpdateLogic);
             _socket = new NetSocket(ReceiveLogic);
             _netEventListener = listener;
             _flowModes = new List<FlowMode>();
@@ -172,7 +174,7 @@ namespace LiteNetLib
         /// <param name="port">port to listen</param>
         public virtual bool Start(int port)
         {
-            if (_running)
+            if (IsRunning)
             {
                 return false;
             }
@@ -181,8 +183,7 @@ namespace LiteNetLib
             if (!_socket.Bind(port))
                 return false;
 
-            _running = true;
-            _logicThread = new NetThread("LogicThread(" + port + ")", UpdateTime, UpdateLogic);
+            _logicThread.Start();
             return true;
         }
 
@@ -218,7 +219,7 @@ namespace LiteNetLib
         /// <returns>Operation result</returns>
         public bool SendUnconnectedMessage(byte[] message, int start, int length, NetEndPoint remoteEndPoint)
         {
-            if (!_running)
+            if (!IsRunning)
                 return false;
             var packet = NetPacket.CreateRawPacket(PacketProperty.UnconnectedMessage, message, start, length);
             return SendRaw(packet, remoteEndPoint);
@@ -236,7 +237,7 @@ namespace LiteNetLib
 
         public bool SendDiscoveryRequest(byte[] data, int start, int length, int port)
         {
-            if (!_running)
+            if (!IsRunning)
                 return false;
             var packet = NetPacket.CreateRawPacket(PacketProperty.DiscoveryRequest, data, start, length);
             return _socket.SendBroadcast(packet, 0, packet.Length, port);
@@ -254,7 +255,7 @@ namespace LiteNetLib
 
         public bool SendDiscoveryResponse(byte[] data, int start, int length, NetEndPoint remoteEndPoint)
         {
-            if (!_running)
+            if (!IsRunning)
                 return false;
             var packet = NetPacket.CreateRawPacket(PacketProperty.DiscoveryResponse, data, start, length);
             return SendRaw(packet, remoteEndPoint);
@@ -267,7 +268,7 @@ namespace LiteNetLib
 
         internal bool SendRaw(byte[] message, int start, int length, NetEndPoint remoteEndPoint)
         {
-            if (!_running)
+            if (!IsRunning)
                 return false;
 
             int errorCode = 0;
@@ -298,11 +299,9 @@ namespace LiteNetLib
         /// </summary>
         public virtual void Stop()
         {
-            if (_running)
+            if (IsRunning)
             {
-                _running = false;
                 _logicThread.Stop();
-                _logicThread = null;
                 _socket.Close();
             }
         }
@@ -312,7 +311,7 @@ namespace LiteNetLib
         /// </summary>
         public bool IsRunning
         {
-            get { return _running; }
+            get { return _logicThread.IsRunning; }
         }
 
         /// <summary>

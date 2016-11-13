@@ -1,4 +1,4 @@
-﻿#if WINRT && !UNITY_EDITOR
+#if WINRT && !UNITY_EDITOR
 #define USE_WINRT
 #endif
 
@@ -19,13 +19,14 @@ namespace LiteNetLib
         private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
         private readonly ManualResetEvent _joinWaiter = new ManualResetEvent(false);
 #else
-        private readonly Thread _thread;
+        private Thread _thread;
 #endif
 
         private readonly Action _callback;
 
         public int SleepTime;
         private bool _running;
+        private readonly string _name;
 
         public bool IsRunning
         {
@@ -36,6 +37,13 @@ namespace LiteNetLib
         {
             _callback = callback;
             SleepTime = sleepTime;
+            _name = name;
+        }
+
+        public void Start()
+        {
+            if (_running)
+                return;
             _running = true;
 #if USE_WINRT
             var thread = new PreallocatedWorkItem(ThreadLogic, WorkItemPriority.Normal, WorkItemOptions.TimeSliced);
@@ -43,7 +51,7 @@ namespace LiteNetLib
 #else
             _thread = new Thread(ThreadLogic)
             {
-                Name = name,
+                Name = _name,
                 IsBackground = true
             };
             _thread.Start();
@@ -54,8 +62,8 @@ namespace LiteNetLib
         {
             if (!_running)
                 return;
-
             _running = false;
+
 #if USE_WINRT
             _joinWaiter.WaitOne();
 #else
