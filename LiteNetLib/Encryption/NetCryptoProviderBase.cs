@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !WINRT
+
+using System;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -78,3 +80,4 @@ namespace LiteNetLib.Encryption
         }
     }
 }
+#endif

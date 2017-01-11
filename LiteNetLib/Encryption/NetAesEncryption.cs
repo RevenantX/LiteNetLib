@@ -1,3 +1,4 @@
+#if !WINRT
 using System.Security.Cryptography;
 
 namespace LiteNetLib.Encryption
@@ -33,3 +34,4 @@ namespace LiteNetLib.Encryption
         }
     }
 }
+#endif

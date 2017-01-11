@@ -19,7 +19,11 @@ namespace LiteNetLib.Encryption
 
         public void SetKey(string str)
         {
+#if WINRT
+            var bytes = Encoding.Unicode.GetBytes(str);
+#else
             var bytes = Encoding.ASCII.GetBytes(str);
+#endif
             SetKey(bytes, 0, bytes.Length);
         }
 
