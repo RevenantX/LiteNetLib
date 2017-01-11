@@ -39,6 +39,16 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encryption\NetAesEncryption.cs" />
+    <Compile Include="Encryption\NetBlockEncryptionBase.cs" />
+    <Compile Include="Encryption\NetCryptoProviderBase.cs" />
+    <Compile Include="Encryption\NetCryptoProviderEncryption.cs" />
+    <Compile Include="Encryption\NetDesEncryption.cs" />
+    <Compile Include="Encryption\NetEncryption.cs" />
+    <Compile Include="Encryption\NetRc2Encryption.cs" />
+    <Compile Include="Encryption\NetTripleDESEncryption.cs" />
+    <Compile Include="Encryption\NetXorEncryption.cs" />
+    <Compile Include="Encryption\NetXteaEncryption.cs" />
     <Compile Include="INetEventListener.cs" />
     <Compile Include="NetDebug.cs" />
     <Compile Include="NetThread.cs" />

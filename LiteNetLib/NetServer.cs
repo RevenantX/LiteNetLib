@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using LiteNetLib.Encryption;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -19,7 +20,8 @@ namespace LiteNetLib
         /// <param name="listener">Listener of server events</param>
         /// <param name="maxClients">Maximum clients</param>
         /// <param name="key">Application key to identify connecting clients</param>
-        public NetServer(INetEventListener listener, int maxClients, string key) : base(listener)
+        /// <param name="encryption">Encryption algorithm for this server</param>
+        public NetServer(INetEventListener listener, int maxClients, string key, NetEncryption encryption = null) : base(listener, encryption)
         {
             _peers = new Dictionary<NetEndPoint, NetPeer>();
             _peerConnectionIds = new Dictionary<NetEndPoint, ulong>();
