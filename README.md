@@ -29,6 +29,13 @@ Minimal .NET version - 3.5
 * Connection statisitcs
 * Multicasting (for discovering servers in local network)
 * Unity3d support (you can use library source in project)
+ *Encription(beta)
+  *Xtea
+  *AES
+  *DES
+  *Triple DES
+  *RC2 
+  *XOR
 * Supported platforms:
  * Windows/Mac/Linux (.net and Mono)
  * Android
