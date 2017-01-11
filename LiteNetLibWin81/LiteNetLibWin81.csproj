@@ -44,6 +44,36 @@
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\LiteNetLib\Encryption\NetAesEncryption.cs">
+      <Link>Encryption\NetAesEncryption.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetBlockEncryptionBase.cs">
+      <Link>Encryption\NetBlockEncryptionBase.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetCryptoProviderBase.cs">
+      <Link>Encryption\NetCryptoProviderBase.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetCryptoProviderEncryption.cs">
+      <Link>Encryption\NetCryptoProviderEncryption.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetDesEncryption.cs">
+      <Link>Encryption\NetDesEncryption.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetEncryption.cs">
+      <Link>Encryption\NetEncryption.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetRc2Encryption.cs">
+      <Link>Encryption\NetRc2Encryption.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetTripleDESEncryption.cs">
+      <Link>Encryption\NetTripleDESEncryption.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetXorEncryption.cs">
+      <Link>Encryption\NetXorEncryption.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetXteaEncryption.cs">
+      <Link>Encryption\NetXteaEncryption.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\INetEventListener.cs">
       <Link>INetEventListener.cs</Link>
     </Compile>
