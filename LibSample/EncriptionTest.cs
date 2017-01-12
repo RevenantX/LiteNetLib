@@ -1,12 +1,4 @@
-﻿// ********************************************************************************
-// Copyright (C) 2015-2017 Yevhenii Vitiuk(CodeVenator). All rights reserved.
-// 
-// Name    : LibSample | IMainServerFramework | EncriptionTest.cs
-// Created : 2017/01/10 21:52
-// ********************************************************************************
-
-
-using System;
+﻿using System;
 using System.Threading;
 using LiteNetLib;
 using LiteNetLib.Encryption;
@@ -24,8 +16,9 @@ namespace LibSample
 
                 NetDataWriter dataWriter = new NetDataWriter();
 
-                //dataWriter.Put("Hello world!!!", 100);
                 dataWriter.Put(199999999L);
+                dataWriter.Put(Math.PI);
+                dataWriter.Put("Hello, world!", 50);
                 peer.Send(dataWriter, SendOptions.ReliableOrdered);
             }
 
@@ -80,8 +73,14 @@ namespace LibSample
 
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
             {
-                var result = reader.GetLong();
-                Console.WriteLine("[Server] Result:" + result);
+                var resultLong = reader.GetLong();
+                var resultDouble = reader.GetDouble();
+                var resultString = reader.GetString(50);
+                Console.WriteLine(
+                    "[Server] Result: Long[{0}] Double[{1}] String[{2}]",
+                    resultLong,
+                    resultDouble,
+                    resultString);
             }
 
             public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)

@@ -8,14 +8,14 @@ namespace LiteNetLib.Encryption
     /// </summary>
     public class NetXorEncryption : NetEncryption
     {
-        private byte[] byteKey;
+        private byte[] _byteKey;
 
         /// <summary>
         ///     NetXorEncryption constructor
         /// </summary>
         public NetXorEncryption(byte[] key)
         {
-            byteKey = key;
+            _byteKey = key;
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace LiteNetLib.Encryption
         /// </summary>
         public NetXorEncryption(string key)
         {
-            byteKey = Encoding.UTF8.GetBytes(key);
+            _byteKey = Encoding.UTF8.GetBytes(key);
         }
 
         /// <summary>
@@ -34,8 +34,8 @@ namespace LiteNetLib.Encryption
             var cur = start;
             for (var i = 0; i < length; i++, cur++)
             {
-                var offset = i % byteKey.Length;
-                rawData[cur] = (byte) (rawData[cur] ^ byteKey[offset]);
+                var offset = i % _byteKey.Length;
+                rawData[cur] = (byte) (rawData[cur] ^ _byteKey[offset]);
             }
             return true;
         }
@@ -48,16 +48,16 @@ namespace LiteNetLib.Encryption
             var cur = start;
             for (var i = 0; i < length; i++, cur++)
             {
-                var offset = i % byteKey.Length;
-                rawData[cur] = (byte) (rawData[cur] ^ byteKey[offset]);
+                var offset = i % _byteKey.Length;
+                rawData[cur] = (byte) (rawData[cur] ^ _byteKey[offset]);
             }
             return true;
         }
 
         public override void SetKey(byte[] data, int offset, int count)
         {
-            byteKey = new byte[count];
-            Array.Copy(data, offset, byteKey, 0, count);
+            _byteKey = new byte[count];
+            Array.Copy(data, offset, _byteKey, 0, count);
         }
     }
 }
