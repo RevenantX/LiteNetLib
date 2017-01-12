@@ -36,7 +36,8 @@ Minimal .NET version - 3.5
  * iOS
  * Universal Windows (Windows 8.1 and Windows 10 including phones)
 
-#### Encription (beta)
+## Encription (beta)
+
 | Algorithm | .Net 3.5 | NetCore | WinRT |
 | --- | --- | --- | --- |
 | Xtea | + | + | - |
