@@ -13,7 +13,7 @@ namespace LibSample
     {
         internal class TestHost
         {
-            private int _clientCount = 200;
+            private int _clientCount = 10;
             internal List<ClientListener> _clients;
             internal ServerListener _serverListener;
 
