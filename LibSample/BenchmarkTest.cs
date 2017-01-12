@@ -237,9 +237,9 @@ namespace LibSample
         internal class HealthChecker
         {
             private int _threadId;
-            private BenchmarkTest _context;
+            private BenchmarkTest.TestHost _context;
 
-            public void Start(BenchmarkTest context)
+            public void Start(BenchmarkTest.TestHost context)
             {
                 _context = context;
                 _threadId++;
