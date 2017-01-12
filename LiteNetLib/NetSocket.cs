@@ -65,10 +65,10 @@ namespace LiteNetLib
                         //10040 - message too long
                         //10054 - remote close (not error)
                         //Just UDP
-                        NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}", ex.ErrorCode, ex.ToString() );
+                        NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString() );
                         continue;
                     }
-                    NetUtils.DebugWriteError("[R]Error code: {0} - {1}", ex.ErrorCode, ex.ToString());
+                    NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
                     _onMessageReceived(null, 0, (int)ex.SocketErrorCode, bufferNetEndPoint);
                     continue;
                 }
@@ -216,7 +216,7 @@ namespace LiteNetLib
                     NetUtils.DebugWriteError("[S]" + ex);
                 }
                 
-                errorCode = ex.ErrorCode;
+                errorCode = (int)ex.SocketErrorCode;
                 return -1;
             }
             catch (Exception ex)
@@ -224,6 +224,15 @@ namespace LiteNetLib
                 NetUtils.DebugWriteError("[S]" + ex);
                 return -1;
             }
+        }
+
+        private void CloseSocket(Socket s)
+        {
+#if NETCORE
+            s.Dispose();
+#else
+            s.Close();
+#endif
         }
 
         public void Close()
@@ -238,7 +247,7 @@ namespace LiteNetLib
             _threadv4 = null;
             if (_udpSocketv4 != null)
             {
-                _udpSocketv4.Close();
+                CloseSocket(_udpSocketv4);
                 _udpSocketv4 = null;
             }
 
@@ -254,7 +263,7 @@ namespace LiteNetLib
             _threadv6 = null;
             if (_udpSocketv6 != null)
             {
-                _udpSocketv6.Close();
+                CloseSocket(_udpSocketv6);
                 _udpSocketv6 = null;
             }
         }

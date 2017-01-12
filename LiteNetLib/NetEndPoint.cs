@@ -66,7 +66,13 @@ namespace LiteNetLib
 
         private IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily)
         {
-            IPHostEntry host = Dns.GetHostEntry(hostStr);
+#if NETCORE
+            var hostTask = Dns.GetHostEntryAsync(Dns.GetHostName());
+            hostTask.Wait();
+            var host = hostTask.Result;
+#else
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+#endif
             foreach (IPAddress ip in host.AddressList)
             {
                 if (ip.AddressFamily == addressFamily)
