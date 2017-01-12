@@ -31,7 +31,7 @@ Minimal .NET version - 3.5
 * Unity3d support (you can use library source in project)
 * Encription(beta)
 | Algorithm | Incompatible platform |
-|---|---|
+| --- | --- |
 | Xtea | WinRT |
 | AES | WinRT |
 | DES | WinRT, NetCore |
