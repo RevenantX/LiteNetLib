@@ -1,5 +1,12 @@
 {
   "name": "LiteNetLib",
+  "packOptions": {
+    "projectUrl": "https://github.com/RevenantX/LiteNetLib",
+    "licenseUrl": "https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt"
+  },
+  "authors": [
+    "Ruslan Pyrch (RevenantX)"
+  ],
   "version": "0.7.0-*",
   "buildOptions": {
     "define": [
