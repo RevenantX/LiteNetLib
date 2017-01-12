@@ -1,5 +1,6 @@
 {
-  "version": "1.0.0-*",
+  "name": "LiteNetLib",
+  "version": "0.7.0-*",
   "buildOptions": {
     "define": [
       "NETCORE"

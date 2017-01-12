@@ -86,7 +86,9 @@ namespace LiteNetLib
             _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, NetConstants.SocketTTL);
+#if !NETCORE
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DontFragment, true);
+#endif
 
             try
             {
