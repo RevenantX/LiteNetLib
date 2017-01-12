@@ -30,12 +30,14 @@ Minimal .NET version - 3.5
 * Multicasting (for discovering servers in local network)
 * Unity3d support (you can use library source in project)
 * Encription(beta)
- * Xtea
- * AES
- * DES
- * Triple DES
- * RC2 
- * XOR
+| Algorithm | Incompatible platform |
+|---|---|
+| Xtea | WinRT |
+| AES | WinRT |
+| DES | WinRT, NetCore |
+| Triple DES | WinRT |
+| RC2 | WinRT, NetCore |
+| XOR | |
 * Supported platforms:
  * Windows/Mac/Linux (.net framework, Mono, .net core)
  * Android
