@@ -6,18 +6,18 @@ namespace LiteNetLib.Encryption
 {
     public class NetTripleDESEncryption : NetCryptoProviderBase
     {
-        public NetTripleDESEncryption(NetPeer peer)
-            : base(new TripleDESCryptoServiceProvider())
+        public NetTripleDESEncryption()
+            : base(TripleDES.Create())
         {}
 
-        public NetTripleDESEncryption(NetPeer peer, string key)
-            : base(new TripleDESCryptoServiceProvider())
+        public NetTripleDESEncryption(string key)
+            : base(TripleDES.Create())
         {
             SetKey(key);
         }
 
-        public NetTripleDESEncryption(NetPeer peer, byte[] data, int offset, int count)
-            : base(new TripleDESCryptoServiceProvider())
+        public NetTripleDESEncryption(byte[] data, int offset, int count)
+            : base(TripleDES.Create())
         {
             SetKey(data, offset, count);
         }

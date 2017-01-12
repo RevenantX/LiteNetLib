@@ -6,10 +6,10 @@ namespace LiteNetLib.Encryption
     public class NetAesEncryption : NetCryptoProviderBase
     {
         public NetAesEncryption()
-#if UNITY
+#if UNITY 
 			: base(new RijndaelManaged())
 #else
-            : base(new AesCryptoServiceProvider())
+            : base(Aes.Create())
 #endif
         {}
 
@@ -17,7 +17,7 @@ namespace LiteNetLib.Encryption
 #if UNITY
 			: base(new RijndaelManaged())
 #else
-            : base(new AesCryptoServiceProvider())
+            : base(Aes.Create())
 #endif
         {
             SetKey(key);
@@ -27,7 +27,7 @@ namespace LiteNetLib.Encryption
 #if UNITY
 			: base(new RijndaelManaged())
 #else
-            : base(new AesCryptoServiceProvider())
+            : base(Aes.Create())
 #endif
         {
             SetKey(data, offset, count);

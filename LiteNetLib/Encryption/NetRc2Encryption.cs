@@ -1,4 +1,4 @@
-#if !WINRT
+#if !WINRT && !NETCORE
 using System.Security.Cryptography;
 
 namespace LiteNetLib.Encryption
@@ -7,7 +7,7 @@ namespace LiteNetLib.Encryption
     {
         public NetRc2Encryption()
             : base(new RC2CryptoServiceProvider())
-        {}
+            { }
 
         public NetRc2Encryption(string key)
             : base(new RC2CryptoServiceProvider())

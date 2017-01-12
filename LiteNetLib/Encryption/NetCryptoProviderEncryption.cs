@@ -13,12 +13,15 @@ namespace LiteNetLib.Encryption
         public override bool Decrypt(byte[] rawData, int start, ref int length)
         {
             var len = BitConverter.ToInt32(rawData, start);
-            var ms = new MemoryStream(rawData, start + IntSize, length - IntSize);
-            var cs = GetDecryptStream(ms);
-
             var buffer = new byte[len];
-            cs.Read(buffer, 0, len);
-            cs.Close();
+
+            using (var ms = new MemoryStream(rawData, start + IntSize, length - IntSize))
+            {
+                using (var cs = GetDecryptStream(ms))
+                {
+                    cs.Read(buffer, 0, len);
+                }
+            }
 
             length = len;
 
@@ -29,13 +32,16 @@ namespace LiteNetLib.Encryption
 
         public override bool Encrypt(byte[] rawData, ref int start, ref int length)
         {
-            var ms = new MemoryStream();
-            var cs = GetEncryptStream(ms);
-            cs.Write(rawData, start, length);
-            cs.Close();
+            byte[] result;
+            using (var ms = new MemoryStream())
+            {
+                using (var cs = GetEncryptStream(ms))
+                {
+                    cs.Write(rawData, start, length);
+                }
 
-            var result = ms.ToArray();
-            ms.Close();
+                result = ms.ToArray();
+            }
 
             var lenInByte = BitConverter.GetBytes(length);
             length = result.Length;

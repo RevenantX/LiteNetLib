@@ -1,4 +1,4 @@
-#if !WINRT
+#if !WINRT && !NETCORE
 using System.Security.Cryptography;
 
 namespace LiteNetLib.Encryption
