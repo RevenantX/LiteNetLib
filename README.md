@@ -29,11 +29,23 @@ Minimal .NET version - 3.5
 * Connection statisitcs
 * Multicasting (for discovering servers in local network)
 * Unity3d support (you can use library source in project)
+* Encription
 * Supported platforms:
  * Windows/Mac/Linux (.net framework, Mono, .net core)
  * Android
  * iOS
  * Universal Windows (Windows 8.1 and Windows 10 including phones)
+
+## Encription (beta)
+
+| Algorithm | .Net 3.5 | NetCore | WinRT |
+| --- | --- | --- | --- |
+| Xtea | + | + | - |
+| AES | + | + | - |
+| DES | + | - | - |
+| Triple DES | + | + | - |
+| RC2 | + | - | - |
+| XOR | + | + | + |
 
 ## Usage samples
 

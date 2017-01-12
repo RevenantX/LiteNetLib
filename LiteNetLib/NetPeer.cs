@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LiteNetLib.Encryption;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -68,6 +69,9 @@ namespace LiteNetLib
         private int _mergePos;
         private int _mergeCount;
 
+        //Encription
+        public NetEncryption _encryption;
+
         //DEBUG
         internal ConsoleColor DebugTextColor = ConsoleColor.DarkGreen;
 
@@ -122,6 +126,17 @@ namespace LiteNetLib
             get { return _reliableOrderedChannel.PacketsInQueue; }
         }
 
+        public NetEncryption Encryption
+        {
+            get { return _encryption; }
+            set { _encryption = value; }
+        }
+
+        internal NetPeer(NetBase peerListener, NetEndPoint remoteEndPoint, NetEncryption encryption) : this(peerListener, remoteEndPoint)
+        {
+            _encryption = encryption;
+        }
+
         internal NetPeer(NetBase peerListener, NetEndPoint remoteEndPoint)
         {
             _peerListener = peerListener;
@@ -172,12 +187,17 @@ namespace LiteNetLib
         {
             Send(dataWriter.Data, 0, dataWriter.Length, options);
         }
-
+        
         public void Send(byte[] data, int start, int length, SendOptions options)
         {
             //Prepare
             PacketProperty property = SendOptionsToProperty(options);
             int headerSize = NetPacket.GetHeaderSize(property);
+
+            if (_encryption != null)
+            {
+                _encryption.Encrypt(data, ref start, ref length);
+            }
 
             //Check fragmentation
             if (length + headerSize > _mtu)
@@ -422,6 +442,15 @@ namespace LiteNetLib
                     fragments[i] = null;
                 }
 
+                //Encription
+                if (_encryption != null)
+                {
+                    var data = resultingPacket.RawData;
+                    var start = resultingPacket.GetHeaderSize();
+                    var len = data.Length - start;
+                    _encryption.Decrypt(data, start, ref len);
+                }
+
                 //Send to process
                 _peerListener.ReceiveFromPeer(resultingPacket, _remoteEndPoint);
 
@@ -431,6 +460,15 @@ namespace LiteNetLib
             }
             else //Just simple packet
             {
+                //Encription
+                if (_encryption != null)
+                {
+                    var data = p.RawData;
+                    var start = p.GetHeaderSize();
+                    var len = data.Length - start;
+                    _encryption.Decrypt(data, start, ref len);
+                }
+
                 _peerListener.ReceiveFromPeer(p, _remoteEndPoint);
                 Recycle(p);
             }

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using LiteNetLib.Encryption;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -59,6 +60,8 @@ namespace LiteNetLib
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
         private readonly INetEventListener _netEventListener;
+
+        private readonly NetEncryption _encryption;
 
         //config section
         public bool UnconnectedMessagesEnabled = false;
@@ -120,10 +123,11 @@ namespace LiteNetLib
             return _flowModes[flowMode].StartRtt;
         }
 
-        protected NetBase(INetEventListener listener)
+        protected NetBase(INetEventListener listener, NetEncryption encryption = null)
         {
             _logicThread = new NetThread("LogicThread", DefaultUpdateTime, UpdateLogic);
             _socket = new NetSocket(ReceiveLogic);
+            _encryption = encryption;
             _netEventListener = listener;
             _flowModes = new List<FlowMode>();
             _netEventsQueue = new Queue<NetEvent>();
@@ -144,10 +148,10 @@ namespace LiteNetLib
             _socket.RemovePeer(ep);
 #endif
         }
-
+        
         protected NetPeer CreatePeer(NetEndPoint remoteEndPoint)
         {
-            var peer = new NetPeer(this, remoteEndPoint);
+            var peer = new NetPeer(this, remoteEndPoint, _encryption);
             peer.PingInterval = PingInterval;
             return peer;
         }

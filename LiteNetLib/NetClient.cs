@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using LiteNetLib.Encryption;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -18,7 +19,7 @@ namespace LiteNetLib
         private readonly string _connectKey;
         private readonly object _connectionCloseLock = new object();
 
-        public NetClient(INetEventListener listener, string connectKey) : base(listener)
+        public NetClient(INetEventListener listener, string connectKey, NetEncryption encryption = null) : base(listener, encryption)
         {
             _connectKey = connectKey;
         }

@@ -2,6 +2,7 @@
 *.suo
 .idea
 *.iml
+.vs/
 LiteNetLib/obj
 LiteNetLib/bin
 LiteNetLibWin81/obj
