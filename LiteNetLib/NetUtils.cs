@@ -106,7 +106,13 @@ namespace LiteNetLib
             //Fallback mode
             if ((lastAddress == null && lastAddressV6 == null) || (lastAddress == null && preferIPv4))
             {
+#if NETCORE
+                var hostTask = Dns.GetHostEntryAsync(Dns.GetHostName());
+                hostTask.Wait();
+                var host = hostTask.Result;
+#else
                 var host = Dns.GetHostEntry(Dns.GetHostName());
+#endif
                 foreach (IPAddress ip in host.AddressList)
                 {
                     if (ip.AddressFamily == AddressFamily.InterNetworkV6)

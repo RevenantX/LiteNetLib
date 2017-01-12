@@ -1,0 +1,35 @@
+{
+  "name": "LiteNetLib",
+  "packOptions": {
+    "projectUrl": "https://github.com/RevenantX/LiteNetLib",
+    "licenseUrl": "https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt"
+  },
+  "authors": [
+    "Ruslan Pyrch (RevenantX)"
+  ],
+  "version": "0.7.0-*",
+  "buildOptions": {
+    "define": [
+      "NETCORE"
+    ],
+    "compile": {
+      "include": [ "../LiteNetLib/**/*.cs" ]
+    },
+    "debugType": "portable"
+  },
+  "dependencies": {},
+  "frameworks": {
+    "netstandard1.6": {
+      "dependencies": {
+        "System.Net.NetworkInformation" : "4.3.0",
+        "System.Threading": "4.3.0",
+        "System.Threading.Thread": "4.3.0",
+        "System.Net.NameResolution": "4.3.0",
+        "System.Net.Sockets": "4.3.0",
+        "System.Collections": "4.3.0",
+        "System.Console": "4.3.0",
+        "System.Runtime.Extensions": "4.3.0"
+      }
+    }
+  }
+}
