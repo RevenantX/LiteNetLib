@@ -1,6 +1,6 @@
 # LiteNetLib 
 
-Lite reliable UDP library for .NET and Mono.
+Lite reliable UDP library for .NET, Mono, and .NET Core.
 Minimal .NET version - 3.5
 
 ### Build status
@@ -30,7 +30,7 @@ Minimal .NET version - 3.5
 * Multicasting (for discovering servers in local network)
 * Unity3d support (you can use library source in project)
 * Supported platforms:
- * Windows/Mac/Linux (.net and Mono)
+ * Windows/Mac/Linux (.net framework, Mono, .net core)
  * Android
  * iOS
  * Universal Windows (Windows 8.1 and Windows 10 including phones)
