@@ -43,7 +43,7 @@ Minimal .NET version - 3.5
 | Xtea | + | + | - |
 | AES | + | + | - |
 | DES | + | - | - |
-| Triple DES | + | - | - |
+| Triple DES | + | + | - |
 | RC2 | + | - | - |
 | XOR | + | + | + |
 

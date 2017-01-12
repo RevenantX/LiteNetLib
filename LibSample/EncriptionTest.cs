@@ -103,7 +103,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetServer server = new NetServer(_serverListener, 2, "encription", new NetXteaEncryption("test"));
+            NetServer server = new NetServer(_serverListener, 2, "encription", new NetTripleDESEncryption("te123we"));
             
             if (!server.Start(9050))
             {
@@ -116,7 +116,7 @@ namespace LibSample
             //Client
             _clientListener = new ClientListener();
 
-            NetClient client = new NetClient(_clientListener, "encription", new NetXteaEncryption("test"));
+            NetClient client = new NetClient(_clientListener, "encription", new NetTripleDESEncryption("te123we"));
             
             //client1.SimulateLatency = true;
             client.SimulationMaxLatency = 1500;
