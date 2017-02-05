@@ -48,11 +48,9 @@
     <Compile Include="NetEndPoint.cs" />
     <Compile Include="NtpSyncModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="NetBase.cs" />
-    <Compile Include="NetClient.cs" />
+    <Compile Include="NetManager.cs" />
     <Compile Include="NetPacket.cs" />
     <Compile Include="NetPeer.cs" />
-    <Compile Include="NetServer.cs" />
     <Compile Include="NetSocket.cs" />
     <Compile Include="NetUtils.cs" />
     <Compile Include="SequencedChannel.cs" />

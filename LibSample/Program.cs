@@ -14,8 +14,8 @@ class Program
             Console.WriteLine("Synced time test: " + ntpSync.SyncedTime.Value);
         }
 
-        new EchoMessagesTest().Run();
-        //new HolePunchServerTest().Run();
+        //new EchoMessagesTest().Run();
+        new HolePunchServerTest().Run();
         //new BroadcastTest().Run();
         //new BenchmarkTest.TestHost().Run();
     }

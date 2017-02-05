@@ -22,7 +22,7 @@ namespace LibSample
                 //Server
                 _serverListener = new ServerListener();
 
-                NetServer server = new NetServer(_serverListener, _clientCount, "myapp1");
+                NetManager server = new NetManager(_serverListener, _clientCount, "myapp1");
                 server.UnsyncedEvents = true;
                 server.UpdateTime = 1;
                 if (!server.Start(9050))
@@ -39,7 +39,7 @@ namespace LibSample
                 for (int i = 0; i < _clientCount; i++)
                 {
                     var _clientListener = new ClientListener();
-                    var client1 = new NetClient(_clientListener, "myapp1");
+                    var client1 = new NetManager(_clientListener, "myapp1");
                     client1.SimulationMaxLatency = 1500;
                     client1.MergeEnabled = true;
                     client1.UnsyncedEvents = true;
@@ -114,17 +114,17 @@ namespace LibSample
             internal bool Connected;
             internal int Errors;
 
-            byte[] testData = new byte[13218];
+            private readonly byte[] testData = new byte[13218];
 
             internal Stopwatch Watch = new Stopwatch();
-            internal NetClient Client;
+            internal NetManager Client;
 
             public void OnPeerConnected(NetPeer peer)
             {
                 Connected = true;
             }
 
-            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectInfo info)
             {
                 Connected = false;
             }
@@ -159,7 +159,7 @@ namespace LibSample
 
             void Send()
             {
-                var peer = Client.Peer;
+                var peer = Client.GetFirstPeer();
 
                 Watch.Start();
 
@@ -186,16 +186,16 @@ namespace LibSample
             internal DateTime StartTime;
             internal DateTime StopTime;
             internal int Errors;
-            internal NetServer Server;
+            internal NetManager Server;
 
             public void OnPeerConnected(NetPeer peer)
             {
                 Console.WriteLine("[Server] Peer connected: " + peer.EndPoint);
             }
 
-            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectInfo info)
             {
-                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + disconnectReason);
+                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + info.Reason);
             }
 
             public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)

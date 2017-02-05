@@ -48,7 +48,7 @@ namespace LiteNetLib
             public string Token;
         }
 
-        private readonly NetBase _netBase;
+        private readonly NetManager _netBase;
         private readonly Queue<RequestEventData> _requestEvents;
         private readonly Queue<SuccessEventData> _successEvents; 
         private const byte HostByte = 1;
@@ -57,7 +57,7 @@ namespace LiteNetLib
 
         private INatPunchListener _natPunchListener;
 
-        internal NatPunchModule(NetBase netBase, NetSocket socket)
+        internal NatPunchModule(NetManager netBase, NetSocket socket)
         {
             _netBase = netBase;
             _requestEvents = new Queue<RequestEventData>();

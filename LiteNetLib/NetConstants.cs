@@ -24,6 +24,7 @@ namespace LiteNetLib
         public const int SocketTTL = 255;
 
         //protocol
+        public const int ProtocolId = 1;
         public const int MaxUdpHeaderSize = 68;
         public const int PacketSizeLimit = ushort.MaxValue - MaxUdpHeaderSize;
         public const int MinPacketSize = 576 - MaxUdpHeaderSize;

@@ -14,7 +14,7 @@ namespace LiteNetLib
         private Thread _threadv4;
         private Thread _threadv6;
         private bool _running;
-        private readonly NetBase.OnMessageReceived _onMessageReceived;
+        private readonly NetManager.OnMessageReceived _onMessageReceived;
 
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse(NetConstants.MulticastGroupIPv6);
         private static readonly bool IPv6Support = Socket.OSSupportsIPv6;
@@ -26,7 +26,7 @@ namespace LiteNetLib
             get { return _localEndPoint; }
         }
 
-        public NetSocket(NetBase.OnMessageReceived onMessageReceived)
+        public NetSocket(NetManager.OnMessageReceived onMessageReceived)
         {
             _onMessageReceived = onMessageReceived;
         }
@@ -276,6 +276,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Networking;
 using Windows.Networking.Sockets;
@@ -287,7 +288,7 @@ namespace LiteNetLib
     {
         private DatagramSocket _datagramSocket;
         private readonly Dictionary<NetEndPoint, IOutputStream> _peers = new Dictionary<NetEndPoint, IOutputStream>();
-        private readonly NetBase.OnMessageReceived _onMessageReceived;
+        private readonly NetManager.OnMessageReceived _onMessageReceived;
         private readonly byte[] _byteBuffer = new byte[NetConstants.PacketSizeLimit];
         private readonly IBuffer _buffer;
         private NetEndPoint _bufferEndPoint;
@@ -300,7 +301,7 @@ namespace LiteNetLib
             get { return _localEndPoint; }
         }
 
-        public NetSocket(NetBase.OnMessageReceived onMessageReceived)
+        public NetSocket(NetManager.OnMessageReceived onMessageReceived)
         {
             _onMessageReceived = onMessageReceived;
             _buffer = _byteBuffer.AsBuffer();

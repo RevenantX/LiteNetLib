@@ -37,6 +37,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BenchmarkTest.cs" />
     <Compile Include="BroadcastTest.cs" />
     <Compile Include="EchoMessagesTest.cs" />
     <Compile Include="HolePunchServerTest.cs" />

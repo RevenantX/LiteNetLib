@@ -11,7 +11,6 @@ namespace LiteNetLib
 
     public enum DisconnectReason
     {
-        DisconnectCalled,
         SocketReceiveError,
         ConnectionFailed,
         Timeout,
@@ -20,10 +19,17 @@ namespace LiteNetLib
         DisconnectPeerCalled
     }
 
+    public struct DisconnectInfo
+    {
+        public DisconnectReason Reason;
+        public int SocketErrorCode;
+        public NetDataReader AdditionalData;
+    }
+
     public interface INetEventListener
     {
         void OnPeerConnected(NetPeer peer);
-        void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode);
+        void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
         void OnNetworkError(NetEndPoint endPoint, int socketErrorCode);
         void OnNetworkReceive(NetPeer peer, NetDataReader reader);
         void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
@@ -33,7 +39,7 @@ namespace LiteNetLib
     public class EventBasedNetListener : INetEventListener
     {
         public delegate void OnPeerConnected(NetPeer peer);
-        public delegate void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode);
+        public delegate void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
         public delegate void OnNetworkError(NetEndPoint endPoint, int socketErrorCode);
         public delegate void OnNetworkReceive(NetPeer peer, NetDataReader reader);
         public delegate void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
@@ -52,10 +58,10 @@ namespace LiteNetLib
                 PeerConnectedEvent(peer);
         }
 
-        void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
+        void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             if (PeerDisconnectedEvent != null)
-                PeerDisconnectedEvent(peer, disconnectReason, socketErrorCode);
+                PeerDisconnectedEvent(peer, disconnectInfo);
         }
 
         void INetEventListener.OnNetworkError(NetEndPoint endPoint, int socketErrorCode)

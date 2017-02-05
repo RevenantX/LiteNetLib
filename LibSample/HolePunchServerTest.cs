@@ -31,9 +31,9 @@ namespace LibSample
 
         private readonly Dictionary<string, WaitPeer> _waitingPeers = new Dictionary<string, WaitPeer>();
         private readonly List<string> _peersToRemove = new List<string>();
-        private NetClient _puncher;
-        private NetClient _c1;
-        private NetClient _c2;
+        private NetManager _puncher;
+        private NetManager _c1;
+        private NetManager _c2;
 
         void INatPunchListener.OnNatIntroductionRequest(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token)
         {
@@ -91,9 +91,9 @@ namespace LibSample
                 Console.WriteLine("PeerConnected: " + peer.EndPoint.ToString());
             };
 
-            netListener.PeerDisconnectedEvent += (peer, reason, error) =>
+            netListener.PeerDisconnectedEvent += (peer, disconnectInfo) =>
             {
-                Console.WriteLine("PeerDisconnected: " + reason);
+                Console.WriteLine("PeerDisconnected: " + disconnectInfo.Reason);
             };
 
             natPunchListener1.NatIntroductionSuccess += (point, token) =>
@@ -108,19 +108,17 @@ namespace LibSample
                 _c2.Connect(point);
             };
 
-            _c1 = new NetClient(netListener, "gamekey");
-            _c1.PeerToPeerMode = true;
+            _c1 = new NetManager(netListener, "gamekey");
             _c1.NatPunchEnabled = true;
             _c1.NatPunchModule.Init(natPunchListener1);
             _c1.Start();
 
-            _c2 = new NetClient(netListener, "gamekey");
-            _c2.PeerToPeerMode = true;
+            _c2 = new NetManager(netListener, "gamekey");
             _c2.NatPunchEnabled = true;
             _c2.NatPunchModule.Init(natPunchListener2);
             _c2.Start();
 
-            _puncher = new NetClient(netListener, "notneed");
+            _puncher = new NetManager(netListener, "notneed");
             _puncher.Start(ServerPort);
             _puncher.NatPunchEnabled = true;
             _puncher.NatPunchModule.Init(this);
@@ -135,7 +133,7 @@ namespace LibSample
             {
                 if (Console.KeyAvailable)
                 {
-                    var key = Console.ReadKey().Key;
+                    var key = Console.ReadKey(true).Key;
                     if (key == ConsoleKey.Escape)
                     {
                         break;

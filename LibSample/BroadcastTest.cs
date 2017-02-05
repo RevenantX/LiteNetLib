@@ -9,16 +9,16 @@ namespace LibSample
     {
         private class ClientListener : INetEventListener
         {
-            public NetClient Client;
+            public NetManager Client;
 
             public void OnPeerConnected(NetPeer peer)
             {
                 Console.WriteLine("[Client {0}] connected to: {1}:{2}", Client.LocalEndPoint.Port, peer.EndPoint.Host, peer.EndPoint.Port);
             }
 
-            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
             {
-                Console.WriteLine("[Client] disconnected: " + disconnectReason);
+                Console.WriteLine("[Client] disconnected: " + disconnectInfo.Reason);
             }
 
             public void OnNetworkError(NetEndPoint endPoint, int error)
@@ -48,7 +48,7 @@ namespace LibSample
 
         private class ServerListener : INetEventListener
         {
-            public NetServer Server;
+            public NetManager Server;
 
             public void OnPeerConnected(NetPeer peer)
             {
@@ -56,13 +56,13 @@ namespace LibSample
                 var peers = Server.GetPeers();
                 foreach (var netPeer in peers)
                 {
-                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);
+                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.ConnectId, netPeer.EndPoint);
                 }
             }
 
-            public void OnPeerDisconnected(NetPeer peer, DisconnectReason disconnectReason, int socketErrorCode)
+            public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
             {
-                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + disconnectReason);
+                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + disconnectInfo.Reason);
             }
 
             public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
@@ -98,7 +98,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetServer server = new NetServer(_serverListener, 2, "myapp1");
+            NetManager server = new NetManager(_serverListener, 2, "myapp1");
             server.DiscoveryEnabled = true;
             if (!server.Start(9050))
             {
@@ -111,7 +111,7 @@ namespace LibSample
             //Client
             _clientListener1 = new ClientListener();
 
-            NetClient client1 = new NetClient(_clientListener1, "myapp1");
+            NetManager client1 = new NetManager(_clientListener1, "myapp1");
             _clientListener1.Client = client1;
             client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
@@ -123,7 +123,7 @@ namespace LibSample
             }
 
             _clientListener2 = new ClientListener();
-            NetClient client2 = new NetClient(_clientListener2, "myapp1");
+            NetManager client2 = new NetManager(_clientListener2, "myapp1");
             _clientListener2.Client = client2;
             client2.SimulateLatency = true;
             client2.SimulationMaxLatency = 1500;

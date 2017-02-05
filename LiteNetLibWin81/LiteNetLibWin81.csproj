@@ -50,12 +50,6 @@
     <Compile Include="..\LiteNetLib\NatPunchModule.cs">
       <Link>NatPunchModule.cs</Link>
     </Compile>
-    <Compile Include="..\LiteNetLib\NetBase.cs">
-      <Link>NetBase.cs</Link>
-    </Compile>
-    <Compile Include="..\LiteNetLib\NetClient.cs">
-      <Link>NetClient.cs</Link>
-    </Compile>
     <Compile Include="..\LiteNetLib\NetConstants.cs">
       <Link>NetConstants.cs</Link>
     </Compile>
@@ -65,14 +59,14 @@
     <Compile Include="..\LiteNetLib\NetEndPoint.cs">
       <Link>NetEndPoint.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\NetManager.cs">
+      <Link>NetManager.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\NetPacket.cs">
       <Link>NetPacket.cs</Link>
     </Compile>
     <Compile Include="..\LiteNetLib\NetPeer.cs">
       <Link>NetPeer.cs</Link>
-    </Compile>
-    <Compile Include="..\LiteNetLib\NetServer.cs">
-      <Link>NetServer.cs</Link>
     </Compile>
     <Compile Include="..\LiteNetLib\NetSocket.cs">
       <Link>NetSocket.cs</Link>
