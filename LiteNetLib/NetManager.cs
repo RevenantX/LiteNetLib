@@ -64,7 +64,7 @@ namespace LiteNetLib
         private readonly INetEventListener _netEventListener;
 
         private readonly Dictionary<NetEndPoint, NetPeer> _peers;
-        private readonly int _maxClients;
+        private readonly int _maxConnections;
         private readonly Queue<NetEndPoint> _peersToRemove;
         private readonly string _connectKey;
 
@@ -160,12 +160,23 @@ namespace LiteNetLib
             return _flowModes[flowMode].StartRtt;
         }
 
+        /// <summary>
+        /// NetManager constructor with maxConnections = 1 (usable for client)
+        /// </summary>
+        /// <param name="listener">Network events listener</param>
+        /// <param name="connectKey">Application key (must be same with remote host for establish connection)</param>
         public NetManager(INetEventListener listener, string connectKey) : this(listener, 1, connectKey)
         {
             
         }
 
-        public NetManager(INetEventListener listener, int maxClients, string connectKey)
+        /// <summary>
+        /// NetManager constructor
+        /// </summary>
+        /// <param name="listener">Network events listener</param>
+        /// <param name="maxConnections">Maximum connections (incoming and outcoming)</param>
+        /// <param name="connectKey">Application key (must be same with remote host for establish connection)</param>
+        public NetManager(INetEventListener listener, int maxConnections, string connectKey)
         {
             _logicThread = new NetThread("LogicThread", DefaultUpdateTime, UpdateLogic);
             _socket = new NetSocket(ReceiveLogic);
@@ -177,8 +188,8 @@ namespace LiteNetLib
 
             _connectKey = connectKey;
             _peers = new Dictionary<NetEndPoint, NetPeer>();
-            _peersToRemove = new Queue<NetEndPoint>(maxClients);
-            _maxClients = maxClients;
+            _peersToRemove = new Queue<NetEndPoint>(maxConnections);
+            _maxConnections = maxConnections;
             _connectKey = connectKey;
         }
 
@@ -601,7 +612,7 @@ namespace LiteNetLib
                     return;
                 }
 
-                if (peersCount < _maxClients && packet.Property == PacketProperty.ConnectRequest)
+                if (peersCount < _maxConnections && packet.Property == PacketProperty.ConnectRequest)
                 {
                     int protoId = BitConverter.ToInt32(packet.RawData, 1);
                     if (protoId != NetConstants.ProtocolId)
@@ -655,54 +666,83 @@ namespace LiteNetLib
             }
         }
 
-        public void SendToClients(NetDataWriter writer, SendOptions options)
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="writer">DataWriter with data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        public void SendToAll(NetDataWriter writer, SendOptions options)
         {
-            lock (_peers)
-                foreach (NetPeer netPeer in _peers.Values)
-                {
-                    netPeer.Send(writer, options);
-                }
+            SendToAll(writer.Data, 0, writer.Length, options);
         }
 
-        public void SendToClients(byte[] data, SendOptions options)
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        public void SendToAll(byte[] data, SendOptions options)
         {
-            SendToClients(data, 0, data.Length, options, null);
+            SendToAll(data, 0, data.Length, options);
         }
 
-        public void SendToClients(byte[] data, int start, int length, SendOptions options)
-        {
-            SendToClients(data, start, length, options, null);
-        }
-
-        public void SendToClients(NetDataWriter writer, SendOptions options, NetPeer excludePeer)
-        {
-            SendToClients(writer.Data, 0, writer.Length, options, excludePeer);
-        }
-
-        public void SendToClients(byte[] data, SendOptions options, NetPeer excludePeer)
-        {
-            SendToClients(data, 0, data.Length, options, excludePeer);
-        }
-
-        public void SendToClients(byte[] data, int start, int length, SendOptions options, NetPeer excludePeer)
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="start">Start of data</param>
+        /// <param name="length">Length of data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        public void SendToAll(byte[] data, int start, int length, SendOptions options)
         {
             lock (_peers)
             {
-                if (excludePeer == null)
+                foreach (NetPeer netPeer in _peers.Values)
                 {
-                    foreach (NetPeer netPeer in _peers.Values)
+                    netPeer.Send(data, start, length, options);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="writer">DataWriter with data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(NetDataWriter writer, SendOptions options, NetPeer excludePeer)
+        {
+            SendToAll(writer.Data, 0, writer.Length, options, excludePeer);
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(byte[] data, SendOptions options, NetPeer excludePeer)
+        {
+            SendToAll(data, 0, data.Length, options, excludePeer);
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="start">Start of data</param>
+        /// <param name="length">Length of data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(byte[] data, int start, int length, SendOptions options, NetPeer excludePeer)
+        {
+            lock (_peers)
+            {
+                foreach (NetPeer netPeer in _peers.Values)
+                {
+                    if (netPeer != excludePeer)
                     {
                         netPeer.Send(data, start, length, options);
-                    }
-                }
-                else
-                {
-                    foreach (NetPeer netPeer in _peers.Values)
-                    {
-                        if (netPeer != excludePeer)
-                        {
-                            netPeer.Send(data, start, length, options);
-                        }
                     }
                 }
             }
@@ -809,6 +849,9 @@ namespace LiteNetLib
             return SendRaw(packet, remoteEndPoint);
         }
 
+        /// <summary>
+        /// Receive all pending events. Call this in game update code
+        /// </summary>
         public void PollEvents()
         {
             if (UnsyncedEvents)
@@ -837,6 +880,10 @@ namespace LiteNetLib
             Connect(ep);
         }
 
+        /// <summary>
+        /// Connect to remote host
+        /// </summary>
+        /// <param name="target">Server end point (ip and port)</param>
         public void Connect(NetEndPoint target)
         {
             if (!IsRunning)
@@ -845,7 +892,7 @@ namespace LiteNetLib
             }
             lock (_peers)
             {
-                if (_peers.ContainsKey(target))
+                if (_peers.ContainsKey(target) || _peers.Count >= _maxConnections)
                 {
                     //Already connected
                     return;
@@ -921,6 +968,10 @@ namespace LiteNetLib
             return peers;
         }
 
+        /// <summary>
+        /// Get copy of current connected peers (without allocations)
+        /// </summary>
+        /// <param name="peers">List that will contain result</param>
         public void GetPeersNonAlloc(List<NetPeer> peers)
         {
             peers.Clear();
