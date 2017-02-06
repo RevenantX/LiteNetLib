@@ -101,6 +101,7 @@ client.Stop();
  * default value: **1000 msec**.
 * **DisconnectTimeout**
  * if client or server doesn't receive any packet from remote peer during this time then connection will be closed
+ * (including library internal keepalive packets)
  * default value: **5000 msec**.
 * **SimulatePacketLoss**
  * simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)
