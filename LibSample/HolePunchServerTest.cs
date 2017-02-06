@@ -94,6 +94,10 @@ namespace LibSample
             netListener.PeerDisconnectedEvent += (peer, disconnectInfo) =>
             {
                 Console.WriteLine("PeerDisconnected: " + disconnectInfo.Reason);
+                if (disconnectInfo.AdditionalData.AvailableBytes > 0)
+                {
+                    Console.WriteLine("Disconnect data: " + disconnectInfo.AdditionalData.GetInt());
+                }
             };
 
             natPunchListener1.NatIntroductionSuccess += (point, token) =>
@@ -138,9 +142,10 @@ namespace LibSample
                     {
                         break;
                     }
-                    else if (key == ConsoleKey.A)
+                    if (key == ConsoleKey.A)
                     {
                         Console.WriteLine("C1 stopped");
+                        _c1.DisconnectPeer(_c1.GetFirstPeer(), new byte[] {1,2,3,4});
                         _c1.Stop();
                     }
                 }

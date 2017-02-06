@@ -115,7 +115,7 @@ namespace LiteNetLib
             get { return (int)(DateTime.UtcNow - _lastPacketReceivedStart).TotalMilliseconds; }
         }
 
-        public NetManager Handler
+        public NetManager NetManager
         {
             get { return _peerListener; }
         }
@@ -303,12 +303,6 @@ namespace LiteNetLib
             //Else just send
             NetPacket packet = GetPacketFromPool(property, length);
             packet.PutData(data, start, length);
-            SendPacket(packet);
-        }
-
-        internal void CreateAndSend(PacketProperty property)
-        {
-            NetPacket packet = GetPacketFromPool(property);
             SendPacket(packet);
         }
 

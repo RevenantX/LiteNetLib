@@ -28,11 +28,46 @@ namespace LiteNetLib
 
     public interface INetEventListener
     {
+        /// <summary>
+        /// New remote peer connected to host, or client connected to remote host
+        /// </summary>
+        /// <param name="peer">Connected peer object</param>
         void OnPeerConnected(NetPeer peer);
+
+        /// <summary>
+        /// Peer disconnected
+        /// </summary>
+        /// <param name="peer">disconnected peer</param>
+        /// <param name="disconnectInfo">additional info about reason, errorCode or data received with disconnect message</param>
         void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
+
+        /// <summary>
+        /// Network error (on send or receive)
+        /// </summary>
+        /// <param name="endPoint">From endPoint (can be null)</param>
+        /// <param name="socketErrorCode">Socket error code</param>
         void OnNetworkError(NetEndPoint endPoint, int socketErrorCode);
+
+        /// <summary>
+        /// Received some data
+        /// </summary>
+        /// <param name="peer">From peer</param>
+        /// <param name="reader">DataReader containing all received data</param>
         void OnNetworkReceive(NetPeer peer, NetDataReader reader);
+
+        /// <summary>
+        /// Received unconnected message
+        /// </summary>
+        /// <param name="remoteEndPoint">From address (IP and Port)</param>
+        /// <param name="reader">Message data</param>
+        /// <param name="messageType">Message type (simple, discovery request or responce)</param>
         void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
+
+        /// <summary>
+        /// Latency information updated
+        /// </summary>
+        /// <param name="peer">Peer with updated latency</param>
+        /// <param name="latency">latency value in milliseconds</param>
         void OnNetworkLatencyUpdate(NetPeer peer, int latency);
     }
 

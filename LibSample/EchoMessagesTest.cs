@@ -60,14 +60,14 @@ namespace LibSample
             {
                 if (reader.AvailableBytes == 13218)
                 {
-                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", peer.Handler.LocalEndPoint.Port, reader.Data[0], reader.Data[13217]);
+                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", peer.NetManager.LocalEndPoint.Port, reader.Data[0], reader.Data[13217]);
                 }
                 else
                 {
                     int type = reader.GetInt();
                     int num = reader.GetInt();
                     _messagesReceivedCount++;
-                    Console.WriteLine("[{0}] CNT: {1}, TYPE: {2}, NUM: {3}", peer.Handler.LocalEndPoint.Port, _messagesReceivedCount, type, num);
+                    Console.WriteLine("[{0}] CNT: {1}, TYPE: {2}, NUM: {3}", peer.NetManager.LocalEndPoint.Port, _messagesReceivedCount, type, num);
                 }
             }
 

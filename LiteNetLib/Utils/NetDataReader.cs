@@ -7,7 +7,7 @@ namespace LiteNetLib.Utils
     {
         protected byte[] _data;
         protected int _position;
-        protected int _maxLength;
+        protected int _dataSize;
 
         public byte[] Data
         {
@@ -19,25 +19,35 @@ namespace LiteNetLib.Utils
             get { return _position; }
         }
 
+        public bool EndOfData
+        {
+            get { return _position == _dataSize; }
+        }
+
+        public int AvailableBytes
+        {
+            get { return _dataSize - _position; }
+        }
+
         public void SetSource(byte[] source)
         {
             _data = source;
             _position = 0;
-            _maxLength = source.Length;
+            _dataSize = source.Length;
         }
 
         public void SetSource(byte[] source, int offset)
         {
             _data = source;
             _position = offset;
-            _maxLength = source.Length;
+            _dataSize = source.Length;
         }
 
-        public void SetSource(byte[] source, int offset, int maxSize)
+        public void SetSource(byte[] source, int offset, int dataSize)
         {
             _data = source;
             _position = offset;
-            _maxLength = maxSize;
+            _dataSize = dataSize;
         }
 
         public NetDataReader()
@@ -58,16 +68,6 @@ namespace LiteNetLib.Utils
         public NetDataReader(byte[] source, int offset, int maxSize)
         {
             SetSource(source, offset, maxSize);
-        }
-
-        public bool EndOfData
-        {
-            get { return _position == _maxLength; }
-        }
-
-        public int AvailableBytes
-        {
-            get { return _maxLength - _position; }
         }
 
         public NetEndPoint GetNetEndPoint()
@@ -195,6 +195,8 @@ namespace LiteNetLib.Utils
 
         public void Clear()
         {
+            _position = 0;
+            _dataSize = 0;
             _data = null;
         }
     }

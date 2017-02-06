@@ -51,7 +51,7 @@ namespace LiteNetLib
 
         public ReliableChannel(NetPeer peer, bool ordered, int windowSize)
         {
-            _resendDelay = peer.Handler.ReliableResendTime;
+            _resendDelay = peer.NetManager.ReliableResendTime;
             _windowSize = windowSize;
             _peer = peer;
             _ordered = ordered;

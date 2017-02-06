@@ -552,10 +552,9 @@ namespace LiteNetLib
 
             //Check peers
             Monitor.Enter(_peers);
-            bool peerFound = _peers.TryGetValue(remoteEndPoint, out netPeer);
             int peersCount = _peers.Count;
 
-            if (peerFound)
+            if (_peers.TryGetValue(remoteEndPoint, out netPeer))
             {
                 Monitor.Exit(_peers);
                 packet = netPeer.GetPacketFromPool(init: false);
@@ -576,15 +575,17 @@ namespace LiteNetLib
                         netPeer.Recycle(packet);
                         return;
                     }
-                    //TODO: read data!!!!
+
                     var netEvent = CreateEvent(NetEventType.Disconnect);
                     netEvent.Peer = netPeer;
+                    netEvent.DataReader.SetSource(packet.RawData, 5, packet.RawData.Length - 5);
                     netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
                     EnqueueEvent(netEvent);
                     lock (_peersToRemove)
                     {
                         _peersToRemove.Enqueue(netPeer.EndPoint);
                     }
+                    //do not recycle because no sense)
                 }
                 else if (packet.Property == PacketProperty.ConnectAccept)
                 {
@@ -594,6 +595,7 @@ namespace LiteNetLib
                         connectEvent.Peer = netPeer;
                         EnqueueEvent(connectEvent);
                     }
+                    netPeer.Recycle(packet);
                 }
                 else
                 {
