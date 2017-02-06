@@ -4,7 +4,7 @@ using LiteNetLib.Utils;
 
 public class GameClient : MonoBehaviour, INetEventListener
 {
-    private NetClient _netClient;
+    private NetManager _netClient;
 
     [SerializeField] private GameObject _clientBall;
     [SerializeField] private GameObject _clientBallInterpolated;
@@ -15,7 +15,7 @@ public class GameClient : MonoBehaviour, INetEventListener
 
     void Start ()
     {
-        _netClient = new NetClient(this, "sample_app");
+        _netClient = new NetManager(this, "sample_app");
 	    _netClient.Start();
 	    _netClient.UpdateTime = 15;
     }
@@ -24,7 +24,8 @@ public class GameClient : MonoBehaviour, INetEventListener
     {
 	    _netClient.PollEvents();
 
-        if (_netClient.IsConnected)
+        var peer = _netClient.GetFirstPeer();
+        if (peer != null && peer.ConnectionState == ConnectionState.Connected)
         {
             //Fixed delta set to 0.05
             var pos = _clientBallInterpolated.transform.position;
@@ -51,11 +52,6 @@ public class GameClient : MonoBehaviour, INetEventListener
         Debug.Log("[CLIENT] We connected to " + peer.EndPoint);
     }
 
-    public void OnPeerDisconnected(NetPeer peer, DisconnectReason reason, int socketErrorCode)
-    {
-        Debug.Log("[CLIENT] We disconnected because " + reason);
-    }
-
     public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
     {
         Debug.Log("[CLIENT] We received error " + socketErrorCode);
@@ -77,7 +73,7 @@ public class GameClient : MonoBehaviour, INetEventListener
 
     public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
     {
-        if (messageType == UnconnectedMessageType.DiscoveryResponse && _netClient.Peer == null)
+        if (messageType == UnconnectedMessageType.DiscoveryResponse && _netClient.PeersCount == 0)
         {
             Debug.Log("[CLIENT] Received discovery response. Connecting to: " + remoteEndPoint);
             _netClient.Connect(remoteEndPoint);
@@ -87,5 +83,10 @@ public class GameClient : MonoBehaviour, INetEventListener
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
     {
         
+    }
+
+    public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+    {
+        Debug.Log("[CLIENT] We disconnected because " + disconnectInfo.Reason);
     }
 }

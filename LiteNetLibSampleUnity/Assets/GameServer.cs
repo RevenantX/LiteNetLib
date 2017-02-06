@@ -4,7 +4,7 @@ using LiteNetLib.Utils;
 
 public class GameServer : MonoBehaviour, INetEventListener
 {
-    private NetServer _netServer;
+    private NetManager _netServer;
     private NetPeer _ourPeer;
     private NetDataWriter _dataWriter;
 
@@ -13,7 +13,7 @@ public class GameServer : MonoBehaviour, INetEventListener
     void Start()
     {
         _dataWriter = new NetDataWriter();
-        _netServer = new NetServer(this, 100, "sample_app");
+        _netServer = new NetManager(this, 100, "sample_app");
         _netServer.Start(5000);
         _netServer.DiscoveryEnabled = true;
         _netServer.UpdateTime = 15;
@@ -49,19 +49,12 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectReason reason, int socketErrorCode)
     {
-        Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + reason);
-        if (peer == _ourPeer)
-            _ourPeer = null;
+ 
     }
 
     public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
     {
         Debug.Log("[SERVER] error " + socketErrorCode);
-    }
-
-    public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
-    {
-
     }
 
     public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
@@ -74,6 +67,18 @@ public class GameServer : MonoBehaviour, INetEventListener
     }
 
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
+    {
+        
+    }
+
+    public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+    {
+        Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + disconnectInfo.Reason);
+        if (peer == _ourPeer)
+            _ourPeer = null;
+    }
+
+    public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
     {
         
     }
