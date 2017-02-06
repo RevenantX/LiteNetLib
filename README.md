@@ -9,6 +9,11 @@ Minimal .NET version - 3.5
 ### DLL build from master ( Warning! Master branch can be unstable! )
 https://ci.appveyor.com/project/RevenantX/litenetlib/branch/master/artifacts
 
+### Donations are welcome and will help further development of this project.
+```
+BTC: 15JFQ3tHHF22QDUkJYYvuYhyUoptkyaBms
+```
+
 ## Features
 
 * Lightweight
