@@ -248,7 +248,7 @@ namespace LiteNetLib
                     //Drop additional data
                     data = null;
                     count = 0;
-                    NetUtils.DebugWriteError("Disconnect additional data size more than 8 + MTU!");
+                    NetUtils.DebugWriteError("Disconnect additional data size more than MTU - 8!");
                 }
 
                 var disconnectPacket = NetPacket.CreateRawPacket(PacketProperty.Disconnect, 8 + count);
@@ -392,12 +392,24 @@ namespace LiteNetLib
                 int delta = _logicThread.SleepTime;
                 foreach (NetPeer netPeer in _peers.Values)
                 {
-                    if (netPeer.TimeSinceLastPacket > DisconnectTimeout)
+                    if (netPeer.ConnectionState == ConnectionState.Connected && netPeer.TimeSinceLastPacket > DisconnectTimeout)
                     {
                         netPeer.DebugWrite("Disconnect by timeout: {0} > {1}", netPeer.TimeSinceLastPacket, DisconnectTimeout);
                         var netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
                         netEvent.DisconnectReason = DisconnectReason.Timeout;
+                        EnqueueEvent(netEvent);
+
+                        lock (_peersToRemove)
+                        {
+                            _peersToRemove.Enqueue(netPeer.EndPoint);
+                        }
+                    }
+                    else if(netPeer.ConnectionState == ConnectionState.Disconnected)
+                    {
+                        var netEvent = CreateEvent(NetEventType.Disconnect);
+                        netEvent.Peer = netPeer;
+                        netEvent.DisconnectReason = DisconnectReason.ConnectionFailed;
                         EnqueueEvent(netEvent);
 
                         lock (_peersToRemove)
@@ -579,49 +591,54 @@ namespace LiteNetLib
                 return;
             }
 
-            //Else add new peer
-            packet = new NetPacket();
-            if (!packet.FromBytes(reusableBuffer, 0, count))
+            try
             {
-                //Bad packet
+                //Else add new peer
+                packet = new NetPacket();
+                if (!packet.FromBytes(reusableBuffer, 0, count))
+                {
+                    //Bad packet
+                    return;
+                }
+
+                if (peersCount < _maxClients && packet.Property == PacketProperty.ConnectRequest)
+                {
+                    int protoId = BitConverter.ToInt32(packet.RawData, 1);
+                    if (protoId != NetConstants.ProtocolId)
+                    {
+                        NetUtils.DebugWrite(ConsoleColor.Cyan,
+                            "[NS] Peer connect reject. Invalid protocol ID: " + protoId);
+                        return;
+                    }
+
+                    string peerKey = Encoding.UTF8.GetString(packet.RawData, 13, packet.RawData.Length - 13);
+                    if (peerKey != _connectKey)
+                    {
+                        NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Peer connect reject. Invalid key: " + peerKey);
+                        return;
+                    }
+
+                    //Getting new id for peer
+                    long connectionId = BitConverter.ToInt64(packet.RawData, 5);
+                    //response with id
+                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request Id: {0}, EP: {1}",
+                        netPeer.ConnectId, remoteEndPoint);
+                    netPeer = new NetPeer(this, remoteEndPoint, connectionId);
+
+                    //clean incoming packet
+                    netPeer.Recycle(packet);
+
+                    _peers.Add(remoteEndPoint, netPeer);
+
+                    var netEvent = CreateEvent(NetEventType.Connect);
+                    netEvent.Peer = netPeer;
+                    EnqueueEvent(netEvent);
+                }
+            }
+            finally
+            {
                 Monitor.Exit(_peers);
-                return;
             }
-
-            if (peersCount < _maxClients && packet.Property == PacketProperty.ConnectRequest)
-            {
-                int protoId = BitConverter.ToInt32(packet.RawData, 1);
-                if (protoId != NetConstants.ProtocolId)
-                {
-                    Monitor.Exit(_peers);
-                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Peer connect reject. Invalid protocol ID: " + protoId);
-                    return;
-                }
-
-                string peerKey = Encoding.UTF8.GetString(packet.RawData, 13, packet.RawData.Length - 13);
-                if (peerKey != _connectKey)
-                {
-                    Monitor.Exit(_peers);
-                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Peer connect reject. Invalid key: " + peerKey);
-                    return;
-                }
-
-                //Getting new id for peer
-                long connectionId = BitConverter.ToInt64(packet.RawData, 5);
-                //response with id
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NS] Received peer connect request Id: {0}, EP: {1}", netPeer.ConnectId, remoteEndPoint);
-                netPeer = new NetPeer(this, remoteEndPoint, connectionId);
-
-                //clean incoming packet
-                netPeer.Recycle(packet);
-
-                _peers.Add(remoteEndPoint, netPeer);
-
-                var netEvent = CreateEvent(NetEventType.Connect);
-                netEvent.Peer = netPeer;
-                EnqueueEvent(netEvent);
-            }
-            Monitor.Exit(_peers);
         }
 
         internal void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
@@ -669,22 +686,26 @@ namespace LiteNetLib
 
         public void SendToClients(byte[] data, int start, int length, SendOptions options, NetPeer excludePeer)
         {
-            Monitor.Enter(_peers);
-            if (excludePeer == null)
+            lock (_peers)
             {
-                foreach (NetPeer netPeer in _peers.Values)
+                if (excludePeer == null)
                 {
-                    netPeer.Send(data, start, length, options);
+                    foreach (NetPeer netPeer in _peers.Values)
+                    {
+                        netPeer.Send(data, start, length, options);
+                    }
+                }
+                else
+                {
+                    foreach (NetPeer netPeer in _peers.Values)
+                    {
+                        if (netPeer != excludePeer)
+                        {
+                            netPeer.Send(data, start, length, options);
+                        }
+                    }
                 }
             }
-            foreach (NetPeer netPeer in _peers.Values)
-            {
-                if (netPeer != excludePeer)
-                {
-                    netPeer.Send(data, start, length, options);
-                }
-            }
-            Monitor.Exit(_peers);
         }
 
         /// <summary>
