@@ -6,7 +6,8 @@ Minimal .NET version - 3.5
 ### Build status
 [![](https://ci.appveyor.com/api/projects/status/354501wnvxs8kuh3/branch/master?svg=true)](https://ci.appveyor.com/project/RevenantX/litenetlib/branch/master)
 
-### Warning! Master branch can be unstable!
+### DLL build from master ( Warning! Master branch can be unstable! )
+https://ci.appveyor.com/project/RevenantX/litenetlib/branch/master/artifacts
 
 ## Features
 
