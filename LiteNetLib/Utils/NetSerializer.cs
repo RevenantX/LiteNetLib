@@ -157,7 +157,7 @@ namespace LiteNetLib.Utils
                 return info;
             }
 
-#if WINRT
+#if WINRT || NETCORE
             var fields = t.GetRuntimeFields();
 #else
             var fields = t.GetFields();
