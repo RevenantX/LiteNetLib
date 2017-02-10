@@ -31,13 +31,20 @@ namespace LiteNetLib.Utils
 
         private class StructInfo
         {
-            public Action[] WriteDelegate;
-            public Action<NetDataReader>[] ReadDelegate;
+            public readonly Action[] WriteDelegate;
+            public readonly Action<NetDataReader>[] ReadDelegate;
             public AbstractStructRefrence StructReference;
             public Action<ValueType> OnReceive;
+
+            public StructInfo(int membersCount)
+            {
+                WriteDelegate = new Action[membersCount];
+                ReadDelegate = new Action<NetDataReader>[membersCount];
+            }
         }
 
         private readonly Dictionary<ulong, StructInfo> _cache;
+        private readonly Dictionary<string, ulong> _hashCache;
         private readonly Dictionary<Type, RWDelegates> _registeredCustomTypes;
         private readonly char[] _hashBuffer = new char[1024];
         private readonly HashSet<Type> _acceptedTypes;
@@ -47,6 +54,7 @@ namespace LiteNetLib.Utils
         public NetSerializer()
         {
             _cache = new Dictionary<ulong, StructInfo>();
+            _hashCache = new Dictionary<string, ulong>();
             _registeredCustomTypes = new Dictionary<Type, RWDelegates>();
             _writer = new NetDataWriter();
             _acceptedTypes = new HashSet<Type>
@@ -67,34 +75,40 @@ namespace LiteNetLib.Utils
 
         private ulong HashStr(string str)
         {
-            str.CopyTo(0, _hashBuffer, 0, str.Length);
             ulong hash = 14695981039346656037UL; //offset
-            for (var i = 0; i < str.Length; i++)
+            if (_hashCache.TryGetValue(str, out hash))
+            {
+                return hash;
+            }
+            int len = str.Length;
+            str.CopyTo(0, _hashBuffer, 0, len);      
+            for (var i = 0; i < len; i++)
             {
                 hash = hash ^ _hashBuffer[i];
                 hash *= 1099511628211UL; //prime
             }
+            _hashCache.Add(str, hash);
             return hash;
         }
 
-        private delegate TProperty GetGenericDelegate<TStruct, out TProperty>(ref TStruct obj) where TStruct : struct;
-        private delegate void SetGenericDelegate<TStruct, in TProperty>(ref TStruct obj, TProperty property) where TStruct : struct;
+        private delegate TProperty GetMethodDelegate<TStruct, out TProperty>(ref TStruct obj) where TStruct : struct;
+        private delegate void SetMethodDelegate<TStruct, in TProperty>(ref TStruct obj, TProperty property) where TStruct : struct;
 
-        private GetGenericDelegate<TStruct, TProperty> ExtractGetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
+        private GetMethodDelegate<TStruct, TProperty> ExtractGetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
         {
 #if WINRT || NETCORE
-            return (Func<TStruct, TProperty>)info.CreateDelegate(typeof(Func<TStruct, TProperty>));
+            return (GetMethodDelegate<TStruct, TProperty>)info.CreateDelegate(typeof(GetMethodDelegate<TStruct, TProperty>));
 #else
-            return (GetGenericDelegate<TStruct, TProperty>)Delegate.CreateDelegate(typeof(GetGenericDelegate<TStruct, TProperty>), info);
+            return (GetMethodDelegate<TStruct, TProperty>)Delegate.CreateDelegate(typeof(GetMethodDelegate<TStruct, TProperty>), info);
 #endif
         }
 
-        private SetGenericDelegate<TStruct, TProperty> ExtractSetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
+        private SetMethodDelegate<TStruct, TProperty> ExtractSetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
         {
 #if WINRT || NETCORE
-            return (Action<TStruct, T>)info.CreateDelegate(typeof(Action<TStruct, TProperty>));
+            return (SetMethodDelegate<TStruct, TProperty>)info.CreateDelegate(typeof(SetMethodDelegate<TStruct, TProperty>));
 #else
-            return (SetGenericDelegate<TStruct, TProperty>)Delegate.CreateDelegate(typeof(SetGenericDelegate<TStruct, TProperty>), info);
+            return (SetMethodDelegate<TStruct, TProperty>)Delegate.CreateDelegate(typeof(SetMethodDelegate<TStruct, TProperty>), info);
 #endif
         }
 
@@ -231,12 +245,8 @@ namespace LiteNetLib.Utils
                 throw new ArgumentException("Type does not contain acceptable fields");
             }
 
-            info = new StructInfo
-            {
-                StructReference = new StructReference<T> { Structure = Activator.CreateInstance<T>() },
-                WriteDelegate = new Action[accepted.Count],
-                ReadDelegate = new Action<NetDataReader>[accepted.Count]
-            };
+            info = new StructInfo(accepted.Count);
+            info.StructReference = new StructReference<T> { Structure = Activator.CreateInstance<T>() };
 
             _cache[name] = info;
             for(int i = 0; i < accepted.Count; i++)

@@ -95,6 +95,7 @@ namespace LibSample
 
         private void TestPerformance()
         {
+            const int LoopLength = 1000000;
             //Test serializer performance
             Stopwatch sw = new Stopwatch();
             BinaryFormatter bf = new BinaryFormatter();
@@ -115,7 +116,7 @@ namespace LibSample
 
             //Test binary formatter
             sw.Start();
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < LoopLength; i++)
             {
                 bf.Serialize(ms, samplePacket);
             }
@@ -124,7 +125,7 @@ namespace LibSample
 
             //Test NetSerializer
             sw.Restart();
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < LoopLength; i++)
             {
                 var data = ns.Serialize(samplePacket);
                 ms.Write(data, 0, data.Length);
