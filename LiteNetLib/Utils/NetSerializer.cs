@@ -20,11 +20,8 @@ namespace LiteNetLib.Utils
             public abstract ValueType GetStruct();
         }
 
-        public delegate void WriteDelegate<T>(ref T strct) where T : struct;
-
         private class StructReference<T> : AbstractStructRefrence where T : struct
         {
-            public WriteDelegate<T>[] WriteDelegates;
             public T Structure;
             public override ValueType GetStruct()
             {
@@ -34,12 +31,14 @@ namespace LiteNetLib.Utils
 
         private class StructInfo
         {
+            public readonly Action[] WriteDelegate;
             public readonly Action<NetDataReader>[] ReadDelegate;
             public AbstractStructRefrence StructReference;
             public Action<ValueType> OnReceive;
 
             public StructInfo(int membersCount)
             {
+                WriteDelegate = new Action[membersCount];
                 ReadDelegate = new Action<NetDataReader>[membersCount];
             }
         }
@@ -123,84 +122,84 @@ namespace LiteNetLib.Utils
                 var setDelegate = ExtractSetDelegate<T, string>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, string>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetString(MaxStringLenght)); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct), MaxStringLenght); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure), MaxStringLenght); };
             }
             else if (t == typeof(byte))
             {
                 var setDelegate = ExtractSetDelegate<T, byte>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, byte>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetByte()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(sbyte))
             {
                 var setDelegate = ExtractSetDelegate<T, sbyte>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, sbyte>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetSByte()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(short))
             {
                 var setDelegate = ExtractSetDelegate<T, short>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, short>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetShort()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(ushort))
             {
                 var setDelegate = ExtractSetDelegate<T, ushort>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, ushort>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetUShort()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(int))
             {
                 var setDelegate = ExtractSetDelegate<T, int>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, int>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetInt()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(uint))
             {
                 var setDelegate = ExtractSetDelegate<T, uint>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, uint>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetUInt()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(long))
             {
                 var setDelegate = ExtractSetDelegate<T, long>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, long>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetLong()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(ulong))
             {
                 var setDelegate = ExtractSetDelegate<T, ulong>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, ulong>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetULong()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(float))
             {
                 var setDelegate = ExtractSetDelegate<T, float>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, float>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetFloat()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(double))
             {
                 var setDelegate = ExtractSetDelegate<T, double>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, double>(getMethod);
                 info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetDouble()); };
-                sref.WriteDelegates[idx] = (ref T strct) => { _writer.Put(getDelegate(ref strct)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (_registeredCustomTypes.TryGetValue(t, out registeredCustomType))
             {
                 var setDelegate = ExtractSetDelegate<T, object>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, object>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, registeredCustomType.ReadDelegate(reader));
-                sref.WriteDelegates[idx] = (ref T strct) => registeredCustomType.WriteDelegate(_writer, getDelegate(ref strct));
+                info.WriteDelegate[idx] = () => registeredCustomType.WriteDelegate(_writer, getDelegate(ref sref.Structure));
             }
             else
             {
@@ -247,11 +246,7 @@ namespace LiteNetLib.Utils
             }
 
             info = new StructInfo(accepted.Count);
-            info.StructReference = new StructReference<T>
-            {
-                Structure = Activator.CreateInstance<T>(),
-                WriteDelegates = new WriteDelegate<T>[accepted.Count]
-            };
+            info.StructReference = new StructReference<T> { Structure = Activator.CreateInstance<T>() };
 
             _cache[name] = info;
             for(int i = 0; i < accepted.Count; i++)
@@ -298,14 +293,15 @@ namespace LiteNetLib.Utils
             Type t = typeof(T);
             ulong nameHash = HashStr(t.Name);
             var structInfo = Register<T>(t, nameHash);
+            var wd = structInfo.WriteDelegate;
+            var wdlen = structInfo.WriteDelegate.Length;
             var sref = (StructReference<T>)structInfo.StructReference;
-            var wd = sref.WriteDelegates;
-            var wdlen = sref.WriteDelegates.Length;
+            sref.Structure = obj;
 
             _writer.Put(nameHash);
             for (int i = 0; i < wdlen; i++)
             {
-                wd[i](ref obj);
+                wd[i]();
             }
 
             return _writer.CopyData();
