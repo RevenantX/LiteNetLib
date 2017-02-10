@@ -99,7 +99,7 @@
       <Link>Utils\NetDataWriter.cs</Link>
     </Compile>
     <Compile Include="..\LiteNetLib\Utils\NetSerializer.cs">
-      <Link>NetSerializer.cs</Link>
+      <Link>Utils\NetSerializer.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
