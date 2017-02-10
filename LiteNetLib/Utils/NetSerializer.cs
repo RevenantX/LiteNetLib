@@ -281,14 +281,15 @@ namespace LiteNetLib.Utils
             _writer.Reset();
 
             Type t = typeof(T);
-            ulong name = HashStr(t.Name);
-            var info = Register<T>(t, name);
-            var wd = info.WriteDelegate;
-            var sref = (StructReference<T>) info.StructReference;
+            ulong nameHash = HashStr(t.Name);
+            var structInfo = Register<T>(t, nameHash);
+            var wd = structInfo.WriteDelegate;
+            var wdlen = structInfo.WriteDelegate.Length;
+            var sref = (StructReference<T>)structInfo.StructReference;
             sref.Structure = obj;
 
-            _writer.Put(name);
-            for (int i = 0; i < info.WriteDelegate.Length; i++)
+            _writer.Put(nameHash);
+            for (int i = 0; i < wdlen; i++)
             {
                 wd[i]();
             }
