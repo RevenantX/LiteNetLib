@@ -13,9 +13,8 @@ namespace LibSample
         [Serializable] //Just for test binary formatter
         private struct SamplePacket
         {
-            public string SomeString;
-            public float SomeFloat;
-            public int[] IntNumbers;
+            public string SomeString { get; set; }
+            public float SomeFloat { get; set; }
         }
 
         private class ClientListener : INetEventListener
@@ -100,22 +99,23 @@ namespace LibSample
             Stopwatch sw = new Stopwatch();
             BinaryFormatter bf = new BinaryFormatter();
             MemoryStream ms = new MemoryStream();
-            SamplePacket samplePacket = new SamplePacket();
-            samplePacket.IntNumbers = new[] { 5, 6, 7 };
-            samplePacket.SomeFloat = 0.3f;
-            samplePacket.SomeString = "TEST";
+            SamplePacket samplePacket = new SamplePacket
+            {
+                SomeFloat = 0.3f,
+                SomeString = "TEST"
+            };
 
             NetSerializer ns = new NetSerializer();
 
             //Prewarm cpu
-            for(int i = 0; i < 1000000; i++)
+            for(int i = 0; i < 10000000; i++)
             {
                 double c = Math.Sin(i);
             }
 
             //Test binary formatter
             sw.Start();
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 100000; i++)
             {
                 bf.Serialize(ms, samplePacket);
             }
@@ -124,7 +124,7 @@ namespace LibSample
 
             //Test NetSerializer
             sw.Restart();
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 100000; i++)
             {
                 var data = ns.Serialize(samplePacket);
                 ms.Write(data, 0, data.Length);

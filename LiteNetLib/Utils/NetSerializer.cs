@@ -8,28 +8,41 @@ namespace LiteNetLib.Utils
     {
         private class RWDelegates
         {
-            public WriteDelegate WriteDelegate;
-            public ReadDelegate ReadDelegate;
+            public CustomTypeWrite WriteDelegate;
+            public CustomTypeRead ReadDelegate;
+        }
+
+        public delegate void CustomTypeWrite(NetDataWriter writer, object customObj);
+        public delegate object CustomTypeRead(NetDataReader reader);
+
+        private abstract class AbstractStructRefrence
+        {
+            public abstract ValueType GetStruct();
+        }
+
+        private class StructReference<T> : AbstractStructRefrence where T : struct
+        {
+            public T Structure;
+            public override ValueType GetStruct()
+            {
+                return Structure;
+            }
         }
 
         private class StructInfo
         {
-            public WriteDelegate[] WriteDelegate;
-            public ReadDelegate[] ReadDelegate;
-            public FieldInfo[] FieldInfos;
-            public object Instance;
-            public Action<object> OnReceive;
+            public Action[] WriteDelegate;
+            public Action<NetDataReader>[] ReadDelegate;
+            public AbstractStructRefrence StructReference;
+            public Action<ValueType> OnReceive;
         }
 
-        private Dictionary<ulong, StructInfo> _cache;
+        private readonly Dictionary<ulong, StructInfo> _cache;
         private readonly Dictionary<Type, RWDelegates> _registeredCustomTypes;
-        private char[] _hashBuffer = new char[1024];
-        private HashSet<Type> _acceptedTypes;
-        private NetDataWriter _writer;
+        private readonly char[] _hashBuffer = new char[1024];
+        private readonly HashSet<Type> _acceptedTypes;
+        private readonly NetDataWriter _writer;
         private const int MaxStringLenght = 1024;
-
-        public delegate void WriteDelegate(NetDataWriter writer, object o);
-        public delegate object ReadDelegate(NetDataReader reader);
 
         public NetSerializer()
         {
@@ -64,69 +77,115 @@ namespace LiteNetLib.Utils
             return hash;
         }
 
-        private void MakeDelegate(Type t, out WriteDelegate writeDelegate, out ReadDelegate readDelegate)
+        private delegate TProperty GetGenericDelegate<TStruct, out TProperty>(ref TStruct obj) where TStruct : struct;
+        private delegate void SetGenericDelegate<TStruct, in TProperty>(ref TStruct obj, TProperty property) where TStruct : struct;
+
+        private GetGenericDelegate<TStruct, TProperty> ExtractGetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
+        {
+#if WINRT || NETCORE
+            return (Func<TStruct, TProperty>)info.CreateDelegate(typeof(Func<TStruct, TProperty>));
+#else
+            return (GetGenericDelegate<TStruct, TProperty>)Delegate.CreateDelegate(typeof(GetGenericDelegate<TStruct, TProperty>), info);
+#endif
+        }
+
+        private SetGenericDelegate<TStruct, TProperty> ExtractSetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
+        {
+#if WINRT || NETCORE
+            return (Action<TStruct, T>)info.CreateDelegate(typeof(Action<TStruct, TProperty>));
+#else
+            return (SetGenericDelegate<TStruct, TProperty>)Delegate.CreateDelegate(typeof(SetGenericDelegate<TStruct, TProperty>), info);
+#endif
+        }
+
+        private void MakeDelegate<T>(Type t, MethodInfo getMethod, MethodInfo setMethod, StructInfo info, int idx) where T : struct
         {
             RWDelegates registeredCustomType;
+            StructReference<T> sref = (StructReference<T>)info.StructReference;
 
             if (t == typeof(string))
             {
-                writeDelegate = (writer, o) => { writer.Put((string)o, MaxStringLenght); };
-                readDelegate = reader => reader.GetString(MaxStringLenght);
+                var setDelegate = ExtractSetDelegate<T, string>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, string>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetString(MaxStringLenght)); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure), MaxStringLenght); };
             }
             else if (t == typeof(byte))
             {
-                writeDelegate = (writer, o) => { writer.Put((byte)o); };
-                readDelegate = reader => reader.GetByte();
+                var setDelegate = ExtractSetDelegate<T, byte>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, byte>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetByte()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(sbyte))
             {
-                writeDelegate = (writer, o) => { writer.Put((sbyte)o); };
-                readDelegate = reader => reader.GetSByte();
+                var setDelegate = ExtractSetDelegate<T, sbyte>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, sbyte>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetSByte()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(short))
             {
-                writeDelegate = (writer, o) => { writer.Put((short)o); };
-                readDelegate = reader => reader.GetShort();
+                var setDelegate = ExtractSetDelegate<T, short>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, short>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetShort()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(ushort))
             {
-                writeDelegate = (writer, o) => { writer.Put((ushort)o); };
-                readDelegate = reader => reader.GetUShort();
+                var setDelegate = ExtractSetDelegate<T, ushort>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, ushort>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetUShort()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(int))
             {
-                writeDelegate = (writer, o) => { writer.Put((int)o); };
-                readDelegate = reader => reader.GetInt();
+                var setDelegate = ExtractSetDelegate<T, int>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, int>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetInt()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(uint))
             {
-                writeDelegate = (writer, o) => { writer.Put((uint)o); };
-                readDelegate = reader => reader.GetUInt();
+                var setDelegate = ExtractSetDelegate<T, uint>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, uint>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetUInt()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(long))
             {
-                writeDelegate = (writer, o) => { writer.Put((long)o); };
-                readDelegate = reader => reader.GetLong();
+                var setDelegate = ExtractSetDelegate<T, long>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, long>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetLong()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(ulong))
             {
-                writeDelegate = (writer, o) => { writer.Put((ulong)o); };
-                readDelegate = reader => reader.GetULong();
+                var setDelegate = ExtractSetDelegate<T, ulong>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, ulong>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetULong()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(float))
             {
-                writeDelegate = (writer, o) => { writer.Put((float)o); };
-                readDelegate = reader => reader.GetFloat();
+                var setDelegate = ExtractSetDelegate<T, float>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, float>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetFloat()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (t == typeof(double))
             {
-                writeDelegate = (writer, o) => { writer.Put((double)o); };
-                readDelegate = reader => reader.GetDouble();
+                var setDelegate = ExtractSetDelegate<T, double>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, double>(getMethod);
+                info.ReadDelegate[idx] = reader => { setDelegate(ref sref.Structure, reader.GetDouble()); };
+                info.WriteDelegate[idx] = () => { _writer.Put(getDelegate(ref sref.Structure)); };
             }
             else if (_registeredCustomTypes.TryGetValue(t, out registeredCustomType))
             {
-                writeDelegate = registeredCustomType.WriteDelegate;
-                readDelegate = registeredCustomType.ReadDelegate;
+                var setDelegate = ExtractSetDelegate<T, object>(setMethod);
+                var getDelegate = ExtractGetDelegate<T, object>(getMethod);
+                info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, registeredCustomType.ReadDelegate(reader));
+                info.WriteDelegate[idx] = () => registeredCustomType.WriteDelegate(_writer, getDelegate(ref sref.Structure));
             }
             else
             {
@@ -134,13 +193,9 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void RegisterCustomTypeProcessor<T>(WriteDelegate writeDelegate, ReadDelegate readDelegate)
+        public void RegisterCustomTypeProcessor<T>(CustomTypeWrite writeDelegate, CustomTypeRead readDelegate) where T : struct
         {
-            RegisterCustomTypeProcessor(typeof(T), writeDelegate, readDelegate);
-        }
-
-        public void RegisterCustomTypeProcessor(Type t, WriteDelegate writeDelegate, ReadDelegate readDelegate)
-        {
+            var t = typeof(T);
             if(_acceptedTypes.Contains(t))
             {
                 return;
@@ -149,7 +204,7 @@ namespace LiteNetLib.Utils
             _acceptedTypes.Add(t);
         }
 
-        private StructInfo Register(Type t, ulong name)
+        private StructInfo Register<T>(Type t, ulong name) where T : struct
         {
             StructInfo info;
             if (_cache.TryGetValue(name, out info))
@@ -158,67 +213,42 @@ namespace LiteNetLib.Utils
             }
 
 #if WINRT || NETCORE
-            var fields = t.GetRuntimeFields();
+            var props = t.GetRuntimeProperties();
 #else
-            var fields = t.GetFields();
+            var props = t.GetProperties();
 #endif
-            List<FieldInfo> acceptedFields = new List<FieldInfo>();
-            foreach(var field in fields)
+            List<PropertyInfo> accepted = new List<PropertyInfo>();
+            foreach(var prop in props)
             {
-                var type = field.FieldType.IsArray ? field.FieldType.GetElementType() : field.FieldType;
+                var type = prop.PropertyType.IsArray ? prop.PropertyType.GetElementType() : prop.PropertyType;
                 if (_acceptedTypes.Contains(type))
                 {
-                    acceptedFields.Add(field);
+                    accepted.Add(prop);
                 }
             }
-            if(acceptedFields.Count < 0)
+            if(accepted.Count < 0)
             {
                 throw new ArgumentException("Type does not contain acceptable fields");
             }
 
-            info = new StructInfo();
-            info.Instance = Activator.CreateInstance(t);
-            info.WriteDelegate = new WriteDelegate[acceptedFields.Count];
-            info.ReadDelegate = new ReadDelegate[acceptedFields.Count];
-            info.FieldInfos = new FieldInfo[acceptedFields.Count];
+            info = new StructInfo
+            {
+                StructReference = new StructReference<T> { Structure = Activator.CreateInstance<T>() },
+                WriteDelegate = new Action[accepted.Count],
+                ReadDelegate = new Action<NetDataReader>[accepted.Count]
+            };
 
             _cache[name] = info;
-            for(int i = 0; i < acceptedFields.Count; i++)
+            for(int i = 0; i < accepted.Count; i++)
             {
-                info.FieldInfos[i] = acceptedFields[i];
-                var fieldType = acceptedFields[i].FieldType;
-
-                if (fieldType.IsArray)
-                {
-                    WriteDelegate objWrite;
-                    ReadDelegate objRead;
-                    Type elementType = fieldType.GetElementType();
-                    MakeDelegate(elementType, out objWrite, out objRead);
-                    info.WriteDelegate[i] = (writer, o) =>
-                    {
-                        Array arr = (Array)o;
-                        writer.Put(arr.Length);
-                        for (int idx = 0; idx < arr.Length; idx++)
-                        {
-                            objWrite(writer, arr.GetValue(idx));
-                        }
-                    };
-                    info.ReadDelegate[i] = reader =>
-                    {
-                        int elemCount = reader.GetInt();
-                        Array arr = Array.CreateInstance(elementType, elemCount);
-                        for (int idx = 0; idx < elemCount; idx++)
-                        {
-                            object value = objRead(reader);
-                            arr.SetValue(value, idx);
-                        }
-                        return arr;
-                    };
-                }
-                else
-                {
-                    MakeDelegate(fieldType, out info.WriteDelegate[i], out info.ReadDelegate[i]);
-                }
+#if WINRT || NETCORE
+                var getMethod = accepted[i].GetMethod;
+                var setMethod = accepted[i].SetMethod;
+#else
+                var getMethod = accepted[i].GetGetMethod();
+                var setMethod = accepted[i].GetSetMethod();
+#endif
+                MakeDelegate<T>( accepted[i].PropertyType, getMethod, setMethod, info, i);
             }
             return info;
         }
@@ -230,19 +260,19 @@ namespace LiteNetLib.Utils
             
             for(int i = 0; i < info.ReadDelegate.Length; i++)
             {
-                info.FieldInfos[i].SetValue(info.Instance, info.ReadDelegate[i](reader));
+                info.ReadDelegate[i](reader);
             }
 
             if(info.OnReceive != null)
             {
-                info.OnReceive(info.Instance);
+                info.OnReceive(info.StructReference.GetStruct());
             }
         }
 
         public void Subscribe<T>(Action<T> onReceive) where T : struct
         {
             var t = typeof(T);
-            var info = Register(t, HashStr(t.Name));
+            var info = Register<T>(t, HashStr(t.Name));
             info.OnReceive = o => { onReceive((T)o); };
         }
 
@@ -252,14 +282,15 @@ namespace LiteNetLib.Utils
 
             Type t = typeof(T);
             ulong name = HashStr(t.Name);
-            var info = Register(t, name);
+            var info = Register<T>(t, name);
             var wd = info.WriteDelegate;
-            var fi = info.FieldInfos;
+            var sref = (StructReference<T>) info.StructReference;
+            sref.Structure = obj;
 
             _writer.Put(name);
             for (int i = 0; i < info.WriteDelegate.Length; i++)
             {
-                wd[i](_writer, fi[i].GetValue(obj));
+                wd[i]();
             }
 
             return _writer.CopyData();
