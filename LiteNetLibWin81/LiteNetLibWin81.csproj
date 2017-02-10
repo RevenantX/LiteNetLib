@@ -98,6 +98,9 @@
     <Compile Include="..\LiteNetLib\Utils\NetDataWriter.cs">
       <Link>Utils\NetDataWriter.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\Utils\NetSerializer.cs">
+      <Link>NetSerializer.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

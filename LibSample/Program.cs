@@ -15,8 +15,9 @@ class Program
         }
 
         //new EchoMessagesTest().Run();
-        new HolePunchServerTest().Run();
+        //new HolePunchServerTest().Run();
         //new BroadcastTest().Run();
         //new BenchmarkTest.TestHost().Run();
+        new SerializerTest().Run();
     }
 }
