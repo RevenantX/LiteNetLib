@@ -159,6 +159,14 @@ namespace LiteNetLib.Utils
             _position += length;
         }
 
+        public void Put(byte[] data)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + data.Length);
+            Buffer.BlockCopy(data, 0, _data, _position, data.Length);
+            _position += data.Length;
+        }
+
         public void Put(bool value)
         {
             if (_autoResize)

@@ -97,16 +97,18 @@ namespace LibSample
         {
             const int LoopLength = 1000000;
             //Test serializer performance
-            Stopwatch sw = new Stopwatch();
-            BinaryFormatter bf = new BinaryFormatter();
-            MemoryStream ms = new MemoryStream();
+            Stopwatch stopwatch = new Stopwatch();
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            MemoryStream memoryStream = new MemoryStream();
+            NetDataWriter netDataWriter = new NetDataWriter();
+
             SamplePacket samplePacket = new SamplePacket
             {
                 SomeFloat = 0.3f,
                 SomeString = "TEST"
             };
 
-            NetSerializer ns = new NetSerializer();
+            NetSerializer netSerializer = new NetSerializer();
 
             //Prewarm cpu
             for(int i = 0; i < 10000000; i++)
@@ -115,23 +117,33 @@ namespace LibSample
             }
 
             //Test binary formatter
-            sw.Start();
+            stopwatch.Start();
             for (int i = 0; i < LoopLength; i++)
             {
-                bf.Serialize(ms, samplePacket);
+                binaryFormatter.Serialize(memoryStream, samplePacket);
             }
-            sw.Stop();
-            Console.WriteLine("BinaryFormatter time: " + sw.ElapsedMilliseconds + " ms");
+            stopwatch.Stop();
+            Console.WriteLine("BinaryFormatter time: " + stopwatch.ElapsedMilliseconds + " ms");
 
             //Test NetSerializer
-            sw.Restart();
+            stopwatch.Restart();
             for (int i = 0; i < LoopLength; i++)
             {
-                var data = ns.Serialize(samplePacket);
-                ms.Write(data, 0, data.Length);
+                netSerializer.Serialize(netDataWriter, samplePacket);
             }
-            sw.Stop();
-            Console.WriteLine("NetSerializer time: " + sw.ElapsedMilliseconds + " ms");
+            stopwatch.Stop();
+            Console.WriteLine("NetSerializer time: " + stopwatch.ElapsedMilliseconds + " ms");
+
+            //Test RAW
+            netDataWriter.Reset();
+            stopwatch.Restart();
+            for (int i = 0; i < LoopLength; i++)
+            {
+                netDataWriter.Put(samplePacket.SomeFloat);
+                netDataWriter.Put(samplePacket.SomeString);
+            }
+            stopwatch.Stop();
+            Console.WriteLine("DataWriter time: " + stopwatch.ElapsedMilliseconds + " ms");
         }
 
         public void Run()
