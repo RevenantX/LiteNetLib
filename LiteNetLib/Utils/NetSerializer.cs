@@ -136,84 +136,86 @@ namespace LiteNetLib.Utils
         }
 
         private void MakeDelegate<T>(
-            Type t, 
+            PropertyInfo propInfo,
             MethodInfo getMethod, 
             MethodInfo setMethod, 
             StructInfo info, 
             int idx,
             StructReference<T> sref) where T : struct
         {
-            if (t == typeof(string))
+            var propertyType = propInfo.PropertyType;
+
+            if (propertyType == typeof(string))
             {
                 var setDelegate = ExtractSetDelegate<T, string>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, string>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetString(MaxStringLenght));
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure), MaxStringLenght);
             }
-            else if (t == typeof(byte))
+            else if (propertyType == typeof(byte))
             {
                 var setDelegate = ExtractSetDelegate<T, byte>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, byte>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetByte());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(sbyte))
+            else if (propertyType == typeof(sbyte))
             {
                 var setDelegate = ExtractSetDelegate<T, sbyte>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, sbyte>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetSByte());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(short))
+            else if (propertyType == typeof(short))
             {
                 var setDelegate = ExtractSetDelegate<T, short>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, short>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetShort());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(ushort))
+            else if (propertyType == typeof(ushort))
             {
                 var setDelegate = ExtractSetDelegate<T, ushort>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, ushort>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetUShort());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(int))
+            else if (propertyType == typeof(int))
             {
                 var setDelegate = ExtractSetDelegate<T, int>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, int>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetInt());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(uint))
+            else if (propertyType == typeof(uint))
             {
                 var setDelegate = ExtractSetDelegate<T, uint>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, uint>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetUInt());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(long))
+            else if (propertyType == typeof(long))
             {
                 var setDelegate = ExtractSetDelegate<T, long>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, long>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetLong());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(ulong))
+            else if (propertyType == typeof(ulong))
             {
                 var setDelegate = ExtractSetDelegate<T, ulong>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, ulong>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetULong());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(float))
+            else if (propertyType == typeof(float))
             {
                 var setDelegate = ExtractSetDelegate<T, float>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, float>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetFloat());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(double))
+            else if (propertyType == typeof(double))
             {
                 var setDelegate = ExtractSetDelegate<T, double>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, double>(getMethod);
@@ -221,70 +223,70 @@ namespace LiteNetLib.Utils
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
             // Array types
-            else if (t == typeof(string[]))
+            else if (propertyType == typeof(string[]))
             {
                 var setDelegate = ExtractSetDelegate<T, string[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, string[]>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetStringArray(MaxStringLenght));
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure), MaxStringLenght);
             }
-            else if (t == typeof(byte[]))
+            else if (propertyType == typeof(byte[]))
             {
                 var setDelegate = ExtractSetDelegate<T, byte[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, byte[]>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetBytes());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(short[]))
+            else if (propertyType == typeof(short[]))
             {
                 var setDelegate = ExtractSetDelegate<T, short[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, short[]>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetShortArray());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(ushort[]))
+            else if (propertyType == typeof(ushort[]))
             {
                 var setDelegate = ExtractSetDelegate<T, ushort[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, ushort[]>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetUShortArray());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(int[]))
+            else if (propertyType == typeof(int[]))
             {
                 var setDelegate = ExtractSetDelegate<T, int[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, int[]>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetIntArray());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(uint[]))
+            else if (propertyType == typeof(uint[]))
             {
                 var setDelegate = ExtractSetDelegate<T, uint[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, uint[]>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetUIntArray());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(long[]))
+            else if (propertyType == typeof(long[]))
             {
                 var setDelegate = ExtractSetDelegate<T, long[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, long[]>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetLongArray());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(ulong[]))
+            else if (propertyType == typeof(ulong[]))
             {
                 var setDelegate = ExtractSetDelegate<T, ulong[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, ulong[]>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetULongArray());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(float[]))
+            else if (propertyType == typeof(float[]))
             {
                 var setDelegate = ExtractSetDelegate<T, float[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, float[]>(getMethod);
                 info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, reader.GetFloatArray());
                 info.WriteDelegate[idx] = writer => writer.Put(getDelegate(ref sref.Structure));
             }
-            else if (t == typeof(double[]))
+            else if (propertyType == typeof(double[]))
             {
                 var setDelegate = ExtractSetDelegate<T, double[]>(setMethod);
                 var getDelegate = ExtractGetDelegate<T, double[]>(getMethod);
@@ -294,28 +296,40 @@ namespace LiteNetLib.Utils
             else
             {
                 RWDelegates registeredCustomType;
-                if (_registeredCustomTypes.TryGetValue(t, out registeredCustomType))
+                if (_registeredCustomTypes.TryGetValue(propertyType, out registeredCustomType))
                 {
-                    var setDelegate = ExtractSetDelegate<T, object>(setMethod);
-                    var getDelegate = ExtractGetDelegate<T, object>(getMethod);
-                    info.ReadDelegate[idx] = reader => setDelegate(ref sref.Structure, registeredCustomType.ReadDelegate(reader));
-                    info.WriteDelegate[idx] = writer => registeredCustomType.WriteDelegate(writer, getDelegate(ref sref.Structure));
+                    info.ReadDelegate[idx] = reader =>
+                    {
+                        object boxedStruct = sref.Structure;
+                        propInfo.SetValue(boxedStruct, registeredCustomType.ReadDelegate(reader), null);
+                        sref.Structure = (T)boxedStruct;
+                    };
+
+                    info.WriteDelegate[idx] = writer =>
+                    {
+                        registeredCustomType.WriteDelegate(writer, propInfo.GetValue(sref.Structure, null));
+                    };
                 }
                 else
                 {
-                    throw new ArgumentException("Unregistered argument type: " + t);
+                    throw new ArgumentException("Unregistered argument type: " + propertyType);
                 }
             }
         }
 
-        public void RegisterCustomTypeProcessor<T>(CustomTypeWrite writeDelegate, CustomTypeRead readDelegate) where T : struct
+        public void RegisterCustomType<T>(Action<NetDataWriter, T> writeDelegate, Func<NetDataReader, T> readDelegate) where T : struct
         {
             var t = typeof(T);
             if(_acceptedTypes.Contains(t))
             {
                 return;
             }
-            _registeredCustomTypes.Add(t, new RWDelegates(writeDelegate, readDelegate));
+
+            var rwDelegates = new RWDelegates(
+                (writer, obj) => writeDelegate(writer, (T) obj),
+                reader => readDelegate(reader));
+
+            _registeredCustomTypes.Add(t, rwDelegates);
             _acceptedTypes.Add(t);
         }
 
@@ -360,7 +374,7 @@ namespace LiteNetLib.Utils
                 var setMethod = accepted[i].GetSetMethod();
 #endif
                 MakeDelegate( 
-                    accepted[i].PropertyType, 
+                    accepted[i], 
                     getMethod, 
                     setMethod, 
                     info, 

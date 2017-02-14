@@ -16,6 +16,28 @@ namespace LibSample
             public string SomeString { get; set; }
             public float SomeFloat { get; set; }
             public int[] SomeIntArray { get; set; }
+            public SomeVector2 SomeVector2 { get; set; }
+        }
+
+        [Serializable] //Just for test binary formatter
+        private struct SomeVector2
+        {
+            public int X;
+            public int Y;
+
+            public static void Serialize(NetDataWriter writer, SomeVector2 vector)
+            {
+                writer.Put(vector.X);
+                writer.Put(vector.Y);
+            }
+
+            public static SomeVector2 Deserialize(NetDataReader reader)
+            {
+                SomeVector2 res = new SomeVector2();
+                res.X = reader.GetInt();
+                res.Y = reader.GetInt();
+                return res;
+            }
         }
 
         private class ClientListener : INetEventListener
@@ -107,10 +129,12 @@ namespace LibSample
             {
                 SomeFloat = 0.3f,
                 SomeString = "TEST",
-                SomeIntArray = new [] { 1, 2, 3 }
+                SomeIntArray = new [] { 1, 2, 3 },
+                SomeVector2 = new SomeVector2 { X = 1, Y = 2 }
             };
 
             NetSerializer netSerializer = new NetSerializer();
+            netSerializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
 
             //Prewarm cpu
             for(int i = 0; i < 10000000; i++)
@@ -144,6 +168,8 @@ namespace LibSample
                 netDataWriter.Put(samplePacket.SomeFloat);
                 netDataWriter.Put(samplePacket.SomeString);
                 netDataWriter.Put(samplePacket.SomeIntArray);
+                netDataWriter.Put(samplePacket.SomeVector2.X);
+                netDataWriter.Put(samplePacket.SomeVector2.Y);
             }
             stopwatch.Stop();
             Console.WriteLine("DataWriter (raw put method calls) time: " + stopwatch.ElapsedMilliseconds + " ms");

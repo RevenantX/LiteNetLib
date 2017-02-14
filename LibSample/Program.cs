@@ -4,6 +4,7 @@ using LiteNetLib;
 
 class Program
 {
+
     static void Main(string[] args)
     {
         //Test ntp
