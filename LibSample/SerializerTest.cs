@@ -19,6 +19,7 @@ namespace LibSample
             public int[] SomeIntArray { get; set; }
             public SomeVector2 SomeVector2 { get; set; }
             public SomeVector2[] SomeVectors { get; set; }
+            public string EmptyString { get; set; }
 
             public override string ToString()
             {
@@ -36,6 +37,7 @@ namespace LibSample
                 {
                     sb.AppendLine(" " + SomeVectors[i]);
                 }
+                sb.AppendLine("EmptyString: " + EmptyString);
                 return sb.ToString();
             }
         }
@@ -163,7 +165,7 @@ namespace LibSample
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
             {
                 Console.WriteLine("[Server] received data. Processing...");
-                _netSerializer.ProcessData(reader);
+                _netSerializer.ReadAllPackets(reader);
             }
 
             public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
@@ -202,7 +204,7 @@ namespace LibSample
             netSerializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
 
             //Prewarm cpu
-            for(int i = 0; i < 10000000; i++)
+            for (int i = 0; i < 10000000; i++)
             {
                 double c = Math.Sin(i);
             }
@@ -223,7 +225,17 @@ namespace LibSample
                 netSerializer.Serialize(netDataWriter, samplePacket);
             }
             stopwatch.Stop();
-            Console.WriteLine("NetSerializer time: " + stopwatch.ElapsedMilliseconds + " ms");
+            Console.WriteLine("NetSerializer first run time: " + stopwatch.ElapsedMilliseconds + " ms");
+
+            //Test NetSerializer
+            netDataWriter.Reset();
+            stopwatch.Restart();
+            for (int i = 0; i < LoopLength; i++)
+            {
+                netSerializer.Serialize(netDataWriter, samplePacket);
+            }
+            stopwatch.Stop();
+            Console.WriteLine("NetSerializer second run time: " + stopwatch.ElapsedMilliseconds + " ms");
 
             //Test RAW
             netDataWriter.Reset();
@@ -241,6 +253,7 @@ namespace LibSample
                     netDataWriter.Put(samplePacket.SomeVectors[j].X);
                     netDataWriter.Put(samplePacket.SomeVectors[j].Y);
                 }
+                netDataWriter.Put(samplePacket.EmptyString);
             }
             stopwatch.Stop();
             Console.WriteLine("DataWriter (raw put method calls) time: " + stopwatch.ElapsedMilliseconds + " ms");

@@ -18,8 +18,10 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public delegate void CustomTypeWrite(NetDataWriter writer, object customObj);
-        public delegate object CustomTypeRead(NetDataReader reader);
+        private delegate void CustomTypeWrite(NetDataWriter writer, object customObj);
+        private delegate object CustomTypeRead(NetDataReader reader);
+        private delegate TProperty GetMethodDelegate<TStruct, out TProperty>(ref TStruct obj) where TStruct : struct;
+        private delegate void SetMethodDelegate<TStruct, in TProperty>(ref TStruct obj, TProperty property) where TStruct : struct;
 
         private abstract class AbstractStructRefrence
         {
@@ -114,10 +116,7 @@ namespace LiteNetLib.Utils
             return hash;
         }
 
-        private delegate TProperty GetMethodDelegate<TStruct, out TProperty>(ref TStruct obj) where TStruct : struct;
-        private delegate void SetMethodDelegate<TStruct, in TProperty>(ref TStruct obj, TProperty property) where TStruct : struct;
-
-        private GetMethodDelegate<TStruct, TProperty> ExtractGetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
+        private static GetMethodDelegate<TStruct, TProperty> ExtractGetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
         {
 #if WINRT || NETCORE
             return (GetMethodDelegate<TStruct, TProperty>)info.CreateDelegate(typeof(GetMethodDelegate<TStruct, TProperty>));
@@ -126,7 +125,7 @@ namespace LiteNetLib.Utils
 #endif
         }
 
-        private SetMethodDelegate<TStruct, TProperty> ExtractSetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
+        private static SetMethodDelegate<TStruct, TProperty> ExtractSetDelegate<TStruct, TProperty>(MethodInfo info) where TStruct : struct
         {
 #if WINRT || NETCORE
             return (SetMethodDelegate<TStruct, TProperty>)info.CreateDelegate(typeof(SetMethodDelegate<TStruct, TProperty>));
@@ -135,6 +134,11 @@ namespace LiteNetLib.Utils
 #endif
         }
 
+        /// <summary>
+        /// Register custom property type
+        /// </summary>
+        /// <param name="writeDelegate"></param>
+        /// <param name="readDelegate"></param>
         public void RegisterCustomType<T>(Action<NetDataWriter, T> writeDelegate, Func<NetDataReader, T> readDelegate) where T : struct
         {
             var t = typeof(T);
@@ -410,7 +414,23 @@ namespace LiteNetLib.Utils
             return info;
         }
 
-        public void ProcessData(NetDataReader reader)
+        /// <summary>
+        /// Reads all available data from NetDataReader and calls OnReceive delegates
+        /// </summary>
+        /// <param name="reader">NetDataReader with packets data</param>
+        public void ReadAllPackets(NetDataReader reader)
+        {
+            while (reader.AvailableBytes > 0)
+            {
+                ReadPacket(reader);
+            }
+        }
+
+        /// <summary>
+        /// Reads one packet from NetDataReader and calls OnReceive delegate
+        /// </summary>
+        /// <param name="reader">NetDataReader with packet</param>
+        public void ReadPacket(NetDataReader reader)
         {
             ulong name = reader.GetULong();
             var info = _cache[name];
@@ -426,6 +446,10 @@ namespace LiteNetLib.Utils
             }
         }
 
+        /// <summary>
+        /// Register and subscribe to packet receive event
+        /// </summary>
+        /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         public void Subscribe<T>(Action<T> onReceive) where T : struct
         {
             var t = typeof(T);
@@ -433,6 +457,11 @@ namespace LiteNetLib.Utils
             info.OnReceive = o => { onReceive((T)o); };
         }
 
+        /// <summary>
+        /// Serialize struct to NetDataWriter (fast)
+        /// </summary>
+        /// <param name="writer">Serialization target NetDataWriter</param>
+        /// <param name="obj">Struct to serialize</param>
         public void Serialize<T>(NetDataWriter writer, T obj) where T : struct 
         {
             Type t = typeof(T);
@@ -450,6 +479,11 @@ namespace LiteNetLib.Utils
             }
         }
 
+        /// <summary>
+        /// Serialize struct to byte array
+        /// </summary>
+        /// <param name="obj">Struct to serialize</param>
+        /// <returns>byte array with serialized data</returns>
         public byte[] Serialize<T>(T obj) where T : struct
         {
             _writer.Reset();
