@@ -15,6 +15,7 @@ namespace LibSample
         {
             public string SomeString { get; set; }
             public float SomeFloat { get; set; }
+            public int[] SomeIntArray { get; set; }
         }
 
         private class ClientListener : INetEventListener
@@ -105,7 +106,8 @@ namespace LibSample
             SamplePacket samplePacket = new SamplePacket
             {
                 SomeFloat = 0.3f,
-                SomeString = "TEST"
+                SomeString = "TEST",
+                SomeIntArray = new [] { 1, 2, 3 }
             };
 
             NetSerializer netSerializer = new NetSerializer();
@@ -141,9 +143,10 @@ namespace LibSample
             {
                 netDataWriter.Put(samplePacket.SomeFloat);
                 netDataWriter.Put(samplePacket.SomeString);
+                netDataWriter.Put(samplePacket.SomeIntArray);
             }
             stopwatch.Stop();
-            Console.WriteLine("DataWriter time: " + stopwatch.ElapsedMilliseconds + " ms");
+            Console.WriteLine("DataWriter (raw put method calls) time: " + stopwatch.ElapsedMilliseconds + " ms");
         }
 
         public void Run()

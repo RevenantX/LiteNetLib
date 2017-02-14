@@ -7,8 +7,9 @@ namespace LiteNetLib.Utils
     {
         protected byte[] _data;
         protected int _position;
-        protected int _maxLength;
-        protected bool _autoResize;
+
+        private int _maxLength;
+        private readonly bool _autoResize;
 
         public NetDataWriter()
         {
@@ -71,20 +72,20 @@ namespace LiteNetLib.Utils
             get { return _position; }
         }
 
-        public void Put(double value)
-        {
-            if(_autoResize)
-                ResizeIfNeed(_position + 8);
-            FastBitConverter.GetBytes(_data, _position, value);
-            _position += 8;
-        }
-
         public void Put(float value)
         {
             if (_autoResize)
                 ResizeIfNeed(_position + 4);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 4;
+        }
+
+        public void Put(double value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + 8);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 8;
         }
 
         public void Put(long value)
@@ -186,6 +187,123 @@ namespace LiteNetLib.Utils
             //put string
             Encoding.UTF8.GetBytes(value, 0, value.Length, _data, _position);
             _position += bytesCount;
+        }
+
+        public void Put(float[] value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + value.Length * 4 + 2);
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(double[] value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + value.Length * 8 + 2);
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(long[] value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + value.Length * 8 + 2);
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(ulong[] value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + value.Length * 8 + 2);
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(int[] value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + value.Length * 4 + 2);
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(uint[] value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + value.Length * 4 + 2);
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(ushort[] value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + value.Length * 2 + 2);
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(short[] value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + value.Length * 2 + 2);
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(bool[] value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + value.Length + 2);
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(string[] value)
+        {
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(string[] value, int maxLength)
+        {
+            Put((ushort)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i], maxLength);
+            }
         }
 
         public void Put(NetEndPoint endPoint)
