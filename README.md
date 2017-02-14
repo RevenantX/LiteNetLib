@@ -27,6 +27,7 @@ BTC: 15JFQ3tHHF22QDUkJYYvuYhyUoptkyaBms
  * Reliable without order
  * Ordered but unreliable with duplication prevention
  * Simple UDP packets without order and reliability
+* Fast packet serializer
 * Packet flow control
 * Automatic small packets merging ( if enabled )
 * Automatic fragmentation of reliable packets
@@ -88,7 +89,7 @@ while (!Console.KeyAvailable)
 client.Stop();
 ```
 
-### NetManager settings description
+## NetManager settings description
 
 * **UnconnectedMessagesEnabled**
  * enable messages receiving without connection. (with SendUnconnectedMessage method)
