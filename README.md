@@ -27,7 +27,7 @@ BTC: 15JFQ3tHHF22QDUkJYYvuYhyUoptkyaBms
  * Reliable without order
  * Ordered but unreliable with duplication prevention
  * Simple UDP packets without order and reliability
-* Fast packet serializer
+* Fast packet serializer [(Usage manual)](https://github.com/RevenantX/LiteNetLib/wiki/NetSerializer-usage)
 * Packet flow control
 * Automatic small packets merging ( if enabled )
 * Automatic fragmentation of reliable packets
