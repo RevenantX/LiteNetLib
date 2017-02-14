@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Threading;
 
 namespace LibSample
@@ -17,6 +18,26 @@ namespace LibSample
             public float SomeFloat { get; set; }
             public int[] SomeIntArray { get; set; }
             public SomeVector2 SomeVector2 { get; set; }
+            public SomeVector2[] SomeVectors { get; set; }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("SomeString: " + SomeString);
+                sb.AppendLine("SomeFloat: " + SomeFloat);
+                sb.AppendLine("SomeIntArray: ");
+                for (int i = 0; i < SomeIntArray.Length; i++)
+                {
+                    sb.AppendLine(" " + SomeIntArray[i]);
+                }
+                sb.AppendLine("SomeVector2 X: " + SomeVector2);
+                sb.AppendLine("SomeVectors: ");
+                for (int i = 0; i < SomeVectors.Length; i++)
+                {
+                    sb.AppendLine(" " + SomeVectors[i]);
+                }
+                return sb.ToString();
+            }
         }
 
         [Serializable] //Just for test binary formatter
@@ -24,6 +45,17 @@ namespace LibSample
         {
             public int X;
             public int Y;
+
+            public SomeVector2(int x, int y)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public override string ToString()
+            {
+                return "X: " + X + ", Y: " + Y;
+            }
 
             public static void Serialize(NetDataWriter writer, SomeVector2 vector)
             {
@@ -42,9 +74,27 @@ namespace LibSample
 
         private class ClientListener : INetEventListener
         {
+            private readonly NetSerializer _serializer;
+
+            public ClientListener()
+            {
+                _serializer = new NetSerializer();
+                _serializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
+            }
+
             public void OnPeerConnected(NetPeer peer)
             {
                 Console.WriteLine("[Client] connected to: {0}:{1}", peer.EndPoint.Host, peer.EndPoint.Port);
+                SamplePacket sp = new SamplePacket
+                {
+                    SomeFloat = 3.42f,
+                    SomeIntArray = new[] {6, 5, 4},
+                    SomeString = "Test String",
+                    SomeVector2 = new SomeVector2(4, 5),
+                    SomeVectors = new[] {new SomeVector2(1, 2), new SomeVector2(3, 4)}
+                };
+                Console.WriteLine("Sending to server:\n" + sp );
+                peer.Send(_serializer.Serialize(sp), SendOptions.ReliableOrdered);
             }
 
             public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
@@ -76,6 +126,19 @@ namespace LibSample
         private class ServerListener : INetEventListener
         {
             public NetManager Server;
+            private readonly NetSerializer _netSerializer;
+
+            public ServerListener()
+            {
+                _netSerializer = new NetSerializer();
+                _netSerializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
+                _netSerializer.Subscribe<SamplePacket>(OnSamplePacketReceived);
+            }
+
+            private void OnSamplePacketReceived(SamplePacket samplePacket)
+            {
+                Console.WriteLine("[Server] ReceivedPacket:\n" + samplePacket);
+            }
 
             public void OnPeerConnected(NetPeer peer)
             {
@@ -99,7 +162,8 @@ namespace LibSample
 
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
             {
-
+                Console.WriteLine("[Server] received data. Processing...");
+                _netSerializer.ProcessData(reader);
             }
 
             public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
@@ -118,7 +182,7 @@ namespace LibSample
 
         private void TestPerformance()
         {
-            const int LoopLength = 1000000;
+            const int LoopLength = 100000;
             //Test serializer performance
             Stopwatch stopwatch = new Stopwatch();
             BinaryFormatter binaryFormatter = new BinaryFormatter();
@@ -130,7 +194,8 @@ namespace LibSample
                 SomeFloat = 0.3f,
                 SomeString = "TEST",
                 SomeIntArray = new [] { 1, 2, 3 },
-                SomeVector2 = new SomeVector2 { X = 1, Y = 2 }
+                SomeVector2 = new SomeVector2(1, 2),
+                SomeVectors = new [] { new SomeVector2(3,4), new SomeVector2(5,6) }
             };
 
             NetSerializer netSerializer = new NetSerializer();
@@ -170,6 +235,12 @@ namespace LibSample
                 netDataWriter.Put(samplePacket.SomeIntArray);
                 netDataWriter.Put(samplePacket.SomeVector2.X);
                 netDataWriter.Put(samplePacket.SomeVector2.Y);
+                netDataWriter.Put(samplePacket.SomeVectors.Length);
+                for (int j = 0; j < samplePacket.SomeVectors.Length; j++)
+                {
+                    netDataWriter.Put(samplePacket.SomeVectors[j].X);
+                    netDataWriter.Put(samplePacket.SomeVectors[j].Y);
+                }
             }
             stopwatch.Stop();
             Console.WriteLine("DataWriter (raw put method calls) time: " + stopwatch.ElapsedMilliseconds + " ms");
