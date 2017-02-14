@@ -7,8 +7,9 @@ namespace LiteNetLib.Utils
     {
         protected byte[] _data;
         protected int _position;
-        protected int _maxLength;
-        protected bool _autoResize;
+
+        private int _maxLength;
+        private readonly bool _autoResize;
 
         public NetDataWriter()
         {
@@ -71,20 +72,20 @@ namespace LiteNetLib.Utils
             get { return _position; }
         }
 
-        public void Put(double value)
-        {
-            if(_autoResize)
-                ResizeIfNeed(_position + 8);
-            FastBitConverter.GetBytes(_data, _position, value);
-            _position += 8;
-        }
-
         public void Put(float value)
         {
             if (_autoResize)
                 ResizeIfNeed(_position + 4);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 4;
+        }
+
+        public void Put(double value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + 8);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 8;
         }
 
         public void Put(long value)
@@ -159,6 +160,14 @@ namespace LiteNetLib.Utils
             _position += length;
         }
 
+        public void Put(byte[] data)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + data.Length);
+            Buffer.BlockCopy(data, 0, _data, _position, data.Length);
+            _position += data.Length;
+        }
+
         public void Put(bool value)
         {
             if (_autoResize)
@@ -167,8 +176,148 @@ namespace LiteNetLib.Utils
             _position++;
         }
 
+        public void Put(float[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            if (_autoResize)
+                ResizeIfNeed(_position + len * 4 + 2);
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(double[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            if (_autoResize)
+                ResizeIfNeed(_position + len * 8 + 2);
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(long[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            if (_autoResize)
+                ResizeIfNeed(_position + len * 8 + 2);
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(ulong[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            if (_autoResize)
+                ResizeIfNeed(_position + len * 8 + 2);
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(int[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            if (_autoResize)
+                ResizeIfNeed(_position + len * 4 + 2);
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(uint[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            if (_autoResize)
+                ResizeIfNeed(_position + len * 4 + 2);
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(ushort[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            if (_autoResize)
+                ResizeIfNeed(_position + len * 2 + 2);
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(short[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            if (_autoResize)
+                ResizeIfNeed(_position + len * 2 + 2);
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(bool[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            if (_autoResize)
+                ResizeIfNeed(_position + len + 2);
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(string[] value)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            Put(len);
+            for (int i = 0; i < value.Length; i++)
+            {
+                Put(value[i]);
+            }
+        }
+
+        public void Put(string[] value, int maxLength)
+        {
+            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
+            Put(len);
+            for (int i = 0; i < len; i++)
+            {
+                Put(value[i], maxLength);
+            }
+        }
+
+        public void Put(NetEndPoint endPoint)
+        {
+            Put(endPoint.Host);
+            Put(endPoint.Port);
+        }
+
         public void Put(string value)
         {
+            if (string.IsNullOrEmpty(value))
+            {
+                Put(0);
+                return;
+            }
+
             //put bytes count
             int bytesCount = Encoding.UTF8.GetByteCount(value);
             if (_autoResize)
@@ -180,20 +329,15 @@ namespace LiteNetLib.Utils
             _position += bytesCount;
         }
 
-        public void Put(NetEndPoint endPoint)
-        {
-            Put(endPoint.Host);
-            Put(endPoint.Port);
-        }
-
         public void Put(string value, int maxLength)
         {
-            int length = value.Length > maxLength ? maxLength : value.Length;
-            if (length == 0)
+            if (string.IsNullOrEmpty(value))
             {
+                Put(0);
                 return;
             }
 
+            int length = value.Length > maxLength ? maxLength : value.Length;
             //calculate max count
             int bytesCount = Encoding.UTF8.GetByteCount(value);
             if (_autoResize)

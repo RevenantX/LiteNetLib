@@ -60,6 +60,7 @@
     <Compile Include="SimpleChannel.cs" />
     <Compile Include="Utils\NetDataReader.cs" />
     <Compile Include="Utils\NetDataWriter.cs" />
+    <Compile Include="Utils\NetSerializer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

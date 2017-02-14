@@ -91,6 +91,126 @@ namespace LiteNetLib.Utils
             return b;
         }
 
+        public bool[] GetBoolArray()
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new bool[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetBool();
+            }
+            return arr;
+        }
+
+        public ushort[] GetUShortArray()
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new ushort[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetUShort();
+            }
+            return arr;
+        }
+
+        public short[] GetShortArray()
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new short[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetShort();
+            }
+            return arr;
+        }
+
+        public long[] GetLongArray()
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new long[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetLong();
+            }
+            return arr;
+        }
+
+        public ulong[] GetULongArray()
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new ulong[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetULong();
+            }
+            return arr;
+        }
+
+        public int[] GetIntArray()
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new int[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetInt();
+            }
+            return arr;
+        }
+
+        public uint[] GetUIntArray()
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new uint[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetUInt();
+            }
+            return arr;
+        }
+
+        public float[] GetFloatArray()
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new float[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetFloat();
+            }
+            return arr;
+        }
+
+        public double[] GetDoubleArray()
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new double[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetDouble();
+            }
+            return arr;
+        }
+
+        public string[] GetStringArray(int maxLength)
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new string[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetString(maxLength);
+            }
+            return arr;
+        }
+
         public bool GetBool()
         {
             bool res = _data[_position] > 0;
