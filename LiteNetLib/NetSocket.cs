@@ -16,8 +16,8 @@ namespace LiteNetLib
         private bool _running;
         private readonly NetManager.OnMessageReceived _onMessageReceived;
 
-        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse(NetConstants.MulticastGroupIPv6);
-        private static readonly bool IPv6Support = Socket.OSSupportsIPv6;
+		private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
+        private static readonly bool IPv6Support;
         private const int SocketReceivePollTime = 100000;
         private const int SocketSendPollTime = 5000;
 
@@ -25,6 +25,19 @@ namespace LiteNetLib
         {
             get { return _localEndPoint; }
         }
+
+		static NetSocket()
+		{
+			try
+			{
+				//Unity3d .NET 2.0 throws exception.
+				IPv6Support = Socket.OSSupportsIPv6;
+			}
+			catch 
+			{
+				IPv6Support = false;
+			}
+		}
 
         public NetSocket(NetManager.OnMessageReceived onMessageReceived)
         {
