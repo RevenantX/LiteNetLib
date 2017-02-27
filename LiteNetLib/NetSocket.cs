@@ -92,13 +92,15 @@ namespace LiteNetLib
             }
         }
 
-        public bool Bind(int port)
+        public bool Bind(int port, bool reuseAddress)
         {
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv4.Blocking = false;
             _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, NetConstants.SocketTTL);
+            if(reuseAddress)
+                _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 #if !NETCORE
             _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DontFragment, true);
 #endif
@@ -135,6 +137,8 @@ namespace LiteNetLib
             _udpSocketv6.Blocking = false;
             _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
+            if (reuseAddress)
+                _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
             if (BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, port)))
             {
@@ -336,7 +340,7 @@ namespace LiteNetLib
             _onMessageReceived(_byteBuffer, length, 0, _bufferEndPoint);
         }
 
-        public bool Bind(int port)
+        public bool Bind(int port, bool reuseAddress)
         {
             _datagramSocket = new DatagramSocket();
             _datagramSocket.Control.InboundBufferSizeInBytes = NetConstants.SocketBufferSize;

@@ -85,6 +85,7 @@ namespace LiteNetLib
         public bool MergeEnabled = false;
         public int ReconnectDelay = 500;
         public int MaxConnectAttempts = 10;
+        public bool ReuseAddress = false;
 
         private const int DefaultUpdateTime = 15;
 
@@ -770,7 +771,7 @@ namespace LiteNetLib
             }
 
             _netEventsQueue.Clear();
-            if (!_socket.Bind(port))
+            if (!_socket.Bind(port, ReuseAddress))
                 return false;
 
             _logicThread.Start();

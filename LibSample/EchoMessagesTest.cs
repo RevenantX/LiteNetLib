@@ -138,6 +138,7 @@ namespace LibSample
             _serverListener = new ServerListener();
 
             NetManager server = new NetManager(_serverListener, 2, "myapp1");
+            //server.ReuseAddress = true;
             if (!server.Start(9050))
             {
                 Console.WriteLine("Server start failed");

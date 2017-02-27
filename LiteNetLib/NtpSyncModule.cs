@@ -14,7 +14,7 @@ namespace LiteNetLib
         {
             _ntpEndPoint = new NetEndPoint(ntpServer, 123);
             _socket = new NetSocket(OnMessageReceived);
-            _socket.Bind(0);
+            _socket.Bind(0, false);
             SyncedTime = null;
         }
 
