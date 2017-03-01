@@ -279,6 +279,7 @@ namespace LiteNetLib
                     Buffer.BlockCopy(data, start, disconnectPacket, 9, count);
                 }
                 SendRaw(disconnectPacket, peer.EndPoint);
+                NetPacket.RecycleRawPacket(disconnectPacket);
             }
             var netEvent = CreateEvent(NetEventType.Disconnect);
             netEvent.Peer = peer;
@@ -825,7 +826,9 @@ namespace LiteNetLib
             if (!IsRunning)
                 return false;
             var packet = NetPacket.CreateRawPacket(PacketProperty.UnconnectedMessage, message, start, length);
-            return SendRaw(packet, remoteEndPoint);
+            bool result = SendRaw(packet, remoteEndPoint);
+            NetPacket.RecycleRawPacket(packet);
+            return result;
         }
 
         public bool SendDiscoveryRequest(NetDataWriter writer, int port)
@@ -843,7 +846,9 @@ namespace LiteNetLib
             if (!IsRunning)
                 return false;
             var packet = NetPacket.CreateRawPacket(PacketProperty.DiscoveryRequest, data, start, length);
-            return _socket.SendBroadcast(packet, 0, packet.Length, port);
+            bool result = _socket.SendBroadcast(packet, 0, packet.Length, port);
+            NetPacket.RecycleRawPacket(packet);
+            return result;
         }
 
         public bool SendDiscoveryResponse(NetDataWriter writer, NetEndPoint remoteEndPoint)
@@ -861,7 +866,9 @@ namespace LiteNetLib
             if (!IsRunning)
                 return false;
             var packet = NetPacket.CreateRawPacket(PacketProperty.DiscoveryResponse, data, start, length);
-            return SendRaw(packet, remoteEndPoint);
+            bool result = SendRaw(packet, remoteEndPoint);
+            NetPacket.RecycleRawPacket(packet);
+            return result;
         }
 
         /// <summary>
@@ -933,6 +940,7 @@ namespace LiteNetLib
                     var disconnectPacket = NetPacket.CreateRawPacket(PacketProperty.Disconnect, 8);
                     FastBitConverter.GetBytes(disconnectPacket, 1, netPeer.ConnectId);
                     SendRaw(disconnectPacket, netPeer.EndPoint);
+                    NetPacket.RecycleRawPacket(disconnectPacket);
                 }
 
             //Clear

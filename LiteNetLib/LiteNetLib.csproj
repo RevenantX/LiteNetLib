@@ -61,6 +61,7 @@
     <Compile Include="Utils\NetDataReader.cs" />
     <Compile Include="Utils\NetDataWriter.cs" />
     <Compile Include="Utils\NetSerializer.cs" />
+    <Compile Include="Utils\Pool.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
