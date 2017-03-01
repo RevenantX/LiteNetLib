@@ -37,7 +37,7 @@ namespace LiteNetLib
         private DateTime _lastPacketReceivedStart;
 
         //Common            
-        private readonly Stack<NetPacket> _packetPool;
+        private static readonly Pool<NetPacket> PacketPool = new Pool<NetPacket>();
         private readonly NetEndPoint _remoteEndPoint;
         private readonly NetManager _peerListener;
 
@@ -149,7 +149,6 @@ namespace LiteNetLib
             _sequencedChannel = new SequencedChannel(this);
             _simpleChannel = new SimpleChannel(this);
 
-            _packetPool = new Stack<NetPacket>();
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
 
             _mergeData.Init(PacketProperty.Merged, NetConstants.PossibleMtu[NetConstants.PossibleMtu.Length - 1]);
@@ -186,6 +185,7 @@ namespace LiteNetLib
 
             //Send raw
             _peerListener.SendRaw(connectPacket, _remoteEndPoint);
+            NetPacket.RecycleRawPacket(connectPacket);
         }
 
         private void SendConnectAccept()
@@ -201,6 +201,7 @@ namespace LiteNetLib
 
             //Send raw
             _peerListener.SendRaw(connectPacket, _remoteEndPoint);
+            NetPacket.RecycleRawPacket(connectPacket);
         }
 
         internal bool ProcessConnectAccept(NetPacket packet)
@@ -414,17 +415,7 @@ namespace LiteNetLib
         internal NetPacket GetPacketFromPool(PacketProperty property = PacketProperty.Unreliable, int size=0, bool init=true)
         {
             NetPacket packet = null;
-            lock (_packetPool)
-            {
-                if (_packetPool.Count > 0)
-                {
-                    packet = _packetPool.Pop();
-                }
-            }
-            if(packet == null)
-            {
-                packet = new NetPacket();
-            }
+            packet = PacketPool.Get();
             if(init)
                 packet.Init(property, size);
             return packet;
@@ -432,11 +423,8 @@ namespace LiteNetLib
 
         internal void Recycle(NetPacket packet)
         {
-            packet.RawData = null;
-            lock (_packetPool)
-            {
-                _packetPool.Push(packet);
-            }
+            packet.Recycle();
+            PacketPool.Recycle(packet);
         }
 
         internal void AddIncomingPacket(NetPacket p)
