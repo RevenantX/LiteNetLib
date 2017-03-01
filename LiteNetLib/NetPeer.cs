@@ -130,6 +130,11 @@ namespace LiteNetLib
             get { return _reliableOrderedChannel.PacketsInQueue; }
         }
 
+        /// <summary>
+		/// Application defined object containing data about the connection
+		/// </summary>
+        public object Tag;
+
         internal NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint, long connectId)
         {
             _peerListener = peerListener;
