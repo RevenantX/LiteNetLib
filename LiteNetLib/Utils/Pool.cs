@@ -3,42 +3,7 @@ using System.Collections.Generic;
 
 namespace LiteNetLib.Utils
 {
-    public class Pool<T> where T:class, new()
-    {
-        private readonly Stack<T> _pool;
-
-        public Pool()
-        {
-            _pool = new Stack<T>();
-        }
-
-        public T Get()
-        {
-            T element = null;
-            lock (_pool)
-            {
-                if (_pool.Count > 0)
-                {
-                    element = _pool.Pop();
-                }
-            }
-            if (element == null)
-            {
-                element = new T();
-            }
-            return element;
-        }
-
-        public void Recycle(T element)
-        {
-            lock (_pool)
-            {
-                _pool.Push(element);
-            }
-        }
-    }
-
-    public class PoolArray<T>
+    public sealed class PoolArray<T>
     {
         private readonly Dictionary<int, Stack<T[]>> _pool;
 

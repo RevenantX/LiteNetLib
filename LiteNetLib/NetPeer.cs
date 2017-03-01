@@ -37,7 +37,7 @@ namespace LiteNetLib
         private DateTime _lastPacketReceivedStart;
 
         //Common            
-        private static readonly Pool<NetPacket> PacketPool = new Pool<NetPacket>();
+        private static readonly Stack<NetPacket> PacketPool = new Stack<NetPacket>();
         private readonly NetEndPoint _remoteEndPoint;
         private readonly NetManager _peerListener;
 
@@ -415,8 +415,18 @@ namespace LiteNetLib
         internal NetPacket GetPacketFromPool(PacketProperty property = PacketProperty.Unreliable, int size=0, bool init=true)
         {
             NetPacket packet = null;
-            packet = PacketPool.Get();
-            if(init)
+            lock (PacketPool)
+            {
+                if (PacketPool.Count > 0)
+                {
+                    packet = PacketPool.Pop();
+                }
+            }
+            if (packet == null)
+            {
+                packet = new NetPacket();
+            }
+            if (init)
                 packet.Init(property, size);
             return packet;
         }
@@ -424,7 +434,10 @@ namespace LiteNetLib
         internal void Recycle(NetPacket packet)
         {
             packet.Recycle();
-            PacketPool.Recycle(packet);
+            lock (PacketPool)
+            {
+                PacketPool.Push(packet);
+            }
         }
 
         internal void AddIncomingPacket(NetPacket p)

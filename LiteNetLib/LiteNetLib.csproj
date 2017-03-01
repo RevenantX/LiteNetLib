@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="INetEventListener.cs" />
     <Compile Include="NetDebug.cs" />
+    <Compile Include="NetPeerCollection.cs" />
     <Compile Include="NetThread.cs" />
     <Compile Include="Utils\FastBitConverter.cs" />
     <Compile Include="NatPunchModule.cs" />
