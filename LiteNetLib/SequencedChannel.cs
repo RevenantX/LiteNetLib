@@ -35,7 +35,7 @@ namespace LiteNetLib
                 packet = _outgoingPackets.Dequeue();
             }
             packet.Sequence = _localSequence;
-            _peer.SendRawData(packet.RawData);
+            _peer.SendRawData(packet);
             _peer.Recycle(packet);
             return true;
         }

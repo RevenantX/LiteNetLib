@@ -35,7 +35,6 @@ namespace LiteNetLib
         private readonly NetPeer _peer;
         private bool _mustSendAcks;
 
-        private readonly double _resendDelay;
         private readonly bool _ordered;
         private readonly int _windowSize;
         private readonly object _pendingPacketsAccess = new object();
@@ -51,7 +50,6 @@ namespace LiteNetLib
 
         public ReliableChannel(NetPeer peer, bool ordered, int windowSize)
         {
-            _resendDelay = peer.NetManager.ReliableResendTime;
             _windowSize = windowSize;
             _peer = peer;
             _ordered = ordered;
@@ -80,9 +78,9 @@ namespace LiteNetLib
         public void ProcessAck(NetPacket packet)
         {
             int validPacketSize = (_windowSize - 1) / BitsInByte + 1 + NetConstants.SequencedHeaderSize;
-            if (packet.RawData.Length != validPacketSize)
+            if (packet.Size != validPacketSize)
             {
-                _peer.DebugWriteForce("[PA]Invalid acks packet size");
+                _peer.DebugWrite("[PA]Invalid acks packet size");
                 return;
             }
 
@@ -199,7 +197,7 @@ namespace LiteNetLib
                     if(currentPacket.TimeStamp.HasValue)
                     {
                         double packetHoldTime = (currentTime - currentPacket.TimeStamp.Value).TotalMilliseconds;
-                        if (packetHoldTime > _resendDelay)
+                        if (packetHoldTime > _peer.ResendDelay)
                         {
                             _peer.DebugWrite("[RR]Resend: {0}", (int)packetHoldTime);
                             packetFound = true;
@@ -217,7 +215,7 @@ namespace LiteNetLib
             if (packetFound)
             {
                 currentPacket.TimeStamp = currentTime;
-                _peer.SendRawData(currentPacket.Packet.RawData);
+                _peer.SendRawData(currentPacket.Packet);
                 _peer.DebugWrite("[RR]Sended");
             }
             Monitor.Exit(_pendingPacketsAccess);
@@ -266,7 +264,7 @@ namespace LiteNetLib
             } while (currentAckIndex != startAckIndex);
             Monitor.Exit(_outgoingAcksAccess);
 
-            _peer.SendRawData(acksPacket.RawData);
+            _peer.SendRawData(acksPacket);
             _peer.Recycle(acksPacket);
         }
 

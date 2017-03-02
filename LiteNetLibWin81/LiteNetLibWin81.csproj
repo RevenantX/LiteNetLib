@@ -67,8 +67,14 @@
     <Compile Include="..\LiteNetLib\NetPacket.cs">
       <Link>NetPacket.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\NetPacketPool.cs">
+      <Link>NetPacketPool.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\NetPeer.cs">
       <Link>NetPeer.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\NetPeerCollection.cs">
+      <Link>NetPeerCollection.cs</Link>
     </Compile>
     <Compile Include="..\LiteNetLib\NetSocket.cs">
       <Link>NetSocket.cs</Link>

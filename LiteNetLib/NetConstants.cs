@@ -41,6 +41,8 @@ namespace LiteNetLib
             7981 - MaxUdpHeaderSize  //WLAN
         };
 
+        public static int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
+
         //peer specific
         public const int FlowUpdateTime = 1000;
         public const int FlowIncreaseThreshold = 4;
