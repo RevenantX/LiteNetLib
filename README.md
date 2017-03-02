@@ -100,9 +100,6 @@ client.Stop();
 * **UpdateTime**
  * library logic update (and send) period in milliseconds
  * default value: **100 msec**. For games you can use 15 msec (66 ticks per second)
-* **ReliableResendTime**
- * time for resending lost reliable packets in milliseconds
- * default value: **500 msec**. Set that value to 4x-5x update time ( if UpdateTime = 15 then ReliableResendTime = 75 )
 * **PingInterval**
  * Interval for latency detection and checking connection
  * default value: **1000 msec**.
