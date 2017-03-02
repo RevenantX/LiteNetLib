@@ -57,7 +57,7 @@ namespace LiteNetLib
 
         private INatPunchListener _natPunchListener;
 
-        internal NatPunchModule(NetManager netBase, NetSocket socket)
+        internal NatPunchModule(NetManager netBase)
         {
             _netBase = netBase;
             _requestEvents = new Queue<RequestEventData>();

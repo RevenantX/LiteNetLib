@@ -30,6 +30,7 @@ namespace LiteNetLib
         public const int MinPacketSize = 576 - MaxUdpHeaderSize;
         public const int MinPacketDataSize = MinPacketSize - HeaderSize;
         public const int MinSequencedPacketDataSize = MinPacketSize - SequencedHeaderSize;
+        public const int MaxPacketSize = 7981 - MaxUdpHeaderSize;
 
         public static readonly int[] PossibleMtu =
         {

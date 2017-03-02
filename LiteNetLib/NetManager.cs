@@ -71,7 +71,6 @@ namespace LiteNetLib
         public bool UnconnectedMessagesEnabled = false;
         public bool NatPunchEnabled = false;
         public int UpdateTime { get { return _logicThread.SleepTime; } set { _logicThread.SleepTime = value; } }
-        public int ReliableResendTime = 500;
         public int PingInterval = NetConstants.DefaultPingInterval;
         public long DisconnectTimeout = 5000;
         public bool SimulatePacketLoss = false;

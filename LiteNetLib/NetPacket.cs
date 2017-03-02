@@ -29,8 +29,6 @@ namespace LiteNetLib
 
     internal sealed class NetPacket
     {
-        private static readonly PoolArray<byte> ByteArrayPool = new PoolArray<byte>();
-
         private const int LastProperty = 19;
 
         //Header
@@ -77,27 +75,34 @@ namespace LiteNetLib
         }
 
         //Data
-        public byte[] RawData;
+        public readonly byte[] RawData;
+        public int Size { get; private set; }
+
+        public NetPacket()
+        {
+            RawData = new byte[NetConstants.MaxPacketSize];
+            Size = 0;
+        }
 
         //Packet constructor
         public void Init(PacketProperty property, int dataSize)
         {
-            RawData = ByteArrayPool.Get(GetHeaderSize(property) + dataSize);
+            Size = GetHeaderSize(property) + dataSize;
             Property = property;
         }
 
         //Always not fragmented
         public static byte[] CreateRawPacket(PacketProperty property, int dataSize)
         {
-            byte[] rawData = ByteArrayPool.Get(GetHeaderSize(property) + dataSize);
-            rawData[0] = (byte) property;
+            byte[] rawData = new byte[GetHeaderSize(property) + dataSize];
+            rawData[0] = (byte)property;
             return rawData;
         }
 
         public static byte[] CreateRawPacket(PacketProperty property, byte[] data, int start, int count)
         {
             int headerSize = GetHeaderSize(property);
-            byte[] rawData = ByteArrayPool.Get(headerSize + count);
+            byte[] rawData = new byte[GetHeaderSize(property) + count];
             rawData[0] = (byte)property;
             Buffer.BlockCopy(data, start, rawData, headerSize, count);
             return rawData;
@@ -106,23 +111,10 @@ namespace LiteNetLib
         public static byte[] CreateRawPacket(PacketProperty property, NetDataWriter dataWriter)
         {
             int headerSize = GetHeaderSize(property);
-            byte[] rawData = ByteArrayPool.Get(headerSize + dataWriter.Length);
+            byte[] rawData = new byte[GetHeaderSize(property) + dataWriter.Length];
             rawData[0] = (byte)property;
             Buffer.BlockCopy(dataWriter.Data, 0, rawData, headerSize, dataWriter.Length);
             return rawData;
-        }
-
-        public static void RecycleRawPacket(byte[] arrayToRecycle)
-        {
-            ByteArrayPool.Recycle(arrayToRecycle);
-        }
-
-        public void Init(PacketProperty property, NetDataWriter dataWriter)
-        {
-            int headerSize = GetHeaderSize(property);
-            RawData = ByteArrayPool.Get(headerSize + dataWriter.Length);
-            Property = property;
-            Buffer.BlockCopy(dataWriter.Data, 0, RawData, headerSize, dataWriter.Length);
         }
 
         public void Recycle()
@@ -135,28 +127,6 @@ namespace LiteNetLib
         {
             int packetStart = GetHeaderSize(Property) + (IsFragmented ? NetConstants.FragmentHeaderSize : 0);
             Buffer.BlockCopy(data, start, RawData, packetStart, length);
-        }
-
-        public static bool GetPacketProperty(byte[] data, out PacketProperty property)
-        {
-            byte properyByte = (byte)(data[0] & 0x7F);
-            if (properyByte > LastProperty)
-            {
-                property = PacketProperty.Unreliable;
-                return false;
-            }
-            property = (PacketProperty)properyByte;
-            return true;
-        }
-
-        public static bool ComparePacketProperty(byte[] data, PacketProperty check)
-        {
-            PacketProperty property;
-            if (GetPacketProperty(data, out property))
-            {
-                return property == check;
-            }
-            return false;
         }
 
         public static int GetHeaderSize(PacketProperty property)
@@ -175,7 +145,7 @@ namespace LiteNetLib
         {
             int headerSize = GetHeaderSize(Property);
             int dataSize = RawData.Length - headerSize;
-            byte[] data = ByteArrayPool.Get(dataSize);
+            byte[] data = new byte[dataSize];
             Buffer.BlockCopy(RawData, headerSize, data, 0, dataSize);
             return data;
         }
@@ -214,7 +184,7 @@ namespace LiteNetLib
             //Reading property
             if ((data[0] & 0x7F) > LastProperty || packetSize > NetConstants.PacketSizeLimit)
                 return false;
-            RawData = ByteArrayPool.Get(packetSize);
+            Size = packetSize;
             Buffer.BlockCopy(data, start, RawData, 0, packetSize);
      
             return true;

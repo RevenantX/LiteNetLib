@@ -35,7 +35,6 @@ namespace LiteNetLib
         private readonly NetPeer _peer;
         private bool _mustSendAcks;
 
-        private readonly double _resendDelay;
         private readonly bool _ordered;
         private readonly int _windowSize;
         private readonly object _pendingPacketsAccess = new object();
@@ -51,7 +50,6 @@ namespace LiteNetLib
 
         public ReliableChannel(NetPeer peer, bool ordered, int windowSize)
         {
-            _resendDelay = peer.NetManager.ReliableResendTime;
             _windowSize = windowSize;
             _peer = peer;
             _ordered = ordered;
@@ -199,7 +197,7 @@ namespace LiteNetLib
                     if(currentPacket.TimeStamp.HasValue)
                     {
                         double packetHoldTime = (currentTime - currentPacket.TimeStamp.Value).TotalMilliseconds;
-                        if (packetHoldTime > _resendDelay)
+                        if (packetHoldTime > _peer.ResendDelay)
                         {
                             _peer.DebugWrite("[RR]Resend: {0}", (int)packetHoldTime);
                             packetFound = true;

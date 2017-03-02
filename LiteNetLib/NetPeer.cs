@@ -28,6 +28,7 @@ namespace LiteNetLib
         private int _goodRttCount;
         private ushort _pingSequence;
         private ushort _remotePingSequence;
+        private double _resendDelay = 27.0;
 
         private int _pingSendTimer;
         private const int RttResetDelay = 1000;
@@ -128,6 +129,11 @@ namespace LiteNetLib
         public int PacketsCountInReliableOrderedQueue
         {
             get { return _reliableOrderedChannel.PacketsInQueue; }
+        }
+
+        internal double ResendDelay
+        {
+            get { return _resendDelay; }
         }
 
         /// <summary>
@@ -398,6 +404,12 @@ namespace LiteNetLib
                     DebugWrite("[PA]Decreased flow speed, RTT: {0}, PPS: {1}", _avgRtt, _peerListener.GetPacketsPerSecond(_currentFlowMode));
                 }
             }
+
+            //recalc resend delay
+            double avgRtt = _avgRtt;
+            if (avgRtt <= 0.0)
+                avgRtt = 0.1;
+            _resendDelay = 25 + (avgRtt * 2.1); // 25 ms + double rtt
         }
 
         [Conditional("DEBUG_MESSAGES")]
