@@ -76,57 +76,24 @@ namespace LiteNetLib
 
         //Data
         public readonly byte[] RawData;
-        public int Size { get; private set; }
+        public int Size;
 
-        public NetPacket()
+        public NetPacket(int size)
         {
-            RawData = new byte[NetConstants.MaxPacketSize];
+            RawData = new byte[size];
             Size = 0;
         }
 
-        //Packet constructor
-        public void Init(PacketProperty property, int dataSize)
+        public static bool GetPacketProperty(byte[] data, out PacketProperty property)
         {
-            Size = GetHeaderSize(property) + dataSize;
-            Property = property;
-        }
-
-        //Always not fragmented
-        public static byte[] CreateRawPacket(PacketProperty property, int dataSize)
-        {
-            byte[] rawData = new byte[GetHeaderSize(property) + dataSize];
-            rawData[0] = (byte)property;
-            return rawData;
-        }
-
-        public static byte[] CreateRawPacket(PacketProperty property, byte[] data, int start, int count)
-        {
-            int headerSize = GetHeaderSize(property);
-            byte[] rawData = new byte[GetHeaderSize(property) + count];
-            rawData[0] = (byte)property;
-            Buffer.BlockCopy(data, start, rawData, headerSize, count);
-            return rawData;
-        }
-
-        public static byte[] CreateRawPacket(PacketProperty property, NetDataWriter dataWriter)
-        {
-            int headerSize = GetHeaderSize(property);
-            byte[] rawData = new byte[GetHeaderSize(property) + dataWriter.Length];
-            rawData[0] = (byte)property;
-            Buffer.BlockCopy(dataWriter.Data, 0, rawData, headerSize, dataWriter.Length);
-            return rawData;
-        }
-
-        public void Recycle()
-        {
-            ByteArrayPool.Recycle(RawData);
-            RawData = null;
-        }
-
-        public void PutData(byte[] data, int start, int length)
-        {
-            int packetStart = GetHeaderSize(Property) + (IsFragmented ? NetConstants.FragmentHeaderSize : 0);
-            Buffer.BlockCopy(data, start, RawData, packetStart, length);
+            byte properyByte = (byte)(data[0] & 0x7F);
+            if (properyByte > LastProperty)
+            {
+                property = PacketProperty.Unreliable;
+                return false;
+            }
+            property = (PacketProperty)properyByte;
+            return true;
         }
 
         public static int GetHeaderSize(PacketProperty property)
@@ -144,7 +111,7 @@ namespace LiteNetLib
         public byte[] GetPacketData()
         {
             int headerSize = GetHeaderSize(Property);
-            int dataSize = RawData.Length - headerSize;
+            int dataSize = Size - headerSize;
             byte[] data = new byte[dataSize];
             Buffer.BlockCopy(RawData, headerSize, data, 0, dataSize);
             return data;
@@ -170,23 +137,24 @@ namespace LiteNetLib
                 property == PacketProperty.AckReliableOrdered;
         }
 
-        public static byte[] GetUnconnectedData(byte[] raw, int count)
-        {
-            int size = count - NetConstants.HeaderSize;
-            byte[] data = ByteArrayPool.Get(size);
-            Buffer.BlockCopy(raw, 1, data, 0, size);
-            return data;
-        }
-
         //Packet contstructor from byte array
         public bool FromBytes(byte[] data, int start, int packetSize)
         {
             //Reading property
-            if ((data[0] & 0x7F) > LastProperty || packetSize > NetConstants.PacketSizeLimit)
+            byte property = (byte)(data[start] & 0x7F);
+            bool fragmented = (data[start] & 0x80) != 0;
+            int headerSize = GetHeaderSize((PacketProperty) property);
+
+            if (property > LastProperty ||
+                packetSize > NetConstants.PacketSizeLimit ||
+                packetSize < headerSize ||
+                (fragmented && packetSize < headerSize + NetConstants.FragmentHeaderSize))
+            {
                 return false;
-            Size = packetSize;
+            }
+
             Buffer.BlockCopy(data, start, RawData, 0, packetSize);
-     
+            Size = packetSize;
             return true;
         }
     }

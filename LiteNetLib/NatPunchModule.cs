@@ -85,9 +85,8 @@ namespace LiteNetLib
             dw.Put(hostExternal);
             dw.Put(additionalInfo, MaxTokenLength);
 
-            byte[] packet = NetPacket.CreateRawPacket(PacketProperty.NatIntroduction, dw);
-            _netBase.SendRaw(packet, clientExternal);
-            NetPacket.RecycleRawPacket(packet);
+            var packet = _netBase.PacketPool.GetWithData(PacketProperty.NatIntroduction, dw);
+            _netBase.SendRawAndRecycle(packet, clientExternal);
 
             //Second packet (client)
             //send to server
@@ -97,9 +96,8 @@ namespace LiteNetLib
             dw.Put(clientExternal);
             dw.Put(additionalInfo, MaxTokenLength);
 
-            packet = NetPacket.CreateRawPacket(PacketProperty.NatIntroduction, dw);
-            _netBase.SendRaw(packet, hostExternal);
-            NetPacket.RecycleRawPacket(packet);
+            packet = _netBase.PacketPool.GetWithData(PacketProperty.NatIntroduction, dw);
+            _netBase.SendRawAndRecycle(packet, hostExternal);
         }
 
         public void PollEvents()
@@ -138,9 +136,8 @@ namespace LiteNetLib
             dw.Put(additionalInfo, MaxTokenLength);
 
             //prepare packet
-            byte[] packet = NetPacket.CreateRawPacket(PacketProperty.NatIntroductionRequest, dw);
-            _netBase.SendRaw(packet, masterServerEndPoint);
-            NetPacket.RecycleRawPacket(packet);
+            var packet = _netBase.PacketPool.GetWithData(PacketProperty.NatIntroductionRequest, dw);
+            _netBase.SendRawAndRecycle(packet, masterServerEndPoint);
         }
 
         private void HandleNatPunch(NetEndPoint senderEndPoint, NetDataReader dr)
@@ -177,18 +174,16 @@ namespace LiteNetLib
             // send internal punch
             writer.Put(hostByte);
             writer.Put(token);
-            byte[] packet = NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer);
-            _netBase.SendRaw(packet, remoteInternal);
-            NetPacket.RecycleRawPacket(packet);
+            var packet = _netBase.PacketPool.GetWithData(PacketProperty.NatPunchMessage, writer);
+            _netBase.SendRawAndRecycle(packet, remoteInternal);
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] internal punch sent to " + remoteInternal);
 
             // send external punch
             writer.Reset();
             writer.Put(hostByte);
             writer.Put(token);
-            packet = NetPacket.CreateRawPacket(PacketProperty.NatPunchMessage, writer);
-            _netBase.SendRaw(packet, remoteExternal);
-            NetPacket.RecycleRawPacket(packet);
+            packet = _netBase.PacketPool.GetWithData(PacketProperty.NatPunchMessage, writer);
+            _netBase.SendRawAndRecycle(packet, remoteExternal);
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] external punch sent to " + remoteExternal);
         }
 
@@ -207,11 +202,10 @@ namespace LiteNetLib
             }
         }
 
-        internal void ProcessMessage(NetEndPoint senderEndPoint, PacketProperty property, byte[] data)
+        internal void ProcessMessage(NetEndPoint senderEndPoint, NetPacket packet)
         {
-            NetDataReader dr = new NetDataReader(data);
-
-            switch (property)
+            var dr = new NetDataReader(packet.RawData, NetConstants.HeaderSize, packet.Size);
+            switch (packet.Property)
             {
                 case PacketProperty.NatIntroductionRequest:
                     //We got request and must introduce

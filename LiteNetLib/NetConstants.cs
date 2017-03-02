@@ -30,7 +30,6 @@ namespace LiteNetLib
         public const int MinPacketSize = 576 - MaxUdpHeaderSize;
         public const int MinPacketDataSize = MinPacketSize - HeaderSize;
         public const int MinSequencedPacketDataSize = MinPacketSize - SequencedHeaderSize;
-        public const int MaxPacketSize = 7981 - MaxUdpHeaderSize;
 
         public static readonly int[] PossibleMtu =
         {
@@ -41,6 +40,8 @@ namespace LiteNetLib
             4464 - MaxUdpHeaderSize, //Token ring
             7981 - MaxUdpHeaderSize  //WLAN
         };
+
+        public static int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
 
         //peer specific
         public const int FlowUpdateTime = 1000;

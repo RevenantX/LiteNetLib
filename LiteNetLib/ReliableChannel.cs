@@ -78,9 +78,9 @@ namespace LiteNetLib
         public void ProcessAck(NetPacket packet)
         {
             int validPacketSize = (_windowSize - 1) / BitsInByte + 1 + NetConstants.SequencedHeaderSize;
-            if (packet.RawData.Length != validPacketSize)
+            if (packet.Size != validPacketSize)
             {
-                _peer.DebugWriteForce("[PA]Invalid acks packet size");
+                _peer.DebugWrite("[PA]Invalid acks packet size");
                 return;
             }
 
@@ -215,7 +215,7 @@ namespace LiteNetLib
             if (packetFound)
             {
                 currentPacket.TimeStamp = currentTime;
-                _peer.SendRawData(currentPacket.Packet.RawData);
+                _peer.SendRawData(currentPacket.Packet);
                 _peer.DebugWrite("[RR]Sended");
             }
             Monitor.Exit(_pendingPacketsAccess);
@@ -264,7 +264,7 @@ namespace LiteNetLib
             } while (currentAckIndex != startAckIndex);
             Monitor.Exit(_outgoingAcksAccess);
 
-            _peer.SendRawData(acksPacket.RawData);
+            _peer.SendRawData(acksPacket);
             _peer.Recycle(acksPacket);
         }
 

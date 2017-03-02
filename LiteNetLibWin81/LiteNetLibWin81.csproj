@@ -67,6 +67,9 @@
     <Compile Include="..\LiteNetLib\NetPacket.cs">
       <Link>NetPacket.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\NetPacketPool.cs">
+      <Link>NetPacketPool.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\NetPeer.cs">
       <Link>NetPeer.cs</Link>
     </Compile>
@@ -105,9 +108,6 @@
     </Compile>
     <Compile Include="..\LiteNetLib\Utils\NetSerializer.cs">
       <Link>Utils\NetSerializer.cs</Link>
-    </Compile>
-    <Compile Include="..\LiteNetLib\Utils\Pool.cs">
-      <Link>Utils\Pool.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
