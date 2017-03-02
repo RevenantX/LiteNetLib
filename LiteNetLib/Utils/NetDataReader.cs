@@ -29,6 +29,13 @@ namespace LiteNetLib.Utils
             get { return _dataSize - _position; }
         }
 
+        public void SetSource(NetDataWriter dataWriter)
+        {
+            _data = dataWriter.Data;
+            _position = 0;
+            _dataSize = dataWriter.Length;
+        }
+
         public void SetSource(byte[] source)
         {
             _data = source;

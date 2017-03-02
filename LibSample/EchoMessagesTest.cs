@@ -153,7 +153,7 @@ namespace LibSample
             NetManager client1 = new NetManager(_clientListener, "myapp1");
             //client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
-            //client1.MergeEnabled = true;
+            client1.MergeEnabled = true;
             if (!client1.Start())
             {
                 Console.WriteLine("Client1 start failed");
