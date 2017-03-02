@@ -67,11 +67,11 @@ namespace LiteNetLib
         private IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily)
         {
 #if NETCORE
-            var hostTask = Dns.GetHostEntryAsync(Dns.GetHostName());
+            var hostTask = Dns.GetHostEntryAsync(hostStr);
             hostTask.Wait();
             var host = hostTask.Result;
 #else
-            var host = Dns.GetHostEntry(Dns.GetHostName());
+            var host = Dns.GetHostEntry(hostStr);
 #endif
             foreach (IPAddress ip in host.AddressList)
             {
