@@ -662,7 +662,7 @@ namespace LiteNetLib
             }
             else
             {
-                _peerListener.SendRaw(packet, _remoteEndPoint);
+                _peerListener.SendRaw(packet.RawData, 0, packet.Size, _remoteEndPoint);
             }
         }
 
