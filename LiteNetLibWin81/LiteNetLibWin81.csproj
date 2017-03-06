@@ -46,6 +46,15 @@
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\LiteNetLib\Encryption\NetBlockEncryptionBase.cs">
+      <Link>Encryption\NetBlockEncryptionBase.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetEncryption.cs">
+      <Link>Encryption\NetEncryption.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Encryption\NetXorEncryption.cs">
+      <Link>Encryption\NetXorEncryption.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\INetEventListener.cs">
       <Link>INetEventListener.cs</Link>
     </Compile>

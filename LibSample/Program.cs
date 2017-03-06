@@ -21,5 +21,7 @@ class Program
 
         //new BenchmarkTest.TestHost().Run();
         //new SerializerTest().Run();
+
+        //new EncriptionTest().Run();
     }
 }

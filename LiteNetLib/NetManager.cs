@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using LiteNetLib.Encryption;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -97,6 +98,9 @@ namespace LiteNetLib
 
         //modules
         public readonly NatPunchModule NatPunchModule;
+
+        //Encription
+        private NetEncryption _encryption;
 
         /// <summary>
         /// Returns true if socket listening and update thread is running
@@ -197,6 +201,14 @@ namespace LiteNetLib
             _peers = new NetPeerCollection(maxConnections);
             _maxConnections = maxConnections;
             _connectKey = connectKey;
+        }
+
+        public bool EnableEncription(NetEncryption encryption)
+        {
+            if(_encryption != null)
+                return false;
+            _encryption = encryption;
+            return true;
         }
 
         internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
@@ -625,7 +637,7 @@ namespace LiteNetLib
                     //Getting new id for peer
                     long connectionId = BitConverter.ToInt64(packet.RawData, 5);
                     //response with id
-                    netPeer = new NetPeer(this, remoteEndPoint, connectionId);
+                    netPeer = new NetPeer(this, remoteEndPoint, connectionId, _encryption);
                     NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connect request Id: {0}, EP: {1}",
                         netPeer.ConnectId, remoteEndPoint);
 
@@ -898,7 +910,7 @@ namespace LiteNetLib
 
                 //Create reliable connection
                 //And request connection
-                var newPeer = new NetPeer(this, target, 0);
+                var newPeer = new NetPeer(this, target, 0, _encryption);
                 _peers.Add(target, newPeer);
             }
         }

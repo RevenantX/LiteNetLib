@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using LiteNetLib.Encryption;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -135,14 +136,17 @@ namespace LiteNetLib
         {
             get { return _resendDelay; }
         }
-
+        
         /// <summary>
 		/// Application defined object containing data about the connection
 		/// </summary>
         public object Tag;
 
-        internal NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint, long connectId)
+        private readonly NetEncryption _encryption;
+
+        internal NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint, long connectId, NetEncryption encryption = null)
         {
+            _encryption = encryption;
             _packetPool = peerListener.PacketPool;
             _peerListener = peerListener;
             _remoteEndPoint = remoteEndPoint;
@@ -261,6 +265,11 @@ namespace LiteNetLib
             //Prepare
             PacketProperty property = SendOptionsToProperty(options);
             int headerSize = NetPacket.GetHeaderSize(property);
+
+            if (_encryption != null)
+            {
+                _encryption.Encrypt(data, ref start, ref length);
+            }
 
             //Check fragmentation
             if (length + headerSize > _mtu)
@@ -493,6 +502,15 @@ namespace LiteNetLib
                     fragments[i] = null;
                 }
 
+                //Encription
+                if (_encryption != null)
+                {
+                    var data = p.RawData;
+                    var start = p.GetHeaderSize();
+                    var len = data.Length - start;
+                    _encryption.Decrypt(data, start, ref len);
+                }
+
                 //Send to process
                 _peerListener.ReceiveFromPeer(resultingPacket, _remoteEndPoint);
 
@@ -502,6 +520,15 @@ namespace LiteNetLib
             }
             else //Just simple packet
             {
+                //Encription
+                if (_encryption != null)
+                {
+                    var data = p.RawData;
+                    var start = p.GetHeaderSize();
+                    var len = data.Length - start;
+                    _encryption.Decrypt(data, start, ref len);
+                }
+
                 _peerListener.ReceiveFromPeer(p, _remoteEndPoint);
                 _packetPool.Recycle(p);
             }

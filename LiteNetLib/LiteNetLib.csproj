@@ -41,6 +41,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encryption\NetBlockEncryptionBase.cs" />
+    <Compile Include="Encryption\NetEncryption.cs" />
+    <Compile Include="Encryption\NetXorEncryption.cs" />
     <Compile Include="INetEventListener.cs" />
     <Compile Include="NetDebug.cs" />
     <Compile Include="NetPacketPool.cs" />

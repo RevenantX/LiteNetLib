@@ -40,6 +40,7 @@
     <Compile Include="BenchmarkTest.cs" />
     <Compile Include="BroadcastTest.cs" />
     <Compile Include="EchoMessagesTest.cs" />
+    <Compile Include="EncriptionTest.cs" />
     <Compile Include="HolePunchServerTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
