@@ -502,7 +502,7 @@ namespace LiteNetLib
                     fragments[i] = null;
                 }
 
-                //Encription
+                //Encryption
                 if (_encryption != null)
                 {
                     var data = p.RawData;
@@ -520,7 +520,7 @@ namespace LiteNetLib
             }
             else //Just simple packet
             {
-                //Encription
+                //Encryption
                 if (_encryption != null)
                 {
                     var data = p.RawData;

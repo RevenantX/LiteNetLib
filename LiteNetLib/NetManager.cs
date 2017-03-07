@@ -99,7 +99,7 @@ namespace LiteNetLib
         //modules
         public readonly NatPunchModule NatPunchModule;
 
-        //Encription
+        //Encryption
         private NetEncryption _encryption;
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace LiteNetLib
             _connectKey = connectKey;
         }
 
-        public bool EnableEncription(NetEncryption encryption)
+        public bool EnableEncryption(NetEncryption encryption)
         {
             if(_encryption != null)
                 return false;

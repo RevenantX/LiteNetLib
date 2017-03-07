@@ -6,7 +6,7 @@ using LiteNetLib.Utils;
 
 namespace LibSample
 {
-    public class EncriptionTest
+    public class EncryptionTest
     {
         private class ClientListener : INetEventListener
         {
@@ -104,7 +104,7 @@ namespace LibSample
             NetEncryption encryption = new NetXorEncryption("te123we");
 
             NetManager server = new NetManager(_serverListener, 2, "encription");
-            server.EnableEncription(encryption);
+            server.EnableEncryption(encryption);
             
             if (!server.Start(9050))
             {
@@ -118,7 +118,7 @@ namespace LibSample
             _clientListener = new ClientListener();
 
             NetManager client = new NetManager(_clientListener, "encription");
-            client.EnableEncription(encryption);
+            client.EnableEncryption(encryption);
             
             //client1.SimulateLatency = true;
             client.SimulationMaxLatency = 1500;
