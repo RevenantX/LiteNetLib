@@ -12,7 +12,7 @@ namespace LibSample
     class SerializerTest
     {
         [Serializable] //Just for test binary formatter
-        private struct SamplePacket
+        private class SamplePacket
         {
             public string SomeString { get; set; }
             public float SomeFloat { get; set; }
@@ -165,7 +165,7 @@ namespace LibSample
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
             {
                 Console.WriteLine("[Server] received data. Processing...");
-                _netSerializer.ReadAllPackets(reader);
+                _netSerializer.ReadAllPackets(reader, true);
             }
 
             public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
