@@ -12,17 +12,18 @@ using System.Net.NetworkInformation;
 namespace LiteNetLib
 {
 #if WINRT && !UNITY_EDITOR
-    public struct ConsoleColor
+    public enum ConsoleColor
     {
-        public static readonly ConsoleColor Gray = new ConsoleColor();
-        public static readonly ConsoleColor Yellow = new ConsoleColor();
-        public static readonly ConsoleColor Cyan = new ConsoleColor();
-        public static readonly ConsoleColor DarkCyan = new ConsoleColor();
-        public static readonly ConsoleColor DarkGreen = new ConsoleColor();
-        public static readonly ConsoleColor Blue = new ConsoleColor();
-        public static readonly ConsoleColor DarkRed = new ConsoleColor();
-        public static readonly ConsoleColor Red = new ConsoleColor();
-        public static readonly ConsoleColor Green = new ConsoleColor();
+        Gray,
+        Yellow,
+        Cyan,
+        DarkCyan,
+        DarkGreen,
+        Blue,
+        DarkRed,
+        Red,
+        Green,
+        DarkYellow
     }
 #endif
 
@@ -161,6 +162,12 @@ namespace LiteNetLib
                     NetDebug.Logger.WriteNet(color, str, args);
                 }
             }
+        }
+
+        [Conditional("DEBUG_MESSAGES")]
+        internal static void DebugWrite(string str, params object[] args)
+        {
+            DebugWriteLogic(ConsoleColor.DarkGreen, str, args);
         }
 
         [Conditional("DEBUG_MESSAGES")]

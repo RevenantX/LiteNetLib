@@ -428,7 +428,7 @@ namespace LiteNetLib
                     var netPeer = _peers[i];
                     if (netPeer.ConnectionState == ConnectionState.Connected && netPeer.TimeSinceLastPacket > DisconnectTimeout)
                     {
-                        netPeer.DebugWrite("[NM] Disconnect by timeout: {0} > {1}", netPeer.TimeSinceLastPacket, DisconnectTimeout);
+                        NetUtils.DebugWrite("[NM] Disconnect by timeout: {0} > {1}", netPeer.TimeSinceLastPacket, DisconnectTimeout);
                         var netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
                         netEvent.DisconnectReason = DisconnectReason.Timeout;
