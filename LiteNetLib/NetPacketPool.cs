@@ -71,6 +71,10 @@ namespace LiteNetLib
                 //allocate new packet of max size or bigger
                 packet = new NetPacket(size > NetConstants.MaxPacketSize ? size : NetConstants.MaxPacketSize);
             }
+            else
+            {
+                Array.Clear(packet.RawData, 0, size);
+            }
             packet.Property = property;
             packet.Size = size;
             return packet;

@@ -34,7 +34,7 @@ namespace LiteNetLib
         private int _rttResetTimer;
 
         private DateTime _pingTimeStart;
-        private DateTime _lastPacketReceivedStart;
+        private int _timeSinceLastPacket;
 
         //Common            
         private readonly NetEndPoint _remoteEndPoint;
@@ -112,7 +112,7 @@ namespace LiteNetLib
 
         public int TimeSinceLastPacket
         {
-            get { return (int)(DateTime.UtcNow - _lastPacketReceivedStart).TotalMilliseconds; }
+            get { return _timeSinceLastPacket; }
         }
 
         public NetManager NetManager
@@ -196,7 +196,7 @@ namespace LiteNetLib
         private void SendConnectAccept()
         {
             //Reset connection timer
-            _lastPacketReceivedStart = DateTime.UtcNow;
+            _timeSinceLastPacket = 0;
 
             //Make initial packet
             var connectPacket = _packetPool.Get(PacketProperty.ConnectAccept, 8);
@@ -220,7 +220,7 @@ namespace LiteNetLib
             }
 
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
-            _lastPacketReceivedStart = DateTime.UtcNow;
+            _timeSinceLastPacket = 0;
             _connectionState = ConnectionState.Connected;
             return true;
         }
@@ -529,7 +529,7 @@ namespace LiteNetLib
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
-            _lastPacketReceivedStart = DateTime.UtcNow;
+            _timeSinceLastPacket = 0;
 
             NetUtils.DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
@@ -673,6 +673,8 @@ namespace LiteNetLib
             {
                 return;
             }
+
+            _timeSinceLastPacket += deltaTime;
             if (_connectionState == ConnectionState.InProgress)
             {
                 _connectTimer += deltaTime;

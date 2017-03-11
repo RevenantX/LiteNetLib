@@ -10,7 +10,6 @@ namespace LiteNetLib
         {
             public NetPacket Packet;
             public DateTime? TimeStamp;
-            public bool NotEmpty { get { return Packet != null; } }
 
             public NetPacket GetAndClear()
             {
@@ -106,6 +105,7 @@ namespace LiteNetLib
                 int ackSequence = (ackWindowStart + i) % NetConstants.MaxSequence;
                 if (NetUtils.RelativeSequenceNumber(ackSequence, _localWindowStart) < 0)
                 {
+                    //NetUtils.DebugWrite(ConsoleColor.Cyan, "[PA] SKIP OLD: " + ackSequence);
                     //Skip old ack
                     continue;
                 }
@@ -115,6 +115,7 @@ namespace LiteNetLib
 
                 if ((acksData[currentByte] & (1 << currentBit)) == 0)
                 {
+                    //NetUtils.DebugWrite(ConsoleColor.Cyan, "[PA] SKIP FALSE: " + ackSequence);
                     //Skip false ack
                     continue;
                 }
@@ -125,10 +126,9 @@ namespace LiteNetLib
                     _localWindowStart = (_localWindowStart + 1) % NetConstants.MaxSequence;
                 }
 
-                int storeIdx = ackSequence % _windowSize;
-                if (_pendingPackets[storeIdx].NotEmpty)
+                NetPacket removed = _pendingPackets[ackSequence % _windowSize].GetAndClear();
+                if (removed != null)
                 {
-                    NetPacket removed = _pendingPackets[storeIdx].GetAndClear();
                     _peer.Recycle(removed);
 
                     NetUtils.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", ackSequence);
@@ -164,7 +164,6 @@ namespace LiteNetLib
                     }
                     packet.Sequence = (ushort)_localSeqence;
                     _pendingPackets[_localSeqence % _windowSize].Packet = packet;
-
                     _localSeqence = (_localSeqence + 1) % NetConstants.MaxSequence;
                 }
                 else //Queue filled
@@ -189,7 +188,7 @@ namespace LiteNetLib
             do
             {
                 currentPacket = _pendingPackets[_queueIndex];
-                if (currentPacket.NotEmpty)
+                if (currentPacket.Packet != null)
                 {
                     //check send time
                     if(currentPacket.TimeStamp.HasValue)
