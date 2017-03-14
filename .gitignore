@@ -13,7 +13,9 @@ LiteNetLibSampleUnity.CSharp.csproj
 LiteNetLibSampleUnity.sln
 LiteNetLibSampleUnity/Temp
 LiteNetLibSampleUnity/Library
-LiteNetLibNetCore/bin
-LiteNetLibNetCore/obj
+LiteNetLibNetCore/LiteNetLibNetCore/bin
+LiteNetLibNetCore/LiteNetLibNetCore/obj
+LiteNetLibNetCoreOld/bin
+LiteNetLibNetCoreOld/obj
 **/*.vscode
 **/project.lock.json
