@@ -40,6 +40,7 @@ namespace LiteNetLib
         private readonly NetEndPoint _remoteEndPoint;
         private readonly NetManager _peerListener;
         private readonly NetPacketPool _packetPool;
+        private readonly object _flushLock = new object();
 
         //Channels
         private readonly ReliableChannel _reliableOrderedChannel;
@@ -667,6 +668,55 @@ namespace LiteNetLib
             _peerListener.SendRaw(packet.RawData, 0, packet.Size, _remoteEndPoint);
         }
 
+        private void SendQueuedPackets(int currentMaxSend)
+        {
+            int currentSended = 0;
+            while (currentSended < currentMaxSend)
+            {
+                //Get one of packets
+                if (_reliableOrderedChannel.SendNextPacket() ||
+                    _reliableUnorderedChannel.SendNextPacket() ||
+                    _sequencedChannel.SendNextPacket() ||
+                    _simpleChannel.SendNextPacket())
+                {
+                    currentSended++;
+                }
+                else
+                {
+                    //no outgoing packets
+                    break;
+                }
+            }
+
+            //Increase counter
+            _sendedPacketsCount += currentSended;
+
+            //If merging enabled
+            if (_mergePos > 0)
+            {
+                if (_mergeCount > 1)
+                {
+                    NetUtils.DebugWrite("Send merged: " + _mergePos + ", count: " + _mergeCount);
+                    _peerListener.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
+                }
+                else
+                {
+                    //Send without length information and merging
+                    _peerListener.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, _remoteEndPoint);
+                }
+                _mergePos = 0;
+                _mergeCount = 0;
+            }
+        }
+
+        public void Flush()
+        {
+            lock (_flushLock)
+            {
+                SendQueuedPackets(int.MaxValue);
+            }
+        }
+
         internal void Update(int deltaTime)
         {
             if (_connectionState == ConnectionState.Disconnected)
@@ -713,28 +763,6 @@ namespace LiteNetLib
             //Pending acks
             _reliableOrderedChannel.SendAcks();
             _reliableUnorderedChannel.SendAcks();
-
-            //Pending send
-            int currentSended = 0;
-            while (currentSended < currentMaxSend)
-            {
-                //Get one of packets
-                if (_reliableOrderedChannel.SendNextPacket() ||
-                    _reliableUnorderedChannel.SendNextPacket() ||
-                    _sequencedChannel.SendNextPacket() ||
-                    _simpleChannel.SendNextPacket())
-                {
-                    currentSended++;
-                }
-                else
-                {
-                    //no outgoing packets
-                    break;
-                }
-            }
-
-            //Increase counter
-            _sendedPacketsCount += currentSended;
 
             //ResetFlowTimer
             _flowTimer += deltaTime;
@@ -803,21 +831,10 @@ namespace LiteNetLib
             }
             //MTU - end
 
-            //Flush
-            if (_mergePos > 0)
+            //Pending send
+            lock (_flushLock)
             {
-                if (_mergeCount > 1)
-                {
-                    NetUtils.DebugWrite("Send merged: " + _mergePos + ", count: " + _mergeCount);
-                    _peerListener.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
-                }
-                else
-                {
-                    //Send without length information and merging
-                    _peerListener.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, _remoteEndPoint);
-                }
-                _mergePos = 0;
-                _mergeCount = 0;
+                SendQueuedPackets(currentMaxSend);
             }
         }
 

@@ -211,7 +211,7 @@ namespace LiteNetLib
 
             if (packetFound)
             {
-                currentPacket.TimeStamp = currentTime;
+                currentPacket.TimeStamp = DateTime.Now;
                 _peer.SendRawData(currentPacket.Packet);
                 NetUtils.DebugWrite("[RR]Sended");
             }
