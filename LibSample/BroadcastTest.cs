@@ -5,7 +5,7 @@ using LiteNetLib.Utils;
 
 namespace LibSample
 {
-    class BroadcastTest
+    class BroadcastTest : IRunnable
     {
         private class ClientListener : INetEventListener
         {
@@ -150,8 +150,6 @@ namespace LibSample
             client1.Stop();
             client2.Stop();
             server.Stop();
-            Console.ReadKey();
-            Console.WriteLine("Press any key to exit");
             Console.ReadKey();
         }
     }

@@ -5,7 +5,7 @@ using LiteNetLib.Utils;
 
 namespace LibSample
 {
-    class EchoMessagesTest
+    class EchoMessagesTest : IRunnable
     {
         private static int _messagesReceivedCount = 0;
 
@@ -194,8 +194,6 @@ namespace LibSample
                 client2.PacketsReceived,
                 client2.BytesSent,
                 client2.PacketsSent);
-            Console.WriteLine("Press any key to exit");
-            Console.ReadKey();
         }
     }
 }
