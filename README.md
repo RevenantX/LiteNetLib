@@ -17,16 +17,16 @@ BTC: 15JFQ3tHHF22QDUkJYYvuYhyUoptkyaBms
 ## Features
 
 * Lightweight
- * Small CPU and RAM usage
- * Small packet size overhead ( 1 byte for unrealiable, 3 bytes for reliable packets )
+  * Small CPU and RAM usage
+  * Small packet size overhead ( 1 byte for unrealiable, 3 bytes for reliable packets )
 * Simple connection handling
 * Peer to peer connections
 * Helper classes for sending and reading messages
 * Different send mechanics
- * Reliable with order
- * Reliable without order
- * Ordered but unreliable with duplication prevention
- * Simple UDP packets without order and reliability
+  * Reliable with order
+  * Reliable without order
+  * Ordered but unreliable with duplication prevention
+  * Simple UDP packets without order and reliability
 * Fast packet serializer [(Usage manual)](https://github.com/RevenantX/LiteNetLib/wiki/NetSerializer-usage)
 * Packet flow control
 * Automatic small packets merging ( if enabled )
@@ -40,10 +40,10 @@ BTC: 15JFQ3tHHF22QDUkJYYvuYhyUoptkyaBms
 * Multicasting (for discovering hosts in local network)
 * Unity3d support (you can use library source in project)
 * Supported platforms:
- * Windows/Mac/Linux (.net framework, Mono, .net core)
- * Android
- * iOS
- * Universal Windows (Windows 8.1 and Windows 10 including phones)
+  * Windows/Mac/Linux (.net framework, Mono, .net core)
+  * Android
+  * iOS
+  * Universal Windows (Windows 8.1 and Windows 10 including phones)
 
 ## Usage samples
 
@@ -92,48 +92,48 @@ client.Stop();
 ## NetManager settings description
 
 * **UnconnectedMessagesEnabled**
- * enable messages receiving without connection. (with SendUnconnectedMessage method)
- * default value: **false**
+  * enable messages receiving without connection. (with SendUnconnectedMessage method)
+  * default value: **false**
 * **NatPunchEnabled**
- * enable nat punch messages
- * default value: **false**
+  * enable nat punch messages
+  * default value: **false**
 * **UpdateTime**
- * library logic update (and send) period in milliseconds
- * default value: **100 msec**. For games you can use 15 msec (66 ticks per second)
+  * library logic update (and send) period in milliseconds
+  * default value: **100 msec**. For games you can use 15 msec (66 ticks per second)
 * **PingInterval**
- * Interval for latency detection and checking connection
- * default value: **1000 msec**.
+  * Interval for latency detection and checking connection
+  * default value: **1000 msec**.
 * **DisconnectTimeout**
- * if client or server doesn't receive any packet from remote peer during this time then connection will be closed
- * (including library internal keepalive packets)
- * default value: **5000 msec**.
+  * if client or server doesn't receive any packet from remote peer during this time then connection will be closed
+  * (including library internal keepalive packets)
+  * default value: **5000 msec**.
 * **SimulatePacketLoss**
- * simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)
- * default value: **false**
+  * simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)
+  * default value: **false**
 * **SimulateLatency**
- * simulate latency by holding packets for random time. (Works only in DEBUG mode)
- * default value: **false**
+  * simulate latency by holding packets for random time. (Works only in DEBUG mode)
+  * default value: **false**
 * **SimulationPacketLossChance**
- * chance of packet loss when simulation enabled. value in percents.
- * default value: **10 (%)**
+  * chance of packet loss when simulation enabled. value in percents.
+  * default value: **10 (%)**
 * **SimulationMinLatency**
- * minimum simulated latency
- * default value: **30 msec**
+  * minimum simulated latency
+  * default value: **30 msec**
 * **SimulationMaxLatency**
- * maximum simulated latency
- * default value: **100 msec**
+  * maximum simulated latency
+  * default value: **100 msec**
 * **DiscoveryEnabled**
- * Allows receive DiscoveryRequests
- * default value: **false**
+  * Allows receive DiscoveryRequests
+  * default value: **false**
 * **MergeEnabled**
- * Merge small packets into one before sending to reduce outgoing packets count. (May increase a bit outgoing data size)
- * default value: **false**
+  * Merge small packets into one before sending to reduce outgoing packets count. (May increase a bit outgoing data size)
+  * default value: **false**
 * **ReconnectDelay**
- * delay betwen connection attempts
- * default value: **500 msec**
+  * delay betwen connection attempts
+  * default value: **500 msec**
 * **MaxConnectAttempts**
- * maximum connection attempts before client stops and call disconnect event.
- * default value: **10**
+  * maximum connection attempts before client stops and call disconnect event.
+  * default value: **10**
 * **UnsyncedEvents**
- * Experimental feature. Events automatically will be called without PollEvents method from another thread
- * default value: **false**
+  * Experimental feature. Events automatically will be called without PollEvents method from another thread
+  * default value: **false**
