@@ -221,3 +221,11 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+# Rider
+.idea/
+
+# Unity
+LiteNetLibSampleUnity/Library/
+LiteNetLibSampleUnity/*.sln
+LiteNetLibSampleUnity/*.csproj
