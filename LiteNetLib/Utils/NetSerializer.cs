@@ -4,9 +4,51 @@ using System.Collections.Generic;
 
 namespace LiteNetLib.Utils
 {
+    public abstract class NetSerializerHasher
+    {
+        public abstract ulong GetHash(string type);
+        public abstract void WriteHash(string type, NetDataWriter writer);
+        public abstract ulong ReadHash(NetDataReader reader);
+    }
+
+    public sealed class FNVHasher : NetSerializerHasher
+    {
+        private readonly Dictionary<string, ulong> _hashCache = new Dictionary<string, ulong>();
+        private readonly char[] _hashBuffer = new char[1024];
+
+        public override ulong GetHash(string type)
+        {
+            ulong hash;
+            if (_hashCache.TryGetValue(type, out hash))
+            {
+                return hash;
+            }
+            hash = 14695981039346656037UL; //offset
+            int len = type.Length;
+            type.CopyTo(0, _hashBuffer, 0, len);
+            for (var i = 0; i < len; i++)
+            {
+                hash = hash ^ _hashBuffer[i];
+                hash *= 1099511628211UL; //prime
+            }
+            _hashCache.Add(type, hash);
+            return hash;
+        }
+
+        public override ulong ReadHash(NetDataReader reader)
+        {
+            return reader.GetULong();
+        }
+
+        public override void WriteHash(string type, NetDataWriter writer)
+        {
+            writer.Put(GetHash(type));
+        }
+    }
+
     public sealed class NetSerializer
     {
-        private class RWDelegates
+        private sealed class RWDelegates
         {
             public readonly CustomTypeWrite WriteDelegate;
             public readonly CustomTypeRead ReadDelegate;
@@ -21,7 +63,7 @@ namespace LiteNetLib.Utils
         private delegate void CustomTypeWrite(NetDataWriter writer, object customObj);
         private delegate object CustomTypeRead(NetDataReader reader);
 
-        private class StructInfo
+        private sealed class StructInfo
         {
             public readonly Action<NetDataWriter>[] WriteDelegate;
             public readonly Action<NetDataReader>[] ReadDelegate;
@@ -37,17 +79,20 @@ namespace LiteNetLib.Utils
         }
 
         private readonly Dictionary<ulong, StructInfo> _cache;
-        private readonly Dictionary<string, ulong> _hashCache;
         private readonly Dictionary<Type, RWDelegates> _registeredCustomTypes;
-        private readonly char[] _hashBuffer = new char[1024];
         private readonly HashSet<Type> _acceptedTypes;
         private readonly NetDataWriter _writer;
+        private readonly NetSerializerHasher _hasher;
         private const int MaxStringLenght = 1024;
 
-        public NetSerializer()
+        public NetSerializer() : this(new FNVHasher())
         {
+        }
+
+        public NetSerializer(NetSerializerHasher hasher)
+        {
+            _hasher = hasher;
             _cache = new Dictionary<ulong, StructInfo>();
-            _hashCache = new Dictionary<string, ulong>();
             _registeredCustomTypes = new Dictionary<Type, RWDelegates>();
             _writer = new NetDataWriter();
             _acceptedTypes = new HashSet<Type>
@@ -74,25 +119,6 @@ namespace LiteNetLib.Utils
                 typeof(float[]),
                 typeof(double[])
             };
-        }
-
-        private ulong HashStr(string str)
-        {
-            ulong hash;
-            if (_hashCache.TryGetValue(str, out hash))
-            {
-                return hash;
-            }
-            hash = 14695981039346656037UL; //offset
-            int len = str.Length;
-            str.CopyTo(0, _hashBuffer, 0, len);      
-            for (var i = 0; i < len; i++)
-            {
-                hash = hash ^ _hashBuffer[i];
-                hash *= 1099511628211UL; //prime
-            }
-            _hashCache.Add(str, hash);
-            return hash;
         }
 
         private static Func<TClass, TProperty> ExtractGetDelegate<TClass, TProperty>(MethodInfo info)
@@ -169,14 +195,15 @@ namespace LiteNetLib.Utils
 
             for(int i = 0; i < accepted.Count; i++)
             {
+                var property = accepted[i];
+                var propertyType = property.PropertyType;
 #if WINRT || NETCORE
-                var getMethod = accepted[i].GetMethod;
-                var setMethod = accepted[i].SetMethod;
+                var getMethod = property.GetMethod;
+                var setMethod = property.SetMethod;
 #else
-                var getMethod = accepted[i].GetGetMethod();
-                var setMethod = accepted[i].GetSetMethod();
+                var getMethod = property.GetGetMethod();
+                var setMethod = property.GetSetMethod();
 #endif
-                var propertyType = accepted[i].PropertyType;
                 if (propertyType == typeof(string))
                 {
                     var setDelegate = ExtractSetDelegate<T, string>(setMethod);
@@ -328,17 +355,17 @@ namespace LiteNetLib.Utils
                 else
                 {
                     RWDelegates registeredCustomType;
-                    PropertyInfo property = accepted[i];
-                    Type arrayType = null;
+                    bool array = false;
+
                     if (propertyType.IsArray)
                     {
-                        arrayType = propertyType;
-                        propertyType = arrayType.GetElementType();
+                        array = true;
+                        propertyType = propertyType.GetElementType();
                     }
 
                     if (_registeredCustomTypes.TryGetValue(propertyType, out registeredCustomType))
                     {
-                        if (arrayType != null) //Array type serialize/deserialize
+                        if (array) //Array type serialize/deserialize
                         {
                             info.ReadDelegate[i] = reader =>
                             { 
@@ -407,7 +434,7 @@ namespace LiteNetLib.Utils
         /// <param name="reusePacket">Reuse packet will overwrite last received packet class (less garbage)</param>
         public void ReadPacket(NetDataReader reader, bool reusePacket)
         {
-            ulong name = reader.GetULong();
+            ulong name = _hasher.ReadHash(reader);
             var info = _cache[name];
 
             if (!reusePacket || info.Reference == null)
@@ -427,6 +454,16 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
+        /// Just register class for nested support
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public void Register<T>() where T : class, new()
+        {
+            var t = typeof(T);
+            Register<T>(t, _hasher.GetHash(t.Name));
+        }
+
+        /// <summary>
         /// Register and subscribe to packet receive event
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
@@ -443,7 +480,7 @@ namespace LiteNetLib.Utils
         public void Subscribe<T>(Action<T> onReceive, Func<T> packetConstructor) where T : class, new()
         {
             var t = typeof(T);
-            var info = Register<T>(t, HashStr(t.Name));
+            var info = Register<T>(t, _hasher.GetHash(t.Name));
             if (packetConstructor == null)
             {
                 info.CreatorFunc = Activator.CreateInstance<T>;
@@ -463,12 +500,12 @@ namespace LiteNetLib.Utils
         public void Serialize<T>(NetDataWriter writer, T obj) where T : class, new()
         {
             Type t = typeof(T);
-            ulong nameHash = HashStr(t.Name);
+            ulong nameHash = _hasher.GetHash(t.Name);
             var structInfo = Register<T>(t, nameHash);
             var wd = structInfo.WriteDelegate;
             var wdlen = wd.Length;
             structInfo.Reference = obj;
-            writer.Put(nameHash);
+            _hasher.WriteHash(t.Name, writer);
             for (int i = 0; i < wdlen; i++)
             {
                 wd[i](writer);
