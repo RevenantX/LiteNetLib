@@ -270,7 +270,7 @@ namespace LibSample
             {
                 netDataWriter.Put(samplePacket.SomeFloat);
                 netDataWriter.Put(samplePacket.SomeString);
-                netDataWriter.Put(samplePacket.SomeIntArray);
+                netDataWriter.PutArray(samplePacket.SomeIntArray);
                 netDataWriter.Put(samplePacket.SomeVector2.X);
                 netDataWriter.Put(samplePacket.SomeVector2.Y);
                 netDataWriter.Put(samplePacket.SomeVectors.Length);

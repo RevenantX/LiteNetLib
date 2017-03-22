@@ -168,6 +168,24 @@ namespace LiteNetLib.Utils
             _position += data.Length;
         }
 
+        public void PutBytesWithLength(byte[] data, int offset, int length)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + length);
+            Put(length);
+            Buffer.BlockCopy(data, offset, _data, _position, length);
+            _position += length;
+        }
+
+        public void PutBytesWithLength(byte[] data)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + data.Length);
+            Put(data.Length);
+            Buffer.BlockCopy(data, 0, _data, _position, data.Length);
+            _position += data.Length;
+        }
+
         public void Put(bool value)
         {
             if (_autoResize)
@@ -176,7 +194,7 @@ namespace LiteNetLib.Utils
             _position++;
         }
 
-        public void Put(float[] value)
+        public void PutArray(float[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             if (_autoResize)
@@ -188,7 +206,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(double[] value)
+        public void PutArray(double[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             if (_autoResize)
@@ -200,7 +218,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(long[] value)
+        public void PutArray(long[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             if (_autoResize)
@@ -212,7 +230,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(ulong[] value)
+        public void PutArray(ulong[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             if (_autoResize)
@@ -224,7 +242,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(int[] value)
+        public void PutArray(int[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             if (_autoResize)
@@ -236,7 +254,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(uint[] value)
+        public void PutArray(uint[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             if (_autoResize)
@@ -248,7 +266,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(ushort[] value)
+        public void PutArray(ushort[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             if (_autoResize)
@@ -260,7 +278,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(short[] value)
+        public void PutArray(short[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             if (_autoResize)
@@ -272,7 +290,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(bool[] value)
+        public void PutArray(bool[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             if (_autoResize)
@@ -284,7 +302,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(string[] value)
+        public void PutArray(string[] value)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             Put(len);
@@ -294,7 +312,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(string[] value, int maxLength)
+        public void PutArray(string[] value, int maxLength)
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             Put(len);
