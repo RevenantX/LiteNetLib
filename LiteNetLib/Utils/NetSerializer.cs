@@ -119,6 +119,7 @@ namespace LiteNetLib.Utils
                 typeof(string),
                 typeof(float),
                 typeof(double),
+                typeof(bool)
             };
         }
 
@@ -235,6 +236,13 @@ namespace LiteNetLib.Utils
                     var getDelegate = ExtractGetDelegate<T, string>(getMethod);
                     info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetString(MaxStringLenght));
                     info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference), MaxStringLenght);
+                }
+                else if (propertyType == typeof(bool))
+                {
+                    var setDelegate = ExtractSetDelegate<T, bool>(setMethod);
+                    var getDelegate = ExtractGetDelegate<T, bool>(getMethod);
+                    info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetBool());
+                    info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference));
                 }
                 else if (propertyType == typeof(byte))
                 {
@@ -448,6 +456,7 @@ namespace LiteNetLib.Utils
         /// Reads all available data from NetDataReader and calls OnReceive delegates
         /// </summary>
         /// <param name="reader">NetDataReader with packets data</param>
+        /// <param name="userData">Argument that passed to OnReceivedEvent</param>
         public void ReadAllPackets<T>(NetDataReader reader, T userData)
         {
             while (reader.AvailableBytes > 0)
