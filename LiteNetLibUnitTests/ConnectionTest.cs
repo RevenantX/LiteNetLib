@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using LiteNetLib;
+using LiteNetLib.Utils;
 using NUnit.Framework;
 
 namespace LiteNetLibUnitTests
 {
-    [TestFixture, SingleThreaded]
+    [TestFixture]
     public class LiteNetLibTest
     {
         private EventBasedNetListener _serverListener = new EventBasedNetListener();
@@ -49,9 +51,10 @@ namespace LiteNetLibUnitTests
             _server.Stop();
         }
 
-        [Test]
+        [Test, Timeout(2000)]
         public void ConnectionByIpV4()
         {
+            _server.MaxConnectAttempts = 2;
             bool connected = false;
             EventBasedNetListener.OnPeerConnected action = peer =>
             {
@@ -68,7 +71,11 @@ namespace LiteNetLibUnitTests
                 Thread.Sleep(15);
                 _server.PollEvents();
             }
-            
+
+            Assert.AreEqual(connected, true);
+            Assert.AreEqual(_server.PeersCount, 1);
+            Assert.AreEqual(_client1.PeersCount, 1);
+
             foreach (var netPeer in _client1.GetPeers())
             {
                 _client1.DisconnectPeer(netPeer);
@@ -77,7 +84,7 @@ namespace LiteNetLibUnitTests
             _clientListener1.PeerConnectedEvent -= action;
         }
 
-        [Test]
+        [Test, Timeout(2000)]
         public void ConnectionByIpV6()
         {
             bool connected = false;
@@ -97,12 +104,76 @@ namespace LiteNetLibUnitTests
                 _server.PollEvents();
             }
 
+            Assert.AreEqual(connected, true);
+            Assert.AreEqual(_server.PeersCount, 1);
+            Assert.AreEqual(_client1.PeersCount, 1);
+
             foreach (var netPeer in _client1.GetPeers())
             {
                 _client1.DisconnectPeer(netPeer);
             }
 
             _clientListener1.PeerConnectedEvent -= action;
+        }
+
+        [Test, Timeout(2000)]
+        public void SendRawDataToAll()
+        {
+            bool connected = false;
+            EventBasedNetListener.OnPeerConnected action = peer =>
+            {
+                //TODO: Identify user
+                connected = true;
+            };
+
+            _serverListener.PeerConnectedEvent += action;
+
+            _client1.Connect("127.0.0.1", 9050);
+
+            while (!connected)
+            {
+                Thread.Sleep(15);
+                _server.PollEvents();
+            }
+
+            Assert.AreEqual(connected, true);
+            Assert.AreEqual(_server.PeersCount, 1);
+            Assert.AreEqual(_client1.PeersCount, 1);
+            Assert.AreEqual(_client2.PeersCount, 0);
+
+            connected = false;
+
+            _client2.Connect("127.0.0.1", 9050);
+
+            while (!connected)
+            {
+                Thread.Sleep(15);
+                _server.PollEvents();
+            }
+
+            Assert.AreEqual(connected, true);
+            Assert.AreEqual(_server.PeersCount, 2);
+            Assert.AreEqual(_client1.PeersCount, 1);
+            Assert.AreEqual(_client2.PeersCount, 1);
+            
+            byte[] data = Encoding.Default.GetBytes("TextForTest");
+
+            _client1.SendToAll(data, SendOptions.ReliableOrdered);
+
+            byte[] recivedData = null;
+
+            _serverListener.NetworkReceiveEvent += (peer, reader) =>
+            {
+                recivedData = reader.Data;
+            };
+
+            while (recivedData == null)
+            {
+                _server.PollEvents();
+                Thread.Sleep(15);
+            }
+
+            Assert.That(data, Is.EqualTo(recivedData).AsCollection);
         }
     }
 }
