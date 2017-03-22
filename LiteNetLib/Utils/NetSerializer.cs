@@ -456,6 +456,18 @@ namespace LiteNetLib.Utils
         /// Reads all available data from NetDataReader and calls OnReceive delegates
         /// </summary>
         /// <param name="reader">NetDataReader with packets data</param>
+        public void ReadAllPackets(NetDataReader reader)
+        {
+            while (reader.AvailableBytes > 0)
+            {
+                ReadPacket(reader);
+            }
+        }
+
+        /// <summary>
+        /// Reads all available data from NetDataReader and calls OnReceive delegates
+        /// </summary>
+        /// <param name="reader">NetDataReader with packets data</param>
         /// <param name="userData">Argument that passed to OnReceivedEvent</param>
         public void ReadAllPackets<T>(NetDataReader reader, T userData)
         {
@@ -463,6 +475,15 @@ namespace LiteNetLib.Utils
             {
                 ReadPacket(reader, userData);
             }
+        }
+
+        /// <summary>
+        /// Reads one packet from NetDataReader and calls OnReceive delegate
+        /// </summary>
+        /// <param name="reader">NetDataReader with packet</param>
+        public void ReadPacket(NetDataReader reader)
+        {
+            ReadPacket<object>(reader, null);
         }
 
         /// <summary>
