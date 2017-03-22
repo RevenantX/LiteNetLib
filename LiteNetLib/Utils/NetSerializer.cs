@@ -79,8 +79,7 @@ namespace LiteNetLib.Utils
             public readonly Type[] FieldTypes;
             public object Reference;
             public Func<object> CreatorFunc;
-            public Action<object> OnReceive;
-            public bool ReusePacket;
+            public Action<object, object> OnReceive;
 
             public StructInfo(int membersCount)
             {
@@ -449,11 +448,11 @@ namespace LiteNetLib.Utils
         /// Reads all available data from NetDataReader and calls OnReceive delegates
         /// </summary>
         /// <param name="reader">NetDataReader with packets data</param>
-        public void ReadAllPackets(NetDataReader reader)
+        public void ReadAllPackets<T>(NetDataReader reader, T userData)
         {
             while (reader.AvailableBytes > 0)
             {
-                ReadPacket(reader);
+                ReadPacket(reader, userData);
             }
         }
 
@@ -461,12 +460,13 @@ namespace LiteNetLib.Utils
         /// Reads one packet from NetDataReader and calls OnReceive delegate
         /// </summary>
         /// <param name="reader">NetDataReader with packet</param>
-        public void ReadPacket(NetDataReader reader)
+        /// <param name="userData">Argument that passed to OnReceivedEvent</param>
+        public void ReadPacket<T>(NetDataReader reader, T userData)
         {
             ulong name = _hasher.ReadHash(reader);
             var info = _cache[name];
 
-            if (!info.ReusePacket || info.Reference == null)
+            if (info.CreatorFunc != null)
             {
                 info.Reference = info.CreatorFunc();
             }
@@ -478,18 +478,8 @@ namespace LiteNetLib.Utils
 
             if(info.OnReceive != null)
             {
-                info.OnReceive(info.Reference);
+                info.OnReceive(info.Reference, userData);
             }
-        }
-
-        /// <summary>
-        /// Register and subscribe to packet receive event
-        /// </summary>
-        /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-        /// <param name="reusePacket">Reuse packet will overwrite last received packet class on receive (less garbage)</param>
-        public void Subscribe<T>(Action<T> onReceive, bool reusePacket) where T : class, new()
-        {
-            Subscribe(onReceive, null, reusePacket);
         }
 
         /// <summary>
@@ -497,21 +487,51 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
-        /// /// <param name="reusePacket">Reuse packet will overwrite last received packet class on receive (less garbage)</param>
-        public void Subscribe<T>(Action<T> onReceive, Func<T> packetConstructor, bool reusePacket) where T : class, new()
+        public void Subscribe<T>(Action<T> onReceive, Func<T> packetConstructor) where T : class, new()
         {
             var t = typeof(T);
             var info = Register<T>(t, _hasher.GetHash(t.Name));
-            info.ReusePacket = reusePacket;
-            if (packetConstructor == null)
-            {
-                info.CreatorFunc = Activator.CreateInstance<T>;
-            } 
-            else
-            {
-                info.CreatorFunc = () => packetConstructor();
-            }
-            info.OnReceive = o => { onReceive((T)o); };
+            info.CreatorFunc = () => packetConstructor();
+            info.OnReceive = (o, userData) => { onReceive((T)o); };
+        }
+
+        /// <summary>
+        /// Register and subscribe to packet receive event (with userData)
+        /// </summary>
+        /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+        /// <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        public void Subscribe<T, TUserData>(Action<T, TUserData> onReceive, Func<T> packetConstructor) where T : class, new()
+        {
+            var t = typeof(T);
+            var info = Register<T>(t, _hasher.GetHash(t.Name));
+            info.CreatorFunc = () => packetConstructor();
+            info.OnReceive = (o, userData) => { onReceive((T)o, (TUserData)userData); };
+        }
+
+        /// <summary>
+        /// Register and subscribe to packet receive event
+        /// This metod will overwrite last received packet class on receive (less garbage)
+        /// </summary>
+        /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+        public void SubscribeReusable<T>(Action<T> onReceive) where T : class, new()
+        {
+            var t = typeof(T);
+            var info = Register<T>(t, _hasher.GetHash(t.Name));
+            info.Reference = new T();
+            info.OnReceive = (o, userData) => { onReceive((T)o); };
+        }
+
+        /// <summary>
+        /// Register and subscribe to packet receive event
+        /// This metod will overwrite last received packet class on receive (less garbage)
+        /// </summary>
+        /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+        public void SubscribeReusable<T, TUserData>(Action<T, TUserData> onReceive) where T : class, new()
+        {
+            var t = typeof(T);
+            var info = Register<T>(t, _hasher.GetHash(t.Name));
+            info.Reference = new T();
+            info.OnReceive = (o, userData) => { onReceive((T)o, (TUserData)userData); };
         }
 
         /// <summary>

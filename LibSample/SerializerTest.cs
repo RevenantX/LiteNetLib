@@ -157,12 +157,14 @@ namespace LibSample
                 _netSerializer = new NetSerializer();
                 _netSerializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
                 _netSerializer.RegisterCustomType<SampleNetSerializable>();
-                _netSerializer.Subscribe<SamplePacket>(OnSamplePacketReceived, true);
+
+                //user data support
+                _netSerializer.SubscribeReusable<SamplePacket, NetPeer>(OnSamplePacketReceived);
             }
 
-            private void OnSamplePacketReceived(SamplePacket samplePacket)
+            private void OnSamplePacketReceived(SamplePacket samplePacket, NetPeer peer)
             {
-                Console.WriteLine("[Server] ReceivedPacket:\n" + samplePacket);
+                Console.WriteLine("[Server] ReceivedPacket from {0}:\n{1}", peer.EndPoint, samplePacket);
             }
 
             public void OnPeerConnected(NetPeer peer)
@@ -188,7 +190,7 @@ namespace LibSample
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
             {
                 Console.WriteLine("[Server] received data. Processing...");
-                _netSerializer.ReadAllPackets(reader);
+                _netSerializer.ReadAllPackets(reader, peer);
             }
 
             public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
