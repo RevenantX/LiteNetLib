@@ -102,7 +102,7 @@ namespace LiteNetLib
             if(reuseAddress)
                 _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 #if !NETCORE
-            _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DontFragment, true);
+            _udpSocketv4.DontFragment = true;
 #endif
 
             try
@@ -151,7 +151,7 @@ namespace LiteNetLib
                         SocketOptionName.AddMembership,
                         new IPv6MulticastOption(MulticastAddressV6));
                 }
-                catch
+                catch(Exception)
                 {
                     // Unity3d throws exception - ignored
                 }
