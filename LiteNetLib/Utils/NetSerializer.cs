@@ -1,9 +1,18 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
+#if WINRT || NETCORE
+using System.Linq;
+#endif
 
 namespace LiteNetLib.Utils
 {
+    public interface INetSerializable
+    {
+        void Serialize(NetDataWriter writer);
+        void Desereialize(NetDataReader reader);
+    }
+
     public abstract class NetSerializerHasher
     {
         public abstract ulong GetHash(string type);
@@ -48,12 +57,12 @@ namespace LiteNetLib.Utils
 
     public sealed class NetSerializer
     {
-        private sealed class RWDelegates
+        private sealed class CustomType
         {
             public readonly CustomTypeWrite WriteDelegate;
             public readonly CustomTypeRead ReadDelegate;
 
-            public RWDelegates(CustomTypeWrite writeDelegate, CustomTypeRead readDelegate)
+            public CustomType(CustomTypeWrite writeDelegate, CustomTypeRead readDelegate)
             {
                 WriteDelegate = writeDelegate;
                 ReadDelegate = readDelegate;
@@ -67,20 +76,23 @@ namespace LiteNetLib.Utils
         {
             public readonly Action<NetDataWriter>[] WriteDelegate;
             public readonly Action<NetDataReader>[] ReadDelegate;
+            public readonly Type[] FieldTypes;
             public object Reference;
             public Func<object> CreatorFunc;
             public Action<object> OnReceive;
+            public bool ReusePacket;
 
             public StructInfo(int membersCount)
             {
                 WriteDelegate = new Action<NetDataWriter>[membersCount];
                 ReadDelegate = new Action<NetDataReader>[membersCount];
+                FieldTypes = new Type[membersCount];
             }
         }
 
         private readonly Dictionary<ulong, StructInfo> _cache;
-        private readonly Dictionary<Type, RWDelegates> _registeredCustomTypes;
-        private readonly HashSet<Type> _acceptedTypes;
+        private readonly Dictionary<Type, CustomType> _registeredCustomTypes;
+        private readonly HashSet<Type> _basicTypes;
         private readonly NetDataWriter _writer;
         private readonly NetSerializerHasher _hasher;
         private const int MaxStringLenght = 1024;
@@ -93,9 +105,9 @@ namespace LiteNetLib.Utils
         {
             _hasher = hasher;
             _cache = new Dictionary<ulong, StructInfo>();
-            _registeredCustomTypes = new Dictionary<Type, RWDelegates>();
+            _registeredCustomTypes = new Dictionary<Type, CustomType>();
             _writer = new NetDataWriter();
-            _acceptedTypes = new HashSet<Type>
+            _basicTypes = new HashSet<Type>
             {
                 typeof(int),
                 typeof(uint),
@@ -108,16 +120,6 @@ namespace LiteNetLib.Utils
                 typeof(string),
                 typeof(float),
                 typeof(double),
-                typeof(int[]),
-                typeof(uint[]),
-                typeof(byte[]),
-                typeof(short[]),
-                typeof(ushort[]),
-                typeof(long[]),
-                typeof(ulong[]),
-                typeof(string[]),
-                typeof(float[]),
-                typeof(double[])
             };
         }
 
@@ -142,22 +144,51 @@ namespace LiteNetLib.Utils
         /// <summary>
         /// Register custom property type
         /// </summary>
-        /// <param name="writeDelegate"></param>
-        /// <param name="readDelegate"></param>
-        public void RegisterCustomType<T>(Action<NetDataWriter, T> writeDelegate, Func<NetDataReader, T> readDelegate) 
+        /// <typeparam name="T">INetSerializable structure</typeparam>
+        /// <returns>True - if register successful, false - if type already registered</returns>
+        public bool RegisterCustomType<T>() where T : struct, INetSerializable
         {
             var t = typeof(T);
-            if(_acceptedTypes.Contains(t))
+            if (_basicTypes.Contains(t) || _registeredCustomTypes.ContainsKey(t))
             {
-                return;
+                return false;
             }
 
-            var rwDelegates = new RWDelegates(
+            var rwDelegates = new CustomType(
+                (writer, obj) =>
+                {
+                    ((T)obj).Serialize(writer);
+                },
+                reader =>
+                {
+                    var instance = new T();
+                    instance.Desereialize(reader);
+                    return instance;
+                });
+            _registeredCustomTypes.Add(typeof(T), rwDelegates);
+            return true;
+        }
+
+        /// <summary>
+        /// Register custom property type
+        /// </summary>
+        /// <param name="writeDelegate"></param>
+        /// <param name="readDelegate"></param>
+        /// <returns>True - if register successful, false - if type already registered</returns>
+        public bool RegisterCustomType<T>(Action<NetDataWriter, T> writeDelegate, Func<NetDataReader, T> readDelegate) 
+        {
+            var t = typeof(T);
+            if(_basicTypes.Contains(t) || _registeredCustomTypes.ContainsKey(t))
+            {
+                return false;
+            }
+
+            var rwDelegates = new CustomType(
                 (writer, obj) => writeDelegate(writer, (T) obj),
                 reader => readDelegate(reader));
 
             _registeredCustomTypes.Add(t, rwDelegates);
-            _acceptedTypes.Add(t);
+            return true;
         }
 
         private StructInfo Register<T>(Type t, ulong nameHash) where T : class 
@@ -170,33 +201,28 @@ namespace LiteNetLib.Utils
 
 #if WINRT || NETCORE
             var props = t.GetRuntimeProperties();
+            int propsCount = props.Count();
 #else
             var props = t.GetProperties(
                 BindingFlags.Instance | 
                 BindingFlags.Public | 
                 BindingFlags.GetProperty | 
                 BindingFlags.SetProperty);
+            int propsCount = props.Length;
 #endif
-            List<PropertyInfo> accepted = new List<PropertyInfo>();
-            foreach(var prop in props)
-            {
-                if (_acceptedTypes.Contains(prop.PropertyType) ||
-                   (prop.PropertyType.IsArray && _registeredCustomTypes.ContainsKey(prop.PropertyType.GetElementType())))
-                {
-                    accepted.Add(prop);
-                }
-            }
-            if(accepted.Count < 0)
+            if(props == null || propsCount < 0)
             {
                 throw new ArgumentException("Type does not contain acceptable fields");
             }
 
-            info = new StructInfo(accepted.Count);
-
-            for(int i = 0; i < accepted.Count; i++)
+            info = new StructInfo(propsCount);
+            int i = 0;
+            foreach(var property in props)
             {
-                var property = accepted[i];
                 var propertyType = property.PropertyType;
+
+                //Set field type
+                info.FieldTypes[i] = propertyType.IsArray ? propertyType.GetElementType() : propertyType;
 #if WINRT || NETCORE
                 var getMethod = property.GetMethod;
                 var setMethod = property.SetMethod;
@@ -354,7 +380,7 @@ namespace LiteNetLib.Utils
                 }
                 else
                 {
-                    RWDelegates registeredCustomType;
+                    CustomType registeredCustomType;
                     bool array = false;
 
                     if (propertyType.IsArray)
@@ -401,13 +427,18 @@ namespace LiteNetLib.Utils
                                 registeredCustomType.WriteDelegate(writer, property.GetValue(info.Reference, null));
                             };
                         }
-
                     }
                     else
                     {
-                        throw new ArgumentException("Unregistered argument type: " + propertyType);
+                        //Set empty for later update
+                        //info.ReadDelegate[i] = reader => { };
+                        //info.WriteDelegate[i] = writer => { };
+                        throw new Exception("Unknown property type: " + propertyType.Name);
                     }
                 }
+
+                //increase index
+                i++;
             }
             _cache.Add(nameHash, info);
 
@@ -418,12 +449,11 @@ namespace LiteNetLib.Utils
         /// Reads all available data from NetDataReader and calls OnReceive delegates
         /// </summary>
         /// <param name="reader">NetDataReader with packets data</param>
-        /// /// <param name="reusePacket">Reuse packet will overwrite last received packet class (less garbage)</param>
-        public void ReadAllPackets(NetDataReader reader, bool reusePacket)
+        public void ReadAllPackets(NetDataReader reader)
         {
             while (reader.AvailableBytes > 0)
             {
-                ReadPacket(reader, reusePacket);
+                ReadPacket(reader);
             }
         }
 
@@ -431,13 +461,12 @@ namespace LiteNetLib.Utils
         /// Reads one packet from NetDataReader and calls OnReceive delegate
         /// </summary>
         /// <param name="reader">NetDataReader with packet</param>
-        /// <param name="reusePacket">Reuse packet will overwrite last received packet class (less garbage)</param>
-        public void ReadPacket(NetDataReader reader, bool reusePacket)
+        public void ReadPacket(NetDataReader reader)
         {
             ulong name = _hasher.ReadHash(reader);
             var info = _cache[name];
 
-            if (!reusePacket || info.Reference == null)
+            if (!info.ReusePacket || info.Reference == null)
             {
                 info.Reference = info.CreatorFunc();
             }
@@ -454,22 +483,13 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Just register class for nested support
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        public void Register<T>() where T : class, new()
-        {
-            var t = typeof(T);
-            Register<T>(t, _hasher.GetHash(t.Name));
-        }
-
-        /// <summary>
         /// Register and subscribe to packet receive event
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-        public void Subscribe<T>(Action<T> onReceive) where T : class, new()
+        /// <param name="reusePacket">Reuse packet will overwrite last received packet class on receive (less garbage)</param>
+        public void Subscribe<T>(Action<T> onReceive, bool reusePacket) where T : class, new()
         {
-            Subscribe(onReceive, null);
+            Subscribe(onReceive, null, reusePacket);
         }
 
         /// <summary>
@@ -477,14 +497,16 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
-        public void Subscribe<T>(Action<T> onReceive, Func<T> packetConstructor) where T : class, new()
+        /// /// <param name="reusePacket">Reuse packet will overwrite last received packet class on receive (less garbage)</param>
+        public void Subscribe<T>(Action<T> onReceive, Func<T> packetConstructor, bool reusePacket) where T : class, new()
         {
             var t = typeof(T);
             var info = Register<T>(t, _hasher.GetHash(t.Name));
+            info.ReusePacket = reusePacket;
             if (packetConstructor == null)
             {
                 info.CreatorFunc = Activator.CreateInstance<T>;
-            }
+            } 
             else
             {
                 info.CreatorFunc = () => packetConstructor();
@@ -501,10 +523,10 @@ namespace LiteNetLib.Utils
         {
             Type t = typeof(T);
             ulong nameHash = _hasher.GetHash(t.Name);
-            var structInfo = Register<T>(t, nameHash);
-            var wd = structInfo.WriteDelegate;
+            var classInfo = Register<T>(t, nameHash);
+            var wd = classInfo.WriteDelegate;
             var wdlen = wd.Length;
-            structInfo.Reference = obj;
+            classInfo.Reference = obj;
             _hasher.WriteHash(t.Name, writer);
             for (int i = 0; i < wdlen; i++)
             {
