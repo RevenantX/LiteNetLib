@@ -487,6 +487,33 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
+        /// Reads packet with known type
+        /// </summary>
+        /// <param name="reader">NetDataReader with packet</param>
+        /// <returns>Returns packet if packet in reader is matched type</returns>
+        public T ReadKnownPacket<T>(NetDataReader reader) where T : class, new()
+        {
+            ulong name = _hasher.ReadHash(reader);
+            var info = _cache[name];
+            ulong typeHash = _hasher.GetHash(typeof(T).Name);
+            if (typeHash != name)
+            {
+                return null;
+            }
+
+            if (info.CreatorFunc != null)
+            {
+                info.Reference = info.CreatorFunc();
+            }
+
+            for (int i = 0; i < info.ReadDelegate.Length; i++)
+            {
+                info.ReadDelegate[i](reader);
+            }
+            return (T)info.Reference;
+        }
+
+        /// <summary>
         /// Reads one packet from NetDataReader and calls OnReceive delegate
         /// </summary>
         /// <param name="reader">NetDataReader with packet</param>
