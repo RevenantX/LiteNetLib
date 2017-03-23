@@ -129,7 +129,11 @@ namespace LiteNetLib
 
             //prepare outgoing data
             NetDataWriter dw = new NetDataWriter();
-            string networkIp = NetUtils.GetLocalIp(true);
+            string networkIp = NetUtils.GetLocalIp(LocalAddrType.IPv4);
+            if (string.IsNullOrEmpty(networkIp))
+            {
+                networkIp = NetUtils.GetLocalIp(LocalAddrType.IPv6);
+            }
             int networkPort = _netBase.LocalEndPoint.Port;
             NetEndPoint localEndPoint = new NetEndPoint(networkIp, networkPort);
             dw.Put(localEndPoint);
