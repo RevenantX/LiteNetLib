@@ -500,17 +500,38 @@ namespace LiteNetLib.Utils
             {
                 return null;
             }
-
-            if (info.CreatorFunc != null)
-            {
-                info.Reference = info.CreatorFunc();
-            }
+            info.Reference = info.CreatorFunc != null ? info.CreatorFunc() : Activator.CreateInstance<T>();
 
             for (int i = 0; i < info.ReadDelegate.Length; i++)
             {
                 info.ReadDelegate[i](reader);
             }
             return (T)info.Reference;
+        }
+
+        /// <summary>
+        /// Reads packet with known type (non alloc variant)
+        /// </summary>
+        /// <param name="reader">NetDataReader with packet</param>
+        /// <param name="target">Deserialization target</param>
+        /// <returns>Returns true if packet in reader is matched type</returns>
+        public bool ReadKnownPacket<T>(NetDataReader reader, T target) where T : class, new()
+        {
+            ulong name = _hasher.ReadHash(reader);
+            var info = _cache[name];
+            ulong typeHash = _hasher.GetHash(typeof(T).Name);
+            if (typeHash != name)
+            {
+                return false;
+            }
+
+            info.Reference = target;
+
+            for (int i = 0; i < info.ReadDelegate.Length; i++)
+            {
+                info.ReadDelegate[i](reader);
+            }
+            return true;
         }
 
         /// <summary>
@@ -550,6 +571,21 @@ namespace LiteNetLib.Utils
             var info = Register<T>(t, _hasher.GetHash(t.Name));
             info.CreatorFunc = () => packetConstructor();
             info.OnReceive = (o, userData) => { onReceive((T)o); };
+        }
+
+        /// <summary>
+        /// Register packet type for direct reading (ReadKnownPacket)
+        /// </summary>
+        /// <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        public void Register<T>(Func<T> packetConstructor = null) where T : class, new()
+        {
+            var t = typeof(T);
+            var info = Register<T>(t, _hasher.GetHash(t.Name));
+            if (packetConstructor != null)
+            {
+                info.CreatorFunc = () => packetConstructor();      
+            }
+            info.OnReceive = (o, userData) => { };
         }
 
         /// <summary>
