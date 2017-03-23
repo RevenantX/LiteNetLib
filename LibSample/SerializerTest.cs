@@ -12,6 +12,22 @@ namespace LibSample
     class SerializerTest
     {
         [Serializable] //Just for test binary formatter
+        private struct SampleNetSerializable : INetSerializable
+        {
+            public int Value;
+
+            public void Serialize(NetDataWriter writer)
+            {
+                writer.Put(Value);
+            }
+
+            public void Desereialize(NetDataReader reader)
+            {
+                Value = reader.GetInt();
+            }
+        }
+
+        [Serializable] //Just for test binary formatter
         private class SamplePacket
         {
             public string SomeString { get; set; }
@@ -20,6 +36,7 @@ namespace LibSample
             public SomeVector2 SomeVector2 { get; set; }
             public SomeVector2[] SomeVectors { get; set; }
             public string EmptyString { get; set; }
+            public SampleNetSerializable TestObj { get; set; }
 
             public override string ToString()
             {
@@ -38,6 +55,7 @@ namespace LibSample
                     sb.AppendLine(" " + SomeVectors[i]);
                 }
                 sb.AppendLine("EmptyString: " + EmptyString);
+                sb.AppendLine("TestObj value: " + TestObj.Value);
                 return sb.ToString();
             }
         }
@@ -81,6 +99,7 @@ namespace LibSample
             public ClientListener()
             {
                 _serializer = new NetSerializer();
+                _serializer.RegisterCustomType<SampleNetSerializable>();
                 _serializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
             }
 
@@ -93,10 +112,13 @@ namespace LibSample
                     SomeIntArray = new[] {6, 5, 4},
                     SomeString = "Test String",
                     SomeVector2 = new SomeVector2(4, 5),
-                    SomeVectors = new[] {new SomeVector2(1, 2), new SomeVector2(3, 4)}
+                    SomeVectors = new[] {new SomeVector2(1, 2), new SomeVector2(3, 4)},
+                    TestObj = new SampleNetSerializable { Value = 5 }
                 };
-                Console.WriteLine("Sending to server:\n" + sp );
-                peer.Send(_serializer.Serialize(sp), SendOptions.ReliableOrdered);
+                
+                byte[] data = _serializer.Serialize(sp);
+                Console.WriteLine("Sending to server (length {0}):\n{1}", data.Length, sp);
+                peer.Send(data, SendOptions.ReliableOrdered);
             }
 
             public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
@@ -134,12 +156,15 @@ namespace LibSample
             {
                 _netSerializer = new NetSerializer();
                 _netSerializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
-                _netSerializer.Subscribe<SamplePacket>(OnSamplePacketReceived);
+                _netSerializer.RegisterCustomType<SampleNetSerializable>();
+
+                //user data support
+                _netSerializer.SubscribeReusable<SamplePacket, NetPeer>(OnSamplePacketReceived);
             }
 
-            private void OnSamplePacketReceived(SamplePacket samplePacket)
+            private void OnSamplePacketReceived(SamplePacket samplePacket, NetPeer peer)
             {
-                Console.WriteLine("[Server] ReceivedPacket:\n" + samplePacket);
+                Console.WriteLine("[Server] ReceivedPacket from {0}:\n{1}", peer.EndPoint, samplePacket);
             }
 
             public void OnPeerConnected(NetPeer peer)
@@ -165,7 +190,7 @@ namespace LibSample
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
             {
                 Console.WriteLine("[Server] received data. Processing...");
-                _netSerializer.ReadAllPackets(reader, true);
+                _netSerializer.ReadAllPackets(reader, peer);
             }
 
             public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
@@ -201,6 +226,7 @@ namespace LibSample
             };
 
             NetSerializer netSerializer = new NetSerializer();
+            netSerializer.RegisterCustomType<SampleNetSerializable>();
             netSerializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
 
             //Prewarm cpu
@@ -244,7 +270,7 @@ namespace LibSample
             {
                 netDataWriter.Put(samplePacket.SomeFloat);
                 netDataWriter.Put(samplePacket.SomeString);
-                netDataWriter.Put(samplePacket.SomeIntArray);
+                netDataWriter.PutArray(samplePacket.SomeIntArray);
                 netDataWriter.Put(samplePacket.SomeVector2.X);
                 netDataWriter.Put(samplePacket.SomeVector2.Y);
                 netDataWriter.Put(samplePacket.SomeVectors.Length);
@@ -254,6 +280,7 @@ namespace LibSample
                     netDataWriter.Put(samplePacket.SomeVectors[j].Y);
                 }
                 netDataWriter.Put(samplePacket.EmptyString);
+                netDataWriter.Put(samplePacket.TestObj.Value);
             }
             stopwatch.Stop();
             Console.WriteLine("DataWriter (raw put method calls) time: " + stopwatch.ElapsedMilliseconds + " ms");
