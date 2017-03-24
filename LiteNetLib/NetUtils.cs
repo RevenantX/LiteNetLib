@@ -1,9 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 #if WINRT && !UNITY_EDITOR
 using Windows.Networking;
 using Windows.Networking.Connectivity;
 #else
-using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
@@ -27,14 +28,22 @@ namespace LiteNetLib
     }
 #endif
 
-    static class NetUtils
+    [Flags]
+    public enum LocalAddrType
     {
-        public static int RelativeSequenceNumber(int number, int expected)
+        IPv4 = 1,
+        IPv6 = 2,
+        All = 3
+    }
+
+    public static class NetUtils
+    {
+        internal static int RelativeSequenceNumber(int number, int expected)
         {
             return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
         }
 
-        public static int GetDividedPacketsCount(int size, int mtu)
+        internal static int GetDividedPacketsCount(int size, int mtu)
         {
             return (size / mtu) + (size % mtu == 0 ? 0 : 1);
         }
@@ -70,32 +79,41 @@ namespace LiteNetLib
 #endif
         }
 
-        public static string GetLocalIp(bool preferIPv4 = false)
+        public static void GetLocalIpList(List<string> targetList, LocalAddrType addrType)
         {
+            bool ipv4 = (addrType & LocalAddrType.IPv4) == LocalAddrType.IPv4;
+            bool ipv6 = (addrType & LocalAddrType.IPv6) == LocalAddrType.IPv6;
 #if WINRT && !UNITY_EDITOR
             foreach (HostName localHostName in NetworkInformation.GetHostNames())
             {
-                if (localHostName.IPInformation != null)
+                if (localHostName.IPInformation != null && 
+                    ((ipv4 && localHostName.Type == HostNameType.Ipv4) ||
+                     (ipv6 && localHostName.Type == HostNameType.Ipv6)))
                 {
-                    return localHostName.ToString();
+                    targetList.Add(localHostName.ToString());
                 }
             }
 #else
-            IPAddress lastAddress = null;
-            IPAddress lastAddressV6 = null;
-
             try
             {
                 foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
                 {
+                    //Skip loopback
                     if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback)
                         continue;
-                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+
+                    var ipProps = ni.GetIPProperties();
+
+                    //Skip address without gateway
+                    if (ipProps.GatewayAddresses.Count == 0)
+                        continue;
+
+                    foreach (UnicastIPAddressInformation ip in ipProps.UnicastAddresses)
                     {
-                        if (ip.Address.AddressFamily == AddressFamily.InterNetworkV6)
-                            lastAddressV6 = ip.Address;
-                        else
-                            lastAddress = ip.Address;
+                        var address = ip.Address;
+                        if ((ipv4 && address.AddressFamily == AddressFamily.InterNetwork) ||
+                            (ipv6 && address.AddressFamily == AddressFamily.InterNetworkV6))
+                            targetList.Add(address.ToString());
                     }
                 }
             }
@@ -104,8 +122,8 @@ namespace LiteNetLib
                 //ignored
             }
 
-            //Fallback mode
-            if ((lastAddress == null && lastAddressV6 == null) || (lastAddress == null && preferIPv4))
+            //Fallback mode (unity android)
+            if (targetList.Count == 0)
             {
 #if NETCORE
                 var hostTask = Dns.GetHostEntryAsync(Dns.GetHostName());
@@ -116,26 +134,30 @@ namespace LiteNetLib
 #endif
                 foreach (IPAddress ip in host.AddressList)
                 {
-                    if (ip.AddressFamily == AddressFamily.InterNetworkV6)
-                        lastAddressV6 = ip;
-                    else
-                        lastAddress = ip;
+                    if((ipv4 && ip.AddressFamily == AddressFamily.InterNetwork) ||
+                       (ipv6 && ip.AddressFamily == AddressFamily.InterNetworkV6))
+                        targetList.Add(ip.ToString());
                 }
             }
-
-            //Prefer IPv4
-            if (preferIPv4 && lastAddress != null)
-            {
-                return lastAddress.ToString();
-            }
-
-            //Try IPv6 then IPv4
-            if (lastAddressV6 != null)
-                return lastAddressV6.ToString();
-            if (lastAddress != null)
-                return lastAddress.ToString();
 #endif
-            return preferIPv4 ? "127.0.0.1" : "::1";
+            if (targetList.Count == 0)
+            {
+                if(ipv4)
+                    targetList.Add("127.0.0.1");
+                if(ipv6)
+                    targetList.Add("::1");
+            }
+        }
+
+        private static readonly List<string> IpList = new List<string>();
+        public static string GetLocalIp(LocalAddrType addrType)
+        {
+            lock (IpList)
+            {
+                IpList.Clear();
+                GetLocalIpList(IpList, addrType);
+                return IpList.Count == 0 ? string.Empty : IpList[0];
+            }
         }
 
         private static readonly object DebugLogLock = new object();
