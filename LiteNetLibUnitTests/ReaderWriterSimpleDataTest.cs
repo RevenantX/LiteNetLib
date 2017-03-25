@@ -8,51 +8,54 @@ namespace LiteNetLibUnitTests
     public class ReaderWriterSimpleDataTest
     {
         [Test]
-        public void WriteReadInt()
+        public void WriteReadBool()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(32);
+            ndw.Put(true);
 
             var ndr = new NetDataReader(ndw.Data);
-            var readInt = ndr.GetInt();
+            var readBool = ndr.GetBool();
 
-            Assert.AreEqual(readInt, 32);
+            Assert.AreEqual(readBool, true);
         }
 
         [Test]
-        public void WriteReadLong()
+        public void WriteReadBoolArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(64L);
+            ndw.PutArray(new[] {true, false, true, false, false});
 
             var ndr = new NetDataReader(ndw.Data);
-            var readLong = ndr.GetLong();
+            var readBoolArray = ndr.GetBoolArray();
 
-            Assert.AreEqual(readLong, 64L);
+            Assert.That(new[] {true, false, true, false, false}, Is.EqualTo(readBoolArray).AsCollection);
         }
 
         [Test]
-        public void WriteReadShort()
+        public void WriteReadByte()
         {
             var ndw = new NetDataWriter();
-            ndw.Put((short)16);
+            ndw.Put((byte) 8);
 
             var ndr = new NetDataReader(ndw.Data);
-            var readShort = ndr.GetShort();
+            var readByte = ndr.GetByte();
 
-            Assert.AreEqual(readShort, (short)16);
+            Assert.AreEqual(readByte, (byte) 8);
         }
 
         [Test]
-        public void WriteReadFloat()
+        public void WriteReadByteArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(3.1415f);
+            ndw.Put(new byte[] {1, 2, 4, 8, 16, byte.MaxValue, byte.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
-            var readFloat = ndr.GetFloat();
+            var readByteArray = new byte[7];
+            ndr.GetBytes(readByteArray, 7);
 
-            Assert.AreEqual(readFloat, 3.1415f);
+            Assert.That(
+                new byte[] {1, 2, 4, 8, 16, byte.MaxValue, byte.MinValue},
+                Is.EqualTo(readByteArray).AsCollection);
         }
 
         [Test]
@@ -68,75 +71,91 @@ namespace LiteNetLibUnitTests
         }
 
         [Test]
-        public void WriteReadULong()
+        public void WriteReadDoubleArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(64UL);
+            ndw.PutArray(new[] {1.1, 2.2, 3.3, 4.4, double.MaxValue, double.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
-            var readULong = ndr.GetULong();
+            var readDoubleArray = ndr.GetDoubleArray();
 
-            Assert.AreEqual(readULong, 64UL);
+            Assert.That(
+                new[] {1.1, 2.2, 3.3, 4.4, double.MaxValue, double.MinValue},
+                Is.EqualTo(readDoubleArray).AsCollection);
         }
 
         [Test]
-        public void WriteReadUInt()
+        public void WriteReadFloat()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(34U);
+            ndw.Put(3.1415f);
 
             var ndr = new NetDataReader(ndw.Data);
-            var readUInt = ndr.GetUInt();
+            var readFloat = ndr.GetFloat();
 
-            Assert.AreEqual(readUInt, 34U);
+            Assert.AreEqual(readFloat, 3.1415f);
         }
 
         [Test]
-        public void WriteReadUShort()
+        public void WriteReadFloatArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put((ushort)16);
+            ndw.PutArray(new[] {1.1f, 2.2f, 3.3f, 4.4f, float.MaxValue, float.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
-            var readUShort = ndr.GetUShort();
+            var readFloatArray = ndr.GetFloatArray();
 
-            Assert.AreEqual(readUShort, (ushort)16);
+            Assert.That(
+                new[] {1.1f, 2.2f, 3.3f, 4.4f, float.MaxValue, float.MinValue},
+                Is.EqualTo(readFloatArray).AsCollection);
         }
 
         [Test]
-        public void WriteReadSByte()
+        public void WriteReadInt()
         {
             var ndw = new NetDataWriter();
-            ndw.Put((sbyte)8);
+            ndw.Put(32);
 
             var ndr = new NetDataReader(ndw.Data);
-            var readSByte = ndr.GetSByte();
+            var readInt = ndr.GetInt();
 
-            Assert.AreEqual(readSByte, (sbyte)8);
+            Assert.AreEqual(readInt, 32);
         }
 
         [Test]
-        public void WriteReadByte()
+        public void WriteReadIntArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put((byte)8);
+            ndw.PutArray(new[] {1, 2, 3, 4, 5, 6, 7, int.MaxValue, int.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
-            var readByte = ndr.GetByte();
+            var readIntArray = ndr.GetIntArray();
 
-            Assert.AreEqual(readByte, (byte)8);
+            Assert.That(new[] {1, 2, 3, 4, 5, 6, 7, int.MaxValue, int.MinValue}, Is.EqualTo(readIntArray).AsCollection);
         }
 
         [Test]
-        public void WriteReadBool()
+        public void WriteReadLong()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(true);
+            ndw.Put(64L);
 
             var ndr = new NetDataReader(ndw.Data);
-            var readBool = ndr.GetBool();
+            var readLong = ndr.GetLong();
 
-            Assert.AreEqual(readBool, true);
+            Assert.AreEqual(readLong, 64L);
+        }
+
+        [Test]
+        public void WriteReadLongArray()
+        {
+            var ndw = new NetDataWriter();
+            ndw.PutArray(new[] {1L, 2L, 3L, 4L, long.MaxValue, long.MinValue});
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readLongArray = ndr.GetLongArray();
+
+            Assert.That(new[] {1L, 2L, 3L, 4L, long.MaxValue, long.MinValue}, Is.EqualTo(readLongArray).AsCollection);
         }
 
         [Test]
@@ -152,6 +171,44 @@ namespace LiteNetLibUnitTests
         }
 
         [Test]
+        public void WriteReadSByte()
+        {
+            var ndw = new NetDataWriter();
+            ndw.Put((sbyte) 8);
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readSByte = ndr.GetSByte();
+
+            Assert.AreEqual(readSByte, (sbyte) 8);
+        }
+
+        [Test]
+        public void WriteReadShort()
+        {
+            var ndw = new NetDataWriter();
+            ndw.Put((short) 16);
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readShort = ndr.GetShort();
+
+            Assert.AreEqual(readShort, (short) 16);
+        }
+
+        [Test]
+        public void WriteReadShortArray()
+        {
+            var ndw = new NetDataWriter();
+            ndw.PutArray(new short[] {1, 2, 3, 4, 5, 6, short.MaxValue, short.MinValue});
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readShortArray = ndr.GetShortArray();
+
+            Assert.That(
+                new short[] {1, 2, 3, 4, 5, 6, short.MaxValue, short.MinValue},
+                Is.EqualTo(readShortArray).AsCollection);
+        }
+
+        [Test]
         public void WriteReadString()
         {
             var ndw = new NetDataWriter();
@@ -159,129 +216,84 @@ namespace LiteNetLibUnitTests
 
             var ndr = new NetDataReader(ndw.Data);
             var readString = ndr.GetString(10);
-            
+
             Assert.AreEqual(readString, "String");
-        }
-
-        [Test]
-        public void WriteReadByteArray()
-        {
-            var ndw = new NetDataWriter();
-            ndw.Put(new byte[]{1, 2, 4, 8, 16, byte.MaxValue, byte.MinValue});
-
-            var ndr = new NetDataReader(ndw.Data);
-            var readByteArray = new byte[7];
-            ndr.GetBytes(readByteArray, 7);
-
-            Assert.That(new byte[] { 1, 2, 4, 8, 16, byte.MaxValue, byte.MinValue }, Is.EqualTo(readByteArray).AsCollection);
-        }
-
-        [Test]
-        public void WriteReadBoolArray()
-        {
-            var ndw = new NetDataWriter();
-            ndw.PutArray(new[] {true, false, true, false, false});
-
-            var ndr = new NetDataReader(ndw.Data);
-            var readBoolArray = ndr.GetBoolArray();
-
-            Assert.That(new[] { true, false, true, false, false }, Is.EqualTo(readBoolArray).AsCollection);
-        }
-
-        [Test]
-        public void WriteReadShortArray()
-        {
-            var ndw = new NetDataWriter();
-            ndw.PutArray(new short[]{1,2,3,4,5,6, short.MaxValue, short.MinValue});
-
-            var ndr = new NetDataReader(ndw.Data);
-            var readShortArray = ndr.GetShortArray();
-
-            Assert.That(new short[]{1,2,3,4,5,6, short.MaxValue, short.MinValue}, Is.EqualTo(readShortArray).AsCollection);
-        }
-
-        [Test]
-        public void WriteReadLongArray()
-        {
-            var ndw = new NetDataWriter();
-            ndw.PutArray(new long[]{1L, 2L, 3L, 4L, long.MaxValue, long.MinValue});
-
-            var ndr = new NetDataReader(ndw.Data);
-            var readLongArray = ndr.GetLongArray();
-
-            Assert.That(new long[]{1L, 2L, 3L, 4L, long.MaxValue, long.MinValue}, Is.EqualTo(readLongArray).AsCollection);
-        }
-
-        [Test]
-        public void WriteReadULongArray()
-        {
-            var ndw = new NetDataWriter();
-            ndw.PutArray(new ulong[]{1UL, 2UL, 3UL, 4UL, 5UL, ulong.MaxValue, ulong.MinValue});
-
-            var ndr = new NetDataReader(ndw.Data);
-            var readULongArray = ndr.GetULongArray();
-
-            Assert.That(new ulong[]{1UL, 2UL, 3UL, 4UL, 5UL, ulong.MaxValue, ulong.MinValue}, Is.EqualTo(readULongArray).AsCollection);
-        }
-
-        [Test]
-        public void WriteReadIntArray()
-        {
-            var ndw = new NetDataWriter();
-            ndw.PutArray(new int[] {1,2,3,4,5,6,7,int.MaxValue, int.MinValue});
-
-            var ndr = new NetDataReader(ndw.Data);
-            var readIntArray = ndr.GetIntArray();
-
-            Assert.That(new int[] {1,2,3,4,5,6,7,int.MaxValue, int.MinValue}, Is.EqualTo(readIntArray).AsCollection);
-        }
-
-        [Test]
-        public void WriteReadUIntArray()
-        {
-            var ndw = new NetDataWriter();
-            ndw.PutArray(new uint[]{1U,2U,3U,4U,5U,6U, uint.MaxValue, uint.MinValue});
-
-            var ndr = new NetDataReader(ndw.Data);
-            var readUIntArray = ndr.GetUIntArray();
-
-            Assert.That(new uint[]{1U,2U,3U,4U,5U,6U, uint.MaxValue, uint.MinValue}, Is.EqualTo(readUIntArray).AsCollection);
-        }
-
-        [Test]
-        public void WriteReadFloatArray()
-        {
-            var ndw = new NetDataWriter();
-            ndw.PutArray(new float[]{1.1f, 2.2f, 3.3f, 4.4f, float.MaxValue, float.MinValue});
-
-            var ndr = new NetDataReader(ndw.Data);
-            var readFloatArray = ndr.GetFloatArray();
-
-            Assert.That(new float[]{1.1f, 2.2f, 3.3f, 4.4f, float.MaxValue, float.MinValue}, Is.EqualTo(readFloatArray).AsCollection);
-        }
-
-        [Test]
-        public void WriteReadDoubleArray()
-        {
-            var ndw = new NetDataWriter();
-            ndw.PutArray(new double[]{1.1, 2.2, 3.3, 4.4, double.MaxValue, double.MinValue});
-
-            var ndr = new NetDataReader(ndw.Data);
-            var readDoubleArray = ndr.GetDoubleArray();
-
-            Assert.That(new double[]{1.1, 2.2, 3.3, 4.4, double.MaxValue, double.MinValue}, Is.EqualTo(readDoubleArray).AsCollection);
         }
 
         [Test]
         public void WriteReadStringArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new string[] {"First", "Second", "Third", "Fourth"});
+            ndw.PutArray(new[] {"First", "Second", "Third", "Fourth"});
 
             var ndr = new NetDataReader(ndw.Data);
             var readStringArray = ndr.GetStringArray(10);
 
-            Assert.That(new string[] {"First", "Second", "Third", "Fourth"}, Is.EqualTo(readStringArray).AsCollection);
+            Assert.That(new[] {"First", "Second", "Third", "Fourth"}, Is.EqualTo(readStringArray).AsCollection);
+        }
+
+        [Test]
+        public void WriteReadUInt()
+        {
+            var ndw = new NetDataWriter();
+            ndw.Put(34U);
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readUInt = ndr.GetUInt();
+
+            Assert.AreEqual(readUInt, 34U);
+        }
+
+        [Test]
+        public void WriteReadUIntArray()
+        {
+            var ndw = new NetDataWriter();
+            ndw.PutArray(new[] {1U, 2U, 3U, 4U, 5U, 6U, uint.MaxValue, uint.MinValue});
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readUIntArray = ndr.GetUIntArray();
+
+            Assert.That(
+                new[] {1U, 2U, 3U, 4U, 5U, 6U, uint.MaxValue, uint.MinValue},
+                Is.EqualTo(readUIntArray).AsCollection);
+        }
+
+        [Test]
+        public void WriteReadULong()
+        {
+            var ndw = new NetDataWriter();
+            ndw.Put(64UL);
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readULong = ndr.GetULong();
+
+            Assert.AreEqual(readULong, 64UL);
+        }
+
+        [Test]
+        public void WriteReadULongArray()
+        {
+            var ndw = new NetDataWriter();
+            ndw.PutArray(new[] {1UL, 2UL, 3UL, 4UL, 5UL, ulong.MaxValue, ulong.MinValue});
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readULongArray = ndr.GetULongArray();
+
+            Assert.That(
+                new[] {1UL, 2UL, 3UL, 4UL, 5UL, ulong.MaxValue, ulong.MinValue},
+                Is.EqualTo(readULongArray).AsCollection);
+        }
+
+        [Test]
+        public void WriteReadUShort()
+        {
+            var ndw = new NetDataWriter();
+            ndw.Put((ushort) 16);
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readUShort = ndr.GetUShort();
+
+            Assert.AreEqual(readUShort, (ushort) 16);
         }
     }
 }
