@@ -180,7 +180,7 @@ namespace LiteNetLibUnitTests
         public void WriteReadBoolArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new[] {true, false, true, false, false});
+            ndw.PutArray(new[] {true, false, true, false, false});
 
             var ndr = new NetDataReader(ndw.Data);
             var readBoolArray = ndr.GetBoolArray();
@@ -192,7 +192,7 @@ namespace LiteNetLibUnitTests
         public void WriteReadShortArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new short[]{1,2,3,4,5,6, short.MaxValue, short.MinValue});
+            ndw.PutArray(new short[]{1,2,3,4,5,6, short.MaxValue, short.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readShortArray = ndr.GetShortArray();
@@ -204,7 +204,7 @@ namespace LiteNetLibUnitTests
         public void WriteReadLongArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new long[]{1L, 2L, 3L, 4L, long.MaxValue, long.MinValue});
+            ndw.PutArray(new long[]{1L, 2L, 3L, 4L, long.MaxValue, long.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readLongArray = ndr.GetLongArray();
@@ -216,7 +216,7 @@ namespace LiteNetLibUnitTests
         public void WriteReadULongArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new ulong[]{1UL, 2UL, 3UL, 4UL, 5UL, ulong.MaxValue, ulong.MinValue});
+            ndw.PutArray(new ulong[]{1UL, 2UL, 3UL, 4UL, 5UL, ulong.MaxValue, ulong.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readULongArray = ndr.GetULongArray();
@@ -228,7 +228,7 @@ namespace LiteNetLibUnitTests
         public void WriteReadIntArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new int[] {1,2,3,4,5,6,7,int.MaxValue, int.MinValue});
+            ndw.PutArray(new int[] {1,2,3,4,5,6,7,int.MaxValue, int.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readIntArray = ndr.GetIntArray();
@@ -240,7 +240,7 @@ namespace LiteNetLibUnitTests
         public void WriteReadUIntArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new uint[]{1U,2U,3U,4U,5U,6U, uint.MaxValue, uint.MinValue});
+            ndw.PutArray(new uint[]{1U,2U,3U,4U,5U,6U, uint.MaxValue, uint.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readUIntArray = ndr.GetUIntArray();
@@ -252,7 +252,7 @@ namespace LiteNetLibUnitTests
         public void WriteReadFloatArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new float[]{1.1f, 2.2f, 3.3f, 4.4f, float.MaxValue, float.MinValue});
+            ndw.PutArray(new float[]{1.1f, 2.2f, 3.3f, 4.4f, float.MaxValue, float.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readFloatArray = ndr.GetFloatArray();
@@ -264,7 +264,7 @@ namespace LiteNetLibUnitTests
         public void WriteReadDoubleArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new double[]{1.1, 2.2, 3.3, 4.4, double.MaxValue, double.MinValue});
+            ndw.PutArray(new double[]{1.1, 2.2, 3.3, 4.4, double.MaxValue, double.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readDoubleArray = ndr.GetDoubleArray();
@@ -276,7 +276,7 @@ namespace LiteNetLibUnitTests
         public void WriteReadStringArray()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new string[] {"First", "Second", "Third", "Fourth"});
+            ndw.PutArray(new string[] {"First", "Second", "Third", "Fourth"});
 
             var ndr = new NetDataReader(ndw.Data);
             var readStringArray = ndr.GetStringArray(10);
