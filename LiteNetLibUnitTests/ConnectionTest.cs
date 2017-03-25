@@ -11,6 +11,9 @@ namespace LiteNetLibUnitTests
     [TestFixture]
     public class LiteNetLibTest
     {
+        private const int Port = 9050;
+        private const string ServerName = "test_server";
+
         private EventBasedNetListener _serverListener = new EventBasedNetListener();
         private EventBasedNetListener _clientListener1 = new EventBasedNetListener();
         private EventBasedNetListener _clientListener2 = new EventBasedNetListener();
@@ -23,8 +26,6 @@ namespace LiteNetLibUnitTests
         private NetManager _client3;
         private NetManager _client4;
 
-        private const string ServerName = "test_server";
-
         [SetUp]
         public void Init()
         {
@@ -34,7 +35,7 @@ namespace LiteNetLibUnitTests
             _client3 = new NetManager(_clientListener3, ServerName);
             _client4 = new NetManager(_clientListener4, ServerName);
 
-            if (!_server.Start(9050))
+            if (!_server.Start(Port))
             {
                 Assert.Fail("Server start failed");
             }
@@ -76,75 +77,40 @@ namespace LiteNetLibUnitTests
         [Test, Timeout(2000)]
         public void ConnectionByIpV4()
         {
-            _server.MaxConnectAttempts = 2;
-            bool connected = false;
-            EventBasedNetListener.OnPeerConnected action = peer =>
-            {
-                //TODO: Identify user
-                connected = true;
-            };
-           
-            _serverListener.PeerConnectedEvent += action;
+            _client1.Connect("127.0.0.1", Port);
 
-            _client1.Connect("127.0.0.1", 9050);
-
-            while (!connected)
+            while (_server.PeersCount != 1)
             {
                 Thread.Sleep(15);
                 _server.PollEvents();
             }
-
-            Assert.AreEqual(connected, true);
+            
             Assert.AreEqual(_server.PeersCount, 1);
             Assert.AreEqual(_client1.PeersCount, 1);
-
-            foreach (var netPeer in _client1.GetPeers())
-            {
-                _client1.DisconnectPeer(netPeer);
-            }
-            
-            _clientListener1.PeerConnectedEvent -= action;
         }
 
         [Test, Timeout(2000)]
         public void ConnectionByIpV6()
         {
-            bool connected = false;
-            EventBasedNetListener.OnPeerConnected action = peer =>
-            {
-                //TODO: Identify user
-                connected = true;
-            };
+            _client1.Connect("::1", Port);
 
-            _serverListener.PeerConnectedEvent += action;
-
-            _client1.Connect("::1", 9050);
-
-            while (!connected)
+            while (_server.PeersCount != 1)
             {
                 Thread.Sleep(15);
                 _server.PollEvents();
             }
 
-            Assert.AreEqual(connected, true);
             Assert.AreEqual(_server.PeersCount, 1);
             Assert.AreEqual(_client1.PeersCount, 1);
-
-            foreach (var netPeer in _client1.GetPeers())
-            {
-                _client1.DisconnectPeer(netPeer);
-            }
-
-            _clientListener1.PeerConnectedEvent -= action;
         }
 
         [Test, Timeout(2000)]
         public void SendRawDataToAll()
         {
-            _client1.Connect("127.0.0.1", 9050);
-            _client2.Connect("127.0.0.1", 9050);
-            _client3.Connect("127.0.0.1", 9050);
-            _client4.Connect("127.0.0.1", 9050);
+            _client1.Connect("127.0.0.1", Port);
+            _client2.Connect("127.0.0.1", Port);
+            _client3.Connect("127.0.0.1", Port);
+            _client4.Connect("127.0.0.1", Port);
 
             while (_server.PeersCount != 4)
             {
@@ -189,6 +155,72 @@ namespace LiteNetLibUnitTests
             Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
             Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
             Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
+        }
+
+        [Test, Timeout(2000)]
+        public void DiscoveryBroadcastTest()
+        {
+            _server.DiscoveryEnabled = true;
+
+            var writer = new NetDataWriter();
+            writer.Put("Client request");
+
+            _serverListener.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
+            {
+                var serverWriter = new NetDataWriter();
+                writer.Put("Server reponse");
+                _server.SendDiscoveryResponse(serverWriter, point);
+            };
+
+            _clientListener1.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
+            {
+                if (type == UnconnectedMessageType.DiscoveryResponse)
+                {
+                    _client1.Connect(point);
+                }
+            };
+            _clientListener2.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
+            {
+                if (type == UnconnectedMessageType.DiscoveryResponse)
+                {
+                    _client2.Connect(point);
+                }
+            };
+            _clientListener3.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
+            {
+                if (type == UnconnectedMessageType.DiscoveryResponse)
+                {
+                    _client3.Connect(point);
+                }
+            };
+            _clientListener4.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
+            {
+                if (type == UnconnectedMessageType.DiscoveryResponse)
+                {
+                    _client4.Connect(point);
+                }
+            };
+
+            _client1.SendDiscoveryRequest(writer, Port);
+            _client2.SendDiscoveryRequest(writer, Port);
+            _client3.SendDiscoveryRequest(writer, Port);
+            _client4.SendDiscoveryRequest(writer, Port);
+
+            while (_server.PeersCount != 4)
+            {
+                _server.PollEvents();
+                _client1.PollEvents();
+                _client2.PollEvents();
+                _client3.PollEvents();
+                _client4.PollEvents();
+                Thread.Sleep(15);
+            }
+
+            Assert.AreEqual(_server.PeersCount, 4);
+            Assert.AreEqual(_client1.PeersCount, 1);
+            Assert.AreEqual(_client2.PeersCount, 1);
+            Assert.AreEqual(_client3.PeersCount, 1);
+            Assert.AreEqual(_client4.PeersCount, 1);
         }
     }
 }
