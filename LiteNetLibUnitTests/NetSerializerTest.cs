@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using LiteNetLib.Utils;
 using NUnit.Framework;
 
@@ -7,147 +8,205 @@ namespace LiteNetLibUnitTests
     [TestFixture]
     public class NetSerializerTest
     {
-        private struct SerializableDataType : INetSerializable, IEquatable<SerializableDataType>
+        [SetUp]
+        public void Init()
         {
-            public int IntValue;
-            public string StringValue;
-
-            public static void Serialize(NetDataWriter writer, SerializableDataType data)
+            _samplePackage = new SamplePacket
             {
-                data.Serialize(writer);
+                SomeFloat = 3.42f,
+                SomeIntArray = new[] {6, 5, 4},
+                SomeString = "Test String",
+                SomeVector2 = new SomeVector2(4, 5),
+                SomeVectors = new[] {new SomeVector2(1, 2), new SomeVector2(3, 4)},
+                TestObj = new SampleNetSerializable {Value = 5}
+            };
+
+            _serializer = new NetSerializer();
+            _serializer.RegisterCustomType<SampleNetSerializable>();
+            _serializer.RegisterCustomType(SomeVector2.Serialize, SomeVector2.Deserialize);
+        }
+
+        private SamplePacket _samplePackage;
+        private NetSerializer _serializer;
+
+        private struct SomeVector2 : IEquatable<SomeVector2>
+        {
+            public int X;
+            public int Y;
+
+            public SomeVector2(int x, int y)
+            {
+                X = x;
+                Y = y;
             }
 
-            public static SerializableDataType Deserialize(NetDataReader reader)
+            public static void Serialize(NetDataWriter writer, SomeVector2 vector)
             {
-                var data = new SerializableDataType();
-
-                data.Desereialize(reader);
-
-                return data;
+                writer.Put(vector.X);
+                writer.Put(vector.Y);
             }
+
+            public static SomeVector2 Deserialize(NetDataReader reader)
+            {
+                var res = new SomeVector2();
+                res.X = reader.GetInt();
+                res.Y = reader.GetInt();
+                return res;
+            }
+
+            public bool Equals(SomeVector2 other)
+            {
+                return X == other.X && Y == other.Y;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj))
+                {
+                    return false;
+                }
+                return obj is SomeVector2 && Equals((SomeVector2) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return (X * 397) ^ Y;
+                }
+            }
+        }
+
+        private struct SampleNetSerializable : INetSerializable, IEquatable<SampleNetSerializable>
+        {
+            public int Value;
 
             public void Serialize(NetDataWriter writer)
             {
-                writer.Put(IntValue);
-                writer.Put(StringValue.Length);
-                writer.Put(StringValue);
+                writer.Put(Value);
             }
 
             public void Desereialize(NetDataReader reader)
             {
-                IntValue = reader.GetInt();
-                var stringLen = reader.GetInt();
-                StringValue = reader.GetString(stringLen);
+                Value = reader.GetInt();
             }
 
-            public bool Equals(SerializableDataType other)
+            public bool Equals(SampleNetSerializable other)
             {
-                return IntValue == other.IntValue && string.Equals(StringValue, other.StringValue);
+                return Value == other.Value;
             }
 
             public override bool Equals(object obj)
             {
                 if (ReferenceEquals(null, obj))
+                {
                     return false;
-                return obj is SerializableDataType && Equals((SerializableDataType) obj);
+                }
+                return obj is SampleNetSerializable && Equals((SampleNetSerializable) obj);
             }
 
             public override int GetHashCode()
             {
-                unchecked
-                {
-                    return (IntValue * 397) ^ (StringValue != null ? StringValue.GetHashCode() : 0);
-                }
+                return Value;
             }
         }
-        private class CustomPackage : IEquatable<CustomPackage>
-        {
-            public SerializableDataType Data;
-            public string String;
-            public float Single;
 
-            public bool Equals(CustomPackage other)
+        private class SamplePacket : IEquatable<SamplePacket>
+        {
+            public string EmptyString { get; set; }
+            public float SomeFloat { get; set; }
+            public int[] SomeIntArray { get; set; }
+            public string SomeString { get; set; }
+            public SomeVector2 SomeVector2 { get; set; }
+            public SomeVector2[] SomeVectors { get; set; }
+            public SampleNetSerializable TestObj { get; set; }
+
+            public bool Equals(SamplePacket other)
             {
                 if (ReferenceEquals(null, other))
+                {
                     return false;
+                }
                 if (ReferenceEquals(this, other))
+                {
                     return true;
-                return Data.Equals(other.Data) && string.Equals(String, other.String) && Single.Equals(other.Single);
+                }
+                return string.Equals(SomeString, other.SomeString) && SomeFloat.Equals(other.SomeFloat) &&
+                       SomeIntArray.SequenceEqual(other.SomeIntArray) && SomeVector2.Equals(other.SomeVector2) &&
+                       SomeVectors.SequenceEqual(other.SomeVectors) && string.Equals(EmptyString, other.EmptyString) &&
+                       TestObj.Equals(other.TestObj);
             }
 
             public override bool Equals(object obj)
             {
                 if (ReferenceEquals(null, obj))
+                {
                     return false;
+                }
                 if (ReferenceEquals(this, obj))
+                {
                     return true;
-                if (obj.GetType() != this.GetType())
+                }
+                if (obj.GetType() != GetType())
+                {
                     return false;
-                return Equals((CustomPackage) obj);
+                }
+                return Equals((SamplePacket) obj);
             }
 
             public override int GetHashCode()
             {
                 unchecked
                 {
-                    var hashCode = Data.GetHashCode();
-                    hashCode = (hashCode * 397) ^ (String != null ? String.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ Single.GetHashCode();
+                    var hashCode = SomeString != null ? SomeString.GetHashCode() : 0;
+                    hashCode = (hashCode * 397) ^ SomeFloat.GetHashCode();
+                    hashCode = (hashCode * 397) ^ (SomeIntArray != null ? GetHashCode(SomeIntArray) : 0);
+                    hashCode = (hashCode * 397) ^ SomeVector2.GetHashCode();
+                    hashCode = (hashCode * 397) ^ (SomeVectors != null ? GetHashCode(SomeVectors) : 0);
+                    hashCode = (hashCode * 397) ^ (EmptyString != null ? EmptyString.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ TestObj.GetHashCode();
                     return hashCode;
                 }
             }
-        }
 
-        private CustomPackage _customPackageCache;
-        private SerializableDataType _customDataCache;
-
-        [SetUp]
-        private void Init()
-        {
-            _customDataCache = new SerializableDataType() { IntValue = 10, StringValue = "String" };
-            _customPackageCache = new CustomPackage()
+            public int GetHashCode<T>(T[] array)
             {
-                Data = _customDataCache,
-                Single = 3.1415f,
-                String = "String",
-            };
+                unchecked
+                {
+                    if (array == null)
+                    {
+                        return 0;
+                    }
+                    int hash = 17;
+                    foreach (T element in array)
+                    {
+                        hash = hash * 31 + element.GetHashCode();
+                    }
+                    return hash;
+                }
+            }
         }
 
-        [Test, Timeout(2000)]
+        [Test]
+        [Timeout(2000)]
         public void CustomPackageTest()
         {
-            var serializer = new NetSerializer();
-
-            serializer.RegisterCustomType<SerializableDataType>();
-            
             var writer = new NetDataWriter();
-            serializer.Serialize(writer, _customPackageCache);
+            writer.Put(_serializer.Serialize(_samplePackage));
 
             var reader = new NetDataReader(writer.CopyData());
-            var deserializedPackage = serializer.ReadKnownPacket<CustomPackage>(reader);
+            SamplePacket readPackage = null;
 
-            Assert.AreEqual(_customPackageCache, deserializedPackage);
-        }
+            _serializer.SubscribeReusable<SamplePacket>(
+                packet =>
+                {
+                    readPackage = packet;
+                });
 
-        [Test, Timeout(2000)]
-        public void CustomPackageObservableTest()
-        {
-            var serializer = new NetSerializer();
+            _serializer.ReadAllPackets(reader);
 
-            serializer.RegisterCustomType<SerializableDataType>();
-            
-            var writer = new NetDataWriter();
-            serializer.Serialize(writer, _customPackageCache);
-
-            CustomPackage deserializedPackage = null;
-            serializer.Subscribe(
-                customPackage => deserializedPackage = customPackage,
-                () => new CustomPackage());
-
-            var reader = new NetDataReader(writer.CopyData());
-            serializer.ReadAllPackets(reader);
-
-            Assert.AreEqual(_customPackageCache, deserializedPackage);
+            Assert.NotNull(readPackage);
+            Assert.AreEqual(_samplePackage, readPackage);
         }
     }
 }
