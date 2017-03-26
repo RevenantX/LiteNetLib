@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace LiteNetLibUnitTests
 {
-    [TestFixture]
+    [TestFixture, Timeout(500)]
     public class ReaderWriterSimpleDataTest
     {
         [Test]
