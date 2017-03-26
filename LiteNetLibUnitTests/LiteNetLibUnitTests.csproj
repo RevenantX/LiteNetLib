@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionTest.cs" />
+    <Compile Include="Helper\NetManagerStack.cs" />
     <Compile Include="NetSerializerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReaderWriterSimpleDataTest.cs" />
@@ -57,5 +58,6 @@
       <Name>LiteNetLib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,235 +1,171 @@
 ﻿using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using LiteNetLib;
 using LiteNetLib.Utils;
+using LiteNetLibUnitTests.Helper;
 using NUnit.Framework;
 
 namespace LiteNetLibUnitTests
 {
-    [TestFixture]
-    public class LiteNetLibTest
+    [TestFixture, Timeout(2000)]
+    public class CommunicationTest
     {
         [SetUp]
         public void Init()
         {
-            _serverListener = new EventBasedNetListener();
-            _clientListener1 = new EventBasedNetListener();
-            _clientListener2 = new EventBasedNetListener();
-            _clientListener3 = new EventBasedNetListener();
-            _clientListener4 = new EventBasedNetListener();
-
-            _server = new NetManager(_serverListener, 60, ServerName);
-            _client1 = new NetManager(_clientListener1, ServerName);
-            _client2 = new NetManager(_clientListener2, ServerName);
-            _client3 = new NetManager(_clientListener3, ServerName);
-            _client4 = new NetManager(_clientListener4, ServerName);
-
-            if (!_server.Start(Port))
-            {
-                Assert.Fail("Server start failed");
-            }
-            Thread.Yield();
-
-            if (!_client1.Start())
-            {
-                Assert.Fail("Client1 start failed");
-            }
-            Thread.Yield();
-
-            if (!_client2.Start())
-            {
-                Assert.Fail("Client2 start failed");
-            }
-            Thread.Yield();
-
-            if (!_client3.Start())
-            {
-                Assert.Fail("Client3 start failed");
-            }
-            Thread.Yield();
-
-            if (!_client4.Start())
-            {
-                Assert.Fail("Client4 start failed");
-            }
-            Thread.Yield();
+            ManagerStack = new NetManagerStack(DefaultAppKey, DefaultPort);
         }
 
         [TearDown]
         public void TearDown()
         {
-            _client1.Stop();
-            _client2.Stop();
-            _server.Stop();
+            ManagerStack?.Dispose();
         }
 
-        private const int Port = 9050;
-        private const string ServerName = "test_server";
+        private const int DefaultPort = 9050;
+        private const string DefaultAppKey = "test_server";
 
-        private EventBasedNetListener _serverListener;
-        private EventBasedNetListener _clientListener1;
-        private EventBasedNetListener _clientListener2;
-        private EventBasedNetListener _clientListener3;
-        private EventBasedNetListener _clientListener4;
-
-        private NetManager _server;
-        private NetManager _client1;
-        private NetManager _client2;
-        private NetManager _client3;
-        private NetManager _client4;
+        public NetManagerStack ManagerStack { get; set; }
 
         [Test]
-        [Timeout(2000)]
+        public void HelperManagerStackTest()
+        {
+            Assert.AreEqual(ManagerStack.Client(1), ManagerStack.Client(1));
+            Assert.AreNotEqual(ManagerStack.Client(1), ManagerStack.Client(2));
+            Assert.AreEqual(ManagerStack.Client(2), ManagerStack.Client(2));
+
+            Assert.AreEqual(ManagerStack.Server(1), ManagerStack.Server(1));
+            Assert.AreNotEqual(ManagerStack.Server(1), ManagerStack.Client(1));
+            Assert.AreNotEqual(ManagerStack.Server(1), ManagerStack.Client(2));
+        }
+
+        [Test]
         public void ConnectionByIpV4()
         {
-            _client1.Connect("127.0.0.1", Port);
+            var server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
+            client.Connect("127.0.0.1", DefaultPort);
 
-            while (_server.PeersCount != 1)
+            while (server.PeersCount != 1)
             {
                 Thread.Sleep(15);
-                _server.PollEvents();
+                server.PollEvents();
             }
 
-            Assert.AreEqual(_server.PeersCount, 1);
-            Assert.AreEqual(_client1.PeersCount, 1);
+            Assert.AreEqual(server.PeersCount, 1);
+            Assert.AreEqual(client.PeersCount, 1);
         }
 
         [Test]
-        [Timeout(2000)]
         public void ConnectionByIpV6()
         {
-            _client1.Connect("::1", Port);
+            var server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
+            client.Connect("::1", DefaultPort);
 
-            while (_server.PeersCount != 1)
+            while (server.PeersCount != 1)
             {
                 Thread.Sleep(15);
-                _server.PollEvents();
+                server.PollEvents();
             }
 
-            Assert.AreEqual(_server.PeersCount, 1);
-            Assert.AreEqual(_client1.PeersCount, 1);
+            Assert.AreEqual(server.PeersCount, 1);
+            Assert.AreEqual(client.PeersCount, 1);
         }
 
         [Test]
-        [Timeout(2000)]
         public void DiscoveryBroadcastTest()
         {
-            _server.DiscoveryEnabled = true;
+            var server = ManagerStack.Server(1);
+            var clientCount = 10;
 
+            server.DiscoveryEnabled = true;
+            
             var writer = new NetDataWriter();
             writer.Put("Client request");
 
-            _serverListener.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
+            ManagerStack.ServerListener(1).NetworkReceiveUnconnectedEvent += (point, reader, type) =>
             {
                 var serverWriter = new NetDataWriter();
                 writer.Put("Server reponse");
-                _server.SendDiscoveryResponse(serverWriter, point);
+                server.SendDiscoveryResponse(serverWriter, point);
             };
 
-            _clientListener1.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
+            for (ushort i = 1; i <= clientCount; i++)
             {
-                if (type == UnconnectedMessageType.DiscoveryResponse)
+                var cache = i;
+                ManagerStack.ClientListener(i).NetworkReceiveUnconnectedEvent += (point, reader, type) =>
                 {
-                    _client1.Connect(point);
-                }
-            };
-            _clientListener2.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
-            {
-                if (type == UnconnectedMessageType.DiscoveryResponse)
-                {
-                    _client2.Connect(point);
-                }
-            };
-            _clientListener3.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
-            {
-                if (type == UnconnectedMessageType.DiscoveryResponse)
-                {
-                    _client3.Connect(point);
-                }
-            };
-            _clientListener4.NetworkReceiveUnconnectedEvent += (point, reader, type) =>
-            {
-                if (type == UnconnectedMessageType.DiscoveryResponse)
-                {
-                    _client4.Connect(point);
-                }
-            };
+                    Assert.AreEqual(type, UnconnectedMessageType.DiscoveryResponse);
+                    ManagerStack.Client(cache).Connect(point);
+                };
+            }
 
-            _client1.SendDiscoveryRequest(writer, Port);
-            _client2.SendDiscoveryRequest(writer, Port);
-            _client3.SendDiscoveryRequest(writer, Port);
-            _client4.SendDiscoveryRequest(writer, Port);
+            ManagerStack.ClientForeach((i, manager, l) => manager.SendDiscoveryRequest(writer, DefaultPort));
 
-            while (_server.PeersCount != 4)
+            while (server.PeersCount < clientCount)
             {
-                _server.PollEvents();
-                _client1.PollEvents();
-                _client2.PollEvents();
-                _client3.PollEvents();
-                _client4.PollEvents();
+                server.PollEvents();
+                ManagerStack.ClientForeach((i, manager, l) => manager.PollEvents());
+
                 Thread.Sleep(15);
             }
 
-            Assert.AreEqual(_server.PeersCount, 4);
-            Assert.AreEqual(_client1.PeersCount, 1);
-            Assert.AreEqual(_client2.PeersCount, 1);
-            Assert.AreEqual(_client3.PeersCount, 1);
-            Assert.AreEqual(_client4.PeersCount, 1);
+            Assert.AreEqual(server.PeersCount, clientCount);
+            ManagerStack.ClientForeach(
+                (i, manager, l) =>
+                {
+                    Assert.AreEqual(manager.PeersCount, 1);
+                });
         }
 
         [Test]
-        [Timeout(2000)]
         public void SendRawDataToAll()
         {
-            _client1.Connect("127.0.0.1", Port);
-            _client2.Connect("127.0.0.1", Port);
-            _client3.Connect("127.0.0.1", Port);
-            _client4.Connect("127.0.0.1", Port);
+            var clientCount = 10;
 
-            while (_server.PeersCount != 4)
+            var server = ManagerStack.Server(1);
+            
+            for (ushort i = 1; i <= clientCount; i++)
             {
-                Thread.Sleep(15);
-                _server.PollEvents();
+                ManagerStack.Client(i).Connect("127.0.0.1", DefaultPort);
             }
 
-            Assert.AreEqual(_server.PeersCount, 4);
-            Assert.AreEqual(_client1.PeersCount, 1);
-            Assert.AreEqual(_client2.PeersCount, 1);
-            Assert.AreEqual(_client3.PeersCount, 1);
-            Assert.AreEqual(_client4.PeersCount, 1);
-
-            var dataStack = new Stack<byte[]>(4);
-
-            _clientListener1.NetworkReceiveEvent += (peer, reader) => dataStack.Push(reader.Data);
-            _clientListener2.NetworkReceiveEvent += (peer, reader) => dataStack.Push(reader.Data);
-            _clientListener3.NetworkReceiveEvent += (peer, reader) => dataStack.Push(reader.Data);
-            _clientListener4.NetworkReceiveEvent += (peer, reader) => dataStack.Push(reader.Data);
-
-            var data = Encoding.Default.GetBytes("TextForTest");
-            _server.SendToAll(data, SendOptions.ReliableUnordered);
-
-            while (dataStack.Count != 4)
+            while (server.PeersCount < clientCount)
             {
-                _client1.PollEvents();
-                _client2.PollEvents();
-                _client3.PollEvents();
-                _client4.PollEvents();
+                Thread.Sleep(15);
+                server.PollEvents();
+            }
+
+            Assert.AreEqual(server.PeersCount, clientCount);
+            ManagerStack.ClientForeach((i, manager, l) => Assert.AreEqual(manager.PeersCount, 1));
+            
+            var dataStack = new Stack<byte[]>(clientCount);
+            
+            ManagerStack.ClientForeach(
+                (i, manager, l) => l.NetworkReceiveEvent += (peer, reader) => dataStack.Push(reader.Data));
+            
+            var data = Encoding.Default.GetBytes("TextForTest");
+            server.SendToAll(data, SendOptions.ReliableUnordered);
+
+            while (dataStack.Count < clientCount)
+            {
+                ManagerStack.ClientForeach((i, manager, l) => manager.PollEvents());
+
                 Thread.Sleep(10);
             }
 
-            Assert.AreEqual(dataStack.Count, 4);
+            Assert.AreEqual(dataStack.Count, clientCount);
 
-            Assert.AreEqual(_server.PeersCount, 4);
-            Assert.AreEqual(_client1.PeersCount, 1);
-            Assert.AreEqual(_client2.PeersCount, 1);
-            Assert.AreEqual(_client3.PeersCount, 1);
-            Assert.AreEqual(_client4.PeersCount, 1);
-
-            Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
-            Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
-            Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
-            Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
+            Assert.AreEqual(server.PeersCount, clientCount);
+            for (ushort i = 1; i <= clientCount; i++)
+            {
+                Assert.AreEqual(ManagerStack.Client(i).PeersCount, 1);
+                Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
+            }
         }
     }
 }
