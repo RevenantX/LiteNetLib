@@ -224,12 +224,3 @@ ModelManifest.xml
 
 # Rider
 .idea/
-
-# Unity
-LiteNetLibSampleUnity/Temp
-LiteNetLibSampleUnity/Library/
-LiteNetLibSampleUnity/*.sln
-LiteNetLibSampleUnity/*.csproj
-*.sln.iml
-
-.vscode
