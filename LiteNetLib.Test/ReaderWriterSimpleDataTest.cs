@@ -1,10 +1,10 @@
-﻿using LiteNetLib;
-using LiteNetLib.Utils;
+﻿using LiteNetLib.Utils;
 using NUnit.Framework;
 
-namespace LiteNetLibUnitTests
+namespace LiteNetLib.Test
 {
-    [TestFixture, Timeout(500)]
+    [TestFixture]
+    [Timeout(500)]
     public class ReaderWriterSimpleDataTest
     {
         [Test]

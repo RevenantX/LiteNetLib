@@ -1,2 +1,7 @@
 before_build:
   - nuget restore
+build:
+  project: LiteNetLib.sln
+test:
+  assemblies:
+    - '**\*.Test.dll'

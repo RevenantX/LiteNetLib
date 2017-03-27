@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using LiteNetLib;
+using LiteNetLib.Test.Helper;
 using LiteNetLib.Utils;
-using LiteNetLibUnitTests.Helper;
 using NUnit.Framework;
 
-namespace LiteNetLibUnitTests
+namespace LiteNetLib.Test
 {
-    [TestFixture, Timeout(2000)]
+    [TestFixture]
+    [Timeout(2000)]
     public class CommunicationTest
     {
         [SetUp]
@@ -27,18 +27,6 @@ namespace LiteNetLibUnitTests
         private const string DefaultAppKey = "test_server";
 
         public NetManagerStack ManagerStack { get; set; }
-
-        [Test]
-        public void HelperManagerStackTest()
-        {
-            Assert.AreEqual(ManagerStack.Client(1), ManagerStack.Client(1));
-            Assert.AreNotEqual(ManagerStack.Client(1), ManagerStack.Client(2));
-            Assert.AreEqual(ManagerStack.Client(2), ManagerStack.Client(2));
-
-            Assert.AreEqual(ManagerStack.Server(1), ManagerStack.Server(1));
-            Assert.AreNotEqual(ManagerStack.Server(1), ManagerStack.Client(1));
-            Assert.AreNotEqual(ManagerStack.Server(1), ManagerStack.Client(2));
-        }
 
         [Test]
         public void ConnectionByIpV4()
@@ -81,7 +69,7 @@ namespace LiteNetLibUnitTests
             var clientCount = 10;
 
             server.DiscoveryEnabled = true;
-            
+
             var writer = new NetDataWriter();
             writer.Put("Client request");
 
@@ -121,12 +109,24 @@ namespace LiteNetLibUnitTests
         }
 
         [Test]
+        public void HelperManagerStackTest()
+        {
+            Assert.AreEqual(ManagerStack.Client(1), ManagerStack.Client(1));
+            Assert.AreNotEqual(ManagerStack.Client(1), ManagerStack.Client(2));
+            Assert.AreEqual(ManagerStack.Client(2), ManagerStack.Client(2));
+
+            Assert.AreEqual(ManagerStack.Server(1), ManagerStack.Server(1));
+            Assert.AreNotEqual(ManagerStack.Server(1), ManagerStack.Client(1));
+            Assert.AreNotEqual(ManagerStack.Server(1), ManagerStack.Client(2));
+        }
+
+        [Test]
         public void SendRawDataToAll()
         {
             var clientCount = 10;
 
             var server = ManagerStack.Server(1);
-            
+
             for (ushort i = 1; i <= clientCount; i++)
             {
                 ManagerStack.Client(i).Connect("127.0.0.1", DefaultPort);
@@ -140,12 +140,12 @@ namespace LiteNetLibUnitTests
 
             Assert.AreEqual(server.PeersCount, clientCount);
             ManagerStack.ClientForeach((i, manager, l) => Assert.AreEqual(manager.PeersCount, 1));
-            
+
             var dataStack = new Stack<byte[]>(clientCount);
-            
+
             ManagerStack.ClientForeach(
                 (i, manager, l) => l.NetworkReceiveEvent += (peer, reader) => dataStack.Push(reader.Data));
-            
+
             var data = Encoding.Default.GetBytes("TextForTest");
             server.SendToAll(data, SendOptions.ReliableUnordered);
 

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLibWin81", "LiteNetL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSample", "LibSample\LibSample.csproj", "{EF232CBE-04C8-4FD9-AE26-2F7EBBE81699}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLibUnitTests", "LiteNetLibUnitTests\LiteNetLibUnitTests.csproj", "{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib.Tests", "LiteNetLib.Test\LiteNetLib.Tests.csproj", "{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

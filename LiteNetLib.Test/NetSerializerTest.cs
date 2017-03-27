@@ -3,7 +3,7 @@ using System.Linq;
 using LiteNetLib.Utils;
 using NUnit.Framework;
 
-namespace LiteNetLibUnitTests
+namespace LiteNetLib.Test
 {
     [TestFixture]
     public class NetSerializerTest
@@ -177,8 +177,8 @@ namespace LiteNetLibUnitTests
                     {
                         return 0;
                     }
-                    int hash = 17;
-                    foreach (T element in array)
+                    var hash = 17;
+                    foreach (var element in array)
                     {
                         hash = hash * 31 + element.GetHashCode();
                     }
