@@ -6,6 +6,7 @@ using NUnit.Framework;
 namespace LiteNetLib.Test
 {
     [TestFixture]
+    [Category("Serializer")]
     public class NetSerializerTest
     {
         [SetUp]

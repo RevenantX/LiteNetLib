@@ -5,6 +5,7 @@ namespace LiteNetLib.Test
 {
     [TestFixture]
     [Timeout(500)]
+    [Category("DataReaderWriter")]
     public class ReaderWriterSimpleDataTest
     {
         [Test]

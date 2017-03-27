@@ -9,6 +9,7 @@ namespace LiteNetLib.Test
 {
     [TestFixture]
     [Timeout(2000)]
+    [Category("Communication")]
     public class CommunicationTest
     {
         [SetUp]
