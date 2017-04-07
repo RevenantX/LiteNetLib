@@ -224,3 +224,5 @@ ModelManifest.xml
 
 # Rider
 .idea/
+*.sln.iml
+**/*.vscode

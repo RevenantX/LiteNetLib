@@ -300,6 +300,19 @@ namespace LiteNetLib.Utils
             return result;
         }
 
+        public string GetString()
+        {
+            int bytesCount = GetInt();
+            if (bytesCount <= 0)
+            {
+                return string.Empty;
+            }
+
+            string result = Encoding.UTF8.GetString(_data, _position, bytesCount);
+            _position += bytesCount;
+            return result;
+        }
+
         public byte[] GetRemainingBytes()
         {
             byte[] outgoingData = new byte[AvailableBytes];
