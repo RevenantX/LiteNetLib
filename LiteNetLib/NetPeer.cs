@@ -709,6 +709,9 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Flush all queued packets
+        /// </summary>
         public void Flush()
         {
             lock (_flushLock)

@@ -848,6 +848,20 @@ namespace LiteNetLib
         }
 
         /// <summary>
+        /// Flush all queued packets of all peers
+        /// </summary>
+        public void Flush()
+        {
+            lock (_peers)
+            {
+                for (int i = 0; i < _peers.Count; i++)
+                {
+                    _peers[i].Flush();
+                }
+            }
+        }
+
+        /// <summary>
         /// Receive all pending events. Call this in game update code
         /// </summary>
         public void PollEvents()
