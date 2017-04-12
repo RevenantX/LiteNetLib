@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using LiteNetLib.Utils;
+﻿using LiteNetLib.Utils;
 using NUnit.Framework;
 
 namespace LiteNetLib.Test
@@ -30,7 +28,7 @@ namespace LiteNetLib.Test
         private SamplePacket _samplePackage;
         private NetSerializer _serializer;
 
-        private struct SomeVector2 : IEquatable<SomeVector2>
+        private struct SomeVector2
         {
             public int X;
             public int Y;
@@ -54,31 +52,9 @@ namespace LiteNetLib.Test
                 res.Y = reader.GetInt();
                 return res;
             }
-
-            public bool Equals(SomeVector2 other)
-            {
-                return X == other.X && Y == other.Y;
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj))
-                {
-                    return false;
-                }
-                return obj is SomeVector2 && Equals((SomeVector2) obj);
-            }
-
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    return (X * 397) ^ Y;
-                }
-            }
         }
 
-        private struct SampleNetSerializable : INetSerializable, IEquatable<SampleNetSerializable>
+        private struct SampleNetSerializable : INetSerializable
         {
             public int Value;
 
@@ -91,28 +67,9 @@ namespace LiteNetLib.Test
             {
                 Value = reader.GetInt();
             }
-
-            public bool Equals(SampleNetSerializable other)
-            {
-                return Value == other.Value;
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj))
-                {
-                    return false;
-                }
-                return obj is SampleNetSerializable && Equals((SampleNetSerializable) obj);
-            }
-
-            public override int GetHashCode()
-            {
-                return Value;
-            }
         }
 
-        private class SamplePacket : IEquatable<SamplePacket>
+        private class SamplePacket
         {
             public string EmptyString { get; set; }
             public float SomeFloat { get; set; }
@@ -121,71 +78,15 @@ namespace LiteNetLib.Test
             public SomeVector2 SomeVector2 { get; set; }
             public SomeVector2[] SomeVectors { get; set; }
             public SampleNetSerializable TestObj { get; set; }
+        }
 
-            public bool Equals(SamplePacket other)
+        private static bool AreSame(string s1, string s2)
+        {
+            if (string.IsNullOrEmpty(s1) && string.IsNullOrEmpty(s2))
             {
-                if (ReferenceEquals(null, other))
-                {
-                    return false;
-                }
-                if (ReferenceEquals(this, other))
-                {
-                    return true;
-                }
-                return string.Equals(SomeString, other.SomeString) && SomeFloat.Equals(other.SomeFloat) &&
-                       SomeIntArray.SequenceEqual(other.SomeIntArray) && SomeVector2.Equals(other.SomeVector2) &&
-                       SomeVectors.SequenceEqual(other.SomeVectors) && string.Equals(EmptyString, other.EmptyString) &&
-                       TestObj.Equals(other.TestObj);
+                return true;
             }
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj))
-                {
-                    return false;
-                }
-                if (ReferenceEquals(this, obj))
-                {
-                    return true;
-                }
-                if (obj.GetType() != GetType())
-                {
-                    return false;
-                }
-                return Equals((SamplePacket) obj);
-            }
-
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    var hashCode = SomeString != null ? SomeString.GetHashCode() : 0;
-                    hashCode = (hashCode * 397) ^ SomeFloat.GetHashCode();
-                    hashCode = (hashCode * 397) ^ (SomeIntArray != null ? GetHashCode(SomeIntArray) : 0);
-                    hashCode = (hashCode * 397) ^ SomeVector2.GetHashCode();
-                    hashCode = (hashCode * 397) ^ (SomeVectors != null ? GetHashCode(SomeVectors) : 0);
-                    hashCode = (hashCode * 397) ^ (EmptyString != null ? EmptyString.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ TestObj.GetHashCode();
-                    return hashCode;
-                }
-            }
-
-            public int GetHashCode<T>(T[] array)
-            {
-                unchecked
-                {
-                    if (array == null)
-                    {
-                        return 0;
-                    }
-                    var hash = 17;
-                    foreach (var element in array)
-                    {
-                        hash = hash * 31 + element.GetHashCode();
-                    }
-                    return hash;
-                }
-            }
+            return s1 == s2;
         }
 
         [Test]
@@ -207,7 +108,13 @@ namespace LiteNetLib.Test
             _serializer.ReadAllPackets(reader);
 
             Assert.NotNull(readPackage);
-            Assert.AreEqual(_samplePackage, readPackage);
+            Assert.IsTrue(AreSame(_samplePackage.EmptyString, readPackage.EmptyString));
+            Assert.AreEqual(_samplePackage.SomeFloat, readPackage.SomeFloat);
+            Assert.AreEqual(_samplePackage.SomeIntArray, readPackage.SomeIntArray);
+            Assert.IsTrue(AreSame(_samplePackage.SomeString, readPackage.SomeString));
+            Assert.AreEqual(_samplePackage.SomeVector2, readPackage.SomeVector2);
+            Assert.AreEqual(_samplePackage.SomeVectors, readPackage.SomeVectors);
+            Assert.AreEqual(_samplePackage.TestObj.Value, readPackage.TestObj.Value);
         }
     }
 }
