@@ -101,7 +101,7 @@ namespace LiteNetLib.Test
                 Thread.Sleep(15);
             }
 
-            Assert.AreEqual(server.PeersCount, clientCount);
+            Assert.AreEqual(clientCount, server.PeersCount);
             ManagerStack.ClientForeach(
                 (i, manager, l) =>
                 {

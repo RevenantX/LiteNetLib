@@ -26,8 +26,8 @@ namespace LiteNetLib.Test.Helper
         {
             foreach (var id in _clientIds)
             {
-                var tuple = Manager(id, true);
-                action.Invoke(id, tuple.Item1, tuple.Item2);
+                var tuple = GetNetworkManager(id, true);
+                action(id, tuple.Item1, tuple.Item2);
             }
         }
 
@@ -35,33 +35,33 @@ namespace LiteNetLib.Test.Helper
         {
             foreach (var id in _clientIds)
             {
-                var tuple = Manager(id, false);
-                action.Invoke(id, tuple.Item1, tuple.Item2);
+                var tuple = GetNetworkManager(id, false);
+                action(id, tuple.Item1, tuple.Item2);
             }
         }
 
         public NetManager Client(ushort id)
         {
             _clientIds.Add(id);
-            return Manager(id, true).Item1;
+            return GetNetworkManager(id, true).Item1;
         }
 
         public EventBasedNetListener ClientListener(ushort id)
         {
             _clientIds.Add(id);
-            return Manager(id, true).Item2;
+            return GetNetworkManager(id, true).Item2;
         }
 
         public NetManager Server(ushort id)
         {
             _serverIds.Add(id);
-            return Manager(id, false).Item1;
+            return GetNetworkManager(id, false).Item1;
         }
 
         public EventBasedNetListener ServerListener(ushort id)
         {
             _serverIds.Add(id);
-            return Manager(id, false).Item2;
+            return GetNetworkManager(id, false).Item2;
         }
 
         public void Dispose()
@@ -72,7 +72,7 @@ namespace LiteNetLib.Test.Helper
             }
         }
 
-        private Tuple<NetManager, EventBasedNetListener> Manager(ushort id, bool isClient)
+        private Tuple<NetManager, EventBasedNetListener> GetNetworkManager(ushort id, bool isClient)
         {
             Tuple<NetManager, EventBasedNetListener> tuple;
             if (id == 0)
@@ -84,9 +84,10 @@ namespace LiteNetLib.Test.Helper
             if (!_managers.TryGetValue(key, out tuple))
             {
                 var listener = new EventBasedNetListener();
-                var netManager = new NetManager(listener, 20, _appKey);
+                NetManager netManager;
                 if (isClient)
                 {
+                    netManager = new NetManager(listener, _appKey);
                     if (!netManager.Start())
                     {
                         Assert.Fail($"Client {id} start failed");
@@ -94,6 +95,7 @@ namespace LiteNetLib.Test.Helper
                 }
                 else
                 {
+                    netManager = new NetManager(listener, 20, _appKey);
                     if (!netManager.Start(_serverPort))
                     {
                         Assert.Fail($"Server {id} on port{_serverPort} start failed");
