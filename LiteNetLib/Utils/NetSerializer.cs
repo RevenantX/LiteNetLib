@@ -141,12 +141,7 @@ namespace LiteNetLib.Utils
 #endif
         }
 
-        /// <summary>
-        /// Register custom property type
-        /// </summary>
-        /// <typeparam name="T">INetSerializable structure</typeparam>
-        /// <returns>True - if register successful, false - if type already registered</returns>
-        public bool RegisterCustomType<T>() where T : struct, INetSerializable
+        private bool RegisterCustomTypeInternal<T>(Func<T> constructor) where T : INetSerializable
         {
             var t = typeof(T);
             if (_basicTypes.Contains(t) || _registeredCustomTypes.ContainsKey(t))
@@ -161,7 +156,7 @@ namespace LiteNetLib.Utils
                 },
                 reader =>
                 {
-                    var instance = new T();
+                    var instance = constructor();
                     instance.Desereialize(reader);
                     return instance;
                 });
@@ -172,26 +167,46 @@ namespace LiteNetLib.Utils
         /// <summary>
         /// Register custom property type
         /// </summary>
+        /// <typeparam name="T">INetSerializable structure</typeparam>
+        /// <returns>True - if register successful, false - if type already registered</returns>
+        public bool RegisterCustomType<T>() where T : struct, INetSerializable
+        {
+            return RegisterCustomTypeInternal(() => new T());
+        }
+
+        /// <summary>
+        /// Register custom property type
+        /// </summary>
+        /// <typeparam name="T">INetSerializable class</typeparam>
+        /// <returns>True - if register successful, false - if type already registered</returns>
+        public bool RegisterCustomType<T>(Func<T> constructor) where T : class, INetSerializable
+        {
+            return RegisterCustomTypeInternal(constructor);
+        }
+
+        /// <summary>
+        /// Register custom property type
+        /// </summary>
         /// <param name="writeDelegate"></param>
         /// <param name="readDelegate"></param>
         /// <returns>True - if register successful, false - if type already registered</returns>
-        public bool RegisterCustomType<T>(Action<NetDataWriter, T> writeDelegate, Func<NetDataReader, T> readDelegate) 
+        public bool RegisterCustomType<T>(Action<NetDataWriter, T> writeDelegate, Func<NetDataReader, T> readDelegate)
         {
             var t = typeof(T);
-            if(_basicTypes.Contains(t) || _registeredCustomTypes.ContainsKey(t))
+            if (_basicTypes.Contains(t) || _registeredCustomTypes.ContainsKey(t))
             {
                 return false;
             }
 
             var rwDelegates = new CustomType(
-                (writer, obj) => writeDelegate(writer, (T) obj),
+                (writer, obj) => writeDelegate(writer, (T)obj),
                 reader => readDelegate(reader));
 
             _registeredCustomTypes.Add(t, rwDelegates);
             return true;
         }
 
-        private StructInfo Register<T>(Type t, ulong nameHash) where T : class 
+        private StructInfo Register<T>(Type t, ulong nameHash) where T : class
         {
             StructInfo info;
             if (_cache.TryGetValue(nameHash, out info))
@@ -204,33 +219,65 @@ namespace LiteNetLib.Utils
             int propsCount = props.Count();
 #else
             var props = t.GetProperties(
-                BindingFlags.Instance | 
-                BindingFlags.Public | 
-                BindingFlags.GetProperty | 
+                BindingFlags.Instance |
+                BindingFlags.Public |
+                BindingFlags.GetProperty |
                 BindingFlags.SetProperty);
             int propsCount = props.Length;
 #endif
-            if(props == null || propsCount < 0)
+            if (props == null || propsCount < 0)
             {
                 throw new ArgumentException("Type does not contain acceptable fields");
             }
 
             info = new StructInfo(propsCount);
             int i = 0;
-            foreach(var property in props)
+            foreach (var property in props)
             {
                 var propertyType = property.PropertyType;
 
                 //Set field type
                 info.FieldTypes[i] = propertyType.IsArray ? propertyType.GetElementType() : propertyType;
 #if WINRT || NETCORE
+                bool isEnum = propertyType.GetTypeInfo().IsEnum;
                 var getMethod = property.GetMethod;
                 var setMethod = property.SetMethod;
 #else
+                bool isEnum = propertyType.IsEnum;
                 var getMethod = property.GetGetMethod();
                 var setMethod = property.GetSetMethod();
 #endif
-                if (propertyType == typeof(string))
+                if (isEnum)
+                {
+                    var underlyingType = Enum.GetUnderlyingType(propertyType);
+                    if (underlyingType == typeof(byte))
+                    {
+                        info.ReadDelegate[i] = reader =>
+                        {
+                            property.SetValue(info.Reference, Enum.ToObject(propertyType, reader.GetByte()), null);
+                        };
+                        info.WriteDelegate[i] = writer =>
+                        {
+                            writer.Put((byte)property.GetValue(info.Reference, null));
+                        };
+                    }
+                    else if (underlyingType == typeof(int))
+                    {
+                        info.ReadDelegate[i] = reader =>
+                        {
+                            property.SetValue(info.Reference, Enum.ToObject(propertyType, reader.GetInt()), null);
+                        };
+                        info.WriteDelegate[i] = writer =>
+                        {
+                            writer.Put((int)property.GetValue(info.Reference, null));
+                        };
+                    }
+                    else
+                    {
+                        throw new Exception("Not supported enum underlying type: " + underlyingType.Name);
+                    }
+                }
+                else if (propertyType == typeof(string))
                 {
                     var setDelegate = ExtractSetDelegate<T, string>(setMethod);
                     var getDelegate = ExtractGetDelegate<T, string>(getMethod);
@@ -401,7 +448,7 @@ namespace LiteNetLib.Utils
                         if (array) //Array type serialize/deserialize
                         {
                             info.ReadDelegate[i] = reader =>
-                            { 
+                            {
                                 ushort arrLength = reader.GetUShort();
                                 Array arr = Array.CreateInstance(propertyType, arrLength);
                                 for (int k = 0; k < arrLength; k++)
@@ -542,19 +589,23 @@ namespace LiteNetLib.Utils
         public void ReadPacket<T>(NetDataReader reader, T userData)
         {
             ulong name = _hasher.ReadHash(reader);
-            var info = _cache[name];
+            StructInfo info;
+            if (!_cache.TryGetValue(name, out info))
+            {
+                throw new Exception("Undefined packet received");
+            }
 
             if (info.CreatorFunc != null)
             {
                 info.Reference = info.CreatorFunc();
             }
 
-            for(int i = 0; i < info.ReadDelegate.Length; i++)
+            for (int i = 0; i < info.ReadDelegate.Length; i++)
             {
                 info.ReadDelegate[i](reader);
             }
 
-            if(info.OnReceive != null)
+            if (info.OnReceive != null)
             {
                 info.OnReceive(info.Reference, userData);
             }
@@ -583,7 +634,7 @@ namespace LiteNetLib.Utils
             var info = Register<T>(t, _hasher.GetHash(t.Name));
             if (packetConstructor != null)
             {
-                info.CreatorFunc = () => packetConstructor();      
+                info.CreatorFunc = () => packetConstructor();
             }
             info.OnReceive = (o, userData) => { };
         }

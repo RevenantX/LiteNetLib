@@ -10,13 +10,14 @@ namespace LiteNetLib.Test
         [SetUp]
         public void Init()
         {
-            _samplePackage = new SamplePacket
+            _samplePacket = new SamplePacket
             {
                 SomeFloat = 3.42f,
                 SomeIntArray = new[] {6, 5, 4},
                 SomeString = "Test String",
                 SomeVector2 = new SomeVector2(4, 5),
                 SomeVectors = new[] {new SomeVector2(1, 2), new SomeVector2(3, 4)},
+                SomeEnum = TestEnum.B,
                 TestObj = new SampleNetSerializable {Value = 5}
             };
 
@@ -25,7 +26,7 @@ namespace LiteNetLib.Test
             _serializer.RegisterCustomType(SomeVector2.Serialize, SomeVector2.Deserialize);
         }
 
-        private SamplePacket _samplePackage;
+        private SamplePacket _samplePacket;
         private NetSerializer _serializer;
 
         private struct SomeVector2
@@ -69,6 +70,13 @@ namespace LiteNetLib.Test
             }
         }
 
+        private enum TestEnum
+        {
+            A = 1,
+            B = 7,
+            C = 13
+        }
+
         private class SamplePacket
         {
             public string EmptyString { get; set; }
@@ -77,6 +85,7 @@ namespace LiteNetLib.Test
             public string SomeString { get; set; }
             public SomeVector2 SomeVector2 { get; set; }
             public SomeVector2[] SomeVectors { get; set; }
+            public TestEnum SomeEnum { get; set; }
             public SampleNetSerializable TestObj { get; set; }
         }
 
@@ -94,7 +103,7 @@ namespace LiteNetLib.Test
         public void CustomPackageTest()
         {
             var writer = new NetDataWriter();
-            writer.Put(_serializer.Serialize(_samplePackage));
+            writer.Put(_serializer.Serialize(_samplePacket));
 
             var reader = new NetDataReader(writer.CopyData());
             SamplePacket readPackage = null;
@@ -108,13 +117,14 @@ namespace LiteNetLib.Test
             _serializer.ReadAllPackets(reader);
 
             Assert.NotNull(readPackage);
-            Assert.IsTrue(AreSame(_samplePackage.EmptyString, readPackage.EmptyString));
-            Assert.AreEqual(_samplePackage.SomeFloat, readPackage.SomeFloat);
-            Assert.AreEqual(_samplePackage.SomeIntArray, readPackage.SomeIntArray);
-            Assert.IsTrue(AreSame(_samplePackage.SomeString, readPackage.SomeString));
-            Assert.AreEqual(_samplePackage.SomeVector2, readPackage.SomeVector2);
-            Assert.AreEqual(_samplePackage.SomeVectors, readPackage.SomeVectors);
-            Assert.AreEqual(_samplePackage.TestObj.Value, readPackage.TestObj.Value);
+            Assert.IsTrue(AreSame(_samplePacket.EmptyString, readPackage.EmptyString));
+            Assert.AreEqual(_samplePacket.SomeFloat, readPackage.SomeFloat);
+            Assert.AreEqual(_samplePacket.SomeIntArray, readPackage.SomeIntArray);
+            Assert.IsTrue(AreSame(_samplePacket.SomeString, readPackage.SomeString));
+            Assert.AreEqual(_samplePacket.SomeVector2, readPackage.SomeVector2);
+            Assert.AreEqual(_samplePacket.SomeVectors, readPackage.SomeVectors);
+            Assert.AreEqual(_samplePacket.SomeEnum, readPackage.SomeEnum);
+            Assert.AreEqual(_samplePacket.TestObj.Value, readPackage.TestObj.Value);
         }
     }
 }
