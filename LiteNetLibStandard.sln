@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSample", "LibSample\LibS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib.Tests", "LiteNetLib.Test\LiteNetLib.Tests.csproj", "{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLibStandard", "LiteNetLibStandard\LiteNetLibStandard.csproj", "{2173A7AE-AB4E-41E0-AEEF-DC80E815CD47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
