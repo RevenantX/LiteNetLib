@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace LibSample
 {
-    class SerializerTest
+    class SerializerTest : IRunnable
     {
         [Serializable] //Just for test binary formatter
         private struct SampleNetSerializable : INetSerializable
@@ -334,8 +334,6 @@ namespace LibSample
                 client.PacketsReceived,
                 client.BytesSent,
                 client.PacketsSent);
-            Console.WriteLine("Press any key to exit");
-            Console.ReadKey();
         }
     }
 }

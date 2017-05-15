@@ -11,7 +11,7 @@ namespace LibSample
 {
     internal class BenchmarkTest
     {
-        internal class TestHost
+        internal class TestHost : IRunnable
         {
             private int _clientCount = 10;
             internal List<ClientListener> _clients;
@@ -100,9 +100,6 @@ namespace LibSample
                 }
 
                 server.Stop();
-
-                Console.WriteLine("Press any key to exit");
-                Console.ReadKey();
             }
         }
 

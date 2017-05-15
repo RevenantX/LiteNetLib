@@ -24,7 +24,7 @@ namespace LibSample
         }
     }
 
-    class HolePunchServerTest : INatPunchListener
+    class HolePunchServerTest : INatPunchListener, IRunnable
     {
         private const int ServerPort = 50010;
         private static readonly TimeSpan KickTime = new TimeSpan(0, 0, 6);
