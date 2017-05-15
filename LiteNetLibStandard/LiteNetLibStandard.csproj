@@ -4,11 +4,19 @@
     <TargetFramework>netstandard1.6</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;NETSTANDARD1_6;NETCORE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>NETSTANDARD1_6;NETCORE</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\LiteNetLib\Properties\AssemblyInfo.cs" />
     <Compile Include="..\LiteNetLib\INetEventListener.cs" Link="INetEventListener.cs" />
     <Compile Include="..\LiteNetLib\NatPunchModule.cs" Link="NatPunchModule.cs" />
     <Compile Include="..\LiteNetLib\NetConstants.cs" Link="NetConstants.cs" />
