@@ -100,11 +100,17 @@
     <Compile Include="..\LiteNetLib\Utils\FastBitConverter.cs">
       <Link>Utils\FastBitConverter.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\Utils\INetSerializable.cs">
+      <Link>Utils\INetSerializable.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\Utils\NetDataReader.cs">
       <Link>Utils\NetDataReader.cs</Link>
     </Compile>
     <Compile Include="..\LiteNetLib\Utils\NetDataWriter.cs">
       <Link>Utils\NetDataWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\LiteNetLib\Utils\NetPacketProcessor.cs">
+      <Link>Utils\NetPacketProcessor.cs</Link>
     </Compile>
     <Compile Include="..\LiteNetLib\Utils\NetSerializer.cs">
       <Link>Utils\NetSerializer.cs</Link>

@@ -207,14 +207,26 @@ namespace LiteNetLib.Utils
             return arr;
         }
 
-        public string[] GetStringArray(int maxLength)
+        public string[] GetStringArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new string[size];
             for (int i = 0; i < size; i++)
             {
-                arr[i] = GetString(maxLength);
+                arr[i] = GetString();
+            }
+            return arr;
+        }
+
+        public string[] GetStringArray(int maxStringLength)
+        {
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            var arr = new string[size];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = GetString(maxStringLength);
             }
             return arr;
         }

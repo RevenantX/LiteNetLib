@@ -16,7 +16,7 @@ namespace LiteNetLib
         private bool _running;
         private readonly NetManager.OnMessageReceived _onMessageReceived;
 
-        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
+        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse(NetConstants.MulticastGroupIPv6);
         private static readonly bool IPv6Support;
         private const int SocketReceivePollTime = 100000;
         private const int SocketSendPollTime = 5000;
@@ -98,16 +98,15 @@ namespace LiteNetLib
             _udpSocketv4.Blocking = false;
             _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
-            _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, NetConstants.SocketTTL);
+            _udpSocketv4.Ttl = NetConstants.SocketTTL;
             if(reuseAddress)
                 _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 #if !NETCORE
             _udpSocketv4.DontFragment = true;
 #endif
-
             try
             {
-                _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
+                _udpSocketv4.EnableBroadcast = true;
             }
             catch (SocketException e)
             {
@@ -137,6 +136,7 @@ namespace LiteNetLib
             _udpSocketv6.Blocking = false;
             _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
+            //_udpSocketv6.Ttl = NetConstants.SocketTTL;
             if (reuseAddress)
                 _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
@@ -189,13 +189,22 @@ namespace LiteNetLib
         {
             try
             {
-                int result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(IPAddress.Broadcast, port));
-                if (result <= 0)
-                    return false;
+                if (_udpSocketv4.SendTo(
+                        data,
+                        offset,
+                        size,
+                        SocketFlags.None,
+                        new IPEndPoint(IPAddress.Broadcast, port)) <= 0)
+                        return false;
+           
                 if (IPv6Support)
                 {
-                    result = _udpSocketv6.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(MulticastAddressV6, port));
-                    if (result <= 0)
+                    if (_udpSocketv6.SendTo(
+                            data, 
+                            offset, 
+                            size, 
+                            SocketFlags.None, 
+                            new IPEndPoint(MulticastAddressV6, port)) <= 0)
                         return false;
                 }
             }

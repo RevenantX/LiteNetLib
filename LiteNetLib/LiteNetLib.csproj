@@ -60,8 +60,10 @@
     <Compile Include="SequencedChannel.cs" />
     <Compile Include="ReliableChannel.cs" />
     <Compile Include="SimpleChannel.cs" />
+    <Compile Include="Utils\INetSerializable.cs" />
     <Compile Include="Utils\NetDataReader.cs" />
     <Compile Include="Utils\NetDataWriter.cs" />
+    <Compile Include="Utils\NetPacketProcessor.cs" />
     <Compile Include="Utils\NetSerializer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

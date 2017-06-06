@@ -18,7 +18,6 @@ namespace LiteNetLib
         public const ushort HalfMaxSequence = MaxSequence / 2;
 
         //socket
-        public const string MulticastGroupIPv4 = "224.0.0.1";
         public const string MulticastGroupIPv6 = "FF02:0:0:0:0:0:0:1";
         public const int SocketBufferSize = 1024*1024*2; //2mb
         public const int SocketTTL = 255;

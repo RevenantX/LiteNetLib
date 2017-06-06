@@ -94,13 +94,13 @@ namespace LibSample
 
         private class ClientListener : INetEventListener
         {
-            private readonly NetSerializer _serializer;
+            private readonly NetPacketProcessor _packetProcessor;
 
             public ClientListener()
             {
-                _serializer = new NetSerializer();
-                _serializer.RegisterCustomType<SampleNetSerializable>();
-                _serializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
+                _packetProcessor = new NetPacketProcessor();
+                _packetProcessor.RegisterNestedType<SampleNetSerializable>();
+                _packetProcessor.RegisterNestedType( SomeVector2.Serialize, SomeVector2.Deserialize );
             }
 
             public void OnPeerConnected(NetPeer peer)
@@ -116,7 +116,7 @@ namespace LibSample
                     TestObj = new SampleNetSerializable { Value = 5 }
                 };
                 
-                byte[] data = _serializer.Serialize(sp);
+                byte[] data = _packetProcessor.Write(sp);
                 Console.WriteLine("Sending to server (length {0}):\n{1}", data.Length, sp);
                 peer.Send(data, SendOptions.ReliableOrdered);
             }
@@ -150,16 +150,16 @@ namespace LibSample
         private class ServerListener : INetEventListener
         {
             public NetManager Server;
-            private readonly NetSerializer _netSerializer;
+            private readonly NetPacketProcessor _netPacketProcessor;
 
             public ServerListener()
             {
-                _netSerializer = new NetSerializer();
-                _netSerializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
-                _netSerializer.RegisterCustomType<SampleNetSerializable>();
+                _netPacketProcessor = new NetPacketProcessor();
+                _netPacketProcessor.RegisterNestedType( SomeVector2.Serialize, SomeVector2.Deserialize );
+                _netPacketProcessor.RegisterNestedType<SampleNetSerializable>();
 
                 //user data support
-                _netSerializer.SubscribeReusable<SamplePacket, NetPeer>(OnSamplePacketReceived);
+                _netPacketProcessor.SubscribeReusable<SamplePacket, NetPeer>(OnSamplePacketReceived);
             }
 
             private void OnSamplePacketReceived(SamplePacket samplePacket, NetPeer peer)
@@ -190,7 +190,7 @@ namespace LibSample
             public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
             {
                 Console.WriteLine("[Server] received data. Processing...");
-                _netSerializer.ReadAllPackets(reader, peer);
+                _netPacketProcessor.ReadAllPackets(reader, peer);
             }
 
             public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
@@ -226,8 +226,8 @@ namespace LibSample
             };
 
             NetSerializer netSerializer = new NetSerializer();
-            netSerializer.RegisterCustomType<SampleNetSerializable>();
-            netSerializer.RegisterCustomType( SomeVector2.Serialize, SomeVector2.Deserialize );
+            netSerializer.RegisterNestedType<SampleNetSerializable>();
+            netSerializer.RegisterNestedType( SomeVector2.Serialize, SomeVector2.Deserialize );
 
             //Prewarm cpu
             for (int i = 0; i < 10000000; i++)
