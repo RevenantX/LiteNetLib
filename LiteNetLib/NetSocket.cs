@@ -28,15 +28,11 @@ namespace LiteNetLib
 
         static NetSocket()
         {
-            try
-            {
-                //Unity3d .NET 2.0 throws exception.
-                IPv6Support = Socket.OSSupportsIPv6;
-            }
-            catch 
-            {
-                IPv6Support = false;
-            }
+#if UNITY
+            IPv6Support = Socket.SupportsIPv6;
+#else
+            IPv6Support = Socket.OSSupportsIPv6;
+#endif
         }
 
         public NetSocket(NetManager.OnMessageReceived onMessageReceived)
@@ -289,7 +285,7 @@ namespace LiteNetLib
     }
 }
 #else
-using System;
+            using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
