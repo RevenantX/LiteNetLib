@@ -114,6 +114,12 @@ namespace LiteNetLib
         /// <param name="peer">Peer with updated latency</param>
         /// <param name="latency">latency value in milliseconds</param>
         void OnNetworkLatencyUpdate(NetPeer peer, int latency);
+
+        /// <summary>
+        /// On peer connection requested
+        /// </summary>
+        /// <param name="request">Request information (EndPoint, internal id, additional data)</param>
+        void OnConnectionRequest(ConnectionRequest request);
     }
 
     public class EventBasedNetListener : INetEventListener
@@ -125,13 +131,16 @@ namespace LiteNetLib
         public delegate void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
         public delegate void OnNetworkLatencyUpdate(NetPeer peer, int latency);
 
+        public delegate void OnConnectionRequest(ConnectionRequest request);
+
         public event OnPeerConnected PeerConnectedEvent;
         public event OnPeerDisconnected PeerDisconnectedEvent;
         public event OnNetworkError NetworkErrorEvent;
         public event OnNetworkReceive NetworkReceiveEvent;
         public event OnNetworkReceiveUnconnected NetworkReceiveUnconnectedEvent;
-        public event OnNetworkLatencyUpdate NetworkLatencyUpdateEvent; 
-         
+        public event OnNetworkLatencyUpdate NetworkLatencyUpdateEvent;
+        public event OnConnectionRequest ConnectionRequestEvent;
+
         void INetEventListener.OnPeerConnected(NetPeer peer)
         {
             if (PeerConnectedEvent != null)
@@ -166,6 +175,12 @@ namespace LiteNetLib
         {
             if (NetworkLatencyUpdateEvent != null)
                 NetworkLatencyUpdateEvent(peer, latency);
+        }
+
+        void INetEventListener.OnConnectionRequest(ConnectionRequest request)
+        {
+            if (ConnectionRequestEvent != null)
+                ConnectionRequestEvent(request);
         }
     }
 }

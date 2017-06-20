@@ -38,11 +38,10 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Creates NetDataWriter from existing bytearray
+        /// Creates NetDataWriter from existing ByteArray
         /// </summary>
         /// <param name="bytes">Source byte array</param>
         /// <param name="copy">Copy array to new location or use existing</param>
-        /// <returns></returns>
         public static NetDataWriter FromBytes(byte[] bytes, bool copy)
         {
             if (copy)
@@ -52,6 +51,19 @@ namespace LiteNetLib.Utils
                 return netDataWriter;
             }
             return new NetDataWriter(true, 0) {_data = bytes};
+        }
+
+        /// <summary>
+        /// Creates NetDataWriter from existing ByteArray (always copied data)
+        /// </summary>
+        /// <param name="bytes">Source byte array</param>
+        /// <param name="offset">Offset of array</param>
+        /// <param name="length">Length of array</param>
+        public static NetDataWriter FromBytes(byte[] bytes, int offset, int length)
+        {
+            var netDataWriter = new NetDataWriter(true, bytes.Length);
+            netDataWriter.Put(bytes, offset, length);
+            return netDataWriter;
         }
 
         public static NetDataWriter FromString(string value)

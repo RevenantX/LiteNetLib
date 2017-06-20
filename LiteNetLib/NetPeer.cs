@@ -332,6 +332,11 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
+        internal void SendReliableDisconnect(NetPacket packet)
+        {
+            _reliableOrderedChannel.AddToQueue(packet);
+        }
+
         //from user thread, our thread, or recv?
         private void SendPacket(NetPacket packet)
         {
@@ -361,7 +366,6 @@ namespace LiteNetLib
                 case PacketProperty.AckReliableOrdered:
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
-                case PacketProperty.Disconnect:
                 case PacketProperty.MtuOk:
                     SendRawData(packet);
                     _packetPool.Recycle(packet);
