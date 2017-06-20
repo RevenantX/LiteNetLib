@@ -137,7 +137,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener, 2, "myapp1");
+            NetManager server = new NetManager(_serverListener, 2);
             //server.ReuseAddress = true;
             if (!server.Start(9050))
             {
@@ -150,7 +150,7 @@ namespace LibSample
             //Client
             _clientListener = new ClientListener();
 
-            NetManager client1 = new NetManager(_clientListener, "myapp1");
+            NetManager client1 = new NetManager(_clientListener);
             //client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
             client1.MergeEnabled = true;
@@ -161,7 +161,7 @@ namespace LibSample
             }
             client1.Connect("127.0.0.1", 9050);
 
-            NetManager client2 = new NetManager(_clientListener, "myapp1");
+            NetManager client2 = new NetManager(_clientListener);
             //client2.SimulateLatency = true;
             client2.SimulationMaxLatency = 1500;
             client2.Start();

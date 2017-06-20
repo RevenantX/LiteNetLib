@@ -25,7 +25,7 @@ namespace LiteNetLib
         private readonly Action _callback;
 
         public int SleepTime;
-        private bool _running;
+        private volatile bool _running;
         private readonly string _name;
 
         public bool IsRunning

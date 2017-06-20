@@ -293,7 +293,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener, 2, "myapp1");
+            NetManager server = new NetManager(_serverListener, 2);
             if (!server.Start(9050))
             {
                 Console.WriteLine("Server start failed");
@@ -305,7 +305,7 @@ namespace LibSample
             //Client
             _clientListener = new ClientListener();
 
-            NetManager client = new NetManager(_clientListener, "myapp1");
+            NetManager client = new NetManager(_clientListener);
             client.MergeEnabled = true;
             if (!client.Start())
             {

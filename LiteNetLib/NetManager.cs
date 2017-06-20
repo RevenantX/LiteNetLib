@@ -29,7 +29,8 @@ namespace LiteNetLib
             Error,
             ConnectionLatencyUpdated,
             DiscoveryRequest,
-            DiscoveryResponse
+            DiscoveryResponse,
+            ConnectionRequest
         }
 
         private sealed class NetEvent
@@ -40,6 +41,7 @@ namespace LiteNetLib
             public NetEndPoint RemoteEndPoint;
             public int AdditionalData;
             public DisconnectReason DisconnectReason;
+            public ConnectionRequest ConnectionRequest;
         }
 
 #if DEBUG
@@ -65,7 +67,6 @@ namespace LiteNetLib
 
         private readonly NetPeerCollection _peers;
         private readonly int _maxConnections;
-        private readonly string _connectKey;
 
         private readonly NetPacketPool _netPacketPool;
 
@@ -122,11 +123,6 @@ namespace LiteNetLib
             get { return _peers.Count; }
         }
 
-        public string ConnectKey
-        {
-            get { return _connectKey; }
-        }
-
         //Flow
         public void AddFlowMode(int startRtt, int packetsPerSecond)
         {
@@ -170,8 +166,7 @@ namespace LiteNetLib
         /// NetManager constructor with maxConnections = 1 (usable for client)
         /// </summary>
         /// <param name="listener">Network events listener</param>
-        /// <param name="connectKey">Application key (must be same with remote host for establish connection)</param>
-        public NetManager(INetEventListener listener, string connectKey) : this(listener, 1, connectKey)
+        public NetManager(INetEventListener listener) : this(listener, 1)
         {
             
         }
@@ -181,8 +176,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="listener">Network events listener</param>
         /// <param name="maxConnections">Maximum connections (incoming and outcoming)</param>
-        /// <param name="connectKey">Application key (must be same with remote host for establish connection)</param>
-        public NetManager(INetEventListener listener, int maxConnections, string connectKey)
+        public NetManager(INetEventListener listener, int maxConnections)
         {
             _logicThread = new NetThread("LogicThread", DefaultUpdateTime, UpdateLogic);
             _socket = new NetSocket(ReceiveLogic);
@@ -192,11 +186,8 @@ namespace LiteNetLib
             _netEventsPool = new Stack<NetEvent>();
             _netPacketPool = new NetPacketPool();
             NatPunchModule = new NatPunchModule(this);
-
-            _connectKey = connectKey;
             _peers = new NetPeerCollection(maxConnections);
             _maxConnections = maxConnections;
-            _connectKey = connectKey;
         }
 
         internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
@@ -461,13 +452,12 @@ namespace LiteNetLib
             if (errorCode == 0)
             {
 #if DEBUG
-                bool receivePacket = true;
-
                 if (SimulatePacketLoss && _randomGenerator.Next(100/SimulationPacketLossChance) == 0)
                 {
-                    receivePacket = false;
+                    //drop packet
+                    return;
                 }
-                else if (SimulateLatency)
+                if (SimulateLatency)
                 {
                     int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
                     if (latency > MinLatencyTreshold)
@@ -484,21 +474,45 @@ namespace LiteNetLib
                                 TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
                             });
                         }
-                    
-                        receivePacket = false;
+
+                        //hold packet
+                        return;
                     }
                 }
-
-                if (receivePacket) //DataReceived
 #endif
-                    //ProcessEvents
-                    DataReceived(data, length, remoteEndPoint);
+                //ProcessEvents
+                DataReceived(data, length, remoteEndPoint);
             }
             else //Error on receive
             {
                 ClearPeers();
                 var netEvent = CreateEvent(NetEventType.Error);
                 netEvent.AdditionalData = errorCode;
+                EnqueueEvent(netEvent);
+            }
+        }
+
+        private void OnConnectionSolved(ConnectionRequest request, ConnectionRequestResult result)
+        {
+            if (result == ConnectionRequestResult.Reject)
+            {
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
+            }
+            else
+            {
+                //response with id
+                var netPeer = new NetPeer(this, request.RemoteEndPoint, request.ConnectionId);
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connection Id: {0}, EP: {1}",
+                    netPeer.ConnectId, netPeer.EndPoint);
+
+                //add peer to list
+                lock (_peers)
+                {
+                    _peers.Add(request.RemoteEndPoint, netPeer);
+                }
+
+                var netEvent = CreateEvent(NetEventType.Connect);
+                netEvent.Peer = netPeer;
                 EnqueueEvent(netEvent);
             }
         }
@@ -557,16 +571,16 @@ namespace LiteNetLib
                     }
             }
 
-            //Check normal packets
-            NetPeer netPeer;
-
             //Check peers
-            Monitor.Enter(_peers);
-            int peersCount = _peers.Count;
-
-            if (_peers.TryGetValue(remoteEndPoint, out netPeer))
+            NetPeer netPeer;
+            bool peerFound;
+            lock (_peers)
             {
-                Monitor.Exit(_peers);
+                peerFound = _peers.TryGetValue(remoteEndPoint, out netPeer);
+            }
+
+            if (peerFound)
+            {
                 //Send
                 if (packet.Property == PacketProperty.Disconnect)
                 {
@@ -583,7 +597,10 @@ namespace LiteNetLib
                     netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
                     EnqueueEvent(netEvent);
 
-                    _peers.Remove(netPeer.EndPoint);
+                    lock (_peers)
+                    {
+                        _peers.Remove(netPeer.EndPoint);
+                    }
                     //do not recycle because no sense)
                 }
                 else if (packet.Property == PacketProperty.ConnectAccept)
@@ -605,8 +622,15 @@ namespace LiteNetLib
 
             try
             {
-                if (peersCount < _maxConnections && packet.Property == PacketProperty.ConnectRequest)
+                if (_peers.Count < _maxConnections &&
+                    packet.Property == PacketProperty.ConnectRequest &&
+                    packet.Size >= 12)
                 {
+                    // structure
+                    // 0:    header (ConnectRequest)
+                    // 1-4:  protocol id
+                    // 5-12: connection id
+                    // 13+:  additional data
                     int protoId = BitConverter.ToInt32(packet.RawData, 1);
                     if (protoId != NetConstants.ProtocolId)
                     {
@@ -614,34 +638,26 @@ namespace LiteNetLib
                             "[NM] Peer connect reject. Invalid protocol ID: " + protoId);
                         return;
                     }
-
-                    string peerKey = Encoding.UTF8.GetString(packet.RawData, 13, packet.Size - 13);
-                    if (peerKey != _connectKey)
-                    {
-                        NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject. Invalid key: " + peerKey);
-                        return;
-                    }
-
-                    //Getting new id for peer
+                    // Getting new id for peer
                     long connectionId = BitConverter.ToInt64(packet.RawData, 5);
-                    //response with id
-                    netPeer = new NetPeer(this, remoteEndPoint, connectionId);
-                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connect request Id: {0}, EP: {1}",
-                        netPeer.ConnectId, remoteEndPoint);
 
-                    //clean incoming packet
-                    _netPacketPool.Recycle(packet);
-
-                    _peers.Add(remoteEndPoint, netPeer);
-
-                    var netEvent = CreateEvent(NetEventType.Connect);
-                    netEvent.Peer = netPeer;
+                    // Read data and create request
+                    var reader = new NetDataReader(new byte[0]);
+                    if (packet.Size > 12)
+                    {
+                        reader.SetSource(packet.RawData, 13, packet.Size - 13);
+                    }
+                    var netEvent = CreateEvent(NetEventType.ConnectionRequest);
+                    netEvent.ConnectionRequest = new ConnectionRequest(connectionId, remoteEndPoint, reader, OnConnectionSolved);
                     EnqueueEvent(netEvent);
+
+                    // Clean incoming packet
+                    _netPacketPool.Recycle(packet);
                 }
             }
-            finally
+            catch
             {
-                Monitor.Exit(_peers);
+                //ignored
             }
         }
 
@@ -885,18 +901,19 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="address">Server IP or hostname</param>
         /// <param name="port">Server Port</param>
-        public void Connect(string address, int port)
+        /// <param name="connectionData">Additional data for remote peer</param>
+        public void Connect(string address, int port, NetDataWriter connectionData)
         {
-            //Create target endpoint
-            NetEndPoint ep = new NetEndPoint(address, port);
-            Connect(ep);
+            var ep = new NetEndPoint(address, port);
+            Connect(ep, connectionData);
         }
 
         /// <summary>
         /// Connect to remote host
         /// </summary>
         /// <param name="target">Server end point (ip and port)</param>
-        public void Connect(NetEndPoint target)
+        /// <param name="connectionData">Additional data for remote peer</param>
+        public void Connect(NetEndPoint target, NetDataWriter connectionData)
         {
             if (!IsRunning)
             {
@@ -911,8 +928,8 @@ namespace LiteNetLib
                 }
 
                 //Create reliable connection
-                //And request connection
-                var newPeer = new NetPeer(this, target, 0);
+                //And send connection request
+                var newPeer = new NetPeer(this, target, connectionData);
                 _peers.Add(target, newPeer);
             }
         }

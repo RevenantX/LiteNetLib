@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -80,6 +79,7 @@ namespace LiteNetLib
         private int _connectTimer;
         private long _connectId;
         private ConnectionState _connectionState;
+        private readonly NetDataWriter _connectData;
 
         public ConnectionState ConnectionState
         {
@@ -141,7 +141,7 @@ namespace LiteNetLib
 		/// </summary>
         public object Tag;
 
-        internal NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint, long connectId)
+        private NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint)
         {
             _packetPool = peerListener.PacketPool;
             _peerListener = peerListener;
@@ -159,39 +159,40 @@ namespace LiteNetLib
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
 
             _mergeData = _packetPool.Get(PacketProperty.Merged, NetConstants.MaxPacketSize);
+        }
 
-            //if ID != 0 then we already connected
+        //Connect constructor
+        internal NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint, NetDataWriter dataWriter) : this(peerListener, remoteEndPoint)
+        {
+            _connectData = dataWriter;
             _connectAttempts = 0;
-            if (connectId == 0)
-            {
-                _connectId = DateTime.UtcNow.Ticks;
-                SendConnectRequest();
-            }
-            else
-            {
-                _connectId = connectId;
-                _connectionState = ConnectionState.Connected;
-                SendConnectAccept();
-            }
+            _connectId = DateTime.UtcNow.Ticks;
+            SendConnectRequest();
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}", _connectId);
+        }
 
+        //Accept incoming constructor
+        internal NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint, long connectId) : this(peerListener, remoteEndPoint)
+        {
+            _connectAttempts = 0;
+            _connectId = connectId;
+            _connectionState = ConnectionState.Connected;
+            SendConnectAccept();
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}", _connectId);
         }
 
         private void SendConnectRequest()
         {
-            //Get connect key bytes
-            byte[] keyData = Encoding.UTF8.GetBytes(_peerListener.ConnectKey);
-
             //Make initial packet
-            var connectPacket = _packetPool.Get(PacketProperty.ConnectRequest, 12 + keyData.Length);
+            var connectPacket = _packetPool.Get(PacketProperty.ConnectRequest, 12 + _connectData.Length);
 
             //Add data
             FastBitConverter.GetBytes(connectPacket.RawData, 1, NetConstants.ProtocolId);
             FastBitConverter.GetBytes(connectPacket.RawData, 5, _connectId);
-            Buffer.BlockCopy(keyData, 0, connectPacket.RawData, 13, keyData.Length);
+            Buffer.BlockCopy(_connectData.Data, 0, connectPacket.RawData, 13, _connectData.Length);
 
             //Send raw
-            _peerListener.SendRawAndRecycle(connectPacket, _remoteEndPoint);
+            _simpleChannel.AddToQueue(connectPacket);
         }
 
         private void SendConnectAccept()
@@ -206,7 +207,7 @@ namespace LiteNetLib
             FastBitConverter.GetBytes(connectPacket.RawData, 1, _connectId);
 
             //Send raw
-            _peerListener.SendRawAndRecycle(connectPacket, _remoteEndPoint);
+            _simpleChannel.AddToQueue(connectPacket);
         }
 
         internal bool ProcessConnectAccept(NetPacket packet)
@@ -761,20 +762,9 @@ namespace LiteNetLib
                 currentMaxSend = int.MaxValue;
             }
 
-            //DebugWrite("[UPDATE]Delta: {0}ms, MaxSend: {1}", deltaTime, currentMaxSend);
-
             //Pending acks
             _reliableOrderedChannel.SendAcks();
             _reliableUnorderedChannel.SendAcks();
-
-            //ResetFlowTimer
-            _flowTimer += deltaTime;
-            if (_flowTimer >= NetConstants.FlowUpdateTime)
-            {
-                NetUtils.DebugWrite("[UPDATE]Reset flow timer, _sendedPackets - {0}", _sendedPacketsCount);
-                _sendedPacketsCount = 0;
-                _flowTimer = 0;
-            }
 
             //Send ping
             _pingSendTimer += deltaTime;
@@ -838,6 +828,15 @@ namespace LiteNetLib
             lock (_flushLock)
             {
                 SendQueuedPackets(currentMaxSend);
+
+                //Reset flow timer (in lock because of flush!)
+                _flowTimer += deltaTime;
+                if (_flowTimer >= NetConstants.FlowUpdateTime)
+                {
+                    NetUtils.DebugWrite("[UPDATE] Reset flow timer, _sendedPackets - {0}", _sendedPacketsCount);
+                    _sendedPacketsCount = 0;
+                    _flowTimer = 0;
+                }
             }
         }
 

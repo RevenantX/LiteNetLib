@@ -11,6 +11,11 @@ namespace LiteNetLib.Utils
         private int _maxLength;
         private readonly bool _autoResize;
 
+        public int Capacity
+        {
+            get { return _data.Length; }
+        }
+
         public NetDataWriter()
         {
             _maxLength = 64;
@@ -30,6 +35,30 @@ namespace LiteNetLib.Utils
             _maxLength = initialSize;
             _data = new byte[_maxLength];
             _autoResize = autoResize;
+        }
+
+        /// <summary>
+        /// Creates NetDataWriter from existing bytearray
+        /// </summary>
+        /// <param name="bytes">Source byte array</param>
+        /// <param name="copy">Copy array to new location or use existing</param>
+        /// <returns></returns>
+        public static NetDataWriter FromBytes(byte[] bytes, bool copy)
+        {
+            if (copy)
+            {
+                var netDataWriter = new NetDataWriter(true, bytes.Length);
+                netDataWriter.Put(bytes);
+                return netDataWriter;
+            }
+            return new NetDataWriter(true, 0) {_data = bytes};
+        }
+
+        public static NetDataWriter FromString(string value)
+        {
+            var netDataWriter = new NetDataWriter();
+            netDataWriter.Put(value);
+            return netDataWriter;
         }
 
         public void ResizeIfNeed(int newSize)

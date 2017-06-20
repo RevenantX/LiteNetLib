@@ -1,3 +1,4 @@
+using System;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -19,11 +20,55 @@ namespace LiteNetLib
         DisconnectPeerCalled
     }
 
+    internal enum ConnectionRequestResult
+    {
+        Accept,
+        Reject
+    }
+
     public struct DisconnectInfo
     {
         public DisconnectReason Reason;
         public int SocketErrorCode;
         public NetDataReader AdditionalData;
+    }
+
+    public class ConnectionRequest
+    {
+        private readonly Action<ConnectionRequest, ConnectionRequestResult> _onUserAction;
+        private bool _used;
+
+        public readonly long ConnectionId;
+        public readonly NetEndPoint RemoteEndPoint;
+        public readonly NetDataReader Data;
+
+        internal ConnectionRequest(
+            long connectionId, 
+            NetEndPoint remoteEndPoint, 
+            NetDataReader netDataReader,
+            Action<ConnectionRequest, ConnectionRequestResult> onUserAction)
+        {
+            ConnectionId = connectionId;
+            RemoteEndPoint = remoteEndPoint;
+            Data = netDataReader;
+            _onUserAction = onUserAction;
+        }
+
+        public void Accept()
+        {
+            if (_used)
+                return;
+            _used = true;
+            _onUserAction(this, ConnectionRequestResult.Accept);
+        }
+
+        public void Reject()
+        {
+            if (_used)
+                return;
+            _used = true;
+            _onUserAction(this, ConnectionRequestResult.Reject);
+        }
     }
 
     public interface INetEventListener

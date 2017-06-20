@@ -87,7 +87,7 @@ namespace LiteNetLib.Test.Helper
                 NetManager netManager;
                 if (isClient)
                 {
-                    netManager = new NetManager(listener, _appKey);
+                    netManager = new NetManager(listener);
                     if (!netManager.Start())
                     {
                         Assert.Fail($"Client {id} start failed");
@@ -95,7 +95,7 @@ namespace LiteNetLib.Test.Helper
                 }
                 else
                 {
-                    netManager = new NetManager(listener, 20, _appKey);
+                    netManager = new NetManager(listener, 20);
                     if (!netManager.Start(_serverPort))
                     {
                         Assert.Fail($"Server {id} on port{_serverPort} start failed");

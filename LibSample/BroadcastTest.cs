@@ -98,7 +98,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener, 2, "myapp1");
+            NetManager server = new NetManager(_serverListener, 2);
             server.DiscoveryEnabled = true;
             if (!server.Start(9050))
             {
@@ -111,7 +111,7 @@ namespace LibSample
             //Client
             _clientListener1 = new ClientListener();
 
-            NetManager client1 = new NetManager(_clientListener1, "myapp1");
+            NetManager client1 = new NetManager(_clientListener1);
             _clientListener1.Client = client1;
             client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
@@ -123,7 +123,7 @@ namespace LibSample
             }
 
             _clientListener2 = new ClientListener();
-            NetManager client2 = new NetManager(_clientListener2, "myapp1");
+            NetManager client2 = new NetManager(_clientListener2);
             _clientListener2.Client = client2;
             client2.SimulateLatency = true;
             client2.SimulationMaxLatency = 1500;

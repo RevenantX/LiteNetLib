@@ -22,7 +22,7 @@ namespace LibSample
                 //Server
                 _serverListener = new ServerListener();
 
-                NetManager server = new NetManager(_serverListener, _clientCount, "myapp1");
+                NetManager server = new NetManager(_serverListener, _clientCount);
                 server.UnsyncedEvents = true;
                 server.UpdateTime = 1;
                 if (!server.Start(9050))
@@ -39,7 +39,7 @@ namespace LibSample
                 for (int i = 0; i < _clientCount; i++)
                 {
                     var _clientListener = new ClientListener();
-                    var client1 = new NetManager(_clientListener, "myapp1");
+                    var client1 = new NetManager(_clientListener);
                     client1.SimulationMaxLatency = 1500;
                     client1.MergeEnabled = true;
                     client1.UnsyncedEvents = true;
@@ -51,7 +51,7 @@ namespace LibSample
                         return;
                     }
                     _clients.Add(_clientListener);
-                    client1.Connect("127.0.0.1", 9050);
+                    client1.Connect("127.0.0.1", 9050, NetDataWriter.FromString("BENCH_TEST"));
                 }
 
                 // Wait
