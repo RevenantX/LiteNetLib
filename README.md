@@ -42,7 +42,7 @@ BTC: 15JFQ3tHHF22QDUkJYYvuYhyUoptkyaBms
 * Supported platforms:
   * Windows/Mac/Linux (.net framework, Mono, .net core)
   * Android
-  * iOS
+  * iOS (in Unity3d use library source and add compilation flag UNITY)
   * Universal Windows (Windows 8.1 and Windows 10 including phones)
 
 ## Usage samples
