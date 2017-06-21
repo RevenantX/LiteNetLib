@@ -5,7 +5,7 @@ namespace LiteNetLib
 {
     public enum UnconnectedMessageType
     {
-        Default,
+        BasicMessage,
         DiscoveryRequest,
         DiscoveryResponse
     }
