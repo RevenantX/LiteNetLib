@@ -10,20 +10,20 @@ namespace LiteNetLib
     {
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
-        private NetEndPoint _localEndPoint;
+        private int _port;
         private Thread _threadv4;
         private Thread _threadv6;
         private bool _running;
         private readonly NetManager.OnMessageReceived _onMessageReceived;
 
-        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse(NetConstants.MulticastGroupIPv6);
-        private static readonly bool IPv6Support;
+        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
+        internal static readonly bool IPv6Support;
         private const int SocketReceivePollTime = 100000;
         private const int SocketSendPollTime = 5000;
 
-        public NetEndPoint LocalEndPoint
+        public int LocalPort
         {
-            get { return _localEndPoint; }
+            get { return _port; }
         }
 
         static NetSocket()
@@ -113,20 +113,16 @@ namespace LiteNetLib
             {
                 return false;
             }
-            _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv4.LocalEndPoint);
-
+            _port = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
             _running = true;
             _threadv4 = new Thread(ReceiveLogic);
-            _threadv4.Name = "SocketThreadv4(" + port + ")";
+            _threadv4.Name = "SocketThreadv4(" + _port + ")";
             _threadv4.IsBackground = true;
             _threadv4.Start(_udpSocketv4);
 
             //Check IPv6 support
             if (!IPv6Support)
                 return true;
-
-            //Use one port for two sockets
-            port = _localEndPoint.Port;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv6.Blocking = false;
@@ -136,10 +132,9 @@ namespace LiteNetLib
             if (reuseAddress)
                 _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
-            if (BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, port)))
+            //Use one port for two sockets
+            if (BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, _port)))
             {
-                _localEndPoint = new NetEndPoint((IPEndPoint)_udpSocketv6.LocalEndPoint);
-
                 try
                 {
                     _udpSocketv6.SetSocketOption(
@@ -153,7 +148,7 @@ namespace LiteNetLib
                 }
 
                 _threadv6 = new Thread(ReceiveLogic);
-                _threadv6.Name = "SocketThreadv6(" + port + ")";
+                _threadv6.Name = "SocketThreadv6(" + _port + ")";
                 _threadv6.IsBackground = true;
                 _threadv6.Start(_udpSocketv6);
             }
@@ -314,13 +309,13 @@ namespace LiteNetLib
         private readonly byte[] _byteBuffer = new byte[NetConstants.PacketSizeLimit];
         private readonly IBuffer _buffer;
         private NetEndPoint _bufferEndPoint;
-        private NetEndPoint _localEndPoint;
+        private int _port;
         private static readonly HostName BroadcastAddress = new HostName("255.255.255.255");
         private static readonly HostName MulticastAddressV6 = new HostName(NetConstants.MulticastGroupIPv6);
 
-        public NetEndPoint LocalEndPoint
+        public int LocalPort
         {
-            get { return _localEndPoint; }
+            get { return _port; }
         }
 
         public NetSocket(NetManager.OnMessageReceived onMessageReceived)
@@ -357,7 +352,7 @@ namespace LiteNetLib
             {
                 _datagramSocket.BindServiceNameAsync(port.ToString()).AsTask().Wait();
                 _datagramSocket.JoinMulticastGroup(MulticastAddressV6);
-                _localEndPoint = new NetEndPoint(_datagramSocket.Information.LocalAddress, _datagramSocket.Information.LocalPort);
+                _port = int.Parse(_datagramSocket.Information.LocalPort);
             }
             catch (Exception ex)
             {
