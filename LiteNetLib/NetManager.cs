@@ -109,9 +109,9 @@ namespace LiteNetLib
         /// <summary>
         /// Local EndPoint (host and port)
         /// </summary>
-        public NetEndPoint LocalEndPoint
+        public int LocalPort
         {
-            get { return _socket.LocalEndPoint; }
+            get { return _socket.LocalPort; }
         }
 
         /// <summary>

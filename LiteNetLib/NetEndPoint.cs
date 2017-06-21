@@ -41,7 +41,7 @@ namespace LiteNetLib
             IPAddress ipAddress;
             if (!IPAddress.TryParse(hostStr, out ipAddress))
             {
-                if (Socket.OSSupportsIPv6)
+                if (NetSocket.IPv6Support)
                 {
                     if (hostStr == "localhost")
                     {

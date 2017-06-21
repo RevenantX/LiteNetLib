@@ -13,7 +13,7 @@ namespace LibSample
 
             public void OnPeerConnected(NetPeer peer)
             {
-                Console.WriteLine("[Client {0}] connected to: {1}:{2}", Client.LocalEndPoint.Port, peer.EndPoint.Host, peer.EndPoint.Port);
+                Console.WriteLine("[Client {0}] connected to: {1}:{2}", Client.LocalPort, peer.EndPoint.Host, peer.EndPoint.Port);
             }
 
             public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)

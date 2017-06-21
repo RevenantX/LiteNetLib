@@ -51,7 +51,7 @@ namespace LiteNetLib
         public static void PrintInterfaceInfos()
         {
 #if !WINRT || UNITY_EDITOR
-            DebugWriteForce(ConsoleColor.Green, "IPv6Support: {0}", Socket.OSSupportsIPv6);
+            DebugWriteForce(ConsoleColor.Green, "IPv6Support: {0}", NetSocket.IPv6Support);
             try
             {
                 foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())

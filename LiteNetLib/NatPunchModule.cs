@@ -134,7 +134,7 @@ namespace LiteNetLib
             {
                 networkIp = NetUtils.GetLocalIp(LocalAddrType.IPv6);
             }
-            int networkPort = _netBase.LocalEndPoint.Port;
+            int networkPort = _netBase.LocalPort;
             NetEndPoint localEndPoint = new NetEndPoint(networkIp, networkPort);
             dw.Put(localEndPoint);
             dw.Put(additionalInfo, MaxTokenLength);
