@@ -8,6 +8,7 @@ namespace LiteNetLib
     {
         InProgress,
         Connected,
+        ShutdownRequested,
         Disconnected
     }
 
@@ -259,6 +260,11 @@ namespace LiteNetLib
 
         public void Send(byte[] data, int start, int length, SendOptions options)
         {
+            if (_connectionState == ConnectionState.ShutdownRequested || 
+                _connectionState == ConnectionState.Disconnected)
+            {
+                return;
+            }
             //Prepare
             PacketProperty property = SendOptionsToProperty(options);
             int headerSize = NetPacket.GetHeaderSize(property);
@@ -332,8 +338,9 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
-        internal void SendReliableDisconnect(NetPacket packet)
+        internal void Shutdown(NetPacket packet)
         {
+            _connectionState = ConnectionState.ShutdownRequested;
             _reliableOrderedChannel.AddToQueue(packet);
         }
 
@@ -841,6 +848,15 @@ namespace LiteNetLib
                     _sendedPacketsCount = 0;
                     _flowTimer = 0;
                 }
+            }
+
+            //Check shutdown
+            if (_connectionState == ConnectionState.ShutdownRequested && 
+                _reliableOrderedChannel.PacketsInQueue == 0 &&
+                _reliableUnorderedChannel.PacketsInQueue == 0)
+            {
+                NetUtils.DebugWrite("[UPDATE] PeerShutdown complete");
+                _connectionState = ConnectionState.Disconnected;
             }
         }
 

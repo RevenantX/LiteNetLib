@@ -64,6 +64,7 @@ namespace LiteNetLib
         private readonly INetEventListener _netEventListener;
 
         private readonly NetPeerCollection _peers;
+        private readonly List<NetPeer> _peersToShutdown;
         private readonly int _maxConnections;
 
         private readonly NetPacketPool _netPacketPool;
@@ -185,6 +186,7 @@ namespace LiteNetLib
             _netPacketPool = new NetPacketPool();
             NatPunchModule = new NatPunchModule(this);
             _peers = new NetPeerCollection(maxConnections);
+            _peersToShutdown = new List<NetPeer>();
             _maxConnections = maxConnections;
         }
 
@@ -219,7 +221,7 @@ namespace LiteNetLib
                 NetPeer fromPeer;
                 if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
                 {
-                    DisconnectPeer(fromPeer, DisconnectReason.SocketSendError, errorCode, false, true, null, 0, 0);
+                    DisconnectPeer(fromPeer, DisconnectReason.SocketSendError, errorCode, true, null, 0, 0);
                 }
                 var netEvent = CreateEvent(NetEventType.Error);
                 netEvent.RemoteEndPoint = remoteEndPoint;
@@ -244,35 +246,40 @@ namespace LiteNetLib
             NetPeer peer, 
             DisconnectReason reason, 
             int socketErrorCode, 
-            bool sendDisconnectPacket,
             bool force,
             byte[] data,
             int start,
             int count)
         {
-            if (sendDisconnectPacket)
+            if (peer == null || !_peers.ContainsAddress(peer.EndPoint))
             {
-                if (count + 8 >= peer.Mtu)
-                {
-                    //Drop additional data
-                    data = null;
-                    count = 0;
-                    NetUtils.DebugWriteError("[NM] Disconnect additional data size more than MTU - 8!");
-                }
+                return;
+            }
 
-                var disconnectPacket = _netPacketPool.Get(PacketProperty.Disconnect, 8 + count);
-                FastBitConverter.GetBytes(disconnectPacket.RawData, 1, peer.ConnectId);
-                if (data != null)
+            if (count + 8 >= peer.Mtu)
+            {
+                //Drop additional data
+                data = null;
+                count = 0;
+                NetUtils.DebugWriteError("[NM] Disconnect additional data size more than MTU - 8!");
+            }
+            var disconnectPacket = _netPacketPool.Get(PacketProperty.Disconnect, 8 + count);
+            FastBitConverter.GetBytes(disconnectPacket.RawData, 1, peer.ConnectId);
+            if (data != null && count > 0)
+            {
+                Buffer.BlockCopy(data, start, disconnectPacket.RawData, 9, count);
+            }
+
+            if (force)
+            {
+                SendRawAndRecycle(disconnectPacket, peer.EndPoint);
+            }
+            else
+            {
+                peer.Shutdown(disconnectPacket);
+                lock (_peersToShutdown)
                 {
-                    Buffer.BlockCopy(data, start, disconnectPacket.RawData, 9, count);
-                }
-                if (force)
-                {
-                    SendRawAndRecycle(disconnectPacket, peer.EndPoint);
-                }
-                else
-                {
-                    peer.SendReliableDisconnect(disconnectPacket);
+                    _peersToShutdown.Add(peer);
                 }
             }
             var netEvent = CreateEvent(NetEventType.Disconnect);
@@ -303,7 +310,6 @@ namespace LiteNetLib
         private NetEvent CreateEvent(NetEventType type)
         {
             NetEvent evt = null;
-
             lock (_netEventsPool)
             {
                 if (_netEventsPool.Count > 0)
@@ -408,11 +414,10 @@ namespace LiteNetLib
                 }
             }
 #endif
-
+            int delta = _logicThread.SleepTime;
             //Process acks
             lock (_peers)
             {
-                int delta = _logicThread.SleepTime;
                 for(int i = 0; i < _peers.Count; i++)
                 {
                     var netPeer = _peers[i];
@@ -447,6 +452,22 @@ namespace LiteNetLib
                     else
                     {
                         netPeer.Update(delta);
+                    }
+                }
+            }
+
+            //Process shutdowned peers
+            lock (_peersToShutdown)
+            {
+                for (int i = 0; i < _peersToShutdown.Count; i++)
+                {
+                    var peer = _peersToShutdown[i];
+                    peer.Update(delta);
+                    if (peer.ConnectionState == ConnectionState.Disconnected)
+                    {
+                        NetUtils.DebugWrite("[NM] PeerShutdown removed");
+                        _peersToShutdown.RemoveAt(i);
+                        i--;
                     }
                 }
             }
@@ -1015,59 +1036,60 @@ namespace LiteNetLib
         }
 
         /// <summary>
+        /// Immediately disconnect peer from server without additional data
+        /// </summary>
+        /// <param name="peer">peer to disconnect</param>
+        public void DisconnectPeerForce(NetPeer peer)
+        {
+            DisconnectPeer(peer, DisconnectReason.DisconnectPeerCalled, 0, true, null, 0, 0);
+        }
+
+        /// <summary>
         /// Disconnect peer from server
         /// </summary>
         /// <param name="peer">peer to disconnect</param>
-        /// <param name="force">when true - remaining reliable packets will be dropped</param>
-        public void DisconnectPeer(NetPeer peer, bool force)
+        public void DisconnectPeer(NetPeer peer)
         {
-            DisconnectPeer(peer, force, null, 0, 0);
+            DisconnectPeer(peer, null, 0, 0);
         }
 
         /// <summary>
         /// Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
         /// </summary>
         /// <param name="peer">peer to disconnect</param>
-        /// <param name="force">when true - remaining reliable packets will be dropped</param>
         /// <param name="data">additional data</param>
-        public void DisconnectPeer(NetPeer peer, bool force, byte[] data)
+        public void DisconnectPeer(NetPeer peer, byte[] data)
         {
-            DisconnectPeer(peer, force, data, 0, data.Length);
+            DisconnectPeer(peer, data, 0, data.Length);
         }
 
         /// <summary>
         /// Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
         /// </summary>
         /// <param name="peer">peer to disconnect</param>
-        /// <param name="force">when true - remaining reliable packets will be dropped</param>
         /// <param name="writer">additional data</param>
-        public void DisconnectPeer(NetPeer peer, bool force, NetDataWriter writer)
+        public void DisconnectPeer(NetPeer peer, NetDataWriter writer)
         {
-            DisconnectPeer(peer, force, writer.Data, 0, writer.Length);
+            DisconnectPeer(peer, writer.Data, 0, writer.Length);
         }
 
         /// <summary>
         /// Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
         /// </summary>
         /// <param name="peer">peer to disconnect</param>
-        /// <param name="force">when true - remaining reliable packets will be dropped</param>
         /// <param name="data">additional data</param>
         /// <param name="start">data start</param>
         /// <param name="count">data length</param>
-        public void DisconnectPeer(NetPeer peer, bool force, byte[] data, int start, int count)
+        public void DisconnectPeer(NetPeer peer, byte[] data, int start, int count)
         {
-            if (peer != null && _peers.ContainsAddress(peer.EndPoint))
-            {
-                DisconnectPeer(
-                    peer, 
-                    DisconnectReason.DisconnectPeerCalled, 
-                    0, 
-                    true,
-                    force,
-                    data, 
-                    start, 
-                    count);
+            DisconnectPeer(
+                peer, 
+                DisconnectReason.DisconnectPeerCalled, 
+                0, 
+                false,
+                data, 
+                start, 
+                count);
             }
-        }
     }
 }
