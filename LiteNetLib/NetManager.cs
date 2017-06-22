@@ -621,7 +621,7 @@ namespace LiteNetLib
 
                     var netEvent = CreateEvent(NetEventType.Disconnect);
                     netEvent.Peer = netPeer;
-                    netEvent.DataReader.SetSource(packet.RawData, 5, packet.Size - 5);
+                    netEvent.DataReader.SetSource(packet.RawData, 9, packet.Size);
                     netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
                     EnqueueEvent(netEvent);
 
