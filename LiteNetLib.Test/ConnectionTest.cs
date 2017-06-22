@@ -47,6 +47,33 @@ namespace LiteNetLib.Test
         }
 
         [Test]
+        public void DisconnectTest()
+        {
+            var server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
+            bool disconnected = false;
+            ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) =>
+            {
+                var bytes = info.AdditionalData.GetRemainingBytes();
+                Assert.AreEqual(new byte[] { 1, 2, 3, 4 }, bytes);
+                disconnected = true;
+            };
+            client.Connect("127.0.0.1", DefaultPort);
+
+            while (server.PeersCount != 1)
+            {
+                Thread.Sleep(15);
+                server.PollEvents();
+            }
+            server.DisconnectPeer(server.GetFirstPeer(), new byte[] {1,2,3,4});
+            while (!disconnected)
+            {
+                client.PollEvents();
+            }
+            Assert.True(disconnected);
+        }
+
+        [Test]
         public void ConnectionByIpV6()
         {
             var server = ManagerStack.Server(1);
