@@ -1,0 +1,362 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LiteNetLib</name>
+    </assembly>
+    <members>
+        <member name="M:LiteNetLib.INetEventListener.OnPeerConnected(LiteNetLib.NetPeer)">
+            <summary>
+            New remote peer connected to host, or client connected to remote host
+            </summary>
+            <param name="peer">Connected peer object</param>
+        </member>
+        <member name="M:LiteNetLib.INetEventListener.OnPeerDisconnected(LiteNetLib.NetPeer,LiteNetLib.DisconnectInfo)">
+            <summary>
+            Peer disconnected
+            </summary>
+            <param name="peer">disconnected peer</param>
+            <param name="disconnectInfo">additional info about reason, errorCode or data received with disconnect message</param>
+        </member>
+        <member name="M:LiteNetLib.INetEventListener.OnNetworkError(LiteNetLib.NetEndPoint,System.Int32)">
+            <summary>
+            Network error (on send or receive)
+            </summary>
+            <param name="endPoint">From endPoint (can be null)</param>
+            <param name="socketErrorCode">Socket error code</param>
+        </member>
+        <member name="M:LiteNetLib.INetEventListener.OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.Utils.NetDataReader)">
+            <summary>
+            Received some data
+            </summary>
+            <param name="peer">From peer</param>
+            <param name="reader">DataReader containing all received data</param>
+        </member>
+        <member name="M:LiteNetLib.INetEventListener.OnNetworkReceiveUnconnected(LiteNetLib.NetEndPoint,LiteNetLib.Utils.NetDataReader,LiteNetLib.UnconnectedMessageType)">
+            <summary>
+            Received unconnected message
+            </summary>
+            <param name="remoteEndPoint">From address (IP and Port)</param>
+            <param name="reader">Message data</param>
+            <param name="messageType">Message type (simple, discovery request or responce)</param>
+        </member>
+        <member name="M:LiteNetLib.INetEventListener.OnNetworkLatencyUpdate(LiteNetLib.NetPeer,System.Int32)">
+            <summary>
+            Latency information updated
+            </summary>
+            <param name="peer">Peer with updated latency</param>
+            <param name="latency">latency value in milliseconds</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.RegisterCustomType``1">
+            <summary>
+            Register custom property type
+            </summary>
+            <typeparam name="T">INetSerializable structure</typeparam>
+            <returns>True - if register successful, false - if type already registered</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.RegisterCustomType``1(System.Func{``0})">
+            <summary>
+            Register custom property type
+            </summary>
+            <typeparam name="T">INetSerializable class</typeparam>
+            <returns>True - if register successful, false - if type already registered</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.RegisterCustomType``1(System.Action{LiteNetLib.Utils.NetDataWriter,``0},System.Func{LiteNetLib.Utils.NetDataReader,``0})">
+            <summary>
+            Register custom property type
+            </summary>
+            <param name="writeDelegate"></param>
+            <param name="readDelegate"></param>
+            <returns>True - if register successful, false - if type already registered</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.ReadAllPackets(LiteNetLib.Utils.NetDataReader)">
+            <summary>
+            Reads all available data from NetDataReader and calls OnReceive delegates
+            </summary>
+            <param name="reader">NetDataReader with packets data</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.ReadAllPackets``1(LiteNetLib.Utils.NetDataReader,``0)">
+            <summary>
+            Reads all available data from NetDataReader and calls OnReceive delegates
+            </summary>
+            <param name="reader">NetDataReader with packets data</param>
+            <param name="userData">Argument that passed to OnReceivedEvent</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.ReadPacket(LiteNetLib.Utils.NetDataReader)">
+            <summary>
+            Reads one packet from NetDataReader and calls OnReceive delegate
+            </summary>
+            <param name="reader">NetDataReader with packet</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.ReadKnownPacket``1(LiteNetLib.Utils.NetDataReader)">
+            <summary>
+            Reads packet with known type
+            </summary>
+            <param name="reader">NetDataReader with packet</param>
+            <returns>Returns packet if packet in reader is matched type</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.ReadKnownPacket``1(LiteNetLib.Utils.NetDataReader,``0)">
+            <summary>
+            Reads packet with known type (non alloc variant)
+            </summary>
+            <param name="reader">NetDataReader with packet</param>
+            <param name="target">Deserialization target</param>
+            <returns>Returns true if packet in reader is matched type</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.ReadPacket(LiteNetLib.Utils.NetDataReader,System.Object)">
+            <summary>
+            Reads one packet from NetDataReader and calls OnReceive delegate
+            </summary>
+            <param name="reader">NetDataReader with packet</param>
+            <param name="userData">Argument that passed to OnReceivedEvent</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.Subscribe``1(System.Action{``0},System.Func{``0})">
+            <summary>
+            Register and subscribe to packet receive event
+            </summary>
+            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.Register``1(System.Func{``0})">
+            <summary>
+            Register packet type for direct reading (ReadKnownPacket)
+            </summary>
+            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.Subscribe``2(System.Action{``0,``1},System.Func{``0})">
+            <summary>
+            Register and subscribe to packet receive event (with userData)
+            </summary>
+            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.SubscribeReusable``1(System.Action{``0})">
+            <summary>
+            Register and subscribe to packet receive event
+            This metod will overwrite last received packet class on receive (less garbage)
+            </summary>
+            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.SubscribeReusable``2(System.Action{``0,``1})">
+            <summary>
+            Register and subscribe to packet receive event
+            This metod will overwrite last received packet class on receive (less garbage)
+            </summary>
+            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.Serialize``1(LiteNetLib.Utils.NetDataWriter,``0)">
+            <summary>
+            Serialize struct to NetDataWriter (fast)
+            </summary>
+            <param name="writer">Serialization target NetDataWriter</param>
+            <param name="obj">Struct to serialize</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.Serialize``1(``0)">
+            <summary>
+            Serialize struct to byte array
+            </summary>
+            <param name="obj">Struct to serialize</param>
+            <returns>byte array with serialized data</returns>
+        </member>
+        <member name="P:LiteNetLib.NetManager.IsRunning">
+            <summary>
+            Returns true if socket listening and update thread is running
+            </summary>
+        </member>
+        <member name="P:LiteNetLib.NetManager.LocalPort">
+            <summary>
+            Local EndPoint (host and port)
+            </summary>
+        </member>
+        <member name="P:LiteNetLib.NetManager.PeersCount">
+            <summary>
+            Connected peers count
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.NetManager.#ctor(LiteNetLib.INetEventListener,System.String)">
+            <summary>
+            NetManager constructor with maxConnections = 1 (usable for client)
+            </summary>
+            <param name="listener">Network events listener</param>
+            <param name="connectKey">Application key (must be same with remote host for establish connection)</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.#ctor(LiteNetLib.INetEventListener,System.Int32,System.String)">
+            <summary>
+            NetManager constructor
+            </summary>
+            <param name="listener">Network events listener</param>
+            <param name="maxConnections">Maximum connections (incoming and outcoming)</param>
+            <param name="connectKey">Application key (must be same with remote host for establish connection)</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.SendOptions)">
+            <summary>
+            Send data to all connected peers
+            </summary>
+            <param name="writer">DataWriter with data</param>
+            <param name="options">Send options (reliable, unreliable, etc.)</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.SendOptions)">
+            <summary>
+            Send data to all connected peers
+            </summary>
+            <param name="data">Data</param>
+            <param name="options">Send options (reliable, unreliable, etc.)</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.SendOptions)">
+            <summary>
+            Send data to all connected peers
+            </summary>
+            <param name="data">Data</param>
+            <param name="start">Start of data</param>
+            <param name="length">Length of data</param>
+            <param name="options">Send options (reliable, unreliable, etc.)</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.SendOptions,LiteNetLib.NetPeer)">
+            <summary>
+            Send data to all connected peers
+            </summary>
+            <param name="writer">DataWriter with data</param>
+            <param name="options">Send options (reliable, unreliable, etc.)</param>
+            <param name="excludePeer">Excluded peer</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.SendOptions,LiteNetLib.NetPeer)">
+            <summary>
+            Send data to all connected peers
+            </summary>
+            <param name="data">Data</param>
+            <param name="options">Send options (reliable, unreliable, etc.)</param>
+            <param name="excludePeer">Excluded peer</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.SendOptions,LiteNetLib.NetPeer)">
+            <summary>
+            Send data to all connected peers
+            </summary>
+            <param name="data">Data</param>
+            <param name="start">Start of data</param>
+            <param name="length">Length of data</param>
+            <param name="options">Send options (reliable, unreliable, etc.)</param>
+            <param name="excludePeer">Excluded peer</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Start">
+            <summary>
+            Start logic thread and listening on available port
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Start(System.Int32)">
+            <summary>
+            Start logic thread and listening on selected port
+            </summary>
+            <param name="port">port to listen</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendUnconnectedMessage(System.Byte[],LiteNetLib.NetEndPoint)">
+            <summary>
+            Send message without connection
+            </summary>
+            <param name="message">Raw data</param>
+            <param name="remoteEndPoint">Packet destination</param>
+            <returns>Operation result</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,LiteNetLib.NetEndPoint)">
+            <summary>
+            Send message without connection
+            </summary>
+            <param name="writer">Data serializer</param>
+            <param name="remoteEndPoint">Packet destination</param>
+            <returns>Operation result</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendUnconnectedMessage(System.Byte[],System.Int32,System.Int32,LiteNetLib.NetEndPoint)">
+            <summary>
+            Send message without connection
+            </summary>
+            <param name="message">Raw data</param>
+            <param name="start">data start</param>
+            <param name="length">data length</param>
+            <param name="remoteEndPoint">Packet destination</param>
+            <returns>Operation result</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Flush">
+            <summary>
+            Flush all queued packets of all peers
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.NetManager.PollEvents">
+            <summary>
+            Receive all pending events. Call this in game update code
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Connect(System.String,System.Int32)">
+            <summary>
+            Connect to remote host
+            </summary>
+            <param name="address">Server IP or hostname</param>
+            <param name="port">Server Port</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Connect(LiteNetLib.NetEndPoint)">
+            <summary>
+            Connect to remote host
+            </summary>
+            <param name="target">Server end point (ip and port)</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Stop">
+            <summary>
+            Force closes connection and stop all threads.
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.NetManager.GetFirstPeer">
+            <summary>
+            Get first peer. Usefull for Client mode
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.GetPeers">
+            <summary>
+            Get copy of current connected peers
+            </summary>
+            <returns>Array with connected peers</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.GetPeersNonAlloc(System.Collections.Generic.List{LiteNetLib.NetPeer})">
+            <summary>
+            Get copy of current connected peers (without allocations)
+            </summary>
+            <param name="peers">List that will contain result</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)">
+            <summary>
+            Disconnect peer from server
+            </summary>
+            <param name="peer">peer to disconnect</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,System.Byte[])">
+            <summary>
+            Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
+            </summary>
+            <param name="peer">peer to disconnect</param>
+            <param name="data">additional data</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,LiteNetLib.Utils.NetDataWriter)">
+            <summary>
+            Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
+            </summary>
+            <param name="peer">peer to disconnect</param>
+            <param name="writer">additional data</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
+            </summary>
+            <param name="peer">peer to disconnect</param>
+            <param name="data">additional data</param>
+            <param name="start">data start</param>
+            <param name="count">data length</param>
+        </member>
+        <member name="F:LiteNetLib.NetPeer.Tag">
+            <summary>
+            Application defined object containing data about the connection
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.Flush">
+            <summary>
+            Flush all queued packets
+            </summary>
+        </member>
+    </members>
+</doc>
