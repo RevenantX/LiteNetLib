@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using LiteNetLib.Utils;
 
-//Some code parts taked from lidgren-network-gen3
-
+//Some code parts taken from lidgren-network-gen3
 namespace LiteNetLib
 {
     public interface INatPunchListener
@@ -33,6 +32,9 @@ namespace LiteNetLib
         }
     }
 
+    /// <summary>
+    /// Module for UDP NAT Hole punching operations. Can be accessed from NetManager
+    /// </summary>
     public sealed class NatPunchModule
     {
         struct RequestEventData

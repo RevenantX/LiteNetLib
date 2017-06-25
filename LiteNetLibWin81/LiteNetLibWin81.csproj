@@ -85,9 +85,6 @@
     <Compile Include="..\LiteNetLib\NetUtils.cs">
       <Link>NetUtils.cs</Link>
     </Compile>
-    <Compile Include="..\LiteNetLib\NtpSyncModule.cs">
-      <Link>NtpSyncModule.cs</Link>
-    </Compile>
     <Compile Include="..\LiteNetLib\ReliableChannel.cs">
       <Link>ReliableChannel.cs</Link>
     </Compile>

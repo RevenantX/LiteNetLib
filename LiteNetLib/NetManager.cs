@@ -8,6 +8,9 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    /// <summary>
+    /// Main class for all network operations. Can be used as client and/or server.
+    /// </summary>
     public sealed class NetManager
     {
         internal delegate void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint);
@@ -70,21 +73,85 @@ namespace LiteNetLib
         private readonly NetPacketPool _netPacketPool;
 
         //config section
+        /// <summary>
+        /// Enable messages receiving without connection. (with SendUnconnectedMessage method)
+        /// </summary>
         public bool UnconnectedMessagesEnabled = false;
+
+        /// <summary>
+        /// Enable nat punch messages
+        /// </summary>
         public bool NatPunchEnabled = false;
+
+        /// <summary>
+        /// Library logic update and send period in milliseconds
+        /// </summary>
         public int UpdateTime { get { return _logicThread.SleepTime; } set { _logicThread.SleepTime = value; } }
-        public int PingInterval = NetConstants.DefaultPingInterval;
+
+        /// <summary>
+        /// Interval for latency detection and checking connection
+        /// </summary>
+        public int PingInterval = 1000;
+
+        /// <summary>
+        /// If NetManager doesn't receive any packet from remote peer during this time then connection will be closed
+        /// (including library internal keepalive packets)
+        /// </summary>
         public long DisconnectTimeout = 5000;
+
+        /// <summary>
+        /// Simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)
+        /// </summary>
         public bool SimulatePacketLoss = false;
+
+        /// <summary>
+        /// Simulate latency by holding packets for random time. (Works only in DEBUG mode)
+        /// </summary>
         public bool SimulateLatency = false;
+
+        /// <summary>
+        /// Chance of packet loss when simulation enabled. value in percents (1 - 100).
+        /// </summary>
         public int SimulationPacketLossChance = 10;
+
+        /// <summary>
+        /// Minimum simulated latency
+        /// </summary>
         public int SimulationMinLatency = 30;
+
+        /// <summary>
+        /// Maximum simulated latency
+        /// </summary>
         public int SimulationMaxLatency = 100;
+
+        /// <summary>
+        /// Experimental feature. Events automatically will be called without PollEvents method from another thread
+        /// </summary>
         public bool UnsyncedEvents = false;
+
+        /// <summary>
+        /// Allows receive DiscoveryRequests
+        /// </summary>
         public bool DiscoveryEnabled = false;
+
+        /// <summary>
+        /// Merge small packets into one before sending to reduce outgoing packets count. (May increase a bit outgoing data size)
+        /// </summary>
         public bool MergeEnabled = false;
+
+        /// <summary>
+        /// Delay betwen initial connection attempts
+        /// </summary>
         public int ReconnectDelay = 500;
+
+        /// <summary>
+        /// Maximum connection attempts before client stops and call disconnect event.
+        /// </summary>
         public int MaxConnectAttempts = 10;
+
+        /// <summary>
+        /// Enables socket option "ReuseAddress" for specific purposes
+        /// </summary>
         public bool ReuseAddress = false;
 
         private const int DefaultUpdateTime = 15;
@@ -96,6 +163,9 @@ namespace LiteNetLib
         public ulong BytesReceived { get; private set; }
 
         //modules
+        /// <summary>
+        /// NatPunchModule for NAT hole punching operations
+        /// </summary>
         public readonly NatPunchModule NatPunchModule;
 
         /// <summary>

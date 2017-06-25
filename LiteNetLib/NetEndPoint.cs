@@ -5,6 +5,9 @@ using System.Net.Sockets;
 
 namespace LiteNetLib
 {
+    /// <summary>
+    /// Network End Point. Contains ip address and port
+    /// </summary>
     public sealed class NetEndPoint
     {
         public string Host { get { return EndPoint.Address.ToString(); } }

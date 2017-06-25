@@ -13,7 +13,7 @@ using Windows.System.Threading.Core;
 
 namespace LiteNetLib
 {
-    public sealed class NetThread
+    internal sealed class NetThread
     {
 #if USE_WINRT
         private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
@@ -38,6 +38,15 @@ namespace LiteNetLib
             _callback = callback;
             SleepTime = sleepTime;
             _name = name;
+        }
+
+        public void Sleep(int msec)
+        {
+#if USE_WINRT
+            _updateWaiter.WaitOne(msec);
+#else
+            Thread.Sleep(msec);
+#endif
         }
 
         public void Start()
