@@ -28,6 +28,9 @@ namespace LiteNetLib
     }
 #endif
 
+    /// <summary>
+    /// Address type that you want to receive from NetUtils.GetLocalIp method
+    /// </summary>
     [Flags]
     public enum LocalAddrType
     {
@@ -36,49 +39,68 @@ namespace LiteNetLib
         All = 3
     }
 
+    /// <summary>
+    /// Some specific network utilities
+    /// </summary>
     public static class NetUtils
     {
-        internal static int RelativeSequenceNumber(int number, int expected)
+        /// <summary>
+        /// Request time from NTP server and calls callback (if success)
+        /// </summary>
+        /// <param name="ntpServerAddress">NTP Server address</param>
+        /// <param name="port">port</param>
+        /// <param name="onRequestComplete">callback (called from other thread!)</param>
+        public static void RequestTimeFromNTP(string ntpServerAddress, int port, Action<DateTime?> onRequestComplete)
         {
-            return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
-        }
+            NetSocket socket = null;
+            var ntpEndPoint = new NetEndPoint(ntpServerAddress, port);
 
-        internal static int GetDividedPacketsCount(int size, int mtu)
-        {
-            return (size / mtu) + (size % mtu == 0 ? 0 : 1);
-        }
-
-        public static void PrintInterfaceInfos()
-        {
-#if !WINRT || UNITY_EDITOR
-            DebugWriteForce(ConsoleColor.Green, "IPv6Support: {0}", NetSocket.IPv6Support);
-            try
+            NetManager.OnMessageReceived onReceive = (data, length, code, point) =>
             {
-                foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+                if (!point.Equals(ntpEndPoint) || length < 48)
                 {
-                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
-                    {
-                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork ||
-                            ip.Address.AddressFamily == AddressFamily.InterNetworkV6)
-                        {
-                            DebugWriteForce(
-                                ConsoleColor.Green,
-                                "Interface: {0}, Type: {1}, Ip: {2}, OpStatus: {3}",
-                                ni.Name,
-                                ni.NetworkInterfaceType.ToString(),
-                                ip.Address.ToString(),
-                                ni.OperationalStatus.ToString());
-                        }
-                    }
+                    return;
                 }
-            }
-            catch (Exception e)
+                socket.Close();
+
+                ulong intPart = (ulong)data[40] << 24 | (ulong)data[41] << 16 | (ulong)data[42] << 8 | (ulong)data[43];
+                ulong fractPart = (ulong)data[44] << 24 | (ulong)data[45] << 16 | (ulong)data[46] << 8 | (ulong)data[47];
+                var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
+                onRequestComplete(new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long) milliseconds));
+            };
+
+            //Create and start socket
+            socket = new NetSocket(onReceive);
+            socket.Bind(0, false);
+
+            //Send request
+            int errorCode = 0;
+            var sendData = new byte[48];
+            sendData[0] = 0x1B;
+            var sendCount = socket.SendTo(sendData, 0, sendData.Length, ntpEndPoint, ref errorCode);
+            if (errorCode != 0 || sendCount != sendData.Length)
             {
-                DebugWriteForce(ConsoleColor.Red, "Error while getting interface infos: {0}", e.ToString());
+                onRequestComplete(null);
             }
-#endif
         }
 
+        /// <summary>
+        /// Get all local ip addresses
+        /// </summary>
+        /// <param name="addrType">type of address (IPv4, IPv6 or both)</param>
+        /// <returns>List with all local ip adresses</returns>
+        public static List<string> GetLocalIpList(LocalAddrType addrType)
+        {
+            List<string> targetList = new List<string>();
+            GetLocalIpList(targetList, addrType);
+            return targetList;
+        }
+
+        /// <summary>
+        /// Get all local ip addresses (non alloc version)
+        /// </summary>
+        /// <param name="targetList">result list</param>
+        /// <param name="addrType">type of address (IPv4, IPv6 or both)</param>
         public static void GetLocalIpList(List<string> targetList, LocalAddrType addrType)
         {
             bool ipv4 = (addrType & LocalAddrType.IPv4) == LocalAddrType.IPv4;
@@ -150,6 +172,11 @@ namespace LiteNetLib
         }
 
         private static readonly List<string> IpList = new List<string>();
+        /// <summary>
+        /// Get first detected local ip address
+        /// </summary>
+        /// <param name="addrType">type of address (IPv4, IPv6 or both)</param>
+        /// <returns>IP address if available. Else - string.Empty</returns>
         public static string GetLocalIp(LocalAddrType addrType)
         {
             lock (IpList)
@@ -160,8 +187,46 @@ namespace LiteNetLib
             }
         }
 
-        private static readonly object DebugLogLock = new object();
+        // ===========================================
+        // Internal and debug log related stuff
+        // ===========================================
+        internal static void PrintInterfaceInfos()
+        {
+#if !WINRT || UNITY_EDITOR
+            DebugWriteForce(ConsoleColor.Green, "IPv6Support: {0}", NetSocket.IPv6Support);
+            try
+            {
+                foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork ||
+                            ip.Address.AddressFamily == AddressFamily.InterNetworkV6)
+                        {
+                            DebugWriteForce(
+                                ConsoleColor.Green,
+                                "Interface: {0}, Type: {1}, Ip: {2}, OpStatus: {3}",
+                                ni.Name,
+                                ni.NetworkInterfaceType.ToString(),
+                                ip.Address.ToString(),
+                                ni.OperationalStatus.ToString());
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                DebugWriteForce(ConsoleColor.Red, "Error while getting interface infos: {0}", e.ToString());
+            }
+#endif
+        }
 
+        internal static int RelativeSequenceNumber(int number, int expected)
+        {
+            return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
+        }
+
+        private static readonly object DebugLogLock = new object();
         private static void DebugWriteLogic(ConsoleColor color, string str, params object[] args)
         {
             lock (DebugLogLock)

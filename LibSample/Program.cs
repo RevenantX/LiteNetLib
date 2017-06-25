@@ -4,16 +4,16 @@ using LiteNetLib;
 
 class Program
 {
-
     static void Main(string[] args)
     {
         //Test ntp
-        NtpSyncModule ntpSync = new NtpSyncModule("pool.ntp.org");
-        ntpSync.GetNetworkTime();
-        if (ntpSync.SyncedTime.HasValue)
+        NetUtils.RequestTimeFromNTP("pool.ntp.org", 123, dateTime =>
         {
-            Console.WriteLine("Synced time test: " + ntpSync.SyncedTime.Value);
-        }
+            if (dateTime.HasValue)
+            {
+                Console.WriteLine("[MAIN] Synced time test: " + dateTime.Value);
+            }
+        });
 
         //new EchoMessagesTest().Run();
         //new HolePunchServerTest().Run();

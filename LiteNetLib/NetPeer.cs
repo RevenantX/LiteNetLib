@@ -5,6 +5,9 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    /// <summary>
+    /// Peer connection state
+    /// </summary>
     public enum ConnectionState
     {
         InProgress,
@@ -12,6 +15,9 @@ namespace LiteNetLib
         Disconnected
     }
 
+    /// <summary>
+    /// Network peer. Main purpose is sending messages to specific peer.
+    /// </summary>
     public sealed class NetPeer
     {
         //Flow control
@@ -81,21 +87,33 @@ namespace LiteNetLib
         private long _connectId;
         private ConnectionState _connectionState;
 
+        /// <summary>
+        /// Current connection state
+        /// </summary>
         public ConnectionState ConnectionState
         {
             get { return _connectionState; }
         }
 
+        /// <summary>
+        /// Connection id for internal purposes, but can be used as key in your dictionary of peers
+        /// </summary>
         public long ConnectId
         {
             get { return _connectId; }
         }
 
+        /// <summary>
+        /// Peer ip address and port
+        /// </summary>
         public NetEndPoint EndPoint
         {
             get { return _remoteEndPoint; }
         }
 
+        /// <summary>
+        /// Current ping in milliseconds
+        /// </summary>
         public int Ping
         {
             get { return _ping; }
@@ -106,16 +124,25 @@ namespace LiteNetLib
             get { return _currentFlowMode; }
         }
 
+        /// <summary>
+        /// Current MTU - Maximum Transfer Unit ( maximum udp packet size without fragmentation )
+        /// </summary>
         public int Mtu
         {
             get { return _mtu; }
         }
 
+        /// <summary>
+        /// Time since last packet received (including internal library packets)
+        /// </summary>
         public int TimeSinceLastPacket
         {
             get { return _timeSinceLastPacket; }
         }
 
+        /// <summary>
+        /// Peer parent NetManager
+        /// </summary>
         public NetManager NetManager
         {
             get { return _peerListener; }
@@ -241,21 +268,43 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Gets maximum size of packet that will be not fragmented.
+        /// </summary>
+        /// <param name="options">Type of packet that you want send</param>
+        /// <returns>size in bytes</returns>
         public int GetMaxSinglePacketSize(SendOptions options)
         {
             return _mtu - NetPacket.GetHeaderSize(SendOptionsToProperty(options));
         }
 
+        /// <summary>
+        /// Send data to peer
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         public void Send(byte[] data, SendOptions options)
         {
             Send(data, 0, data.Length, options);
         }
 
+        /// <summary>
+        /// Send data to peer
+        /// </summary>
+        /// <param name="dataWriter">DataWriter with data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         public void Send(NetDataWriter dataWriter, SendOptions options)
         {
             Send(dataWriter.Data, 0, dataWriter.Length, options);
         }
 
+        /// <summary>
+        /// Send data to peer
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="start">Start of data</param>
+        /// <param name="length">Length of data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         public void Send(byte[] data, int start, int length, SendOptions options)
         {
             //Prepare
