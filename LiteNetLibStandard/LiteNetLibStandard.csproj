@@ -13,6 +13,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>NETSTANDARD1_6;NETCORE</DefineConstants>
+    <DocumentationFile>bin\Release\netstandard1.6\LiteNetLibStandard.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

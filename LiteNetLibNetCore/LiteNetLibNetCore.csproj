@@ -10,6 +10,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>TRACE;RELEASE;NETCOREAPP1_1;NETCORE</DefineConstants>
+    <DocumentationFile>bin\Release\netcoreapp1.1\LiteNetLibNetCore.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

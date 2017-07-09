@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>LiteNetLib</id>
+    <version>0.7.4</version>
+    <authors>Ruslan Pyrch</authors>
+    <owners>RevenantX</owners>
+    <licenseUrl>https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/RevenantX/LiteNetLib</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Lite reliable UDP library for .NET, Mono, and .NET Core.</description>
+    <copyright>Copyright 2017 Ruslan Pyrch</copyright>
+    <tags>udp reliable-udp network</tags>
+    <dependencies>
+	  <group targetFramework="netcoreapp">
+        <dependency id="System.Net.NetworkInformation" version="4.3.0" />
+      </group>
+	  <group targetFramework="netstandard">
+        <dependency id="System.Net.NetworkInformation" version="4.3.0" />
+		<dependency id="System.Net.NameResolution" version="4.3.0" />
+		<dependency id="System.Threading.Thread" version="4.3.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+	<file src="HelpBuilder\Help\Documentation.chm" target="" />
+	<file src="LiteNetLib\bin\$configuration$\**" target="lib\net35"/>
+	<file src="LiteNetLibWin81\bin\$configuration$\**" target="lib\wpa81"/>
+	<file src="LiteNetLibNetCore\bin\$configuration$\netcoreapp1.1\**" target="lib\netcoreapp"/>
+	<file src="LiteNetLibStandard\bin\$configuration$\netstandard1.6\**" target="lib\netstandard"/>
+  </files>
+</package>
