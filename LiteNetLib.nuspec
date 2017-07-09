@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>LiteNetLib</id>
-    <version>0.7.4</version>
+    <version>0.7.4.1</version>
     <authors>Ruslan Pyrch</authors>
     <owners>RevenantX</owners>
     <licenseUrl>https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt</licenseUrl>
@@ -12,10 +12,12 @@
     <copyright>Copyright 2017 Ruslan Pyrch</copyright>
     <tags>udp reliable-udp network</tags>
     <dependencies>
-	  <group targetFramework="netcoreapp">
+	  <group targetFramework="net35">
+	  </group>
+	  <group targetFramework="netcoreapp1.1">
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
       </group>
-	  <group targetFramework="netstandard">
+	  <group targetFramework="netstandard1.6">
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
 		<dependency id="System.Net.NameResolution" version="4.3.0" />
 		<dependency id="System.Threading.Thread" version="4.3.0" />
