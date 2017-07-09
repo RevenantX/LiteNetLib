@@ -1,17 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib", "LiteNetLib\LiteNetLib.csproj", "{B0A014E4-0392-4E35-AA42-8FB5A40417E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLibWin81", "LiteNetLibWin81\LiteNetLibWin81.csproj", "{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLibStandard", "LiteNetLibStandard\LiteNetLibStandard.csproj", "{2173A7AE-AB4E-41E0-AEEF-DC80E815CD47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteNetLibStandard", "LiteNetLibStandard\LiteNetLibStandard.csproj", "{2173A7AE-AB4E-41E0-AEEF-DC80E815CD47}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSample", "LibSample\LibSample.csproj", "{EF232CBE-04C8-4FD9-AE26-2F7EBBE81699}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib.Tests", "LiteNetLib.Test\LiteNetLib.Tests.csproj", "{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteNetLibNetCore", "LiteNetLibNetCore\LiteNetLibNetCore.csproj", "{BA5A3267-4656-47B5-BF06-130C472FD304}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +107,22 @@ Global
 		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.Release|x64.Build.0 = Release|Any CPU
 		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.Release|x86.ActiveCfg = Release|Any CPU
 		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.Release|x86.Build.0 = Release|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Debug|ARM.Build.0 = Debug|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Debug|x64.Build.0 = Debug|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Debug|x86.Build.0 = Debug|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Release|ARM.ActiveCfg = Release|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Release|ARM.Build.0 = Release|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Release|x64.ActiveCfg = Release|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Release|x64.Build.0 = Release|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA5A3267-4656-47B5-BF06-130C472FD304}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
