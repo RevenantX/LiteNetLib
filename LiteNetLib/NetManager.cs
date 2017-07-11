@@ -530,13 +530,11 @@ namespace LiteNetLib
             if (errorCode == 0)
             {
 #if DEBUG
-                bool receivePacket = true;
-
                 if (SimulatePacketLoss && _randomGenerator.Next(100/SimulationPacketLossChance) == 0)
                 {
-                    receivePacket = false;
+                    return; //drop packet
                 }
-                else if (SimulateLatency)
+                if (SimulateLatency)
                 {
                     int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
                     if (latency > MinLatencyTreshold)
@@ -553,15 +551,20 @@ namespace LiteNetLib
                                 TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
                             });
                         }
-                    
-                        receivePacket = false;
+
+                        return; //drop packet
                     }
                 }
-
-                if (receivePacket) //DataReceived
 #endif
+                try
+                {
                     //ProcessEvents
                     DataReceived(data, length, remoteEndPoint);
+                }
+                catch
+                {
+                    //protects socket receive thread
+                }
             }
             else //Error on receive
             {
