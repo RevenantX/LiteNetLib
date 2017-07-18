@@ -120,8 +120,9 @@ namespace LiteNetLib
             {
                 foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
                 {
-                    //Skip loopback
-                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback)
+                    //Skip loopback and disabled network interfaces
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback || 
+                        ni.OperationalStatus != OperationalStatus.Up)
                         continue;
 
                     var ipProps = ni.GetIPProperties();
