@@ -13,6 +13,7 @@ Minimal .NET version - 3.5
 ( Warning! Master branch can be unstable! )
 
 ### Donations are welcome and will help further development of this project.
+[![Bountysource](https://img.shields.io/badge/bountysource-donate-green.svg)](https://salt.bountysource.com/checkout/amount?team=litenetlib)
 ```
 BTC: 15JFQ3tHHF22QDUkJYYvuYhyUoptkyaBms
 ```
