@@ -141,6 +141,7 @@ namespace LibSample
 
         private ClientListener _clientListener;
         private ServerListener _serverListener;
+        private const int Port = 9050;
 
         public void Run()
         {
@@ -148,8 +149,7 @@ namespace LibSample
             _serverListener = new ServerListener();
 
             NetManager server = new NetManager(_serverListener, 2);
-            //server.ReuseAddress = true;
-            if (!server.Start(9050))
+            if (!server.Start(Port))
             {
                 Console.WriteLine("Server start failed");
                 Console.ReadKey();
@@ -160,22 +160,28 @@ namespace LibSample
             //Client
             _clientListener = new ClientListener();
 
-            NetManager client1 = new NetManager(_clientListener);
-            //client1.SimulateLatency = true;
-            client1.SimulationMaxLatency = 1500;
-            client1.MergeEnabled = true;
+            NetManager client1 = new NetManager(_clientListener)
+            {
+                SimulationMaxLatency = 1500,
+                //SimulateLatency = true,
+                MergeEnabled = true
+            };
+            //client1
             if (!client1.Start())
             {
                 Console.WriteLine("Client1 start failed");
                 return;
             }
-            client1.Connect("127.0.0.1", 9050);
+            client1.Connect("127.0.0.1", Port, NetDataWriter.FromString("gamekey"));
 
-            NetManager client2 = new NetManager(_clientListener);
-            //client2.SimulateLatency = true;
-            client2.SimulationMaxLatency = 1500;
+            NetManager client2 = new NetManager(_clientListener)
+            {
+                //SimulateLatency = true,
+                SimulationMaxLatency = 1500
+            };
+            
             client2.Start();
-            client2.Connect("::1", 9050);
+            client2.Connect("::1", Port, NetDataWriter.FromString("gamekey"));
 
             while (!Console.KeyAvailable)
             {

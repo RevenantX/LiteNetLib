@@ -157,6 +157,11 @@ namespace LibSample
 
             }
 
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                request.Accept();
+            }
+
             void Send()
             {
                 var peer = Client.GetFirstPeer();
@@ -220,6 +225,11 @@ namespace LibSample
             public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
             {
 
+            }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                request.Accept();
             }
 
             public void Start()

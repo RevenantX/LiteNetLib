@@ -190,9 +190,9 @@ namespace LiteNetLib
         }
 
         //Connect constructor
-        internal NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint, NetDataWriter dataWriter) : this(peerListener, remoteEndPoint)
+        internal NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint, NetDataWriter connectData) : this(peerListener, remoteEndPoint)
         {
-            _connectData = dataWriter;
+            _connectData = connectData;
             _connectAttempts = 0;
             _connectId = DateTime.UtcNow.Ticks;
             SendConnectRequest();

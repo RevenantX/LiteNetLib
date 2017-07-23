@@ -44,6 +44,11 @@ namespace LibSample
             {
 
             }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                request.Accept();
+            }
         }
 
         private class ServerListener : INetEventListener
@@ -86,6 +91,11 @@ namespace LibSample
             public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
             {
 
+            }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                
             }
         }
 
