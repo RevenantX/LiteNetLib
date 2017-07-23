@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Collections.Generic;
 #if (WINRT && !UNITY_EDITOR) || NETCORE
+#define USE_WINRT
 using System.Linq;
 #endif
 
@@ -212,7 +213,7 @@ namespace LiteNetLib.Utils
 
         private static Delegate CreateDelegate(Type type, MethodInfo info)
         {
-#if WINRT || NETCORE
+#if USE_WINRT
             return info.CreateDelegate(type);
 #else
             return Delegate.CreateDelegate(type, info);
@@ -240,7 +241,7 @@ namespace LiteNetLib.Utils
                 return info;
             }
 
-#if WINRT || NETCORE
+#if USE_WINRT
             var props = t.GetRuntimeProperties().ToArray();
             int propsCount = props.Count();
 #else
@@ -264,7 +265,7 @@ namespace LiteNetLib.Utils
 
                 //Set field type
                 info.FieldTypes[i] = propertyType.IsArray ? propertyType.GetElementType() : propertyType;
-#if WINRT || NETCORE
+#if USE_WINRT
                 bool isEnum = propertyType.GetTypeInfo().IsEnum;
                 var getMethod = property.GetMethod;
                 var setMethod = property.SetMethod;
