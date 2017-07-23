@@ -1,8 +1,10 @@
-﻿using System;
+﻿#if (WINRT && !UNITY_EDITOR) || NETCORE
+#define USE_WINRT
+#endif
+using System;
 using System.Reflection;
 using System.Collections.Generic;
-#if (WINRT && !UNITY_EDITOR) || NETCORE
-#define USE_WINRT
+#if USE_WINRT
 using System.Linq;
 #endif
 
