@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
-#if WINRT || NETCORE
+#if (WINRT && !UNITY_EDITOR) || NETCORE
 using System.Linq;
 #endif
 
