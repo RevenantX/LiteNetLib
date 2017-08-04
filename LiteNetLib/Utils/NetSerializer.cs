@@ -13,7 +13,7 @@ namespace LiteNetLib.Utils
     public interface INetSerializable
     {
         void Serialize(NetDataWriter writer);
-        void Desereialize(NetDataReader reader);
+        void Deserialize(NetDataReader reader);
     }
 
     public abstract class NetSerializerHasher
@@ -164,7 +164,7 @@ namespace LiteNetLib.Utils
                 reader =>
                 {
                     var instance = constructor();
-                    instance.Desereialize(reader);
+                    instance.Deserialize(reader);
                     return instance;
                 });
             _registeredCustomTypes.Add(t, rwDelegates);

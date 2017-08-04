@@ -64,7 +64,7 @@ namespace LiteNetLib.Test
                 writer.Put(Value);
             }
 
-            public void Desereialize(NetDataReader reader)
+            public void Deserialize(NetDataReader reader)
             {
                 Value = reader.GetInt();
             }
