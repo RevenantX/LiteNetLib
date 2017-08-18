@@ -123,6 +123,7 @@ namespace LiteNetLib.Utils
             typeof(byte),
             typeof(sbyte),
             typeof(short),
+            typeof(char),
             typeof(ushort),
             typeof(long),
             typeof(ulong),
@@ -339,6 +340,13 @@ namespace LiteNetLib.Utils
                     var setDelegate = ExtractSetDelegate<T, short>(setMethod);
                     var getDelegate = ExtractGetDelegate<T, short>(getMethod);
                     info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetShort());
+                    info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference));
+                }
+                else if (propertyType == typeof(char))
+                {
+                    var setDelegate = ExtractSetDelegate<T, char>(setMethod);
+                    var getDelegate = ExtractGetDelegate<T, char>(getMethod);
+                    info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetChar());
                     info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference));
                 }
                 else if (propertyType == typeof(ushort))

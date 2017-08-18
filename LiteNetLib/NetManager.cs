@@ -530,7 +530,7 @@ namespace LiteNetLib
             if (errorCode == 0)
             {
 #if DEBUG
-                if (SimulatePacketLoss && _randomGenerator.Next(100/SimulationPacketLossChance) == 0)
+                if (SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance)
                 {
                     return; //drop packet
                 }
