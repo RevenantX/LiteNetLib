@@ -120,6 +120,14 @@ namespace LiteNetLib.Utils
             _position += 4;
         }
 
+        public void Put(char value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + 2);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 2;
+        }
+
         public void Put(ushort value)
         {
             if (_autoResize)
