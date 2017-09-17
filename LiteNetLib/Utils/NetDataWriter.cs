@@ -314,7 +314,7 @@ namespace LiteNetLib.Utils
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             Put(len);
-            for (int i = 0; i < value.Length; i++)
+            for (int i = 0; i < len; i++)
             {
                 Put(value[i]);
             }
