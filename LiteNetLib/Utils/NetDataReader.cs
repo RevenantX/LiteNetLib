@@ -238,6 +238,13 @@ namespace LiteNetLib.Utils
             return res;
         }
 
+        public char GetChar()
+        {
+            ushort result = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            return (char)result;
+        }
+
         public ushort GetUShort()
         {
             ushort result = BitConverter.ToUInt16(_data, _position);

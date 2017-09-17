@@ -1,6 +1,6 @@
 # LiteNetLib 
 
-Lite reliable UDP library for .NET, Mono, and .NET Core.
+Lite reliable UDP library for .NET, Mono, .NET Core, .NET Standart, and UWP.
 Minimal .NET version - 3.5
 
 ## Build

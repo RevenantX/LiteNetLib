@@ -161,6 +161,14 @@ namespace LiteNetLib.Utils
             _position += 4;
         }
 
+        public void Put(char value)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + 2);
+            FastBitConverter.GetBytes(_data, _position, value);
+            _position += 2;
+        }
+
         public void Put(ushort value)
         {
             if (_autoResize)
@@ -212,19 +220,19 @@ namespace LiteNetLib.Utils
         public void PutBytesWithLength(byte[] data, int offset, int length)
         {
             if (_autoResize)
-                ResizeIfNeed(_position + length);
-            Put(length);
-            Buffer.BlockCopy(data, offset, _data, _position, length);
-            _position += length;
+                ResizeIfNeed(_position + length + 4);
+            FastBitConverter.GetBytes(_data, _position, length);
+            Buffer.BlockCopy(data, offset, _data, _position + 4, length);
+            _position += length + 4;
         }
 
         public void PutBytesWithLength(byte[] data)
         {
             if (_autoResize)
-                ResizeIfNeed(_position + data.Length);
-            Put(data.Length);
-            Buffer.BlockCopy(data, 0, _data, _position, data.Length);
-            _position += data.Length;
+                ResizeIfNeed(_position + data.Length + 4);
+            FastBitConverter.GetBytes(_data, _position, data.Length);
+            Buffer.BlockCopy(data, 0, _data, _position + 4, data.Length);
+            _position += data.Length + 4;
         }
 
         public void Put(bool value)
@@ -347,7 +355,7 @@ namespace LiteNetLib.Utils
         {
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             Put(len);
-            for (int i = 0; i < value.Length; i++)
+            for (int i = 0; i < len; i++)
             {
                 Put(value[i]);
             }

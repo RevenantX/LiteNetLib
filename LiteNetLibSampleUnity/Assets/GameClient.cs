@@ -16,13 +16,13 @@ public class GameClient : MonoBehaviour, INetEventListener
     void Start ()
     {
         _netClient = new NetManager(this, "sample_app");
-	    _netClient.Start();
-	    _netClient.UpdateTime = 15;
+        _netClient.Start();
+        _netClient.UpdateTime = 15;
     }
 
-	void Update ()
+    void Update ()
     {
-	    _netClient.PollEvents();
+	_netClient.PollEvents();
 
         var peer = _netClient.GetFirstPeer();
         if (peer != null && peer.ConnectionState == ConnectionState.Connected)
