@@ -145,6 +145,7 @@ namespace LibSample
 
         public void Run()
         {
+            Console.WriteLine("=== Echo Messages Test ===");
             //Server
             _serverListener = new ServerListener();
 

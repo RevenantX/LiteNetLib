@@ -105,6 +105,7 @@ namespace LibSample
 
         public void Run()
         {
+            Console.WriteLine("=== Broadcast Test ===");
             //Server
             _serverListener = new ServerListener();
 

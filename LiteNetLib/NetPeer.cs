@@ -222,7 +222,7 @@ namespace LiteNetLib
             Buffer.BlockCopy(_connectData.Data, 0, connectPacket.RawData, 13, _connectData.Length);
 
             //Send raw
-            _simpleChannel.AddToQueue(connectPacket);
+            _internalChannel.AddToQueue(connectPacket);
         }
 
         private void SendConnectAccept()
@@ -237,7 +237,7 @@ namespace LiteNetLib
             FastBitConverter.GetBytes(connectPacket.RawData, 1, _connectId);
 
             //Send raw
-            _simpleChannel.AddToQueue(connectPacket);
+            _internalChannel.AddToQueue(connectPacket);
         }
 
         internal bool ProcessConnectAccept(NetPacket packet)
@@ -248,6 +248,7 @@ namespace LiteNetLib
             //check connection id
             if (BitConverter.ToInt64(packet.RawData, 1) != _connectId)
             {
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Invalid connectId: {0}", _connectId);
                 return false;
             }
 
@@ -790,6 +791,8 @@ namespace LiteNetLib
                 return;
             }
 
+            _internalChannel.SendNextPacket();
+
             _timeSinceLastPacket += deltaTime;
             if (_connectionState == ConnectionState.InProgress)
             {
@@ -895,7 +898,7 @@ namespace LiteNetLib
                 _flowTimer += deltaTime;
                 if (_flowTimer >= NetConstants.FlowUpdateTime)
                 {
-                    NetUtils.DebugWrite("[UPDATE] Reset flow timer, _sendedPackets - {0}", _sendedPacketsCount);
+                    //NetUtils.DebugWrite("[UPDATE] Reset flow timer, _sendedPackets - {0}", _sendedPacketsCount);
                     _sendedPacketsCount = 0;
                     _flowTimer = 0;
                 }

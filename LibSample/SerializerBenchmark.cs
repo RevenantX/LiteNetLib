@@ -92,6 +92,8 @@ namespace LibSample
 
         public void Run()
         {
+            Console.WriteLine("=== Serializer benchmark ===");
+            
             const int LoopLength = 100000;
             //Test serializer performance
             Stopwatch stopwatch = new Stopwatch();

@@ -590,9 +590,9 @@ namespace LiteNetLib
             }
         }
 
-        private void OnConnectionSolved(ConnectionRequest request, ConnectionRequestResult result)
+        private void OnConnectionSolved(ConnectionRequest request)
         {
-            if (result == ConnectionRequestResult.Reject)
+            if (request.Result == ConnectionRequestResult.Reject)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
             }
@@ -743,19 +743,16 @@ namespace LiteNetLib
                     var reader = new NetDataReader(new byte[0]);
                     if (packet.Size > 12)
                     {
-                        reader.SetSource(packet.RawData, 13, packet.Size - 13);
+                        reader.SetSource(packet.RawData, 13, packet.Size);
                     }
                     var netEvent = CreateEvent(NetEventType.ConnectionRequest);
                     netEvent.ConnectionRequest = new ConnectionRequest(connectionId, remoteEndPoint, reader, OnConnectionSolved);
                     EnqueueEvent(netEvent);
-
-                    // Clean incoming packet
-                    _netPacketPool.Recycle(packet);
                 }
             }
-            catch
+            catch(Exception e)
             {
-                //ignored
+                NetUtils.DebugWriteError("[CR] Connect request error: {0}", e);
             }
         }
 

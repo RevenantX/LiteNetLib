@@ -26,8 +26,9 @@ namespace LiteNetLib
         DisconnectPeerCalled
     }
 
-    internal enum ConnectionRequestResult
+    public enum ConnectionRequestResult
     {
+        None,
         Accept,
         Reject
     }
@@ -55,18 +56,19 @@ namespace LiteNetLib
 
     public class ConnectionRequest
     {
-        private readonly Action<ConnectionRequest, ConnectionRequestResult> _onUserAction;
+        private readonly Action<ConnectionRequest> _onUserAction;
         private bool _used;
 
         public readonly long ConnectionId;
         public readonly NetEndPoint RemoteEndPoint;
         public readonly NetDataReader Data;
+        public ConnectionRequestResult Result { get; private set; }
 
         internal ConnectionRequest(
             long connectionId, 
             NetEndPoint remoteEndPoint, 
             NetDataReader netDataReader,
-            Action<ConnectionRequest, ConnectionRequestResult> onUserAction)
+            Action<ConnectionRequest> onUserAction)
         {
             ConnectionId = connectionId;
             RemoteEndPoint = remoteEndPoint;
@@ -94,7 +96,8 @@ namespace LiteNetLib
             if (_used)
                 return;
             _used = true;
-            _onUserAction(this, ConnectionRequestResult.Accept);
+            Result = ConnectionRequestResult.Accept;
+            _onUserAction(this);
         }
 
         public void Reject()
@@ -102,7 +105,8 @@ namespace LiteNetLib
             if (_used)
                 return;
             _used = true;
-            _onUserAction(this, ConnectionRequestResult.Reject);
+            Result = ConnectionRequestResult.Reject;
+            _onUserAction(this);
         }
     }
 

@@ -84,6 +84,8 @@ namespace LibSample
 
         public void Run()
         {
+            Console.WriteLine("=== HolePunch Test ===");
+            
             EventBasedNetListener netListener = new EventBasedNetListener();
             EventBasedNatPunchListener natPunchListener1 = new EventBasedNatPunchListener();
             EventBasedNatPunchListener natPunchListener2 = new EventBasedNatPunchListener();
@@ -91,6 +93,11 @@ namespace LibSample
             netListener.PeerConnectedEvent += peer =>
             {
                 Console.WriteLine("PeerConnected: " + peer.EndPoint.ToString());
+            };
+
+            netListener.ConnectionRequestEvent += request =>
+            {
+                request.AcceptIfKey(ConnectionKey);
             };
 
             netListener.PeerDisconnectedEvent += (peer, disconnectInfo) =>
