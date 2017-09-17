@@ -34,7 +34,7 @@ namespace LiteNetLib.Test
         {
             var server = ManagerStack.Server(1);
             var client = ManagerStack.Client(1);
-            client.Connect("127.0.0.1", DefaultPort);
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
             while (server.PeersCount != 1)
             {
@@ -58,7 +58,7 @@ namespace LiteNetLib.Test
                 Assert.AreEqual(new byte[] { 1, 2, 3, 4 }, bytes);
                 disconnected = true;
             };
-            client.Connect("127.0.0.1", DefaultPort);
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
             while (server.PeersCount != 1)
             {
@@ -78,7 +78,7 @@ namespace LiteNetLib.Test
         {
             var server = ManagerStack.Server(1);
             var client = ManagerStack.Client(1);
-            client.Connect("::1", DefaultPort);
+            client.Connect("::1", DefaultPort, DefaultAppKey);
 
             while (server.PeersCount != 1)
             {
@@ -114,7 +114,7 @@ namespace LiteNetLib.Test
                 ManagerStack.ClientListener(i).NetworkReceiveUnconnectedEvent += (point, reader, type) =>
                 {
                     Assert.AreEqual(type, UnconnectedMessageType.DiscoveryResponse);
-                    ManagerStack.Client(cache).Connect(point);
+                    ManagerStack.Client(cache).Connect(point, DefaultAppKey);
                 };
             }
 
@@ -157,7 +157,7 @@ namespace LiteNetLib.Test
 
             for (ushort i = 1; i <= clientCount; i++)
             {
-                ManagerStack.Client(i).Connect("127.0.0.1", DefaultPort);
+                ManagerStack.Client(i).Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             }
 
             while (server.PeersCount < clientCount)

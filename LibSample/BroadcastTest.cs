@@ -36,7 +36,7 @@ namespace LibSample
                 Console.WriteLine("[Client] ReceiveUnconnected {0}. From: {1}. Data: {2}", messageType, remoteEndPoint, reader.GetString(100));
                 if (messageType == UnconnectedMessageType.DiscoveryResponse)
                 {
-                    Client.Connect(remoteEndPoint);
+                    Client.Connect(remoteEndPoint, "key");
                 }
             }
 
@@ -47,7 +47,7 @@ namespace LibSample
 
             public void OnConnectionRequest(ConnectionRequest request)
             {
-                request.Accept();
+                request.AcceptIfKey("key");
             }
         }
 

@@ -53,6 +53,7 @@ namespace LiteNetLib
         private readonly ReliableChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
         private readonly SimpleChannel _simpleChannel;
+        private readonly SimpleChannel _internalChannel;
 
         private int _windowSize = NetConstants.DefaultWindowSize;
 
@@ -183,6 +184,7 @@ namespace LiteNetLib
             _reliableUnorderedChannel = new ReliableChannel(this, false, _windowSize);
             _sequencedChannel = new SequencedChannel(this);
             _simpleChannel = new SimpleChannel(this);
+            _internalChannel = new SimpleChannel(this);
 
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
 

@@ -74,6 +74,21 @@ namespace LiteNetLib
             _onUserAction = onUserAction;
         }
 
+        public bool AcceptIfKey(string key)
+        {
+            if (_used)
+                return false;
+            string dataKey = Data.GetString(key.Length);
+            if (dataKey == key)
+            {
+                Accept();
+                return true;
+            }
+
+            Reject();
+            return false;
+        }
+
         public void Accept()
         {
             if (_used)

@@ -999,11 +999,34 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="address">Server IP or hostname</param>
         /// <param name="port">Server Port</param>
+        /// <param name="key">Connection key</param>
+        public void Connect(string address, int port, string key)
+        {
+            var ep = new NetEndPoint(address, port);
+            Connect(ep, key);
+        }
+
+        /// <summary>
+        /// Connect to remote host
+        /// </summary>
+        /// <param name="address">Server IP or hostname</param>
+        /// <param name="port">Server Port</param>
         /// <param name="connectionData">Additional data for remote peer</param>
         public void Connect(string address, int port, NetDataWriter connectionData)
         {
             var ep = new NetEndPoint(address, port);
             Connect(ep, connectionData);
+        }
+
+
+        /// <summary>
+        /// Connect to remote host
+        /// </summary>
+        /// <param name="target">Server end point (ip and port)</param>
+        /// <param name="key">Connection key</param>
+        public void Connect(NetEndPoint target, string key)
+        {
+            Connect(target, NetDataWriter.FromString(key));
         }
 
         /// <summary>

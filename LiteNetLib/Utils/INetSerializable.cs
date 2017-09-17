@@ -3,6 +3,6 @@
     public interface INetSerializable
     {
         void Serialize(NetDataWriter writer);
-        void Desereialize(NetDataReader reader);
+        void Deserialize(NetDataReader reader);
     }
 }

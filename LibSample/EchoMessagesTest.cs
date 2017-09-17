@@ -83,7 +83,7 @@ namespace LibSample
 
             public void OnConnectionRequest(ConnectionRequest request)
             {
-                request.Accept();
+
             }
         }
 
@@ -135,7 +135,7 @@ namespace LibSample
 
             public void OnConnectionRequest(ConnectionRequest request)
             {
-                request.Accept();
+                request.AcceptIfKey("gamekey");
             }
         }
 
@@ -172,7 +172,7 @@ namespace LibSample
                 Console.WriteLine("Client1 start failed");
                 return;
             }
-            client1.Connect("127.0.0.1", Port, NetDataWriter.FromString("gamekey"));
+            client1.Connect("127.0.0.1", Port, "gamekey");
 
             NetManager client2 = new NetManager(_clientListener)
             {
@@ -181,7 +181,7 @@ namespace LibSample
             };
             
             client2.Start();
-            client2.Connect("::1", Port, NetDataWriter.FromString("gamekey"));
+            client2.Connect("::1", Port, "gamekey");
 
             while (!Console.KeyAvailable)
             {

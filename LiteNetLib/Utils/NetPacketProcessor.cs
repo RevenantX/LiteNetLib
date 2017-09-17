@@ -249,7 +249,7 @@ namespace LiteNetLib.Utils
             _callbacks[GetHash(typeof(T))] = (reader, userData) =>
             {
                 var pkt = packetConstructor();
-                pkt.Desereialize(reader);
+                pkt.Deserialize(reader);
                 onReceive(pkt, (TUserData)userData);
             };
         }
@@ -261,7 +261,7 @@ namespace LiteNetLib.Utils
             _callbacks[GetHash(typeof(T))] = (reader, userData) =>
             {
                 var pkt = packetConstructor();
-                pkt.Desereialize(reader);
+                pkt.Deserialize(reader);
                 onReceive(pkt);
             };
         }
@@ -272,7 +272,7 @@ namespace LiteNetLib.Utils
             var reference = new T();
             _callbacks[GetHash(typeof(T))] = (reader, userData) =>
             {
-                reference.Desereialize(reader);
+                reference.Deserialize(reader);
                 onReceive(reference, (TUserData)userData);
             };
         }
@@ -283,7 +283,7 @@ namespace LiteNetLib.Utils
             var reference = new T();
             _callbacks[GetHash(typeof(T))] = (reader, userData) =>
             {
-                reference.Desereialize(reader);
+                reference.Deserialize(reader);
                 onReceive(reference);
             };
         }

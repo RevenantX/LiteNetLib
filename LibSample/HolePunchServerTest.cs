@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace LibSample
 {
@@ -27,6 +28,7 @@ namespace LibSample
     class HolePunchServerTest : INatPunchListener
     {
         private const int ServerPort = 50010;
+        private const string ConnectionKey = "test_key";
         private static readonly TimeSpan KickTime = new TimeSpan(0, 0, 6);
 
         private readonly Dictionary<string, WaitPeer> _waitingPeers = new Dictionary<string, WaitPeer>();
@@ -103,13 +105,13 @@ namespace LibSample
             natPunchListener1.NatIntroductionSuccess += (point, token) =>
             {
                 Console.WriteLine("Success C1. Connecting to C2: {0}", point);
-                _c1.Connect(point);
+                _c1.Connect(point, ConnectionKey);
             };
 
             natPunchListener2.NatIntroductionSuccess += (point, token) =>
             {
                 Console.WriteLine("Success C2. Connecting to C1: {0}", point);
-                _c2.Connect(point);
+                _c2.Connect(point, ConnectionKey);
             };
 
             _c1 = new NetManager(netListener);

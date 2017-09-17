@@ -106,7 +106,7 @@ namespace LiteNetLib.Utils
                 reader =>
                 {
                     var instance = constructor();
-                    instance.Desereialize(reader);
+                    instance.Deserialize(reader);
                     return instance;
                 });
             _registeredNestedTypes.Add(t, rwDelegates);

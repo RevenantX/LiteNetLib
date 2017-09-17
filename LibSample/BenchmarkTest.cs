@@ -11,6 +11,8 @@ namespace LibSample
 {
     internal class BenchmarkTest
     {
+        private const string AppKey = "BENCH_TEST";
+
         internal class TestHost
         {
             private int _clientCount = 10;
@@ -51,7 +53,7 @@ namespace LibSample
                         return;
                     }
                     _clients.Add(_clientListener);
-                    client1.Connect("127.0.0.1", 9050, NetDataWriter.FromString("BENCH_TEST"));
+                    client1.Connect("127.0.0.1", 9050, AppKey);
                 }
 
                 // Wait
@@ -159,7 +161,7 @@ namespace LibSample
 
             public void OnConnectionRequest(ConnectionRequest request)
             {
-                request.Accept();
+
             }
 
             void Send()
@@ -229,7 +231,7 @@ namespace LibSample
 
             public void OnConnectionRequest(ConnectionRequest request)
             {
-                request.Accept();
+                request.AcceptIfKey(AppKey);
             }
 
             public void Start()
@@ -247,9 +249,9 @@ namespace LibSample
         internal class HealthChecker
         {
             private int _threadId;
-            private BenchmarkTest.TestHost _context;
+            private TestHost _context;
 
-            public void Start(BenchmarkTest.TestHost context)
+            public void Start(TestHost context)
             {
                 _context = context;
                 _threadId++;
