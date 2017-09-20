@@ -587,31 +587,38 @@ namespace LiteNetLib
                 var netEvent = CreateEvent(NetEventType.Error);
                 netEvent.AdditionalData = errorCode;
                 EnqueueEvent(netEvent);
+                NetUtils.DebugWriteError("[NM] Receive error: {0}" + errorCode);
             }
         }
 
         private void OnConnectionSolved(ConnectionRequest request)
         {
-            if (request.Result == ConnectionRequestResult.Reject)
+            lock (_peers)
             {
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
-            }
-            else
-            {
-                //response with id
-                var netPeer = new NetPeer(this, request.RemoteEndPoint, request.ConnectionId);
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connection Id: {0}, EP: {1}",
-                    netPeer.ConnectId, netPeer.EndPoint);
-
-                //add peer to list
-                lock (_peers)
+                if (_peers.ContainsAddress(request.RemoteEndPoint))
                 {
-                    _peers.Add(request.RemoteEndPoint, netPeer);
+                    NetUtils.DebugWrite(ConsoleColor.Yellow, "[NM] Peer already connected: {0}", request.RemoteEndPoint);
+                    return;
                 }
 
-                var netEvent = CreateEvent(NetEventType.Connect);
-                netEvent.Peer = netPeer;
-                EnqueueEvent(netEvent);
+                if (request.Result == ConnectionRequestResult.Reject)
+                {
+                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
+                }
+                else
+                {
+                    //response with id
+                    var netPeer = new NetPeer(this, request.RemoteEndPoint, request.ConnectionId);
+                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connection Id: {0}, EP: {1}",
+                        netPeer.ConnectId, netPeer.EndPoint);
+
+                    //add peer to list
+                    _peers.Add(request.RemoteEndPoint, netPeer);
+
+                    var netEvent = CreateEvent(NetEventType.Connect);
+                    netEvent.Peer = netPeer;
+                    EnqueueEvent(netEvent);
+                }
             }
         }
 
@@ -720,35 +727,41 @@ namespace LiteNetLib
 
             try
             {
-                if (_peers.Count < _maxConnections &&
-                    packet.Property == PacketProperty.ConnectRequest &&
-                    packet.Size >= 12)
+                if (_peers.Count >= _maxConnections)
                 {
-                    // structure
-                    // 0:    header (ConnectRequest)
-                    // 1-4:  protocol id
-                    // 5-12: connection id
-                    // 13+:  additional data
-                    int protoId = BitConverter.ToInt32(packet.RawData, 1);
-                    if (protoId != NetConstants.ProtocolId)
-                    {
-                        NetUtils.DebugWrite(ConsoleColor.Cyan,
-                            "[NM] Peer connect reject. Invalid protocol ID: " + protoId);
-                        return;
-                    }
-                    // Getting new id for peer
-                    long connectionId = BitConverter.ToInt64(packet.RawData, 5);
-
-                    // Read data and create request
-                    var reader = new NetDataReader(new byte[0]);
-                    if (packet.Size > 12)
-                    {
-                        reader.SetSource(packet.RawData, 13, packet.Size);
-                    }
-                    var netEvent = CreateEvent(NetEventType.ConnectionRequest);
-                    netEvent.ConnectionRequest = new ConnectionRequest(connectionId, remoteEndPoint, reader, OnConnectionSolved);
-                    EnqueueEvent(netEvent);
+                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer limit");
+                    return;
                 }
+                if (packet.Property != PacketProperty.ConnectRequest || packet.Size >= 12)
+                {
+                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Bad connect request");
+                    return;
+                }
+
+                // structure
+                // 0:    header (ConnectRequest)
+                // 1-4:  protocol id
+                // 5-12: connection id
+                // 13+:  additional data
+                int protoId = BitConverter.ToInt32(packet.RawData, 1);
+                if (protoId != NetConstants.ProtocolId)
+                {
+                    NetUtils.DebugWrite(ConsoleColor.Cyan,
+                        "[NM] Peer connect reject. Invalid protocol ID: " + protoId);
+                    return;
+                }
+                // Getting new id for peer
+                long connectionId = BitConverter.ToInt64(packet.RawData, 5);
+
+                // Read data and create request
+                var reader = new NetDataReader(new byte[0]);
+                if (packet.Size > 12)
+                {
+                    reader.SetSource(packet.RawData, 13, packet.Size);
+                }
+                var netEvent = CreateEvent(NetEventType.ConnectionRequest);
+                netEvent.ConnectionRequest = new ConnectionRequest(connectionId, remoteEndPoint, reader, OnConnectionSolved);
+                EnqueueEvent(netEvent);
             }
             catch(Exception e)
             {

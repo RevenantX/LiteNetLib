@@ -7,14 +7,26 @@ namespace LiteNetLib.Test.Helper
 {
     public class NetManagerStack : IDisposable
     {
+        private struct NetContainer
+        {
+            public readonly NetManager Manager;
+            public readonly EventBasedNetListener Listener;
+
+            public NetContainer(NetManager netManager, EventBasedNetListener listener)
+            {
+                Manager = netManager;
+                Listener = listener;
+            }
+        }
+
         private readonly string _appKey;
         private readonly int _serverPort;
 
         private readonly HashSet<ushort> _clientIds = new HashSet<ushort>();
         private readonly HashSet<ushort> _serverIds = new HashSet<ushort>();
 
-        private readonly Dictionary<uint, Tuple<NetManager, EventBasedNetListener>> _managers =
-            new Dictionary<uint, Tuple<NetManager, EventBasedNetListener>>();
+        private readonly Dictionary<uint, NetContainer> _managers =
+            new Dictionary<uint, NetContainer>();
 
         public NetManagerStack(string appKey, int serverPort)
         {
@@ -27,7 +39,7 @@ namespace LiteNetLib.Test.Helper
             foreach (var id in _clientIds)
             {
                 var tuple = GetNetworkManager(id, true);
-                action(id, tuple.Item1, tuple.Item2);
+                action(id, tuple.Manager, tuple.Listener);
             }
         }
 
@@ -36,54 +48,55 @@ namespace LiteNetLib.Test.Helper
             foreach (var id in _clientIds)
             {
                 var tuple = GetNetworkManager(id, false);
-                action(id, tuple.Item1, tuple.Item2);
+                action(id, tuple.Manager, tuple.Listener);
             }
         }
 
         public NetManager Client(ushort id)
         {
             _clientIds.Add(id);
-            return GetNetworkManager(id, true).Item1;
+            return GetNetworkManager(id, true).Manager;
         }
 
         public EventBasedNetListener ClientListener(ushort id)
         {
             _clientIds.Add(id);
-            return GetNetworkManager(id, true).Item2;
+            return GetNetworkManager(id, true).Listener;
         }
 
         public NetManager Server(ushort id)
         {
             _serverIds.Add(id);
-            return GetNetworkManager(id, false).Item1;
+            return GetNetworkManager(id, false).Manager;
         }
 
         public EventBasedNetListener ServerListener(ushort id)
         {
             _serverIds.Add(id);
-            return GetNetworkManager(id, false).Item2;
+            return GetNetworkManager(id, false).Listener;
         }
 
         public void Dispose()
         {
-            foreach (var manager in _managers.Values.Select(v => v.Item1))
+            foreach (var manager in _managers.Values.Select(v => v.Manager))
             {
                 manager.Stop();
             }
         }
 
-        private Tuple<NetManager, EventBasedNetListener> GetNetworkManager(ushort id, bool isClient)
+        private NetContainer GetNetworkManager(ushort id, bool isClient)
         {
-            Tuple<NetManager, EventBasedNetListener> tuple;
+            NetContainer container;
             if (id == 0)
             {
                 Assert.Fail("Id cannot be 0");
             }
 
             var key = isClient ? id : (uint) id << 16;
-            if (!_managers.TryGetValue(key, out tuple))
+            if (!_managers.TryGetValue(key, out container))
             {
                 var listener = new EventBasedNetListener();
+                listener.ConnectionRequestEvent += request => { request.AcceptIfKey(_appKey); };
                 NetManager netManager;
                 if (isClient)
                 {
@@ -102,11 +115,11 @@ namespace LiteNetLib.Test.Helper
                     }
                 }
 
-                tuple = new Tuple<NetManager, EventBasedNetListener>(netManager, listener);
-                _managers[key] = tuple;
+                container = new NetContainer(netManager, listener);
+                _managers[key] = container;
             }
 
-            return tuple;
+            return container;
         }
     }
 }

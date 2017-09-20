@@ -83,7 +83,7 @@ namespace LiteNetLib
                 }
 
                 //All ok!
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Recieved data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
                 _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
             }
         }

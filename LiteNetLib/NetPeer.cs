@@ -601,13 +601,14 @@ namespace LiteNetLib
             {
                 case PacketProperty.ConnectRequest:
                     //response with connect
-                    long newId = BitConverter.ToInt64(packet.RawData, 1);
+                    long newId = BitConverter.ToInt64(packet.RawData, 5);
+
+                    NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", _connectId, newId, _remoteEndPoint);
                     if (newId > _connectId)
                     {
                         _connectId = newId;
                     }
-
-                    NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", ConnectId, newId, _remoteEndPoint);
+                    
                     SendConnectAccept();
                     _packetPool.Recycle(packet);
                     break;
