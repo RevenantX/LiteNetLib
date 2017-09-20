@@ -598,7 +598,7 @@ namespace LiteNetLib
                     {
                         var netEvent = CreateEvent(NetEventType.DiscoveryRequest);
                         netEvent.RemoteEndPoint = remoteEndPoint;
-                        netEvent.DataReader.SetSource(packet.RawData, NetConstants.HeaderSize);
+                        netEvent.DataReader.SetSource(packet.RawData, NetConstants.HeaderSize, count);
                         EnqueueEvent(netEvent);
                     }
                     return;
@@ -606,7 +606,7 @@ namespace LiteNetLib
                     {
                         var netEvent = CreateEvent(NetEventType.DiscoveryResponse);
                         netEvent.RemoteEndPoint = remoteEndPoint;
-                        netEvent.DataReader.SetSource(packet.RawData, NetConstants.HeaderSize);
+                        netEvent.DataReader.SetSource(packet.RawData, NetConstants.HeaderSize, count);
                         EnqueueEvent(netEvent);
                     }
                     return;
@@ -615,7 +615,7 @@ namespace LiteNetLib
                     {
                         var netEvent = CreateEvent(NetEventType.ReceiveUnconnected);
                         netEvent.RemoteEndPoint = remoteEndPoint;
-                        netEvent.DataReader.SetSource(packet.RawData, NetConstants.HeaderSize);
+                        netEvent.DataReader.SetSource(packet.RawData, NetConstants.HeaderSize, count);
                         EnqueueEvent(netEvent);
                     }
                     return;
