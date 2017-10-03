@@ -214,7 +214,7 @@ namespace LiteNetLib
 
             //Add data
             FastBitConverter.GetBytes(connectPacket.RawData, 1, NetConstants.ProtocolId);
-            FastBitConverter.GetBytes(connectPacket.RawData, 5, _connectId);
+            FastBitConverter.GetBytes(connectPacket.RawData, NetConstants.RequestConnectIdIndex, _connectId);
             Buffer.BlockCopy(keyData, 0, connectPacket.RawData, 13, keyData.Length);
 
             //Send raw
@@ -230,7 +230,7 @@ namespace LiteNetLib
             var connectPacket = _packetPool.Get(PacketProperty.ConnectAccept, 8);
 
             //Add data
-            FastBitConverter.GetBytes(connectPacket.RawData, 1, _connectId);
+            FastBitConverter.GetBytes(connectPacket.RawData, NetConstants.AcceptConnectIdIndex, _connectId);
 
             //Send raw
             _peerListener.SendRawAndRecycle(connectPacket, _remoteEndPoint);
@@ -242,7 +242,7 @@ namespace LiteNetLib
                 return false;
 
             //check connection id
-            if (BitConverter.ToInt64(packet.RawData, 1) != _connectId)
+            if (BitConverter.ToInt64(packet.RawData, NetConstants.AcceptConnectIdIndex) != _connectId)
             {
                 return false;
             }
@@ -586,7 +586,7 @@ namespace LiteNetLib
             {
                 case PacketProperty.ConnectRequest:
                     //response with connect
-                    long newId = BitConverter.ToInt64(packet.RawData, 1);
+                    long newId = BitConverter.ToInt64(packet.RawData, NetConstants.RequestConnectIdIndex);
                     if (newId > _connectId)
                     {
                         _connectId = newId;
