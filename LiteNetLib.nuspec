@@ -2,7 +2,8 @@
 <package >
   <metadata>
     <id>LiteNetLib</id>
-    <version>0.7.5</version>
+    <title>LiteNetLib</title>
+    <version>0.7.6</version>
     <authors>Ruslan Pyrch</authors>
     <owners>RevenantX</owners>
     <licenseUrl>https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt</licenseUrl>
