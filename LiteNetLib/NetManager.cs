@@ -726,10 +726,7 @@ namespace LiteNetLib
                 var netEvent = CreateEvent(NetEventType.Receive);
                 netEvent.Peer = fromPeer;
                 netEvent.RemoteEndPoint = fromPeer.EndPoint;
-                //copy data
                 netEvent.DataReader.SetSource(packet.GetPacketData());
-                //recycle
-                _netPacketPool.Recycle(packet);
                 EnqueueEvent(netEvent);
             }
         }
