@@ -370,7 +370,7 @@ namespace LiteNetLib.Utils
 
         public char PeekChar()
         {
-            return (char)BitConverter.ToUInt16(_data, _position);
+            return BitConverter.ToChar(_data, _position);
         }
 
         public ushort PeekUShort()
