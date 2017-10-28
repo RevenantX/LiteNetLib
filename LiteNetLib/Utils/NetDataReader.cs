@@ -228,9 +228,9 @@ namespace LiteNetLib.Utils
 
         public char GetChar()
         {
-            ushort result = BitConverter.ToUInt16(_data, _position);
+            char result = BitConverter.ToChar(_data, _position);
             _position += 2;
-            return (char)result;
+            return result;
         }
 
         public ushort GetUShort()
@@ -452,3 +452,4 @@ namespace LiteNetLib.Utils
         }
     }
 }
+

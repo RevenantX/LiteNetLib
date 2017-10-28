@@ -13,16 +13,16 @@ public class GameClient : MonoBehaviour, INetEventListener
     private float _oldBallPosX;
     private float _lerpTime;
 
-    void Start ()
+    void Start()
     {
         _netClient = new NetManager(this, "sample_app");
         _netClient.Start();
         _netClient.UpdateTime = 15;
     }
 
-    void Update ()
+    void Update()
     {
-	_netClient.PollEvents();
+        _netClient.PollEvents();
 
         var peer = _netClient.GetFirstPeer();
         if (peer != null && peer.ConnectionState == ConnectionState.Connected)
@@ -33,17 +33,17 @@ public class GameClient : MonoBehaviour, INetEventListener
             _clientBallInterpolated.transform.position = pos;
 
             //Basic lerp
-            _lerpTime += Time.deltaTime/Time.fixedDeltaTime;
+            _lerpTime += Time.deltaTime / Time.fixedDeltaTime;
         }
         else
         {
-            _netClient.SendDiscoveryRequest(new byte[] { 1 }, 5000);
+            _netClient.SendDiscoveryRequest(new byte[] {1}, 5000);
         }
     }
 
     void OnDestroy()
     {
-        if(_netClient != null)
+        if (_netClient != null)
             _netClient.Stop();
     }
 
@@ -71,7 +71,8 @@ public class GameClient : MonoBehaviour, INetEventListener
         _lerpTime = 0f;
     }
 
-    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
+    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader,
+        UnconnectedMessageType messageType)
     {
         if (messageType == UnconnectedMessageType.DiscoveryResponse && _netClient.PeersCount == 0)
         {
@@ -82,7 +83,6 @@ public class GameClient : MonoBehaviour, INetEventListener
 
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
     {
-        
     }
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
