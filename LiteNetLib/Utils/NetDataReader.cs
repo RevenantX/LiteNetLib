@@ -368,6 +368,11 @@ namespace LiteNetLib.Utils
             return _data[_position] > 0;
         }
 
+        public char PeekChar()
+        {
+            return (char)BitConverter.ToUInt16(_data, _position);
+        }
+
         public ushort PeekUShort()
         {
             return BitConverter.ToUInt16(_data, _position);
