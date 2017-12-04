@@ -39,12 +39,16 @@ Minimal .NET version - 3.5
 * IPv6 support (dual mode)
 * Connection statisitcs (need DEBUG or STATS_ENABLED flag)
 * Multicasting (for discovering hosts in local network)
-* Unity3d support (you can use library source in project)
+* Unity3d support
 * Supported platforms:
   * Windows/Mac/Linux (.net framework, Mono, .net core)
-  * Android
-  * iOS (in Unity3d use library source and add compilation flag UNITY)
+  * Android (unity3d)
+  * iOS (unity3d)
   * Universal Windows (Windows 8.1 and Windows 10 including phones)
+
+## Unity3d notes!!!
+* Always use library sources insted of precompiled DLL files. 
+* Add to define symbols UNITY.
 
 ## Usage samples
 
