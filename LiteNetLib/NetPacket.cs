@@ -84,12 +84,14 @@ namespace LiteNetLib
             Size = 0;
         }
 
-        public void Realloc(int toSize)
+        public bool Realloc(int toSize)
         {
             if (RawData.Length < toSize)
             {
                 RawData = new byte[toSize];
+                return true;
             }
+            return false;
         }
 
         public static bool GetPacketProperty(byte[] data, out PacketProperty property)
