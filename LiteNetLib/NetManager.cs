@@ -957,18 +957,19 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="address">Server IP or hostname</param>
         /// <param name="port">Server Port</param>
-        public void Connect(string address, int port)
+        public NetPeer Connect(string address, int port)
         {
             //Create target endpoint
             NetEndPoint ep = new NetEndPoint(address, port);
-            Connect(ep);
+            return Connect(ep);
         }
 
         /// <summary>
         /// Connect to remote host
         /// </summary>
         /// <param name="target">Server end point (ip and port)</param>
-        public void Connect(NetEndPoint target)
+        /// <returns>peer awatinig connection or already connected peer</returns>
+        public NetPeer Connect(NetEndPoint target)
         {
             if (!IsRunning)
             {
@@ -976,16 +977,18 @@ namespace LiteNetLib
             }
             lock (_peers)
             {
-                if (_peers.ContainsAddress(target) || _peers.Count >= _maxConnections)
+                NetPeer peer;
+                if (_peers.TryGetValue(target, out peer) || _peers.Count >= _maxConnections)
                 {
                     //Already connected
-                    return;
+                    return peer;
                 }
 
                 //Create reliable connection
                 //And request connection
-                var newPeer = new NetPeer(this, target, 0);
-                _peers.Add(target, newPeer);
+                peer = new NetPeer(this, target, 0);
+                _peers.Add(target, peer);
+                return peer;
             }
         }
 
