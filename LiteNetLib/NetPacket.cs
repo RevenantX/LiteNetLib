@@ -75,13 +75,21 @@ namespace LiteNetLib
         }
 
         //Data
-        public readonly byte[] RawData;
+        public byte[] RawData;
         public int Size;
 
         public NetPacket(int size)
         {
             RawData = new byte[size];
             Size = 0;
+        }
+
+        public void Realloc(int toSize)
+        {
+            if (RawData.Length < toSize)
+            {
+                RawData = new byte[toSize];
+            }
         }
 
         public static bool GetPacketProperty(byte[] data, out PacketProperty property)

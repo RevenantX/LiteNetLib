@@ -41,8 +41,13 @@ namespace LiteNetLib
             }
             if (packet == null)
             {
-                //allocate new packet of max size or bigger
-                packet = new NetPacket(NetConstants.MaxPacketSize);
+                //allocate new packet
+                packet = new NetPacket(count);
+            }
+            else
+            {
+                //reallocate packet data if packet not fits
+                packet.Realloc(count);
             }
             if (!packet.FromBytes(data, start, count))
             {
