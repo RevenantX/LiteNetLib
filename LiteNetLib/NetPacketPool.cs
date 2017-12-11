@@ -6,6 +6,7 @@ namespace LiteNetLib
 {
     internal class NetPacketPool
     {
+        private const int PoolLimit = 1000;
         private readonly Stack<NetPacket> _pool;
 
         public NetPacketPool()
@@ -82,7 +83,7 @@ namespace LiteNetLib
 
         public void Recycle(NetPacket packet)
         { 
-            if (packet.Size > NetConstants.MaxPacketSize)
+            if (packet.Size > NetConstants.MaxPacketSize || _pool.Count > PoolLimit)
             {
                 //Dont pool big packets. Save memory
                 return;
