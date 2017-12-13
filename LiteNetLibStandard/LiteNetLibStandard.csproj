@@ -6,6 +6,8 @@
 
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyName>LiteNetLib</AssemblyName>
+    <RootNamespace>LiteNetLib</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -13,7 +15,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>NETSTANDARD1_6;NETCORE</DefineConstants>
-    <DocumentationFile>bin\Release\netstandard1.6\LiteNetLibStandard.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard1.6\LiteNetLib.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
