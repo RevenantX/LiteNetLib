@@ -20,6 +20,7 @@ class Program
         //new BroadcastTest().Run();
 
         //new BenchmarkTest.TestHost().Run();
-        new SerializerTest().Run();
+        new SpeedBecnh().Run();
+        //new SerializerTest().Run();
     }
 }
