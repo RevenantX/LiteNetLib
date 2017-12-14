@@ -23,20 +23,19 @@ namespace LiteNetLib
             }
         }
 
-        public bool SendNextPacket()
+        public void SendNextPackets()
         {
-            NetPacket packet;
             lock (_outgoingPackets)
             {
-                if (_outgoingPackets.Count == 0)
-                    return false;
-                packet = _outgoingPackets.Dequeue();
+                while (_outgoingPackets.Count > 0)
+                {
+                    NetPacket packet = _outgoingPackets.Dequeue();
+                    _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
+                    packet.Sequence = (ushort)_localSequence;
+                    _peer.SendRawData(packet);
+                    _peer.Recycle(packet);
+                }
             }
-            _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
-            packet.Sequence = (ushort)_localSequence;
-            _peer.SendRawData(packet);
-            _peer.Recycle(packet);
-            return true;
         }
 
         public void ProcessPacket(NetPacket packet)

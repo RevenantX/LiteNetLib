@@ -325,15 +325,15 @@ namespace LibSample
             server.Stop();
             Console.ReadKey();
             Console.WriteLine("ServStats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}",
-                server.BytesReceived,
-                server.PacketsReceived,
-                server.BytesSent,
-                server.PacketsSent);
+                server.Statistics.BytesReceived,
+                server.Statistics.PacketsReceived,
+                server.Statistics.BytesSent,
+                server.Statistics.PacketsSent);
             Console.WriteLine("ClientStats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}",
-                client.BytesReceived,
-                client.PacketsReceived,
-                client.BytesSent,
-                client.PacketsSent);
+                client.Statistics.BytesReceived,
+                client.Statistics.PacketsReceived,
+                client.Statistics.BytesSent,
+                client.Statistics.PacketsSent);
             Console.WriteLine("Press any key to exit");
             Console.ReadKey();
         }
