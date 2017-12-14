@@ -6,13 +6,26 @@ namespace LiteNetLib
 {
     internal sealed class ReliableChannel
     {
-        private class PendingPacket
+        private sealed class PendingPacket
         {
             public NetPacket Packet;
             public DateTime? TimeStamp;
+            public PendingPacket Next;
+            public PendingPacket Prev;
 
             public NetPacket GetAndClear()
             {
+                if (Prev != null)
+                {
+                    Prev.Next = Next;
+                    Prev = null;
+                }
+                if (Next != null)
+                {
+                    Next.Prev = Prev;
+                    Next = null;
+                }
+
                 var packet = Packet;
                 Packet = null;
                 TimeStamp = null;
@@ -25,6 +38,7 @@ namespace LiteNetLib
         private readonly PendingPacket[] _pendingPackets;    //for unacked packets and duplicates
         private readonly NetPacket[] _receivedPackets;       //for order
         private readonly bool[] _earlyReceived;              //for unordered
+        private PendingPacket _headPendingPacket;
 
         private int _localSeqence;
         private int _remoteSequence;
@@ -38,16 +52,14 @@ namespace LiteNetLib
         private readonly int _windowSize;
         private const int BitsInByte = 8;
 
-        private int _queueIndex;
-
         public int PacketsInQueue
         {
             get { return _outgoingPackets.Count; }
         }
 
-        public ReliableChannel(NetPeer peer, bool ordered, int windowSize)
+        public ReliableChannel(NetPeer peer, bool ordered)
         {
-            _windowSize = windowSize;
+            _windowSize = NetConstants.DefaultWindowSize;
             _peer = peer;
             _ordered = ordered;
 
@@ -115,6 +127,10 @@ namespace LiteNetLib
 
                 if ((acksData[currentByte] & (1 << currentBit)) == 0)
                 {
+#if STATS_ENABLED || DEBUG
+                    if(_pendingPackets[ackSequence % _windowSize].TimeStamp.HasValue)
+                        _peer.Statistics.PacketLoss++;
+#endif
                     //NetUtils.DebugWrite(ConsoleColor.Cyan, "[PA] SKIP FALSE: " + ackSequence);
                     //Skip false ack
                     continue;
@@ -126,11 +142,15 @@ namespace LiteNetLib
                     _localWindowStart = (_localWindowStart + 1) % NetConstants.MaxSequence;
                 }
 
-                NetPacket removed = _pendingPackets[ackSequence % _windowSize].GetAndClear();
+                PendingPacket pendingPacket = _pendingPackets[ackSequence % _windowSize];
+                if (pendingPacket == _headPendingPacket)
+                {
+                    _headPendingPacket = null;
+                }
+                NetPacket removed = pendingPacket.GetAndClear();
                 if (removed != null)
                 {
                     _peer.Recycle(removed);
-
                     NetUtils.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", ackSequence);
                 }
                 else
@@ -143,27 +163,32 @@ namespace LiteNetLib
 
         public void AddToQueue(NetPacket packet)
         {
-            lock (_outgoingPackets)
-            {
-                _outgoingPackets.Enqueue(packet);
-            }
+            Monitor.Enter(_outgoingPackets);
+            _outgoingPackets.Enqueue(packet);
+            Monitor.Exit(_outgoingPackets);
         }
 
-        private void ProcessQueuedPackets()
+        public void SendNextPackets()
         {
+            //check sending acks
+            DateTime currentTime = DateTime.UtcNow;
+            Monitor.Enter(_pendingPackets);
             //get packets from queue
+            Monitor.Enter(_outgoingPackets);
             while (_outgoingPackets.Count > 0)
             {
                 int relate = NetUtils.RelativeSequenceNumber(_localSeqence, _localWindowStart);
                 if (relate < _windowSize)
                 {
-                    NetPacket packet;
-                    lock (_outgoingPackets)
+                    PendingPacket pendingPacket = _pendingPackets[_localSeqence % _windowSize];
+                    pendingPacket.Packet = _outgoingPackets.Dequeue();
+                    pendingPacket.Packet.Sequence = (ushort) _localSeqence;
+                    if (_headPendingPacket != null)
                     {
-                        packet = _outgoingPackets.Dequeue();
+                        _headPendingPacket.Next = pendingPacket;
+                        pendingPacket.Prev = _headPendingPacket;
                     }
-                    packet.Sequence = (ushort)_localSeqence;
-                    _pendingPackets[_localSeqence % _windowSize].Packet = packet;
+                    _headPendingPacket = pendingPacket;
                     _localSeqence = (_localSeqence + 1) % NetConstants.MaxSequence;
                 }
                 else //Queue filled
@@ -171,52 +196,32 @@ namespace LiteNetLib
                     break;
                 }
             }
-        }
+            Monitor.Exit(_outgoingPackets);
 
-        public bool SendNextPacket()
-        {
-            //check sending acks
-            DateTime currentTime = DateTime.UtcNow;
-
-            Monitor.Enter(_pendingPackets);
-            ProcessQueuedPackets();
-
+            //if no pending packets return
+            if (_headPendingPacket == null)
+            {
+                Monitor.Exit(_pendingPackets);
+                return;
+            }
             //send
-            PendingPacket currentPacket;
-            bool packetFound = false;
-            int startQueueIndex = _queueIndex;
+            PendingPacket currentPacket = _headPendingPacket;  
             do
             {
-                currentPacket = _pendingPackets[_queueIndex];
-                if (currentPacket.Packet != null)
+                if (currentPacket.TimeStamp.HasValue) //check send time
                 {
-                    //check send time
-                    if(currentPacket.TimeStamp.HasValue)
+                    double packetHoldTime = (currentTime - currentPacket.TimeStamp.Value).TotalMilliseconds;
+                    if (packetHoldTime < _peer.ResendDelay)
                     {
-                        double packetHoldTime = (currentTime - currentPacket.TimeStamp.Value).TotalMilliseconds;
-                        if (packetHoldTime > _peer.ResendDelay)
-                        {
-                            NetUtils.DebugWrite("[RC]Resend: {0} > {1}", (int)packetHoldTime, _peer.ResendDelay);
-                            packetFound = true;
-                        }
+                        continue;
                     }
-                    else //Never sended
-                    {
-                        packetFound = true;
-                    }
+                    NetUtils.DebugWrite("[RC]Resend: {0} > {1}", (int)packetHoldTime, _peer.ResendDelay);
                 }
 
-                _queueIndex = (_queueIndex + 1) % _windowSize;
-            } while (!packetFound && _queueIndex != startQueueIndex);
-
-            if (packetFound)
-            {
                 currentPacket.TimeStamp = DateTime.UtcNow;
                 _peer.SendRawData(currentPacket.Packet);
-                NetUtils.DebugWrite("[RR]Sended");
-            }
+            } while ((currentPacket = currentPacket.Prev) != null);
             Monitor.Exit(_pendingPackets);
-            return packetFound;
         }
 
         public void SendAcks()

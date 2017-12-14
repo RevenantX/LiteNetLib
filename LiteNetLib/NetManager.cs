@@ -17,12 +17,6 @@ namespace LiteNetLib
     {
         internal delegate void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint);
 
-        private struct FlowMode
-        {
-            public int PacketsPerSecond;
-            public int StartRtt;
-        }
-
         private enum NetEventType
         {
             Connect,
@@ -158,11 +152,10 @@ namespace LiteNetLib
 
         private const int DefaultUpdateTime = 15;
 
-        //stats
-        public ulong PacketsSent { get; private set; }
-        public ulong PacketsReceived { get; private set; }
-        public ulong BytesSent { get; private set; }
-        public ulong BytesReceived { get; private set; }
+        /// <summary>
+        /// Statistics of all connections
+        /// </summary>
+        public readonly NetStatistics Statistics;
 
         //modules
         /// <summary>
@@ -224,6 +217,7 @@ namespace LiteNetLib
             _netEventsPool = new Stack<NetEvent>();
             _netPacketPool = new NetPacketPool();
             NatPunchModule = new NatPunchModule(this);
+            Statistics = new NetStatistics();
 
             ConnectKey = connectKey;
             _peers = new NetPeerCollection(maxConnections);
@@ -279,8 +273,8 @@ namespace LiteNetLib
                 return false;
             }
 #if STATS_ENABLED
-            PacketsSent++;
-            BytesSent += (uint)length;
+            Statistics.PacketsSent++;
+            Statistics.BytesSent += (uint)length;
 #endif
 
             return true;
@@ -454,6 +448,9 @@ namespace LiteNetLib
             }
 #endif
 
+#if STATS_ENABLED
+            ulong totalPacketLoss = 0;
+#endif
             //Process acks
             lock (_peers)
             {
@@ -485,9 +482,15 @@ namespace LiteNetLib
                     else
                     {
                         netPeer.Update(delta);
+#if STATS_ENABLED
+                        totalPacketLoss += netPeer.Statistics.PacketLoss;
+#endif
                     }
                 }
             }
+#if STATS_ENABLED
+            Statistics.PacketLoss = totalPacketLoss;
+#endif
         }
         
         private void ReceiveLogic(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint)
@@ -545,8 +548,8 @@ namespace LiteNetLib
         private void DataReceived(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
         {
 #if STATS_ENABLED
-            PacketsReceived++;
-            BytesReceived += (uint) count;
+            Statistics.PacketsReceived++;
+            Statistics.BytesReceived += (uint) count;
 #endif
 
             //Try read packet

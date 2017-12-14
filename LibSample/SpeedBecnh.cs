@@ -11,11 +11,9 @@ namespace LibSample
         public class Server : INetEventListener
         {
             public int ReliableReceived;
-            public int ReliableSent;
             public int UnreliableReceived;
-            public int UnreliableSent;
 
-            NetManager _server;
+            readonly NetManager _server;
 
             public Server()
             {
@@ -69,14 +67,17 @@ namespace LibSample
 
         public class Client : INetEventListener
         {
-            public int ReliableReceived;
             public int ReliableSent;
-            public int UnreliableReceived;
             public int UnreliableSent;
 
-            NetManager _client;
-            NetDataWriter _writer;
+            readonly NetManager _client;
+            readonly NetDataWriter _writer;
             NetPeer _peer;
+
+            public NetStatistics Stats
+            {
+                get { return _client.Statistics; }
+            }
 
             public Client()
             {
@@ -182,22 +183,22 @@ namespace LibSample
 
             for (int i = 0; i < MAX_LOOP_COUNT; i++)
             {
-                for (int ui = 0; ui < UNRELIABLE_MESSAGES_PER_LOOP; ui++)
-                    _c.SendUnreliable(DATA);
+                //for (int ui = 0; ui < UNRELIABLE_MESSAGES_PER_LOOP; ui++)
+                //    _c.SendUnreliable(DATA);
 
                 for (int ri = 0; ri < RELIABLE_MESSAGES_PER_LOOP; ri++)
                     _c.SendReliable(DATA);
-
                 _c.PollEvents();
-                Thread.Sleep(1);
             }
 
             int dataSize = MAX_LOOP_COUNT * Encoding.UTF8.GetByteCount(DATA) * (UNRELIABLE_MESSAGES_PER_LOOP + RELIABLE_MESSAGES_PER_LOOP);
             Console.WriteLine("DataSize: {0}b, {1}kb, {2}mb", dataSize, dataSize/1024, dataSize/1024/1024);
 
             CLIENT_RUNNING = false;
+            Thread.Sleep(10000);
 
             Console.WriteLine("CLIENT SENT -> Reliable: " + _c.ReliableSent + ", Unreliable: " + _c.UnreliableSent);
+            Console.WriteLine("CLIENT STATS:\n" + _c.Stats);
         }
     }
 }

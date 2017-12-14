@@ -29,7 +29,6 @@ Minimal .NET version - 3.5
   * Ordered but unreliable with duplication prevention
   * Simple UDP packets without order and reliability
 * Fast packet serializer [(Usage manual)](https://github.com/RevenantX/LiteNetLib/wiki/NetSerializer-usage)
-* Packet flow control
 * Automatic small packets merging ( if enabled )
 * Automatic fragmentation of reliable packets
 * Automatic MTU detection

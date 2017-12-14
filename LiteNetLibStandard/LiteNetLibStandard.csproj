@@ -19,6 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\LiteNetLib\NetStatistics.cs" Link="NetStatistics.cs" />
     <Compile Include="..\LiteNetLib\Properties\AssemblyInfo.cs" />
     <Compile Include="..\LiteNetLib\INetEventListener.cs" Link="INetEventListener.cs" />
     <Compile Include="..\LiteNetLib\NatPunchModule.cs" Link="NatPunchModule.cs" />

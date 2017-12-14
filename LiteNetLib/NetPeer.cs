@@ -1,3 +1,6 @@
+#if DEBUG
+#define STATS_ENABLED
+#endif
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -47,7 +50,6 @@ namespace LiteNetLib
         private readonly ReliableChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
         private readonly SimpleChannel _simpleChannel;
-        private int _windowSize = NetConstants.DefaultWindowSize;
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
@@ -156,8 +158,14 @@ namespace LiteNetLib
 		/// </summary>
         public object Tag;
 
+        /// <summary>
+        /// Statistics of peer connection
+        /// </summary>
+        public readonly NetStatistics Statistics;
+
         internal NetPeer(NetManager peerListener, NetEndPoint remoteEndPoint, long connectId)
         {
+            Statistics = new NetStatistics();
             _packetPool = peerListener.PacketPool;
             _peerListener = peerListener;
             _remoteEndPoint = remoteEndPoint;
@@ -413,8 +421,6 @@ namespace LiteNetLib
             _rtt += roundTripTime;
             _rttCount++;
             _avgRtt = _rtt/_rttCount;
-            _reliableOrderedChannel.ProcessRtt(_avgRtt);
-            _reliableUnorderedChannel.ProcessRtt(_avgRtt);
 
             //recalc resend delay
             double avgRtt = _avgRtt;
@@ -675,6 +681,10 @@ namespace LiteNetLib
 
             NetUtils.DebugWrite(ConsoleColor.DarkYellow, "[P]SendingPacket: " + packet.Property);
             _peerListener.SendRaw(packet.RawData, 0, packet.Size, _remoteEndPoint);
+#if STATS_ENABLED
+            Statistics.PacketsSent++;
+            Statistics.BytesSent += (ulong)packet.Size;
+#endif
         }
 
         private void SendQueuedPackets()
@@ -691,11 +701,19 @@ namespace LiteNetLib
                 {
                     NetUtils.DebugWrite("Send merged: " + _mergePos + ", count: " + _mergeCount);
                     _peerListener.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
+#if STATS_ENABLED
+                    Statistics.PacketsSent++;
+                    Statistics.BytesSent += (ulong)(NetConstants.HeaderSize + _mergePos);
+#endif
                 }
                 else
                 {
                     //Send without length information and merging
                     _peerListener.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, _remoteEndPoint);
+#if STATS_ENABLED
+                    Statistics.PacketsSent++;
+                    Statistics.BytesSent += (ulong)(_mergePos - 2);
+#endif
                 }
                 _mergePos = 0;
                 _mergeCount = 0;
