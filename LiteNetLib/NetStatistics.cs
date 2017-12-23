@@ -7,8 +7,19 @@
         public ulong BytesSent;
         public ulong BytesReceived;
         public ulong PacketLoss;
-        public ulong PacketLossPercent { get { return PacketLoss * 100 / PacketsSent; } }
-        
+        public ulong PacketLossPercent
+        {
+            get
+            {
+                if (PacketsSent == 0)
+                {
+                    return 0;
+                }
+
+                return PacketLoss * 100 / PacketsSent;
+            }
+        }
+
         public override string ToString()
         {
             return
