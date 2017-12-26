@@ -37,7 +37,7 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     void OnDestroy()
     {
-        if(_netServer != null)
+        if (_netServer != null)
             _netServer.Stop();
     }
 
@@ -49,7 +49,6 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectReason reason, int socketErrorCode)
     {
- 
     }
 
     public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
@@ -57,7 +56,8 @@ public class GameServer : MonoBehaviour, INetEventListener
         Debug.Log("[SERVER] error " + socketErrorCode);
     }
 
-    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
+    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader,
+        UnconnectedMessageType messageType)
     {
         if (messageType == UnconnectedMessageType.DiscoveryRequest)
         {
@@ -68,7 +68,6 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
     {
-        
     }
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
@@ -80,6 +79,5 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
     {
-        
     }
 }

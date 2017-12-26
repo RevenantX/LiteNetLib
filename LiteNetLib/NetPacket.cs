@@ -75,13 +75,23 @@ namespace LiteNetLib
         }
 
         //Data
-        public readonly byte[] RawData;
+        public byte[] RawData;
         public int Size;
 
         public NetPacket(int size)
         {
             RawData = new byte[size];
             Size = 0;
+        }
+
+        public bool Realloc(int toSize)
+        {
+            if (RawData.Length < toSize)
+            {
+                RawData = new byte[toSize];
+                return true;
+            }
+            return false;
         }
 
         public static bool GetPacketProperty(byte[] data, out PacketProperty property)
@@ -98,9 +108,19 @@ namespace LiteNetLib
 
         public static int GetHeaderSize(PacketProperty property)
         {
-            return IsSequenced(property)
-                ? NetConstants.SequencedHeaderSize
-                : NetConstants.HeaderSize;
+            switch (property)
+            {
+                case PacketProperty.ReliableOrdered:
+                case PacketProperty.Reliable:
+                case PacketProperty.Sequenced:
+                case PacketProperty.Ping:
+                case PacketProperty.Pong:
+                case PacketProperty.AckReliable:
+                case PacketProperty.AckReliableOrdered:
+                    return NetConstants.SequencedHeaderSize;
+                default:
+                    return NetConstants.HeaderSize;
+            }
         }
 
         public int GetHeaderSize()
@@ -124,17 +144,6 @@ namespace LiteNetLib
                    property == PacketProperty.ReliableOrdered ||
                    property == PacketProperty.Unreliable ||
                    property == PacketProperty.Sequenced;
-        }
-
-        public static bool IsSequenced(PacketProperty property)
-        {
-            return property == PacketProperty.ReliableOrdered ||
-                property == PacketProperty.Reliable ||
-                property == PacketProperty.Sequenced ||
-                property == PacketProperty.Ping ||
-                property == PacketProperty.Pong ||
-                property == PacketProperty.AckReliable ||
-                property == PacketProperty.AckReliableOrdered;
         }
 
         //Packet contstructor from byte array

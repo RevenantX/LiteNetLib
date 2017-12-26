@@ -6,6 +6,7 @@ namespace LiteNetLib
 {
     internal class NetPacketPool
     {
+        private const int PoolLimit = 1000;
         private readonly Stack<NetPacket> _pool;
 
         public NetPacketPool()
@@ -27,35 +28,9 @@ namespace LiteNetLib
             return packet;
         }
 
-        //Get packet just for read
-        public NetPacket GetAndRead(byte[] data, int start, int count)
+        private NetPacket GetPacket(int size, bool clear)
         {
             NetPacket packet = null;
-            lock (_pool)
-            {
-                if (_pool.Count > 0)
-                {
-                    packet = _pool.Pop();
-                }
-            }
-            if (packet == null)
-            {
-                //allocate new packet of max size or bigger
-                packet = new NetPacket(NetConstants.MaxPacketSize);
-            }
-            if (!packet.FromBytes(data, start, count))
-            {
-                Recycle(packet);
-                return null;
-            }
-            return packet;
-        }
-
-        //Get packet with size
-        public NetPacket Get(PacketProperty property, int size)
-        {
-            NetPacket packet = null;
-            size += NetPacket.GetHeaderSize(property);
             if (size <= NetConstants.MaxPacketSize)
             {
                 lock (_pool)
@@ -68,21 +43,46 @@ namespace LiteNetLib
             }
             if (packet == null)
             {
-                //allocate new packet of max size or bigger
-                packet = new NetPacket(size > NetConstants.MaxPacketSize ? size : NetConstants.MaxPacketSize);
+                //allocate new packet
+                packet = new NetPacket(size);
             }
             else
             {
-                Array.Clear(packet.RawData, 0, size);
+                //reallocate packet data if packet not fits
+                if (!packet.Realloc(size) && clear)
+                {
+                    //clear in not reallocated
+                    Array.Clear(packet.RawData, 0, size);
+                }
             }
+            return packet;
+        }
+
+        //Get packet just for read
+        public NetPacket GetAndRead(byte[] data, int start, int count)
+        {
+            NetPacket packet = GetPacket(count, false);
+            if (!packet.FromBytes(data, start, count))
+            {
+                Recycle(packet);
+                return null;
+            }
+            return packet;
+        }
+
+        //Get packet with size
+        public NetPacket Get(PacketProperty property, int size)
+        {
+            size += NetPacket.GetHeaderSize(property);
+            NetPacket packet = GetPacket(size, true);
             packet.Property = property;
             packet.Size = size;
             return packet;
         }
 
         public void Recycle(NetPacket packet)
-        { 
-            if (packet.Size > NetConstants.MaxPacketSize)
+        {
+            if (packet.Size > NetConstants.MaxPacketSize || _pool.Count > PoolLimit)
             {
                 //Dont pool big packets. Save memory
                 return;

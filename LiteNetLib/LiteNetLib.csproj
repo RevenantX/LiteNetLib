@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,7 +13,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;DEBUG_MESSAGES</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -45,6 +45,7 @@
     <Compile Include="NetDebug.cs" />
     <Compile Include="NetPacketPool.cs" />
     <Compile Include="NetPeerCollection.cs" />
+    <Compile Include="NetStatistics.cs" />
     <Compile Include="NetThread.cs" />
     <Compile Include="Utils\FastBitConverter.cs" />
     <Compile Include="NatPunchModule.cs" />

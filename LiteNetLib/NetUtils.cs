@@ -236,7 +236,7 @@ namespace LiteNetLib
                 if (NetDebug.Logger == null)
                 {
 #if UNITY
-                    UnityEngine.Debug.LogFormat(str, args);
+                    UnityEngine.Debug.Log(string.Format(str, args));
 #elif WINRT
                     Debug.WriteLine(str, args);
 #else

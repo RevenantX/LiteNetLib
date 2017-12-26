@@ -53,6 +53,8 @@ namespace LiteNetLib
         internal const int ProtocolId = 2;
         internal const int MaxUdpHeaderSize = 68;
         internal const int PacketSizeLimit = ushort.MaxValue - MaxUdpHeaderSize;
+        internal const int RequestConnectIdIndex = 5;
+        internal const int AcceptConnectIdIndex = 1;
 
         internal static readonly int[] PossibleMtu =
         {

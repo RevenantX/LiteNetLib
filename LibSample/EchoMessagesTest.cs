@@ -197,20 +197,20 @@ namespace LibSample
             server.Stop();
             Console.ReadKey();
             Console.WriteLine("ServStats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}", 
-                server.BytesReceived, 
-                server.PacketsReceived, 
-                server.BytesSent, 
-                server.PacketsSent);
+                server.Statistics.BytesReceived, 
+                server.Statistics.PacketsReceived, 
+                server.Statistics.BytesSent, 
+                server.Statistics.PacketsSent);
             Console.WriteLine("Client1Stats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}",
-                client1.BytesReceived,
-                client1.PacketsReceived,
-                client1.BytesSent,
-                client1.PacketsSent);
+                client1.Statistics.BytesReceived,
+                client1.Statistics.PacketsReceived,
+                client1.Statistics.BytesSent,
+                client1.Statistics.PacketsSent);
             Console.WriteLine("Client2Stats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}",
-                client2.BytesReceived,
-                client2.PacketsReceived,
-                client2.BytesSent,
-                client2.PacketsSent);
+                client2.Statistics.BytesReceived,
+                client2.Statistics.PacketsReceived,
+                client2.Statistics.BytesSent,
+                client2.Statistics.PacketsSent);
             Console.WriteLine("Press any key to exit");
             Console.ReadKey();
         }

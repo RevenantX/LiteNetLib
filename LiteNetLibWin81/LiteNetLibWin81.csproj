@@ -79,6 +79,9 @@
     <Compile Include="..\LiteNetLib\NetSocket.cs">
       <Link>NetSocket.cs</Link>
     </Compile>
+    <Compile Include="..\LiteNetLib\NetStatistics.cs">
+      <Link>NetStatistics.cs</Link>
+    </Compile>
     <Compile Include="..\LiteNetLib\NetThread.cs">
       <Link>NetThread.cs</Link>
     </Compile>

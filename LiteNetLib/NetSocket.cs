@@ -137,10 +137,12 @@ namespace LiteNetLib
             {
                 try
                 {
+#if !ENABLE_IL2CPP
                     _udpSocketv6.SetSocketOption(
                         SocketOptionLevel.IPv6, 
                         SocketOptionName.AddMembership,
                         new IPv6MulticastOption(MulticastAddressV6));
+#endif
                 }
                 catch(Exception)
                 {

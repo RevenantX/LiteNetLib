@@ -2,7 +2,8 @@
 <package >
   <metadata>
     <id>LiteNetLib</id>
-    <version>0.7.4.1</version>
+    <title>LiteNetLib</title>
+    <version>0.7.6.3</version>
     <authors>Ruslan Pyrch</authors>
     <owners>RevenantX</owners>
     <licenseUrl>https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt</licenseUrl>
@@ -28,7 +29,7 @@
 	<file src="HelpBuilder\Help\Documentation.chm" target="" />
 	<file src="LiteNetLib\bin\$configuration$\**" target="lib\net35"/>
 	<file src="LiteNetLibWin81\bin\$configuration$\**" target="lib\wpa81"/>
-	<file src="LiteNetLibNetCore\bin\$configuration$\netcoreapp1.1\**" target="lib\netcoreapp"/>
-	<file src="LiteNetLibStandard\bin\$configuration$\netstandard1.6\**" target="lib\netstandard"/>
+	<file src="LiteNetLibNetCore\bin\$configuration$\netcoreapp1.1\**" target="lib\netcoreapp1.1"/>
+	<file src="LiteNetLibStandard\bin\$configuration$\netstandard1.6\**" target="lib\netstandard1.6"/>
   </files>
 </package>
