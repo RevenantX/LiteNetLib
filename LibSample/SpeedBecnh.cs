@@ -17,7 +17,7 @@ namespace LibSample
 
             public Server()
             {
-                _server = new NetManager(this, 15, "ConnKey");
+                _server = new NetManager(this, 15);
                 _server.UpdateTime = 1;
                 _server.Start(9050);
             }
@@ -33,6 +33,11 @@ namespace LibSample
 
             void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
             {
+            }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                request.AcceptIfKey("ConnKey");
             }
 
             void INetEventListener.OnNetworkReceive(NetPeer peer, NetDataReader reader)
@@ -83,7 +88,7 @@ namespace LibSample
             {
                 _writer = new NetDataWriter();
 
-                _client = new NetManager(this, "ConnKey");
+                _client = new NetManager(this);
                 _client.Start();
             }
 
@@ -109,7 +114,7 @@ namespace LibSample
 
             public void Connect()
             {
-                _peer = _client.Connect("localhost", 9050);
+                _peer = _client.Connect("localhost", 9050, "ConnKey");
             }
 
             public void PollEvents()
@@ -123,6 +128,11 @@ namespace LibSample
 
             void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
             {
+            }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                request.AcceptIfKey("ConnKey");
             }
 
             void INetEventListener.OnNetworkReceive(NetPeer peer, NetDataReader reader)

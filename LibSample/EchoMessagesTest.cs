@@ -135,7 +135,11 @@ namespace LibSample
 
             public void OnConnectionRequest(ConnectionRequest request)
             {
-                request.AcceptIfKey("gamekey");
+                bool accepted = request.AcceptIfKey("gamekey");
+                Console.WriteLine("[Server] ConnectionRequest. Id: {0}, Ep: {1}, Accepted: {2}", 
+                    request.ConnectionId,
+                    request.RemoteEndPoint,
+                    accepted);
             }
         }
 

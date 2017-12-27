@@ -87,7 +87,7 @@ namespace LiteNetLib
             dw.Put(hostExternal);
             dw.Put(additionalInfo, MaxTokenLength);
 
-            var packet = _netBase.PacketPool.GetWithData(PacketProperty.NatIntroduction, dw);
+            var packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatIntroduction, dw);
             _netBase.SendRawAndRecycle(packet, clientExternal);
 
             //Second packet (client)
@@ -98,7 +98,7 @@ namespace LiteNetLib
             dw.Put(clientExternal);
             dw.Put(additionalInfo, MaxTokenLength);
 
-            packet = _netBase.PacketPool.GetWithData(PacketProperty.NatIntroduction, dw);
+            packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatIntroduction, dw);
             _netBase.SendRawAndRecycle(packet, hostExternal);
         }
 
@@ -142,7 +142,7 @@ namespace LiteNetLib
             dw.Put(additionalInfo, MaxTokenLength);
 
             //prepare packet
-            var packet = _netBase.PacketPool.GetWithData(PacketProperty.NatIntroductionRequest, dw);
+            var packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatIntroductionRequest, dw);
             _netBase.SendRawAndRecycle(packet, masterServerEndPoint);
         }
 
@@ -180,7 +180,7 @@ namespace LiteNetLib
             // send internal punch
             writer.Put(hostByte);
             writer.Put(token);
-            var packet = _netBase.PacketPool.GetWithData(PacketProperty.NatPunchMessage, writer);
+            var packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatPunchMessage, writer);
             _netBase.SendRawAndRecycle(packet, remoteInternal);
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] internal punch sent to " + remoteInternal);
 
@@ -188,7 +188,7 @@ namespace LiteNetLib
             writer.Reset();
             writer.Put(hostByte);
             writer.Put(token);
-            packet = _netBase.PacketPool.GetWithData(PacketProperty.NatPunchMessage, writer);
+            packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatPunchMessage, writer);
             _netBase.SendRawAndRecycle(packet, remoteExternal);
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] external punch sent to " + remoteExternal);
         }
