@@ -37,6 +37,7 @@
     <Compile Include="..\LiteNetLib\Utils\INetSerializable.cs" Link="Utils\INetSerializable.cs" />
     <Compile Include="..\LiteNetLib\Utils\NetDataReader.cs" Link="Utils\NetDataReader.cs" />
     <Compile Include="..\LiteNetLib\Utils\NetDataWriter.cs" Link="Utils\NetDataWriter.cs" />
+    <Compile Include="..\LiteNetLib\Utils\NetPacketProcessor.cs" Link="Utils\NetPacketProcessor.cs" />
     <Compile Include="..\LiteNetLib\Utils\NetSerializer.cs" Link="Utils\NetSerializer.cs" />
   </ItemGroup>
 

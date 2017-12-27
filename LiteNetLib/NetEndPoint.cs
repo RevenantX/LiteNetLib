@@ -104,7 +104,6 @@ namespace LiteNetLib
                 id |= (long)(addr[1] ^ addr[9]) << 8;
                 id |= (long)(addr[2] ^ addr[10]) << 16;
 
-
                 id |= (long)(addr[3] ^ addr[11]) << 24;
                 id |= (long)(addr[4] ^ addr[12]) << 32;
                 id |= (long)(addr[5] ^ addr[13]) << 40;

@@ -984,7 +984,6 @@ namespace LiteNetLib
             return Connect(ep, connectionData);
         }
 
-
         /// <summary>
         /// Connect to remote host
         /// </summary>
