@@ -1,26 +1,11 @@
-#if WINRT && !UNITY_EDITOR
-#define USE_WINRT
-#endif
-
 using System;
 using System.Threading;
-
-#if USE_WINRT
-using Windows.Foundation;
-using Windows.System.Threading;
-using Windows.System.Threading.Core;
-#endif
 
 namespace LiteNetLib
 {
     internal sealed class NetThread
     {
-#if USE_WINRT
-        private readonly ManualResetEvent _updateWaiter = new ManualResetEvent(false);
-        private readonly ManualResetEvent _joinWaiter = new ManualResetEvent(false);
-#else
         private Thread _thread;
-#endif
 
         private readonly Action _callback;
 
@@ -42,11 +27,7 @@ namespace LiteNetLib
 
         public void Sleep(int msec)
         {
-#if USE_WINRT
-            _updateWaiter.WaitOne(msec);
-#else
             Thread.Sleep(msec);
-#endif
         }
 
         public void Start()
@@ -54,17 +35,12 @@ namespace LiteNetLib
             if (_running)
                 return;
             _running = true;
-#if USE_WINRT
-            var thread = new PreallocatedWorkItem(ThreadLogic, WorkItemPriority.Normal, WorkItemOptions.TimeSliced);
-            thread.RunAsync().AsTask();
-#else
             _thread = new Thread(ThreadLogic)
             {
                 Name = _name,
                 IsBackground = true
             };
             _thread.Start();
-#endif
         }
 
         public void Stop()
@@ -72,25 +48,9 @@ namespace LiteNetLib
             if (!_running)
                 return;
             _running = false;
-
-#if USE_WINRT
-            _joinWaiter.WaitOne();
-#else
             _thread.Join();
-#endif
         }
 
-#if USE_WINRT
-        private void ThreadLogic(IAsyncAction action)
-        {
-            while (_running)
-            {
-                _callback();
-                _updateWaiter.WaitOne(SleepTime);
-            }
-            _joinWaiter.Set();
-        }
-#else
         private void ThreadLogic()
         {
             while (_running)
@@ -99,6 +59,5 @@ namespace LiteNetLib
                 Thread.Sleep(SleepTime);
             }
         }
-#endif
     }
 }

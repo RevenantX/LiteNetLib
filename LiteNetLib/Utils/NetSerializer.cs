@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
-#if WINRT || NETCORE
+#if NETCORE
 using System.Linq;
 #endif
 
@@ -157,7 +157,7 @@ namespace LiteNetLib.Utils
 
         private static Delegate CreateDelegate(Type type, MethodInfo info)
         {
-#if WINRT || NETCORE
+#if NETCORE
             return info.CreateDelegate(type);
 #else
             return Delegate.CreateDelegate(type, info);
@@ -183,7 +183,7 @@ namespace LiteNetLib.Utils
                 return info;
             }
 
-#if WINRT || NETCORE
+#if NETCORE
             var props = t.GetRuntimeProperties().ToArray();
 #else
             var props = t.GetProperties(
@@ -204,7 +204,7 @@ namespace LiteNetLib.Utils
                 var property = props[i];
                 var propertyType = property.PropertyType;
 
-#if WINRT || NETCORE
+#if NETCORE
                 bool isEnum = propertyType.GetTypeInfo().IsEnum;
                 var getMethod = property.GetMethod;
                 var setMethod = property.SetMethod;

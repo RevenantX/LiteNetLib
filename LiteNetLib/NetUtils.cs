@@ -1,33 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-#if WINRT && !UNITY_EDITOR
-using Windows.Networking;
-using Windows.Networking.Connectivity;
-#else
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
-#endif
 
 namespace LiteNetLib
 {
-#if WINRT && !UNITY_EDITOR
-    public enum ConsoleColor
-    {
-        Gray,
-        Yellow,
-        Cyan,
-        DarkCyan,
-        DarkGreen,
-        Blue,
-        DarkRed,
-        Red,
-        Green,
-        DarkYellow
-    }
-#endif
-
     /// <summary>
     /// Address type that you want to receive from NetUtils.GetLocalIp method
     /// </summary>
@@ -105,17 +84,6 @@ namespace LiteNetLib
         {
             bool ipv4 = (addrType & LocalAddrType.IPv4) == LocalAddrType.IPv4;
             bool ipv6 = (addrType & LocalAddrType.IPv6) == LocalAddrType.IPv6;
-#if WINRT && !UNITY_EDITOR
-            foreach (HostName localHostName in NetworkInformation.GetHostNames())
-            {
-                if (localHostName.IPInformation != null && 
-                    ((ipv4 && localHostName.Type == HostNameType.Ipv4) ||
-                     (ipv6 && localHostName.Type == HostNameType.Ipv6)))
-                {
-                    targetList.Add(localHostName.ToString());
-                }
-            }
-#else
             try
             {
                 foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
@@ -162,7 +130,6 @@ namespace LiteNetLib
                         targetList.Add(ip.ToString());
                 }
             }
-#endif
             if (targetList.Count == 0)
             {
                 if(ipv4)
@@ -193,7 +160,6 @@ namespace LiteNetLib
         // ===========================================
         internal static void PrintInterfaceInfos()
         {
-#if !WINRT || UNITY_EDITOR
             DebugWriteForce(ConsoleColor.Green, "IPv6Support: {0}", NetSocket.IPv6Support);
             try
             {
@@ -219,7 +185,6 @@ namespace LiteNetLib
             {
                 DebugWriteForce(ConsoleColor.Red, "Error while getting interface infos: {0}", e.ToString());
             }
-#endif
         }
 
         internal static int RelativeSequenceNumber(int number, int expected)
@@ -237,8 +202,6 @@ namespace LiteNetLib
                 {
 #if UNITY
                     UnityEngine.Debug.Log(string.Format(str, args));
-#elif WINRT
-                    Debug.WriteLine(str, args);
 #else
                     Console.ForegroundColor = color;
                     Console.WriteLine(str, args);

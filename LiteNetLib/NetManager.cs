@@ -317,9 +317,6 @@ namespace LiteNetLib
             lock (_peers)
             {
                 _peers.Remove(peer.EndPoint);
-#if WINRT && !UNITY_EDITOR
-                _socket.RemovePeer(peer.EndPoint);
-#endif
             }
         }
 
@@ -327,9 +324,6 @@ namespace LiteNetLib
         {
             lock (_peers)
             {
-#if WINRT && !UNITY_EDITOR
-                _socket.ClearPeers();
-#endif
                 _peers.Clear();
             }
         }
@@ -473,10 +467,6 @@ namespace LiteNetLib
 
                     if (remove)
                     {
-#if WINRT && !UNITY_EDITOR
-                        var endPoint = _peers[i].EndPoint;
-                        _socket.RemovePeer(endPoint);
-#endif
                         _peers.RemoveAt(i);
                         i--;
                     }

@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib", "LiteNetLib\LiteNetLib.csproj", "{B0A014E4-0392-4E35-AA42-8FB5A40417E0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLibWin81", "LiteNetLibWin81\LiteNetLibWin81.csproj", "{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteNetLibStandard", "LiteNetLibStandard\LiteNetLibStandard.csproj", "{2173A7AE-AB4E-41E0-AEEF-DC80E815CD47}"
 EndProject
@@ -43,22 +41,6 @@ Global
 		{B0A014E4-0392-4E35-AA42-8FB5A40417E0}.Release|x64.Build.0 = Release|Any CPU
 		{B0A014E4-0392-4E35-AA42-8FB5A40417E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{B0A014E4-0392-4E35-AA42-8FB5A40417E0}.Release|x86.Build.0 = Release|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Debug|ARM.Build.0 = Debug|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Debug|x64.Build.0 = Debug|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Debug|x86.Build.0 = Debug|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Release|ARM.ActiveCfg = Release|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Release|ARM.Build.0 = Release|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Release|x64.ActiveCfg = Release|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Release|x64.Build.0 = Release|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Release|x86.ActiveCfg = Release|Any CPU
-		{4CCFFD6B-352C-4C90-8B4C-C70FDD7F2550}.Release|x86.Build.0 = Release|Any CPU
 		{2173A7AE-AB4E-41E0-AEEF-DC80E815CD47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2173A7AE-AB4E-41E0-AEEF-DC80E815CD47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2173A7AE-AB4E-41E0-AEEF-DC80E815CD47}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -126,5 +108,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3629F29B-A78F-4AB0-8502-FEF6799FFBB9}
 	EndGlobalSection
 EndGlobal
