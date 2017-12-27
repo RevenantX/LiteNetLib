@@ -15,7 +15,7 @@ namespace LiteNetLib
     {
         IPv4 = 1,
         IPv6 = 2,
-        All = 3
+        All = IPv4 | IPv6
     }
 
     /// <summary>

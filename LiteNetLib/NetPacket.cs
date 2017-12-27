@@ -25,7 +25,7 @@ namespace LiteNetLib
         DiscoveryRequest,       //17
         DiscoveryResponse,      //18
         Merged,                 //19
-        AlreadyDisconnected     //20     
+        ShutdownOk     //20     
     }
 
     internal sealed class NetPacket

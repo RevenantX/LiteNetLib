@@ -7,12 +7,14 @@ namespace LiteNetLib
     /// <summary>
     /// Peer connection state
     /// </summary>
+    [Flags]
     public enum ConnectionState
     {
-        InProgress,
-        Connected,
-        ShutdownRequested,
-        Disconnected
+        InProgress = 1,
+        Connected = 2,
+        ShutdownRequested = 4,
+        Disconnected = 8,
+        Any = InProgress | Connected | ShutdownRequested
     }
 
     /// <summary>
@@ -402,8 +404,12 @@ namespace LiteNetLib
             _peerListener.DisconnectPeer(this);
         }
 
-        internal void Shutdown(byte[] data, int start, int length)
+        internal bool Shutdown(byte[] data, int start, int length, bool force)
         {
+            if (_connectionState == ConnectionState.Disconnected ||
+                _connectionState == ConnectionState.ShutdownRequested)
+                return false;
+
             _shutdownPacket = _packetPool.Get(PacketProperty.Disconnect, 8 + length);
             FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectId);
             if (length + 8 >= _mtu)
@@ -415,8 +421,9 @@ namespace LiteNetLib
             {
                 Buffer.BlockCopy(data, start, _shutdownPacket.RawData, 9, length);
             }
-            _connectionState = ConnectionState.ShutdownRequested;
+            _connectionState = force ? ConnectionState.Disconnected : ConnectionState.ShutdownRequested;
             SendRawData(_shutdownPacket);
+            return true;
         }
 
         //from user thread, our thread, or recv?
@@ -685,6 +692,10 @@ namespace LiteNetLib
                     ProcessMtuPacket(packet);
                     break;
 
+                case PacketProperty.ShutdownOk:
+                    _connectionState = ConnectionState.Disconnected;
+                    break;
+                
                 default:
                     NetUtils.DebugWriteError("Error! Unexpected packet type: " + packet.Property);
                     break;

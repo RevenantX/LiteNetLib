@@ -60,7 +60,6 @@ namespace LiteNetLib
         private readonly INetEventListener _netEventListener;
 
         private readonly NetPeerCollection _peers;
-        private readonly Dictionary<NetEndPoint, NetPeer> _peersToShutdown;
         private readonly int _maxConnections;
 
         internal readonly NetPacketPool NetPacketPool;
@@ -177,14 +176,6 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Connected peers count
-        /// </summary>
-        public int PeersCount
-        {
-            get { return _peers.Count; }
-        }
-
-        /// <summary>
         /// NetManager constructor with maxConnections = 1 (usable for client)
         /// </summary>
         /// <param name="listener">Network events listener</param>
@@ -209,7 +200,6 @@ namespace LiteNetLib
             NatPunchModule = new NatPunchModule(this);
             Statistics = new NetStatistics();
             _peers = new NetPeerCollection(maxConnections);
-            _peersToShutdown = new Dictionary<NetEndPoint, NetPeer>();
             _maxConnections = maxConnections;
         }
 
@@ -283,21 +273,11 @@ namespace LiteNetLib
             }
             lock (_peers)
             {
-                if (!_peers.Remove(peer.EndPoint))
+                if (!_peers.ContainsAddress(peer.EndPoint) || !peer.Shutdown(data, start, count, force))
                 {
-                    //already disconnected or in shutdown state
+                    //invalid peer
                     return;
                 }
-
-                peer.Shutdown(data, start, count);
-                if (!force) //reliable disconnect
-                {
-                    lock (_peersToShutdown)
-                    {
-                        _peersToShutdown.Add(peer.EndPoint, peer);
-                    }
-                }
-
                 var netEvent = CreateEvent(NetEventType.Disconnect);
                 netEvent.Peer = peer;
                 netEvent.AdditionalData = socketErrorCode;
@@ -311,10 +291,6 @@ namespace LiteNetLib
             lock (_peers)
             {
                 _peers.Clear();
-            }
-            lock (_peersToShutdown)
-            {
-                _peersToShutdown.Clear();
             }
         }
 
@@ -448,6 +424,7 @@ namespace LiteNetLib
                     }
                     else if(netPeer.ConnectionState == ConnectionState.Disconnected)
                     {
+                        //TODO: this must just remove peers. (think about connectionfailed)
                         var netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
                         netEvent.DisconnectReason = DisconnectReason.ConnectionFailed;
@@ -467,14 +444,6 @@ namespace LiteNetLib
                         totalPacketLoss += netPeer.Statistics.PacketLoss;
 #endif
                     }
-                }
-            }
-  			//Process shutdowned peers
-            lock (_peersToShutdown)
-            {
-                foreach (var netPeer in _peersToShutdown)
-                {
-                    netPeer.Value.Update(delta);
                 }
             }
             
@@ -628,68 +597,63 @@ namespace LiteNetLib
             NetPeer netPeer;
             //Check peers
             Monitor.Enter(_peers);
-            int peersCount = _peers.Count;
-            if (_peers.TryGetValue(remoteEndPoint, out netPeer))
+            bool peerFound = _peers.TryGetValue(remoteEndPoint, out netPeer);
+            Monitor.Exit(_peers);
+            if (peerFound)
             {
-                Monitor.Exit(_peers);
-                //Send
-                if (packet.Property == PacketProperty.Disconnect)
+                switch (packet.Property)
                 {
-                    if (BitConverter.ToInt64(packet.RawData, 1) != netPeer.ConnectId)
-                    {
-                        //Old or incorrect disconnect
+                    case PacketProperty.Disconnect:
+                        if (netPeer.ConnectionState == ConnectionState.InProgress ||
+                            netPeer.ConnectionState == ConnectionState.Connected)
+                        {
+                            if (BitConverter.ToInt64(packet.RawData, 1) != netPeer.ConnectId)
+                            {
+                                //Old or incorrect disconnect
+                                NetPacketPool.Recycle(packet);
+                                return;
+                            }
+
+                            var netEvent = CreateEvent(NetEventType.Disconnect);
+                            netEvent.Peer = netPeer;
+                            netEvent.DataReader.SetSource(packet.RawData, 9, packet.Size);
+                            netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
+                            EnqueueEvent(netEvent);
+                        }
+                        break;
+                    case PacketProperty.ShutdownOk:
+                        if (netPeer.ConnectionState != ConnectionState.ShutdownRequested)
+                        {
+                            return;
+                        }
+                        netPeer.ProcessPacket(packet);
+                        NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NM] ShutdownOK!");
+                        break;
+                    case PacketProperty.ConnectAccept:
+                        if (netPeer.ProcessConnectAccept(packet))
+                        {
+                            var connectEvent = CreateEvent(NetEventType.Connect);
+                            connectEvent.Peer = netPeer;
+                            EnqueueEvent(connectEvent);
+                        }
                         NetPacketPool.Recycle(packet);
                         return;
-                    }
-
-                    var netEvent = CreateEvent(NetEventType.Disconnect);
-                    netEvent.Peer = netPeer;
-                    netEvent.DataReader.SetSource(packet.RawData, 9, packet.Size);
-                    netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
-                    EnqueueEvent(netEvent);
-
-                    Monitor.Enter(_peers);
-                    _peers.Remove(netPeer.EndPoint);
-                    Monitor.Exit(_peers);
-                    //do not recycle because no sense)
-                }
-                else if (packet.Property == PacketProperty.ConnectAccept)
-                {
-                    if (netPeer.ProcessConnectAccept(packet))
-                    {
-                        var connectEvent = CreateEvent(NetEventType.Connect);
-                        connectEvent.Peer = netPeer;
-                        EnqueueEvent(connectEvent);
-                    }
-                    NetPacketPool.Recycle(packet);
-                }
-                else
-                {
-                    netPeer.ProcessPacket(packet);
+                    default:
+                        netPeer.ProcessPacket(packet);
+                        return;
                 }
                 return;
             }
-            Monitor.Exit(_peers);
 
             //Unacked shutdown
             if (packet.Property == PacketProperty.Disconnect)
             {
-                byte[] data = { (byte)PacketProperty.AlreadyDisconnected };
+                byte[] data = { (byte)PacketProperty.ShutdownOk };
                 SendRaw(data, 0, 1, remoteEndPoint);
                 return;
             }
 
-            //Search shutdowned peer and remove
-            if (packet.Property == PacketProperty.AlreadyDisconnected)
-            {
-                lock (_peersToShutdown)
-                {
-                    bool removed = _peersToShutdown.Remove(remoteEndPoint);
-                    NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NM] Peer shutdowned: " + removed);
-                }
-                return;
-            }
-
+            int peersCount = GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress);
             if (peersCount < _maxConnections && packet.Property == PacketProperty.ConnectRequest && packet.Size >= 12)
             {
                 int protoId = BitConverter.ToInt32(packet.RawData, 1);
@@ -1028,7 +992,7 @@ namespace LiteNetLib
             {
                 for (int i = 0; i < _peers.Count; i++)
                 {
-                    _peers[i].Shutdown(null, 0, 0);
+                    _peers[i].Shutdown(null, 0, 0, true);
                 }
             }
 
@@ -1059,32 +1023,73 @@ namespace LiteNetLib
             return null;
         }
 
-        /// <summary>
-        /// Get copy of current connected peers
-        /// </summary>
-        /// <returns>Array with connected peers</returns>
-        public NetPeer[] GetPeers()
+        [Obsolete("Use GetPeersCount(ConnectionState peerState)")]
+        public int GetPeersCount()
         {
-            NetPeer[] peers;
+            return GetPeersCount(ConnectionState.InProgress | ConnectionState.Connected);
+        }
+
+        public int GetPeersCount(ConnectionState peerState)
+        {
+            int count = 0;
             lock (_peers)
             {
-                peers = _peers.ToArray();
+                for (int i = 0; i < _peers.Count; i++)
+                {
+                    if ((_peers[i].ConnectionState & peerState) != 0)
+                    {
+                        count++;
+                    }
+                }
             }
-            return peers;
+            return count;
         }
 
         /// <summary>
-        /// Get copy of current connected peers (without allocations)
+        /// Get copy of current connected peers (slow! use GetPeersNonAlloc for best performance)
+        /// </summary>
+        /// <returns>Array with connected peers</returns>
+        [Obsolete("Use GetPeers(ConnectionState peerState)")]
+        public NetPeer[] GetPeers()
+        {
+            return GetPeers(ConnectionState.Connected | ConnectionState.InProgress);
+        }
+
+        /// <summary>
+        /// Get copy of current connected peers (slow! use GetPeersNonAlloc for best performance)
+        /// </summary>
+        /// <returns>Array with connected peers</returns>
+        public NetPeer[] GetPeers(ConnectionState peerState)
+        {
+            if (peerState == ConnectionState.Any)
+            {
+                lock (_peers)
+                {
+                    return _peers.ToArray();
+                }
+            }
+
+            List<NetPeer> peersList = new List<NetPeer>();
+            GetPeersNonAlloc(peersList, peerState);
+            return peersList.ToArray();
+        }
+
+        /// <summary>
+        /// Get copy of peers (without allocations)
         /// </summary>
         /// <param name="peers">List that will contain result</param>
-        public void GetPeersNonAlloc(List<NetPeer> peers)
+        /// <param name="peerState">State of peers</param>
+        public void GetPeersNonAlloc(List<NetPeer> peers, ConnectionState peerState)
         {
             peers.Clear();
             lock (_peers)
             {
                 for(int i = 0; i < _peers.Count; i++)
                 {
-                    peers.Add(_peers[i]);
+                    if ((_peers[i].ConnectionState & peerState) != 0)
+                    {
+                        peers.Add(_peers[i]);
+                    }
                 }
             }
         }
