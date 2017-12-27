@@ -105,7 +105,7 @@ namespace LiteNetLib.Test
         public void CustomPackageTest()
         {
             var writer = new NetDataWriter();
-            _packetProcessor.Write(_samplePacket);
+            _packetProcessor.Write(writer, _samplePacket);
 
             var reader = new NetDataReader(writer.CopyData());
             SamplePacket readPackage = null;

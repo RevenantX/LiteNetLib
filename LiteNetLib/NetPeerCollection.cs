@@ -64,16 +64,21 @@ namespace LiteNetLib
             _count--;
         }
 
-        public void Remove(NetEndPoint endPoint)
+        public bool Remove(NetEndPoint endPoint)
         {
+            if (!_peersDict.ContainsKey(endPoint))
+            {
+                return false;
+            }
             for (int i = 0; i < _count; i++)
             {
                 if (_peersArray[i].EndPoint.Equals(endPoint))
                 {
                     RemoveAt(i);
-                    break;
+                    return true;
                 }
             }
+            return false;
         }
     }
 }

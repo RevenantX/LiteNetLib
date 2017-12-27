@@ -277,46 +277,32 @@ namespace LiteNetLib
             int start,
             int count)
         {
-            if (peer == null || !_peers.ContainsAddress(peer.EndPoint))
+            if (peer == null)
             {
                 return;
             }
-
-            if (count + 8 >= peer.Mtu)
-            {
-                //Drop additional data
-                data = null;
-                count = 0;
-                NetUtils.DebugWriteError("[NM] Disconnect additional data size more than MTU - 8!");
-            }
-            var disconnectPacket = NetPacketPool.Get(PacketProperty.Disconnect, 8 + count);
-            FastBitConverter.GetBytes(disconnectPacket.RawData, 1, peer.ConnectId);
-            if (data != null && count > 0)
-            {
-                Buffer.BlockCopy(data, start, disconnectPacket.RawData, 9, count);
-            }
-
-            if (force)
-            {
-                SendRawAndRecycle(disconnectPacket, peer.EndPoint);
-            }
-            else
-            {
-                //reliable disconnect
-                peer.Shutdown(disconnectPacket);
-                lock (_peersToShutdown)
-                {
-                    _peersToShutdown.Add(peer.EndPoint, peer);
-                }
-            }
-            var netEvent = CreateEvent(NetEventType.Disconnect);
-            netEvent.Peer = peer;
-            netEvent.AdditionalData = socketErrorCode;
-            netEvent.DisconnectReason = reason;
-            EnqueueEvent(netEvent);
             lock (_peers)
             {
-                _peers.Remove(peer.EndPoint);
+                if (!_peers.Remove(peer.EndPoint))
+                {
+                    //already disconnected or in shutdown state
+                    return;
+                }
+
+                peer.Shutdown(data, start, count);
+                if (!force) //reliable disconnect
+                {
+                    lock (_peersToShutdown)
+                    {
+                        _peersToShutdown.Add(peer.EndPoint, peer);
+                    }
+                }
+
+                var netEvent = CreateEvent(NetEventType.Disconnect);
+                netEvent.Peer = peer;
+                netEvent.AdditionalData = socketErrorCode;
+                netEvent.DisconnectReason = reason;
+                EnqueueEvent(netEvent);           
             }
         }
 
@@ -325,6 +311,10 @@ namespace LiteNetLib
             lock (_peers)
             {
                 _peers.Clear();
+            }
+            lock (_peersToShutdown)
+            {
+                _peersToShutdown.Clear();
             }
         }
 
@@ -1033,14 +1023,12 @@ namespace LiteNetLib
         /// </summary>
         public void Stop()
         {
-            //Send disconnect packets
+            //Send disconnects
             lock (_peers)
             {
                 for (int i = 0; i < _peers.Count; i++)
                 {
-                    var disconnectPacket = NetPacketPool.Get(PacketProperty.Disconnect, 8);
-                    FastBitConverter.GetBytes(disconnectPacket.RawData, 1, _peers[i].ConnectId);
-                    SendRawAndRecycle(disconnectPacket, _peers[i].EndPoint);
+                    _peers[i].Shutdown(null, 0, 0);
                 }
             }
 
@@ -1101,9 +1089,28 @@ namespace LiteNetLib
             }
         }
 
-        public void Disconnect()
+        public void DisconnectAll()
         {
-            //TODO
+            DisconnectAll(null, 0, 0);
+        }
+
+        public void DisconnectAll(byte[] data, int start, int count)
+        {
+            //Send disconnect packets
+            lock (_peers)
+            {
+                for (int i = 0; i < _peers.Count; i++)
+                {
+                    DisconnectPeer(
+                        _peers[i], 
+                        DisconnectReason.DisconnectPeerCalled, 
+                        0, 
+                        false,
+                        data, 
+                        start, 
+                        count);
+                }
+            }
         }
 
         /// <summary>

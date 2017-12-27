@@ -382,10 +382,40 @@ namespace LiteNetLib
             SendPacket(packet);
         }
 
-        internal void Shutdown(NetPacket packet)
+        public void Disconnect(byte[] data)
         {
+            _peerListener.DisconnectPeer(this, data);
+        }
+
+        public void Disconnect(NetDataWriter writer)
+        {
+            _peerListener.DisconnectPeer(this, writer);
+        }
+
+        public void Disconnect(byte[] data, int start, int count)
+        {
+            _peerListener.DisconnectPeer(this, data, start, count);
+        }
+
+        public void Disconnect()
+        {
+            _peerListener.DisconnectPeer(this);
+        }
+
+        internal void Shutdown(byte[] data, int start, int length)
+        {
+            _shutdownPacket = _packetPool.Get(PacketProperty.Disconnect, 8 + length);
+            FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectId);
+            if (length + 8 >= _mtu)
+            {
+                //Drop additional data
+                NetUtils.DebugWriteError("[Peer] Disconnect additional data size more than MTU - 8!");
+            }
+            else if (data != null && length > 0)
+            {
+                Buffer.BlockCopy(data, start, _shutdownPacket.RawData, 9, length);
+            }
             _connectionState = ConnectionState.ShutdownRequested;
-            _shutdownPacket = packet;
             SendRawData(_shutdownPacket);
         }
 
