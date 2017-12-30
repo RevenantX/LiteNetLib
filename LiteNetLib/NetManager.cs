@@ -263,7 +263,7 @@ namespace LiteNetLib
             return true;
         }
 
-        private void DisconnectPeer(
+        internal void DisconnectPeer(
             NetPeer peer, 
             DisconnectReason reason, 
             int socketErrorCode, 
@@ -417,27 +417,7 @@ namespace LiteNetLib
                 for(int i = 0; i < _peers.Count; i++)
                 {
                     var netPeer = _peers[i];
-                    bool remove = false;
-                    if (netPeer.ConnectionState == ConnectionState.Connected && netPeer.TimeSinceLastPacket > DisconnectTimeout)
-                    {
-                        NetUtils.DebugWrite("[NM] Disconnect by timeout: {0} > {1}", netPeer.TimeSinceLastPacket, DisconnectTimeout);
-                        var netEvent = CreateEvent(NetEventType.Disconnect);
-                        netEvent.Peer = netPeer;
-                        netEvent.DisconnectReason = DisconnectReason.Timeout;
-                        EnqueueEvent(netEvent);
-                        remove = true;
-                    }
-                    else if(netPeer.ConnectionState == ConnectionState.Disconnected)
-                    {
-                        //TODO: this must just remove peers. (think about connectionfailed)
-                        var netEvent = CreateEvent(NetEventType.Disconnect);
-                        netEvent.Peer = netPeer;
-                        netEvent.DisconnectReason = DisconnectReason.ConnectionFailed;
-                        EnqueueEvent(netEvent);
-                        remove = true;
-                    }
-
-                    if (remove)
+                    if (netPeer.ConnectionState == ConnectionState.Disconnected)
                     {
                         _peers.RemoveAt(i);
                         i--;
