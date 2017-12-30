@@ -175,6 +175,11 @@ namespace LiteNetLib
             get { return _socket.LocalPort; }
         }
 
+        public int PeersCount
+        {
+            get { return _peers.Count; }
+        }
+
         /// <summary>
         /// NetManager constructor with maxConnections = 1 (usable for client)
         /// </summary>
@@ -1021,12 +1026,6 @@ namespace LiteNetLib
                 }
             }
             return null;
-        }
-
-        [Obsolete("Use GetPeersCount(ConnectionState peerState)")]
-        public int GetPeersCount()
-        {
-            return GetPeersCount(ConnectionState.InProgress | ConnectionState.Connected);
         }
 
         public int GetPeersCount(ConnectionState peerState)
