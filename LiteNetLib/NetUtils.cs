@@ -50,7 +50,7 @@ namespace LiteNetLib
 
             //Create and start socket
             socket = new NetSocket(onReceive);
-            socket.Bind(0, false);
+            socket.Bind(IPAddress.Any, IPAddress.IPv6Any, 0, false);
 
             //Send request
             int errorCode = 0;

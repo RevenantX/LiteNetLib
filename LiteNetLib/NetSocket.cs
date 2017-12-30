@@ -80,7 +80,7 @@ namespace LiteNetLib
             }
         }
 
-        public bool Bind(int port, bool reuseAddress)
+        public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress)
         {
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv4.Blocking = true;
@@ -101,7 +101,7 @@ namespace LiteNetLib
                 NetUtils.DebugWriteError("Broadcast error: {0}", e.ToString());
             }
 
-            if (!BindSocket(_udpSocketv4, new IPEndPoint(IPAddress.Any, port)))
+            if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port)))
             {
                 return false;
             }
@@ -125,7 +125,7 @@ namespace LiteNetLib
                 _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
             //Use one port for two sockets
-            if (BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, _port)))
+            if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, _port)))
             {
                 try
                 {

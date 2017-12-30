@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using LiteNetLib.Utils;
 
@@ -770,6 +771,27 @@ namespace LiteNetLib
         /// <summary>
         /// Start logic thread and listening on selected port
         /// </summary>
+        /// <param name="addressIPv4">bind to specific ipv4 address</param>
+        /// <param name="addressIPv6">bind to specific ipv6 address</param>
+        /// <param name="port">port to listen</param>
+        public bool Start(string addressIPv4, string addressIPv6, int port)
+        {
+            if (IsRunning)
+            {
+                return false;
+            }
+            _netEventsQueue.Clear();
+            IPAddress ipv4 = NetEndPoint.GetFromString(addressIPv4);
+            IPAddress ipv6 = NetEndPoint.GetFromString(addressIPv6);
+            if (!_socket.Bind(ipv4, ipv6, port, ReuseAddress))
+                return false;
+            _logicThread.Start();
+            return true;
+        }
+
+        /// <summary>
+        /// Start logic thread and listening on selected port
+        /// </summary>
         /// <param name="port">port to listen</param>
         public bool Start(int port)
         {
@@ -777,11 +799,9 @@ namespace LiteNetLib
             {
                 return false;
             }
-
             _netEventsQueue.Clear();
-            if (!_socket.Bind(port, ReuseAddress))
+            if (!_socket.Bind(IPAddress.Any, IPAddress.IPv6Any, port, ReuseAddress))
                 return false;
-
             _logicThread.Start();
             return true;
         }
