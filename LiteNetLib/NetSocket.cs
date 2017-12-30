@@ -61,7 +61,8 @@ namespace LiteNetLib
                 catch (SocketException ex)
                 {
                     if (ex.SocketErrorCode == SocketError.ConnectionReset ||
-                        ex.SocketErrorCode == SocketError.MessageSize)
+                        ex.SocketErrorCode == SocketError.MessageSize ||
+                        ex.SocketErrorCode == SocketError.Interrupted)
                     {
                         //10040 - message too long
                         //10054 - remote close (not error)
@@ -211,6 +212,10 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
+                if (ex.SocketErrorCode == SocketError.Interrupted)
+                {
+                    return 0;
+                }
                 if (ex.SocketErrorCode != SocketError.MessageSize)
                 {
                     NetUtils.DebugWriteError("[S]" + ex);
@@ -240,32 +245,32 @@ namespace LiteNetLib
             _running = false;
 
             //Close IPv4
-            if (Thread.CurrentThread != _threadv4)
-            {
-                _threadv4.Join();
-            }
-            _threadv4 = null;
             if (_udpSocketv4 != null)
             {
                 CloseSocket(_udpSocketv4);
                 _udpSocketv4 = null;
             }
+            if (Thread.CurrentThread != _threadv4)
+            {
+                _threadv4.Join();
+            }
+            _threadv4 = null;
 
             //No ipv6
             if (_udpSocketv6 == null)
                 return;
 
             //Close IPv6
-            if (Thread.CurrentThread != _threadv6)
-            {
-                _threadv6.Join();
-            }
-            _threadv6 = null;
             if (_udpSocketv6 != null)
             {
                 CloseSocket(_udpSocketv6);
                 _udpSocketv6 = null;
             }
+            if (Thread.CurrentThread != _threadv6)
+            {
+                _threadv6.Join();
+            }
+            _threadv6 = null;
         }
     }
 }
