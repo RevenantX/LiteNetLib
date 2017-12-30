@@ -17,14 +17,14 @@ namespace LiteNetLib
             {
                 if (Prev != null)
                 {
-                    Prev.Next = Next;
-                    Prev = null;
+                    Prev.Next = Next; 
                 }
                 if (Next != null)
                 {
                     Next.Prev = Prev;
-                    Next = null;
                 }
+                Prev = null;
+                Next = null;
 
                 var packet = Packet;
                 Packet = null;
@@ -143,13 +143,13 @@ namespace LiteNetLib
                 }
 
                 PendingPacket pendingPacket = _pendingPackets[ackSequence % _windowSize];
-                if (pendingPacket == _headPendingPacket)
-                {
-                    _headPendingPacket = null;
-                }
                 NetPacket removed = pendingPacket.GetAndClear();
                 if (removed != null)
                 {
+                    if (pendingPacket == _headPendingPacket)
+                    {
+                        _headPendingPacket = null;
+                    }
                     _peer.Recycle(removed);
                     NetUtils.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", ackSequence);
                 }
@@ -218,7 +218,7 @@ namespace LiteNetLib
                     NetUtils.DebugWrite("[RC]Resend: {0} > {1}", (int)packetHoldTime, _peer.ResendDelay);
                 }
 
-                currentPacket.TimeStamp = DateTime.UtcNow;
+                currentPacket.TimeStamp = currentTime;
                 _peer.SendRawData(currentPacket.Packet);
             } while ((currentPacket = currentPacket.Prev) != null);
             Monitor.Exit(_pendingPackets);
