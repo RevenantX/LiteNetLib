@@ -57,6 +57,15 @@ namespace LiteNetLib.Utils
             _dataSize = maxSize;
         }
 
+        /// <summary>
+        /// Clone NetDataReader without data copy (usable for OnReceive)
+        /// </summary>
+        /// <returns>new NetDataReader instance</returns>
+        public NetDataReader Clone()
+        {
+            return new NetDataReader(_data, _position, _dataSize);
+        }
+
         public NetDataReader()
         {
 

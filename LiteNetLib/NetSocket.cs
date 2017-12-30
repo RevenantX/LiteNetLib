@@ -17,8 +17,6 @@ namespace LiteNetLib
 
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
         internal static readonly bool IPv6Support;
-        private const int SocketReceivePollTime = 100000;
-        private const int SocketSendPollTime = 5000;
 
         public int LocalPort
         {
@@ -48,12 +46,6 @@ namespace LiteNetLib
 
             while (_running)
             {
-                //wait for data
-                if (!socket.Poll(SocketReceivePollTime, SelectMode.SelectRead))
-                {
-                    continue;
-                }
-
                 int result;
 
                 //Reading data
@@ -90,7 +82,7 @@ namespace LiteNetLib
         public bool Bind(int port, bool reuseAddress)
         {
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _udpSocketv4.Blocking = false;
+            _udpSocketv4.Blocking = true;
             _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.Ttl = NetConstants.SocketTTL;
@@ -124,7 +116,7 @@ namespace LiteNetLib
                 return true;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
-            _udpSocketv6.Blocking = false;
+            _udpSocketv6.Blocking = true;
             _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
             //_udpSocketv6.Ttl = NetConstants.SocketTTL;
@@ -215,14 +207,10 @@ namespace LiteNetLib
                 int result = 0;
                 if (remoteEndPoint.EndPoint.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    if (!_udpSocketv4.Poll(SocketSendPollTime, SelectMode.SelectWrite))
-                        return -1;
                     result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
                 }
                 else if(IPv6Support)
                 {
-                    if (!_udpSocketv6.Poll(SocketSendPollTime, SelectMode.SelectWrite))
-                        return -1;
                     result = _udpSocketv6.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
                 }
 
