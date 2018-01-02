@@ -44,6 +44,7 @@ namespace LiteNetLib
         private readonly NetManager _peerListener;
         private readonly NetPacketPool _packetPool;
         private readonly object _flushLock = new object();
+        private readonly object _sendLock = new object();
 
         //Channels
         private readonly ReliableChannel _reliableOrderedChannel;
@@ -303,19 +304,23 @@ namespace LiteNetLib
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         public void Send(byte[] data, int start, int length, SendOptions options)
         {
+            if (_connectionState == ConnectionState.Disconnected)
+            {
+                return;
+            }
             //Prepare
             PacketProperty property = SendOptionsToProperty(options);
             int headerSize = NetPacket.GetHeaderSize(property);
-
+            int mtu = _mtu;
             //Check fragmentation
-            if (length + headerSize > _mtu)
+            if (length + headerSize > mtu)
             {
                 if (options == SendOptions.Sequenced || options == SendOptions.Unreliable)
                 {
-                    throw new Exception("Unreliable packet size > allowed (" + (_mtu - headerSize) + ")");
+                    throw new Exception("Unreliable packet size > allowed (" + (mtu - headerSize) + ")");
                 }
                 
-                int packetFullSize = _mtu - headerSize;
+                int packetFullSize = mtu - headerSize;
                 int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
 
                 int fullPacketsCount = length / packetDataSize;
@@ -329,8 +334,8 @@ namespace LiteNetLib
                            " packetDataSize: {3}\n" +
                            " fullPacketsCount: {4}\n" +
                            " lastPacketSize: {5}\n" +
-                           " totalPackets: {6}", 
-                    _mtu, headerSize, packetFullSize, packetDataSize, fullPacketsCount, lastPacketSize, totalPackets);
+                           " totalPackets: {6}",
+                    mtu, headerSize, packetFullSize, packetDataSize, fullPacketsCount, lastPacketSize, totalPackets);
 
                 if (totalPackets > ushort.MaxValue)
                 {
@@ -338,29 +343,31 @@ namespace LiteNetLib
                 }
 
                 int dataOffset = headerSize + NetConstants.FragmentHeaderSize;
-                for (ushort i = 0; i < fullPacketsCount; i++)
-                {
-                    NetPacket p = _packetPool.Get(property, packetFullSize);
-                    p.FragmentId = _fragmentId;
-                    p.FragmentPart = i;
-                    p.FragmentsTotal = (ushort)totalPackets;
-                    p.IsFragmented = true;
-                    Buffer.BlockCopy(data, i * packetDataSize, p.RawData, dataOffset, packetDataSize);
-                    SendPacket(p);
-                }
-                
-                if (lastPacketSize > 0)
-                {
-                    NetPacket p = _packetPool.Get(property, lastPacketSize + NetConstants.FragmentHeaderSize);
-                    p.FragmentId = _fragmentId;
-                    p.FragmentPart = (ushort)fullPacketsCount; //last
-                    p.FragmentsTotal = (ushort)totalPackets;
-                    p.IsFragmented = true;
-                    Buffer.BlockCopy(data, fullPacketsCount * packetDataSize, p.RawData, dataOffset, lastPacketSize);
-                    SendPacket(p);
-                }
 
-                _fragmentId++;             
+                lock (_sendLock)
+                {
+                    for (ushort i = 0; i < fullPacketsCount; i++)
+                    {
+                        NetPacket p = _packetPool.Get(property, packetFullSize);
+                        p.FragmentId = _fragmentId;
+                        p.FragmentPart = i;
+                        p.FragmentsTotal = (ushort)totalPackets;
+                        p.IsFragmented = true;
+                        Buffer.BlockCopy(data, i * packetDataSize, p.RawData, dataOffset, packetDataSize);
+                        SendPacket(p);
+                    }
+                    if (lastPacketSize > 0)
+                    {
+                        NetPacket p = _packetPool.Get(property, lastPacketSize + NetConstants.FragmentHeaderSize);
+                        p.FragmentId = _fragmentId;
+                        p.FragmentPart = (ushort)fullPacketsCount; //last
+                        p.FragmentsTotal = (ushort)totalPackets;
+                        p.IsFragmented = true;
+                        Buffer.BlockCopy(data, fullPacketsCount * packetDataSize, p.RawData, dataOffset, lastPacketSize);
+                        SendPacket(p);
+                    }
+                    _fragmentId++;
+                }
                 return;
             }
 
