@@ -910,13 +910,15 @@ namespace LiteNetLib
         {
             if (UnsyncedEvents)
                 return;
-
-            while (_netEventsQueue.Count > 0)
+            while (true)
             {
                 NetEvent evt;
                 lock (_netEventsQueue)
                 {
-                    evt = _netEventsQueue.Dequeue();
+                    if (_netEventsQueue.Count > 0)
+                        evt = _netEventsQueue.Dequeue();
+                    else
+                        return;
                 }
                 ProcessEvent(evt);
             }
