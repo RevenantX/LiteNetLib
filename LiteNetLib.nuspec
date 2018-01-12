@@ -3,7 +3,7 @@
   <metadata>
     <id>LiteNetLib</id>
     <title>LiteNetLib</title>
-    <version>0.7.6.3</version>
+    <version>0.7.7</version>
     <authors>Ruslan Pyrch</authors>
     <owners>RevenantX</owners>
     <licenseUrl>https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt</licenseUrl>
@@ -17,12 +17,12 @@
 	  </group>
 	  <group targetFramework="netcoreapp1.1">
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
-      </group>
-	  <group targetFramework="netstandard1.6">
+    </group>
+	  <group targetFramework="netstandard2.0">
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
-		<dependency id="System.Net.NameResolution" version="4.3.0" />
-		<dependency id="System.Threading.Thread" version="4.3.0" />
-      </group>
+		    <dependency id="System.Net.NameResolution" version="4.3.0" />
+		    <dependency id="System.Threading.Thread" version="4.3.0" />
+    </group>
     </dependencies>
   </metadata>
   <files>
@@ -30,6 +30,6 @@
 	<file src="LiteNetLib\bin\$configuration$\**" target="lib\net35"/>
 	<file src="LiteNetLibWin81\bin\$configuration$\**" target="lib\wpa81"/>
 	<file src="LiteNetLibNetCore\bin\$configuration$\netcoreapp1.1\**" target="lib\netcoreapp1.1"/>
-	<file src="LiteNetLibStandard\bin\$configuration$\netstandard1.6\**" target="lib\netstandard1.6"/>
+	<file src="LiteNetLibStandard\bin\$configuration$\netstandard2.0\**" target="lib\netstandard2.0"/>
   </files>
 </package>
