@@ -55,7 +55,7 @@ namespace LiteNetLib
 #endif
 
         private readonly NetSocket _socket;
-        private readonly NetThread _logicThread;
+        private readonly Thread _logicThread;
 
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
@@ -80,7 +80,7 @@ namespace LiteNetLib
         /// <summary>
         /// Library logic update and send period in milliseconds
         /// </summary>
-        public int UpdateTime { get { return _logicThread.SleepTime; } set { _logicThread.SleepTime = value; } }
+        public int UpdateTime = DefaultUpdateTime;
 
         /// <summary>
         /// Interval for latency detection and checking connection
@@ -164,10 +164,7 @@ namespace LiteNetLib
         /// <summary>
         /// Returns true if socket listening and update thread is running
         /// </summary>
-        public bool IsRunning
-        {
-            get { return _logicThread.IsRunning; }
-        }
+        public bool IsRunning { get; private set; }
 
         /// <summary>
         /// Local EndPoint (host and port)
@@ -198,7 +195,7 @@ namespace LiteNetLib
         /// <param name="maxConnections">Maximum connections (incoming and outcoming)</param>
         public NetManager(INetEventListener listener, int maxConnections)
         {
-            _logicThread = new NetThread("LogicThread", DefaultUpdateTime, UpdateLogic);
+            _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
             _socket = new NetSocket(ReceiveLogic);
             _netEventListener = listener;
             _netEventsQueue = new Queue<NetEvent>();
@@ -389,54 +386,57 @@ namespace LiteNetLib
         //Update function
         private void UpdateLogic()
         {
-#if DEBUG
-            if (SimulateLatency)
+            while (IsRunning)
             {
-                var time = DateTime.UtcNow;
-                lock (_pingSimulationList)
+#if DEBUG
+                if (SimulateLatency)
                 {
-                    for (int i = 0; i < _pingSimulationList.Count; i++)
+                    var time = DateTime.UtcNow;
+                    lock (_pingSimulationList)
                     {
-                        var incomingData = _pingSimulationList[i];
-                        if (incomingData.TimeWhenGet <= time)
+                        for (int i = 0; i < _pingSimulationList.Count; i++)
                         {
-                            DataReceived(incomingData.Data, incomingData.Data.Length, incomingData.EndPoint);
-                            _pingSimulationList.RemoveAt(i);
-                            i--;
+                            var incomingData = _pingSimulationList[i];
+                            if (incomingData.TimeWhenGet <= time)
+                            {
+                                DataReceived(incomingData.Data, incomingData.Data.Length, incomingData.EndPoint);
+                                _pingSimulationList.RemoveAt(i);
+                                i--;
+                            }
                         }
                     }
                 }
-            }
 #endif
 
 #if STATS_ENABLED
-            ulong totalPacketLoss = 0;
+                ulong totalPacketLoss = 0;
 #endif
-            int delta = _logicThread.SleepTime;
-            //Process acks
-            lock (_peers)
-            {
-                for(int i = 0; i < _peers.Count; i++)
+                //Process acks
+                lock (_peers)
                 {
-                    var netPeer = _peers[i];
-                    if (netPeer.ConnectionState == ConnectionState.Disconnected)
+                    for (int i = 0; i < _peers.Count; i++)
                     {
-                        _peers.RemoveAt(i);
-                        i--;
-                    }
-                    else
-                    {
-                        netPeer.Update(delta);
+                        var netPeer = _peers[i];
+                        if (netPeer.ConnectionState == ConnectionState.Disconnected)
+                        {
+                            _peers.RemoveAt(i);
+                            i--;
+                        }
+                        else
+                        {
+                            netPeer.Update(UpdateTime);
 #if STATS_ENABLED
-                        totalPacketLoss += netPeer.Statistics.PacketLoss;
+                            totalPacketLoss += netPeer.Statistics.PacketLoss;
 #endif
+                        }
                     }
                 }
-            }
-            
+
 #if STATS_ENABLED
-            Statistics.PacketLoss = totalPacketLoss;
+                Statistics.PacketLoss = totalPacketLoss;
 #endif
+                Thread.Sleep(UpdateTime);
+            }
         }
         
         private void ReceiveLogic(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint)
@@ -801,6 +801,7 @@ namespace LiteNetLib
             IPAddress ipv6 = NetEndPoint.GetFromString(addressIPv6);
             if (!_socket.Bind(ipv4, ipv6, port, ReuseAddress))
                 return false;
+            IsRunning = true;
             _logicThread.Start();
             return true;
         }
@@ -818,6 +819,7 @@ namespace LiteNetLib
             _netEventsQueue.Clear();
             if (!_socket.Bind(IPAddress.Any, IPAddress.IPv6Any, port, ReuseAddress))
                 return false;
+            IsRunning = true;
             _logicThread.Start();
             return true;
         }
@@ -1010,6 +1012,10 @@ namespace LiteNetLib
         /// </summary>
         public void Stop()
         {
+            if (!IsRunning)
+                return;
+            IsRunning = false;
+
             //Send disconnects
             lock (_peers)
             {
@@ -1023,11 +1029,11 @@ namespace LiteNetLib
             ClearPeers();
 
             //Stop
-            if (IsRunning)
+            if (Thread.CurrentThread != _logicThread)
             {
-                _logicThread.Stop();
-                _socket.Close();
+                _logicThread.Join();
             }
+            _socket.Close();
         }
 
         /// <summary>
