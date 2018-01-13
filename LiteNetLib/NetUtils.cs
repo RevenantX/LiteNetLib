@@ -200,7 +200,7 @@ namespace LiteNetLib
 
                 if (NetDebug.Logger == null)
                 {
-#if UNITY
+#if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
                     UnityEngine.Debug.Log(string.Format(str, args));
 #else
                     Console.ForegroundColor = color;

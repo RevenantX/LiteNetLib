@@ -22,7 +22,7 @@ namespace LiteNetLib
 
         static NetSocket()
         {
-#if UNITY
+#if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
             IPv6Support = Socket.SupportsIPv6;
 #else
             IPv6Support = Socket.OSSupportsIPv6;

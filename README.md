@@ -47,7 +47,6 @@ Minimal .NET version - 3.5
 
 ## Unity3d notes!!!
 * Always use library sources insted of precompiled DLL files. 
-* Add to define symbols UNITY.
 
 ## Usage samples
 
