@@ -23,7 +23,12 @@ namespace LiteNetLib
         /// <summary>
         /// Reliable and ordered. All packets will be sent and received in order
         /// </summary>
-        ReliableOrdered
+        ReliableOrdered,
+
+        /// <summary>
+        /// Reliable only last packet
+        /// </summary>
+        //ReliableSequenced
     }
 
     /// <summary>

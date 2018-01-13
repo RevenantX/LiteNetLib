@@ -6,7 +6,7 @@ namespace LiteNetLib
     internal enum PacketProperty : byte
     {
         Unreliable,             //0
-        ReliableUnordered,               //1
+        ReliableUnordered,      //1
         Sequenced,              //2
         ReliableOrdered,        //3
         AckReliable,            //4
@@ -25,12 +25,13 @@ namespace LiteNetLib
         DiscoveryRequest,       //17
         DiscoveryResponse,      //18
         Merged,                 //19
-        ShutdownOk     //20     
+        ShutdownOk,             //20     
+        ReliableSequenced       //21
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 20;
+        private const int LastProperty = 21;
 
         //Header
         public PacketProperty Property
@@ -106,6 +107,7 @@ namespace LiteNetLib
                 case PacketProperty.Pong:
                 case PacketProperty.AckReliable:
                 case PacketProperty.AckReliableOrdered:
+                case PacketProperty.ReliableSequenced:
                     return NetConstants.SequencedHeaderSize;
                 default:
                     return NetConstants.HeaderSize;

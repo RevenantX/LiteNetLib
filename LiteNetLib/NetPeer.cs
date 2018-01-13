@@ -1,3 +1,6 @@
+#if DEBUG
+#define STATS_ENABLED
+#endif
 using System;
 using System.Collections.Generic;
 using LiteNetLib.Utils;
@@ -50,6 +53,7 @@ namespace LiteNetLib
         private readonly ReliableChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
         private readonly SimpleChannel _simpleChannel;
+        private readonly ReliableSequencedChannel _reliableSequencedChannel;
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
@@ -180,6 +184,7 @@ namespace LiteNetLib
             _reliableUnorderedChannel = new ReliableChannel(this, false);
             _sequencedChannel = new SequencedChannel(this);
             _simpleChannel = new SimpleChannel(this);
+            _reliableSequencedChannel = new ReliableSequencedChannel(this);
 
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
 
@@ -264,6 +269,8 @@ namespace LiteNetLib
                     return PacketProperty.Sequenced;
                 case DeliveryMethod.ReliableOrdered:
                     return PacketProperty.ReliableOrdered;
+                //TODO: case DeliveryMethod.ReliableSequenced:
+                //    return PacketProperty.ReliableSequenced;
                 default:
                     return PacketProperty.Unreliable;
             }
@@ -458,6 +465,9 @@ namespace LiteNetLib
                     break;
                 case PacketProperty.Unreliable:
                     _simpleChannel.AddToQueue(packet);
+                    break;
+                case PacketProperty.ReliableSequenced:
+                    _reliableSequencedChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.MtuCheck:
                     //Must check result for MTU fix
@@ -697,6 +707,10 @@ namespace LiteNetLib
                     _reliableOrderedChannel.ProcessPacket(packet);
                     break;
 
+                case PacketProperty.ReliableSequenced:
+                    _reliableSequencedChannel.ProcessPacket(packet);
+                    break;
+
                 //Simple packet without acks
                 case PacketProperty.Unreliable:
                     AddIncomingPacket(packet);
@@ -765,6 +779,7 @@ namespace LiteNetLib
             {
                 _reliableOrderedChannel.SendNextPackets();
                 _reliableUnorderedChannel.SendNextPackets();
+                _reliableSequencedChannel.SendNextPackets();
                 _sequencedChannel.SendNextPackets();
                 _simpleChannel.SendNextPackets();
 
@@ -776,8 +791,8 @@ namespace LiteNetLib
                         NetUtils.DebugWrite("Send merged: " + _mergePos + ", count: " + _mergeCount);
                         _netManager.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
 #if STATS_ENABLED
-                    Statistics.PacketsSent++;
-                    Statistics.BytesSent += (ulong)(NetConstants.HeaderSize + _mergePos);
+                        Statistics.PacketsSent++;
+                        Statistics.BytesSent += (ulong)(NetConstants.HeaderSize + _mergePos);
 #endif
                     }
                     else
@@ -785,8 +800,8 @@ namespace LiteNetLib
                         //Send without length information and merging
                         _netManager.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, _remoteEndPoint);
 #if STATS_ENABLED
-                    Statistics.PacketsSent++;
-                    Statistics.BytesSent += (ulong)(_mergePos - 2);
+                        Statistics.PacketsSent++;
+                        Statistics.BytesSent += (ulong)(_mergePos - 2);
 #endif
                     }
                     _mergePos = 0;

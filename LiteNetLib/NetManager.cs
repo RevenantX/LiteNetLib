@@ -582,11 +582,11 @@ namespace LiteNetLib
 
             //Check normal packets
             NetPeer netPeer;
-            //Check peers
-            Monitor.Enter(_peers);
-            bool peerFound = _peers.TryGetValue(remoteEndPoint, out netPeer);
-            Monitor.Exit(_peers);
-            if (peerFound)
+            lock (_peers)
+            {
+                _peers.TryGetValue(remoteEndPoint, out netPeer);
+            }
+            if (netPeer != null)
             {
                 switch (packet.Property)
                 {
@@ -667,7 +667,11 @@ namespace LiteNetLib
         internal void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
         {
             NetPeer fromPeer;
-            if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
+            lock (_peers)
+            {
+                _peers.TryGetValue(remoteEndPoint, out fromPeer);
+            }
+            if (fromPeer != null)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received message");
                 var netEvent = CreateEvent(NetEventType.Receive);
@@ -686,6 +690,9 @@ namespace LiteNetLib
                         break;
                     case PacketProperty.Sequenced:
                         netEvent.DeliveryMethod = DeliveryMethod.Sequenced;
+                        break;
+                    case PacketProperty.ReliableSequenced:
+                        //TODO: netEvent.DeliveryMethod = DeliveryMethod.ReliableSequenced;
                         break;
                 }
                 netEvent.DataReader.SetSource(packet.CopyPacketData());

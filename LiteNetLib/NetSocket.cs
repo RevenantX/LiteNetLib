@@ -9,7 +9,6 @@ namespace LiteNetLib
     {
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
-        private int _port;
         private Thread _threadv4;
         private Thread _threadv6;
         private bool _running;
@@ -18,10 +17,7 @@ namespace LiteNetLib
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
         internal static readonly bool IPv6Support;
 
-        public int LocalPort
-        {
-            get { return _port; }
-        }
+        public int LocalPort { get; private set; }
 
         static NetSocket()
         {
@@ -70,13 +66,20 @@ namespace LiteNetLib
                         continue;
                     }
                     NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
-                    _onMessageReceived(null, 0, (int)ex.SocketErrorCode, bufferNetEndPoint);
+                    lock (this)
+                    {
+                        _onMessageReceived(null, 0, (int) ex.SocketErrorCode, bufferNetEndPoint);
+                    }
+
                     continue;
                 }
 
                 //All ok!
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
-                _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
+                lock (this)
+                {
+                    _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
+                }
             }
         }
 
@@ -105,10 +108,10 @@ namespace LiteNetLib
             {
                 return false;
             }
-            _port = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
+            LocalPort = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
             _running = true;
             _threadv4 = new Thread(ReceiveLogic);
-            _threadv4.Name = "SocketThreadv4(" + _port + ")";
+            _threadv4.Name = "SocketThreadv4(" + LocalPort + ")";
             _threadv4.IsBackground = true;
             _threadv4.Start(_udpSocketv4);
 
@@ -125,7 +128,7 @@ namespace LiteNetLib
                 _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
             //Use one port for two sockets
-            if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, _port)))
+            if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort)))
             {
                 try
                 {
@@ -142,7 +145,7 @@ namespace LiteNetLib
                 }
 
                 _threadv6 = new Thread(ReceiveLogic);
-                _threadv6.Name = "SocketThreadv6(" + _port + ")";
+                _threadv6.Name = "SocketThreadv6(" + LocalPort + ")";
                 _threadv6.IsBackground = true;
                 _threadv6.Start(_udpSocketv6);
             }
