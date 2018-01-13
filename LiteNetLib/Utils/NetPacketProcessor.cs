@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace LiteNetLib.Utils
 {
@@ -16,7 +15,7 @@ namespace LiteNetLib.Utils
         protected virtual ulong GetHash(Type type)
         {
             ulong hash;
-            string typeName = GetTypeName(type);
+            string typeName = type.FullName;
             if (_hashCache.TryGetValue(typeName, out hash))
             {
                 return hash;
@@ -46,15 +45,6 @@ namespace LiteNetLib.Utils
         protected virtual void WriteHash(Type type, NetDataWriter writer)
         {
             writer.Put(GetHash(type));
-        }
-
-        public static string GetTypeName(Type t)
-        {
-            if (!t.IsGenericType) return t.Name;
-
-            var genericTypes = t.GetGenericArguments();
-            var genericArguments = genericTypes.Aggregate("", (current, type) => current + type.Name);
-            return t.Name + genericArguments;
         }
 
         /// <summary>

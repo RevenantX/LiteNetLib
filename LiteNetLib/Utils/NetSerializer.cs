@@ -177,8 +177,9 @@ namespace LiteNetLib.Utils
         private StructInfo RegisterInternal<T>()
         {
             Type t = typeof(T);
+            string typeName = t.FullName;
             StructInfo info;
-            if (_registeredTypes.TryGetValue(NetPacketProcessor.GetTypeName(t), out info))
+            if (_registeredTypes.TryGetValue(typeName, out info))
             {
                 return info;
             }
@@ -240,7 +241,7 @@ namespace LiteNetLib.Utils
                     }
                     else
                     {
-                        throw new Exception("Not supported enum underlying type: " +NetPacketProcessor.GetTypeName(underlyingType));
+                        throw new Exception("Not supported enum underlying type: " + underlyingType.Name);
                     }
                 }
                 else if (propertyType == typeof(string))
@@ -470,11 +471,11 @@ namespace LiteNetLib.Utils
                     }
                     else
                     {
-                        throw new Exception("Unknown property type: " +NetPacketProcessor.GetTypeName(propertyType));
+                        throw new Exception("Unknown property type: " + propertyType.FullName);
                     }
                 }
             }
-            _registeredTypes.Add(NetPacketProcessor.GetTypeName(t), info);
+            _registeredTypes.Add(typeName, info);
 
             return info;
         }
