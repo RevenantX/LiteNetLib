@@ -80,7 +80,17 @@ namespace LiteNetLib
         {
             if (_used)
                 return false;
-            string dataKey = Data.GetString(key.Length);
+            string dataKey;
+            try
+            {
+                dataKey = Data.GetString(key.Length);
+            }
+            catch
+            {
+                Reject();
+                return false;
+            }
+
             if (dataKey == key)
             {
                 Accept();

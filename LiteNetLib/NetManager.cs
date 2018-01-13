@@ -62,6 +62,7 @@ namespace LiteNetLib
         private readonly INetEventListener _netEventListener;
 
         private readonly NetPeerCollection _peers;
+        private readonly HashSet<NetEndPoint> _connectingPeers;
         private readonly int _maxConnections;
 
         internal readonly NetPacketPool NetPacketPool;
@@ -204,6 +205,7 @@ namespace LiteNetLib
             NatPunchModule = new NatPunchModule(this);
             Statistics = new NetStatistics();
             _peers = new NetPeerCollection(maxConnections);
+            _connectingPeers = new HashSet<NetEndPoint>();
             _maxConnections = maxConnections;
         }
 
@@ -499,12 +501,17 @@ namespace LiteNetLib
         {
             lock (_peers)
             {
-                if (_peers.ContainsAddress(request.RemoteEndPoint))
+                lock (_connectingPeers)
                 {
-                    NetUtils.DebugWrite(ConsoleColor.Yellow, "[NM] Peer already connected: {0}", request.RemoteEndPoint);
-                    return;
+                    if (_connectingPeers.Contains(request.RemoteEndPoint))
+                    {
+                        _connectingPeers.Remove(request.RemoteEndPoint);
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
-
                 if (request.Result == ConnectionRequestResult.Reject)
                 {
                     NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
@@ -586,7 +593,8 @@ namespace LiteNetLib
             {
                 _peers.TryGetValue(remoteEndPoint, out netPeer);
             }
-            if (netPeer != null)
+            if (netPeer != null && 
+                netPeer.ConnectionState != ConnectionState.Disconnected)
             {
                 switch (packet.Property)
                 {
@@ -640,27 +648,40 @@ namespace LiteNetLib
                 return;
             }
 
-            int peersCount = GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress);
-            if (peersCount < _maxConnections && packet.Property == PacketProperty.ConnectRequest && packet.Size >= 12)
+            if (packet.Property == PacketProperty.ConnectRequest && packet.Size >= 12)
             {
-                int protoId = BitConverter.ToInt32(packet.RawData, 1);
-                if (protoId != NetConstants.ProtocolId)
+                int peersCount = GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress);
+                lock (_connectingPeers)
                 {
-                    NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject. Invalid protocol ID: " + protoId);
-                    return;
-                }
-                //Getting new id for peer
-                long connectionId = BitConverter.ToInt64(packet.RawData, 5);
+                    if (_connectingPeers.Contains(remoteEndPoint))
+                        return;
+                    if (peersCount < _maxConnections)
+                    {
+                        int protoId = BitConverter.ToInt32(packet.RawData, 1);
+                        if (protoId != NetConstants.ProtocolId)
+                        {
+                            NetUtils.DebugWrite(ConsoleColor.Cyan,
+                                "[NM] Peer connect reject. Invalid protocol ID: " + protoId);
+                            return;
+                        }
 
-                // Read data and create request
-                var reader = new NetDataReader(null, 0, 0);
-                if (packet.Size > 12)
-                {
-                    reader.SetSource(packet.RawData, 13, packet.Size);
+                        //Getting new id for peer
+                        long connectionId = BitConverter.ToInt64(packet.RawData, 5);
+
+                        // Read data and create request
+                        var reader = new NetDataReader(null, 0, 0);
+                        if (packet.Size > 12)
+                        {
+                            reader.SetSource(packet.RawData, 13, packet.Size);
+                        }
+
+                        _connectingPeers.Add(remoteEndPoint);
+                        var netEvent = CreateEvent(NetEventType.ConnectionRequest);
+                        netEvent.ConnectionRequest =
+                            new ConnectionRequest(connectionId, remoteEndPoint, reader, OnConnectionSolved);
+                        EnqueueEvent(netEvent);
+                    }
                 }
-                var netEvent = CreateEvent(NetEventType.ConnectionRequest);
-                netEvent.ConnectionRequest = new ConnectionRequest(connectionId, remoteEndPoint, reader, OnConnectionSolved);
-                EnqueueEvent(netEvent);
             }
         }
 
