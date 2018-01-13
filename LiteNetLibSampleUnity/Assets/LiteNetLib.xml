@@ -54,12 +54,13 @@
             <param name="endPoint">From endPoint (can be null)</param>
             <param name="socketErrorCode">Socket error code</param>
         </member>
-        <member name="M:LiteNetLib.INetEventListener.OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.Utils.NetDataReader)">
+        <member name="M:LiteNetLib.INetEventListener.OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.Utils.NetDataReader,LiteNetLib.DeliveryMethod)">
             <summary>
             Received some data
             </summary>
             <param name="peer">From peer</param>
             <param name="reader">DataReader containing all received data</param>
+            <param name="deliveryMethod">Type of received packet</param>
         </member>
         <member name="M:LiteNetLib.INetEventListener.OnNetworkReceiveUnconnected(LiteNetLib.NetEndPoint,LiteNetLib.Utils.NetDataReader,LiteNetLib.UnconnectedMessageType)">
             <summary>
@@ -76,6 +77,12 @@
             <param name="peer">Peer with updated latency</param>
             <param name="latency">latency value in milliseconds</param>
         </member>
+        <member name="M:LiteNetLib.INetEventListener.OnConnectionRequest(LiteNetLib.ConnectionRequest)">
+            <summary>
+            On peer connection requested
+            </summary>
+            <param name="request">Request information (EndPoint, internal id, additional data)</param>
+        </member>
         <member name="T:LiteNetLib.INetLogger">
             <summary>
             Interface to implement for your own logger
@@ -87,55 +94,133 @@
             or Debug.Log if compiled with UNITY flag
             </summary>
         </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.RegisterCustomType``1">
+        <member name="M:LiteNetLib.Utils.NetDataReader.Clone">
             <summary>
-            Register custom property type
+            Clone NetDataReader without data copy (usable for OnReceive)
+            </summary>
+            <returns>new NetDataReader instance</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetDataWriter.FromBytes(System.Byte[],System.Boolean)">
+            <summary>
+            Creates NetDataWriter from existing ByteArray
+            </summary>
+            <param name="bytes">Source byte array</param>
+            <param name="copy">Copy array to new location or use existing</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetDataWriter.FromBytes(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Creates NetDataWriter from existing ByteArray (always copied data)
+            </summary>
+            <param name="bytes">Source byte array</param>
+            <param name="offset">Offset of array</param>
+            <param name="length">Length of array</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.RegisterNestedType``1">
+            <summary>
+            Register nested property type
             </summary>
             <typeparam name="T">INetSerializable structure</typeparam>
             <returns>True - if register successful, false - if type already registered</returns>
         </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.RegisterCustomType``1(System.Func{``0})">
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.RegisterNestedType``1(System.Action{LiteNetLib.Utils.NetDataWriter,``0},System.Func{LiteNetLib.Utils.NetDataReader,``0})">
             <summary>
-            Register custom property type
-            </summary>
-            <typeparam name="T">INetSerializable class</typeparam>
-            <returns>True - if register successful, false - if type already registered</returns>
-        </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.RegisterCustomType``1(System.Action{LiteNetLib.Utils.NetDataWriter,``0},System.Func{LiteNetLib.Utils.NetDataReader,``0})">
-            <summary>
-            Register custom property type
+            Register nested property type
             </summary>
             <param name="writeDelegate"></param>
             <param name="readDelegate"></param>
             <returns>True - if register successful, false - if type already registered</returns>
         </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.ReadAllPackets(LiteNetLib.Utils.NetDataReader)">
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.RegisterNestedType``1(System.Func{``0})">
+            <summary>
+            Register nested property type
+            </summary>
+            <typeparam name="T">INetSerializable class</typeparam>
+            <returns>True - if register successful, false - if type already registered</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader)">
             <summary>
             Reads all available data from NetDataReader and calls OnReceive delegates
             </summary>
             <param name="reader">NetDataReader with packets data</param>
         </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.ReadAllPackets``1(LiteNetLib.Utils.NetDataReader,``0)">
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader,System.Object)">
             <summary>
             Reads all available data from NetDataReader and calls OnReceive delegates
             </summary>
             <param name="reader">NetDataReader with packets data</param>
             <param name="userData">Argument that passed to OnReceivedEvent</param>
         </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.ReadPacket(LiteNetLib.Utils.NetDataReader)">
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader)">
             <summary>
             Reads one packet from NetDataReader and calls OnReceive delegate
             </summary>
             <param name="reader">NetDataReader with packet</param>
         </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.ReadKnownPacket``1(LiteNetLib.Utils.NetDataReader)">
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader,System.Object)">
+            <summary>
+            Reads one packet from NetDataReader and calls OnReceive delegate
+            </summary>
+            <param name="reader">NetDataReader with packet</param>
+            <param name="userData">Argument that passed to OnReceivedEvent</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.Subscribe``1(System.Action{``0},System.Func{``0})">
+            <summary>
+            Register and subscribe to packet receive event
+            </summary>
+            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.Subscribe``2(System.Action{``0,``1},System.Func{``0})">
+            <summary>
+            Register and subscribe to packet receive event (with userData)
+            </summary>
+            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.SubscribeReusable``1(System.Action{``0})">
+            <summary>
+            Register and subscribe to packet receive event
+            This metod will overwrite last received packet class on receive (less garbage)
+            </summary>
+            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetPacketProcessor.SubscribeReusable``2(System.Action{``0,``1})">
+            <summary>
+            Register and subscribe to packet receive event
+            This metod will overwrite last received packet class on receive (less garbage)
+            </summary>
+            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.RegisterNestedType``1">
+            <summary>
+            Register nested property type
+            </summary>
+            <typeparam name="T">INetSerializable structure</typeparam>
+            <returns>True - if register successful, false - if type already registered</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.RegisterNestedType``1(System.Func{``0})">
+            <summary>
+            Register nested property type
+            </summary>
+            <typeparam name="T">INetSerializable class</typeparam>
+            <returns>True - if register successful, false - if type already registered</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.RegisterNestedType``1(System.Action{LiteNetLib.Utils.NetDataWriter,``0},System.Func{LiteNetLib.Utils.NetDataReader,``0})">
+            <summary>
+            Register nested property type
+            </summary>
+            <param name="writeDelegate"></param>
+            <param name="readDelegate"></param>
+            <returns>True - if register successful, false - if type already registered</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader)">
             <summary>
             Reads packet with known type
             </summary>
             <param name="reader">NetDataReader with packet</param>
             <returns>Returns packet if packet in reader is matched type</returns>
         </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.ReadKnownPacket``1(LiteNetLib.Utils.NetDataReader,``0)">
+        <member name="M:LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader,``0)">
             <summary>
             Reads packet with known type (non alloc variant)
             </summary>
@@ -143,59 +228,18 @@
             <param name="target">Deserialization target</param>
             <returns>Returns true if packet in reader is matched type</returns>
         </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.ReadPacket(LiteNetLib.Utils.NetDataReader,System.Object)">
-            <summary>
-            Reads one packet from NetDataReader and calls OnReceive delegate
-            </summary>
-            <param name="reader">NetDataReader with packet</param>
-            <param name="userData">Argument that passed to OnReceivedEvent</param>
-        </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.Subscribe``1(System.Action{``0},System.Func{``0})">
-            <summary>
-            Register and subscribe to packet receive event
-            </summary>
-            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
-        </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.Register``1(System.Func{``0})">
-            <summary>
-            Register packet type for direct reading (ReadKnownPacket)
-            </summary>
-            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
-        </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.Subscribe``2(System.Action{``0,``1},System.Func{``0})">
-            <summary>
-            Register and subscribe to packet receive event (with userData)
-            </summary>
-            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
-        </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.SubscribeReusable``1(System.Action{``0})">
-            <summary>
-            Register and subscribe to packet receive event
-            This metod will overwrite last received packet class on receive (less garbage)
-            </summary>
-            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-        </member>
-        <member name="M:LiteNetLib.Utils.NetSerializer.SubscribeReusable``2(System.Action{``0,``1})">
-            <summary>
-            Register and subscribe to packet receive event
-            This metod will overwrite last received packet class on receive (less garbage)
-            </summary>
-            <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-        </member>
         <member name="M:LiteNetLib.Utils.NetSerializer.Serialize``1(LiteNetLib.Utils.NetDataWriter,``0)">
             <summary>
             Serialize struct to NetDataWriter (fast)
             </summary>
             <param name="writer">Serialization target NetDataWriter</param>
-            <param name="obj">Struct to serialize</param>
+            <param name="obj">Object to serialize</param>
         </member>
         <member name="M:LiteNetLib.Utils.NetSerializer.Serialize``1(``0)">
             <summary>
             Serialize struct to byte array
             </summary>
-            <param name="obj">Struct to serialize</param>
+            <param name="obj">Object to serialize</param>
             <returns>byte array with serialized data</returns>
         </member>
         <member name="T:LiteNetLib.NatPunchModule">
@@ -203,27 +247,27 @@
             Module for UDP NAT Hole punching operations. Can be accessed from NetManager
             </summary>
         </member>
-        <member name="T:LiteNetLib.SendOptions">
+        <member name="T:LiteNetLib.DeliveryMethod">
             <summary>
             Sending method type
             </summary>
         </member>
-        <member name="F:LiteNetLib.SendOptions.Unreliable">
+        <member name="F:LiteNetLib.DeliveryMethod.Unreliable">
             <summary>
             Unreliable. Packets can be dropped, duplicated or arrive without order
             </summary>
         </member>
-        <member name="F:LiteNetLib.SendOptions.ReliableUnordered">
+        <member name="F:LiteNetLib.DeliveryMethod.ReliableUnordered">
             <summary>
             Reliable. All packets will be sent and received, but without order
             </summary>
         </member>
-        <member name="F:LiteNetLib.SendOptions.Sequenced">
+        <member name="F:LiteNetLib.DeliveryMethod.Sequenced">
             <summary>
             Unreliable. Packets can be dropped, but never duplicated and arrive in order
             </summary>
         </member>
-        <member name="F:LiteNetLib.SendOptions.ReliableOrdered">
+        <member name="F:LiteNetLib.DeliveryMethod.ReliableOrdered">
             <summary>
             Reliable and ordered. All packets will be sent and received in order
             </summary>
@@ -243,11 +287,6 @@
             Main class for all network operations. Can be used as client and/or server.
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetManager.ConnectKey">
-            <summary>
-            Current connection key
-            </summary>
-        </member>
         <member name="F:LiteNetLib.NetManager.UnconnectedMessagesEnabled">
             <summary>
             Enable messages receiving without connection. (with SendUnconnectedMessage method)
@@ -258,7 +297,7 @@
             Enable nat punch messages
             </summary>
         </member>
-        <member name="P:LiteNetLib.NetManager.UpdateTime">
+        <member name="F:LiteNetLib.NetManager.UpdateTime">
             <summary>
             Library logic update and send period in milliseconds
             </summary>
@@ -329,6 +368,11 @@
             Enables socket option "ReuseAddress" for specific purposes
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.Statistics">
+            <summary>
+            Statistics of all connections
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.NatPunchModule">
             <summary>
             NatPunchModule for NAT hole punching operations
@@ -344,41 +388,34 @@
             Local EndPoint (host and port)
             </summary>
         </member>
-        <member name="P:LiteNetLib.NetManager.PeersCount">
-            <summary>
-            Connected peers count
-            </summary>
-        </member>
-        <member name="M:LiteNetLib.NetManager.#ctor(LiteNetLib.INetEventListener,System.String)">
+        <member name="M:LiteNetLib.NetManager.#ctor(LiteNetLib.INetEventListener)">
             <summary>
             NetManager constructor with maxConnections = 1 (usable for client)
             </summary>
             <param name="listener">Network events listener</param>
-            <param name="connectKey">Application key (must be same with remote host for establish connection)</param>
         </member>
-        <member name="M:LiteNetLib.NetManager.#ctor(LiteNetLib.INetEventListener,System.Int32,System.String)">
+        <member name="M:LiteNetLib.NetManager.#ctor(LiteNetLib.INetEventListener,System.Int32)">
             <summary>
             NetManager constructor
             </summary>
             <param name="listener">Network events listener</param>
             <param name="maxConnections">Maximum connections (incoming and outcoming)</param>
-            <param name="connectKey">Application key (must be same with remote host for establish connection)</param>
         </member>
-        <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.SendOptions)">
+        <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">
             <summary>
             Send data to all connected peers
             </summary>
             <param name="writer">DataWriter with data</param>
             <param name="options">Send options (reliable, unreliable, etc.)</param>
         </member>
-        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.SendOptions)">
+        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.DeliveryMethod)">
             <summary>
             Send data to all connected peers
             </summary>
             <param name="data">Data</param>
             <param name="options">Send options (reliable, unreliable, etc.)</param>
         </member>
-        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.SendOptions)">
+        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod)">
             <summary>
             Send data to all connected peers
             </summary>
@@ -387,7 +424,7 @@
             <param name="length">Length of data</param>
             <param name="options">Send options (reliable, unreliable, etc.)</param>
         </member>
-        <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.SendOptions,LiteNetLib.NetPeer)">
+        <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">
             <summary>
             Send data to all connected peers
             </summary>
@@ -395,7 +432,7 @@
             <param name="options">Send options (reliable, unreliable, etc.)</param>
             <param name="excludePeer">Excluded peer</param>
         </member>
-        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.SendOptions,LiteNetLib.NetPeer)">
+        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">
             <summary>
             Send data to all connected peers
             </summary>
@@ -403,7 +440,7 @@
             <param name="options">Send options (reliable, unreliable, etc.)</param>
             <param name="excludePeer">Excluded peer</param>
         </member>
-        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.SendOptions,LiteNetLib.NetPeer)">
+        <member name="M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">
             <summary>
             Send data to all connected peers
             </summary>
@@ -417,6 +454,14 @@
             <summary>
             Start logic thread and listening on available port
             </summary>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Start(System.String,System.String,System.Int32)">
+            <summary>
+            Start logic thread and listening on selected port
+            </summary>
+            <param name="addressIPv4">bind to specific ipv4 address</param>
+            <param name="addressIPv6">bind to specific ipv6 address</param>
+            <param name="port">port to listen</param>
         </member>
         <member name="M:LiteNetLib.NetManager.Start(System.Int32)">
             <summary>
@@ -460,18 +505,39 @@
             Receive all pending events. Call this in game update code
             </summary>
         </member>
-        <member name="M:LiteNetLib.NetManager.Connect(System.String,System.Int32)">
+        <member name="M:LiteNetLib.NetManager.Connect(System.String,System.Int32,System.String)">
             <summary>
             Connect to remote host
             </summary>
             <param name="address">Server IP or hostname</param>
             <param name="port">Server Port</param>
+            <param name="key">Connection key</param>
+            <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
         </member>
-        <member name="M:LiteNetLib.NetManager.Connect(LiteNetLib.NetEndPoint)">
+        <member name="M:LiteNetLib.NetManager.Connect(System.String,System.Int32,LiteNetLib.Utils.NetDataWriter)">
+            <summary>
+            Connect to remote host
+            </summary>
+            <param name="address">Server IP or hostname</param>
+            <param name="port">Server Port</param>
+            <param name="connectionData">Additional data for remote peer</param>
+            <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Connect(LiteNetLib.NetEndPoint,System.String)">
             <summary>
             Connect to remote host
             </summary>
             <param name="target">Server end point (ip and port)</param>
+            <param name="key">Connection key</param>
+            <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Connect(LiteNetLib.NetEndPoint,LiteNetLib.Utils.NetDataWriter)">
+            <summary>
+            Connect to remote host
+            </summary>
+            <param name="target">Server end point (ip and port)</param>
+            <param name="connectionData">Additional data for remote peer</param>
+            <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
         </member>
         <member name="M:LiteNetLib.NetManager.Stop">
             <summary>
@@ -486,15 +552,28 @@
         </member>
         <member name="M:LiteNetLib.NetManager.GetPeers">
             <summary>
-            Get copy of current connected peers
+            Get copy of current connected peers (slow! use GetPeersNonAlloc for best performance)
             </summary>
             <returns>Array with connected peers</returns>
         </member>
-        <member name="M:LiteNetLib.NetManager.GetPeersNonAlloc(System.Collections.Generic.List{LiteNetLib.NetPeer})">
+        <member name="M:LiteNetLib.NetManager.GetPeers(LiteNetLib.ConnectionState)">
             <summary>
-            Get copy of current connected peers (without allocations)
+            Get copy of current connected peers (slow! use GetPeersNonAlloc for best performance)
+            </summary>
+            <returns>Array with connected peers</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.GetPeersNonAlloc(System.Collections.Generic.List{LiteNetLib.NetPeer},LiteNetLib.ConnectionState)">
+            <summary>
+            Get copy of peers (without allocations)
             </summary>
             <param name="peers">List that will contain result</param>
+            <param name="peerState">State of peers</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.DisconnectPeerForce(LiteNetLib.NetPeer)">
+            <summary>
+            Immediately disconnect peer from server without additional data
+            </summary>
+            <param name="peer">peer to disconnect</param>
         </member>
         <member name="M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)">
             <summary>
@@ -575,28 +654,33 @@
             Application defined object containing data about the connection
             </summary>
         </member>
-        <member name="M:LiteNetLib.NetPeer.GetMaxSinglePacketSize(LiteNetLib.SendOptions)">
+        <member name="F:LiteNetLib.NetPeer.Statistics">
+            <summary>
+            Statistics of peer connection
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.GetMaxSinglePacketSize(LiteNetLib.DeliveryMethod)">
             <summary>
             Gets maximum size of packet that will be not fragmented.
             </summary>
             <param name="options">Type of packet that you want send</param>
             <returns>size in bytes</returns>
         </member>
-        <member name="M:LiteNetLib.NetPeer.Send(System.Byte[],LiteNetLib.SendOptions)">
+        <member name="M:LiteNetLib.NetPeer.Send(System.Byte[],LiteNetLib.DeliveryMethod)">
             <summary>
             Send data to peer
             </summary>
             <param name="data">Data</param>
             <param name="options">Send options (reliable, unreliable, etc.)</param>
         </member>
-        <member name="M:LiteNetLib.NetPeer.Send(LiteNetLib.Utils.NetDataWriter,LiteNetLib.SendOptions)">
+        <member name="M:LiteNetLib.NetPeer.Send(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">
             <summary>
             Send data to peer
             </summary>
             <param name="dataWriter">DataWriter with data</param>
             <param name="options">Send options (reliable, unreliable, etc.)</param>
         </member>
-        <member name="M:LiteNetLib.NetPeer.Send(System.Byte[],System.Int32,System.Int32,LiteNetLib.SendOptions)">
+        <member name="M:LiteNetLib.NetPeer.Send(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod)">
             <summary>
             Send data to peer
             </summary>

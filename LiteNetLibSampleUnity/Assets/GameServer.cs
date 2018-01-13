@@ -13,7 +13,7 @@ public class GameServer : MonoBehaviour, INetEventListener
     void Start()
     {
         _dataWriter = new NetDataWriter();
-        _netServer = new NetManager(this, 100, "sample_app");
+        _netServer = new NetManager(this, 100);
         _netServer.Start(5000);
         _netServer.DiscoveryEnabled = true;
         _netServer.UpdateTime = 15;
@@ -31,7 +31,7 @@ public class GameServer : MonoBehaviour, INetEventListener
             _serverBall.transform.Translate(1f * Time.fixedDeltaTime, 0f, 0f);
             _dataWriter.Reset();
             _dataWriter.Put(_serverBall.transform.position.x);
-            _ourPeer.Send(_dataWriter, SendOptions.Sequenced);
+            _ourPeer.Send(_dataWriter, DeliveryMethod.Sequenced);
         }
     }
 
@@ -70,6 +70,11 @@ public class GameServer : MonoBehaviour, INetEventListener
     {
     }
 
+    public void OnConnectionRequest(ConnectionRequest request)
+    {
+        request.AcceptIfKey("sample_app");
+    }
+
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
         Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + disconnectInfo.Reason);
@@ -77,7 +82,7 @@ public class GameServer : MonoBehaviour, INetEventListener
             _ourPeer = null;
     }
 
-    public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
+    public void OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
     {
     }
 }

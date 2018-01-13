@@ -15,7 +15,7 @@ public class GameClient : MonoBehaviour, INetEventListener
 
     void Start()
     {
-        _netClient = new NetManager(this, "sample_app");
+        _netClient = new NetManager(this);
         _netClient.Start();
         _netClient.UpdateTime = 15;
     }
@@ -57,7 +57,7 @@ public class GameClient : MonoBehaviour, INetEventListener
         Debug.Log("[CLIENT] We received error " + socketErrorCode);
     }
 
-    public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
+    public void OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
     {
         _newBallPosX = reader.GetFloat();
 
@@ -77,12 +77,18 @@ public class GameClient : MonoBehaviour, INetEventListener
         if (messageType == UnconnectedMessageType.DiscoveryResponse && _netClient.PeersCount == 0)
         {
             Debug.Log("[CLIENT] Received discovery response. Connecting to: " + remoteEndPoint);
-            _netClient.Connect(remoteEndPoint);
+            _netClient.Connect(remoteEndPoint, "sample_app");
         }
     }
 
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
     {
+
+    }
+
+    public void OnConnectionRequest(ConnectionRequest request)
+    {
+        
     }
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
