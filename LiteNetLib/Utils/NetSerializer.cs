@@ -194,7 +194,7 @@ namespace LiteNetLib.Utils
                 BindingFlags.SetProperty);
 #endif
             int propsCount = props.Length;
-            if (props == null || propsCount < 0)
+            if (props == null || propsCount == 0)
             {
                 throw new ArgumentException("Type does not contain acceptable fields");
             }
