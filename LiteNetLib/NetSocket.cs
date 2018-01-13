@@ -12,6 +12,7 @@ namespace LiteNetLib
         private Thread _threadv4;
         private Thread _threadv6;
         private bool _running;
+        private readonly object _receiveLock = new object();
         private readonly NetManager.OnMessageReceived _onMessageReceived;
 
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
@@ -66,7 +67,7 @@ namespace LiteNetLib
                         continue;
                     }
                     NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
-                    lock (this)
+                    lock (_receiveLock)
                     {
                         _onMessageReceived(null, 0, (int) ex.SocketErrorCode, bufferNetEndPoint);
                     }
@@ -76,7 +77,7 @@ namespace LiteNetLib
 
                 //All ok!
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
-                lock (this)
+                lock (_receiveLock)
                 {
                     _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
                 }

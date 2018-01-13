@@ -329,7 +329,7 @@ namespace LiteNetLib
             {
                 if (options == DeliveryMethod.Sequenced || options == DeliveryMethod.Unreliable)
                 {
-                    throw new Exception("Unreliable packet size > allowed (" + (mtu - headerSize) + ")");
+                    throw new ArgumentException("Unreliable packet size > allowed (" + (mtu - headerSize) + ")");
                 }
                 
                 int packetFullSize = mtu - headerSize;
