@@ -172,10 +172,10 @@ namespace LiteNetLib.Test
             var dataStack = new Stack<byte[]>(clientCount);
 
             ManagerStack.ClientForeach(
-                (i, manager, l) => l.NetworkReceiveEvent += (peer, reader) => dataStack.Push(reader.Data));
+                (i, manager, l) => l.NetworkReceiveEvent += (peer, reader, type) => dataStack.Push(reader.Data));
 
             var data = Encoding.Default.GetBytes("TextForTest");
-            server.SendToAll(data, SendOptions.ReliableUnordered);
+            server.SendToAll(data, DeliveryMethod.ReliableUnordered);
 
             while (dataStack.Count < clientCount)
             {

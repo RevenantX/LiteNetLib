@@ -254,15 +254,15 @@ namespace LiteNetLib
             return true;
         }
 
-        private static PacketProperty SendOptionsToProperty(SendOptions options)
+        private static PacketProperty SendOptionsToProperty(DeliveryMethod options)
         {
             switch (options)
             {
-                case SendOptions.ReliableUnordered:
-                    return PacketProperty.Reliable;
-                case SendOptions.Sequenced:
+                case DeliveryMethod.ReliableUnordered:
+                    return PacketProperty.ReliableUnordered;
+                case DeliveryMethod.Sequenced:
                     return PacketProperty.Sequenced;
-                case SendOptions.ReliableOrdered:
+                case DeliveryMethod.ReliableOrdered:
                     return PacketProperty.ReliableOrdered;
                 default:
                     return PacketProperty.Unreliable;
@@ -274,7 +274,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="options">Type of packet that you want send</param>
         /// <returns>size in bytes</returns>
-        public int GetMaxSinglePacketSize(SendOptions options)
+        public int GetMaxSinglePacketSize(DeliveryMethod options)
         {
             return _mtu - NetPacket.GetHeaderSize(SendOptionsToProperty(options));
         }
@@ -284,7 +284,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void Send(byte[] data, SendOptions options)
+        public void Send(byte[] data, DeliveryMethod options)
         {
             Send(data, 0, data.Length, options);
         }
@@ -294,7 +294,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="dataWriter">DataWriter with data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void Send(NetDataWriter dataWriter, SendOptions options)
+        public void Send(NetDataWriter dataWriter, DeliveryMethod options)
         {
             Send(dataWriter.Data, 0, dataWriter.Length, options);
         }
@@ -306,7 +306,7 @@ namespace LiteNetLib
         /// <param name="start">Start of data</param>
         /// <param name="length">Length of data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void Send(byte[] data, int start, int length, SendOptions options)
+        public void Send(byte[] data, int start, int length, DeliveryMethod options)
         {
             if (_connectionState == ConnectionState.ShutdownRequested || 
                 _connectionState == ConnectionState.Disconnected)
@@ -320,7 +320,7 @@ namespace LiteNetLib
             //Check fragmentation
             if (length + headerSize > mtu)
             {
-                if (options == SendOptions.Sequenced || options == SendOptions.Unreliable)
+                if (options == DeliveryMethod.Sequenced || options == DeliveryMethod.Unreliable)
                 {
                     throw new Exception("Unreliable packet size > allowed (" + (mtu - headerSize) + ")");
                 }
@@ -447,7 +447,7 @@ namespace LiteNetLib
             NetUtils.DebugWrite("[RS]Packet: " + packet.Property);
             switch (packet.Property)
             {
-                case PacketProperty.Reliable:
+                case PacketProperty.ReliableUnordered:
                     _reliableUnorderedChannel.AddToQueue(packet);
                     break;
                 case PacketProperty.Sequenced:
@@ -689,7 +689,7 @@ namespace LiteNetLib
                     _sequencedChannel.ProcessPacket(packet);
                     break;
 
-                case PacketProperty.Reliable:
+                case PacketProperty.ReliableUnordered:
                     _reliableUnorderedChannel.ProcessPacket(packet);
                     break;
 

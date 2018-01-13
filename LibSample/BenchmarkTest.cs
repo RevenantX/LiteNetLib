@@ -137,7 +137,7 @@ namespace LibSample
                 Errors++;
             }
 
-            public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
+            public void OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
             {
                 if (reader.AvailableBytes == testData.Length)
                 {
@@ -170,7 +170,7 @@ namespace LibSample
 
                 Watch.Start();
 
-                peer.Send(testData, SendOptions.ReliableOrdered);
+                peer.Send(testData, DeliveryMethod.ReliableOrdered);
             }
 
             public void Start()
@@ -211,12 +211,12 @@ namespace LibSample
                 Errors++;
             }
 
-            public void OnNetworkReceive(NetPeer peer, NetDataReader reader)
+            public void OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
             {
                 MessagesReceivedCount++;
 
                 //echo
-                peer.Send(reader.Data, SendOptions.ReliableUnordered);
+                peer.Send(reader.Data, DeliveryMethod.ReliableUnordered);
             }
 
             public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)

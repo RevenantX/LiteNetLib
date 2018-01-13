@@ -3,7 +3,7 @@ namespace LiteNetLib
     /// <summary>
     /// Sending method type
     /// </summary>
-    public enum SendOptions
+    public enum DeliveryMethod
     {
         /// <summary>
         /// Unreliable. Packets can be dropped, duplicated or arrive without order

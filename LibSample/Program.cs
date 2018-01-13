@@ -1,25 +1,28 @@
 using System;
-using LibSample;
 using LiteNetLib;
 
-class Program
+namespace LibSample
 {
-    static void Main(string[] args)
+    class Program
     {
-        //Test ntp
-        NetUtils.RequestTimeFromNTP("pool.ntp.org", 123, dateTime =>
+        static void Main(string[] args)
         {
-            if (dateTime.HasValue)
+            //Test ntp
+            NetUtils.RequestTimeFromNTP("pool.ntp.org", 123, dateTime =>
             {
-                Console.WriteLine("[MAIN] Synced time test: " + dateTime.Value);
-            }
-        });
+                if (dateTime.HasValue)
+                {
+                    Console.WriteLine("[MAIN] Synced time test: " + dateTime.Value);
+                }
+            });
 
-        //new EchoMessagesTest().Run();
-        //new HolePunchServerTest().Run();
-        //new BroadcastTest().Run();
-        //new BenchmarkTest.TestHost().Run();
-        //new SerializerBenchmark().Run();
-        new SpeedBecnh().Run();
+            new EchoMessagesTest().Run();
+            //new HolePunchServerTest().Run();
+            //new BroadcastTest().Run();
+            //new BenchmarkTest.TestHost().Run();
+            //new SerializerBenchmark().Run();
+            //new SpeedBecnh().Run();
+        }
     }
 }
+

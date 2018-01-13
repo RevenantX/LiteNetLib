@@ -39,6 +39,7 @@ namespace LiteNetLib
             public int AdditionalData;
             public DisconnectReason DisconnectReason;
             public ConnectionRequest ConnectionRequest;
+            public DeliveryMethod DeliveryMethod;
         }
 
 #if DEBUG
@@ -350,7 +351,7 @@ namespace LiteNetLib
                     _netEventListener.OnPeerDisconnected(evt.Peer, info);
                     break;
                 case NetEventType.Receive:
-                    _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader);
+                    _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader, evt.DeliveryMethod);
                     break;
                 case NetEventType.ReceiveUnconnected:
                     _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.BasicMessage);
@@ -672,6 +673,21 @@ namespace LiteNetLib
                 var netEvent = CreateEvent(NetEventType.Receive);
                 netEvent.Peer = fromPeer;
                 netEvent.RemoteEndPoint = fromPeer.EndPoint;
+                switch (packet.Property)
+                {
+                    case PacketProperty.Unreliable:
+                        netEvent.DeliveryMethod = DeliveryMethod.Unreliable;
+                        break;
+                    case PacketProperty.ReliableUnordered:
+                        netEvent.DeliveryMethod = DeliveryMethod.ReliableUnordered;
+                        break;
+                    case PacketProperty.ReliableOrdered:
+                        netEvent.DeliveryMethod = DeliveryMethod.ReliableOrdered;
+                        break;
+                    case PacketProperty.Sequenced:
+                        netEvent.DeliveryMethod = DeliveryMethod.Sequenced;
+                        break;
+                }
                 netEvent.DataReader.SetSource(packet.CopyPacketData());
                 EnqueueEvent(netEvent);
             }
@@ -682,7 +698,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="writer">DataWriter with data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void SendToAll(NetDataWriter writer, SendOptions options)
+        public void SendToAll(NetDataWriter writer, DeliveryMethod options)
         {
             SendToAll(writer.Data, 0, writer.Length, options);
         }
@@ -692,7 +708,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void SendToAll(byte[] data, SendOptions options)
+        public void SendToAll(byte[] data, DeliveryMethod options)
         {
             SendToAll(data, 0, data.Length, options);
         }
@@ -704,7 +720,7 @@ namespace LiteNetLib
         /// <param name="start">Start of data</param>
         /// <param name="length">Length of data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void SendToAll(byte[] data, int start, int length, SendOptions options)
+        public void SendToAll(byte[] data, int start, int length, DeliveryMethod options)
         {
             lock (_peers)
             {
@@ -721,7 +737,7 @@ namespace LiteNetLib
         /// <param name="writer">DataWriter with data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         /// <param name="excludePeer">Excluded peer</param>
-        public void SendToAll(NetDataWriter writer, SendOptions options, NetPeer excludePeer)
+        public void SendToAll(NetDataWriter writer, DeliveryMethod options, NetPeer excludePeer)
         {
             SendToAll(writer.Data, 0, writer.Length, options, excludePeer);
         }
@@ -732,7 +748,7 @@ namespace LiteNetLib
         /// <param name="data">Data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         /// <param name="excludePeer">Excluded peer</param>
-        public void SendToAll(byte[] data, SendOptions options, NetPeer excludePeer)
+        public void SendToAll(byte[] data, DeliveryMethod options, NetPeer excludePeer)
         {
             SendToAll(data, 0, data.Length, options, excludePeer);
         }
@@ -745,7 +761,7 @@ namespace LiteNetLib
         /// <param name="length">Length of data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         /// <param name="excludePeer">Excluded peer</param>
-        public void SendToAll(byte[] data, int start, int length, SendOptions options, NetPeer excludePeer)
+        public void SendToAll(byte[] data, int start, int length, DeliveryMethod options, NetPeer excludePeer)
         {
             lock (_peers)
             {

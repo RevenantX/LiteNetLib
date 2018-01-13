@@ -40,7 +40,7 @@ namespace LibSample
                 request.AcceptIfKey("ConnKey");
             }
 
-            void INetEventListener.OnNetworkReceive(NetPeer peer, NetDataReader reader)
+            void INetEventListener.OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
             {
                 var _isReliable = reader.GetBool();
                 var _data = reader.GetString();
@@ -98,7 +98,7 @@ namespace LibSample
                 _writer.Put(false);
                 _writer.Put(pData);
 
-                _peer.Send(_writer, SendOptions.Unreliable);
+                _peer.Send(_writer, DeliveryMethod.Unreliable);
                 UnreliableSent++;
             }
 
@@ -108,7 +108,7 @@ namespace LibSample
                 _writer.Put(true);
                 _writer.Put(pData);
 
-                _peer.Send(_writer, SendOptions.ReliableOrdered);
+                _peer.Send(_writer, DeliveryMethod.ReliableOrdered);
                 ReliableSent++;
             }
 
@@ -135,7 +135,7 @@ namespace LibSample
                 request.AcceptIfKey("ConnKey");
             }
 
-            void INetEventListener.OnNetworkReceive(NetPeer peer, NetDataReader reader)
+            void INetEventListener.OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
             {
 
             }

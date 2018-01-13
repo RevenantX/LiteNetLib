@@ -6,7 +6,7 @@ namespace LiteNetLib
     internal enum PacketProperty : byte
     {
         Unreliable,             //0
-        Reliable,               //1
+        ReliableUnordered,               //1
         Sequenced,              //2
         ReliableOrdered,        //3
         AckReliable,            //4
@@ -100,7 +100,7 @@ namespace LiteNetLib
             switch (property)
             {
                 case PacketProperty.ReliableOrdered:
-                case PacketProperty.Reliable:
+                case PacketProperty.ReliableUnordered:
                 case PacketProperty.Sequenced:
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
