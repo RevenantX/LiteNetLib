@@ -11,6 +11,8 @@ namespace LibSample
 {
     internal class BenchmarkTest
     {
+        private const string AppKey = "BENCH_TEST";
+
         internal class TestHost
         {
             private int _clientCount = 10;
@@ -22,7 +24,7 @@ namespace LibSample
                 //Server
                 _serverListener = new ServerListener();
 
-                NetManager server = new NetManager(_serverListener, _clientCount, "myapp1");
+                NetManager server = new NetManager(_serverListener, _clientCount);
                 server.UnsyncedEvents = true;
                 server.UpdateTime = 1;
                 if (!server.Start(9050))
@@ -39,7 +41,7 @@ namespace LibSample
                 for (int i = 0; i < _clientCount; i++)
                 {
                     var _clientListener = new ClientListener();
-                    var client1 = new NetManager(_clientListener, "myapp1");
+                    var client1 = new NetManager(_clientListener);
                     client1.SimulationMaxLatency = 1500;
                     client1.MergeEnabled = true;
                     client1.UnsyncedEvents = true;
@@ -51,7 +53,7 @@ namespace LibSample
                         return;
                     }
                     _clients.Add(_clientListener);
-                    client1.Connect("127.0.0.1", 9050);
+                    client1.Connect("127.0.0.1", 9050, AppKey);
                 }
 
                 // Wait
@@ -157,6 +159,11 @@ namespace LibSample
 
             }
 
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+
+            }
+
             void Send()
             {
                 var peer = Client.GetFirstPeer();
@@ -222,6 +229,11 @@ namespace LibSample
 
             }
 
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                request.AcceptIfKey(AppKey);
+            }
+
             public void Start()
             {
                 StartTime = DateTime.UtcNow;
@@ -237,9 +249,9 @@ namespace LibSample
         internal class HealthChecker
         {
             private int _threadId;
-            private BenchmarkTest.TestHost _context;
+            private TestHost _context;
 
-            public void Start(BenchmarkTest.TestHost context)
+            public void Start(TestHost context)
             {
                 _context = context;
                 _threadId++;

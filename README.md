@@ -43,7 +43,7 @@ Minimal .NET version - 3.5
   * Windows/Mac/Linux (.net framework, Mono, .net core)
   * Android (unity3d)
   * iOS (unity3d)
-  * Universal Windows (Windows 8.1 and Windows 10 including phones)
+  * UWP Windows 10 including phones
 
 ## Unity3d notes!!!
 * Always use library sources insted of precompiled DLL files. 

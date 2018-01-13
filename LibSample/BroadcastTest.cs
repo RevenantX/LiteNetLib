@@ -36,13 +36,18 @@ namespace LibSample
                 Console.WriteLine("[Client] ReceiveUnconnected {0}. From: {1}. Data: {2}", messageType, remoteEndPoint, reader.GetString(100));
                 if (messageType == UnconnectedMessageType.DiscoveryResponse)
                 {
-                    Client.Connect(remoteEndPoint);
+                    Client.Connect(remoteEndPoint, "key");
                 }
             }
 
             public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
             {
 
+            }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                request.AcceptIfKey("key");
             }
         }
 
@@ -53,7 +58,7 @@ namespace LibSample
             public void OnPeerConnected(NetPeer peer)
             {
                 Console.WriteLine("[Server] Peer connected: " + peer.EndPoint);
-                var peers = Server.GetPeers();
+                var peers = Server.GetPeers(ConnectionState.Connected);
                 foreach (var netPeer in peers)
                 {
                     Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.ConnectId, netPeer.EndPoint);
@@ -87,6 +92,11 @@ namespace LibSample
             {
 
             }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                
+            }
         }
 
         private ClientListener _clientListener1;
@@ -95,10 +105,11 @@ namespace LibSample
 
         public void Run()
         {
+            Console.WriteLine("=== Broadcast Test ===");
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener, 2, "myapp1");
+            NetManager server = new NetManager(_serverListener, 2);
             server.DiscoveryEnabled = true;
             if (!server.Start(9050))
             {
@@ -111,7 +122,7 @@ namespace LibSample
             //Client
             _clientListener1 = new ClientListener();
 
-            NetManager client1 = new NetManager(_clientListener1, "myapp1");
+            NetManager client1 = new NetManager(_clientListener1);
             _clientListener1.Client = client1;
             client1.SimulateLatency = true;
             client1.SimulationMaxLatency = 1500;
@@ -123,7 +134,7 @@ namespace LibSample
             }
 
             _clientListener2 = new ClientListener();
-            NetManager client2 = new NetManager(_clientListener2, "myapp1");
+            NetManager client2 = new NetManager(_clientListener2);
             _clientListener2.Client = client2;
             client2.SimulateLatency = true;
             client2.SimulationMaxLatency = 1500;

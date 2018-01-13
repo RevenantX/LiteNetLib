@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace LibSample
 {
@@ -27,6 +28,7 @@ namespace LibSample
     class HolePunchServerTest : INatPunchListener
     {
         private const int ServerPort = 50010;
+        private const string ConnectionKey = "test_key";
         private static readonly TimeSpan KickTime = new TimeSpan(0, 0, 6);
 
         private readonly Dictionary<string, WaitPeer> _waitingPeers = new Dictionary<string, WaitPeer>();
@@ -82,6 +84,8 @@ namespace LibSample
 
         public void Run()
         {
+            Console.WriteLine("=== HolePunch Test ===");
+            
             EventBasedNetListener netListener = new EventBasedNetListener();
             EventBasedNatPunchListener natPunchListener1 = new EventBasedNatPunchListener();
             EventBasedNatPunchListener natPunchListener2 = new EventBasedNatPunchListener();
@@ -89,6 +93,11 @@ namespace LibSample
             netListener.PeerConnectedEvent += peer =>
             {
                 Console.WriteLine("PeerConnected: " + peer.EndPoint.ToString());
+            };
+
+            netListener.ConnectionRequestEvent += request =>
+            {
+                request.AcceptIfKey(ConnectionKey);
             };
 
             netListener.PeerDisconnectedEvent += (peer, disconnectInfo) =>
@@ -103,26 +112,26 @@ namespace LibSample
             natPunchListener1.NatIntroductionSuccess += (point, token) =>
             {
                 Console.WriteLine("Success C1. Connecting to C2: {0}", point);
-                _c1.Connect(point);
+                _c1.Connect(point, ConnectionKey);
             };
 
             natPunchListener2.NatIntroductionSuccess += (point, token) =>
             {
                 Console.WriteLine("Success C2. Connecting to C1: {0}", point);
-                _c2.Connect(point);
+                _c2.Connect(point, ConnectionKey);
             };
 
-            _c1 = new NetManager(netListener, "gamekey");
+            _c1 = new NetManager(netListener);
             _c1.NatPunchEnabled = true;
             _c1.NatPunchModule.Init(natPunchListener1);
             _c1.Start();
 
-            _c2 = new NetManager(netListener, "gamekey");
+            _c2 = new NetManager(netListener);
             _c2.NatPunchEnabled = true;
             _c2.NatPunchModule.Init(natPunchListener2);
             _c2.Start();
 
-            _puncher = new NetManager(netListener, "notneed");
+            _puncher = new NetManager(netListener);
             _puncher.Start(ServerPort);
             _puncher.NatPunchEnabled = true;
             _puncher.NatPunchModule.Init(this);

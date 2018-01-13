@@ -1,5 +1,5 @@
 image: Visual Studio 2017
-version: 0.7.{build}
+version: 0.8.{build}
 configuration:
   - Release
 before_build:
@@ -20,9 +20,9 @@ artifacts:
   - path: LiteNetLib/bin/Release
     name: LiteNetLib-$(appveyor_build_version)
     type: Zip
-  - path: LiteNetLibWin81/bin/Release
-    name: LiteNetLibWin81-$(appveyor_build_version)
-    type: Zip
   - path: LiteNetLibStandard/bin/Release
     name: LiteNetLibStandard-$(appveyor_build_version)
+    type: Zip
+  - path: LiteNetLibNetCore/bin/Release
+    name: LiteNetLibNetCore-$(appveyor_build_version)
     type: Zip

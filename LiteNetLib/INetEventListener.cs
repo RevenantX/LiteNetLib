@@ -1,3 +1,4 @@
+using System;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -7,7 +8,7 @@ namespace LiteNetLib
     /// </summary>
     public enum UnconnectedMessageType
     {
-        Default,
+        BasicMessage,
         DiscoveryRequest,
         DiscoveryResponse
     }
@@ -23,6 +24,13 @@ namespace LiteNetLib
         SocketSendError,
         RemoteConnectionClose,
         DisconnectPeerCalled
+    }
+
+    public enum ConnectionRequestResult
+    {
+        None,
+        Accept,
+        Reject
     }
 
     /// <summary>
@@ -44,6 +52,62 @@ namespace LiteNetLib
         /// Additional data that can be accessed (only if reason is RemoteConnectionClose)
         /// </summary>
         public NetDataReader AdditionalData;
+    }
+
+    public class ConnectionRequest
+    {
+        private readonly Action<ConnectionRequest> _onUserAction;
+        private bool _used;
+
+        public readonly long ConnectionId;
+        public readonly NetEndPoint RemoteEndPoint;
+        public readonly NetDataReader Data;
+        public ConnectionRequestResult Result { get; private set; }
+
+        internal ConnectionRequest(
+            long connectionId, 
+            NetEndPoint remoteEndPoint, 
+            NetDataReader netDataReader,
+            Action<ConnectionRequest> onUserAction)
+        {
+            ConnectionId = connectionId;
+            RemoteEndPoint = remoteEndPoint;
+            Data = netDataReader;
+            _onUserAction = onUserAction;
+        }
+
+        public bool AcceptIfKey(string key)
+        {
+            if (_used)
+                return false;
+            string dataKey = Data.GetString(key.Length);
+            if (dataKey == key)
+            {
+                Accept();
+                return true;
+            }
+
+            Reject();
+            return false;
+        }
+
+        public void Accept()
+        {
+            if (_used)
+                return;
+            _used = true;
+            Result = ConnectionRequestResult.Accept;
+            _onUserAction(this);
+        }
+
+        public void Reject()
+        {
+            if (_used)
+                return;
+            _used = true;
+            Result = ConnectionRequestResult.Reject;
+            _onUserAction(this);
+        }
     }
 
     public interface INetEventListener
@@ -89,6 +153,12 @@ namespace LiteNetLib
         /// <param name="peer">Peer with updated latency</param>
         /// <param name="latency">latency value in milliseconds</param>
         void OnNetworkLatencyUpdate(NetPeer peer, int latency);
+
+        /// <summary>
+        /// On peer connection requested
+        /// </summary>
+        /// <param name="request">Request information (EndPoint, internal id, additional data)</param>
+        void OnConnectionRequest(ConnectionRequest request);
     }
 
     public class EventBasedNetListener : INetEventListener
@@ -100,13 +170,16 @@ namespace LiteNetLib
         public delegate void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
         public delegate void OnNetworkLatencyUpdate(NetPeer peer, int latency);
 
+        public delegate void OnConnectionRequest(ConnectionRequest request);
+
         public event OnPeerConnected PeerConnectedEvent;
         public event OnPeerDisconnected PeerDisconnectedEvent;
         public event OnNetworkError NetworkErrorEvent;
         public event OnNetworkReceive NetworkReceiveEvent;
         public event OnNetworkReceiveUnconnected NetworkReceiveUnconnectedEvent;
-        public event OnNetworkLatencyUpdate NetworkLatencyUpdateEvent; 
-         
+        public event OnNetworkLatencyUpdate NetworkLatencyUpdateEvent;
+        public event OnConnectionRequest ConnectionRequestEvent;
+
         void INetEventListener.OnPeerConnected(NetPeer peer)
         {
             if (PeerConnectedEvent != null)
@@ -141,6 +214,12 @@ namespace LiteNetLib
         {
             if (NetworkLatencyUpdateEvent != null)
                 NetworkLatencyUpdateEvent(peer, latency);
+        }
+
+        void INetEventListener.OnConnectionRequest(ConnectionRequest request)
+        {
+            if (ConnectionRequestEvent != null)
+                ConnectionRequestEvent(request);
         }
     }
 }

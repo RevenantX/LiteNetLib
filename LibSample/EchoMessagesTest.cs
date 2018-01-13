@@ -80,6 +80,11 @@ namespace LibSample
             {
                 
             }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+
+            }
         }
 
         private class ServerListener : INetEventListener
@@ -89,7 +94,7 @@ namespace LibSample
             public void OnPeerConnected(NetPeer peer)
             {
                 Console.WriteLine("[Server] Peer connected: " + peer.EndPoint);
-                var peers = Server.GetPeers();
+                var peers = Server.GetPeers(ConnectionState.Connected);
                 foreach (var netPeer in peers)
                 {
                     Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.ConnectId, netPeer.EndPoint);
@@ -127,19 +132,29 @@ namespace LibSample
             {
 
             }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+                bool accepted = request.AcceptIfKey("gamekey");
+                Console.WriteLine("[Server] ConnectionRequest. Id: {0}, Ep: {1}, Accepted: {2}", 
+                    request.ConnectionId,
+                    request.RemoteEndPoint,
+                    accepted);
+            }
         }
 
         private ClientListener _clientListener;
         private ServerListener _serverListener;
+        private const int Port = 9050;
 
         public void Run()
         {
+            Console.WriteLine("=== Echo Messages Test ===");
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener, 2, "myapp1");
-            //server.ReuseAddress = true;
-            if (!server.Start(9050))
+            NetManager server = new NetManager(_serverListener, 2);
+            if (!server.Start(Port))
             {
                 Console.WriteLine("Server start failed");
                 Console.ReadKey();
@@ -150,22 +165,28 @@ namespace LibSample
             //Client
             _clientListener = new ClientListener();
 
-            NetManager client1 = new NetManager(_clientListener, "myapp1");
-            //client1.SimulateLatency = true;
-            client1.SimulationMaxLatency = 1500;
-            client1.MergeEnabled = true;
+            NetManager client1 = new NetManager(_clientListener)
+            {
+                SimulationMaxLatency = 1500,
+                //SimulateLatency = true,
+                MergeEnabled = true
+            };
+            //client1
             if (!client1.Start())
             {
                 Console.WriteLine("Client1 start failed");
                 return;
             }
-            client1.Connect("127.0.0.1", 9050);
+            client1.Connect("127.0.0.1", Port, "gamekey");
 
-            NetManager client2 = new NetManager(_clientListener, "myapp1");
-            //client2.SimulateLatency = true;
-            client2.SimulationMaxLatency = 1500;
+            NetManager client2 = new NetManager(_clientListener)
+            {
+                //SimulateLatency = true,
+                SimulationMaxLatency = 1500
+            };
+            
             client2.Start();
-            client2.Connect("::1", 9050);
+            client2.Connect("::1", Port, "gamekey");
 
             while (!Console.KeyAvailable)
             {

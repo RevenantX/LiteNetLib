@@ -1,4 +1,3 @@
-#if !WINRT || UNITY_EDITOR
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -61,7 +60,7 @@ namespace LiteNetLib
                 catch (SocketException ex)
                 {
                     if (ex.SocketErrorCode == SocketError.ConnectionReset ||
-                        ex.SocketErrorCode == SocketError.MessageSize ||
+                        ex.SocketErrorCode == SocketError.MessageSize || 
                         ex.SocketErrorCode == SocketError.Interrupted)
                     {
                         //10040 - message too long
@@ -76,34 +75,33 @@ namespace LiteNetLib
                 }
 
                 //All ok!
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Recieved data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
                 _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
             }
         }
 
-        public bool Bind(int port, bool reuseAddress)
+        public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress)
         {
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _udpSocketv4.Blocking = true;
             _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
-            _udpSocketv4.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, NetConstants.SocketTTL);
+            _udpSocketv4.Ttl = NetConstants.SocketTTL;
             if(reuseAddress)
                 _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 #if !NETCORE
             _udpSocketv4.DontFragment = true;
 #endif
-
             try
             {
-                _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
+                _udpSocketv4.EnableBroadcast = true;
             }
             catch (SocketException e)
             {
                 NetUtils.DebugWriteError("Broadcast error: {0}", e.ToString());
             }
 
-            if (!BindSocket(_udpSocketv4, new IPEndPoint(IPAddress.Any, port)))
+            if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port)))
             {
                 return false;
             }
@@ -122,11 +120,12 @@ namespace LiteNetLib
             _udpSocketv6.Blocking = true;
             _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
+            //_udpSocketv6.Ttl = NetConstants.SocketTTL;
             if (reuseAddress)
                 _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
             //Use one port for two sockets
-            if (BindSocket(_udpSocketv6, new IPEndPoint(IPAddress.IPv6Any, _port)))
+            if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, _port)))
             {
                 try
                 {
@@ -175,13 +174,22 @@ namespace LiteNetLib
         {
             try
             {
-                int result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(IPAddress.Broadcast, port));
-                if (result <= 0)
-                    return false;
+                if (_udpSocketv4.SendTo(
+                        data,
+                        offset,
+                        size,
+                        SocketFlags.None,
+                        new IPEndPoint(IPAddress.Broadcast, port)) <= 0)
+                        return false;
+           
                 if (IPv6Support)
                 {
-                    result = _udpSocketv6.SendTo(data, offset, size, SocketFlags.None, new IPEndPoint(MulticastAddressV6, port));
-                    if (result <= 0)
+                    if (_udpSocketv6.SendTo(
+                            data, 
+                            offset, 
+                            size, 
+                            SocketFlags.None, 
+                            new IPEndPoint(MulticastAddressV6, port)) <= 0)
                         return false;
                 }
             }
@@ -274,165 +282,3 @@ namespace LiteNetLib
         }
     }
 }
-#else
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.Networking;
-using Windows.Networking.Sockets;
-using Windows.Storage.Streams;
-
-namespace LiteNetLib
-{
-    internal sealed class NetSocket
-    {
-        private DatagramSocket _datagramSocket;
-        private readonly Dictionary<NetEndPoint, IOutputStream> _peers = new Dictionary<NetEndPoint, IOutputStream>();
-        private readonly NetManager.OnMessageReceived _onMessageReceived;
-        private readonly byte[] _byteBuffer = new byte[NetConstants.PacketSizeLimit];
-        private readonly IBuffer _buffer;
-        private NetEndPoint _bufferEndPoint;
-        private int _port;
-        private static readonly HostName BroadcastAddress = new HostName("255.255.255.255");
-        private static readonly HostName MulticastAddressV6 = new HostName(NetConstants.MulticastGroupIPv6);
-
-        public int LocalPort
-        {
-            get { return _port; }
-        }
-
-        public NetSocket(NetManager.OnMessageReceived onMessageReceived)
-        {
-            _onMessageReceived = onMessageReceived;
-            _buffer = _byteBuffer.AsBuffer();
-        }
-        
-        private void OnMessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
-        {
-            var result = args.GetDataStream().ReadAsync(_buffer, _buffer.Capacity, InputStreamOptions.None).AsTask().Result;
-            int length = (int)result.Length;
-            if (length <= 0)
-                return;
-
-            if (_bufferEndPoint == null ||
-                !_bufferEndPoint.HostName.IsEqual(args.RemoteAddress) ||
-                !_bufferEndPoint.PortStr.Equals(args.RemotePort))
-            {
-                _bufferEndPoint = new NetEndPoint(args.RemoteAddress, args.RemotePort);
-            }
-            _onMessageReceived(_byteBuffer, length, 0, _bufferEndPoint);
-        }
-
-        public bool Bind(int port, bool reuseAddress)
-        {
-            _datagramSocket = new DatagramSocket();
-            _datagramSocket.Control.InboundBufferSizeInBytes = NetConstants.SocketBufferSize;
-            _datagramSocket.Control.DontFragment = true;
-            _datagramSocket.Control.OutboundUnicastHopLimit = NetConstants.SocketTTL;
-            _datagramSocket.MessageReceived += OnMessageReceived;
-
-            try
-            {
-                _datagramSocket.BindServiceNameAsync(port.ToString()).AsTask().Wait();
-                _datagramSocket.JoinMulticastGroup(MulticastAddressV6);
-                _port = int.Parse(_datagramSocket.Information.LocalPort);
-            }
-            catch (Exception ex)
-            {
-                NetUtils.DebugWriteError("[B]Bind exception: {0}", ex.ToString());
-                return false;
-            }
-            return true;
-        }
-
-        public bool SendBroadcast(byte[] data, int offset, int size, int port)
-        {
-            var portString = port.ToString();
-            try
-            {
-                var outputStream =
-                    _datagramSocket.GetOutputStreamAsync(BroadcastAddress, portString)
-                        .AsTask()
-                        .Result;
-                var writer = outputStream.AsStreamForWrite();
-                writer.Write(data, offset, size);
-                writer.Flush();
-
-                outputStream =
-                    _datagramSocket.GetOutputStreamAsync(MulticastAddressV6, portString)
-                        .AsTask()
-                        .Result;
-                writer = outputStream.AsStreamForWrite();
-                writer.Write(data, offset, size);
-                writer.Flush();
-            }
-            catch (Exception ex)
-            {
-                NetUtils.DebugWriteError("[S][MCAST]" + ex);
-                return false;
-            }
-            return true;
-        }
-
-        public int SendTo(byte[] data, int offset, int length, NetEndPoint remoteEndPoint, ref int errorCode)
-        {
-            Task<uint> task = null;
-            try
-            {
-                IOutputStream writer;
-                if (!_peers.TryGetValue(remoteEndPoint, out writer))
-                {
-                    writer =
-                        _datagramSocket.GetOutputStreamAsync(remoteEndPoint.HostName, remoteEndPoint.PortStr)
-                            .AsTask()
-                            .Result;
-                    _peers.Add(remoteEndPoint, writer);
-                }
-
-                task = writer.WriteAsync(data.AsBuffer(offset, length)).AsTask();
-                return (int)task.Result;
-            }
-            catch (Exception ex)
-            {
-                if (task?.Exception?.InnerExceptions != null)
-                {
-                    ex = task.Exception.InnerException;
-                }
-                var errorStatus = SocketError.GetStatus(ex.HResult);
-                switch (errorStatus)
-                {
-                    case SocketErrorStatus.MessageTooLong:
-                        errorCode = 10040;
-                        break;
-                    default:
-                        errorCode = (int)errorStatus;
-                        NetUtils.DebugWriteError("[S " + errorStatus + "(" + errorCode + ")]" + ex);
-                        break;
-                }
-                
-                return -1;
-            }
-        }
-
-        internal void RemovePeer(NetEndPoint ep)
-        {
-            _peers.Remove(ep);
-        }
-
-        public void Close()
-        {
-            _datagramSocket.Dispose();
-            _datagramSocket = null;
-            ClearPeers();
-        }
-
-        internal void ClearPeers()
-        {
-            _peers.Clear();
-        }
-    }
-}
-#endif

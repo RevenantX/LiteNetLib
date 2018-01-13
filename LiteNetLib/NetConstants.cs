@@ -50,7 +50,7 @@ namespace LiteNetLib
         internal const string MulticastGroupIPv6 = "FF02:0:0:0:0:0:0:1";
 
         //protocol
-        internal const int ProtocolId = 1;
+        internal const int ProtocolId = 2;
         internal const int MaxUdpHeaderSize = 68;
         internal const int PacketSizeLimit = ushort.MaxValue - MaxUdpHeaderSize;
         internal const int RequestConnectIdIndex = 5;

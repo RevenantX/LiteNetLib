@@ -8,7 +8,7 @@
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("revx")]
+[assembly: AssemblyCopyright("Ruslan Pyrch (RevenantX)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

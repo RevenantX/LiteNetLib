@@ -22,13 +22,13 @@ namespace LiteNetLib.Test
                 TestObj = new SampleNetSerializable {Value = 5}
             };
 
-            _serializer = new NetSerializer();
-            _serializer.RegisterCustomType<SampleNetSerializable>();
-            _serializer.RegisterCustomType(SomeVector2.Serialize, SomeVector2.Deserialize);
+            _packetProcessor = new NetPacketProcessor();
+            _packetProcessor.RegisterNestedType<SampleNetSerializable>();
+            _packetProcessor.RegisterNestedType(SomeVector2.Serialize, SomeVector2.Deserialize);
         }
 
         private SamplePacket _samplePacket;
-        private NetSerializer _serializer;
+        private NetPacketProcessor _packetProcessor;
 
         private struct SomeVector2
         {
@@ -105,18 +105,18 @@ namespace LiteNetLib.Test
         public void CustomPackageTest()
         {
             var writer = new NetDataWriter();
-            writer.Put(_serializer.Serialize(_samplePacket));
+            _packetProcessor.Write(writer, _samplePacket);
 
             var reader = new NetDataReader(writer.CopyData());
             SamplePacket readPackage = null;
 
-            _serializer.SubscribeReusable<SamplePacket>(
+            _packetProcessor.SubscribeReusable<SamplePacket>(
                 packet =>
                 {
                     readPackage = packet;
                 });
 
-            _serializer.ReadAllPackets(reader);
+            _packetProcessor.ReadAllPackets(reader);
 
             Assert.NotNull(readPackage);
             Assert.IsTrue(AreSame(_samplePacket.EmptyString, readPackage.EmptyString));
