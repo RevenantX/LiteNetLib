@@ -1,6 +1,6 @@
 # LiteNetLib 
 
-Lite reliable UDP library for .NET, Mono, .NET Core, .NET Standart, and UWP.
+Lite reliable UDP library for .NET, Mono, .NET Core, .NET Standart.
 Minimal .NET version - 3.5
 
 ## Build
@@ -54,32 +54,10 @@ Minimal .NET version - 3.5
 ### Server
 ```csharp
 EventBasedNetListener listener = new EventBasedNetListener();
-NetManager server = new NetManager(listener, 2 /* maximum clients */, "SomeConnectionKey");
-server.Start(9050 /* port */);
-
-listener.PeerConnectedEvent += peer =>
-{
-    Console.WriteLine("We got connection: {0}", peer.EndPoint); // Show peer ip
-    NetDataWriter writer = new NetDataWriter();                 // Create writer class
-    writer.Put("Hello client!");                                // Put some string
-    peer.Send(writer, SendOptions.ReliableOrdered);             // Send with reliability
-};
-
-while (!Console.KeyAvailable)
-{
-    server.PollEvents();
-    Thread.Sleep(15);
-}
-
-server.Stop();
-```
-### Client
-```csharp
-EventBasedNetListener listener = new EventBasedNetListener();
-NetManager client = new NetManager(listener, "SomeConnectionKey");
+NetManager client = new NetManager(listener);
 client.Start();
-client.Connect("localhost" /* host ip or name */, 9050 /* port */);
-listener.NetworkReceiveEvent += (fromPeer, dataReader) =>
+client.Connect("localhost" /* host ip or name */, 9050 /* port */, "SomeConnectionKey" /* text key or NetDataWriter */);
+listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
 {
     Console.WriteLine("We got: {0}", dataReader.GetString(100 /* max length of string */));
 };
@@ -91,6 +69,33 @@ while (!Console.KeyAvailable)
 }
 
 client.Stop();
+```
+### Client
+```csharp
+EventBasedNetListener listener = new EventBasedNetListener();
+NetManager server = new NetManager(listener, 2 /* maximum clients */);
+server.Start(9050 /* port */);
+
+listener.ConnectionRequestEvent += request =>
+{
+    request.AcceptIfKey("SomeConnectionKey");
+};
+
+listener.PeerConnectedEvent += peer =>
+{
+    Console.WriteLine("We got connection: {0}", peer.EndPoint); // Show peer ip
+    NetDataWriter writer = new NetDataWriter();                 // Create writer class
+    writer.Put("Hello client!");                                // Put some string
+    peer.Send(writer, DeliveryMethod.ReliableOrdered);             // Send with reliability
+};
+
+while (!Console.KeyAvailable)
+{
+    server.PollEvents();
+    Thread.Sleep(15);
+}
+
+server.Stop();
 ```
 
 ## NetManager settings description
