@@ -13,7 +13,7 @@ namespace LiteNetLib
             public PendingPacket Next;
             public PendingPacket Prev;
 
-            public NetPacket GetAndClear()
+            public void Clear()
             {
                 if (Prev != null)
                 {
@@ -25,11 +25,8 @@ namespace LiteNetLib
                 }
                 Prev = null;
                 Next = null;
-
-                var packet = Packet;
                 Packet = null;
                 TimeStamp = null;
-                return packet;
             }
         }
 
@@ -143,14 +140,14 @@ namespace LiteNetLib
                 }
 
                 PendingPacket pendingPacket = _pendingPackets[ackSequence % _windowSize];
-                NetPacket removed = pendingPacket.GetAndClear();
-                if (removed != null)
+                if (pendingPacket.Packet != null)
                 {
                     if (pendingPacket == _headPendingPacket)
                     {
-                        _headPendingPacket = null;
+                        _headPendingPacket = _headPendingPacket.Prev;
                     }
-                    _peer.Recycle(removed);
+                    _peer.Recycle(pendingPacket.Packet);
+                    pendingPacket.Clear();
                     NetUtils.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", ackSequence);
                 }
                 else

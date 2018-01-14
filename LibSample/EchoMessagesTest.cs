@@ -138,6 +138,8 @@ namespace LibSample
             _serverListener = new ServerListener();
 
             NetManager server = new NetManager(_serverListener, 2, "myapp1");
+            server.SimulatePacketLoss = true;
+            server.SimulationPacketLossChance = 70;
             //server.ReuseAddress = true;
             if (!server.Start(9050))
             {
@@ -152,6 +154,8 @@ namespace LibSample
 
             NetManager client1 = new NetManager(_clientListener, "myapp1");
             //client1.SimulateLatency = true;
+            client1.SimulatePacketLoss = true;
+            client1.SimulationPacketLossChance = 70;
             client1.SimulationMaxLatency = 1500;
             client1.MergeEnabled = true;
             if (!client1.Start())
