@@ -29,6 +29,11 @@ namespace LiteNetLib
         /// Reliable only last packet
         /// </summary>
         //ReliableSequenced
+
+        /// <summary>
+        /// KCP - A Fast and Reliable ARQ Protocol. Faster than TCP on small packets.
+        /// </summary>
+        KCP
     }
 
     /// <summary>
