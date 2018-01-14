@@ -212,7 +212,8 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                if (ex.SocketErrorCode == SocketError.Interrupted)
+                if (ex.SocketErrorCode == SocketError.Interrupted || 
+                    ex.SocketErrorCode == SocketError.NoBufferSpaceAvailable)
                 {
                     return 0;
                 }
