@@ -497,7 +497,7 @@ namespace LiteNetLib
             }
         }
 
-        private void OnConnectionSolved(ConnectionRequest request)
+        private NetPeer OnConnectionSolved(ConnectionRequest request)
         {
             lock (_peers)
             {
@@ -509,7 +509,7 @@ namespace LiteNetLib
                     }
                     else
                     {
-                        return;
+                        return null;
                     }
                 }
                 if (request.Result == ConnectionRequestResult.Reject)
@@ -529,8 +529,10 @@ namespace LiteNetLib
                     var netEvent = CreateEvent(NetEventType.Connect);
                     netEvent.Peer = netPeer;
                     EnqueueEvent(netEvent);
+                    return netPeer;
                 }
             }
+            return null;
         }
 
         private void DataReceived(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)

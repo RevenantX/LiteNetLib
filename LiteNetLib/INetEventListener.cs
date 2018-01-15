@@ -56,7 +56,7 @@ namespace LiteNetLib
 
     public class ConnectionRequest
     {
-        private readonly Action<ConnectionRequest> _onUserAction;
+        private readonly Func<ConnectionRequest, NetPeer> _onUserAction;
         private bool _used;
 
         public readonly long ConnectionId;
@@ -68,7 +68,7 @@ namespace LiteNetLib
             long connectionId, 
             NetEndPoint remoteEndPoint, 
             NetDataReader netDataReader,
-            Action<ConnectionRequest> onUserAction)
+            Func<ConnectionRequest, NetPeer> onUserAction)
         {
             ConnectionId = connectionId;
             RemoteEndPoint = remoteEndPoint;
@@ -101,13 +101,17 @@ namespace LiteNetLib
             return false;
         }
 
-        public void Accept()
+        /// <summary>
+        /// Accept connection and get new NetPeer as result
+        /// </summary>
+        /// <returns>Connected NetPeer</returns>
+        public NetPeer Accept()
         {
             if (_used)
-                return;
+                return null;
             _used = true;
             Result = ConnectionRequestResult.Accept;
-            _onUserAction(this);
+            return _onUserAction(this);
         }
 
         public void Reject()
