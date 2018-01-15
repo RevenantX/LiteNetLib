@@ -21,6 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\LiteNetLib\NetExceptions.cs" Link="NetExceptions.cs" />
     <Compile Include="..\LiteNetLib\NetStatistics.cs" Link="NetStatistics.cs" />
     <Compile Include="..\LiteNetLib\Properties\AssemblyInfo.cs" />
     <Compile Include="..\LiteNetLib\INetEventListener.cs" Link="INetEventListener.cs" />
@@ -45,6 +46,7 @@
     <Compile Include="..\LiteNetLib\Utils\NetDataWriter.cs" Link="Utils\NetDataWriter.cs" />
     <Compile Include="..\LiteNetLib\Utils\NetPacketProcessor.cs" Link="Utils\NetPacketProcessor.cs" />
     <Compile Include="..\LiteNetLib\Utils\NetSerializer.cs" Link="Utils\NetSerializer.cs" />
+    <Compile Include="..\LiteNetLib\Utils\NetSerializerExceptions.cs" Link="Utils\NetSerializerExceptions.cs" />
   </ItemGroup>
 
   <ItemGroup>

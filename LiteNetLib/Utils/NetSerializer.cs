@@ -196,7 +196,7 @@ namespace LiteNetLib.Utils
             int propsCount = props.Length;
             if (props == null || propsCount == 0)
             {
-                throw new ArgumentException("Type does not contain acceptable fields");
+                throw new InvalidTypeException("Type does not contain acceptable fields");
             }
 
             info = new StructInfo(propsCount);
@@ -241,7 +241,7 @@ namespace LiteNetLib.Utils
                     }
                     else
                     {
-                        throw new Exception("Not supported enum underlying type: " + underlyingType.Name);
+                        throw new InvalidTypeException("Not supported enum underlying type: " + underlyingType.Name);
                     }
                 }
                 else if (propertyType == typeof(string))
@@ -471,7 +471,7 @@ namespace LiteNetLib.Utils
                     }
                     else
                     {
-                        throw new Exception("Unknown property type: " + propertyType.FullName);
+                        throw new InvalidTypeException("Unknown property type: " + propertyType.FullName);
                     }
                 }
             }
@@ -480,6 +480,7 @@ namespace LiteNetLib.Utils
             return info;
         }
 
+        /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public void Register<T>()
         {
             RegisterInternal<T>();
@@ -490,6 +491,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="reader">NetDataReader with packet</param>
         /// <returns>Returns packet if packet in reader is matched type</returns>
+        /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public T Deserialize<T>(NetDataReader reader) where T : class, new()
         {
             var info = RegisterInternal<T>();
@@ -511,6 +513,7 @@ namespace LiteNetLib.Utils
         /// <param name="reader">NetDataReader with packet</param>
         /// <param name="target">Deserialization target</param>
         /// <returns>Returns true if packet in reader is matched type</returns>
+        /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public bool Deserialize<T>(NetDataReader reader, T target) where T : class, new()
         {
             var info = RegisterInternal<T>();
@@ -531,6 +534,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="writer">Serialization target NetDataWriter</param>
         /// <param name="obj">Object to serialize</param>
+        /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public void Serialize<T>(NetDataWriter writer, T obj) where T : class, new()
         {
             RegisterInternal<T>().Write(writer, obj);

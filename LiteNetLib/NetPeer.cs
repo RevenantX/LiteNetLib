@@ -291,6 +291,11 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <exception cref="TooBigPacketException">
+        ///     <para>If size exceeds maximum limit:</para>
+        ///     <para>MTU - headerSize bytes for Unreliable</para>
+        ///     <para>Fragment count exceeded ushort.MaxValue</para>
+        /// </exception>
         public void Send(byte[] data, DeliveryMethod options)
         {
             Send(data, 0, data.Length, options);
@@ -301,6 +306,11 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="dataWriter">DataWriter with data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <exception cref="TooBigPacketException">
+        ///     <para>If size exceeds maximum limit:</para>
+        ///     <para>MTU - headerSize bytes for Unreliable</para>
+        ///     <para>Fragment count exceeded ushort.MaxValue</para>
+        /// </exception>
         public void Send(NetDataWriter dataWriter, DeliveryMethod options)
         {
             Send(dataWriter.Data, 0, dataWriter.Length, options);
@@ -313,6 +323,11 @@ namespace LiteNetLib
         /// <param name="start">Start of data</param>
         /// <param name="length">Length of data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <exception cref="TooBigPacketException">
+        ///     <para>If size exceeds maximum limit:</para>
+        ///     <para>MTU - headerSize bytes for Unreliable</para>
+        ///     <para>Fragment count exceeded ushort.MaxValue</para>
+        /// </exception>
         public void Send(byte[] data, int start, int length, DeliveryMethod options)
         {
             if (_connectionState == ConnectionState.ShutdownRequested || 
@@ -329,7 +344,7 @@ namespace LiteNetLib
             {
                 if (options == DeliveryMethod.Sequenced || options == DeliveryMethod.Unreliable)
                 {
-                    throw new ArgumentException("Unreliable packet size > allowed (" + (mtu - headerSize) + ")");
+                    throw new TooBigPacketException("Unreliable packet size exceeded maximum of " + (_mtu - headerSize) + " bytes");
                 }
                 
                 int packetFullSize = mtu - headerSize;
@@ -351,7 +366,7 @@ namespace LiteNetLib
 
                 if (totalPackets > ushort.MaxValue)
                 {
-                    throw new Exception("Too many fragments: " + totalPackets + " > " + ushort.MaxValue);
+                    throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + ushort.MaxValue);
                 }
 
                 int dataOffset = headerSize + NetConstants.FragmentHeaderSize;
@@ -485,7 +500,7 @@ namespace LiteNetLib
                     _packetPool.Recycle(packet);
                     break;
                 default:
-                    throw new Exception("Unknown packet property: " + packet.Property);
+                    throw new InvalidPacketException("Unknown packet property: " + packet.Property);
             }
         }
 
