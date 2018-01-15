@@ -292,9 +292,9 @@ namespace LiteNetLib
         /// <param name="data">Data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         /// <exception cref="TooBigPacketException">
-        ///     <para>If size exceeds maximum limit:</para>
-        ///     <para>MTU - headerSize bytes for Unreliable</para>
-        ///     <para>Fragment count exceeded ushort.MaxValue</para>
+        ///     If size exceeds maximum limit:<para/>
+        ///     MTU - headerSize bytes for Unreliable<para/>
+        ///     Fragment count exceeded ushort.MaxValue<para/>
         /// </exception>
         public void Send(byte[] data, DeliveryMethod options)
         {
