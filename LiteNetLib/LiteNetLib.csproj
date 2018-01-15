@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="INetEventListener.cs" />
     <Compile Include="NetDebug.cs" />
+    <Compile Include="NetExceptions.cs" />
     <Compile Include="NetPacketPool.cs" />
     <Compile Include="NetPeerCollection.cs" />
     <Compile Include="NetStatistics.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Utils\NetDataWriter.cs" />
     <Compile Include="Utils\NetPacketProcessor.cs" />
     <Compile Include="Utils\NetSerializer.cs" />
+    <Compile Include="Utils\NetSerializerExceptions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

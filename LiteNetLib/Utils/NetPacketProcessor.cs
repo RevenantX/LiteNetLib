@@ -37,7 +37,7 @@ namespace LiteNetLib.Utils
             SubscrieDelegate action;
             if (!_callbacks.TryGetValue(hash, out action))
             {
-                throw new Exception("Undefined packet in NetDataReader");
+                throw new ParseException("Undefined packet in NetDataReader");
             }
             return action;
         }
@@ -95,6 +95,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="reader">NetDataReader with packets data</param>
         /// <param name="userData">Argument that passed to OnReceivedEvent</param>
+        /// <exception cref="ParseException">Malformed packet</exception>
         public void ReadAllPackets(NetDataReader reader, object userData)
         {
             while (reader.AvailableBytes > 0)
@@ -107,6 +108,7 @@ namespace LiteNetLib.Utils
         /// Reads one packet from NetDataReader and calls OnReceive delegate
         /// </summary>
         /// <param name="reader">NetDataReader with packet</param>
+        /// <exception cref="ParseException">Malformed packet</exception>
         public void ReadPacket(NetDataReader reader)
         {
             ReadPacket(reader, null);
@@ -173,6 +175,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="reader">NetDataReader with packet</param>
         /// <param name="userData">Argument that passed to OnReceivedEvent</param>
+        /// <exception cref="ParseException">Malformed packet</exception>
         public void ReadPacket(NetDataReader reader, object userData)
         {
             GetCallbackFromData(reader)(reader, userData);
@@ -183,6 +186,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public void Subscribe<T>(Action<T> onReceive, Func<T> packetConstructor) where T : class, new()
         {
             _netSerializer.Register<T>();
@@ -199,6 +203,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public void Subscribe<T, TUserData>(Action<T, TUserData> onReceive, Func<T> packetConstructor) where T : class, new()
         {
             _netSerializer.Register<T>();
@@ -215,6 +220,7 @@ namespace LiteNetLib.Utils
         /// This metod will overwrite last received packet class on receive (less garbage)
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+        /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public void SubscribeReusable<T>(Action<T> onReceive) where T : class, new()
         {
             _netSerializer.Register<T>();
@@ -231,6 +237,7 @@ namespace LiteNetLib.Utils
         /// This metod will overwrite last received packet class on receive (less garbage)
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
+        /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public void SubscribeReusable<T, TUserData>(Action<T, TUserData> onReceive) where T : class, new()
         {
             _netSerializer.Register<T>();

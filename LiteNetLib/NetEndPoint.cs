@@ -40,6 +40,11 @@ namespace LiteNetLib
             return EndPoint.GetHashCode();
         }
 
+        /// <param name="hostStr">A valid host string that can be resolved by DNS or parsed as an IP address</param>
+        /// <param name="port">Port of the end point</param>
+        /// <exception cref="ArgumentException"> <paramref name="hostStr"/> contains an invalid IP address</exception>>
+        /// <exception cref="ArgumentOutOfRangeException"> 
+        ///     <paramref name="port"/> is less than IPEndPoint.MinPort or port is greater than IPEndPoint.MaxPort</exception>
         public NetEndPoint(string hostStr, int port)
         {
             IPAddress addr = GetFromString(hostStr);
@@ -69,7 +74,7 @@ namespace LiteNetLib
             }
             if (ipAddress == null)
             {
-                throw new Exception("Invalid address: " + hostStr);
+                throw new ArgumentException("Invalid address: " + hostStr);
             }
 
             return ipAddress;
