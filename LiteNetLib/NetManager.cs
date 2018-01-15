@@ -717,6 +717,9 @@ namespace LiteNetLib
                     case PacketProperty.ReliableSequenced:
                         //TODO: netEvent.DeliveryMethod = DeliveryMethod.ReliableSequenced;
                         break;
+                    case PacketProperty.KCP:
+                        netEvent.DeliveryMethod = DeliveryMethod.KCP;
+                        break;
                 }
                 netEvent.DataReader.SetSource(packet.CopyPacketData());
                 EnqueueEvent(netEvent);

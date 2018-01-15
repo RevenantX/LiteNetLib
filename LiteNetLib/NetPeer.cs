@@ -54,6 +54,7 @@ namespace LiteNetLib
         private readonly SequencedChannel _sequencedChannel;
         private readonly SimpleChannel _simpleChannel;
         private readonly ReliableSequencedChannel _reliableSequencedChannel;
+        private readonly KcpChannel _kcpChannel;
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
@@ -185,6 +186,7 @@ namespace LiteNetLib
             _sequencedChannel = new SequencedChannel(this);
             _simpleChannel = new SimpleChannel(this);
             _reliableSequencedChannel = new ReliableSequencedChannel(this);
+            _kcpChannel = new KcpChannel(this);
 
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
 
@@ -269,6 +271,8 @@ namespace LiteNetLib
                     return PacketProperty.Sequenced;
                 case DeliveryMethod.ReliableOrdered:
                     return PacketProperty.ReliableOrdered;
+                case DeliveryMethod.KCP:
+                    return PacketProperty.KCP;
                 //TODO: case DeliveryMethod.ReliableSequenced:
                 //    return PacketProperty.ReliableSequenced;
                 default:
@@ -342,7 +346,7 @@ namespace LiteNetLib
             //Check fragmentation
             if (length + headerSize > mtu)
             {
-                if (options == DeliveryMethod.Sequenced || options == DeliveryMethod.Unreliable)
+                if (options == DeliveryMethod.Sequenced || options == DeliveryMethod.Unreliable || options == DeliveryMethod.KCP)
                 {
                     throw new TooBigPacketException("Unreliable packet size exceeded maximum of " + (_mtu - headerSize) + " bytes");
                 }
@@ -484,6 +488,10 @@ namespace LiteNetLib
                 case PacketProperty.ReliableSequenced:
                     _reliableSequencedChannel.AddToQueue(packet);
                     break;
+                case PacketProperty.KCP:
+                    _kcpChannel.AddToQueue(packet);
+                    break;
+
                 case PacketProperty.MtuCheck:
                     //Must check result for MTU fix
                     if (!_netManager.SendRawAndRecycle(packet, _remoteEndPoint))
@@ -726,6 +734,10 @@ namespace LiteNetLib
                     _reliableSequencedChannel.ProcessPacket(packet);
                     break;
 
+                case PacketProperty.KCP:
+                    _kcpChannel.ProcessPacket(packet);
+                    break;
+
                 //Simple packet without acks
                 case PacketProperty.Unreliable:
                     AddIncomingPacket(packet);
@@ -796,6 +808,7 @@ namespace LiteNetLib
                 _reliableUnorderedChannel.SendNextPackets();
                 _reliableSequencedChannel.SendNextPackets();
                 _sequencedChannel.SendNextPackets();
+                _kcpChannel.SendNextPackets();
                 _simpleChannel.SendNextPackets();
 
                 //If merging enabled
@@ -867,6 +880,7 @@ namespace LiteNetLib
             //Pending acks
             _reliableOrderedChannel.SendAcks();
             _reliableUnorderedChannel.SendAcks();
+            _kcpChannel.Update((uint)deltaTime);
 
             //Send ping
             _pingSendTimer += deltaTime;

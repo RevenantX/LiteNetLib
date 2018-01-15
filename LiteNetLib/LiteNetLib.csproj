@@ -42,6 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="INetEventListener.cs" />
+    <Compile Include="KcpChannel.cs" />
+    <Compile Include="kcp\kcp.cs" />
+    <Compile Include="kcp\switch_queue.cs" />
     <Compile Include="NetDebug.cs" />
     <Compile Include="NetExceptions.cs" />
     <Compile Include="NetPacketPool.cs" />

@@ -19,6 +19,9 @@
 
   <ItemGroup>
     <Compile Include="..\LiteNetLib\INetEventListener.cs" Link="INetEventListener.cs" />
+    <Compile Include="..\LiteNetLib\KcpChannel.cs" Link="KcpChannel.cs"/>
+    <Compile Include="..\LiteNetLib\kcp\kcp.cs" Link="kcp\kcp.cs"/>
+    <Compile Include="..\LiteNetLib\kcp\switch_queue.cs" Link="kcp\switch_queue.cs"/>
     <Compile Include="..\LiteNetLib\NatPunchModule.cs" Link="NatPunchModule.cs" />
     <Compile Include="..\LiteNetLib\NetConstants.cs" Link="NetConstants.cs" />
     <Compile Include="..\LiteNetLib\NetDebug.cs" Link="NetDebug.cs" />
@@ -46,7 +49,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Utils\" />
+    <Folder Include="kcp\" />
+	<Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>
