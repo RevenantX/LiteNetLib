@@ -307,9 +307,9 @@ namespace LiteNetLib
         /// <param name="dataWriter">DataWriter with data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         /// <exception cref="TooBigPacketException">
-        ///     <para>If size exceeds maximum limit:</para>
-        ///     <para>MTU - headerSize bytes for Unreliable</para>
-        ///     <para>Fragment count exceeded ushort.MaxValue</para>
+        ///     If size exceeds maximum limit:<para/>
+        ///     MTU - headerSize bytes for Unreliable<para/>
+        ///     Fragment count exceeded ushort.MaxValue<para/>
         /// </exception>
         public void Send(NetDataWriter dataWriter, DeliveryMethod options)
         {
@@ -324,9 +324,9 @@ namespace LiteNetLib
         /// <param name="length">Length of data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         /// <exception cref="TooBigPacketException">
-        ///     <para>If size exceeds maximum limit:</para>
-        ///     <para>MTU - headerSize bytes for Unreliable</para>
-        ///     <para>Fragment count exceeded ushort.MaxValue</para>
+        ///     If size exceeds maximum limit:<para/>
+        ///     MTU - headerSize bytes for Unreliable<para/>
+        ///     Fragment count exceeded ushort.MaxValue<para/>
         /// </exception>
         public void Send(byte[] data, int start, int length, DeliveryMethod options)
         {
