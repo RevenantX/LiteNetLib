@@ -38,7 +38,11 @@ namespace LiteNetLib
     {
         //can be tuned
         public const int DefaultWindowSize = 64;
+#if UNITY_PS4
         public const int SocketBufferSize = 1024 * 1024; //1mb
+#else
+        public const int SocketBufferSize = 1024 * 1024 * 4; //4mb
+#endif
         public const int SocketTTL = 255;
 
         public const int HeaderSize = 1;

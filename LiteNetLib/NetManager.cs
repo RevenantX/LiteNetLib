@@ -283,13 +283,13 @@ namespace LiteNetLib
                 {
                     //invalid peer
                     return;
-                }
-                var netEvent = CreateEvent(NetEventType.Disconnect);
-                netEvent.Peer = peer;
-                netEvent.AdditionalData = socketErrorCode;
-                netEvent.DisconnectReason = reason;
-                EnqueueEvent(netEvent);           
+                }          
             }
+            var netEvent = CreateEvent(NetEventType.Disconnect);
+            netEvent.Peer = peer;
+            netEvent.AdditionalData = socketErrorCode;
+            netEvent.DisconnectReason = reason;
+            EnqueueEvent(netEvent);
         }
 
         private void ClearPeers()
