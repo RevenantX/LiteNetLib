@@ -143,14 +143,9 @@ namespace LiteNetLib
                 {
                     //Move window
                     _headPendingPacket = _headPendingPacket.Next;
-                    if (_headPendingPacket == null)
-                    {
-                        _localWindowStart = (_localWindowStart + 1) % NetConstants.MaxSequence;
-                    }
-                    else
-                    {
-                        _localWindowStart = _headPendingPacket.Packet.Sequence;
-                    }
+                    _localWindowStart = _headPendingPacket != null
+                        ? _headPendingPacket.Packet.Sequence
+                        : (_localWindowStart + 1) % NetConstants.MaxSequence;
                 }
                 if (pendingPacket == _tailPendingPacket)
                 {
@@ -254,14 +249,15 @@ namespace LiteNetLib
         //Process incoming packet
         public void ProcessPacket(NetPacket packet)
         {
-            if (packet.Sequence >= NetConstants.MaxSequence)
+            int seq = packet.Sequence;
+            if (seq >= NetConstants.MaxSequence)
             {
                 NetUtils.DebugWrite("[RR]Bad sequence");
                 return;
             }
 
-            int relate = NetUtils.RelativeSequenceNumber(packet.Sequence, _remoteWindowStart);
-            int relateSeq = NetUtils.RelativeSequenceNumber(packet.Sequence, _remoteSequence);
+            int relate = NetUtils.RelativeSequenceNumber(seq, _remoteWindowStart);
+            int relateSeq = NetUtils.RelativeSequenceNumber(seq, _remoteSequence);
 
             if (relateSeq > _windowSize)
             {
@@ -308,7 +304,7 @@ namespace LiteNetLib
             //Final stage - process valid packet
             //trigger acks send
             _mustSendAcks = true;
-            ackIdx = packet.Sequence % _windowSize;
+            ackIdx = seq % _windowSize;
             ackByte = 3 + ackIdx / BitsInByte;
             ackBit = ackIdx % BitsInByte;
             if ((_outgoingAcks.RawData[ackByte] & (1 << ackBit)) != 0)
@@ -323,7 +319,7 @@ namespace LiteNetLib
             Monitor.Exit(_outgoingAcks);
 
             //detailed check
-            if (packet.Sequence == _remoteSequence)
+            if (seq == _remoteSequence)
             {
                 NetUtils.DebugWrite("[RR]ReliableInOrder packet succes");
                 _peer.AddIncomingPacket(packet);
@@ -356,11 +352,11 @@ namespace LiteNetLib
             //holded packet
             if (_ordered)
             {
-                _receivedPackets[packet.Sequence % _windowSize] = packet;
+                _receivedPackets[ackIdx] = packet;
             }
             else
             {
-                _earlyReceived[packet.Sequence % _windowSize] = true;
+                _earlyReceived[ackIdx] = true;
                 _peer.AddIncomingPacket(packet);
             }
         }
