@@ -390,6 +390,7 @@ namespace LiteNetLib
         {
             while (IsRunning)
             {
+                long startTime = DateTime.UtcNow.Ticks;
 #if DEBUG
                 if (SimulateLatency)
                 {
@@ -437,7 +438,11 @@ namespace LiteNetLib
 #if STATS_ENABLED
                 Statistics.PacketLoss = totalPacketLoss;
 #endif
-                Thread.Sleep(UpdateTime);
+                int sleepTime = UpdateTime - (int)((DateTime.UtcNow.Ticks - startTime) / TimeSpan.TicksPerMillisecond);
+                if (sleepTime > 0)
+                {
+                    Thread.Sleep(sleepTime);
+                }
             }
         }
         
