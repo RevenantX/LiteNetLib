@@ -864,10 +864,6 @@ namespace LiteNetLib
                 return;
             }
 
-            //Pending acks
-            _reliableOrderedChannel.SendAcks();
-            _reliableUnorderedChannel.SendAcks();
-
             //Send ping
             _pingSendTimer += deltaTime;
             if (_pingSendTimer >= _netManager.PingInterval)
