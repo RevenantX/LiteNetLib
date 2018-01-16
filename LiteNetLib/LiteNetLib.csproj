@@ -48,6 +48,7 @@
     <Compile Include="NetPeerCollection.cs" />
     <Compile Include="NetStatistics.cs" />
     <Compile Include="ReliableSequencedChannel.cs" />
+    <Compile Include="SwitchQueue.cs" />
     <Compile Include="Utils\FastBitConverter.cs" />
     <Compile Include="NatPunchModule.cs" />
     <Compile Include="NetConstants.cs" />

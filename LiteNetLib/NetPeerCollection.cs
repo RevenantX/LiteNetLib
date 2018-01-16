@@ -51,6 +51,21 @@ namespace LiteNetLib
             return result;
         }
 
+        public void Remove(NetPeer peer)
+        {
+            for (int idx = 0; idx < Count; idx++)
+            {
+                if (_peersArray[idx] == peer)
+                {
+                    _peersDict.Remove(_peersArray[idx].EndPoint);
+                    _peersArray[idx] = _peersArray[Count - 1];
+                    _peersArray[Count - 1] = null;
+                    Count--;
+                    break;
+                }
+            }
+        }
+
         public void RemoveAt(int idx)
         {
             _peersDict.Remove(_peersArray[idx].EndPoint);

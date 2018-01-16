@@ -6,35 +6,30 @@ namespace LiteNetLib
     {
         private int _localSequence;
         private int _remoteSequence;
-        private readonly Queue<NetPacket> _outgoingPackets;
+        private readonly SwitchQueue<NetPacket> _outgoingPackets;
         private readonly NetPeer _peer;
 
         public SequencedChannel(NetPeer peer)
         {
-            _outgoingPackets = new Queue<NetPacket>();
+            _outgoingPackets = new SwitchQueue<NetPacket>();
             _peer = peer;
         }
 
         public void AddToQueue(NetPacket packet)
         {
-            lock (_outgoingPackets)
-            {
-                _outgoingPackets.Enqueue(packet);
-            }
+            _outgoingPackets.Push(packet);
         }
 
         public void SendNextPackets()
         {
-            lock (_outgoingPackets)
+            _outgoingPackets.Switch();
+            while (_outgoingPackets.Empty() != true)
             {
-                while (_outgoingPackets.Count > 0)
-                {
-                    NetPacket packet = _outgoingPackets.Dequeue();
-                    _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
-                    packet.Sequence = (ushort)_localSequence;
-                    _peer.SendRawData(packet);
-                    _peer.Recycle(packet);
-                }
+                NetPacket packet = _outgoingPackets.Pop();
+                _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
+                packet.Sequence = (ushort)_localSequence;
+                _peer.SendRawData(packet);
+                _peer.Recycle(packet);
             }
         }
 
