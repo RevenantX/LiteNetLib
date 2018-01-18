@@ -15,10 +15,24 @@ namespace LiteNetLib
         public int Port { get { return EndPoint.Port; } }
 
         internal readonly IPEndPoint EndPoint;
+#if WIN32 && UNSAFE
+        internal readonly byte[] SocketAddr;
+        private byte[] MakeSocketAddr(IPEndPoint ep)
+        {
+            var saddr = ep.Serialize();
+            byte[] data = new byte[saddr.Size];
+            for(int i = 0; i < saddr.Size; i++)
+                data[i] = saddr[i];
+            return data;
+        }
+#endif
 
         internal NetEndPoint(IPEndPoint ipEndPoint)
         {
             EndPoint = ipEndPoint;
+#if WIN32 && UNSAFE
+            SocketAddr = MakeSocketAddr(ipEndPoint);
+#endif
         }
 
         public override bool Equals(object obj)
@@ -49,6 +63,9 @@ namespace LiteNetLib
         {
             IPAddress addr = GetFromString(hostStr);
             EndPoint = new IPEndPoint(addr, port);
+#if WIN32 && UNSAFE
+            SocketAddr = MakeSocketAddr(EndPoint);
+#endif
         }
 
         internal static IPAddress GetFromString(string hostStr)

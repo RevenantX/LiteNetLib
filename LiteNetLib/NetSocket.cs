@@ -2,6 +2,9 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+#if WIN32 && UNSAFE
+using System.Runtime.InteropServices;
+#endif
 
 namespace LiteNetLib
 {
@@ -14,6 +17,25 @@ namespace LiteNetLib
         private bool _running;
         private readonly object _receiveLock = new object();
         private readonly NetManager.OnMessageReceived _onMessageReceived;
+
+#if WIN32 && UNSAFE
+        [DllImport("ws2_32.dll", SetLastError = true)]
+        private static extern unsafe int sendto(
+            [In()] IntPtr socketHandle, 
+            [In()] byte* pinnedBuffer,
+            [In()] int len, 
+            [In()] SocketFlags socketFlags, 
+            [In()] byte[] socketAddress,
+            [In()] int socketAddressSize);
+
+        [DllImport("ws2_32.dll", SetLastError = true)]
+        private static extern int recvfrom([In] IntPtr socketHandle, 
+            [In] byte[] pinnedBuffer, 
+            [In] int len, 
+            [In] SocketFlags socketFlags, 
+            [Out] byte[] socketAddress, 
+            [In, Out] ref int socketAddressSize);
+#endif
 
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
         internal static readonly bool IPv6Support;
@@ -39,6 +61,11 @@ namespace LiteNetLib
             Socket socket = (Socket)state;
             EndPoint bufferEndPoint = new IPEndPoint(socket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
             NetEndPoint bufferNetEndPoint = new NetEndPoint((IPEndPoint)bufferEndPoint);
+#if WIN32 && UNSAFE
+            SocketAddress saddr = new SocketAddress(socket.AddressFamily);
+            int saddrSize = saddr.Size;
+            byte[] socketAddress = new byte[saddrSize];
+#endif
             byte[] receiveBuffer = new byte[NetConstants.PacketSizeLimit];
 
             while (_running)
@@ -48,11 +75,39 @@ namespace LiteNetLib
                 //Reading data
                 try
                 {
+#if WIN32 && UNSAFE
+                    result = recvfrom(
+                        socket.Handle,
+                        receiveBuffer,
+                        receiveBuffer.Length,
+                        SocketFlags.None,
+                        socketAddress,
+                        ref saddrSize);
+                    if ((SocketError) result == SocketError.SocketError)
+                    {
+                        throw new SocketException(Marshal.GetLastWin32Error());
+                    }
+
+                    bool recreate = false;
+                    for(int i = 0; i < saddrSize; i++)
+                    {
+                        if(socketAddress[i] != saddr[i])
+                        {
+                            recreate = true;
+                        }
+                        saddr[i] = socketAddress[i];
+                    }
+                    if(recreate)
+                    {
+                        bufferNetEndPoint = new NetEndPoint((IPEndPoint)bufferEndPoint.Create(saddr));
+                    }
+#else
                     result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
                     if (!bufferNetEndPoint.EndPoint.Equals(bufferEndPoint))
                     {
                         bufferNetEndPoint = new NetEndPoint((IPEndPoint)bufferEndPoint);
                     }
+#endif
                 }
                 catch (SocketException ex)
                 {
@@ -212,7 +267,28 @@ namespace LiteNetLib
                 int result = 0;
                 if (remoteEndPoint.EndPoint.AddressFamily == AddressFamily.InterNetwork)
                 {
+#if WIN32 && UNSAFE
+                    unsafe
+                    {
+                        fixed (byte* pinnedBuffer = data)
+                        {
+                            result = sendto(
+                                _udpSocketv4.Handle,
+                                pinnedBuffer + offset,
+                                size,
+                                SocketFlags.None,
+                                remoteEndPoint.SocketAddr,
+                                remoteEndPoint.SocketAddr.Length);
+                        }
+                    }
+
+                    if ((SocketError) result == SocketError.SocketError)
+                    {
+                        throw new SocketException(Marshal.GetLastWin32Error());
+                    }
+#else
                     result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
+#endif
                 }
                 else if(IPv6Support)
                 {

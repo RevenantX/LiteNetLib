@@ -22,6 +22,7 @@
     <Optimize>false</Optimize>
     <Externalconsole>true</Externalconsole>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -33,9 +34,23 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\LiteNetLib.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <DefineConstants>
+    </DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'WIN_UNSAFE|AnyCPU'">
+    <OutputPath>bin\WIN_UNSAFE\</OutputPath>
+    <DefineConstants>WIN32;UNSAFE</DefineConstants>
+    <DocumentationFile>bin\Release\LiteNetLib.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
