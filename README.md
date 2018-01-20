@@ -49,7 +49,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
 
 ## Usage samples
 
-### Server
+### Client
 ```csharp
 EventBasedNetListener listener = new EventBasedNetListener();
 NetManager client = new NetManager(listener);
@@ -68,7 +68,7 @@ while (!Console.KeyAvailable)
 
 client.Stop();
 ```
-### Client
+### Server
 ```csharp
 EventBasedNetListener listener = new EventBasedNetListener();
 NetManager server = new NetManager(listener, 2 /* maximum clients */);
