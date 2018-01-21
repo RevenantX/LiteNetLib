@@ -62,9 +62,10 @@ namespace LiteNetLib
             EndPoint bufferEndPoint = new IPEndPoint(socket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
             NetEndPoint bufferNetEndPoint = new NetEndPoint((IPEndPoint)bufferEndPoint);
 #if WIN32 && UNSAFE
-            SocketAddress saddr = new SocketAddress(socket.AddressFamily);
-            int saddrSize = saddr.Size;
+            int saddrSize = 32;
+            byte[] prevAddress = new byte[saddrSize];
             byte[] socketAddress = new byte[saddrSize];
+            byte[] addrBuffer = new byte[16]; //IPAddress.IPv6AddressBytes
 #endif
             byte[] receiveBuffer = new byte[NetConstants.PacketSizeLimit];
 
@@ -91,15 +92,38 @@ namespace LiteNetLib
                     bool recreate = false;
                     for(int i = 0; i < saddrSize; i++)
                     {
-                        if(socketAddress[i] != saddr[i])
+                        if(socketAddress[i] != prevAddress[i])
                         {
+                            prevAddress[i] = socketAddress[i];
                             recreate = true;
                         }
-                        saddr[i] = socketAddress[i];
                     }
                     if(recreate)
                     {
-                        bufferNetEndPoint = new NetEndPoint((IPEndPoint)bufferEndPoint.Create(saddr));
+                        if (socket.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            int port = (socketAddress[2]<<8 & 0xFF00) | socketAddress[3]; 
+                            long address = (
+                                (socketAddress[4]     & 0x000000FF) |
+                                (socketAddress[5]<<8  & 0x0000FF00) | 
+                                (socketAddress[6]<<16 & 0x00FF0000) |
+                                (socketAddress[7]<<24) 
+                            ) & 0x00000000FFFFFFFF; 
+                            bufferNetEndPoint = new NetEndPoint(new IPEndPoint(address, port));
+                        }
+                        else
+                        {
+                            for (int i = 0; i < addrBuffer.Length; i++)
+                            { 
+                                addrBuffer[i] = socketAddress[i + 8]; 
+                            }
+                            int port = (socketAddress[2]<<8 & 0xFF00) | (socketAddress[3]);
+                            long scope = (socketAddress[27] << 24) + 
+                                (socketAddress[26] << 16) +
+                                (socketAddress[25] << 8 ) + 
+                                (socketAddress[24]);
+                            bufferNetEndPoint = new NetEndPoint(new IPEndPoint(new IPAddress(addrBuffer, scope), port));
+                        }     
                     }
 #else
                     result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
