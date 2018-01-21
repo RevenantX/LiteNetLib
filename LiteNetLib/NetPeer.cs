@@ -827,16 +827,25 @@ namespace LiteNetLib
 
         internal void Update(int deltaTime)
         {
-            if ((_connectionState == ConnectionState.Connected || _connectionState == ConnectionState.ShutdownRequested) 
-            && _timeSinceLastPacket > _netManager.DisconnectTimeout)
+            if (_connectionState == ConnectionState.Connected && _timeSinceLastPacket > _netManager.DisconnectTimeout)
             {
-                NetUtils.DebugWrite("[UPDATE] Disconnect by timeout: {0} > {1}", _timeSinceLastPacket, _netManager.DisconnectTimeout);
+                NetUtils.DebugWrite(
+                    "[UPDATE] Disconnect by timeout: {0} > {1}", 
+                    _timeSinceLastPacket,
+                    _netManager.DisconnectTimeout);
                 _netManager.DisconnectPeer(this, DisconnectReason.Timeout, 0, true, null, 0, 0);
                 return;
             }
             if (_connectionState == ConnectionState.ShutdownRequested)
             {
-                _netManager.SendRaw(_shutdownPacket.RawData, 0, _shutdownPacket.Size, _remoteEndPoint);
+                if (_timeSinceLastPacket > _netManager.DisconnectTimeout)
+                {
+                    _connectionState = ConnectionState.Disconnected;
+                }
+                else
+                {
+                    _netManager.SendRaw(_shutdownPacket.RawData, 0, _shutdownPacket.Size, _remoteEndPoint);
+                }
                 return;
             }
             if (_connectionState == ConnectionState.Disconnected)
