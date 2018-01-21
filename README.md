@@ -106,7 +106,7 @@ server.Stop();
   * default value: **false**
 * **UpdateTime**
   * library logic update (and send) period in milliseconds
-  * default value: **100 msec**. For games you can use 15 msec (66 ticks per second)
+  * default value: **15 msec**.
 * **PingInterval**
   * Interval for latency detection and checking connection
   * default value: **1000 msec**.
