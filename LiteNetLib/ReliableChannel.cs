@@ -32,7 +32,6 @@ namespace LiteNetLib
         private readonly NetPacket[] _receivedPackets;       //for order
         private readonly bool[] _earlyReceived;              //for unordered
         private PendingPacket _headPendingPacket;
-        private PendingPacket _tailPendingPacket;
 
         private int _localSeqence;
         private int _remoteSequence;
@@ -45,6 +44,7 @@ namespace LiteNetLib
         private readonly bool _ordered;
         private readonly int _windowSize;
         private const int BitsInByte = 8;
+        private int _ackedPackets = 1;
 
         public int PacketsInQueue
         {
@@ -141,17 +141,19 @@ namespace LiteNetLib
 
                 if (seq == _localWindowStart)
                 {
-                    //Move window
-                    _headPendingPacket = _headPendingPacket.Next;
-                    _localWindowStart = _headPendingPacket != null
-                        ? _headPendingPacket.Packet.Sequence
-                        : (_localWindowStart + 1) % NetConstants.MaxSequence;
+                    //Move window                
+                    _localWindowStart = (_localWindowStart + _ackedPackets) % NetConstants.MaxSequence;
+                    _ackedPackets = 1;
                 }
-                if (pendingPacket == _tailPendingPacket)
+                else
                 {
-                    _tailPendingPacket = prevPacket;
+                    _ackedPackets++;
                 }
-                
+                if (_headPendingPacket == pendingPacket)
+                {
+                    _headPendingPacket = _headPendingPacket.Next;
+                }
+
                 var packetToClear = pendingPacket;
 
                 //move forward
@@ -164,6 +166,7 @@ namespace LiteNetLib
                 //clear acked packet
                 _peer.Recycle(packetToClear.Packet);
                 packetToClear.Clear();
+
                 NetUtils.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", seq);
             }
             Monitor.Exit(_pendingPackets);
@@ -200,15 +203,8 @@ namespace LiteNetLib
                     PendingPacket pendingPacket = _pendingPackets[_localSeqence % _windowSize];
                     pendingPacket.Packet = _outgoingPackets.Dequeue();
                     pendingPacket.Packet.Sequence = (ushort)_localSeqence;
-                    if (_headPendingPacket == null)
-                    {
-                        _headPendingPacket = pendingPacket;
-                    }
-                    else
-                    {
-                        _tailPendingPacket.Next = pendingPacket;
-                    }
-                    _tailPendingPacket = pendingPacket;
+                    pendingPacket.Next = _headPendingPacket;
+                    _headPendingPacket = pendingPacket;
                     _localSeqence = (_localSeqence + 1) % NetConstants.MaxSequence;
                 }
                 else //Queue filled
