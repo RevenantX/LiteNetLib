@@ -12,12 +12,6 @@ namespace LiteNetLib
             public long TimeStamp;
             public bool Sended;
             public PendingPacket Next;
-
-            public override string ToString()
-            {
-                return (Packet != null).ToString();
-            }
-
             public void Clear()
             {
                 Next = null;
@@ -83,8 +77,7 @@ namespace LiteNetLib
         //ProcessAck in packet
         public void ProcessAck(NetPacket packet)
         {
-            int validPacketSize = (_windowSize - 1) / BitsInByte + 1 + NetConstants.SequencedHeaderSize;
-            if (packet.Size != validPacketSize)
+            if (packet.Size != _outgoingAcks.Size)
             {
                 NetUtils.DebugWrite("[PA]Invalid acks packet size");
                 return;
@@ -105,8 +98,6 @@ namespace LiteNetLib
             }
 
             byte[] acksData = packet.RawData;
-            NetUtils.DebugWrite("[PA]AcksStart: {0}", ackWindowStart);
-            int startByte = NetConstants.SequencedHeaderSize;
             Monitor.Enter(_pendingPackets);
             PendingPacket pendingPacket = _headPendingPacket;
             PendingPacket prevPacket = null;
@@ -114,19 +105,15 @@ namespace LiteNetLib
             {
                 int seq = pendingPacket.Packet.Sequence;
                 int rel = NetUtils.RelativeSequenceNumber(seq, ackWindowStart);
-                if (rel < 0)
+                if (rel < 0 || rel >= _windowSize)
                 {
                     prevPacket = pendingPacket;
                     pendingPacket = pendingPacket.Next;
                     continue;
                 }
-                if (rel >= _windowSize)
-                {
-                    break;
-                }
 
-                int idx = (ackWindowStart + seq) % _windowSize;
-                int currentByte = startByte + idx / BitsInByte;
+                int idx = seq % _windowSize;
+                int currentByte = NetConstants.SequencedHeaderSize + idx / BitsInByte;
                 int currentBit = idx % BitsInByte;
                 if ((acksData[currentByte] & (1 << currentBit)) == 0)
                 {
@@ -276,10 +263,10 @@ namespace LiteNetLib
             }
 
             //If very new - move window
-            Monitor.Enter(_outgoingAcks);
             int ackIdx;
             int ackByte;
             int ackBit;
+            Monitor.Enter(_outgoingAcks);
             if (relate >= _windowSize)
             {
                 //New window position
@@ -290,7 +277,7 @@ namespace LiteNetLib
                 while (_remoteWindowStart != newWindowStart)
                 {
                     ackIdx = _remoteWindowStart % _windowSize;
-                    ackByte = 3 + ackIdx / BitsInByte;
+                    ackByte = NetConstants.SequencedHeaderSize + ackIdx / BitsInByte;
                     ackBit = ackIdx % BitsInByte;
                     _outgoingAcks.RawData[ackByte] &= (byte)~(1 << ackBit);
                     _remoteWindowStart = (_remoteWindowStart + 1) % NetConstants.MaxSequence;
@@ -301,7 +288,7 @@ namespace LiteNetLib
             //trigger acks send
             _mustSendAcks = true;
             ackIdx = seq % _windowSize;
-            ackByte = 3 + ackIdx / BitsInByte;
+            ackByte = NetConstants.SequencedHeaderSize + ackIdx / BitsInByte;
             ackBit = ackIdx % BitsInByte;
             if ((_outgoingAcks.RawData[ackByte] & (1 << ackBit)) != 0)
             {
