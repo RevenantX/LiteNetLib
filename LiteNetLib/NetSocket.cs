@@ -29,12 +29,28 @@ namespace LiteNetLib
             [In] int socketAddressSize);
 
         [DllImport("ws2_32.dll", SetLastError = true)]
-        private static extern int recvfrom([In] IntPtr socketHandle, 
+        private static extern int recvfrom(
+            [In] IntPtr socketHandle, 
             [In] byte[] pinnedBuffer, 
             [In] int len, 
             [In] SocketFlags socketFlags, 
             [Out] byte[] socketAddress, 
             [In, Out] ref int socketAddressSize);
+
+        internal struct TimeValue
+        {
+            public int Seconds;
+            public int Microseconds;
+        }
+        private static TimeValue SendPollTime = new TimeValue { Microseconds = SocketSendPollTime };
+
+        [DllImport("ws2_32.dll", SetLastError = true)]
+        private static extern int select(
+            [In] int ignoredParameter, 
+            [In, Out] IntPtr[] readfds, 
+            [In, Out] IntPtr[] writefds, 
+            [In, Out] IntPtr[] exceptfds, 
+            [In] ref TimeValue timeout);
 #endif
 
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
@@ -68,25 +84,33 @@ namespace LiteNetLib
             byte[] prevAddress = new byte[saddrSize];
             byte[] socketAddress = new byte[saddrSize];
             byte[] addrBuffer = new byte[16]; //IPAddress.IPv6AddressBytes
+
+            var sockeHandle = socket.Handle;
+            TimeValue time = new TimeValue {Microseconds = SocketReceivePollTime};
 #endif
             byte[] receiveBuffer = new byte[NetConstants.PacketSizeLimit];
 
             while (_running)
             {
-                //wait for data
-                if (!socket.Poll(SocketReceivePollTime, SelectMode.SelectRead))
-                {
-                    continue;
-                }
-
                 int result;
 
                 //Reading data
                 try
                 {
 #if WIN32 && UNSAFE
+                    IntPtr[] fileDescriptorSet = { (IntPtr)1, sockeHandle };
+                    int socketCount = select( 0, fileDescriptorSet, null, null, ref time);
+                    if ((SocketError) socketCount == SocketError.SocketError)
+                    {
+                        throw new SocketException(Marshal.GetLastWin32Error());
+                    }
+                    if ((int)fileDescriptorSet[0] == 0 || fileDescriptorSet[1] != sockeHandle)
+                    {
+                        continue;
+                    }
+
                     result = recvfrom(
-                        socket.Handle,
+                        sockeHandle,
                         receiveBuffer,
                         receiveBuffer.Length,
                         SocketFlags.None,
@@ -134,6 +158,10 @@ namespace LiteNetLib
                         }     
                     }
 #else
+                    if (!socket.Poll(SocketReceivePollTime, SelectMode.SelectRead))
+                    {
+                        continue;
+                    }
                     result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
                     if (!bufferNetEndPoint.EndPoint.Equals(bufferEndPoint))
                     {
@@ -262,25 +290,24 @@ namespace LiteNetLib
 
         public bool SendBroadcast(byte[] data, int offset, int size, int port)
         {
+            bool success;
             try
             {
-                if (_udpSocketv4.SendTo(
-                        data,
-                        offset,
-                        size,
-                        SocketFlags.None,
-                        new IPEndPoint(IPAddress.Broadcast, port)) <= 0)
-                        return false;
+                success = _udpSocketv4.SendTo(
+                             data,
+                             offset,
+                             size,
+                             SocketFlags.None,
+                             new IPEndPoint(IPAddress.Broadcast, port)) > 0;
            
                 if (IPv6Support)
                 {
-                    if (_udpSocketv6.SendTo(
-                            data, 
-                            offset, 
-                            size, 
-                            SocketFlags.None, 
-                            new IPEndPoint(MulticastAddressV6, port)) <= 0)
-                        return false;
+                    success = success || _udpSocketv6.SendTo(
+                                 data,
+                                 offset,
+                                 size,
+                                 SocketFlags.None,
+                                 new IPEndPoint(MulticastAddressV6, port)) > 0;
                 }
             }
             catch (Exception ex)
@@ -288,47 +315,55 @@ namespace LiteNetLib
                 NetUtils.DebugWriteError("[S][MCAST]" + ex);
                 return false;
             }
-            return true;
+            return success;
         }
 
         public int SendTo(byte[] data, int offset, int size, NetEndPoint remoteEndPoint, ref int errorCode)
         {
             try
             {
-                int result = 0;
-                if (remoteEndPoint.EndPoint.AddressFamily == AddressFamily.InterNetwork)
+                var socket = _udpSocketv4;
+                if (remoteEndPoint.EndPoint.AddressFamily == AddressFamily.InterNetworkV6 && IPv6Support)
                 {
-#if WIN32 && UNSAFE
-                    unsafe
-                    {
-                        fixed (byte* pinnedBuffer = data)
-                        {
-                            result = sendto(
-                                _udpSocketv4.Handle,
-                                pinnedBuffer + offset,
-                                size,
-                                SocketFlags.None,
-                                remoteEndPoint.SocketAddr,
-                                remoteEndPoint.SocketAddr.Length);
-                        }
-                    }
+                    socket = _udpSocketv6;
+                }
 
-                    if ((SocketError) result == SocketError.SocketError)
-                    {
-                        throw new SocketException(Marshal.GetLastWin32Error());
-                    }
-#else
-                    if (!_udpSocketv4.Poll(SocketSendPollTime, SelectMode.SelectWrite))
-                        return -1;
-                    result = _udpSocketv4.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
-#endif
-                }
-                else if(IPv6Support)
+                int result;
+#if WIN32 && UNSAFE
+                var handle = socket.Handle;
+                IntPtr[] fileDescriptorSet = { (IntPtr)1, handle };
+                int socketCount = select(0, null, fileDescriptorSet, null, ref SendPollTime);
+                if ((SocketError)socketCount == SocketError.SocketError)
                 {
-                    if (!_udpSocketv6.Poll(SocketSendPollTime, SelectMode.SelectWrite))
-                        return -1;
-                    result = _udpSocketv6.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
+                    throw new SocketException(Marshal.GetLastWin32Error());
                 }
+                if ((int)fileDescriptorSet[0] == 0 || fileDescriptorSet[1] != handle)
+                {
+                    return 0;
+                }
+                unsafe
+                {
+                    fixed (byte* pinnedBuffer = data)
+                    {
+                        result = sendto(
+                            handle,
+                            pinnedBuffer + offset,
+                            size,
+                            SocketFlags.None,
+                            remoteEndPoint.SocketAddr,
+                            remoteEndPoint.SocketAddr.Length);
+                    }
+                }
+
+                if ((SocketError) result == SocketError.SocketError)
+                {
+                    throw new SocketException(Marshal.GetLastWin32Error());
+                }
+#else
+                if (!socket.Poll(SocketSendPollTime, SelectMode.SelectWrite))
+                    return -1;
+                result = socket.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint.EndPoint);
+#endif
 
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint.EndPoint, result);
                 return result;
