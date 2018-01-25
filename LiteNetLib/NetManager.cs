@@ -64,7 +64,7 @@ namespace LiteNetLib
         private readonly NetPeerCollection _peers;
         private readonly HashSet<NetEndPoint> _connectingPeers;
         private readonly int _maxConnections;
-        private List<NetPeer> _peerList;
+        private List<NetPeer> _connectedPeerList;
 
         internal readonly NetPacketPool NetPacketPool;
 
@@ -180,18 +180,18 @@ namespace LiteNetLib
         {
             get
             {
-                _peerList.Clear();
+                _connectedPeerList.Clear();
                 lock (_peers)
                 {
                     for(int i = 0; i < _peers.Count; i++)
                     {
                         if ((_peers[i].ConnectionState & ConnectionState.Connected) != 0)
                         {
-                            _peerList.Add(_peers[i]);
+                            _connectedPeerList.Add(_peers[i]);
                         }
                     }
                 }
-                return _peerList;
+                return _connectedPeerList;
             }
         }
         
@@ -206,7 +206,7 @@ namespace LiteNetLib
         /// <param name="listener">Network events listener</param>
         public NetManager(INetEventListener listener) : this(listener, 1)
         {
-            
+            _connectedPeerList = new List<NetPeer>();
         }
 
         /// <summary>
@@ -227,6 +227,7 @@ namespace LiteNetLib
             _peers = new NetPeerCollection(maxConnections);
             _connectingPeers = new HashSet<NetEndPoint>();
             _maxConnections = maxConnections;
+            _connectedPeerList = new List<NetPeer>();
         }
 
         internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
