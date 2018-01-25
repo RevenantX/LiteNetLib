@@ -185,7 +185,7 @@ namespace LiteNetLib
                 {
                     for(int i = 0; i < _peers.Count; i++)
                     {
-                        if ((_peers[i].ConnectionState & peerState) != 0)
+                        if ((_peers[i].ConnectionState & ConnectionState.Connected) != 0)
                         {
                             _peerList.Add(_peers[i]);
                         }
