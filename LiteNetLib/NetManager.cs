@@ -176,7 +176,7 @@ namespace LiteNetLib
             get { return _socket.LocalPort; }
         }
         
-        public List<NetPeer> PeerList
+        public List<NetPeer> ConnectedPeerList
         {
             get
             {
@@ -193,6 +193,11 @@ namespace LiteNetLib
                 }
                 return _peerList;
             }
+        }
+        
+        public int PeersCount
+        {
+            get { return _peers.Count; }
         }
 
         /// <summary>
