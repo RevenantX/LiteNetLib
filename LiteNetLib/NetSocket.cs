@@ -84,8 +84,8 @@ namespace LiteNetLib
             byte[] prevAddress = new byte[saddrSize];
             byte[] socketAddress = new byte[saddrSize];
             byte[] addrBuffer = new byte[16]; //IPAddress.IPv6AddressBytes
-
             var sockeHandle = socket.Handle;
+            IntPtr[] fileDescriptorSet = { (IntPtr)1, sockeHandle };
             TimeValue time = new TimeValue {Microseconds = SocketReceivePollTime};
 #endif
             byte[] receiveBuffer = new byte[NetConstants.PacketSizeLimit];
@@ -98,7 +98,8 @@ namespace LiteNetLib
                 try
                 {
 #if WIN32 && UNSAFE
-                    IntPtr[] fileDescriptorSet = { (IntPtr)1, sockeHandle };
+                    fileDescriptorSet[0] = (IntPtr)1;
+                    fileDescriptorSet[1] = sockeHandle;
                     int socketCount = select( 0, fileDescriptorSet, null, null, ref time);
                     if ((SocketError) socketCount == SocketError.SocketError)
                     {
