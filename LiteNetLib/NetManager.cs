@@ -206,7 +206,7 @@ namespace LiteNetLib
         /// <param name="listener">Network events listener</param>
         public NetManager(INetEventListener listener) : this(listener, 1)
         {
-            _connectedPeerList = new List<NetPeer>();
+            
         }
 
         /// <summary>
