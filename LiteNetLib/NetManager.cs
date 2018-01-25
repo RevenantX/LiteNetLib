@@ -64,7 +64,7 @@ namespace LiteNetLib
         private readonly NetPeerCollection _peers;
         private readonly HashSet<NetEndPoint> _connectingPeers;
         private readonly int _maxConnections;
-        private List<Peer> _peerList;
+        private List<NetPeer> _peerList;
 
         internal readonly NetPacketPool NetPacketPool;
 
@@ -176,7 +176,7 @@ namespace LiteNetLib
             get { return _socket.LocalPort; }
         }
         
-        public List<Peer> PeerList
+        public List<NetPeer> PeerList
         {
             get
             {
@@ -193,11 +193,6 @@ namespace LiteNetLib
                 }
                 return _peerList;
             }
-        }
-
-        public int PeersCount
-        {
-            get { return _peers.Count; }
         }
 
         /// <summary>
