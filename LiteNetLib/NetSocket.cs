@@ -15,7 +15,6 @@ namespace LiteNetLib
         private Thread _threadv4;
         private Thread _threadv6;
         private bool _running;
-        private readonly object _receiveLock = new object();
         private readonly NetManager.OnMessageReceived _onMessageReceived;
 
 #if WIN32 && UNSAFE
@@ -64,6 +63,8 @@ namespace LiteNetLib
         {
 #if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
             IPv6Support = Socket.SupportsIPv6;
+#elif DISABLE_IPV6
+            IPv6Support = false;
 #else
             IPv6Support = Socket.OSSupportsIPv6;
 #endif
@@ -182,20 +183,14 @@ namespace LiteNetLib
                         continue;
                     }
                     NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
-                    lock (_receiveLock)
-                    {
-                        _onMessageReceived(null, 0, (int) ex.SocketErrorCode, bufferNetEndPoint);
-                    }
+                    _onMessageReceived(null, 0, (int) ex.SocketErrorCode, bufferNetEndPoint);
 
                     continue;
                 }
 
                 //All ok!
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
-                lock (_receiveLock)
-                {
-                    _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
-                }
+                _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
             }
         }
 
