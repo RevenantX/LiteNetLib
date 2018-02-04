@@ -93,12 +93,17 @@ namespace LiteNetLib.Test
 
         private class ObjectPropertyPacket1
         {
+            public string Sample1 { get;set;}
             public object Prop { get; set; }
+            public string Sample2 { get; set; }
         }
 
         private class ObjectPropertyPacket2
         {
+            public string Sample1 { get; set; }
+            public int Sample2 { get; set; }
             public object[] Prop { get; set; }
+            public string Sample3 { get; set; }
         }
 
         private static bool AreSame(string s1, string s2)
@@ -144,7 +149,14 @@ namespace LiteNetLib.Test
         [Timeout(2000)]
         public void ObjectPacket1Test()
         {
-            var sPacket = new ObjectPropertyPacket1() { Prop = "Abc" };
+            var sPacket = new ObjectPropertyPacket1
+            {
+                Sample1 = "EFG",
+                Prop = "Abc",
+                Sample2 = "XYZ"
+            };
+
+
             var writer = new NetDataWriter();
             _packetProcessor.Write(writer, sPacket);
 
@@ -161,13 +173,23 @@ namespace LiteNetLib.Test
 
             Assert.NotNull(readPackage);
             Assert.AreEqual(readPackage.Prop, sPacket.Prop);
+            Assert.AreEqual(readPackage.Sample1, sPacket.Sample1);
+            Assert.AreEqual(readPackage.Sample2, sPacket.Sample2);
         }
 
         [Test]
         [Timeout(2000)]
         public void ObjectPacket2Test()
         {
-            var sPacket = new ObjectPropertyPacket2() { Prop = new object[] { "Abc", 2, false } };
+            var sPacket = new ObjectPropertyPacket2
+            {
+                Sample1 = "AHJ",
+                Sample2 = 4,
+                Sample3 = "6",
+                Prop = new object[] { "Abc", 2, false }
+            };
+
+
             var writer = new NetDataWriter();
             _packetProcessor.Write(writer, sPacket);
 
@@ -184,6 +206,9 @@ namespace LiteNetLib.Test
 
             Assert.NotNull(readPackage);
             Assert.AreEqual(readPackage.Prop, sPacket.Prop);
+            Assert.AreEqual(readPackage.Sample1, sPacket.Sample1);
+            Assert.AreEqual(readPackage.Sample2, sPacket.Sample2);
+            Assert.AreEqual(readPackage.Sample3, sPacket.Sample3);
         }
     }
 }

@@ -473,10 +473,20 @@ namespace LiteNetLib.Utils
                     {
                         if (propertyType == typeof(object))
                         {
-                            var setDelegate = ExtractSetDelegate<T, object>(setMethod);
-                            var getDelegate = ExtractGetDelegate<T, object>(getMethod);
-                            info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetObject());
-                            info.WriteDelegate[i] = writer => writer.PutObject(getDelegate((T)info.Reference));
+                            if (array)
+                            {
+                                var setDelegate = ExtractSetDelegate<T, object[]>(setMethod);
+                                var getDelegate = ExtractGetDelegate<T, object[]>(getMethod);
+                                info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetObjectArray());
+                                info.WriteDelegate[i] = writer => writer.PutObjectArray(getDelegate((T)info.Reference));
+                            }
+                            else
+                            {
+                                var setDelegate = ExtractSetDelegate<T, object>(setMethod);
+                                var getDelegate = ExtractGetDelegate<T, object>(getMethod);
+                                info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetObject());
+                                info.WriteDelegate[i] = writer => writer.PutObject(getDelegate((T)info.Reference));
+                            }
                         }
                         else
                         {

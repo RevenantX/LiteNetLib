@@ -418,6 +418,17 @@ namespace LiteNetLib.Utils
             throw new InvalidTypeException("The object type is not supported");
         }
 
+        public object[] GetObjectArray()
+        {
+            var count = GetInt();
+            var array = new object[count];
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = GetObject();
+            }
+            return array;
+        }
+
         public byte[] GetRemainingBytes()
         {
             byte[] outgoingData = new byte[AvailableBytes];

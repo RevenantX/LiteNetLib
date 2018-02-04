@@ -507,5 +507,12 @@ namespace LiteNetLib.Utils
                     throw new InvalidTypeException("The object type is not supported");
             }
         }
+
+        public void PutObjectArray(object[] value)
+        {
+            Put(value.Length);
+            foreach (var v in value)
+                PutObject(v);
+        }
     }
 }
