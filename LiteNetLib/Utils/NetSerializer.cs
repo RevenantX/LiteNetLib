@@ -79,7 +79,7 @@ namespace LiteNetLib.Utils
 
         public NetSerializer() : this(0)
         {
-            
+
         }
 
         public NetSerializer(int maxStringLength)
@@ -344,9 +344,9 @@ namespace LiteNetLib.Utils
                     if (_maxStringLength <= 0)
                     {
                         info.ReadDelegate[i] =
-                            reader => setDelegate((T) info.Reference, reader.GetStringArray());
+                            reader => setDelegate((T)info.Reference, reader.GetStringArray());
                         info.WriteDelegate[i] =
-                            writer => writer.PutArray(getDelegate((T) info.Reference));
+                            writer => writer.PutArray(getDelegate((T)info.Reference));
                     }
                     else
                     {
@@ -471,7 +471,17 @@ namespace LiteNetLib.Utils
                     }
                     else
                     {
-                        throw new InvalidTypeException("Unknown property type: " + propertyType.FullName);
+                        if (propertyType == typeof(object))
+                        {
+                            var setDelegate = ExtractSetDelegate<T, object>(setMethod);
+                            var getDelegate = ExtractGetDelegate<T, object>(getMethod);
+                            info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetObject());
+                            info.WriteDelegate[i] = writer => writer.PutObject(getDelegate((T)info.Reference));
+                        }
+                        else
+                        {
+                            throw new InvalidTypeException("Unknown property type: " + propertyType.FullName);
+                        }
                     }
                 }
             }

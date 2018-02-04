@@ -50,7 +50,7 @@ namespace LiteNetLib.Utils
                 netDataWriter.Put(bytes);
                 return netDataWriter;
             }
-            return new NetDataWriter(true, 0) {_data = bytes};
+            return new NetDataWriter(true, 0) { _data = bytes };
         }
 
         /// <summary>
@@ -417,6 +417,95 @@ namespace LiteNetLib.Utils
             Encoding.UTF8.GetBytes(value, 0, length, _data, _position);
 
             _position += bytesCount;
+        }
+
+        public void PutObject(object obj)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+
+            var type = obj.GetType().ToString();
+
+            // put the type before the actual object so NetDataReader can deserialize
+            Put(type);
+
+            switch (obj)
+            {
+                case float variable:
+                    Put(variable);
+                    break;
+                case double variable:
+                    Put(variable);
+                    break;
+                case long variable:
+                    Put(variable);
+                    break;
+                case ulong variable:
+                    Put(variable);
+                    break;
+                case int variable:
+                    Put(variable);
+                    break;
+                case uint variable:
+                    Put(variable);
+                    break;
+                case char variable:
+                    Put(variable);
+                    break;
+                case ushort variable:
+                    Put(variable);
+                    break;
+                case short variable:
+                    Put(variable);
+                    break;
+                case sbyte variable:
+                    Put(variable);
+                    break;
+                case byte variable:
+                    Put(variable);
+                    break;
+                case bool variable:
+                    Put(variable);
+                    break;
+                case string variable:
+                    Put(variable);
+                    break;
+                case byte[] variable:
+                    PutBytesWithLength(variable);
+                    break;
+                case float[] variable:
+                    PutArray(variable);
+                    break;
+                case double[] variable:
+                    PutArray(variable);
+                    break;
+                case long[] variable:
+                    PutArray(variable);
+                    break;
+                case ulong[] variable:
+                    PutArray(variable);
+                    break;
+                case int[] variable:
+                    PutArray(variable);
+                    break;
+                case uint[] variable:
+                    PutArray(variable);
+                    break;
+                case ushort[] variable:
+                    PutArray(variable);
+                    break;
+                case short[] variable:
+                    PutArray(variable);
+                    break;
+                case bool[] variable:
+                    PutArray(variable);
+                    break;
+                case string[] variable:
+                    PutArray(variable);
+                    break;
+                default:
+                    throw new InvalidTypeException("The object type is not supported");
+            }
         }
     }
 }

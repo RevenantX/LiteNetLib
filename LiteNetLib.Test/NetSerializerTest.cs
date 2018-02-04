@@ -13,13 +13,13 @@ namespace LiteNetLib.Test
             _samplePacket = new SamplePacket
             {
                 SomeFloat = 3.42f,
-                SomeIntArray = new[] {6, 5, 4},
+                SomeIntArray = new[] { 6, 5, 4 },
                 SomeString = "Test String",
                 SomeVector2 = new SomeVector2(4, 5),
-                SomeVectors = new[] {new SomeVector2(1, 2), new SomeVector2(3, 4)},
+                SomeVectors = new[] { new SomeVector2(1, 2), new SomeVector2(3, 4) },
                 SomeEnum = TestEnum.B,
                 SomeByteArray = new byte[] { 255, 1, 0 },
-                TestObj = new SampleNetSerializable {Value = 5}
+                TestObj = new SampleNetSerializable { Value = 5 }
             };
 
             _packetProcessor = new NetPacketProcessor();
@@ -91,6 +91,16 @@ namespace LiteNetLib.Test
             public SampleNetSerializable TestObj { get; set; }
         }
 
+        private class ObjectPropertyPacket1
+        {
+            public object Prop { get; set; }
+        }
+
+        private class ObjectPropertyPacket2
+        {
+            public object[] Prop { get; set; }
+        }
+
         private static bool AreSame(string s1, string s2)
         {
             if (string.IsNullOrEmpty(s1) && string.IsNullOrEmpty(s2))
@@ -128,6 +138,52 @@ namespace LiteNetLib.Test
             Assert.AreEqual(_samplePacket.SomeEnum, readPackage.SomeEnum);
             Assert.AreEqual(_samplePacket.TestObj.Value, readPackage.TestObj.Value);
             Assert.AreEqual(_samplePacket.SomeByteArray, readPackage.SomeByteArray);
+        }
+
+        [Test]
+        [Timeout(2000)]
+        public void ObjectPacket1Test()
+        {
+            var sPacket = new ObjectPropertyPacket1() { Prop = "Abc" };
+            var writer = new NetDataWriter();
+            _packetProcessor.Write(writer, sPacket);
+
+            var reader = new NetDataReader(writer.CopyData());
+            ObjectPropertyPacket1 readPackage = null;
+
+            _packetProcessor.SubscribeReusable<ObjectPropertyPacket1>(
+                packet =>
+                {
+                    readPackage = packet;
+                });
+
+            _packetProcessor.ReadAllPackets(reader);
+
+            Assert.NotNull(readPackage);
+            Assert.AreEqual(readPackage.Prop, sPacket.Prop);
+        }
+
+        [Test]
+        [Timeout(2000)]
+        public void ObjectPacket2Test()
+        {
+            var sPacket = new ObjectPropertyPacket2() { Prop = new object[] { "Abc", 2, false } };
+            var writer = new NetDataWriter();
+            _packetProcessor.Write(writer, sPacket);
+
+            var reader = new NetDataReader(writer.CopyData());
+            ObjectPropertyPacket2 readPackage = null;
+
+            _packetProcessor.SubscribeReusable<ObjectPropertyPacket2>(
+                packet =>
+                {
+                    readPackage = packet;
+                });
+
+            _packetProcessor.ReadAllPackets(reader);
+
+            Assert.NotNull(readPackage);
+            Assert.AreEqual(readPackage.Prop, sPacket.Prop);
         }
     }
 }

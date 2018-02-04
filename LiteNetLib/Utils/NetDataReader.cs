@@ -313,7 +313,7 @@ namespace LiteNetLib.Utils
         public string GetString(int maxLength)
         {
             int bytesCount = GetInt();
-            if (bytesCount <= 0 || bytesCount > maxLength*2)
+            if (bytesCount <= 0 || bytesCount > maxLength * 2)
             {
                 return string.Empty;
             }
@@ -340,6 +340,82 @@ namespace LiteNetLib.Utils
             string result = Encoding.UTF8.GetString(_data, _position, bytesCount);
             _position += bytesCount;
             return result;
+        }
+
+        public object GetObject()
+        {
+            var type = Type.GetType(GetString());
+
+            if (type == typeof(byte))
+                return GetByte();
+
+            if (type == typeof(sbyte))
+                return GetSByte();
+
+            if (type == typeof(bool[]))
+                return GetBoolArray();
+
+            if (type == typeof(ushort[]))
+                return GetUShortArray();
+
+            if (type == typeof(short[]))
+                return GetShortArray();
+
+            if (type == typeof(long[]))
+                return GetLongArray();
+
+            if (type == typeof(ulong[]))
+                return GetULongArray();
+
+            if (type == typeof(int[]))
+                return GetIntArray();
+
+            if (type == typeof(uint[]))
+                return GetUIntArray();
+
+            if (type == typeof(float[]))
+                return GetFloatArray();
+
+            if (type == typeof(double[]))
+                return GetDoubleArray();
+
+            if (type == typeof(string[]))
+                return GetStringArray();
+
+            if (type == typeof(bool))
+                return GetBool();
+
+            if (type == typeof(char))
+                return GetBool();
+
+            if (type == typeof(ushort))
+                return GetUShort();
+
+            if (type == typeof(short))
+                return GetShort();
+
+            if (type == typeof(long))
+                return GetLong();
+
+            if (type == typeof(ulong))
+                return GetULong();
+
+            if (type == typeof(int))
+                return GetInt();
+
+            if (type == typeof(uint))
+                return GetUInt();
+
+            if (type == typeof(float))
+                return GetFloat();
+
+            if (type == typeof(double))
+                return GetDouble();
+
+            if (type == typeof(string))
+                return GetString();
+
+            throw new InvalidTypeException("The object type is not supported");
         }
 
         public byte[] GetRemainingBytes()
