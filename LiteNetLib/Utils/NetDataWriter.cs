@@ -422,89 +422,137 @@ namespace LiteNetLib.Utils
         public void PutObject(object obj)
         {
             if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
+                throw new ArgumentNullException("obj");
 
             var type = obj.GetType().ToString();
 
             // put the type before the actual object so NetDataReader can deserialize
             Put(type);
 
-            switch (obj)
+
+            if (obj is float)
             {
-                case float variable:
-                    Put(variable);
-                    break;
-                case double variable:
-                    Put(variable);
-                    break;
-                case long variable:
-                    Put(variable);
-                    break;
-                case ulong variable:
-                    Put(variable);
-                    break;
-                case int variable:
-                    Put(variable);
-                    break;
-                case uint variable:
-                    Put(variable);
-                    break;
-                case char variable:
-                    Put(variable);
-                    break;
-                case ushort variable:
-                    Put(variable);
-                    break;
-                case short variable:
-                    Put(variable);
-                    break;
-                case sbyte variable:
-                    Put(variable);
-                    break;
-                case byte variable:
-                    Put(variable);
-                    break;
-                case bool variable:
-                    Put(variable);
-                    break;
-                case string variable:
-                    Put(variable);
-                    break;
-                case byte[] variable:
-                    PutBytesWithLength(variable);
-                    break;
-                case float[] variable:
-                    PutArray(variable);
-                    break;
-                case double[] variable:
-                    PutArray(variable);
-                    break;
-                case long[] variable:
-                    PutArray(variable);
-                    break;
-                case ulong[] variable:
-                    PutArray(variable);
-                    break;
-                case int[] variable:
-                    PutArray(variable);
-                    break;
-                case uint[] variable:
-                    PutArray(variable);
-                    break;
-                case ushort[] variable:
-                    PutArray(variable);
-                    break;
-                case short[] variable:
-                    PutArray(variable);
-                    break;
-                case bool[] variable:
-                    PutArray(variable);
-                    break;
-                case string[] variable:
-                    PutArray(variable);
-                    break;
-                default:
-                    throw new InvalidTypeException("The object type is not supported");
+                var variable = (float) obj;
+                Put(variable);
+            }
+            else if (obj is double)
+            {
+                var variable = (double)obj;
+                Put(variable);
+            }
+            else if (obj is long)
+            {
+                var variable = (long)obj;
+                Put(variable);
+            }
+            else if (obj is ulong)
+            {
+                var variable = (ulong)obj;
+                Put(variable);
+            }
+            else if (obj is int)
+            {
+                var variable = (int)obj;
+                Put(variable);
+            }
+            else if (obj is uint)
+            {
+                var variable = (uint)obj;
+                Put(variable);
+            }
+            else if (obj is char)
+            {
+                var variable = (char)obj;
+                Put(variable);
+            }
+            else if (obj is ushort)
+            {
+                var variable = (ushort)obj;
+                Put(variable);
+            }
+            else if (obj is short)
+            {
+                var variable = (short)obj;
+                Put(variable);
+            }
+            else if (obj is sbyte)
+            {
+                var variable = (sbyte)obj;
+                Put(variable);
+            }
+            else if (obj is byte)
+            {
+                var variable = (byte)obj;
+                Put(variable);
+            }
+            else if (obj is bool)
+            {
+                var variable = (bool)obj;
+                Put(variable);
+            }
+            else if (obj is string)
+            {
+                var variable = (string)obj;
+                Put(variable);
+            }
+            else if (obj is byte[])
+            {
+                var variable = (byte[])obj;
+                PutBytesWithLength(variable);
+            }
+            else if (obj is float[])
+            {
+                var variable = (float[])obj;
+                PutArray(variable);
+            }
+            else if (obj is double[])
+            {
+                var variable = (double[])obj;
+                PutArray(variable);
+            }
+            else if (obj is long[])
+            {
+                var variable = (long[])obj;
+                PutArray(variable);
+            }
+            else if (obj is ulong[])
+            {
+                var variable = (ulong[])obj;
+                PutArray(variable);
+            }
+            else if (obj is int[])
+            {
+                var variable = (int[])obj;
+                PutArray(variable);
+            }
+            else if (obj is uint[] )
+            {
+                var variable = (uint[])obj;
+                PutArray(variable);
+            }
+            else if (obj is ushort[])
+            {
+                var variable = (ushort[])obj;
+                PutArray(variable);
+            }
+            else if (obj is short[])
+            {
+                var variable = (short[])obj;
+                PutArray(variable);
+            }
+            else if (obj is bool[])
+            {
+                var variable = (bool[])obj;
+                PutArray(variable);
+            }
+            else if (obj is string[])
+            {
+                var variable = (string[])obj;
+                PutArray(variable);
+            }
+            else
+            {
+                throw new InvalidTypeException("The object type is not supported");
             }
         }
 
