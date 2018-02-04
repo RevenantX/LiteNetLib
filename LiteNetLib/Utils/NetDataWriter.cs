@@ -422,7 +422,7 @@ namespace LiteNetLib.Utils
         public void PutObject(object obj)
         {
             if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
+                throw new ArgumentNullException("obj");
 
             var type = obj.GetType().ToString();
 
