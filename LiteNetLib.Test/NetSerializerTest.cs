@@ -210,5 +210,69 @@ namespace LiteNetLib.Test
             Assert.AreEqual(readPackage.Sample2, sPacket.Sample2);
             Assert.AreEqual(readPackage.Sample3, sPacket.Sample3);
         }
+
+        [Test]
+        [Timeout(2000)]
+        public void ObjectPacket1NullTest()
+        {
+            var sPacket = new ObjectPropertyPacket1
+            {
+                Sample1 = "EFG",
+                Sample2 = "XYZ"
+            };
+
+
+            var writer = new NetDataWriter();
+            _packetProcessor.Write(writer, sPacket);
+
+            var reader = new NetDataReader(writer.CopyData());
+            ObjectPropertyPacket1 readPackage = null;
+
+            _packetProcessor.SubscribeReusable<ObjectPropertyPacket1>(
+                packet =>
+                {
+                    readPackage = packet;
+                });
+
+            _packetProcessor.ReadAllPackets(reader);
+
+            Assert.NotNull(readPackage);
+            Assert.AreEqual(readPackage.Prop, sPacket.Prop);
+            Assert.AreEqual(readPackage.Sample1, sPacket.Sample1);
+            Assert.AreEqual(readPackage.Sample2, sPacket.Sample2);
+        }
+
+        [Test]
+        [Timeout(2000)]
+        public void ObjectPacket2NullTest()
+        {
+            var sPacket = new ObjectPropertyPacket2
+            {
+                Sample1 = "AHJ",
+                Sample2 = 4,
+                Sample3 = "6"
+            };
+
+
+            var writer = new NetDataWriter();
+            _packetProcessor.Write(writer, sPacket);
+
+            var reader = new NetDataReader(writer.CopyData());
+            ObjectPropertyPacket2 readPackage = null;
+
+            _packetProcessor.SubscribeReusable<ObjectPropertyPacket2>(
+                packet =>
+                {
+                    readPackage = packet;
+                });
+
+            _packetProcessor.ReadAllPackets(reader);
+
+            Assert.NotNull(readPackage);
+            Assert.AreEqual(readPackage.Prop, sPacket.Prop);
+            Assert.AreEqual(readPackage.Sample1, sPacket.Sample1);
+            Assert.AreEqual(readPackage.Sample2, sPacket.Sample2);
+            Assert.AreEqual(readPackage.Sample3, sPacket.Sample3);
+        }
     }
 }

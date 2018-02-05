@@ -344,7 +344,11 @@ namespace LiteNetLib.Utils
 
         public object GetObject()
         {
-            var type = Type.GetType(GetString());
+            var typeString = GetString();
+            if(typeString == "null")
+                return null;
+
+            var type = Type.GetType(typeString);
 
             if (type == typeof(byte))
                 return GetByte();
@@ -421,11 +425,16 @@ namespace LiteNetLib.Utils
         public object[] GetObjectArray()
         {
             var count = GetInt();
+            
+            if(count == -1)
+                return null;
+
             var array = new object[count];
             for (int i = 0; i < array.Length; i++)
             {
                 array[i] = GetObject();
             }
+
             return array;
         }
 

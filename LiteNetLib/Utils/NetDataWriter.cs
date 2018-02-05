@@ -422,7 +422,10 @@ namespace LiteNetLib.Utils
         public void PutObject(object obj)
         {
             if (obj == null)
-                throw new ArgumentNullException("obj");
+            {
+                Put("null");
+                return;
+            }
 
             var type = obj.GetType().ToString();
 
@@ -558,6 +561,12 @@ namespace LiteNetLib.Utils
 
         public void PutObjectArray(object[] value)
         {
+            if (value == null)
+            {
+                Put(-1);
+                return;
+            }
+
             Put(value.Length);
             foreach (var v in value)
                 PutObject(v);
