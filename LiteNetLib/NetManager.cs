@@ -222,7 +222,7 @@ namespace LiteNetLib
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
             NetPacketPool = new NetPacketPool();
-            NatPunchModule = new NatPunchModule(this);
+            NatPunchModule = new NatPunchModule(_socket);
             Statistics = new NetStatistics();
             _peers = new NetPeerCollection(maxConnections);
             _connectingPeers = new HashSet<NetEndPoint>();
@@ -542,7 +542,7 @@ namespace LiteNetLib
                 {
                     NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
                 }
-                else
+                else if(_peers.Count < _maxConnections)
                 {
                     //response with id
                     var netPeer = new NetPeer(this, request.RemoteEndPoint, request.ConnectionId);

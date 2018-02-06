@@ -1,25 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
     internal class NetPacketPool
     {
         private const int PoolLimit = 1000;
-        private readonly Stack<NetPacket> _pool;
-
-        public NetPacketPool()
-        {
-            _pool = new Stack<NetPacket>();
-        }
-
-        public NetPacket GetWithData(PacketProperty property, NetDataWriter writer)
-        {
-            var packet = Get(property, writer.Length);
-            Buffer.BlockCopy(writer.Data, 0, packet.RawData, NetPacket.GetHeaderSize(property), writer.Length);
-            return packet;
-        }
+        private readonly NetPacket[] _pool = new NetPacket[PoolLimit];
+        private int _count;
 
         public NetPacket GetWithData(PacketProperty property, byte[] data, int start, int length)
         {
@@ -35,9 +22,11 @@ namespace LiteNetLib
             {
                 lock (_pool)
                 {
-                    if (_pool.Count > 0)
+                    if (_count > 0)
                     {
-                        packet = _pool.Pop();
+                        _count--;
+                        packet = _pool[_count];
+                        _pool[_count] = null;
                     }
                 }
             }
@@ -82,7 +71,7 @@ namespace LiteNetLib
 
         public void Recycle(NetPacket packet)
         {
-            if (packet.Size > NetConstants.MaxPacketSize || _pool.Count > PoolLimit)
+            if (packet.Size > NetConstants.MaxPacketSize || _count == PoolLimit)
             {
                 //Dont pool big packets. Save memory
                 return;
@@ -92,7 +81,8 @@ namespace LiteNetLib
             packet.IsFragmented = false;
             lock (_pool)
             {
-                _pool.Push(packet);
+                _pool[_count] = packet;
+                _count++;
             }
         }
     }

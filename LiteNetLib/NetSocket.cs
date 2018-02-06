@@ -59,6 +59,15 @@ namespace LiteNetLib
 
         public int LocalPort { get; private set; }
 
+        public short Ttl
+        {
+            get { return _udpSocketv4.Ttl; }
+            set
+            {
+                _udpSocketv4.Ttl = value;
+            }
+        }
+
         static NetSocket()
         {
 #if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
