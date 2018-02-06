@@ -342,7 +342,7 @@ namespace LiteNetLib.Utils
             return result;
         }
 
-        public object GetObject()
+        public object GetSimpleObject()
         {
             var typeString = GetString();
             if(typeString == "null")
@@ -422,7 +422,7 @@ namespace LiteNetLib.Utils
             throw new InvalidTypeException("The object type is not supported");
         }
 
-        public object[] GetObjectArray()
+        public object[] GetSimpleObjectArray()
         {
             var count = GetInt();
             
@@ -432,7 +432,7 @@ namespace LiteNetLib.Utils
             var array = new object[count];
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = GetObject();
+                array[i] = GetSimpleObject();
             }
 
             return array;

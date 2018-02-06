@@ -419,7 +419,7 @@ namespace LiteNetLib.Utils
             _position += bytesCount;
         }
 
-        public void PutObject(object obj)
+        public void PutSimpleObject(object obj)
         {
             if (obj == null)
             {
@@ -559,7 +559,7 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void PutObjectArray(object[] value)
+        public void PutSimpleObjectArray(object[] value)
         {
             if (value == null)
             {
@@ -569,7 +569,7 @@ namespace LiteNetLib.Utils
 
             Put(value.Length);
             foreach (var v in value)
-                PutObject(v);
+                PutSimpleObject(v);
         }
     }
 }

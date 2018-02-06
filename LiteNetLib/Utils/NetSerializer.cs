@@ -477,15 +477,15 @@ namespace LiteNetLib.Utils
                             {
                                 var setDelegate = ExtractSetDelegate<T, object[]>(setMethod);
                                 var getDelegate = ExtractGetDelegate<T, object[]>(getMethod);
-                                info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetObjectArray());
-                                info.WriteDelegate[i] = writer => writer.PutObjectArray(getDelegate((T)info.Reference));
+                                info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetSimpleObjectArray());
+                                info.WriteDelegate[i] = writer => writer.PutSimpleObjectArray(getDelegate((T)info.Reference));
                             }
                             else
                             {
                                 var setDelegate = ExtractSetDelegate<T, object>(setMethod);
                                 var getDelegate = ExtractGetDelegate<T, object>(getMethod);
-                                info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetObject());
-                                info.WriteDelegate[i] = writer => writer.PutObject(getDelegate((T)info.Reference));
+                                info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetSimpleObject());
+                                info.WriteDelegate[i] = writer => writer.PutSimpleObject(getDelegate((T)info.Reference));
                             }
                         }
                         else
