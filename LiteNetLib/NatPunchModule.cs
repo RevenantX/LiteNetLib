@@ -50,7 +50,7 @@ namespace LiteNetLib
             public string Token;
         }
 
-        private readonly NetManager _netBase;
+        private readonly NetSocket _socket;
         private readonly Queue<RequestEventData> _requestEvents;
         private readonly Queue<SuccessEventData> _successEvents; 
         private const byte HostByte = 1;
@@ -59,9 +59,9 @@ namespace LiteNetLib
 
         private INatPunchListener _natPunchListener;
 
-        internal NatPunchModule(NetManager netBase)
+        internal NatPunchModule(NetSocket socket)
         {
-            _netBase = netBase;
+            _socket = socket;
             _requestEvents = new Queue<RequestEventData>();
             _successEvents = new Queue<SuccessEventData>();
         }
@@ -82,24 +82,23 @@ namespace LiteNetLib
 
             //First packet (server)
             //send to client
+            dw.Put((byte)PacketProperty.NatIntroduction);
             dw.Put(ClientByte);
             dw.Put(hostInternal);
             dw.Put(hostExternal);
             dw.Put(additionalInfo, MaxTokenLength);
-
-            var packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatIntroduction, dw);
-            _netBase.SendRawAndRecycle(packet, clientExternal);
+            int errorCode = 0;
+            _socket.SendTo(dw.Data, 0, dw.Length, clientExternal, ref errorCode);
 
             //Second packet (client)
             //send to server
             dw.Reset();
+            dw.Put((byte)PacketProperty.NatIntroduction);
             dw.Put(HostByte);
             dw.Put(clientInternal);
             dw.Put(clientExternal);
             dw.Put(additionalInfo, MaxTokenLength);
-
-            packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatIntroduction, dw);
-            _netBase.SendRawAndRecycle(packet, hostExternal);
+            _socket.SendTo(dw.Data, 0, dw.Length, hostExternal, ref errorCode);
         }
 
         public void PollEvents()
@@ -126,9 +125,6 @@ namespace LiteNetLib
 
         public void SendNatIntroduceRequest(NetEndPoint masterServerEndPoint, string additionalInfo)
         {
-            if (!_netBase.IsRunning)
-                return;
-
             //prepare outgoing data
             NetDataWriter dw = new NetDataWriter();
             string networkIp = NetUtils.GetLocalIp(LocalAddrType.IPv4);
@@ -136,14 +132,14 @@ namespace LiteNetLib
             {
                 networkIp = NetUtils.GetLocalIp(LocalAddrType.IPv6);
             }
-            int networkPort = _netBase.LocalPort;
-            NetEndPoint localEndPoint = new NetEndPoint(networkIp, networkPort);
+            NetEndPoint localEndPoint = new NetEndPoint(networkIp, _socket.LocalPort);
+            dw.Put((byte)PacketProperty.NatIntroductionRequest);
             dw.Put(localEndPoint);
             dw.Put(additionalInfo, MaxTokenLength);
 
             //prepare packet
-            var packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatIntroductionRequest, dw);
-            _netBase.SendRawAndRecycle(packet, masterServerEndPoint);
+            int errorCode = 0;
+            _socket.SendTo(dw.Data, 0, dw.Length, masterServerEndPoint, ref errorCode);
         }
 
         private void HandleNatPunch(NetEndPoint senderEndPoint, NetDataReader dr)
@@ -178,18 +174,29 @@ namespace LiteNetLib
             NetDataWriter writer = new NetDataWriter();
 
             // send internal punch
+            writer.Put((byte)PacketProperty.NatPunchMessage);
             writer.Put(hostByte);
             writer.Put(token);
-            var packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatPunchMessage, writer);
-            _netBase.SendRawAndRecycle(packet, remoteInternal);
+            int errorCode = 0;
+            _socket.SendTo(writer.Data, 0, writer.Length, remoteInternal, ref errorCode);
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] internal punch sent to " + remoteInternal);
 
             // send external punch
             writer.Reset();
+            writer.Put((byte)PacketProperty.NatPunchMessage);
             writer.Put(hostByte);
             writer.Put(token);
-            packet = _netBase.NetPacketPool.GetWithData(PacketProperty.NatPunchMessage, writer);
-            _netBase.SendRawAndRecycle(packet, remoteExternal);
+            if (hostByte == HostByte)
+            {
+                _socket.Ttl = 2;
+                _socket.SendTo(writer.Data, 0, writer.Length, remoteExternal, ref errorCode);
+                _socket.Ttl = NetConstants.SocketTTL;
+            }
+            else
+            {
+                _socket.SendTo(writer.Data, 0, writer.Length, remoteExternal, ref errorCode);
+            }
+    
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] external punch sent to " + remoteExternal);
         }
 
