@@ -46,6 +46,7 @@ namespace LiteNetLib
         public const int SocketBufferSize = 1024 * 1024 * 4; //4mb
 #endif
         public const int SocketTTL = 255;
+        public const int ReceiveTimeout = 1000;
 
         public const int HeaderSize = 1;
         public const int SequencedHeaderSize = 3;

@@ -197,9 +197,12 @@ namespace LiteNetLib
                     continue;
                 }
 
-                //All ok!
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
-                _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
+                if (result > 0)
+                {
+                    //All ok!
+                    NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferNetEndPoint.ToString(), result);
+                    _onMessageReceived(receiveBuffer, result, 0, bufferNetEndPoint);
+                }
             }
         }
 
@@ -210,6 +213,8 @@ namespace LiteNetLib
             _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.Ttl = NetConstants.SocketTTL;
+            _udpSocketv4.ReceiveTimeout = NetConstants.ReceiveTimeout;
+
             if(reuseAddress)
                 _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 #if !NETCORE
@@ -243,6 +248,7 @@ namespace LiteNetLib
             _udpSocketv6.Blocking = false;
             _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
+            _udpSocketv6.ReceiveTimeout = NetConstants.ReceiveTimeout;
             //_udpSocketv6.Ttl = NetConstants.SocketTTL;
             if (reuseAddress)
                 _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
