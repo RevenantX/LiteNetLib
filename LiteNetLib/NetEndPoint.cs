@@ -15,6 +15,7 @@ namespace LiteNetLib
         public int Port { get { return EndPoint.Port; } }
 
         internal readonly IPEndPoint EndPoint;
+        private readonly int _hash;
 #if WIN32 && UNSAFE
         internal readonly byte[] SocketAddr;
         private byte[] MakeSocketAddr(IPEndPoint ep)
@@ -33,6 +34,7 @@ namespace LiteNetLib
 #if WIN32 && UNSAFE
             SocketAddr = MakeSocketAddr(ipEndPoint);
 #endif
+            _hash = EndPoint.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -51,7 +53,7 @@ namespace LiteNetLib
 
         public override int GetHashCode()
         {
-            return EndPoint.GetHashCode();
+            return _hash;
         }
 
         /// <param name="hostStr">A valid host string that can be resolved by DNS or parsed as an IP address</param>
@@ -66,6 +68,7 @@ namespace LiteNetLib
 #if WIN32 && UNSAFE
             SocketAddr = MakeSocketAddr(EndPoint);
 #endif
+            _hash = EndPoint.GetHashCode();
         }
 
         internal static IPAddress GetFromString(string hostStr)

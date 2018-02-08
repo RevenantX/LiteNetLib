@@ -5,6 +5,19 @@ namespace LiteNetLib
 {
     internal sealed class NetPeerCollection
     {
+        private class PeerComparer : IEqualityComparer<NetEndPoint>
+        {
+            public bool Equals(NetEndPoint x, NetEndPoint y)
+            {
+                return x.EndPoint.Equals(y.EndPoint);
+            }
+
+            public int GetHashCode(NetEndPoint obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
+
         private readonly Dictionary<NetEndPoint, NetPeer> _peersDict;
         private readonly NetPeer[] _peersArray;
         public int Count;
@@ -17,7 +30,7 @@ namespace LiteNetLib
         public NetPeerCollection(int maxPeers)
         {
             _peersArray = new NetPeer[maxPeers];
-            _peersDict = new Dictionary<NetEndPoint, NetPeer>();
+            _peersDict = new Dictionary<NetEndPoint, NetPeer>(new PeerComparer());
         }
 
         public bool TryGetValue(NetEndPoint endPoint, out NetPeer peer)
