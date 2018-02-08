@@ -313,14 +313,6 @@ namespace LiteNetLib
             EnqueueEvent(netEvent);
         }
 
-        private void ClearPeers()
-        {
-            lock (_peers)
-            {
-                _peers.Clear();
-            }
-        }
-
         private NetEvent CreateEvent(NetEventType type)
         {
             NetEvent evt = null;
@@ -515,7 +507,10 @@ namespace LiteNetLib
             else //Error on receive
             {
                 //TODO: strange?
-                ClearPeers();
+                lock (_peers)
+                {
+                    _peers.Clear();
+                }
                 var netEvent = CreateEvent(NetEventType.Error);
                 netEvent.AdditionalData = errorCode;
                 EnqueueEvent(netEvent);
@@ -1076,17 +1071,14 @@ namespace LiteNetLib
                 return;
             IsRunning = false;
 
-            //Send disconnects
             lock (_peers)
             {
                 for (int i = 0; i < _peers.Count; i++)
                 {
                     _peers[i].Shutdown(null, 0, 0, true);
                 }
+                _peers.Clear();
             }
-
-            //Clear
-            ClearPeers();
 
             //Stop
             if (Thread.CurrentThread != _logicThread)
