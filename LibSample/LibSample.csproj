@@ -42,6 +42,7 @@
     <Compile Include="EchoMessagesTest.cs" />
     <Compile Include="GithubSample.cs" />
     <Compile Include="HolePunchServerTest.cs" />
+    <Compile Include="PacketProcessorExample.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializerBenchmark.cs" />
