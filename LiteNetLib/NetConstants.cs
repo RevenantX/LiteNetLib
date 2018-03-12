@@ -77,7 +77,7 @@ namespace LiteNetLib
             7981 - MaxUdpHeaderSize  //WLAN
         };
 
-        internal static int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
+        internal static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
 
         //peer specific
         public const int FlowUpdateTime = 1000;

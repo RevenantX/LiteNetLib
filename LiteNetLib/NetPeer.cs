@@ -188,7 +188,7 @@ namespace LiteNetLib
 
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
 
-            _mergeData = _packetPool.Get(PacketProperty.Merged, NetConstants.MaxPacketSize);
+            _mergeData = _packetPool.GetWithProperty(PacketProperty.Merged, NetConstants.MaxPacketSize);
         }
 
         //Connect constructor
@@ -215,7 +215,7 @@ namespace LiteNetLib
         private void SendConnectRequest()
         {
             //Make initial packet
-            var connectPacket = _packetPool.Get(PacketProperty.ConnectRequest, 12 + _connectData.Length);
+            var connectPacket = _packetPool.GetWithProperty(PacketProperty.ConnectRequest, 12 + _connectData.Length);
 
             //Add data
             FastBitConverter.GetBytes(connectPacket.RawData, 1, NetConstants.ProtocolId);
@@ -232,7 +232,7 @@ namespace LiteNetLib
             _timeSinceLastPacket = 0;
 
             //Make initial packet
-            var connectPacket = _packetPool.Get(PacketProperty.ConnectAccept, 8);
+            var connectPacket = _packetPool.GetWithProperty(PacketProperty.ConnectAccept, 8);
 
             //Add data
             FastBitConverter.GetBytes(connectPacket.RawData, NetConstants.AcceptConnectIdIndex, _connectId);
@@ -375,7 +375,7 @@ namespace LiteNetLib
                 {
                     for (ushort i = 0; i < fullPacketsCount; i++)
                     {
-                        NetPacket p = _packetPool.Get(property, packetFullSize);
+                        NetPacket p = _packetPool.GetWithProperty(property, packetFullSize);
                         p.FragmentId = _fragmentId;
                         p.FragmentPart = i;
                         p.FragmentsTotal = (ushort)totalPackets;
@@ -385,7 +385,7 @@ namespace LiteNetLib
                     }
                     if (lastPacketSize > 0)
                     {
-                        NetPacket p = _packetPool.Get(property, lastPacketSize + NetConstants.FragmentHeaderSize);
+                        NetPacket p = _packetPool.GetWithProperty(property, lastPacketSize + NetConstants.FragmentHeaderSize);
                         p.FragmentId = _fragmentId;
                         p.FragmentPart = (ushort)fullPacketsCount; //last
                         p.FragmentsTotal = (ushort)totalPackets;
@@ -405,7 +405,7 @@ namespace LiteNetLib
 
         private void CreateAndSend(PacketProperty property, ushort sequence)
         {
-            NetPacket packet = _packetPool.Get(property, 0);
+            NetPacket packet = _packetPool.GetWithProperty(property, 0);
             packet.Sequence = sequence;
             SendPacket(packet);
         }
@@ -447,7 +447,7 @@ namespace LiteNetLib
                 return false;
             }
 
-            _shutdownPacket = _packetPool.Get(PacketProperty.Disconnect, 8 + length);
+            _shutdownPacket = _packetPool.GetWithProperty(PacketProperty.Disconnect, 8 + length);
             FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectId);
             if (length + 8 >= _mtu)
             {
@@ -562,7 +562,7 @@ namespace LiteNetLib
                 }
 
                 NetUtils.DebugWrite("Received all fragments!");
-                NetPacket resultingPacket = _packetPool.Get( p.Property, incomingFragments.TotalSize );
+                NetPacket resultingPacket = _packetPool.GetWithProperty( p.Property, incomingFragments.TotalSize );
 
                 int resultingPacketOffset = resultingPacket.GetHeaderSize();
                 int firstFragmentSize = fragments[0].Size - dataOffset;
@@ -611,7 +611,7 @@ namespace LiteNetLib
                 }
                 _mtuCheckAttempts = 0;
                 NetUtils.DebugWrite("MTU check. Resend: " + packet.RawData[1]);
-                var mtuOkPacket = _packetPool.Get(PacketProperty.MtuOk, 1);
+                var mtuOkPacket = _packetPool.GetWithProperty(PacketProperty.MtuOk, 1);
                 mtuOkPacket.RawData[1] = packet.RawData[1];
                 SendPacket(mtuOkPacket);
             }
@@ -659,8 +659,8 @@ namespace LiteNetLib
                     {
                         ushort size = BitConverter.ToUInt16(packet.RawData, pos);
                         pos += 2;
-                        NetPacket mergedPacket = _packetPool.GetAndRead(packet.RawData, pos, size);
-                        if (mergedPacket == null)
+                        NetPacket mergedPacket = _packetPool.GetPacket(size, false);
+                        if (!mergedPacket.FromBytes(packet.RawData, pos, size))
                         {
                             _packetPool.Recycle(packet);
                             break;
@@ -921,7 +921,7 @@ namespace LiteNetLib
                             if (_mtuIdx < NetConstants.PossibleMtu.Length - 1)
                             {
                                 int newMtu = NetConstants.PossibleMtu[_mtuIdx + 1] - NetConstants.HeaderSize;
-                                var p = _packetPool.Get(PacketProperty.MtuCheck, newMtu);
+                                var p = _packetPool.GetWithProperty(PacketProperty.MtuCheck, newMtu);
                                 p.RawData[1] = (byte)(_mtuIdx + 1);
                                 SendPacket(p);
                             }
@@ -942,7 +942,7 @@ namespace LiteNetLib
 
         internal NetPacket GetPacketFromPool(PacketProperty property, int bytesCount)
         {
-            return _packetPool.Get(property, bytesCount);
+            return _packetPool.GetWithProperty(property, bytesCount);
         }
     }
 }

@@ -10,12 +10,12 @@ namespace LiteNetLib
 
         public NetPacket GetWithData(PacketProperty property, byte[] data, int start, int length)
         {
-            var packet = Get(property, length);
+            var packet = GetWithProperty(property, length);
             Buffer.BlockCopy(data, start, packet.RawData, NetPacket.GetHeaderSize(property), length);
             return packet;
         }
 
-        private NetPacket GetPacket(int size, bool clear)
+        public NetPacket GetPacket(int size, bool clear)
         {
             NetPacket packet = null;
             if (size <= NetConstants.MaxPacketSize)
@@ -47,20 +47,8 @@ namespace LiteNetLib
             return packet;
         }
 
-        //Get packet just for read
-        public NetPacket GetAndRead(byte[] data, int start, int count)
-        {
-            NetPacket packet = GetPacket(count, false);
-            if (!packet.FromBytes(data, start, count))
-            {
-                Recycle(packet);
-                return null;
-            }
-            return packet;
-        }
-
         //Get packet with size
-        public NetPacket Get(PacketProperty property, int size)
+        public NetPacket GetWithProperty(PacketProperty property, int size)
         {
             size += NetPacket.GetHeaderSize(property);
             NetPacket packet = GetPacket(size, true);

@@ -564,9 +564,10 @@ namespace LiteNetLib
 #endif
 
             //Try read packet
-            NetPacket packet = NetPacketPool.GetAndRead(reusableBuffer, 0, count);
-            if (packet == null)
+            NetPacket packet = NetPacketPool.GetPacket(count, false);
+            if (!packet.FromBytes(reusableBuffer, 0, count))
             {
+                NetPacketPool.Recycle(packet);
                 NetUtils.DebugWriteError("[NM] DataReceived: bad!");
                 return;
             }

@@ -136,10 +136,8 @@ namespace LiteNetLib
             bool fragmented = (data[start] & 0x80) != 0;
             int headerSize = GetHeaderSize((PacketProperty) property);
 
-            if (property > LastProperty ||
-                packetSize > NetConstants.PacketSizeLimit ||
-                packetSize < headerSize ||
-                fragmented && packetSize < headerSize + NetConstants.FragmentHeaderSize)
+            if (property > LastProperty || packetSize < headerSize ||
+               (fragmented && packetSize < headerSize + NetConstants.FragmentHeaderSize))
             {
                 return false;
             }

@@ -40,9 +40,10 @@ namespace LiteNetLib
 
         public void ProcessPacket(NetPacket packet)
         {
-            if (packet.Sequence < NetConstants.MaxSequence && 
-                NetUtils.RelativeSequenceNumber(packet.Sequence, _remoteSequence) > 0)
+            int relative = NetUtils.RelativeSequenceNumber(packet.Sequence, _remoteSequence);
+            if (packet.Sequence < NetConstants.MaxSequence && relative > 0)
             {
+                _peer.Statistics.PacketLoss += (ulong)(relative - 1);
                 _remoteSequence = packet.Sequence;
                 _peer.AddIncomingPacket(packet);
             }

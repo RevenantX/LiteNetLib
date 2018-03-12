@@ -98,7 +98,7 @@ namespace LiteNetLib
             IntPtr[] fileDescriptorSet = { (IntPtr)1, sockeHandle };
             TimeValue time = new TimeValue {Microseconds = SocketReceivePollTime};
 #endif
-            byte[] receiveBuffer = new byte[NetConstants.PacketSizeLimit];
+            byte[] receiveBuffer = new byte[NetConstants.MaxPacketSize];
 
             while (_running)
             {
