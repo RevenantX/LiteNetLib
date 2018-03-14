@@ -59,7 +59,7 @@ namespace LiteNetLib
 
         public void Recycle(NetPacket packet)
         {
-            if (packet.Size > NetConstants.MaxPacketSize || _count == PoolLimit)
+            if (packet.Size > NetConstants.MaxPacketSize)
             {
                 //Dont pool big packets. Save memory
                 return;
@@ -69,6 +69,8 @@ namespace LiteNetLib
             packet.IsFragmented = false;
             lock (_pool)
             {
+                if (_count == PoolLimit)
+                    return;
                 _pool[_count] = packet;
                 _count++;
             }
