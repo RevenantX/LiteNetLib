@@ -48,7 +48,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(client.PeersCount, 1);
         }
 
-        [Test, MaxTime(20000)]
+        [Test, MaxTime(10000)]
         public void ConnectionFailedTest()
         {
             NetManager client = ManagerStack.Client(1);
@@ -76,6 +76,81 @@ namespace LiteNetLib.Tests
 
             Assert.True(result);
             Assert.AreEqual(DisconnectReason.ConnectionFailed, disconnectInfo.Reason);
+        }
+
+        [Test, MaxTime(10000)]
+        public void NetPeerDisconnectTimeout()
+        {
+            NetManager client = ManagerStack.Client(1);
+            NetManager server = ManagerStack.Server(1);
+
+            //Default 5 sec timeout for local network is too mach, set 1 for test
+            server.DisconnectTimeout = 1000;
+
+            NetPeer clientServerPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+
+            while (clientServerPeer.ConnectionState != ConnectionState.Connected)
+            {
+                Thread.Sleep(15);
+                server.PollEvents();
+                client.PollEvents();
+            }
+
+            Assert.AreEqual(ConnectionState.Connected, clientServerPeer.ConnectionState);
+            Assert.True(server.PeersCount == 1);
+
+            ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) =>
+            {
+                Assert.AreEqual(clientServerPeer, peer);
+                Assert.AreEqual(DisconnectReason.Timeout, info.Reason);
+            };
+
+            server.Stop();
+            
+            Assert.True(server.PeersCount == 0);
+            Assert.True(client.PeersCount == 1);
+
+            while (client.PeersCount == 1)
+            {
+                Thread.Sleep(15);
+            }
+        }
+
+
+        [Test, MaxTime(10000)]
+        public void NetPeerDisconnectAll()
+        {
+            NetManager client = ManagerStack.Client(1);
+            NetManager server = ManagerStack.Server(1);
+
+            NetPeer clientServerPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+
+            while (clientServerPeer.ConnectionState != ConnectionState.Connected)
+            {
+                Thread.Sleep(15);
+                server.PollEvents();
+                client.PollEvents();
+            }
+
+            Assert.AreEqual(ConnectionState.Connected, clientServerPeer.ConnectionState);
+            Assert.True(server.PeersCount == 1);
+
+            ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) =>
+            {
+                Assert.AreEqual(clientServerPeer, peer);
+                Assert.AreEqual(DisconnectReason.RemoteConnectionClose, info.Reason);
+            };
+
+            server.DisconnectAll();
+            while (client.GetPeersCount(ConnectionState.Connected) != 0)
+            {
+                Thread.Sleep(15);
+                client.PollEvents();
+            }
+            server.Stop();
+
+            Assert.AreEqual(0, server.PeersCount);
+            Assert.AreEqual(0, client.GetPeersCount(ConnectionState.Connected));
         }
 
         [Test, MaxTime(2000)]
