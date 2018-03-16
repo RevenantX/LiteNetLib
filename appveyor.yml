@@ -16,6 +16,7 @@ build:
 test:
   assemblies:
     - '**\*.Test.dll'
+    - '**\*.Tests.dll'
 artifacts:
   - path: LiteNetLib/bin/Release
     name: LiteNetLib-$(appveyor_build_version)

@@ -6,9 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\LiteNetLib.Test\ConnectionTest.cs" Link="ConnectionTest.cs" />
-    <Compile Include="..\LiteNetLib.Test\NetSerializerTest.cs" Link="NetSerializerTest.cs" />
-    <Compile Include="..\LiteNetLib.Test\ReaderWriterSimpleDataTest.cs" Link="ReaderWriterSimpleDataTest.cs" />
+    <Compile Include="..\LiteNetLib.Tests\ConnectionTest.cs" Link="ConnectionTest.cs" />
+    <Compile Include="..\LiteNetLib.Tests\NetSerializerTest.cs" Link="NetSerializerTest.cs" />
+    <Compile Include="..\LiteNetLib.Tests\ReaderWriterSimpleDataTest.cs" Link="ReaderWriterSimpleDataTest.cs" />
+    <Compile Include="..\LiteNetLib.Tests\TestUtility\NetManagerStack.cs" Link="TestUtility\NetManagerStack.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +20,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LiteNetLibNetCore\LiteNetLibNetCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TestUtility\" />
   </ItemGroup>
 
 </Project>
