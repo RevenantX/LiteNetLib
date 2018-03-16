@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\LiteNetLib.Test\ConnectionTest.cs" Link="ConnectionTest.cs" />
+    <Compile Include="..\LiteNetLib.Test\NetSerializerTest.cs" Link="NetSerializerTest.cs" />
+    <Compile Include="..\LiteNetLib.Test\ReaderWriterSimpleDataTest.cs" Link="ReaderWriterSimpleDataTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.1" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LiteNetLibNetCore\LiteNetLibNetCore.csproj" />
+  </ItemGroup>
+
+</Project>

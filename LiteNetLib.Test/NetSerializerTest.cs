@@ -100,8 +100,7 @@ namespace LiteNetLib.Test
             return s1 == s2;
         }
 
-        [Test]
-        [Timeout(2000)]
+        [Test, MaxTime(2000)]
         public void CustomPackageTest()
         {
             var writer = new NetDataWriter();
