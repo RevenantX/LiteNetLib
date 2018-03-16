@@ -1,7 +1,8 @@
 ﻿using LiteNetLib.Utils;
+
 using NUnit.Framework;
 
-namespace LiteNetLib.Test
+namespace LiteNetLib.Tests
 {
     [TestFixture]
     [Category("Serializer")]

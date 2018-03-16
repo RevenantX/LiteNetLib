@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using LiteNetLib.Test.Helper;
+
+using LiteNetLib.Tests.TestUtility;
 using LiteNetLib.Utils;
 
 using NUnit.Framework;
 
-namespace LiteNetLib.Test
+namespace LiteNetLib.Tests
 {
     [TestFixture]
     [Category("Communication")]

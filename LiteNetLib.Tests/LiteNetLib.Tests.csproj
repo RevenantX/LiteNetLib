@@ -8,8 +8,8 @@
     <ProjectGuid>{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LiteNetLib.Test</RootNamespace>
-    <AssemblyName>LiteNetLib.Test</AssemblyName>
+    <RootNamespace>LiteNetLib.Tests</RootNamespace>
+    <AssemblyName>LiteNetLib.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
