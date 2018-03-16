@@ -30,34 +30,6 @@ namespace LiteNetLib.Test
         public NetManagerStack ManagerStack { get; set; }
 
         [Test, MaxTime(2000)]
-        public void TestLitNetLib()
-        {
-            var clientListener = new EventBasedNetListener();
-            var serverListener = new EventBasedNetListener();
-            var client = new NetManager(clientListener);
-            var server = new NetManager(serverListener);
-
-            serverListener.ConnectionRequestEvent += request =>
-            {
-                request.AcceptIfKey(DefaultAppKey);
-            };
-
-            server.Start(DefaultPort);
-            client.Start();
-
-            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
-
-            while (server.PeersCount != 1)
-            {
-                Thread.Sleep(15);
-                server.PollEvents();
-            }
-
-            Assert.AreEqual(server.PeersCount, 1);
-            Assert.AreEqual(client.PeersCount, 1);
-        }
-
-        [Test, MaxTime(2000)]
         public void ConnectionByIpV4()
         {
             var server = ManagerStack.Server(1);
