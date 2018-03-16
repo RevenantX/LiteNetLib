@@ -119,46 +119,53 @@ namespace LiteNetLib.Tests
         }
 
 
-     
+
+#if !NETCOREAPP2_0
+        //TODO: Timeout attribute not work in netcoreapp
         [Test, MaxTime(10000)]
+#endif
         public void NetPeerDisconnectAll()
         {
-//TODO: Timeout attribute not work in netcoreapp
-#if !NETCOREAPP2_0
             NetManager client = ManagerStack.Client(1);
+            NetManager client2 = ManagerStack.Client(2);
             NetManager server = ManagerStack.Server(1);
 
             NetPeer clientServerPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+            client2.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
             while (clientServerPeer.ConnectionState != ConnectionState.Connected)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
                 client.PollEvents();
+                client2.PollEvents();
             }
 
             Assert.AreEqual(ConnectionState.Connected, clientServerPeer.ConnectionState);
-            Assert.True(server.PeersCount == 1);
+            Assert.AreEqual(2, server.GetPeersCount(ConnectionState.Connected));
 
             ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) =>
             {
+                byte[] bytes = info.AdditionalData.GetRemainingBytes();
+                Assert.AreEqual(new byte[] { 1, 2, 3, 4 }, bytes);
                 Assert.AreEqual(clientServerPeer, peer);
                 Assert.AreEqual(DisconnectReason.RemoteConnectionClose, info.Reason);
             };
 
-            server.DisconnectAll();
+            server.DisconnectAll(new byte[]{1, 2, 3, 4}, 0, 4);
+            
+            Assert.AreEqual(0, server.GetPeersCount(ConnectionState.Connected));
+            Assert.AreEqual(2, server.GetPeersCount(ConnectionState.ShutdownRequested));
+
             while (client.GetPeersCount(ConnectionState.Connected) != 0)
             {
                 Thread.Sleep(15);
                 client.PollEvents();
+                server.PollEvents();
             }
-            server.Stop();
-
+           
             Assert.AreEqual(0, server.PeersCount);
             Assert.AreEqual(0, client.GetPeersCount(ConnectionState.Connected));
-#else
-            Assert.Pass();
-#endif
         }
 
         [Test, MaxTime(2000)]
