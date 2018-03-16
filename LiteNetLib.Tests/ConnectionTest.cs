@@ -6,6 +6,7 @@ using LiteNetLib.Tests.TestUtility;
 using LiteNetLib.Utils;
 
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace LiteNetLib.Tests
 {
@@ -45,6 +46,36 @@ namespace LiteNetLib.Tests
 
             Assert.AreEqual(server.PeersCount, 1);
             Assert.AreEqual(client.PeersCount, 1);
+        }
+
+        [Test, MaxTime(20000)]
+        public void ConnectionFailedTest()
+        {
+            NetManager client = ManagerStack.Client(1);
+
+            var result = false;
+            DisconnectInfo disconnectInfo = default(DisconnectInfo);
+
+            ManagerStack.ClientListener(1).PeerConnectedEvent += peer =>
+            {
+                result = true;
+            };
+            ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) => 
+            {
+                result = true;
+                disconnectInfo = info;
+            };
+
+            client.Connect("127.0.0.2", DefaultPort, DefaultAppKey);
+
+            while (!result)
+            {
+                Thread.Sleep(15);
+                client.PollEvents();
+            }
+
+            Assert.True(result);
+            Assert.AreEqual(DisconnectReason.ConnectionFailed, disconnectInfo.Reason);
         }
 
         [Test, MaxTime(2000)]
