@@ -4,7 +4,6 @@ configuration:
   - Release
 before_build:
   - nuget restore
-  - cd LiteNetLibStandard
   - dotnet restore
 assembly_info:
   patch: true
