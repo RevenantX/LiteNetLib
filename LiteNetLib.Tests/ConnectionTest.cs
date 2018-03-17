@@ -196,6 +196,8 @@ namespace LiteNetLib.Tests
                 client.PollEvents();
             }
             Assert.True(disconnected);
+            Assert.AreEqual(0, server.PeersCount);
+            Assert.AreEqual(0, client.PeersCount);
         }
 
         [Test, MaxTime(2000)]
