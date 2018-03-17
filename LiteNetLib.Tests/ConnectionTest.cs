@@ -204,6 +204,40 @@ namespace LiteNetLib.Tests
         }
 
         [Test, MaxTime(2000)]
+        public void DisconnectFromClientTest()
+        {
+            NetManager server = ManagerStack.Server(1);
+            NetManager client = ManagerStack.Client(1);
+            var clientDisconnected = false;
+            var serverDisconnected = false;
+            
+            ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) => { clientDisconnected = true; };
+            ManagerStack.ServerListener(1).PeerDisconnectedEvent += (peer, info) => { serverDisconnected = true; };
+
+            NetPeer serverPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+            while (server.PeersCount != 1)
+            {
+                Thread.Sleep(15);
+                server.PollEvents();
+            }
+
+            //User server peer from client
+            serverPeer.Disconnect();
+
+            while (!clientDisconnected || !serverDisconnected)
+            {
+                Thread.Sleep(15);
+                client.PollEvents();
+                server.PollEvents();
+            }
+
+            Assert.True(clientDisconnected);
+            Assert.True(serverDisconnected);
+            Assert.AreEqual(0, server.PeersCount);
+            Assert.AreEqual(0, client.PeersCount);
+        }
+
+        [Test, MaxTime(2000)]
         public void ConnectionByIpV6()
         {
             var server = ManagerStack.Server(1);
