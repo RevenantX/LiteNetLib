@@ -197,6 +197,7 @@ namespace LiteNetLib.Tests
                 server.PollEvents();
             }
             
+            // Wait that server remove disconnected peers
             Thread.Sleep(100);
 
             Assert.True(clientDisconnected);
@@ -233,6 +234,7 @@ namespace LiteNetLib.Tests
                 server.PollEvents();
             }
 
+            // Wait that server remove disconnected peers
             Thread.Sleep(100);
 
             Assert.True(clientDisconnected);
