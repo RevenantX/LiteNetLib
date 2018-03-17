@@ -168,6 +168,7 @@ namespace LiteNetLib.Tests
 
             Assert.AreEqual(0, server.GetPeersCount(ConnectionState.ShutdownRequested));
             Assert.AreEqual(0, client.GetPeersCount(ConnectionState.Connected));
+            Assert.AreEqual(ConnectionState.Disconnected, clientServerPeer.ConnectionState);
         }
 
         [Test, MaxTime(2000)]
