@@ -190,13 +190,15 @@ namespace LiteNetLib.Tests
 
             server.DisconnectPeer(server.GetFirstPeer());
 
-            while (!clientDisconnected || !serverDisconnected)
+            while (!(clientDisconnected && serverDisconnected))
             {
                 Thread.Sleep(15);
                 client.PollEvents();
                 server.PollEvents();
             }
             
+            Thread.Sleep(100);
+
             Assert.True(clientDisconnected);
             Assert.True(serverDisconnected);
             Assert.AreEqual(0, server.PeersCount);
@@ -224,12 +226,14 @@ namespace LiteNetLib.Tests
             //User server peer from client
             serverPeer.Disconnect();
 
-            while (!clientDisconnected || !serverDisconnected)
+            while (!(clientDisconnected && serverDisconnected))
             {
                 Thread.Sleep(15);
                 client.PollEvents();
                 server.PollEvents();
             }
+
+            Thread.Sleep(100);
 
             Assert.True(clientDisconnected);
             Assert.True(serverDisconnected);
