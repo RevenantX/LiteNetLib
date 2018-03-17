@@ -164,7 +164,9 @@ namespace LiteNetLib.Tests
                 server.PollEvents();
             }
            
-            Assert.AreEqual(0, server.PeersCount);
+            Thread.Sleep(100);
+
+            Assert.AreEqual(0, server.GetPeersCount(ConnectionState.ShutdownRequested));
             Assert.AreEqual(0, client.GetPeersCount(ConnectionState.Connected));
         }
 
