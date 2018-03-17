@@ -164,10 +164,10 @@ namespace LiteNetLib.Tests
                 server.PollEvents();
             }
            
+            //Wait for client 'ShutdownOk' response
             Thread.Sleep(100);
 
-            Assert.AreEqual(0, server.GetPeersCount(ConnectionState.ShutdownRequested));
-            Assert.AreEqual(0, client.GetPeersCount(ConnectionState.Connected));
+            Assert.AreEqual(0, server.PeersCount);
             Assert.AreEqual(ConnectionState.Disconnected, clientServerPeer.ConnectionState);
         }
 
