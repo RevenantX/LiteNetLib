@@ -1,7 +1,8 @@
 ﻿using LiteNetLib.Utils;
+
 using NUnit.Framework;
 
-namespace LiteNetLib.Test
+namespace LiteNetLib.Tests
 {
     [TestFixture]
     [Category("Serializer")]
@@ -100,8 +101,7 @@ namespace LiteNetLib.Test
             return s1 == s2;
         }
 
-        [Test]
-        [Timeout(2000)]
+        [Test, MaxTime(2000)]
         public void CustomPackageTest()
         {
             var writer = new NetDataWriter();

@@ -638,6 +638,8 @@ namespace LiteNetLib
                             netEvent.DataReader.SetSource(packet.RawData, 9, packet.Size);
                             netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
                             EnqueueEvent(netEvent);
+                            //TODO: Very ugly fix
+                            netPeer.Shutdown(null, 0, 0, true);
                         }
                         break;
                     case PacketProperty.ShutdownOk:

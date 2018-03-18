@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using NUnit.Framework;
 
-namespace LiteNetLib.Test.Helper
+namespace LiteNetLib.Tests.TestUtility
 {
     public class NetManagerStack : IDisposable
     {

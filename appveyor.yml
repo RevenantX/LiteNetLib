@@ -4,7 +4,6 @@ configuration:
   - Release
 before_build:
   - nuget restore
-  - cd LiteNetLibStandard
   - dotnet restore
 assembly_info:
   patch: true
@@ -15,7 +14,7 @@ build:
   project: LiteNetLib.sln
 test:
   assemblies:
-    - '**\*.Test.dll'
+    - '**\*.Tests.dll'
 artifacts:
   - path: LiteNetLib/bin/Release
     name: LiteNetLib-$(appveyor_build_version)
