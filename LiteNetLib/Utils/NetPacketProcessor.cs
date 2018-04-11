@@ -12,6 +12,7 @@ namespace LiteNetLib.Utils
         private readonly Dictionary<ulong, SubscribeDelegate> _callbacks = new Dictionary<ulong, SubscribeDelegate>();
         private readonly NetDataWriter _netDataWriter = new NetDataWriter();
 
+        //FNV-1 64 bit hash
         protected virtual ulong GetHash(Type type)
         {
             ulong hash;
