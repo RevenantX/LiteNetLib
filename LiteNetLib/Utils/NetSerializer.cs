@@ -69,7 +69,8 @@ namespace LiteNetLib.Utils
             typeof(string),
             typeof(float),
             typeof(double),
-            typeof(bool)
+            typeof(bool),
+            typeof(char)
         };
 
         private readonly NetDataWriter _writer;
@@ -334,6 +335,13 @@ namespace LiteNetLib.Utils
                     var setDelegate = ExtractSetDelegate<T, double>(setMethod);
                     var getDelegate = ExtractGetDelegate<T, double>(getMethod);
                     info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetDouble());
+                    info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference));
+                }
+                else if (propertyType == typeof(char))
+                {
+                    var setDelegate = ExtractSetDelegate<T, char>(setMethod);
+                    var getDelegate = ExtractGetDelegate<T, char>(getMethod);
+                    info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetChar());
                     info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference));
                 }
                 // Array types

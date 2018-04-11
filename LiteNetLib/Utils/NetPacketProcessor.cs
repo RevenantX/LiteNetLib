@@ -12,6 +12,7 @@ namespace LiteNetLib.Utils
         private readonly Dictionary<ulong, SubscribeDelegate> _callbacks = new Dictionary<ulong, SubscribeDelegate>();
         private readonly NetDataWriter _netDataWriter = new NetDataWriter();
 
+        //FNV-1 64 bit hash
         protected virtual ulong GetHash(Type type)
         {
             ulong hash;
@@ -293,6 +294,16 @@ namespace LiteNetLib.Utils
                 reference.Deserialize(reader);
                 onReceive(reference);
             };
+        }
+
+        /// <summary>
+        /// Remove any subscriptions by type
+        /// </summary>
+        /// <typeparam name="T">Packet type</typeparam>
+        /// <returns>true if remove is success</returns>
+        public bool RemoveSubscription<T>()
+        {
+            return _callbacks.Remove(GetHash(typeof(T)));
         }
     }
 }
