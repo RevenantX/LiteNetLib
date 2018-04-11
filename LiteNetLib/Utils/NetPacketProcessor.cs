@@ -294,5 +294,15 @@ namespace LiteNetLib.Utils
                 onReceive(reference);
             };
         }
+
+        /// <summary>
+        /// Remove any subscriptions by type
+        /// </summary>
+        /// <typeparam name="T">Packet type</typeparam>
+        /// <returns>true if remove is success</returns>
+        public bool RemoveSubscription<T>()
+        {
+            return _callbacks.Remove(GetHash(typeof(T)));
+        }
     }
 }
