@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text;
 using System.Threading;
 using LiteNetLib;
@@ -27,7 +28,7 @@ namespace LibSample
                 _server.PollEvents();
             }
 
-            void INetEventListener.OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
+            void INetEventListener.OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
             {
             }
 
@@ -55,7 +56,7 @@ namespace LibSample
                 }
             }
 
-            void INetEventListener.OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader,
+            void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader,
                 UnconnectedMessageType messageType)
             {
             }
@@ -122,7 +123,7 @@ namespace LibSample
                 _client.PollEvents();
             }
 
-            void INetEventListener.OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
+            void INetEventListener.OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
             {
             }
 
@@ -140,7 +141,7 @@ namespace LibSample
 
             }
 
-            void INetEventListener.OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader,
+            void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader,
                 UnconnectedMessageType messageType)
             {
             }

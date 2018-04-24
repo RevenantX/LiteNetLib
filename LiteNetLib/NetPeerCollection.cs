@@ -1,12 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 
 namespace LiteNetLib
 {
+    internal class IPEndPointComparer : IEqualityComparer<IPEndPoint>
+    {
+        public bool Equals(IPEndPoint x, IPEndPoint y)
+        {
+            return x.Equals(y);
+        }
+
+        public int GetHashCode(IPEndPoint obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
+
     internal sealed class NetPeerCollection
     {
-        private readonly Dictionary<NetEndPoint, NetPeer> _peersDict;
+        private readonly Dictionary<IPEndPoint, NetPeer> _peersDict;
         private NetPeer[] _peersArray;
         private readonly ReaderWriterLockSlim _lock;
         public int Count;
@@ -29,11 +43,11 @@ namespace LiteNetLib
         public NetPeerCollection(int maxPeers)
         {
             _peersArray = new NetPeer[maxPeers];
-            _peersDict = new Dictionary<NetEndPoint, NetPeer>(new NetEndPointComparer());
+            _peersDict = new Dictionary<IPEndPoint, NetPeer>(new IPEndPointComparer());
             _lock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         }
 
-        public bool TryGetValue(NetEndPoint endPoint, out NetPeer peer)
+        public bool TryGetValue(IPEndPoint endPoint, out NetPeer peer)
         {
             _lock.EnterReadLock();
             bool result = _peersDict.TryGetValue(endPoint, out peer);
@@ -50,7 +64,7 @@ namespace LiteNetLib
             _lock.ExitWriteLock();
         }
 
-        public void Add(NetEndPoint endPoint, NetPeer peer)
+        public void Add(IPEndPoint endPoint, NetPeer peer)
         {
             _lock.EnterWriteLock();
             if (Count == _peersArray.Length)
@@ -61,14 +75,6 @@ namespace LiteNetLib
             _peersDict.Add(endPoint, peer);
             Count++;
             _lock.ExitWriteLock();
-        }
-
-        public bool ContainsAddress(NetEndPoint endPoint)
-        {
-            _lock.EnterReadLock();
-            bool result = _peersDict.ContainsKey(endPoint);
-            _lock.ExitReadLock();
-            return result;
         }
 
         public NetPeer[] ToArray()

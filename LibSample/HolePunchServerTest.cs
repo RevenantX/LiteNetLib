@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using LiteNetLib;
-using LiteNetLib.Utils;
 
 namespace LibSample
 {
     class WaitPeer
     {
-        public NetEndPoint InternalAddr { get; private set; }
-        public NetEndPoint ExternalAddr { get; private set; }
+        public IPEndPoint InternalAddr { get; private set; }
+        public IPEndPoint ExternalAddr { get; private set; }
         public DateTime RefreshTime { get; private set; }
 
         public void Refresh()
@@ -17,7 +17,7 @@ namespace LibSample
             RefreshTime = DateTime.Now;
         }
 
-        public WaitPeer(NetEndPoint internalAddr, NetEndPoint externalAddr)
+        public WaitPeer(IPEndPoint internalAddr, IPEndPoint externalAddr)
         {
             Refresh();
             InternalAddr = internalAddr;
@@ -37,7 +37,7 @@ namespace LibSample
         private NetManager _c1;
         private NetManager _c2;
 
-        void INatPunchListener.OnNatIntroductionRequest(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token)
         {
             WaitPeer wpeer;
             if (_waitingPeers.TryGetValue(token, out wpeer))
@@ -77,7 +77,7 @@ namespace LibSample
             }
         }
 
-        void INatPunchListener.OnNatIntroductionSuccess(NetEndPoint targetEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionSuccess(IPEndPoint targetEndPoint, string token)
         {
             //Ignore we are server
         }
@@ -136,8 +136,8 @@ namespace LibSample
             _puncher.NatPunchEnabled = true;
             _puncher.NatPunchModule.Init(this);
 
-            _c1.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("::1", ServerPort), "token1");
-            _c2.NatPunchModule.SendNatIntroduceRequest(new NetEndPoint("::1", ServerPort), "token1");
+            _c1.NatPunchModule.SendNatIntroduceRequest(NetUtils.MakeEndPoint("::1", ServerPort), "token1");
+            _c2.NatPunchModule.SendNatIntroduceRequest(NetUtils.MakeEndPoint("::1", ServerPort), "token1");
 
             // keep going until ESCAPE is pressed
             Console.WriteLine("Press ESC to quit");

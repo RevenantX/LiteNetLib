@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Text;
 
 namespace LiteNetLib.Utils
@@ -87,11 +88,11 @@ namespace LiteNetLib.Utils
         }
 
         #region GetMethods
-        public NetEndPoint GetNetEndPoint()
+        public IPEndPoint GetNetEndPoint()
         {
             string host = GetString(1000);
             int port = GetInt();
-            return new NetEndPoint(host, port);
+            return NetUtils.MakeEndPoint(host, port);
         }
 
         public byte GetByte()

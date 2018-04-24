@@ -163,12 +163,12 @@ namespace LiteNetLib.Tests
         public void WriteReadNetEndPoint()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(new NetEndPoint("127.0.0.1", 7777));
+            ndw.Put(NetUtils.MakeEndPoint("127.0.0.1", 7777));
 
             var ndr = new NetDataReader(ndw.Data);
             var readNetEndPoint = ndr.GetNetEndPoint();
 
-            Assert.AreEqual(readNetEndPoint, new NetEndPoint("127.0.0.1", 7777));
+            Assert.AreEqual(readNetEndPoint, NetUtils.MakeEndPoint("127.0.0.1", 7777));
         }
 
         [Test]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using LiteNetLib;
 using LiteNetLib.Utils;
@@ -13,7 +14,7 @@ namespace LibSample
 
             public void OnPeerConnected(NetPeer peer)
             {
-                Console.WriteLine("[Client {0}] connected to: {1}:{2}", Client.LocalPort, peer.EndPoint.Host, peer.EndPoint.Port);
+                Console.WriteLine("[Client {0}] connected to: {1}:{2}", Client.LocalPort, peer.EndPoint.Address, peer.EndPoint.Port);
             }
 
             public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
@@ -21,7 +22,7 @@ namespace LibSample
                 Console.WriteLine("[Client] disconnected: " + disconnectInfo.Reason);
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, int error)
+            public void OnNetworkError(IPEndPoint endPoint, int error)
             {
                 Console.WriteLine("[Client] error! " + error);
             }
@@ -31,7 +32,7 @@ namespace LibSample
 
             }
 
-            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
+            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
             {
                 Console.WriteLine("[Client] ReceiveUnconnected {0}. From: {1}. Data: {2}", messageType, remoteEndPoint, reader.GetString(100));
                 if (messageType == UnconnectedMessageType.DiscoveryResponse)
@@ -70,7 +71,7 @@ namespace LibSample
                 Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + disconnectInfo.Reason);
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
+            public void OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
             {
                 Console.WriteLine("[Server] error: " + socketErrorCode);
             }
@@ -80,7 +81,7 @@ namespace LibSample
 
             }
 
-            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
+            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
             {
                 Console.WriteLine("[Server] ReceiveUnconnected {0}. From: {1}. Data: {2}", messageType, remoteEndPoint, reader.GetString(100));
                 NetDataWriter wrtier = new NetDataWriter();

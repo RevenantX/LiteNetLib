@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -60,13 +61,13 @@ namespace LiteNetLib
         private bool _used;
 
         public readonly long ConnectionId;
-        public readonly NetEndPoint RemoteEndPoint;
+        public readonly IPEndPoint RemoteEndPoint;
         public readonly NetDataReader Data;
         public ConnectionRequestResult Result { get; private set; }
 
         internal ConnectionRequest(
-            long connectionId, 
-            NetEndPoint remoteEndPoint, 
+            long connectionId,
+            IPEndPoint remoteEndPoint, 
             NetDataReader netDataReader,
             Func<ConnectionRequest, NetPeer> onUserAction)
         {
@@ -144,7 +145,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="endPoint">From endPoint (can be null)</param>
         /// <param name="socketErrorCode">Socket error code</param>
-        void OnNetworkError(NetEndPoint endPoint, int socketErrorCode);
+        void OnNetworkError(IPEndPoint endPoint, int socketErrorCode);
 
         /// <summary>
         /// Received some data
@@ -160,7 +161,7 @@ namespace LiteNetLib
         /// <param name="remoteEndPoint">From address (IP and Port)</param>
         /// <param name="reader">Message data</param>
         /// <param name="messageType">Message type (simple, discovery request or responce)</param>
-        void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
+        void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
 
         /// <summary>
         /// Latency information updated
@@ -180,9 +181,9 @@ namespace LiteNetLib
     {
         public delegate void OnPeerConnected(NetPeer peer);
         public delegate void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
-        public delegate void OnNetworkError(NetEndPoint endPoint, int socketErrorCode);
+        public delegate void OnNetworkError(IPEndPoint endPoint, int socketErrorCode);
         public delegate void OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod);
-        public delegate void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
+        public delegate void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType);
         public delegate void OnNetworkLatencyUpdate(NetPeer peer, int latency);
 
         public delegate void OnConnectionRequest(ConnectionRequest request);
@@ -207,7 +208,7 @@ namespace LiteNetLib
                 PeerDisconnectedEvent(peer, disconnectInfo);
         }
 
-        void INetEventListener.OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
+        void INetEventListener.OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
         {
             if (NetworkErrorEvent != null)
                 NetworkErrorEvent(endPoint, socketErrorCode);
@@ -219,7 +220,7 @@ namespace LiteNetLib
                 NetworkReceiveEvent(peer, reader, deliveryMethod);
         }
 
-        void INetEventListener.OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
+        void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
         {
             if (NetworkReceiveUnconnectedEvent != null)
                 NetworkReceiveUnconnectedEvent(remoteEndPoint, reader, messageType);

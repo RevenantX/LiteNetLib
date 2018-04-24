@@ -3,6 +3,7 @@
 #endif
 using System;
 using System.Collections.Generic;
+using System.Net;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -42,7 +43,7 @@ namespace LiteNetLib
         private int _timeSinceLastPacket;
 
         //Common            
-        private readonly NetEndPoint _remoteEndPoint;
+        private readonly IPEndPoint _remoteEndPoint;
         private readonly NetManager _netManager;
         private readonly NetPacketPool _packetPool;
         private readonly object _flushLock = new object();
@@ -107,7 +108,7 @@ namespace LiteNetLib
         /// <summary>
         /// Peer ip address and port
         /// </summary>
-        public NetEndPoint EndPoint
+        public IPEndPoint EndPoint
         {
             get { return _remoteEndPoint; }
         }
@@ -169,7 +170,7 @@ namespace LiteNetLib
         /// </summary>
         public readonly NetStatistics Statistics;
 
-        private NetPeer(NetManager netManager, NetEndPoint remoteEndPoint)
+        private NetPeer(NetManager netManager, IPEndPoint remoteEndPoint)
         {
             Statistics = new NetStatistics();
             _packetPool = netManager.NetPacketPool;
@@ -192,7 +193,7 @@ namespace LiteNetLib
         }
 
         //Connect constructor
-        internal NetPeer(NetManager netManager, NetEndPoint remoteEndPoint, NetDataWriter connectData) : this(netManager, remoteEndPoint)
+        internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, NetDataWriter connectData) : this(netManager, remoteEndPoint)
         {
             _connectData = connectData;
             _connectAttempts = 0;
@@ -203,7 +204,7 @@ namespace LiteNetLib
         }
 
         //Accept incoming constructor
-        internal NetPeer(NetManager netManager, NetEndPoint remoteEndPoint, long connectId) : this(netManager, remoteEndPoint)
+        internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, long connectId) : this(netManager, remoteEndPoint)
         {
             _connectAttempts = 0;
             _connectId = connectId;
@@ -434,19 +435,18 @@ namespace LiteNetLib
         {
             lock (this)
             {
-                //don't send anything
-                if (force)
-                {
-                    _connectionState = ConnectionState.Disconnected;
-                    return false;
-                }
-
                 //trying to shutdown already disconnected
                 if (_connectionState == ConnectionState.Disconnected ||
                     _connectionState == ConnectionState.ShutdownRequested)
                 {
-                    NetUtils.DebugWriteError("Trying to shutdown already shutdowned peer!");
                     return false;
+                }
+
+                //don't send anything
+                if (force)
+                {
+                    _connectionState = ConnectionState.Disconnected;
+                    return true;
                 }
 
                 _shutdownPacket = _packetPool.GetWithProperty(PacketProperty.Disconnect, 8 + length);
@@ -831,6 +831,7 @@ namespace LiteNetLib
 
         internal void Update(int deltaTime)
         {
+            _timeSinceLastPacket += deltaTime;
             switch (_connectionState)
             {
                 case ConnectionState.Connected:
@@ -844,38 +845,33 @@ namespace LiteNetLib
                         return;
                     }
                     break;
+
                 case ConnectionState.ShutdownRequested:
                     if (_timeSinceLastPacket > _netManager.DisconnectTimeout)
-                    {
                         _connectionState = ConnectionState.Disconnected;
-                    }
                     else
-                    {
                         _netManager.SendRaw(_shutdownPacket.RawData, 0, _shutdownPacket.Size, _remoteEndPoint);
+                    return;
+
+                case ConnectionState.InProgress:
+                    _connectTimer += deltaTime;
+                    if (_connectTimer > _netManager.ReconnectDelay)
+                    {
+                        _connectTimer = 0;
+                        _connectAttempts++;
+                        if (_connectAttempts > _netManager.MaxConnectAttempts)
+                        {
+                            _netManager.DisconnectPeer(this, DisconnectReason.ConnectionFailed, 0, true, null, 0, 0);
+                            return;
+                        }
+
+                        //else send connect again
+                        SendConnectRequest();
                     }
                     return;
+
                 case ConnectionState.Disconnected:
                     return;
-            }
-
-            _timeSinceLastPacket += deltaTime;
-            if (_connectionState == ConnectionState.InProgress)
-            {
-                _connectTimer += deltaTime;
-                if (_connectTimer > _netManager.ReconnectDelay)
-                {
-                    _connectTimer = 0;
-                    _connectAttempts++;
-                    if (_connectAttempts > _netManager.MaxConnectAttempts)
-                    {
-                        _netManager.DisconnectPeer(this, DisconnectReason.ConnectionFailed, 0, true, null, 0, 0);
-                        return;
-                    }
-
-                    //else send connect again
-                    SendConnectRequest();
-                }
-                return;
             }
 
             //Send ping

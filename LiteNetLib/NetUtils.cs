@@ -23,6 +23,54 @@ namespace LiteNetLib
     /// </summary>
     public static class NetUtils
     {
+        public static IPEndPoint MakeEndPoint(string hostStr, int port)
+        {
+            return new IPEndPoint(ResolveAddress(hostStr), port);
+        }
+
+        public static IPAddress ResolveAddress(string hostStr)
+        {
+            IPAddress ipAddress;
+            if (!IPAddress.TryParse(hostStr, out ipAddress))
+            {
+                if (NetSocket.IPv6Support)
+                {
+                    ipAddress = hostStr == "localhost"
+                        ? IPAddress.IPv6Loopback
+                        : ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
+                }
+                if (ipAddress == null)
+                {
+                    ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetwork);
+                }
+            }
+            if (ipAddress == null)
+            {
+                throw new ArgumentException("Invalid address: " + hostStr);
+            }
+
+            return ipAddress;
+        }
+
+        private static IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily)
+        {
+#if NETCORE
+            var hostTask = Dns.GetHostEntryAsync(hostStr);
+            hostTask.Wait();
+            var host = hostTask.Result;
+#else
+            var host = Dns.GetHostEntry(hostStr);
+#endif
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == addressFamily)
+                {
+                    return ip;
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// Request time from NTP server and calls callback (if success)
         /// </summary>
@@ -32,7 +80,7 @@ namespace LiteNetLib
         public static void RequestTimeFromNTP(string ntpServerAddress, int port, Action<DateTime?> onRequestComplete)
         {
             NetSocket socket = null;
-            var ntpEndPoint = new NetEndPoint(ntpServerAddress, port);
+            var ntpEndPoint = MakeEndPoint(ntpServerAddress, port);
 
             NetManager.OnMessageReceived onReceive = (data, length, code, point) =>
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using LiteNetLib.Utils;
 
 //Some code parts taken from lidgren-network-gen3
@@ -7,25 +8,25 @@ namespace LiteNetLib
 {
     public interface INatPunchListener
     {
-        void OnNatIntroductionRequest(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token);
-        void OnNatIntroductionSuccess(NetEndPoint targetEndPoint, string token);
+        void OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token);
+        void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, string token);
     }
 
     public class EventBasedNatPunchListener : INatPunchListener
     {
-        public delegate void OnNatIntroductionRequest(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token);
-        public delegate void OnNatIntroductionSuccess(NetEndPoint targetEndPoint, string token);
+        public delegate void OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token);
+        public delegate void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, string token);
 
         public event OnNatIntroductionRequest NatIntroductionRequest;
         public event OnNatIntroductionSuccess NatIntroductionSuccess;
 
-        void INatPunchListener.OnNatIntroductionRequest(NetEndPoint localEndPoint, NetEndPoint remoteEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token)
         {
             if(NatIntroductionRequest != null)
                 NatIntroductionRequest(localEndPoint, remoteEndPoint, token);
         }
 
-        void INatPunchListener.OnNatIntroductionSuccess(NetEndPoint targetEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionSuccess(IPEndPoint targetEndPoint, string token)
         {
             if (NatIntroductionSuccess != null)
                 NatIntroductionSuccess(targetEndPoint, token);
@@ -39,14 +40,14 @@ namespace LiteNetLib
     {
         struct RequestEventData
         {
-            public NetEndPoint LocalEndPoint;
-            public NetEndPoint RemoteEndPoint;
+            public IPEndPoint LocalEndPoint;
+            public IPEndPoint RemoteEndPoint;
             public string Token;
         }
 
         struct SuccessEventData
         {
-            public NetEndPoint TargetEndPoint;
+            public IPEndPoint TargetEndPoint;
             public string Token;
         }
 
@@ -72,10 +73,10 @@ namespace LiteNetLib
         }
 
         public void NatIntroduce(
-            NetEndPoint hostInternal,
-            NetEndPoint hostExternal,
-            NetEndPoint clientInternal,
-            NetEndPoint clientExternal,
+            IPEndPoint hostInternal,
+            IPEndPoint hostExternal,
+            IPEndPoint clientInternal,
+            IPEndPoint clientExternal,
             string additionalInfo)
         {
             NetDataWriter dw = new NetDataWriter();
@@ -123,7 +124,7 @@ namespace LiteNetLib
             }
         }
 
-        public void SendNatIntroduceRequest(NetEndPoint masterServerEndPoint, string additionalInfo)
+        public void SendNatIntroduceRequest(IPEndPoint masterServerEndPoint, string additionalInfo)
         {
             //prepare outgoing data
             NetDataWriter dw = new NetDataWriter();
@@ -132,7 +133,7 @@ namespace LiteNetLib
             {
                 networkIp = NetUtils.GetLocalIp(LocalAddrType.IPv6);
             }
-            NetEndPoint localEndPoint = new NetEndPoint(networkIp, _socket.LocalPort);
+            IPEndPoint localEndPoint = NetUtils.MakeEndPoint(networkIp, _socket.LocalPort);
             dw.Put((byte)PacketProperty.NatIntroductionRequest);
             dw.Put(localEndPoint);
             dw.Put(additionalInfo, MaxTokenLength);
@@ -142,7 +143,7 @@ namespace LiteNetLib
             _socket.SendTo(dw.Data, 0, dw.Length, masterServerEndPoint, ref errorCode);
         }
 
-        private void HandleNatPunch(NetEndPoint senderEndPoint, NetDataReader dr)
+        private void HandleNatPunch(IPEndPoint senderEndPoint, NetDataReader dr)
         {
             byte fromHostByte = dr.GetByte();
             if (fromHostByte != HostByte && fromHostByte != ClientByte)
@@ -166,8 +167,8 @@ namespace LiteNetLib
         {
             // read intro
             byte hostByte = dr.GetByte();
-            NetEndPoint remoteInternal = dr.GetNetEndPoint();
-            NetEndPoint remoteExternal = dr.GetNetEndPoint();
+            IPEndPoint remoteInternal = dr.GetNetEndPoint();
+            IPEndPoint remoteExternal = dr.GetNetEndPoint();
             string token = dr.GetString(MaxTokenLength);
 
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] introduction received; we are designated " + (hostByte == HostByte ? "host" : "client"));
@@ -200,9 +201,9 @@ namespace LiteNetLib
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] external punch sent to " + remoteExternal);
         }
 
-        private void HandleNatIntroductionRequest(NetEndPoint senderEndPoint, NetDataReader dr)
+        private void HandleNatIntroductionRequest(IPEndPoint senderEndPoint, NetDataReader dr)
         {
-            NetEndPoint localEp = dr.GetNetEndPoint();
+            IPEndPoint localEp = dr.GetNetEndPoint();
             string token = dr.GetString(MaxTokenLength);
             lock (_requestEvents)
             {
@@ -215,7 +216,7 @@ namespace LiteNetLib
             }
         }
 
-        internal void ProcessMessage(NetEndPoint senderEndPoint, NetPacket packet)
+        internal void ProcessMessage(IPEndPoint senderEndPoint, NetPacket packet)
         {
             var dr = new NetDataReader(packet.RawData, NetConstants.HeaderSize, packet.Size);
             switch (packet.Property)

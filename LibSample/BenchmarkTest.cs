@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using LiteNetLib;
@@ -131,7 +132,7 @@ namespace LibSample
                 Connected = false;
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
+            public void OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
             {
                 Console.WriteLine("[Client] error! " + socketErrorCode);
                 Errors++;
@@ -149,7 +150,7 @@ namespace LibSample
                 }
             }
 
-            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
+            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
             {
                 Console.WriteLine("[Client] ReceiveUnconnected: {0}", reader.GetString(100));
             }
@@ -205,7 +206,7 @@ namespace LibSample
                 Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + info.Reason);
             }
 
-            public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
+            public void OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
             {
                 Console.WriteLine("[Server] error: " + socketErrorCode);
                 Errors++;
@@ -219,7 +220,7 @@ namespace LibSample
                 peer.Send(reader.Data, DeliveryMethod.ReliableUnordered);
             }
 
-            public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
+            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
             {
                 Console.WriteLine("[Server] ReceiveUnconnected: {0}", reader.GetString(100));
             }

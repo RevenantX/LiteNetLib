@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Text;
 
 namespace LiteNetLib.Utils
@@ -371,9 +372,9 @@ namespace LiteNetLib.Utils
             }
         }
 
-        public void Put(NetEndPoint endPoint)
+        public void Put(IPEndPoint endPoint)
         {
-            Put(endPoint.Host);
+            Put(endPoint.Address.ToString());
             Put(endPoint.Port);
         }
 

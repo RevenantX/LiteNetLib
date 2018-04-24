@@ -28,7 +28,6 @@
     <Compile Include="..\LiteNetLib\NatPunchModule.cs" Link="NatPunchModule.cs" />
     <Compile Include="..\LiteNetLib\NetConstants.cs" Link="NetConstants.cs" />
     <Compile Include="..\LiteNetLib\NetDebug.cs" Link="NetDebug.cs" />
-    <Compile Include="..\LiteNetLib\NetEndPoint.cs" Link="NetEndPoint.cs" />
     <Compile Include="..\LiteNetLib\NetManager.cs" Link="NetManager.cs" />
     <Compile Include="..\LiteNetLib\NetPacket.cs" Link="NetPacket.cs" />
     <Compile Include="..\LiteNetLib\NetPacketPool.cs" Link="NetPacketPool.cs" />

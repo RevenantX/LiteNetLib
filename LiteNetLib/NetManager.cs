@@ -15,7 +15,7 @@ namespace LiteNetLib
     /// </summary>
     public sealed class NetManager
     {
-        internal delegate void OnMessageReceived(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint);
+        internal delegate void OnMessageReceived(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint);
 
         private enum NetEventType
         {
@@ -35,7 +35,7 @@ namespace LiteNetLib
             public NetPeer Peer;
             public readonly NetDataReader DataReader = new NetDataReader();
             public NetEventType Type;
-            public NetEndPoint RemoteEndPoint;
+            public IPEndPoint RemoteEndPoint;
             public int AdditionalData;
             public DisconnectReason DisconnectReason;
             public ConnectionRequest ConnectionRequest;
@@ -46,7 +46,7 @@ namespace LiteNetLib
         private struct IncomingData
         {
             public byte[] Data;
-            public NetEndPoint EndPoint;
+            public IPEndPoint EndPoint;
             public DateTime TimeWhenGet;
         }
         private readonly List<IncomingData> _pingSimulationList = new List<IncomingData>(); 
@@ -62,7 +62,7 @@ namespace LiteNetLib
         private readonly INetEventListener _netEventListener;
 
         private readonly NetPeerCollection _peers;
-        private readonly HashSet<NetEndPoint> _connectingPeers;
+        private readonly HashSet<IPEndPoint> _connectingPeers;
         private readonly int _maxConnections;
         private readonly List<NetPeer> _connectedPeerList;
 
@@ -224,7 +224,7 @@ namespace LiteNetLib
             NatPunchModule = new NatPunchModule(_socket);
             Statistics = new NetStatistics();
             _peers = new NetPeerCollection(maxConnections);
-            _connectingPeers = new HashSet<NetEndPoint>(new NetEndPointComparer());
+            _connectingPeers = new HashSet<IPEndPoint>(new IPEndPointComparer());
             _maxConnections = maxConnections;
             _connectedPeerList = new List<NetPeer>();
         }
@@ -237,14 +237,14 @@ namespace LiteNetLib
             EnqueueEvent(evt);
         }
 
-        internal bool SendRawAndRecycle(NetPacket packet, NetEndPoint remoteEndPoint)
+        internal bool SendRawAndRecycle(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             var result = SendRaw(packet.RawData, 0, packet.Size, remoteEndPoint);
             NetPacketPool.Recycle(packet);
             return result;
         }
 
-        internal bool SendRaw(byte[] message, int start, int length, NetEndPoint remoteEndPoint)
+        internal bool SendRaw(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
             if (!IsRunning)
                 return false;
@@ -451,7 +451,7 @@ namespace LiteNetLib
             }
         }
         
-        private void ReceiveLogic(byte[] data, int length, int errorCode, NetEndPoint remoteEndPoint)
+        private void ReceiveLogic(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint)
         {
             //Receive some info
             if (errorCode == 0)
@@ -550,7 +550,7 @@ namespace LiteNetLib
             return null;
         }
 
-        private void DataReceived(byte[] reusableBuffer, int count, NetEndPoint remoteEndPoint)
+        private void DataReceived(byte[] reusableBuffer, int count, IPEndPoint remoteEndPoint)
         {
 #if STATS_ENABLED
             Statistics.PacketsReceived++;
@@ -573,7 +573,7 @@ namespace LiteNetLib
                     if(DiscoveryEnabled)
                     {
                         var netEvent = CreateEvent(NetEventType.DiscoveryRequest);
-                        netEvent.RemoteEndPoint = remoteEndPoint.Clone();
+                        netEvent.RemoteEndPoint = remoteEndPoint;
                         netEvent.DataReader.SetSource(packet.RawData, NetConstants.HeaderSize, count);
                         EnqueueEvent(netEvent);
                     }
@@ -581,7 +581,7 @@ namespace LiteNetLib
                 case PacketProperty.DiscoveryResponse:
                     {
                         var netEvent = CreateEvent(NetEventType.DiscoveryResponse);
-                        netEvent.RemoteEndPoint = remoteEndPoint.Clone();
+                        netEvent.RemoteEndPoint = remoteEndPoint;
                         netEvent.DataReader.SetSource(packet.RawData, NetConstants.HeaderSize, count);
                         EnqueueEvent(netEvent);
                     }
@@ -590,7 +590,7 @@ namespace LiteNetLib
                     if (UnconnectedMessagesEnabled)
                     {
                         var netEvent = CreateEvent(NetEventType.ReceiveUnconnected);
-                        netEvent.RemoteEndPoint = remoteEndPoint.Clone();
+                        netEvent.RemoteEndPoint = remoteEndPoint;
                         netEvent.DataReader.SetSource(packet.RawData, NetConstants.HeaderSize, count);
                         EnqueueEvent(netEvent);
                     }
@@ -600,7 +600,7 @@ namespace LiteNetLib
                 case PacketProperty.NatPunchMessage:
                     {
                         if (NatPunchEnabled)
-                            NatPunchModule.ProcessMessage(remoteEndPoint.Clone(), packet);
+                            NatPunchModule.ProcessMessage(remoteEndPoint, packet);
                         return;
                     }
             }
@@ -687,20 +687,19 @@ namespace LiteNetLib
                         reader.SetSource(packet.RawData, 13, packet.Size);
                     }
 
-                    var newEndPoint = remoteEndPoint.Clone();
                     lock(_connectingPeers)
                     {
-                        _connectingPeers.Add(newEndPoint);
+                        _connectingPeers.Add(remoteEndPoint);
                     }
                     var netEvent = CreateEvent(NetEventType.ConnectionRequest);
                     netEvent.ConnectionRequest =
-                        new ConnectionRequest(connectionId, newEndPoint, reader, OnConnectionSolved);
+                        new ConnectionRequest(connectionId, remoteEndPoint, reader, OnConnectionSolved);
                     EnqueueEvent(netEvent);
                 }
             }
         }
 
-        internal void ReceiveFromPeer(NetPacket packet, NetEndPoint remoteEndPoint)
+        internal void ReceiveFromPeer(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             NetPeer fromPeer;
             if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
@@ -834,8 +833,8 @@ namespace LiteNetLib
                 return false;
             }
             _netEventsQueue.Clear();
-            IPAddress ipv4 = NetEndPoint.GetFromString(addressIPv4);
-            IPAddress ipv6 = NetEndPoint.GetFromString(addressIPv6);
+            IPAddress ipv4 = NetUtils.ResolveAddress(addressIPv4);
+            IPAddress ipv6 = NetUtils.ResolveAddress(addressIPv6);
             if (!_socket.Bind(ipv4, ipv6, port, ReuseAddress))
                 return false;
             IsRunning = true;
@@ -867,7 +866,7 @@ namespace LiteNetLib
         /// <param name="message">Raw data</param>
         /// <param name="remoteEndPoint">Packet destination</param>
         /// <returns>Operation result</returns>
-        public bool SendUnconnectedMessage(byte[] message, NetEndPoint remoteEndPoint)
+        public bool SendUnconnectedMessage(byte[] message, IPEndPoint remoteEndPoint)
         {
             return SendUnconnectedMessage(message, 0, message.Length, remoteEndPoint);
         }
@@ -878,7 +877,7 @@ namespace LiteNetLib
         /// <param name="writer">Data serializer</param>
         /// <param name="remoteEndPoint">Packet destination</param>
         /// <returns>Operation result</returns>
-        public bool SendUnconnectedMessage(NetDataWriter writer, NetEndPoint remoteEndPoint)
+        public bool SendUnconnectedMessage(NetDataWriter writer, IPEndPoint remoteEndPoint)
         {
             return SendUnconnectedMessage(writer.Data, 0, writer.Length, remoteEndPoint);
         }
@@ -891,7 +890,7 @@ namespace LiteNetLib
         /// <param name="length">data length</param>
         /// <param name="remoteEndPoint">Packet destination</param>
         /// <returns>Operation result</returns>
-        public bool SendUnconnectedMessage(byte[] message, int start, int length, NetEndPoint remoteEndPoint)
+        public bool SendUnconnectedMessage(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
             if (!IsRunning)
                 return false;
@@ -920,17 +919,17 @@ namespace LiteNetLib
             return result;
         }
 
-        public bool SendDiscoveryResponse(NetDataWriter writer, NetEndPoint remoteEndPoint)
+        public bool SendDiscoveryResponse(NetDataWriter writer, IPEndPoint remoteEndPoint)
         {
             return SendDiscoveryResponse(writer.Data, 0, writer.Length, remoteEndPoint);
         }
 
-        public bool SendDiscoveryResponse(byte[] data, NetEndPoint remoteEndPoint)
+        public bool SendDiscoveryResponse(byte[] data, IPEndPoint remoteEndPoint)
         {
             return SendDiscoveryResponse(data, 0, data.Length, remoteEndPoint);
         }
 
-        public bool SendDiscoveryResponse(byte[] data, int start, int length, NetEndPoint remoteEndPoint)
+        public bool SendDiscoveryResponse(byte[] data, int start, int length, IPEndPoint remoteEndPoint)
         {
             if (!IsRunning)
                 return false;
@@ -983,7 +982,7 @@ namespace LiteNetLib
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(string address, int port, string key)
         {
-            var ep = new NetEndPoint(address, port);
+            var ep = NetUtils.MakeEndPoint(address, port);
             return Connect(ep, key);
         }
 
@@ -997,7 +996,7 @@ namespace LiteNetLib
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(string address, int port, NetDataWriter connectionData)
         {
-            var ep = new NetEndPoint(address, port);
+            var ep = NetUtils.MakeEndPoint(address, port);
             return Connect(ep, connectionData);
         }
 
@@ -1008,7 +1007,7 @@ namespace LiteNetLib
         /// <param name="key">Connection key</param>
         /// <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
-        public NetPeer Connect(NetEndPoint target, string key)
+        public NetPeer Connect(IPEndPoint target, string key)
         {
             return Connect(target, NetDataWriter.FromString(key));
         }
@@ -1020,7 +1019,7 @@ namespace LiteNetLib
         /// <param name="connectionData">Additional data for remote peer</param>
         /// <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
-        public NetPeer Connect(NetEndPoint target, NetDataWriter connectionData)
+        public NetPeer Connect(IPEndPoint target, NetDataWriter connectionData)
         {
             if (!IsRunning)
             {
