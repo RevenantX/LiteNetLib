@@ -293,11 +293,11 @@ namespace LiteNetLib
             int start,
             int count)
         {
-            if (peer == null || !_peers.ContainsAddress(peer.EndPoint) || !peer.Shutdown(data, start, count, force))
+            if (!peer.Shutdown(data, start, count, force))
             {
-                //invalid peer
+                //already shutdowned. no need send event
                 return;
-            }          
+            }
             var netEvent = CreateEvent(NetEventType.Disconnect);
             netEvent.Peer = peer;
             netEvent.AdditionalData = socketErrorCode;
@@ -532,10 +532,8 @@ namespace LiteNetLib
                 //add peer to list
                 lock (_connectingPeers)
                 {
-                    _peers.EnterWriteLock();
                     _connectingPeers.Remove(request.RemoteEndPoint);
                     _peers.Add(request.RemoteEndPoint, netPeer);
-                    _peers.ExitWriteLock();
                 }
 
                 var netEvent = CreateEvent(NetEventType.Connect);
@@ -633,8 +631,6 @@ namespace LiteNetLib
                                 NetPacketPool.Recycle(packet);
                                 return;
                             }
-
-                            netPeer.Shutdown(null, 0, 0, true);
                             var netEvent = CreateEvent(NetEventType.Disconnect);
                             netEvent.Peer = netPeer;
                             netEvent.DataReader.SetSource(packet.RawData, 9, packet.Size);
@@ -1045,9 +1041,7 @@ namespace LiteNetLib
             //Create reliable connection
             //And send connection request
             peer = new NetPeer(this, target, connectionData);
-            _peers.EnterWriteLock();
             _peers.Add(target, peer);
-            _peers.ExitWriteLock();
             return peer;
         }
 

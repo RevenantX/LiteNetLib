@@ -432,35 +432,38 @@ namespace LiteNetLib
 
         internal bool Shutdown(byte[] data, int start, int length, bool force)
         {
-            //don't send anything
-            if (force)
+            lock (this)
             {
-                _connectionState = ConnectionState.Disconnected;
+                //don't send anything
+                if (force)
+                {
+                    _connectionState = ConnectionState.Disconnected;
+                    return false;
+                }
+
+                //trying to shutdown already disconnected
+                if (_connectionState == ConnectionState.Disconnected ||
+                    _connectionState == ConnectionState.ShutdownRequested)
+                {
+                    NetUtils.DebugWriteError("Trying to shutdown already shutdowned peer!");
+                    return false;
+                }
+
+                _shutdownPacket = _packetPool.GetWithProperty(PacketProperty.Disconnect, 8 + length);
+                FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectId);
+                if (length + 8 >= _mtu)
+                {
+                    //Drop additional data
+                    NetUtils.DebugWriteError("[Peer] Disconnect additional data size more than MTU - 8!");
+                }
+                else if (data != null && length > 0)
+                {
+                    Buffer.BlockCopy(data, start, _shutdownPacket.RawData, 9, length);
+                }
+                _connectionState = ConnectionState.ShutdownRequested;
+                SendRawData(_shutdownPacket);
                 return true;
             }
-
-            //trying to shutdown already disconnected
-            if (_connectionState == ConnectionState.Disconnected ||
-                _connectionState == ConnectionState.ShutdownRequested)
-            {
-                NetUtils.DebugWriteError("Trying to shutdown already shutdowned peer!");
-                return false;
-            }
-
-            _shutdownPacket = _packetPool.GetWithProperty(PacketProperty.Disconnect, 8 + length);
-            FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectId);
-            if (length + 8 >= _mtu)
-            {
-                //Drop additional data
-                NetUtils.DebugWriteError("[Peer] Disconnect additional data size more than MTU - 8!");
-            }
-            else if (data != null && length > 0)
-            {
-                Buffer.BlockCopy(data, start, _shutdownPacket.RawData, 9, length);
-            }
-            _connectionState = ConnectionState.ShutdownRequested;
-            SendRawData(_shutdownPacket);
-            return true;
         }
 
         //from user thread, our thread, or recv?

@@ -16,16 +16,6 @@ namespace LiteNetLib
             get { return _peersArray[index]; }
         }
 
-        public void EnterWriteLock()
-        {
-            _lock.EnterWriteLock();
-        }
-
-        public void ExitWriteLock()
-        {
-            _lock.ExitWriteLock();
-        }
-
         public void EnterReadLock()
         {
             _lock.EnterReadLock();
@@ -40,7 +30,7 @@ namespace LiteNetLib
         {
             _peersArray = new NetPeer[maxPeers];
             _peersDict = new Dictionary<NetEndPoint, NetPeer>(new NetEndPointComparer());
-            _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+            _lock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         }
 
         public bool TryGetValue(NetEndPoint endPoint, out NetPeer peer)
@@ -62,6 +52,7 @@ namespace LiteNetLib
 
         public void Add(NetEndPoint endPoint, NetPeer peer)
         {
+            _lock.EnterWriteLock();
             if (Count == _peersArray.Length)
             {
                 Array.Resize(ref _peersArray, _peersArray.Length*2);
@@ -69,6 +60,7 @@ namespace LiteNetLib
             _peersArray[Count] = peer;
             _peersDict.Add(endPoint, peer);
             Count++;
+            _lock.ExitWriteLock();
         }
 
         public bool ContainsAddress(NetEndPoint endPoint)
