@@ -152,7 +152,7 @@ namespace LiteNetLib
                                 (socketAddress[6]<<16 & 0x00FF0000) |
                                 (socketAddress[7]<<24) 
                             ) & 0x00000000FFFFFFFF; 
-                            bufferNetEndPoint = new NetEndPoint(new IPEndPoint(address, port));
+                            bufferNetEndPoint.EndPoint = new IPEndPoint(address, port);
                         }
                         else
                         {
@@ -165,7 +165,7 @@ namespace LiteNetLib
                                 (socketAddress[26] << 16) +
                                 (socketAddress[25] << 8 ) + 
                                 (socketAddress[24]);
-                            bufferNetEndPoint = new NetEndPoint(new IPEndPoint(new IPAddress(addrBuffer, scope), port));
+                            bufferNetEndPoint.EndPoint = new IPEndPoint(new IPAddress(addrBuffer, scope), port);
                         }     
                     }
 #else
@@ -174,10 +174,7 @@ namespace LiteNetLib
                         continue;
                     }
                     result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
-                    if (!bufferNetEndPoint.EndPoint.Equals(bufferEndPoint))
-                    {
-                        bufferNetEndPoint = new NetEndPoint((IPEndPoint)bufferEndPoint);
-                    }
+                    bufferNetEndPoint.Set(bufferEndPoint);
 #endif
                 }
                 catch (SocketException ex)

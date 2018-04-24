@@ -1,21 +1,34 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
 namespace LiteNetLib
 {
+    internal class NetEndPointComparer : IEqualityComparer<NetEndPoint>
+    {
+        public bool Equals(NetEndPoint x, NetEndPoint y)
+        {
+            return x.EndPoint.Equals(y.EndPoint);
+        }
+
+        public int GetHashCode(NetEndPoint obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
     /// <summary>
     /// Network End Point. Contains ip address and port
     /// </summary>
-    public sealed class NetEndPoint
+    public sealed class NetEndPoint : IEquatable<NetEndPoint>
     {
         public static readonly string IPv4Any = IPAddress.Any.ToString();
         public static readonly string IPv6Any = IPAddress.IPv6Any.ToString();
         public string Host { get { return EndPoint.Address.ToString(); } }
         public int Port { get { return EndPoint.Port; } }
 
-        internal readonly IPEndPoint EndPoint;
-        private readonly int _hash;
+        internal IPEndPoint EndPoint;
+        private int _hash;
 #if WIN32 && UNSAFE
         internal readonly byte[] SocketAddr;
         private byte[] MakeSocketAddr(IPEndPoint ep)
@@ -28,22 +41,34 @@ namespace LiteNetLib
         }
 #endif
 
-        internal NetEndPoint(IPEndPoint ipEndPoint)
+        internal NetEndPoint(EndPoint ipEndPoint)
         {
-            EndPoint = ipEndPoint;
+            Set(ipEndPoint);
+        }
+
+        internal void Set(EndPoint ep)
+        {
+            EndPoint = (IPEndPoint)ep;
 #if WIN32 && UNSAFE
             SocketAddr = MakeSocketAddr(ipEndPoint);
 #endif
             _hash = EndPoint.GetHashCode();
         }
 
+        public NetEndPoint Clone()
+        {
+            return new NetEndPoint(EndPoint);
+        }
+
         public override bool Equals(object obj)
         {
-            if (!(obj is NetEndPoint))
-            {
-                return false;
-            }
-            return EndPoint.Equals(((NetEndPoint)obj).EndPoint);
+            var ep = obj as NetEndPoint;
+            return ep != null && EndPoint.Equals(ep.EndPoint);
+        }
+
+        public bool Equals(NetEndPoint other)
+        {
+            return other != null && other.EndPoint.Equals(EndPoint);
         }
 
         public override string ToString()
@@ -64,11 +89,7 @@ namespace LiteNetLib
         public NetEndPoint(string hostStr, int port)
         {
             IPAddress addr = GetFromString(hostStr);
-            EndPoint = new IPEndPoint(addr, port);
-#if WIN32 && UNSAFE
-            SocketAddr = MakeSocketAddr(EndPoint);
-#endif
-            _hash = EndPoint.GetHashCode();
+            Set(new IPEndPoint(addr, port));
         }
 
         internal static IPAddress GetFromString(string hostStr)
@@ -78,14 +99,9 @@ namespace LiteNetLib
             {
                 if (NetSocket.IPv6Support)
                 {
-                    if (hostStr == "localhost")
-                    {
-                        ipAddress = IPAddress.IPv6Loopback;
-                    }
-                    else
-                    {
-                        ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
-                    }
+                    ipAddress = hostStr == "localhost" 
+                        ? IPAddress.IPv6Loopback 
+                        : ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
                 }
                 if (ipAddress == null)
                 {
