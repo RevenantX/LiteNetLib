@@ -64,7 +64,7 @@ namespace LiteNetLib
         private readonly NetPeerCollection _peers;
         private readonly HashSet<NetEndPoint> _connectingPeers;
         private readonly int _maxConnections;
-        private List<NetPeer> _connectedPeerList;
+        private readonly List<NetPeer> _connectedPeerList;
 
         internal readonly NetPacketPool NetPacketPool;
 
@@ -638,17 +638,9 @@ namespace LiteNetLib
                             netEvent.DataReader.SetSource(packet.RawData, 9, packet.Size);
                             netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
                             EnqueueEvent(netEvent);
-                            //TODO: Very ugly fix
-                            netPeer.Shutdown(null, 0, 0, true);
+                            netPeer.ProcessPacket(packet);
+                            SendRaw(new[] { (byte)PacketProperty.ShutdownOk }, 0, 1, remoteEndPoint);
                         }
-                        break;
-                    case PacketProperty.ShutdownOk:
-                        if (netPeer.ConnectionState != ConnectionState.ShutdownRequested)
-                        {
-                            return;
-                        }
-                        netPeer.ProcessPacket(packet);
-                        NetUtils.DebugWriteForce(ConsoleColor.Cyan, "[NM] ShutdownOK!");
                         break;
                     case PacketProperty.ConnectAccept:
                         if (netPeer.ProcessConnectAccept(packet))
@@ -669,8 +661,7 @@ namespace LiteNetLib
             //Unacked shutdown
             if (packet.Property == PacketProperty.Disconnect)
             {
-                byte[] data = { (byte)PacketProperty.ShutdownOk };
-                SendRaw(data, 0, 1, remoteEndPoint);
+                SendRaw(new[] { (byte)PacketProperty.ShutdownOk }, 0, 1, remoteEndPoint);
                 return;
             }
 

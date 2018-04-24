@@ -737,8 +737,9 @@ namespace LiteNetLib
                     break;
 
                 case PacketProperty.ShutdownOk:
+                case PacketProperty.Disconnect:
                     _connectionState = ConnectionState.Disconnected;
-                    break;
+                    break;            
                 
                 default:
                     NetUtils.DebugWriteError("Error! Unexpected packet type: " + packet.Property);
@@ -827,30 +828,31 @@ namespace LiteNetLib
 
         internal void Update(int deltaTime)
         {
-            if (_connectionState == ConnectionState.Connected && _timeSinceLastPacket > _netManager.DisconnectTimeout)
+            switch (_connectionState)
             {
-                NetUtils.DebugWrite(
-                    "[UPDATE] Disconnect by timeout: {0} > {1}", 
-                    _timeSinceLastPacket,
-                    _netManager.DisconnectTimeout);
-                _netManager.DisconnectPeer(this, DisconnectReason.Timeout, 0, true, null, 0, 0);
-                return;
-            }
-            if (_connectionState == ConnectionState.ShutdownRequested)
-            {
-                if (_timeSinceLastPacket > _netManager.DisconnectTimeout)
-                {
-                    _connectionState = ConnectionState.Disconnected;
-                }
-                else
-                {
-                    _netManager.SendRaw(_shutdownPacket.RawData, 0, _shutdownPacket.Size, _remoteEndPoint);
-                }
-                return;
-            }
-            if (_connectionState == ConnectionState.Disconnected)
-            {
-                return;
+                case ConnectionState.Connected:
+                    if (_timeSinceLastPacket > _netManager.DisconnectTimeout)
+                    {
+                        NetUtils.DebugWrite(
+                            "[UPDATE] Disconnect by timeout: {0} > {1}",
+                            _timeSinceLastPacket,
+                            _netManager.DisconnectTimeout);
+                        _netManager.DisconnectPeer(this, DisconnectReason.Timeout, 0, true, null, 0, 0);
+                        return;
+                    }
+                    break;
+                case ConnectionState.ShutdownRequested:
+                    if (_timeSinceLastPacket > _netManager.DisconnectTimeout)
+                    {
+                        _connectionState = ConnectionState.Disconnected;
+                    }
+                    else
+                    {
+                        _netManager.SendRaw(_shutdownPacket.RawData, 0, _shutdownPacket.Size, _remoteEndPoint);
+                    }
+                    return;
+                case ConnectionState.Disconnected:
+                    return;
             }
 
             _timeSinceLastPacket += deltaTime;
