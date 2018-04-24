@@ -8,9 +8,19 @@ namespace LiteNetLib.Utils
         protected delegate void SubscribeDelegate(NetDataReader reader, object userData);
         private readonly Dictionary<string, ulong> _hashCache = new Dictionary<string, ulong>();
         private readonly char[] _hashBuffer = new char[1024];
-        private readonly NetSerializer _netSerializer = new NetSerializer();
+        private readonly NetSerializer _netSerializer;
         private readonly Dictionary<ulong, SubscribeDelegate> _callbacks = new Dictionary<ulong, SubscribeDelegate>();
         private readonly NetDataWriter _netDataWriter = new NetDataWriter();
+
+        public NetPacketProcessor()
+        {
+            _netSerializer = new NetSerializer();
+        }
+
+        public NetPacketProcessor(int maxStringLength)
+        {
+            _netSerializer = new NetSerializer(maxStringLength);
+        }
 
         //FNV-1 64 bit hash
         protected virtual ulong GetHash(Type type)
