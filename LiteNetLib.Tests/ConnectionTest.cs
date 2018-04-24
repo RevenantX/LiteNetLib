@@ -155,7 +155,6 @@ namespace LiteNetLib.Tests
             server.DisconnectAll(new byte[]{1, 2, 3, 4}, 0, 4);
             
             Assert.AreEqual(0, server.GetPeersCount(ConnectionState.Connected));
-            Assert.AreEqual(2, server.GetPeersCount(ConnectionState.ShutdownRequested));
 
             while (client.GetPeersCount(ConnectionState.Connected) != 0)
             {
