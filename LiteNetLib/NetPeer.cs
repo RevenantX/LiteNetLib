@@ -431,14 +431,6 @@ namespace LiteNetLib
             channel.AddToQueue(packet);
         }
 
-        private void CreateAndSend(PacketProperty property, ushort sequence)
-        {
-            NetPacket packet = _packetPool.GetWithProperty(property, 0);
-            packet.Sequence = sequence;
-            SendRawData(packet);
-            _packetPool.Recycle(packet);
-        }
-
         public void Disconnect(byte[] data)
         {
             _netManager.DisconnectPeer(this, data);
@@ -489,7 +481,7 @@ namespace LiteNetLib
                     Buffer.BlockCopy(data, start, _shutdownPacket.RawData, 9, length);
                 }
                 _connectionState = ConnectionState.ShutdownRequested;
-                SendRawData(_shutdownPacket);
+                _netManager.SendRaw(_shutdownPacket.RawData, 0, _shutdownPacket.Size, _remoteEndPoint);
                 return true;
             }
         }
@@ -603,8 +595,7 @@ namespace LiteNetLib
                 NetUtils.DebugWrite("MTU check. Resend: " + packet.RawData[1]);
                 var mtuOkPacket = _packetPool.GetWithProperty(PacketProperty.MtuOk, 1);
                 mtuOkPacket.RawData[1] = packet.RawData[1];
-                SendRawData(mtuOkPacket);
-                _packetPool.Recycle(mtuOkPacket);
+                _netManager.SendRawAndRecycle(mtuOkPacket, _remoteEndPoint);
             }
             else if(packet.RawData[1] > _mtuIdx) //MtuOk
             {
@@ -672,7 +663,9 @@ namespace LiteNetLib
                     _packetPool.Recycle(packet);
 
                     //send
-                    CreateAndSend(PacketProperty.Pong, _remotePingSequence);
+                    NetPacket pongPacket = _packetPool.GetWithProperty(PacketProperty.Pong, 0);
+                    packet.Sequence = _remotePingSequence;
+                    _netManager.SendRawAndRecycle(pongPacket, _remoteEndPoint);
                     break;
 
                 //If we get pong, calculate ping time and rtt
@@ -740,23 +733,8 @@ namespace LiteNetLib
 
         internal void SendRawData(NetPacket packet)
         {
-            bool canMerge;
-            switch (packet.Property)
-            {
-                case PacketProperty.ConnectAccept:
-                case PacketProperty.ConnectRequest:
-                case PacketProperty.MtuOk:
-                case PacketProperty.Pong:
-                case PacketProperty.Disconnect:
-                    canMerge = false;
-                    break;
-                default:
-                    canMerge =  true;
-                    break;
-            }
             //2 - merge byte + minimal packet size + datalen(ushort)
-            if (_netManager.MergeEnabled && canMerge &&
-                _mergePos + packet.Size + NetConstants.HeaderSize*2 + 2 < _mtu)
+            if (_netManager.MergeEnabled && _mergePos + packet.Size + NetConstants.HeaderSize*2 + 2 < _mtu)
             {
                 FastBitConverter.GetBytes(_mergeData.RawData, _mergePos + NetConstants.HeaderSize, (ushort)packet.Size);
                 Buffer.BlockCopy(packet.RawData, 0, _mergeData.RawData, _mergePos + NetConstants.HeaderSize + 2, packet.Size);
@@ -870,7 +848,10 @@ namespace LiteNetLib
                 _pingSendTimer = 0;
 
                 //send ping
-                CreateAndSend(PacketProperty.Ping, _pingSequence);
+                NetPacket packet = _packetPool.GetWithProperty(PacketProperty.Ping, 0);
+                packet.Sequence = _pingSequence;
+                SendRawData(packet);
+                _packetPool.Recycle(packet);
 
                 //reset timer
                 _pingTimeStart = DateTime.UtcNow;
