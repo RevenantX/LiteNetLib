@@ -43,10 +43,10 @@ namespace LibSample
 
             void INetEventListener.OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
             {
-                var _isReliable = reader.GetBool();
-                var _data = reader.GetString();
+                var isReliable = reader.GetBool();
+                var data = reader.GetString();
 
-                if (_isReliable)
+                if (isReliable)
                 {
                     ReliableReceived++;
                 }
@@ -163,43 +163,42 @@ namespace LibSample
         public void Run()
         {
             Console.WriteLine("Testing LiteNetLib...");
-            Thread _serverThread = new Thread(StartServer);
-            _serverThread.Start();
-            Thread _clientThread = new Thread(StartClient);
-            _clientThread.Start();
+            Thread serverThread = new Thread(StartServer);
+            serverThread.Start();
+            Thread clientThread = new Thread(StartClient);
+            clientThread.Start();
             Console.WriteLine("Processing...");
             Console.ReadKey();
         }
 
         private static void StartServer()
         {
-            Server _s = new Server();
+            Server s = new Server();
 
             while (CLIENT_RUNNING)
             {
-                _s.PollEvents();
+                s.PollEvents();
                 Thread.Sleep(1);
             }
 
             Thread.Sleep(10000);
-            _s.PollEvents();
-
-            Console.WriteLine("SERVER RECEIVED -> Reliable: " + _s.ReliableReceived + ", Unreliable: " + _s.UnreliableReceived);
+            s.PollEvents();
+            Console.WriteLine("SERVER RECEIVED -> Reliable: " + s.ReliableReceived + ", Unreliable: " + s.UnreliableReceived);
         }
 
         private static void StartClient()
         {
-            Client _c = new Client();
-            _c.Connect();
+            Client c = new Client();
+            c.Connect();
 
             for (int i = 0; i < MAX_LOOP_COUNT; i++)
             {
                 //for (int ui = 0; ui < UNRELIABLE_MESSAGES_PER_LOOP; ui++)
-                //    _c.SendUnreliable(DATA);
+                //    c.SendUnreliable(DATA);
 
                 for (int ri = 0; ri < RELIABLE_MESSAGES_PER_LOOP; ri++)
-                    _c.SendReliable(DATA);
-                _c.PollEvents();
+                    c.SendReliable(DATA);
+                c.PollEvents();
             }
 
             int dataSize = MAX_LOOP_COUNT * Encoding.UTF8.GetByteCount(DATA) * (UNRELIABLE_MESSAGES_PER_LOOP + RELIABLE_MESSAGES_PER_LOOP);
@@ -208,8 +207,8 @@ namespace LibSample
             CLIENT_RUNNING = false;
             Thread.Sleep(10000);
 
-            Console.WriteLine("CLIENT SENT -> Reliable: " + _c.ReliableSent + ", Unreliable: " + _c.UnreliableSent);
-            Console.WriteLine("CLIENT STATS:\n" + _c.Stats);
+            Console.WriteLine("CLIENT SENT -> Reliable: " + c.ReliableSent + ", Unreliable: " + c.UnreliableSent);
+            Console.WriteLine("CLIENT STATS:\n" + c.Stats);
         }
     }
 }
