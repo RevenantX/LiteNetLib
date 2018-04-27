@@ -114,6 +114,10 @@ namespace LiteNetLib
 
                 //clear packet
                 var pendingPacket = _pendingPackets[pendingIdx];
+                if (pendingPacket.Packet == null)
+                {
+                    continue;
+                }
                 Peer.Recycle(pendingPacket.Packet);
                 pendingPacket.Packet = null;
 
