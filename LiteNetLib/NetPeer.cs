@@ -53,7 +53,7 @@ namespace LiteNetLib
         private readonly ReliableChannel _reliableOrderedChannel;
         private readonly ReliableChannel _reliableUnorderedChannel;
         private readonly SequencedChannel _sequencedChannel;
-        private readonly SimpleChannel _simpleChannel;
+        private readonly SimpleChannel _unreliableChannel;
         private readonly ReliableSequencedChannel _reliableSequencedChannel;
 
         //MTU
@@ -184,7 +184,7 @@ namespace LiteNetLib
             _reliableOrderedChannel = new ReliableChannel(this, true);
             _reliableUnorderedChannel = new ReliableChannel(this, false);
             _sequencedChannel = new SequencedChannel(this);
-            _simpleChannel = new SimpleChannel(this);
+            _unreliableChannel = new SimpleChannel(this);
             _reliableSequencedChannel = new ReliableSequencedChannel(this);
 
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
@@ -338,12 +338,39 @@ namespace LiteNetLib
             }
             //Prepare
             PacketProperty property = SendOptionsToProperty(options);
-            int headerSize = NetPacket.GetHeaderSize(property);
-            int mtu = _mtu;
+            NetUtils.DebugWrite("[RS]Packet: " + property);
+
+            //Select channel
+            BaseChannel channel;
+            switch (property)
+            {
+                case PacketProperty.ReliableUnordered:
+                    channel = _reliableUnorderedChannel;
+                    break;
+                case PacketProperty.Sequenced:
+                    channel = _sequencedChannel;
+                    break;
+                case PacketProperty.ReliableOrdered:
+                    channel = _reliableOrderedChannel;
+                    break;
+                case PacketProperty.Unreliable:
+                    channel = _unreliableChannel;
+                    break;
+                case PacketProperty.ReliableSequenced:
+                    channel = _reliableSequencedChannel;
+                    break;
+                default:
+                    throw new InvalidPacketException("Unknown packet property: " + property);
+            }
+
             //Check fragmentation
+            int headerSize = NetPacket.GetHeaderSize(property);
+            //Save mtu for multithread
+            int mtu = _mtu;
             if (length + headerSize > mtu)
             {
-                if (options == DeliveryMethod.Sequenced || options == DeliveryMethod.Unreliable)
+                if (options == DeliveryMethod.Sequenced || 
+                    options == DeliveryMethod.Unreliable)
                 {
                     throw new TooBigPacketException("Unreliable packet size exceeded maximum of " + (_mtu - headerSize) + " bytes");
                 }
@@ -382,7 +409,7 @@ namespace LiteNetLib
                         p.FragmentsTotal = (ushort)totalPackets;
                         p.IsFragmented = true;
                         Buffer.BlockCopy(data, i * packetDataSize, p.RawData, dataOffset, packetDataSize);
-                        SendPacket(p);
+                        channel.AddToQueue(p);
                     }
                     if (lastPacketSize > 0)
                     {
@@ -392,7 +419,7 @@ namespace LiteNetLib
                         p.FragmentsTotal = (ushort)totalPackets;
                         p.IsFragmented = true;
                         Buffer.BlockCopy(data, fullPacketsCount * packetDataSize, p.RawData, dataOffset, lastPacketSize);
-                        SendPacket(p);
+                        channel.AddToQueue(p);
                     }
                     _fragmentId++;
                 }
@@ -401,14 +428,15 @@ namespace LiteNetLib
 
             //Else just send
             NetPacket packet = _packetPool.GetWithData(property, data, start, length);
-            SendPacket(packet);
+            channel.AddToQueue(packet);
         }
 
         private void CreateAndSend(PacketProperty property, ushort sequence)
         {
             NetPacket packet = _packetPool.GetWithProperty(property, 0);
             packet.Sequence = sequence;
-            SendPacket(packet);
+            SendRawData(packet);
+            _packetPool.Recycle(packet);
         }
 
         public void Disconnect(byte[] data)
@@ -463,47 +491,6 @@ namespace LiteNetLib
                 _connectionState = ConnectionState.ShutdownRequested;
                 SendRawData(_shutdownPacket);
                 return true;
-            }
-        }
-
-        //from user thread, our thread, or recv?
-        private void SendPacket(NetPacket packet)
-        {
-            NetUtils.DebugWrite("[RS]Packet: " + packet.Property);
-            switch (packet.Property)
-            {
-                case PacketProperty.ReliableUnordered:
-                    _reliableUnorderedChannel.AddToQueue(packet);
-                    break;
-                case PacketProperty.Sequenced:
-                    _sequencedChannel.AddToQueue(packet);
-                    break;
-                case PacketProperty.ReliableOrdered:
-                    _reliableOrderedChannel.AddToQueue(packet);
-                    break;
-                case PacketProperty.Unreliable:
-                    _simpleChannel.AddToQueue(packet);
-                    break;
-                case PacketProperty.ReliableSequenced:
-                    _reliableSequencedChannel.AddToQueue(packet);
-                    break;
-                case PacketProperty.MtuCheck:
-                    //Must check result for MTU fix
-                    if (!_netManager.SendRawAndRecycle(packet, _remoteEndPoint))
-                    {
-                        _finishMtu = true;
-                    }
-                    break;
-                case PacketProperty.AckReliable:
-                case PacketProperty.AckReliableOrdered:
-                case PacketProperty.Ping:
-                case PacketProperty.Pong:
-                case PacketProperty.MtuOk:
-                    SendRawData(packet);
-                    _packetPool.Recycle(packet);
-                    break;
-                default:
-                    throw new InvalidPacketException("Unknown packet property: " + packet.Property);
             }
         }
 
@@ -616,7 +603,8 @@ namespace LiteNetLib
                 NetUtils.DebugWrite("MTU check. Resend: " + packet.RawData[1]);
                 var mtuOkPacket = _packetPool.GetWithProperty(PacketProperty.MtuOk, 1);
                 mtuOkPacket.RawData[1] = packet.RawData[1];
-                SendPacket(mtuOkPacket);
+                SendRawData(mtuOkPacket);
+                _packetPool.Recycle(mtuOkPacket);
             }
             else if(packet.RawData[1] > _mtuIdx) //MtuOk
             {
@@ -750,26 +738,24 @@ namespace LiteNetLib
             }
         }
 
-        private static bool CanMerge(PacketProperty property)
+        internal void SendRawData(NetPacket packet)
         {
-            switch (property)
+            bool canMerge;
+            switch (packet.Property)
             {
                 case PacketProperty.ConnectAccept:
                 case PacketProperty.ConnectRequest:
                 case PacketProperty.MtuOk:
                 case PacketProperty.Pong:
                 case PacketProperty.Disconnect:
-                    return false;
+                    canMerge = false;
+                    break;
                 default:
-                    return true;
+                    canMerge =  true;
+                    break;
             }
-        }
-
-        internal void SendRawData(NetPacket packet)
-        {
             //2 - merge byte + minimal packet size + datalen(ushort)
-            if (_netManager.MergeEnabled &&
-                CanMerge(packet.Property) &&
+            if (_netManager.MergeEnabled && canMerge &&
                 _mergePos + packet.Size + NetConstants.HeaderSize*2 + 2 < _mtu)
             {
                 FastBitConverter.GetBytes(_mergeData.RawData, _mergePos + NetConstants.HeaderSize, (ushort)packet.Size);
@@ -800,7 +786,7 @@ namespace LiteNetLib
                 _reliableUnorderedChannel.SendNextPackets();
                 _reliableSequencedChannel.SendNextPackets();
                 _sequencedChannel.SendNextPackets();
-                _simpleChannel.SendNextPackets();
+                _unreliableChannel.SendNextPackets();
 
                 //If merging enabled
                 if (_mergePos > 0)
@@ -924,7 +910,12 @@ namespace LiteNetLib
                                 int newMtu = NetConstants.PossibleMtu[_mtuIdx + 1] - NetConstants.HeaderSize;
                                 var p = _packetPool.GetWithProperty(PacketProperty.MtuCheck, newMtu);
                                 p.RawData[1] = (byte)(_mtuIdx + 1);
-                                SendPacket(p);
+
+                                //Must check result for MTU fix
+                                if (!_netManager.SendRawAndRecycle(p, _remoteEndPoint))
+                                {
+                                    _finishMtu = true;
+                                }
                             }
                         }
                     }

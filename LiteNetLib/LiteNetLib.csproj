@@ -57,6 +57,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseChannel.cs" />
     <Compile Include="INetEventListener.cs" />
     <Compile Include="NetDebug.cs" />
     <Compile Include="NetExceptions.cs" />

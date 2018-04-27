@@ -1,51 +1,38 @@
-using System.Collections.Generic;
-
 namespace LiteNetLib
 {
-    internal sealed class SequencedChannel
+    internal sealed class SequencedChannel : BaseChannel
     {
         private int _localSequence;
         private int _remoteSequence;
-        private readonly Queue<NetPacket> _outgoingPackets;
-        private readonly NetPeer _peer;
 
-        public SequencedChannel(NetPeer peer)
+        public SequencedChannel(NetPeer peer) : base(peer)
         {
-            _outgoingPackets = new Queue<NetPacket>();
-            _peer = peer;
+
         }
 
-        public void AddToQueue(NetPacket packet)
+        public override void SendNextPackets()
         {
-            lock (_outgoingPackets)
+            lock (OutgoingQueue)
             {
-                _outgoingPackets.Enqueue(packet);
-            }
-        }
-
-        public void SendNextPackets()
-        {
-            lock (_outgoingPackets)
-            {
-                while (_outgoingPackets.Count > 0)
+                while (OutgoingQueue.Count > 0)
                 {
-                    NetPacket packet = _outgoingPackets.Dequeue();
+                    NetPacket packet = OutgoingQueue.Dequeue();
                     _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
                     packet.Sequence = (ushort)_localSequence;
-                    _peer.SendRawData(packet);
-                    _peer.Recycle(packet);
+                    Peer.SendRawData(packet);
+                    Peer.Recycle(packet);
                 }
             }
         }
 
-        public void ProcessPacket(NetPacket packet)
+        public override void ProcessPacket(NetPacket packet)
         {
             int relative = NetUtils.RelativeSequenceNumber(packet.Sequence, _remoteSequence);
             if (packet.Sequence < NetConstants.MaxSequence && relative > 0)
             {
-                _peer.Statistics.PacketLoss += (ulong)(relative - 1);
+                Peer.Statistics.PacketLoss += (ulong)(relative - 1);
                 _remoteSequence = packet.Sequence;
-                _peer.AddIncomingPacket(packet);
+                Peer.AddIncomingPacket(packet);
             }
         }
     }

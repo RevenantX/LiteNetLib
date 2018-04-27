@@ -1025,12 +1025,11 @@ namespace LiteNetLib
             {
                 throw new InvalidOperationException("Client is not running");
             }
-
-            NetPeer peer;
             if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) >= _maxConnections)
             {
                 return null;
             }
+            NetPeer peer;
             if (_peers.TryGetValue(target, out peer))
             {
                 //Already connected
@@ -1056,7 +1055,7 @@ namespace LiteNetLib
             _peers.EnterReadLock();
             for (int i = 0; i < _peers.Count; i++)
             {
-                _peers[i].Shutdown(null, 0, 0, true);
+                _peers[i].Shutdown(null, 0, 0, false);
             }
             _peers.ExitReadLock();
             _peers.Clear();

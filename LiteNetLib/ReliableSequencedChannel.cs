@@ -1,23 +1,18 @@
 ﻿namespace LiteNetLib
 {
-    internal sealed class ReliableSequencedChannel
+    internal sealed class ReliableSequencedChannel : BaseChannel
     {
-        public ReliableSequencedChannel(NetPeer peer)
+        public ReliableSequencedChannel(NetPeer peer) : base(peer)
         {
 
         }
 
-        public void SendNextPackets()
-        {
-            
-        }
-
-        public void AddToQueue(NetPacket packet)
+        public override void SendNextPackets()
         {
             
         }
 
-        public void ProcessPacket(NetPacket packet)
+        public override void ProcessPacket(NetPacket packet)
         {
             
         }
