@@ -87,8 +87,6 @@ namespace LiteNetLib
             Monitor.Enter(_pendingPackets);;
             for(int pendingSeq = _localWindowStart; pendingSeq != _localSeqence; pendingSeq = (pendingSeq + 1) % NetConstants.MaxSequence)
             {
-                int pendingIdx = pendingSeq % _windowSize;
-                var pendingPacket = _pendingPackets[pendingIdx];
                 int rel = NetUtils.RelativeSequenceNumber(pendingSeq, ackWindowStart);
                 if (rel >= _windowSize)
                 {
@@ -96,6 +94,7 @@ namespace LiteNetLib
                     continue;
                 }
 
+                int pendingIdx = pendingSeq % _windowSize;
                 int currentByte = NetConstants.SequencedHeaderSize + pendingIdx / BitsInByte;
                 int currentBit = pendingIdx % BitsInByte;
                 if ((acksData[currentByte] & (1 << currentBit)) == 0)
@@ -114,6 +113,7 @@ namespace LiteNetLib
                 }
 
                 //clear packet
+                var pendingPacket = _pendingPackets[pendingIdx];
                 Peer.Recycle(pendingPacket.Packet);
                 pendingPacket.Packet = null;
 
