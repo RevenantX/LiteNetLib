@@ -86,6 +86,14 @@ namespace LiteNetLib
             Size = 0;
         }
 
+        public NetPacket(PacketProperty property, int size)
+        {
+            size += GetHeaderSize(property);
+            RawData = new byte[size];
+            Property = property;
+            Size = size;
+        }
+
         public bool Realloc(int toSize)
         {
             if (RawData.Length < toSize)

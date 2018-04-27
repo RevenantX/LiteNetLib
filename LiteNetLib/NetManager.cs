@@ -244,6 +244,11 @@ namespace LiteNetLib
             return result;
         }
 
+        internal bool SendRaw(NetPacket packet, IPEndPoint remoteEndPoint)
+        {
+            return SendRaw(packet.RawData, 0, packet.Size, remoteEndPoint);
+        }
+
         internal bool SendRaw(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
             if (!IsRunning)
