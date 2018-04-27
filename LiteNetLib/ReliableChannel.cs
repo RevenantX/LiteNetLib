@@ -160,6 +160,10 @@ namespace LiteNetLib
             for (int pendingSeq = _localWindowStart; pendingSeq != _localSeqence; pendingSeq = (pendingSeq + 1) % NetConstants.MaxSequence)
             {
                 PendingPacket currentPacket = _pendingPackets[pendingSeq % _windowSize];
+                if (currentPacket.Packet == null)
+                {
+                    continue;
+                }
                 if (currentPacket.Sended) //check send time
                 {
                     double packetHoldTime = currentTime - currentPacket.TimeStamp;
