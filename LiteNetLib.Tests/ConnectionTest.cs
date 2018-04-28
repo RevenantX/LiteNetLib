@@ -110,8 +110,6 @@ namespace LiteNetLib.Tests
             server.Stop();
             
             Assert.True(server.PeersCount == 0);
-            Assert.True(client.PeersCount == 1);
-
             while (client.PeersCount == 1)
             {
                 Thread.Sleep(15);
