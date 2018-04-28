@@ -97,7 +97,10 @@ namespace LiteNetLib.Tests.TestUtility
             if (!_managers.TryGetValue(key, out container))
             {
                 var listener = new EventBasedNetListener();
-                listener.ConnectionRequestEvent += request => { request.AcceptIfKey(_appKey); };
+                listener.ConnectionRequestEvent += request =>
+                {
+                    request.AcceptIfKey(_appKey);
+                };
                 NetManager netManager;
                 if (isClient)
                 {

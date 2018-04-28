@@ -225,9 +225,6 @@ namespace LiteNetLib
             _connectId = connectId;
             _connectionState = ConnectionState.Connected;
 
-            //Reset connection timer
-            _timeSinceLastPacket = 0;
-
             //Make initial packet
             _connectAcceptPacket = new NetPacket(PacketProperty.ConnectAccept, 8);
             SendConnectAccept();
@@ -482,6 +479,7 @@ namespace LiteNetLib
                     Buffer.BlockCopy(data, start, _shutdownPacket.RawData, 9, length);
                 }
                 _connectionState = ConnectionState.ShutdownRequested;
+                NetUtils.DebugWrite("[Peer] Send disconnect");
                 _netManager.SendRaw(_shutdownPacket, _remoteEndPoint);
                 return true;
             }

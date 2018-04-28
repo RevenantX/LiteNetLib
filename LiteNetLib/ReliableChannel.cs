@@ -91,7 +91,7 @@ namespace LiteNetLib
                 if (rel >= _windowSize)
                 {
                     NetUtils.DebugWrite("[PA]REL: " + rel);
-                    continue;
+                    break;
                 }
 
                 int pendingIdx = pendingSeq % _windowSize;
@@ -175,9 +175,7 @@ namespace LiteNetLib
                     {
                         continue;
                     }
-
-                    NetUtils.DebugWrite("[RC]Resend: {0} > {1}", (int) packetHoldTime,
-                        resendDelay);
+                    NetUtils.DebugWrite("[RC]Resend: {0} > {1}", (int) packetHoldTime, resendDelay);
                 }
 
                 currentPacket.TimeStamp = currentTime;

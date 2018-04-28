@@ -205,6 +205,43 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(0, client.PeersCount);
         }
 
+        [Test, Timeout(7000)]
+        public void ConnectAfterDisconnect()
+        {
+            NetManager server = ManagerStack.Server(1);
+            NetManager client = ManagerStack.Client(1);
+
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+            while (server.PeersCount != 1)
+            {
+                Thread.Sleep(15);
+                server.PollEvents();
+            }
+            client.Stop();
+
+            var connected = false;
+            ManagerStack.ClientListener(1).PeerConnectedEvent += (peer) =>
+            {
+                connected = true;
+            };
+            client.Start();
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+
+            while (!connected)
+            {
+                Thread.Sleep(15);
+                server.PollEvents();
+                client.PollEvents();
+            }
+
+            // Wait that server remove disconnected peers
+            Thread.Sleep(6000);
+
+            Assert.True(connected);
+            Assert.AreEqual(1, server.PeersCount);
+            Assert.AreEqual(1, client.PeersCount);
+        }
+
         [Test, MaxTime(2000)]
         public void DisconnectFromClientTest()
         {

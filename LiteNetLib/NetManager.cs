@@ -55,7 +55,7 @@ namespace LiteNetLib
 #endif
 
         private readonly NetSocket _socket;
-        private readonly Thread _logicThread;
+        private Thread _logicThread;
 
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
@@ -215,7 +215,6 @@ namespace LiteNetLib
         /// <param name="maxConnections">Maximum connections (incoming and outcoming)</param>
         public NetManager(INetEventListener listener, int maxConnections)
         {
-            _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
             _socket = new NetSocket(ReceiveLogic);
             _netEventListener = listener;
             _netEventsQueue = new Queue<NetEvent>();
@@ -345,6 +344,7 @@ namespace LiteNetLib
 
         private void ProcessEvent(NetEvent evt)
         {
+            NetUtils.DebugWrite("[NM] Processing event: " + evt.Type);
             switch (evt.Type)
             {
                 case NetEventType.Connect:
@@ -670,8 +670,12 @@ namespace LiteNetLib
 
             if (packet.Property == PacketProperty.ConnectRequest && packet.Size >= 12)
             {
+                NetUtils.DebugWrite("[NM] Received ConnectionRequest");
                 if (isPeerConnecting)
+                {
+                    NetUtils.DebugWrite("[NM] Peer already connecting");
                     return;
+                }
                 if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) < _maxConnections)
                 {
                     int protoId = BitConverter.ToInt32(packet.RawData, 1);
@@ -692,7 +696,8 @@ namespace LiteNetLib
                         reader.SetSource(packet.RawData, 13, packet.Size);
                     }
 
-                    lock(_connectingPeers)
+                    NetUtils.DebugWrite("[NM] Creating request event: " + connectionId);
+                    lock (_connectingPeers)
                     {
                         _connectingPeers.Add(remoteEndPoint);
                     }
@@ -843,6 +848,7 @@ namespace LiteNetLib
             if (!_socket.Bind(ipv4, ipv6, port, ReuseAddress))
                 return false;
             IsRunning = true;
+            _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
             _logicThread.Start();
             return true;
         }
@@ -861,6 +867,7 @@ namespace LiteNetLib
             if (!_socket.Bind(IPAddress.Any, IPAddress.IPv6Any, port, ReuseAddress))
                 return false;
             IsRunning = true;
+            _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
             _logicThread.Start();
             return true;
         }
@@ -1055,8 +1062,7 @@ namespace LiteNetLib
         {
             if (!IsRunning)
                 return;
-            IsRunning = false;
-
+            NetUtils.DebugWrite("[NM] Stop");
             _peers.EnterReadLock();
             for (int i = 0; i < _peers.Count; i++)
             {
@@ -1064,12 +1070,15 @@ namespace LiteNetLib
             }
             _peers.ExitReadLock();
             _peers.Clear();
+            //For working send
+            IsRunning = false;
 
             //Stop
             if (Thread.CurrentThread != _logicThread)
             {
                 _logicThread.Join();
             }
+            _logicThread = null;
             _socket.Close();
         }
 
