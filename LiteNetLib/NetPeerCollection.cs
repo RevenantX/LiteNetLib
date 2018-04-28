@@ -91,7 +91,7 @@ namespace LiteNetLib
         {
             if (!_peersDict.Remove(peer.EndPoint))
             {
-                throw new ArgumentException("Already removed peer");
+                return;
             }
             if (peer == _headPeer)
             {
