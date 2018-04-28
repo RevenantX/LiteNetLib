@@ -48,6 +48,8 @@ namespace LiteNetLib
         private readonly NetPacketPool _packetPool;
         private readonly object _flushLock = new object();
         private readonly object _sendLock = new object();
+        internal NetPeer NextPeer;
+        internal NetPeer PrevPeer;
 
         //Channels
         private readonly ReliableChannel _reliableOrderedChannel;
@@ -84,7 +86,7 @@ namespace LiteNetLib
         //Connection
         private int _connectAttempts;
         private int _connectTimer;
-        private long _connectId;
+        private readonly long _connectId;
         private ConnectionState _connectionState;
         private NetPacket _shutdownPacket;
         private readonly NetPacket _pingPacket;
@@ -255,6 +257,7 @@ namespace LiteNetLib
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
             _timeSinceLastPacket = 0;
             _connectionState = ConnectionState.Connected;
+            _packetPool.Recycle(packet);
             return true;
         }
 
@@ -622,14 +625,6 @@ namespace LiteNetLib
             {
                 case PacketProperty.ConnectRequest:
                     //response with connect
-                    long newId = BitConverter.ToInt64(packet.RawData, NetConstants.RequestConnectIdIndex);
-
-                    NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", _connectId, newId, _remoteEndPoint);
-                    if (newId > _connectId)
-                    {
-                        _connectId = newId;
-                    }
-                    
                     SendConnectAccept();
                     _packetPool.Recycle(packet);
                     break;
