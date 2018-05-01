@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 
@@ -22,14 +21,8 @@ namespace LiteNetLib
     {
         private readonly Dictionary<IPEndPoint, NetPeer> _peersDict;
         private readonly ReaderWriterLockSlim _lock;
-        private NetPeer _headPeer;
-
         public int Count;
-
-        public NetPeer HeadPeer
-        {
-            get { return _headPeer; }
-        }
+        public volatile NetPeer HeadPeer;
 
         public NetPeerCollection()
         {
@@ -48,7 +41,7 @@ namespace LiteNetLib
         public void Clear()
         {
             _lock.EnterWriteLock();
-            _headPeer = null;
+            HeadPeer = null;
             _peersDict.Clear();
             Count = 0;
             _lock.ExitWriteLock();
@@ -57,12 +50,12 @@ namespace LiteNetLib
         public void Add(IPEndPoint endPoint, NetPeer peer)
         {
             _lock.EnterWriteLock();
-            peer.NextPeer = _headPeer;
-            if (_headPeer != null)
+            peer.NextPeer = HeadPeer;
+            if (HeadPeer != null)
             {
-                _headPeer.PrevPeer = peer;
+                HeadPeer.PrevPeer = peer;
             }
-            _headPeer = peer;
+            HeadPeer = peer;
             _peersDict.Add(endPoint, peer);
             Count++;
             _lock.ExitWriteLock();
@@ -93,9 +86,9 @@ namespace LiteNetLib
             {
                 return;
             }
-            if (peer == _headPeer)
+            if (peer == HeadPeer)
             {
-                _headPeer = peer.NextPeer;
+                HeadPeer = peer.NextPeer;
             }
             if (peer.PrevPeer != null)
             {

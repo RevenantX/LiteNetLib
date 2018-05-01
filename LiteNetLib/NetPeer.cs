@@ -48,6 +48,7 @@ namespace LiteNetLib
         private readonly NetPacketPool _packetPool;
         private readonly object _flushLock = new object();
         private readonly object _sendLock = new object();
+
         internal NetPeer NextPeer;
         internal NetPeer PrevPeer;
 

@@ -342,13 +342,13 @@ namespace LiteNetLib.Tests
         [Test]
         public void HelperManagerStackTest()
         {
-            Assert.AreEqual(ManagerStack.Client(1), ManagerStack.Client(1));
-            Assert.AreNotEqual(ManagerStack.Client(1), ManagerStack.Client(2));
-            Assert.AreEqual(ManagerStack.Client(2), ManagerStack.Client(2));
+            Assert.AreSame(ManagerStack.Client(1), ManagerStack.Client(1));
+            Assert.AreNotSame(ManagerStack.Client(1), ManagerStack.Client(2));
+            Assert.AreSame(ManagerStack.Client(2), ManagerStack.Client(2));
 
-            Assert.AreEqual(ManagerStack.Server(1), ManagerStack.Server(1));
-            Assert.AreNotEqual(ManagerStack.Server(1), ManagerStack.Client(1));
-            Assert.AreNotEqual(ManagerStack.Server(1), ManagerStack.Client(2));
+            Assert.AreSame(ManagerStack.Server(1), ManagerStack.Server(1));
+            Assert.AreNotSame(ManagerStack.Server(1), ManagerStack.Client(1));
+            Assert.AreNotSame(ManagerStack.Server(1), ManagerStack.Client(2));
         }
 
         [Test]

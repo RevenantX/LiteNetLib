@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace LiteNetLib
     /// <summary>
     /// Main class for all network operations. Can be used as client and/or server.
     /// </summary>
-    public sealed class NetManager
+    public sealed class NetManager : IEnumerable<NetPeer>
     {
         internal delegate void OnMessageReceived(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint);
 
@@ -171,10 +172,7 @@ namespace LiteNetLib
         /// <summary>
         /// Local EndPoint (host and port)
         /// </summary>
-        public int LocalPort
-        {
-            get { return _socket.LocalPort; }
-        }
+        public int LocalPort { get { return _socket.LocalPort; } }
         
         public List<NetPeer> ConnectedPeerList
         {
@@ -190,10 +188,7 @@ namespace LiteNetLib
             }
         }
         
-        public int PeersCount
-        {
-            get { return _peers.Count; }
-        }
+        public int PeersCount { get { return _peers.Count; } }
 
         /// <summary>
         /// NetManager constructor with maxConnections = 1 (usable for client)
@@ -251,9 +246,7 @@ namespace LiteNetLib
 
             int errorCode = 0;
             if (_socket.SendTo(message, start, length, remoteEndPoint, ref errorCode) <= 0)
-            {
                 return false;
-            }
 
             //10040 message to long... need to check
             //10065 no route to host
@@ -293,11 +286,9 @@ namespace LiteNetLib
             int start,
             int count)
         {
+            //if already shutdowned. no need send event
             if (!peer.Shutdown(data, start, count, force))
-            {
-                //already shutdowned. no need send event
                 return;
-            }
             var netEvent = CreateEvent(NetEventType.Disconnect);
             netEvent.Peer = peer;
             netEvent.AdditionalData = socketErrorCode;
@@ -311,14 +302,10 @@ namespace LiteNetLib
             lock (_netEventsPool)
             {
                 if (_netEventsPool.Count > 0)
-                {
                     evt = _netEventsPool.Pop();
-                }
             }
             if(evt == null)
-            {
                 evt = new NetEvent();
-            }
             evt.Type = type;
             return evt;
         }
@@ -332,9 +319,7 @@ namespace LiteNetLib
             else
             {
                 lock (_netEventsQueue)
-                {
                     _netEventsQueue.Enqueue(evt);
-                }
             }
         }
 
@@ -386,9 +371,7 @@ namespace LiteNetLib
             evt.ConnectionRequest = null;
 
             lock (_netEventsPool)
-            {
                 _netEventsPool.Push(evt);
-            }
         }
 
         //Update function
@@ -507,44 +490,38 @@ namespace LiteNetLib
 
         private NetPeer OnConnectionSolved(ConnectionRequest request)
         {
-            bool isConnectingPeer;
-            lock (_connectingPeers)
-            {
-                isConnectingPeer = _connectingPeers.Contains(request.RemoteEndPoint);
-            }
-
-            if (!isConnectingPeer)
-                return null;
-
             if (request.Result == ConnectionRequestResult.Reject)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
             }
             else if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) < _maxConnections)
             {
-                //response with id
-                var netPeer = new NetPeer(this, request.RemoteEndPoint, request.ConnectionId);
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connection Id: {0}, EP: {1}",
-                    netPeer.ConnectId, netPeer.EndPoint);
-
-                //add peer to list
+                NetPeer netPeer = null;
                 lock (_connectingPeers)
                 {
-                    _connectingPeers.Remove(request.RemoteEndPoint);
-                    _peers.Add(request.RemoteEndPoint, netPeer);
+                    if (_connectingPeers.Remove(request.RemoteEndPoint))
+                    {
+                        //response with id
+                        netPeer = new NetPeer(this, request.RemoteEndPoint, request.ConnectionId);
+                        NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connection Id: {0}, EP: {1}",
+                            netPeer.ConnectId, netPeer.EndPoint);
+
+                        //add peer to list
+                        _peers.Add(request.RemoteEndPoint, netPeer);
+                    }         
+                }
+                if (netPeer != null)
+                {
+                    var netEvent = CreateEvent(NetEventType.Connect);
+                    netEvent.Peer = netPeer;
+                    EnqueueEvent(netEvent);
+                    return netPeer;
                 }
 
-                var netEvent = CreateEvent(NetEventType.Connect);
-                netEvent.Peer = netPeer;
-                EnqueueEvent(netEvent);
-                return netPeer;
+                return null;
             }
-
             lock (_connectingPeers)
-            {
                 _connectingPeers.Remove(request.RemoteEndPoint);
-            }
-
             return null;
         }
 
@@ -839,16 +816,12 @@ namespace LiteNetLib
         /// <param name="addressIPv4">bind to specific ipv4 address</param>
         /// <param name="addressIPv6">bind to specific ipv6 address</param>
         /// <param name="port">port to listen</param>
-        public bool Start(string addressIPv4, string addressIPv6, int port)
+        public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port)
         {
             if (IsRunning)
-            {
                 return false;
-            }
             _netEventsQueue.Clear();
-            IPAddress ipv4 = NetUtils.ResolveAddress(addressIPv4);
-            IPAddress ipv6 = NetUtils.ResolveAddress(addressIPv6);
-            if (!_socket.Bind(ipv4, ipv6, port, ReuseAddress))
+            if (!_socket.Bind(addressIPv4, addressIPv6, port, ReuseAddress))
                 return false;
             IsRunning = true;
             _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
@@ -859,20 +832,23 @@ namespace LiteNetLib
         /// <summary>
         /// Start logic thread and listening on selected port
         /// </summary>
+        /// <param name="addressIPv4">bind to specific ipv4 address</param>
+        /// <param name="addressIPv6">bind to specific ipv6 address</param>
+        /// <param name="port">port to listen</param>
+        public bool Start(string addressIPv4, string addressIPv6, int port)
+        {
+            IPAddress ipv4 = NetUtils.ResolveAddress(addressIPv4);
+            IPAddress ipv6 = NetUtils.ResolveAddress(addressIPv6);
+            return Start(ipv4, ipv6, port);
+        }
+
+        /// <summary>
+        /// Start logic thread and listening on selected port
+        /// </summary>
         /// <param name="port">port to listen</param>
         public bool Start(int port)
         {
-            if (IsRunning)
-            {
-                return false;
-            }
-            _netEventsQueue.Clear();
-            if (!_socket.Bind(IPAddress.Any, IPAddress.IPv6Any, port, ReuseAddress))
-                return false;
-            IsRunning = true;
-            _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
-            _logicThread.Start();
-            return true;
+            return Start(IPAddress.Any, IPAddress.IPv6Any, port);
         }
 
         /// <summary>
@@ -1033,13 +1009,11 @@ namespace LiteNetLib
         public NetPeer Connect(IPEndPoint target, NetDataWriter connectionData)
         {
             if (!IsRunning)
-            {
                 throw new InvalidOperationException("Client is not running");
-            }
+
             if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) >= _maxConnections)
-            {
                 return null;
-            }
+
             NetPeer peer;
             if (_peers.TryGetValue(target, out peer))
             {
@@ -1073,9 +1047,7 @@ namespace LiteNetLib
 
             //Stop
             if (Thread.CurrentThread != _logicThread)
-            {
                 _logicThread.Join();
-            }
             _logicThread = null;
             _socket.Close();
         }
@@ -1212,6 +1184,21 @@ namespace LiteNetLib
                 data, 
                 start, 
                 count);
-         }
+        }
+
+        public IEnumerator<NetPeer> GetEnumerator()
+        {
+            var peer = _peers.HeadPeer;
+            while (peer != null)
+            {
+                yield return peer;
+                peer = peer.NextPeer;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
