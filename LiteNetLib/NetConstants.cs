@@ -61,11 +61,9 @@ namespace LiteNetLib
         internal const string MulticastGroupIPv6 = "FF02:0:0:0:0:0:0:1";
 
         //protocol
-        internal const int ProtocolId = 2;
+        internal const int ProtocolId = 3;
         internal const int MaxUdpHeaderSize = 68;
         internal const int PacketSizeLimit = ushort.MaxValue - MaxUdpHeaderSize;
-        internal const int RequestConnectIdIndex = 5;
-        internal const int AcceptConnectIdIndex = 1;
 
         internal static readonly int[] PossibleMtu =
         {
@@ -80,7 +78,8 @@ namespace LiteNetLib
         internal static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
 
         //peer specific
-        public const int FlowUpdateTime = 1000;
-        public const int FlowIncreaseThreshold = 4;
+        public const byte MaxConnectionNumber = 4;
+
+        public const int PacketPoolSize = 1000;
     }
 }

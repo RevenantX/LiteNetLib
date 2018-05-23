@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Compile Include="..\LiteNetLib\BaseChannel.cs" Link="BaseChannel.cs" />
+    <Compile Include="..\LiteNetLib\ConnectionRequest.cs" Link="ConnectionRequest.cs" />
     <Compile Include="..\LiteNetLib\INetEventListener.cs" Link="INetEventListener.cs" />
     <Compile Include="..\LiteNetLib\NatPunchModule.cs" Link="NatPunchModule.cs" />
     <Compile Include="..\LiteNetLib\NetConstants.cs" Link="NetConstants.cs" />

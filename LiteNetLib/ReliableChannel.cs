@@ -39,9 +39,7 @@ namespace LiteNetLib
             _ordered = ordered;
             _pendingPackets = new PendingPacket[_windowSize];
             for (int i = 0; i < _pendingPackets.Length; i++)
-            {
                 _pendingPackets[i] = new PendingPacket();
-            }
 
             if (_ordered)
                 _receivedPackets = new NetPacket[_windowSize];
@@ -114,14 +112,12 @@ namespace LiteNetLib
 
                 //clear packet
                 var pendingPacket = _pendingPackets[pendingIdx];
-                if (pendingPacket.Packet == null)
+                if (pendingPacket.Packet != null)
                 {
-                    continue;
+                    Peer.Recycle(pendingPacket.Packet);
+                    pendingPacket.Packet = null;
+                    NetUtils.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", pendingSeq);
                 }
-                Peer.Recycle(pendingPacket.Packet);
-                pendingPacket.Packet = null;
-
-                NetUtils.DebugWrite("[PA]Removing reliableInOrder ack: {0} - true", pendingSeq);
             }
             Monitor.Exit(_pendingPackets);
         }

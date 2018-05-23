@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Compile Include="..\LiteNetLib\BaseChannel.cs" Link="BaseChannel.cs" />
+    <Compile Include="..\LiteNetLib\ConnectionRequest.cs" Link="ConnectionRequest.cs" />
     <Compile Include="..\LiteNetLib\NetExceptions.cs" Link="NetExceptions.cs" />
     <Compile Include="..\LiteNetLib\NetStatistics.cs" Link="NetStatistics.cs" />
     <Compile Include="..\LiteNetLib\Properties\AssemblyInfo.cs" />
