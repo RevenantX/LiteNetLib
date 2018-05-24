@@ -14,12 +14,12 @@ namespace LiteNetLib
     [Flags]
     public enum ConnectionState : byte
     {
-        WaitingForConnect = 1 << 1,
+        WaitingForAccept = 1 << 1,
         InProgress        = 1 << 2,
         Connected         = 1 << 3,
         ShutdownRequested = 1 << 4,
         Disconnected      = 1 << 5,
-        Any = WaitingForConnect | InProgress | Connected | ShutdownRequested
+        Any = WaitingForAccept | InProgress | Connected | ShutdownRequested
     }
 
     /// <summary>
@@ -105,8 +105,7 @@ namespace LiteNetLib
         /// <summary>
         /// Connection id for internal purposes, but can be used as key in your dictionary of peers
         /// </summary>
-        public long ConnectId { get { return _connectId; }
-        }
+        public long ConnectId { get { return _connectId; } }
 
         /// <summary>
         /// Peer ip address and port
@@ -155,7 +154,7 @@ namespace LiteNetLib
             _packetPool = netManager.NetPacketPool;
             _netManager = netManager;
             _remoteEndPoint = remoteEndPoint;
-            _connectionState = ConnectionState.WaitingForConnect;
+            _connectionState = ConnectionState.WaitingForAccept;
         }
 
         //for low memory consumption
@@ -591,6 +590,20 @@ namespace LiteNetLib
             }
         }
 
+        internal void ProcessConnectRequest(NetConnectRequestPacket connRequest)
+        {
+            if (connRequest.ConnectionId == _connectId)
+            {
+                //Send already accepted
+                _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
+            }
+            else
+            {
+                //Change connect id
+                _connectId = connRequest.ConnectionId;
+            }
+        }
+
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
@@ -604,12 +617,6 @@ namespace LiteNetLib
             NetUtils.DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
             {
-                case PacketProperty.ConnectRequest:
-                    //response with connect
-                    _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
-                    _packetPool.Recycle(packet);
-                    break;
-
                 case PacketProperty.Merged:
                     int pos = NetConstants.HeaderSize;
                     while (pos < packet.Size)

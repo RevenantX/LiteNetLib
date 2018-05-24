@@ -494,7 +494,7 @@ namespace LiteNetLib
                 //TODO: good reject with info
                 _peers.RemovePeer(request.Peer);
             }
-            else if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) < _maxConnections)
+            else
             {
                 //Accept
                 request.Peer.Accept(request.ConnectionId, request.ConnectionNumber);
@@ -506,6 +506,82 @@ namespace LiteNetLib
 
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connection Id: {0}, EP: {1}",
                     request.Peer.ConnectId, request.Peer.EndPoint);
+            }
+        }
+
+        private void ProcessConnectRequest(IPEndPoint remoteEndPoint, NetPeer netPeer, NetConnectRequestPacket connRequest)
+        {
+            NetEvent netEvent;
+            byte connectionNumber = 0;
+
+            NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectId, connRequest.ConnectionId, remoteEndPoint);
+
+            //if we have peer
+            if (netPeer != null)
+            {
+                //old request
+                if (connRequest.ConnectionId < netPeer.ConnectId)
+                    return;
+                //current or new request
+                switch (netPeer.ConnectionState)
+                {
+                    //P2P case
+                    case ConnectionState.InProgress:
+                        //create connect request
+                        //TODO: if connectionNumbers not equals
+                        netEvent = CreateEvent(NetEventType.Disconnect);
+                        netEvent.ConnectionRequest = new ConnectionRequest(
+                            connRequest.ConnectionId,
+                            connectionNumber,
+                            ConnectionRequestType.PeerToPeer,
+                            connRequest.Data,
+                            netPeer,
+                            OnConnectionSolved);
+                        EnqueueEvent(netEvent);
+                        return;
+                    case ConnectionState.Connected:
+                        //Old connect request
+                        if (connRequest.ConnectionId == netPeer.ConnectId)
+                        {
+                            netPeer.ProcessConnectRequest(connRequest);
+                            return; 
+                        }  
+                        //New connect request
+                        netEvent = CreateEvent(NetEventType.Disconnect);
+                        netEvent.Peer = netPeer;
+                        netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
+                        EnqueueEvent(netEvent);
+                        _peers.RemovePeer(netPeer);
+                        break;
+
+                    //just update connectionId
+                    case ConnectionState.WaitingForAccept:
+                        if (connRequest.ConnectionId > netPeer.ConnectId)
+                            netPeer.ProcessConnectRequest(connRequest);
+                        return;
+                }
+                //ConnectionState Disconnected, ShutdownRequested and Connected
+                //Set next connection number
+                connectionNumber = (byte)((netPeer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
+                //To reconnect peer
+            }
+            //New peer incoming
+            if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) >= _maxConnections)
+                return;
+            //Add new peer and craete ConnectRequest event
+            NetUtils.DebugWrite("[NM] Creating request event: " + connRequest.ConnectionId);
+            netPeer = new NetPeer(this, remoteEndPoint);
+            if (_peers.TryAdd(netPeer))
+            {
+                netEvent = CreateEvent(NetEventType.ConnectionRequest);
+                netEvent.ConnectionRequest = new ConnectionRequest(
+                    connRequest.ConnectionId,
+                    connectionNumber,
+                    ConnectionRequestType.Incoming,
+                    connRequest.Data,
+                    netPeer,
+                    OnConnectionSolved);
+                EnqueueEvent(netEvent);
             }
         }
 
@@ -528,7 +604,6 @@ namespace LiteNetLib
             //Check normal packets
             NetPeer netPeer;
             //old packets protection
-            byte connectionNumber = 0;
             NetEvent netEvent;
             bool peerFound = _peers.TryGetValue(remoteEndPoint, out netPeer);
 
@@ -584,7 +659,6 @@ namespace LiteNetLib
                         netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
                         EnqueueEvent(netEvent);
                         netPeer.ProcessPacket(packet);
-                        
                     }
                     //Send shutdown
                     SendRaw(new[] { (byte)PacketProperty.ShutdownOk }, 0, 1, remoteEndPoint);
@@ -601,60 +675,8 @@ namespace LiteNetLib
 
                 case PacketProperty.ConnectRequest:
                     var connRequest = NetConnectRequestPacket.FromData(packet.RawData, packet.Size);
-                    if (connRequest == null)
-                        break;
-                    NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectId, connRequest.ConnectionId, remoteEndPoint);
-                    if (peerFound)
-                    {
-                        //Remove old peer and connect new
-                        if (connRequest.ConnectionId > netPeer.ConnectId)
-                        {
-                            if (netPeer.ConnectionState == ConnectionState.WaitingForConnect)
-                            {
-
-                            }
-                            else if (netPeer.ConnectionState == ConnectionState.InProgress)
-                            {
-
-                            }
-                            else if (netPeer.ConnectionState == ConnectionState.Connected)
-                            {
-                                netEvent = CreateEvent(NetEventType.Disconnect);
-                                netEvent.Peer = netPeer;
-                                netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
-                                EnqueueEvent(netEvent);
-                            }
-                            _peers.RemovePeer(netPeer);
-
-                            //Set next connection number
-                            connectionNumber = (byte)((netPeer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
-                            //To reconnect peer
-                        }
-                        else
-                        {
-                            //Just answer accept
-                            netPeer.ProcessPacket(packet);
-                            return;
-                        }
-                    } //Else
-
-                    if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) < _maxConnections)
-                    {
-                        NetUtils.DebugWrite("[NM] Creating request event: " + connRequest.ConnectionId);
-                        netPeer = new NetPeer(this, remoteEndPoint);
-                        if (_peers.TryAdd(netPeer))
-                        {
-                            netEvent = CreateEvent(NetEventType.ConnectionRequest);
-                            netEvent.ConnectionRequest = new ConnectionRequest(
-                                connRequest.ConnectionId,
-                                connectionNumber,
-                                ConnectionRequestType.Incoming,
-                                connRequest.Data,
-                                netPeer,
-                                OnConnectionSolved);
-                            EnqueueEvent(netEvent);
-                        }
-                    }
+                    if (connRequest != null)
+                        ProcessConnectRequest(remoteEndPoint, netPeer, connRequest);
                     break;
                 default:
                     if(peerFound)
@@ -975,15 +997,30 @@ namespace LiteNetLib
             if (!IsRunning)
                 throw new InvalidOperationException("Client is not running");
 
-            if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) >= _maxConnections)
-                return null;
-
             NetPeer peer;
             if (_peers.TryGetValue(target, out peer))
             {
-                //Already connected
-                return peer;
+                switch (peer.ConnectionState)
+                {
+                    //just return already connected peer
+                    case ConnectionState.Connected:
+                    case ConnectionState.InProgress:
+                        return peer;
+
+                    case ConnectionState.WaitingForAccept:
+                        //TODO: OHNO
+                        return peer;
+
+                    case ConnectionState.Disconnected:
+                    case ConnectionState.ShutdownRequested:
+                        _peers.RemovePeer(peer);
+                        break;
+                }              
             }
+
+            //Check connections limit
+            if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) >= _maxConnections)
+                return null;
 
             //Create reliable connection
             //And send connection request
