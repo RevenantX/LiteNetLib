@@ -176,15 +176,23 @@ namespace LiteNetLib
 
     internal class NetConnectRequestPacket
     {
-        public long ConnectionId;
-        public NetDataReader Data;
+        public readonly long ConnectionId;
+        public readonly byte ConnectionNumber;
+        public readonly NetDataReader Data;
 
-        public static NetConnectRequestPacket FromData(byte[] data, int size)
+        private NetConnectRequestPacket(long connectionId, byte connectionNumber, NetDataReader data)
         {
-            if (size < 12)
+            ConnectionId = connectionId;
+            ConnectionNumber = connectionNumber;
+            Data = data;
+        }
+        
+        public static NetConnectRequestPacket FromData(NetPacket packet)
+        {
+            if (packet.Size < 12)
                 return null;
 
-            int protoId = BitConverter.ToInt32(data, 1);
+            int protoId = BitConverter.ToInt32(packet.RawData, 1);
             if (protoId != NetConstants.ProtocolId)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan,
@@ -193,14 +201,14 @@ namespace LiteNetLib
             }
 
             //Getting new id for peer
-            long connectionId = BitConverter.ToInt64(data, 5);
+            long connectionId = BitConverter.ToInt64(packet.RawData, 5);
 
             // Read data and create request
             var reader = new NetDataReader(null, 0, 0);
-            if (size > 12)
-                reader.SetSource(data, 13, size);
+            if (packet.Size > 12)
+                reader.SetSource(packet.RawData, 13, packet.Size);
 
-            return new NetConnectRequestPacket { ConnectionId = connectionId, Data = reader };
+            return new NetConnectRequestPacket(connectionId, packet.ConnectionNumber, reader);
         }
 
         public static NetPacket Make(NetDataWriter connectData, long connectId)

@@ -597,10 +597,11 @@ namespace LiteNetLib
                 //Send already accepted
                 _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
             }
-            else
-            {
+            else //connRequset.ConnectionId > _connectId
+            { 
                 //Change connect id
                 _connectId = connRequest.ConnectionId;
+                ConnectionNum = connRequest.ConnectionNumber;
             }
         }
 

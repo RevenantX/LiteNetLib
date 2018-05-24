@@ -509,11 +509,13 @@ namespace LiteNetLib
             }
         }
 
-        private void ProcessConnectRequest(IPEndPoint remoteEndPoint, NetPeer netPeer, NetConnectRequestPacket connRequest)
+        private void ProcessConnectRequest(
+            IPEndPoint remoteEndPoint, 
+            NetPeer netPeer, 
+            NetConnectRequestPacket connRequest)
         {
             NetEvent netEvent;
-            byte connectionNumber = 0;
-
+            byte connectionNumber = connRequest.ConnectionNumber;
             NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectId, connRequest.ConnectionId, remoteEndPoint);
 
             //if we have peer
@@ -528,8 +530,11 @@ namespace LiteNetLib
                     //P2P case
                     case ConnectionState.InProgress:
                         //create connect request
-                        //TODO: if connectionNumbers not equals
-                        netEvent = CreateEvent(NetEventType.Disconnect);
+                        if (connRequest.ConnectionId > netPeer.ConnectId)
+                            netPeer.ProcessConnectRequest(connRequest);           
+                        
+                        //create p2p request
+                        netEvent = CreateEvent(NetEventType.ConnectionRequest);
                         netEvent.ConnectionRequest = new ConnectionRequest(
                             connRequest.ConnectionId,
                             connectionNumber,
