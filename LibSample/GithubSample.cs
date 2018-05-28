@@ -7,7 +7,7 @@ namespace LibSample
 {
     class GithubSample
     {
-        public void Client()
+        public void Server()
         {
             EventBasedNetListener listener = new EventBasedNetListener();
             NetManager server = new NetManager(listener, 2 /* maximum clients */);
@@ -35,7 +35,7 @@ namespace LibSample
             server.Stop();
         }
 
-        public void Server()
+        public void Client()
         {
             EventBasedNetListener listener = new EventBasedNetListener();
             NetManager client = new NetManager(listener);
