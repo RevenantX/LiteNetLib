@@ -375,7 +375,7 @@ namespace LiteNetLib
         //Update function
         private void UpdateLogic()
         {
-            List<NetPeer> peersToRemove = new List<NetPeer>();
+            var peersToRemove = new List<NetPeer>();
             while (IsRunning)
             {
                 long startTime = DateTime.UtcNow.Ticks;
@@ -432,57 +432,52 @@ namespace LiteNetLib
         
         private void ReceiveLogic(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint)
         {
-            //Receive some info
-            if (errorCode == 0)
+            if (errorCode != 0)
             {
-#if DEBUG
-                if (SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance)
-                {
-                    //drop packet
-                    return;
-                }
-                if (SimulateLatency)
-                {
-                    int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
-                    if (latency > MinLatencyTreshold)
-                    {
-                        byte[] holdedData = new byte[length];
-                        Buffer.BlockCopy(data, 0, holdedData, 0, length);
-
-                        lock (_pingSimulationList)
-                        {
-                            _pingSimulationList.Add(new IncomingData
-                            {
-                                Data = holdedData,
-                                EndPoint = remoteEndPoint,
-                                TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
-                            });
-                        }
-
-                        //hold packet
-                        return;
-                    }
-                }
-#endif
-                try
-                {
-                    //ProcessEvents
-                    DataReceived(data, length, remoteEndPoint);
-                }
-                catch(Exception e)
-                {
-                    //protects socket receive thread
-                    NetUtils.DebugWriteError("[NM] SocketReceiveThread error: " + e );
-                }
-            }
-            else //Error on receive
-            {
-                //TODO: strange?
                 _peers.Clear();
                 var netEvent = CreateEvent(NetEventType.Error);
                 netEvent.AdditionalData = errorCode;
                 EnqueueEvent(netEvent);
                 NetUtils.DebugWriteError("[NM] Receive error: {0}" + errorCode);
+                return;
+            }
+#if DEBUG
+            if (SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance)
+            {
+                //drop packet
+                return;
+            }
+            if (SimulateLatency)
+            {
+                int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
+                if (latency > MinLatencyTreshold)
+                {
+                    byte[] holdedData = new byte[length];
+                    Buffer.BlockCopy(data, 0, holdedData, 0, length);
+
+                    lock (_pingSimulationList)
+                    {
+                        _pingSimulationList.Add(new IncomingData
+                        {
+                            Data = holdedData,
+                            EndPoint = remoteEndPoint,
+                            TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
+                        });
+                    }
+                    //hold packet
+                    return;
+                }
+            }
+#endif
+            try
+            {
+                //ProcessEvents
+                DataReceived(data, length, remoteEndPoint);
+            }
+            catch(Exception e)
+            {
+                //protects socket receive thread
+                NetUtils.DebugWriteError("[NM] SocketReceiveThread error: " + e );
             }
         }
 
@@ -693,33 +688,33 @@ namespace LiteNetLib
         internal void ReceiveFromPeer(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             NetPeer fromPeer;
-            if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
+            if (!_peers.TryGetValue(remoteEndPoint, out fromPeer))
+                return;
+
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received message");
+            var netEvent = CreateEvent(NetEventType.Receive);
+            netEvent.Peer = fromPeer;
+            netEvent.RemoteEndPoint = fromPeer.EndPoint;
+            switch (packet.Property)
             {
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received message");
-                var netEvent = CreateEvent(NetEventType.Receive);
-                netEvent.Peer = fromPeer;
-                netEvent.RemoteEndPoint = fromPeer.EndPoint;
-                switch (packet.Property)
-                {
-                    case PacketProperty.Unreliable:
-                        netEvent.DeliveryMethod = DeliveryMethod.Unreliable;
-                        break;
-                    case PacketProperty.ReliableUnordered:
-                        netEvent.DeliveryMethod = DeliveryMethod.ReliableUnordered;
-                        break;
-                    case PacketProperty.ReliableOrdered:
-                        netEvent.DeliveryMethod = DeliveryMethod.ReliableOrdered;
-                        break;
-                    case PacketProperty.Sequenced:
-                        netEvent.DeliveryMethod = DeliveryMethod.Sequenced;
-                        break;
-                    case PacketProperty.ReliableSequenced:
-                        //TODO: netEvent.DeliveryMethod = DeliveryMethod.ReliableSequenced;
-                        break;
-                }
-                netEvent.DataReader.SetSource(packet.CopyPacketData());
-                EnqueueEvent(netEvent);
+                case PacketProperty.Unreliable:
+                    netEvent.DeliveryMethod = DeliveryMethod.Unreliable;
+                    break;
+                case PacketProperty.ReliableUnordered:
+                    netEvent.DeliveryMethod = DeliveryMethod.ReliableUnordered;
+                    break;
+                case PacketProperty.ReliableOrdered:
+                    netEvent.DeliveryMethod = DeliveryMethod.ReliableOrdered;
+                    break;
+                case PacketProperty.Sequenced:
+                    netEvent.DeliveryMethod = DeliveryMethod.Sequenced;
+                    break;
+                case PacketProperty.ReliableSequenced:
+                    //TODO: netEvent.DeliveryMethod = DeliveryMethod.ReliableSequenced;
+                    break;
             }
+            netEvent.DataReader.SetSource(packet.CopyPacketData());
+            EnqueueEvent(netEvent);
         }
 
         /// <summary>
@@ -1056,7 +1051,8 @@ namespace LiteNetLib
             _logicThread = null;
             _socket.Close();
             _peers.Clear();
-            _netEventsQueue.Clear();
+            lock(_netEventsQueue)
+                _netEventsQueue.Clear();
         }
 
         /// <summary>
