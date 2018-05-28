@@ -14,7 +14,7 @@ namespace LiteNetLib
     [Flags]
     public enum ConnectionState : byte
     {
-        WaitingForAccept = 1 << 1,
+        WaitingForAccept  = 1 << 1,
         InProgress        = 1 << 2,
         Connected         = 1 << 3,
         ShutdownRequested = 1 << 4,

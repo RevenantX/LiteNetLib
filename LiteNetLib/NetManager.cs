@@ -679,7 +679,7 @@ namespace LiteNetLib
                     break;
 
                 case PacketProperty.ConnectRequest:
-                    var connRequest = NetConnectRequestPacket.FromData(packet.RawData, packet.Size);
+                    var connRequest = NetConnectRequestPacket.FromData(packet);
                     if (connRequest != null)
                         ProcessConnectRequest(remoteEndPoint, netPeer, connRequest);
                     break;
