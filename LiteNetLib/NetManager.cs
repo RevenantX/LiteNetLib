@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using LiteNetLib.Utils;
@@ -376,9 +377,11 @@ namespace LiteNetLib
         private void UpdateLogic()
         {
             var peersToRemove = new List<NetPeer>();
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             while (IsRunning)
             {
-                long startTime = DateTime.UtcNow.Ticks;
 #if DEBUG
                 if (SimulateLatency)
                 {
@@ -402,6 +405,9 @@ namespace LiteNetLib
 #if STATS_ENABLED
                 ulong totalPacketLoss = 0;
 #endif
+                int elapsed = (int)stopwatch.ElapsedMilliseconds;
+                if (elapsed <= 0)
+                    elapsed = 1;
                 //Process acks
                 for(var netPeer = _peers.HeadPeer; netPeer != null; netPeer = netPeer.NextPeer)
                 {
@@ -411,7 +417,7 @@ namespace LiteNetLib
                     }
                     else
                     {
-                        netPeer.Update(UpdateTime);
+                        netPeer.Update(elapsed);
 #if STATS_ENABLED
                         totalPacketLoss += netPeer.Statistics.PacketLoss;
 #endif
@@ -422,12 +428,13 @@ namespace LiteNetLib
 #if STATS_ENABLED
                 Statistics.PacketLoss = totalPacketLoss;
 #endif
-                int sleepTime = UpdateTime - (int)((DateTime.UtcNow.Ticks - startTime) / TimeSpan.TicksPerMillisecond);
+                int sleepTime = UpdateTime - (int)(stopwatch.ElapsedMilliseconds - elapsed);
+                stopwatch.Reset();
+                stopwatch.Start();
                 if (sleepTime > 0)
-                {
                     Thread.Sleep(sleepTime);
-                }
             }
+            stopwatch.Stop();
         }
         
         private void ReceiveLogic(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint)
@@ -555,7 +562,7 @@ namespace LiteNetLib
                         break;
 
                     //just update connectionId
-                    case ConnectionState.WaitingForAccept:
+                    case ConnectionState.Incoming:
                         if (connRequest.ConnectionId > netPeer.ConnectId)
                             netPeer.ProcessConnectRequest(connRequest);
                         return;
@@ -665,14 +672,14 @@ namespace LiteNetLib
                     break;
 
                 case PacketProperty.ConnectAccept:
-                    if (peerFound && netPeer.ProcessConnectAccept(packet))
+                    var connAccept = NetConnectAcceptPacket.FromData(packet);
+                    if (connAccept != null && peerFound && netPeer.ProcessConnectAccept(connAccept))
                     {
                         var connectEvent = CreateEvent(NetEventType.Connect);
                         connectEvent.Peer = netPeer;
                         EnqueueEvent(connectEvent);
                     }
                     break;
-
                 case PacketProperty.ConnectRequest:
                     var connRequest = NetConnectRequestPacket.FromData(packet);
                     if (connRequest != null)
@@ -1007,7 +1014,7 @@ namespace LiteNetLib
                     case ConnectionState.InProgress:
                         return peer;
 
-                    case ConnectionState.WaitingForAccept:
+                    case ConnectionState.Incoming:
                         //TODO: OHNO
                         return peer;
 

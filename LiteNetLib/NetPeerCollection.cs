@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace LiteNetLib
 {
-    internal class IPEndPointComparer : IEqualityComparer<IPEndPoint>
+    internal sealed class IPEndPointComparer : IEqualityComparer<IPEndPoint>
     {
         public bool Equals(IPEndPoint x, IPEndPoint y)
         {

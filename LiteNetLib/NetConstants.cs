@@ -25,12 +25,10 @@ namespace LiteNetLib
         /// </summary>
         ReliableOrdered,
 
-        /*
         /// <summary>
         /// Reliable only last packet
         /// </summary>
-        //ReliableSequenced
-        */
+        ReliableSequenced
     }
 
     /// <summary>

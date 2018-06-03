@@ -174,7 +174,7 @@ namespace LiteNetLib
         }
     }
 
-    internal class NetConnectRequestPacket
+    internal sealed class NetConnectRequestPacket
     {
         public readonly long ConnectionId;
         public readonly byte ConnectionNumber;
@@ -189,7 +189,7 @@ namespace LiteNetLib
         
         public static NetConnectRequestPacket FromData(NetPacket packet)
         {
-            if (packet.Size < 12)
+            if (packet.Size < 12 || packet.ConnectionNumber >= NetConstants.MaxConnectionNumber)
                 return null;
 
             int protoId = BitConverter.ToInt32(packet.RawData, 1);
@@ -224,8 +224,44 @@ namespace LiteNetLib
         }
     }
 
-    internal class NetConnectAcceptPacket
+    internal sealed class NetConnectAcceptPacket
     {
+        public readonly long ConnectionId;
+        public readonly byte ConnectionNumber;
+        public readonly bool IsReusedPeer;
 
+        private NetConnectAcceptPacket(long connectionId, byte connectionNumber, bool isReusedPeer)
+        {
+            ConnectionId = connectionId;
+            ConnectionNumber = connectionNumber;
+            IsReusedPeer = isReusedPeer;
+        }
+
+        public static NetConnectAcceptPacket FromData(NetPacket packet)
+        {
+            if (packet.Size != 11)
+                return null;
+
+            long connectionId = BitConverter.ToInt64(packet.RawData, 1);
+            //check connect num
+            byte connectionNumber = packet.RawData[9];
+            if (connectionNumber >= NetConstants.MaxConnectionNumber)
+                return null;
+            //check reused flag
+            byte isReused = packet.RawData[10];
+            if (isReused > 1)
+                return null;
+
+            return new NetConnectAcceptPacket(connectionId, connectionNumber, isReused == 1);
+        }
+
+        public static NetPacket Make(long connectId, byte connectNum, bool reusedPeer)
+        {
+            var packet = new NetPacket(PacketProperty.ConnectAccept, 10);
+            FastBitConverter.GetBytes(packet.RawData, 1, connectId);
+            packet.RawData[9] = connectNum;
+            packet.RawData[10] = (byte)(reusedPeer ? 1 : 0);
+            return packet;
+        }
     }
 }

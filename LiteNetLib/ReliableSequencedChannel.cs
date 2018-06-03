@@ -4,7 +4,7 @@
     {
         public ReliableSequencedChannel(NetPeer peer) : base(peer)
         {
-
+            //TODO reliable sequenced
         }
 
         public override void SendNextPackets()

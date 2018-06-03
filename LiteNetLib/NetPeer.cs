@@ -14,12 +14,12 @@ namespace LiteNetLib
     [Flags]
     public enum ConnectionState : byte
     {
-        WaitingForAccept  = 1 << 1,
+        Incoming          = 1 << 1,
         InProgress        = 1 << 2,
         Connected         = 1 << 3,
         ShutdownRequested = 1 << 4,
         Disconnected      = 1 << 5,
-        Any = WaitingForAccept | InProgress | Connected | ShutdownRequested
+        Any = Incoming | InProgress | Connected | ShutdownRequested
     }
 
     /// <summary>
@@ -148,13 +148,14 @@ namespace LiteNetLib
         /// </summary>
         public readonly NetStatistics Statistics;
 
+        //incoming connection constructor
         internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint)
         {
             Statistics = new NetStatistics();
             _packetPool = netManager.NetPacketPool;
             _netManager = netManager;
             _remoteEndPoint = remoteEndPoint;
-            _connectionState = ConnectionState.WaitingForAccept;
+            _connectionState = ConnectionState.Incoming;
         }
 
         //for low memory consumption
@@ -199,36 +200,30 @@ namespace LiteNetLib
             _mergeData.ConnectionNumber = connectNum;
 
             //Make initial packet
-            _connectAcceptPacket = new NetPacket(PacketProperty.ConnectAccept, 9);
-            //Add data
-            FastBitConverter.GetBytes(_connectAcceptPacket.RawData, 1, _connectId);
-            _connectAcceptPacket.RawData[9] = connectNum;
+            _connectAcceptPacket = NetConnectAcceptPacket.Make(_connectId, connectNum, false);
             //Send
             _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
 
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}", _connectId);
         }
 
-        internal bool ProcessConnectAccept(NetPacket packet)
+        internal bool ProcessConnectAccept(NetConnectAcceptPacket packet)
         {
-            if (_connectionState != ConnectionState.InProgress || packet.Size != 10)
+            if (_connectionState != ConnectionState.InProgress)
                 return false;
 
             //check connection id
-            if (BitConverter.ToInt64(packet.RawData, 1) != _connectId)
+            if (packet.ConnectionId != _connectId)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Invalid connectId: {0}", _connectId);
                 return false;
             }
             //check connect num
-            ConnectionNum = packet.RawData[9];
-            if (ConnectionNum >= NetConstants.MaxConnectionNumber)
-                return false;
+            ConnectionNum = packet.ConnectionNumber;
 
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
             _timeSinceLastPacket = 0;
             _connectionState = ConnectionState.Connected;
-            _packetPool.Recycle(packet);
             return true;
         }
 
@@ -242,8 +237,8 @@ namespace LiteNetLib
                     return PacketProperty.Sequenced;
                 case DeliveryMethod.ReliableOrdered:
                     return PacketProperty.ReliableOrdered;
-                //TODO: case DeliveryMethod.ReliableSequenced:
-                //    return PacketProperty.ReliableSequenced;
+                case DeliveryMethod.ReliableSequenced:
+                    return PacketProperty.ReliableSequenced;
                 default:
                     return PacketProperty.Unreliable;
             }
@@ -612,6 +607,7 @@ namespace LiteNetLib
             if (packet.ConnectionNumber != ConnectionNum)
             {
                 NetUtils.DebugWrite(ConsoleColor.Red, "[RR]Old packet");
+                _packetPool.Recycle(packet);
                 return;
             }
 
@@ -819,6 +815,7 @@ namespace LiteNetLib
                     return;
 
                 case ConnectionState.Disconnected:
+                case ConnectionState.Incoming:
                     return;
             }
 
