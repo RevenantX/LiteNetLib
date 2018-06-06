@@ -113,7 +113,6 @@ namespace LibSample
             {
                 var peer = _c1.Connect(point, ConnectionKey);
                 Console.WriteLine("Success C1. Connecting to C2: {0}, connection created: {1}", point, peer != null);
-                
             };
 
             natPunchListener2.NatIntroductionSuccess += (point, token) =>
