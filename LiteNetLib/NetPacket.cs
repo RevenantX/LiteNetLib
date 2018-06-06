@@ -3,9 +3,6 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    // 0 1 2 3 4 5 6 7
-    // f ccc ppppppppp
-    //
     internal enum PacketProperty : byte
     {
         Unreliable,             //0
@@ -29,12 +26,13 @@ namespace LiteNetLib
         DiscoveryResponse,      //18 *
         Merged,                 //19
         ShutdownOk,             //20 *   
-        ReliableSequenced       //21
+        ReliableSequenced,      //21
+        AckReliableSequenced    //22
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 21;
+        private const int LastProperty = 22;
 
         //Header
         public PacketProperty Property
@@ -42,17 +40,6 @@ namespace LiteNetLib
             get { return (PacketProperty)(RawData[0] & 0x1F); }
             set { RawData[0] = (byte)((RawData[0] & 0xE0) | (byte)value); }
         }
-
-        // Fragmented
-        // 0x80 - 1000 0000
-        
-        // Property
-        // 0x1F - 0001 1111
-        // 0xE0 - 1110 0000
-        
-        // Connection number
-        // 0x60 - 0110 0000
-        // 0x9F - 1001 1111
 
         public byte ConnectionNumber
         {
@@ -134,6 +121,7 @@ namespace LiteNetLib
                 case PacketProperty.AckReliable:
                 case PacketProperty.AckReliableOrdered:
                 case PacketProperty.ReliableSequenced:
+                case PacketProperty.AckReliableSequenced:
                     return NetConstants.SequencedHeaderSize;
                 default:
                     return NetConstants.HeaderSize;

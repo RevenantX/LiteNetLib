@@ -67,7 +67,7 @@ namespace LiteNetLib
         private ReliableChannel _reliableUnorderedChannel;
         private SequencedChannel _sequencedChannel;
         private SimpleChannel _unreliableChannel;
-        private ReliableSequencedChannel _reliableSequencedChannel;
+        private SequencedChannel _reliableSequencedChannel;
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
@@ -172,9 +172,9 @@ namespace LiteNetLib
         {
             _reliableOrderedChannel = new ReliableChannel(this, true);
             _reliableUnorderedChannel = new ReliableChannel(this, false);
-            _sequencedChannel = new SequencedChannel(this);
+            _sequencedChannel = new SequencedChannel(this, false);
             _unreliableChannel = new SimpleChannel(this);
-            _reliableSequencedChannel = new ReliableSequencedChannel(this);
+            _reliableSequencedChannel = new SequencedChannel(this, true);
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
             _mergeData = new NetPacket(PacketProperty.Merged, NetConstants.MaxPacketSize);
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
@@ -725,6 +725,11 @@ namespace LiteNetLib
 
                 case PacketProperty.ReliableSequenced:
                     _reliableSequencedChannel.ProcessPacket(packet);
+                    break;
+
+                case PacketProperty.AckReliableSequenced:
+                    _reliableSequencedChannel.ProcessAck(packet);
+                    _packetPool.Recycle(packet);
                     break;
 
                 //Simple packet without acks

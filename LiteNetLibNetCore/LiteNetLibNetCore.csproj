@@ -35,7 +35,6 @@
     <Compile Include="..\LiteNetLib\NetStatistics.cs" Link="NetStatistics.cs" />
     <Compile Include="..\LiteNetLib\NetUtils.cs" Link="NetUtils.cs" />
     <Compile Include="..\LiteNetLib\ReliableChannel.cs" Link="ReliableChannel.cs" />
-    <Compile Include="..\LiteNetLib\ReliableSequencedChannel.cs" Link="ReliableSequencedChannel.cs" />
     <Compile Include="..\LiteNetLib\SequencedChannel.cs" Link="SequencedChannel.cs" />
     <Compile Include="..\LiteNetLib\SimpleChannel.cs" Link="SimpleChannel.cs" />
     <Compile Include="..\LiteNetLib\Utils\FastBitConverter.cs" Link="Utils\FastBitConverter.cs" />

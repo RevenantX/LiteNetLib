@@ -701,7 +701,7 @@ namespace LiteNetLib
                     netEvent.DeliveryMethod = DeliveryMethod.Sequenced;
                     break;
                 case PacketProperty.ReliableSequenced:
-                    //TODO: netEvent.DeliveryMethod = DeliveryMethod.ReliableSequenced;
+                    netEvent.DeliveryMethod = DeliveryMethod.ReliableSequenced;
                     break;
             }
             netEvent.DataReader.SetSource(packet.CopyPacketData());

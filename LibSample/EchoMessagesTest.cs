@@ -38,6 +38,11 @@ namespace LibSample
                     dataWriter.Put(3);
                     dataWriter.Put(i);
                     peer.Send(dataWriter, DeliveryMethod.Unreliable);
+
+                    dataWriter.Reset();
+                    dataWriter.Put(4);
+                    dataWriter.Put(i);
+                    peer.Send(dataWriter, DeliveryMethod.ReliableSequenced);
                 }
 
                 //And test fragment

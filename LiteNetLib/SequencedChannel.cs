@@ -3,25 +3,61 @@ namespace LiteNetLib
     internal sealed class SequencedChannel : BaseChannel
     {
         private int _localSequence;
-        private int _remoteSequence;
+        private ushort _remoteSequence;
+        private readonly bool _reliable;
+        private NetPacket _lastPacket;
+        private readonly NetPacket _ackPacket;
+        private bool _mustSendAck;
 
-        public SequencedChannel(NetPeer peer) : base(peer)
+        public SequencedChannel(NetPeer peer, bool reliable) : base(peer)
         {
-
+            _reliable = reliable;
+            if (_reliable)
+            {
+                _ackPacket = new NetPacket(PacketProperty.AckReliableSequenced, 0);
+            }
         }
 
         public override void SendNextPackets()
         {
-            lock (OutgoingQueue)
+            if (_reliable && OutgoingQueue.Count == 0)
             {
-                while (OutgoingQueue.Count > 0)
-                {
-                    NetPacket packet = OutgoingQueue.Dequeue();
-                    _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
-                    packet.Sequence = (ushort)_localSequence;
+                var packet = _lastPacket;
+                if(packet != null)
                     Peer.SendRawData(packet);
-                    Peer.Recycle(packet);
+            }
+            else
+            {
+                lock (OutgoingQueue)
+                {
+                    while (OutgoingQueue.Count > 0)
+                    {
+                        NetPacket packet = OutgoingQueue.Dequeue();
+                        _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
+                        packet.Sequence = (ushort)_localSequence;
+                        Peer.SendRawData(packet);
+
+                        if (_reliable && OutgoingQueue.Count == 0)
+                            _lastPacket = packet;
+                        else
+                            Peer.Recycle(packet);
+                    }
                 }
+            }
+
+            if (_reliable && _mustSendAck)
+            {
+                _ackPacket.Sequence = _remoteSequence;
+                Peer.SendRawData(_ackPacket);
+            }
+        }
+
+        public void ProcessAck(NetPacket packet)
+        {
+            if (_lastPacket != null && packet.Sequence == _lastPacket.Sequence)
+            {
+                //TODO: recycle?
+                _lastPacket = null;
             }
         }
 
@@ -34,6 +70,7 @@ namespace LiteNetLib
                 _remoteSequence = packet.Sequence;
                 Peer.AddIncomingPacket(packet);
             }
+            _mustSendAck = true;
         }
     }
 }
