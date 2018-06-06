@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using LiteNetLib.Utils;
 
@@ -27,13 +26,6 @@ namespace LiteNetLib
         DisconnectPeerCalled
     }
 
-    public enum ConnectionRequestResult
-    {
-        None,
-        Accept,
-        Reject
-    }
-
     /// <summary>
     /// Additional information about disconnection
     /// </summary>
@@ -53,76 +45,6 @@ namespace LiteNetLib
         /// Additional data that can be accessed (only if reason is RemoteConnectionClose)
         /// </summary>
         public NetDataReader AdditionalData;
-    }
-
-    public class ConnectionRequest
-    {
-        private readonly Func<ConnectionRequest, NetPeer> _onUserAction;
-        private bool _used;
-
-        public readonly long ConnectionId;
-        public readonly IPEndPoint RemoteEndPoint;
-        public readonly NetDataReader Data;
-        public ConnectionRequestResult Result { get; private set; }
-
-        internal ConnectionRequest(
-            long connectionId,
-            IPEndPoint remoteEndPoint, 
-            NetDataReader netDataReader,
-            Func<ConnectionRequest, NetPeer> onUserAction)
-        {
-            ConnectionId = connectionId;
-            RemoteEndPoint = remoteEndPoint;
-            Data = netDataReader;
-            _onUserAction = onUserAction;
-        }
-
-        public bool AcceptIfKey(string key)
-        {
-            if (_used)
-                return false;
-            string dataKey;
-            try
-            {
-                dataKey = Data.GetString(key.Length);
-            }
-            catch
-            {
-                Reject();
-                return false;
-            }
-
-            if (dataKey == key)
-            {
-                Accept();
-                return true;
-            }
-
-            Reject();
-            return false;
-        }
-
-        /// <summary>
-        /// Accept connection and get new NetPeer as result
-        /// </summary>
-        /// <returns>Connected NetPeer</returns>
-        public NetPeer Accept()
-        {
-            if (_used)
-                return null;
-            _used = true;
-            Result = ConnectionRequestResult.Accept;
-            return _onUserAction(this);
-        }
-
-        public void Reject()
-        {
-            if (_used)
-                return;
-            _used = true;
-            Result = ConnectionRequestResult.Reject;
-            _onUserAction(this);
-        }
     }
 
     public interface INetEventListener

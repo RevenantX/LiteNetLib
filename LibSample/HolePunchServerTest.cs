@@ -111,14 +111,14 @@ namespace LibSample
 
             natPunchListener1.NatIntroductionSuccess += (point, token) =>
             {
-                Console.WriteLine("Success C1. Connecting to C2: {0}", point);
-                _c1.Connect(point, ConnectionKey);
+                var peer = _c1.Connect(point, ConnectionKey);
+                Console.WriteLine("Success C1. Connecting to C2: {0}, connection created: {1}", point, peer != null);
             };
 
             natPunchListener2.NatIntroductionSuccess += (point, token) =>
             {
-                Console.WriteLine("Success C2. Connecting to C1: {0}", point);
-                _c2.Connect(point, ConnectionKey);
+                var peer = _c2.Connect(point, ConnectionKey);
+                Console.WriteLine("Success C2. Connecting to C1: {0}, connection created: {1}", point, peer != null);
             };
 
             _c1 = new NetManager(netListener);

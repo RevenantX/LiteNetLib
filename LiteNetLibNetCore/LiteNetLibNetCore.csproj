@@ -9,6 +9,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;NETCORE</DefineConstants>
     <NoWarn>1701;1702;1705;1591</NoWarn>
+    <LangVersion>3</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -19,6 +20,7 @@
 
   <ItemGroup>
     <Compile Include="..\LiteNetLib\BaseChannel.cs" Link="BaseChannel.cs" />
+    <Compile Include="..\LiteNetLib\ConnectionRequest.cs" Link="ConnectionRequest.cs" />
     <Compile Include="..\LiteNetLib\INetEventListener.cs" Link="INetEventListener.cs" />
     <Compile Include="..\LiteNetLib\NatPunchModule.cs" Link="NatPunchModule.cs" />
     <Compile Include="..\LiteNetLib\NetConstants.cs" Link="NetConstants.cs" />

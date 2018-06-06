@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace LiteNetLib
 {
-    internal class IPEndPointComparer : IEqualityComparer<IPEndPoint>
+    internal sealed class IPEndPointComparer : IEqualityComparer<IPEndPoint>
     {
         public bool Equals(IPEndPoint x, IPEndPoint y)
         {
@@ -47,18 +47,27 @@ namespace LiteNetLib
             _lock.ExitWriteLock();
         }
 
-        public void Add(IPEndPoint endPoint, NetPeer peer)
+        public bool TryAdd(NetPeer peer)
         {
+            _lock.EnterUpgradeableReadLock();
+            if (_peersDict.ContainsKey(peer.EndPoint))
+            {
+                _lock.ExitUpgradeableReadLock();
+                return false;
+            }
             _lock.EnterWriteLock();
+   
             peer.NextPeer = HeadPeer;
             if (HeadPeer != null)
             {
                 HeadPeer.PrevPeer = peer;
             }
             HeadPeer = peer;
-            _peersDict.Add(endPoint, peer);
+            _peersDict.Add(peer.EndPoint, peer);
             Count++;
             _lock.ExitWriteLock();
+            _lock.ExitUpgradeableReadLock();
+            return true;
         }
 
         public void RemovePeers(List<NetPeer> peersList)

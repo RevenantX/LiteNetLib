@@ -40,14 +40,14 @@ namespace LiteNetLib.Tests
             var client = ManagerStack.Client(1);
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
-            while (server.PeersCount != 1)
+            while (server.PeersCount != 1 || client.PeersCount != 1)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
             }
 
-            Assert.AreEqual(server.PeersCount, 1);
-            Assert.AreEqual(client.PeersCount, 1);
+            Assert.AreEqual(1, server.PeersCount);
+            Assert.AreEqual(1, client.PeersCount);
         }
 
         [Test, MaxTime(10000)]
@@ -283,14 +283,14 @@ namespace LiteNetLib.Tests
             var client = ManagerStack.Client(1);
             client.Connect("::1", DefaultPort, DefaultAppKey);
 
-            while (server.PeersCount != 1)
+            while (server.PeersCount != 1 || client.PeersCount != 1)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
             }
 
-            Assert.AreEqual(server.PeersCount, 1);
-            Assert.AreEqual(client.PeersCount, 1);
+            Assert.AreEqual(1, server.PeersCount);
+            Assert.AreEqual(1, client.PeersCount);
         }
 
         [Test, MaxTime(2000)]

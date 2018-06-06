@@ -136,11 +136,10 @@ namespace LibSample
 
             public void OnConnectionRequest(ConnectionRequest request)
             {
-                bool accepted = request.AcceptIfKey("gamekey");
-                Console.WriteLine("[Server] ConnectionRequest. Id: {0}, Ep: {1}, Accepted: {2}", 
-                    request.ConnectionId,
+                var acceptedPeer = request.AcceptIfKey("gamekey");
+                Console.WriteLine("[Server] ConnectionRequest. Ep: {0}, Accepted: {1}",
                     request.RemoteEndPoint,
-                    accepted);
+                    acceptedPeer != null);
             }
         }
 
@@ -154,7 +153,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener, 2);
+            NetManager server = new NetManager(_serverListener);
             if (!server.Start(Port))
             {
                 Console.WriteLine("Server start failed");
