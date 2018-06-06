@@ -64,7 +64,7 @@ namespace LiteNetLib
         private readonly INetEventListener _netEventListener;
 
         private readonly NetPeerCollection _peers;
-        private int _connectedPeersCount;
+        private volatile int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
 
         internal readonly NetPacketPool NetPacketPool;
@@ -277,9 +277,12 @@ namespace LiteNetLib
             int start,
             int count)
         {
+            bool isConnected = peer.ConnectionState == ConnectionState.Connected;
             //if already shutdowned. no need send event
             if (!peer.Shutdown(data, start, count, force))
                 return;
+            if(isConnected)
+                _connectedPeersCount--;
             var netEvent = CreateEvent(NetEventType.Disconnect);
             netEvent.Peer = peer;
             netEvent.AdditionalData = socketErrorCode;
@@ -290,17 +293,10 @@ namespace LiteNetLib
         private NetEvent CreateEvent(NetEventType type)
         {
             NetEvent evt = null;
+            if (type == NetEventType.Connect)
+                _connectedPeersCount++;
             lock (_netEventsPool)
             {
-                switch (type)
-                {
-                    case NetEventType.Connect:
-                        _connectedPeersCount++;
-                        break;
-                    case NetEventType.Disconnect:
-                        _connectedPeersCount--;
-                        break;
-                }
                 if (_netEventsPool.Count > 0)
                     evt = _netEventsPool.Pop();
             }
@@ -528,6 +524,7 @@ namespace LiteNetLib
                 switch (processResult)
                 {
                     case ConnectRequestResult.Reconnection:
+                        _connectedPeersCount--;
                         netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
                         netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
@@ -644,6 +641,9 @@ namespace LiteNetLib
                             NetPacketPool.Recycle(packet);
                             break;
                         }
+
+                        if (netPeer.ConnectionState == ConnectionState.Connected)
+                            _connectedPeersCount--;
                         netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
                         netEvent.DataReader.SetSource(packet.RawData, 9, packet.Size);
@@ -1031,8 +1031,7 @@ namespace LiteNetLib
             IsRunning = false;
 
             //Stop
-            if (Thread.CurrentThread != _logicThread)
-                _logicThread.Join();
+            _logicThread.Join();
             _logicThread = null;
             _socket.Close();
             _peers.Clear();
