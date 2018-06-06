@@ -82,7 +82,7 @@ namespace LiteNetLib
             }
 
             byte[] acksData = packet.RawData;
-            Monitor.Enter(_pendingPackets);;
+            Monitor.Enter(_pendingPackets);
             for(int pendingSeq = _localWindowStart; pendingSeq != _localSeqence; pendingSeq = (pendingSeq + 1) % NetConstants.MaxSequence)
             {
                 int rel = NetUtils.RelativeSequenceNumber(pendingSeq, ackWindowStart);

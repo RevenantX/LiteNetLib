@@ -587,16 +587,24 @@ namespace LiteNetLib
 
         internal void ProcessConnectRequest(NetConnectRequestPacket connRequest)
         {
-            if (connRequest.ConnectionId == _connectId)
+            switch (_connectionState)
             {
-                //Send already accepted
-                _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
-            }
-            else //connRequset.ConnectionId > _connectId
-            { 
-                //Change connect id
-                _connectId = connRequest.ConnectionId;
-                ConnectionNum = connRequest.ConnectionNumber;
+                case ConnectionState.Connected:
+                    if (connRequest.ConnectionId == _connectId)
+                    {
+                        //Send already accepted
+                        _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
+                    }
+                    break;
+                case ConnectionState.Incoming:
+                case ConnectionState.InProgress:
+                    if(connRequest.ConnectionId > _connectId)
+                    {
+                        //Change connect id
+                        _connectId = connRequest.ConnectionId;
+                        ConnectionNum = connRequest.ConnectionNumber;
+                    }
+                    break;
             }
         }
 

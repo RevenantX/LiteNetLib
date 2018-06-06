@@ -531,14 +531,13 @@ namespace LiteNetLib
                 {
                     //P2P case
                     case ConnectionState.InProgress:
-                        //create connect request
-                        if (connRequest.ConnectionId > netPeer.ConnectId)
-                            netPeer.ProcessConnectRequest(connRequest);           
+                        //process request
+                        netPeer.ProcessConnectRequest(connRequest);           
                         
                         //create p2p request
                         netEvent = CreateEvent(NetEventType.ConnectionRequest);
                         netEvent.ConnectionRequest = new ConnectionRequest(
-                            connRequest.ConnectionId,
+                            netPeer.ConnectId,
                             connectionNumber,
                             ConnectionRequestType.PeerToPeer,
                             connRequest.Data,
@@ -563,8 +562,7 @@ namespace LiteNetLib
 
                     //just update connectionId
                     case ConnectionState.Incoming:
-                        if (connRequest.ConnectionId > netPeer.ConnectId)
-                            netPeer.ProcessConnectRequest(connRequest);
+                        netPeer.ProcessConnectRequest(connRequest);
                         return;
                 }
                 //ConnectionState Disconnected, ShutdownRequested and Connected
