@@ -135,13 +135,14 @@ namespace LiteNetLib.Utils
 
         private readonly NetDataWriter _writer;
         private readonly NetSerializerHasher _hasher;
-        private const int MaxStringLenght = 1024;
+        private int _maxStringLength;
 
-        public NetSerializer() : this(new FNVHasher())
+        public NetSerializer(int maxStringLength = 1024) : this(new FNVHasher(), maxStringLength)
         {
+            _maxStringLength = maxStringLength;
         }
 
-        public NetSerializer(NetSerializerHasher hasher)
+        public NetSerializer(NetSerializerHasher hasher, int maxStringLength = 1024)
         {
             _hasher = hasher;
             _cache = new Dictionary<ulong, StructInfo>();
@@ -311,8 +312,8 @@ namespace LiteNetLib.Utils
                 {
                     var setDelegate = ExtractSetDelegate<T, string>(setMethod);
                     var getDelegate = ExtractGetDelegate<T, string>(getMethod);
-                    info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetString(MaxStringLenght));
-                    info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference), MaxStringLenght);
+                    info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetString(_maxStringLength));
+                    info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference), _maxStringLength);
                 }
                 else if (propertyType == typeof(bool))
                 {
