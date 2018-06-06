@@ -18,7 +18,7 @@ namespace LibSample
 
             public Server()
             {
-                _server = new NetManager(this, 15);
+                _server = new NetManager(this);
                 _server.UpdateTime = 1;
                 _server.SimulatePacketLoss = true;
                 _server.SimulationPacketLossChance = 20;

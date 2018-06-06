@@ -110,7 +110,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener, 2);
+            NetManager server = new NetManager(_serverListener);
             server.DiscoveryEnabled = true;
             if (!server.Start(9050))
             {

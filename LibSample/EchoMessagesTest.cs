@@ -153,7 +153,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener, 2);
+            NetManager server = new NetManager(_serverListener);
             if (!server.Start(Port))
             {
                 Console.WriteLine("Server start failed");

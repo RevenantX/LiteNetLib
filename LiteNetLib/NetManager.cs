@@ -64,7 +64,7 @@ namespace LiteNetLib
         private readonly INetEventListener _netEventListener;
 
         private readonly NetPeerCollection _peers;
-        private readonly int _maxConnections;
+        private int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
 
         internal readonly NetPacketPool NetPacketPool;
@@ -188,23 +188,16 @@ namespace LiteNetLib
             }
         }
         
-        public int PeersCount { get { return _peers.Count; } }
-
         /// <summary>
-        /// NetManager constructor with maxConnections = 1 (usable for client)
+        /// Returns connected peers count
         /// </summary>
-        /// <param name="listener">Network events listener</param>
-        public NetManager(INetEventListener listener) : this(listener, 1)
-        {
-            
-        }
+        public int PeersCount { get { return _connectedPeersCount; } }
 
         /// <summary>
         /// NetManager constructor
         /// </summary>
         /// <param name="listener">Network events listener</param>
-        /// <param name="maxConnections">Maximum connections (incoming and outcoming)</param>
-        public NetManager(INetEventListener listener, int maxConnections)
+        public NetManager(INetEventListener listener)
         {
             _socket = new NetSocket(ReceiveLogic);
             _netEventListener = listener;
@@ -214,7 +207,6 @@ namespace LiteNetLib
             NatPunchModule = new NatPunchModule(_socket);
             Statistics = new NetStatistics();
             _peers = new NetPeerCollection();
-            _maxConnections = maxConnections;
             _connectedPeerListCache = new List<NetPeer>();
         }
 
@@ -297,6 +289,15 @@ namespace LiteNetLib
 
         private NetEvent CreateEvent(NetEventType type)
         {
+            switch (type)
+            {
+                case NetEventType.Connect:
+                    Interlocked.Increment(ref _connectedPeersCount);
+                    break;
+                case NetEventType.Disconnect:
+                    Interlocked.Decrement(ref _connectedPeersCount);
+                    break;
+            }
             NetEvent evt = null;
             lock (_netEventsPool)
             {
@@ -558,9 +559,6 @@ namespace LiteNetLib
                 connectionNumber = (byte)((netPeer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
                 //To reconnect peer
             }
-            //New peer incoming
-            if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) >= _maxConnections)
-                return;
             //Add new peer and craete ConnectRequest event
             NetUtils.DebugWrite("[NM] Creating request event: " + connRequest.ConnectionId);
             netPeer = new NetPeer(this, remoteEndPoint);
@@ -998,22 +996,16 @@ namespace LiteNetLib
                     //just return already connected peer
                     case ConnectionState.Connected:
                     case ConnectionState.InProgress:
-                        return peer;
-
                     case ConnectionState.Incoming:
-                        //TODO: OHNO
                         return peer;
-
-                    case ConnectionState.Disconnected:
-                    case ConnectionState.ShutdownRequested:
-                        _peers.RemovePeer(peer);
-                        break;
                 }              
             }
 
-            //Check connections limit
-            if (GetPeersCount(ConnectionState.Connected | ConnectionState.InProgress) >= _maxConnections)
-                return null;
+            //clean before add new
+            if(peer != null)
+                _peers.RemovePeer(peer);
+
+            //TODO: peer connection num
 
             //Create reliable connection
             //And send connection request
@@ -1044,6 +1036,7 @@ namespace LiteNetLib
             _logicThread = null;
             _socket.Close();
             _peers.Clear();
+            _connectedPeersCount = 0;
             lock(_netEventsQueue)
                 _netEventsQueue.Clear();
         }
@@ -1076,7 +1069,7 @@ namespace LiteNetLib
         public NetPeer[] GetPeers()
         {
             return GetPeers(ConnectionState.Connected | ConnectionState.InProgress);
-        }
+        } 
 
         /// <summary>
         /// Get copy of current connected peers (slow! use GetPeersNonAlloc for best performance)

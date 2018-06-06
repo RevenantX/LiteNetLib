@@ -112,7 +112,7 @@ namespace LiteNetLib.Tests.TestUtility
                 }
                 else
                 {
-                    netManager = new NetManager(listener, 20);
+                    netManager = new NetManager(listener);
                     if (!netManager.Start(_serverPort))
                     {
                         Assert.Fail($"Server {id} on port{_serverPort} start failed");
