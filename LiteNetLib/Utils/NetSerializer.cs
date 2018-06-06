@@ -404,8 +404,8 @@ namespace LiteNetLib.Utils
                 {
                     var setDelegate = ExtractSetDelegate<T, string[]>(setMethod);
                     var getDelegate = ExtractGetDelegate<T, string[]>(getMethod);
-                    info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetStringArray(MaxStringLenght));
-                    info.WriteDelegate[i] = writer => writer.PutArray(getDelegate((T)info.Reference), MaxStringLenght);
+                    info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetStringArray(_maxStringLength));
+                    info.WriteDelegate[i] = writer => writer.PutArray(getDelegate((T)info.Reference), _maxStringLength);
                 }
                 else if (propertyType == typeof(bool[]))
                 {
