@@ -516,25 +516,29 @@ namespace LiteNetLib
             NetPeer netPeer, 
             NetConnectRequestPacket connRequest)
         {
-            NetEvent netEvent;
             byte connectionNumber = connRequest.ConnectionNumber;
+            NetEvent netEvent;
             NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectId, connRequest.ConnectionId, remoteEndPoint);
 
             //if we have peer
             if (netPeer != null)
             {
-                //old request
-                if (connRequest.ConnectionId < netPeer.ConnectId)
-                    return;
-                //current or new request
-                switch (netPeer.ConnectionState)
+                var processResult = netPeer.ProcessConnectRequest(connRequest);
+                switch (processResult)
                 {
-                    //P2P case
-                    case ConnectionState.InProgress:
-                        //process request
-                        netPeer.ProcessConnectRequest(connRequest);           
-                        
-                        //create p2p request
+                    case ConnectRequestResult.Reconnection:
+                        netEvent = CreateEvent(NetEventType.Disconnect);
+                        netEvent.Peer = netPeer;
+                        netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
+                        EnqueueEvent(netEvent);
+                        _peers.RemovePeer(netPeer);
+                        //go to new connection
+                        break;
+                    case ConnectRequestResult.NewConnection:
+                        _peers.RemovePeer(netPeer);
+                        //go to new connection
+                        break;
+                    case ConnectRequestResult.P2PConnection:
                         netEvent = CreateEvent(NetEventType.ConnectionRequest);
                         netEvent.ConnectionRequest = new ConnectionRequest(
                             netPeer.ConnectId,
@@ -545,27 +549,11 @@ namespace LiteNetLib
                             OnConnectionSolved);
                         EnqueueEvent(netEvent);
                         return;
-                    case ConnectionState.Connected:
-                        //Old connect request
-                        if (connRequest.ConnectionId == netPeer.ConnectId)
-                        {
-                            netPeer.ProcessConnectRequest(connRequest);
-                            return; 
-                        }  
-                        //New connect request
-                        netEvent = CreateEvent(NetEventType.Disconnect);
-                        netEvent.Peer = netPeer;
-                        netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
-                        EnqueueEvent(netEvent);
-                        _peers.RemovePeer(netPeer);
-                        break;
-
-                    //just update connectionId
-                    case ConnectionState.Incoming:
-                        netPeer.ProcessConnectRequest(connRequest);
+                    default:
+                        //no operations needed
                         return;
                 }
-                //ConnectionState Disconnected, ShutdownRequested and Connected
+                //ConnectRequestResult.NewConnection
                 //Set next connection number
                 connectionNumber = (byte)((netPeer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
                 //To reconnect peer

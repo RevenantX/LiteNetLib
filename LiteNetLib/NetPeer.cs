@@ -22,6 +22,14 @@ namespace LiteNetLib
         Any = Incoming | InProgress | Connected | ShutdownRequested
     }
 
+    internal enum ConnectRequestResult
+    {
+        None,
+        P2PConnection, //when peer connecting
+        Reconnection,  //when peer was connected
+        NewConnection  //when peer was disconnected
+    }
+
     /// <summary>
     /// Network peer. Main purpose is sending messages to specific peer.
     /// </summary>
@@ -52,8 +60,8 @@ namespace LiteNetLib
 
         internal NetPeer NextPeer;
         internal NetPeer PrevPeer;
-        internal byte ConnectionNum;
-
+        internal byte ConnectionNum { get { return _connectNum;} }
+ 
         //Channels
         private ReliableChannel _reliableOrderedChannel;
         private ReliableChannel _reliableUnorderedChannel;
@@ -90,6 +98,7 @@ namespace LiteNetLib
         private int _connectAttempts;
         private int _connectTimer;
         private long _connectId;
+        private byte _connectNum;
         private ConnectionState _connectionState;
         private NetPacket _shutdownPacket;
         private NetPacket _pingPacket;
@@ -194,7 +203,7 @@ namespace LiteNetLib
             Initialize();
             _connectId = connectId;
             _connectionState = ConnectionState.Connected;
-            ConnectionNum = connectNum;
+            _connectNum = connectNum;
 
             //set connection number to merge data
             _mergeData.ConnectionNumber = connectNum;
@@ -219,7 +228,7 @@ namespace LiteNetLib
                 return false;
             }
             //check connect num
-            ConnectionNum = packet.ConnectionNumber;
+            _connectNum = packet.ConnectionNumber;
 
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
             _timeSinceLastPacket = 0;
@@ -585,27 +594,49 @@ namespace LiteNetLib
             }
         }
 
-        internal void ProcessConnectRequest(NetConnectRequestPacket connRequest)
+        internal ConnectRequestResult ProcessConnectRequest(NetConnectRequestPacket connRequest)
         {
+            //current or new request
             switch (_connectionState)
             {
-                case ConnectionState.Connected:
-                    if (connRequest.ConnectionId == _connectId)
-                    {
-                        //Send already accepted
-                        _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
-                    }
-                    break;
-                case ConnectionState.Incoming:
+                //P2P case or just ID update
                 case ConnectionState.InProgress:
-                    if(connRequest.ConnectionId > _connectId)
+                case ConnectionState.Incoming:
+                    _connectionState = ConnectionState.Incoming;
+                    //change connect id if newer
+                    if (connRequest.ConnectionId >= _connectId)
                     {
                         //Change connect id
                         _connectId = connRequest.ConnectionId;
-                        ConnectionNum = connRequest.ConnectionNumber;
+                        _connectNum = connRequest.ConnectionNumber;
+                    }
+                    return _connectionState == ConnectionState.InProgress 
+                        ? ConnectRequestResult.P2PConnection 
+                        : ConnectRequestResult.None;
+
+                case ConnectionState.Connected:
+                    //Old connect request
+                    if (connRequest.ConnectionId == _connectId)
+                    {
+                        //just reply accept
+                        _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
+                    }
+                    //New connect request
+                    else if (connRequest.ConnectionId > _connectId)
+                    {
+                        return ConnectRequestResult.Reconnection;
+                    }
+                    break;
+
+                case ConnectionState.Disconnected:
+                case ConnectionState.ShutdownRequested:
+                    if (connRequest.ConnectionId >= _connectId)
+                    {
+                        return ConnectRequestResult.NewConnection;
                     }
                     break;
             }
+            return ConnectRequestResult.None;
         }
 
         //Process incoming packet
