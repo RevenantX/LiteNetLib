@@ -64,7 +64,7 @@ namespace LiteNetLib
         private readonly INetEventListener _netEventListener;
 
         private readonly NetPeerCollection _peers;
-        private int _connectedPeersCount;
+        private volatile int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
 
         internal readonly NetPacketPool NetPacketPool;
@@ -292,10 +292,10 @@ namespace LiteNetLib
             switch (type)
             {
                 case NetEventType.Connect:
-                    Interlocked.Increment(ref _connectedPeersCount);
+                    _connectedPeersCount++;
                     break;
                 case NetEventType.Disconnect:
-                    Interlocked.Decrement(ref _connectedPeersCount);
+                    _connectedPeersCount--;
                     break;
             }
             NetEvent evt = null;
