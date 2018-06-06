@@ -346,7 +346,8 @@ namespace LiteNetLib
             if (length + headerSize > mtu)
             {
                 if (options == DeliveryMethod.Sequenced || 
-                    options == DeliveryMethod.Unreliable)
+                    options == DeliveryMethod.Unreliable ||
+                    options == DeliveryMethod.ReliableSequenced)
                 {
                     throw new TooBigPacketException("Unreliable packet size exceeded maximum of " + (_mtu - headerSize) + " bytes");
                 }

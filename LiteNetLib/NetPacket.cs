@@ -101,6 +101,7 @@ namespace LiteNetLib
 
         public bool Realloc(int toSize)
         {
+            Size = toSize;
             if (RawData.Length < toSize)
             {
                 RawData = new byte[toSize];
@@ -115,12 +116,12 @@ namespace LiteNetLib
             {
                 case PacketProperty.ReliableOrdered:
                 case PacketProperty.ReliableUnordered:
+                case PacketProperty.ReliableSequenced:
                 case PacketProperty.Sequenced:
                 case PacketProperty.Ping:
                 case PacketProperty.Pong:
                 case PacketProperty.AckReliable:
                 case PacketProperty.AckReliableOrdered:
-                case PacketProperty.ReliableSequenced:
                 case PacketProperty.AckReliableSequenced:
                     return NetConstants.SequencedHeaderSize;
                 default:
