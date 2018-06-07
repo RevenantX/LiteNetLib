@@ -71,12 +71,15 @@ client.Stop();
 ### Server
 ```csharp
 EventBasedNetListener listener = new EventBasedNetListener();
-NetManager server = new NetManager(listener, 2 /* maximum clients */);
+NetManager server = new NetManager(listener);
 server.Start(9050 /* port */);
 
 listener.ConnectionRequestEvent += request =>
 {
-    request.AcceptIfKey("SomeConnectionKey");
+    if(server.PeersCount < 10 /* max connections */)
+        request.AcceptIfKey("SomeConnectionKey");
+    else
+        request.Reject();
 };
 
 listener.PeerConnectedEvent += peer =>
@@ -92,7 +95,6 @@ while (!Console.KeyAvailable)
     server.PollEvents();
     Thread.Sleep(15);
 }
-
 server.Stop();
 ```
 
