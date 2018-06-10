@@ -18,6 +18,7 @@ namespace LiteNetLib
     public sealed class NetManager : IEnumerable<NetPeer>
     {
         internal delegate void OnMessageReceived(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint);
+        internal delegate void ConnectionSolved(ConnectionRequest request, byte[] rejectData, int start, int length);
 
         private enum NetEventType
         {
@@ -485,13 +486,12 @@ namespace LiteNetLib
             }
         }
 
-        private void OnConnectionSolved(ConnectionRequest request)
+        private void OnConnectionSolved(ConnectionRequest request, byte[] rejectData, int start, int length)
         {
             if (request.Result == ConnectionRequestResult.Reject)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
-                //TODO: good reject with info
-                _peers.RemovePeer(request.Peer);
+                request.Peer.Shutdown(rejectData, start, length, false);
             }
             else
             {
@@ -632,24 +632,27 @@ namespace LiteNetLib
                     break;
 
                 case PacketProperty.Disconnect:
-                    if (peerFound && netPeer.ConnectionState == ConnectionState.InProgress ||
-                        netPeer.ConnectionState == ConnectionState.Connected)
+                    if (peerFound)
                     {
-                        if (BitConverter.ToInt64(packet.RawData, 1) != netPeer.ConnectId)
+                        var disconnectResult = netPeer.ProcessDisconnect(packet);
+                        if (disconnectResult == DisconnectResult.None)
                         {
-                            //Old or incorrect disconnect
                             NetPacketPool.Recycle(packet);
-                            break;
+                            return;
                         }
-
-                        if (netPeer.ConnectionState == ConnectionState.Connected)
+                        if (disconnectResult == DisconnectResult.Disconnect)
                             _connectedPeersCount--;
                         netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
                         netEvent.DataReader.SetSource(packet.RawData, 9, packet.Size);
-                        netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;
+                        netEvent.DisconnectReason = disconnectResult == DisconnectResult.Disconnect 
+                            ? DisconnectReason.RemoteConnectionClose 
+                            : DisconnectReason.ConnectionRejected;
                         EnqueueEvent(netEvent);
-                        netPeer.ProcessPacket(packet);
+                    }
+                    else
+                    {
+                        NetPacketPool.Recycle(packet);
                     }
                     //Send shutdown
                     SendRaw(new[] { (byte)PacketProperty.ShutdownOk }, 0, 1, remoteEndPoint);
@@ -1002,14 +1005,16 @@ namespace LiteNetLib
             }
 
             //clean before add new
-            if(peer != null)
+            byte connectionNumber = 0;
+            if (peer != null)
+            {
+                connectionNumber = (byte)((peer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
                 _peers.RemovePeer(peer);
-
-            //TODO: peer connection num
+            }
 
             //Create reliable connection
             //And send connection request
-            peer = new NetPeer(this, target, connectionData);
+            peer = new NetPeer(this, target, connectionNumber, connectionData);
             _peers.TryAdd(peer);
             return peer;
         }

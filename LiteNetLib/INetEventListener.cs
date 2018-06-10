@@ -23,7 +23,8 @@ namespace LiteNetLib
         Timeout,
         SocketSendError,
         RemoteConnectionClose,
-        DisconnectPeerCalled
+        DisconnectPeerCalled,
+        ConnectionRejected
     }
 
     /// <summary>

@@ -20,7 +20,7 @@ namespace LiteNetLib
 
     public class ConnectionRequest
     {
-        private readonly Action<ConnectionRequest> _onUserAction;
+        private readonly NetManager.ConnectionSolved _onUserAction;
         private int _used;
 
         public IPEndPoint RemoteEndPoint { get { return Peer.EndPoint; } }
@@ -43,7 +43,7 @@ namespace LiteNetLib
             ConnectionRequestType type,
             NetDataReader netDataReader,
             NetPeer peer,
-            Action<ConnectionRequest> onUserAction)
+            NetManager.ConnectionSolved onUserAction)
         {
             ConnectionId = connectionId;
             ConnectionNumber = connectionNumber;
@@ -63,7 +63,7 @@ namespace LiteNetLib
                 if (dataKey == key)
                 {
                     Result = ConnectionRequestResult.Accept;
-                    _onUserAction(this);
+                    _onUserAction(this, null, 0, 0);
                     return Peer;
                 }
             }
@@ -72,7 +72,7 @@ namespace LiteNetLib
                 NetUtils.DebugWriteError("[AC] Invalid incoming data");
             }
             Result = ConnectionRequestResult.Reject;
-            _onUserAction(this);
+            _onUserAction(this, null, 0, 0);
             return null;
         }
 
@@ -85,16 +85,31 @@ namespace LiteNetLib
             if (!TryActivate())
                 return null;
             Result = ConnectionRequestResult.Accept;
-            _onUserAction(this);
+            _onUserAction(this, null, 0, 0);
             return Peer;
         }
 
-        public void Reject()
+        public void Reject(byte[] rejectData, int start, int length)
         {
             if (!TryActivate())
                 return;
             Result = ConnectionRequestResult.Reject;
-            _onUserAction(this);
+            _onUserAction(this, rejectData, start, length);
+        }
+
+        public void Reject()
+        {
+            Reject(null, 0, 0);
+        }
+
+        public void Reject(byte[] rejectData)
+        {
+            Reject(rejectData, 0, rejectData.Length);
+        }
+
+        public void Reject(NetDataWriter rejectData)
+        {
+            Reject(rejectData.Data, 0, rejectData.Length);
         }
     }
 }
