@@ -681,7 +681,8 @@ namespace LiteNetLib
         internal void ProcessPacket(NetPacket packet)
         {
             _timeSinceLastPacket = 0;
-            if (packet.ConnectionNumber != ConnectionNum && packet.Property != PacketProperty.ShutdownOk)
+            if (packet.ConnectionNumber != _connectNum && 
+                packet.Property != PacketProperty.ShutdownOk) //withou connectionNum
             {
                 NetUtils.DebugWrite(ConsoleColor.Red, "[RR]Old packet");
                 _packetPool.Recycle(packet);
@@ -794,7 +795,7 @@ namespace LiteNetLib
 
         internal void SendRawData(NetPacket packet)
         {
-            packet.ConnectionNumber = ConnectionNum;
+            packet.ConnectionNumber = _connectNum;
             //2 - merge byte + minimal packet size + datalen(ushort)
             if (_netManager.MergeEnabled && _mergePos + packet.Size + NetConstants.HeaderSize*2 + 2 < _mtu)
             {
@@ -833,7 +834,7 @@ namespace LiteNetLib
                 {
                     if (_mergeCount > 1)
                     {
-                        NetUtils.DebugWrite("Send merged: " + _mergePos + ", count: " + _mergeCount);
+                        NetUtils.DebugWrite("[P]Send merged: " + _mergePos + ", count: " + _mergeCount);
                         _netManager.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
 #if STATS_ENABLED
                         Statistics.PacketsSent++;
