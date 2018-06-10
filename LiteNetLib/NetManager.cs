@@ -308,6 +308,7 @@ namespace LiteNetLib
                 SendRawAndRecycle(disconnectPacket, peer.EndPoint);
             }
             var netEvent = CreateEvent(NetEventType.Disconnect);
+            peer.SetDisconnectedState();
             netEvent.Peer = peer;
             netEvent.AdditionalData = socketErrorCode;
             netEvent.DisconnectReason = reason;
@@ -464,6 +465,7 @@ namespace LiteNetLib
                         var netEvent = CreateEvent(NetEventType.Disconnect);
                         netEvent.Peer = netPeer;
                         netEvent.DisconnectReason = DisconnectReason.Timeout;
+                        netPeer.SetDisconnectedState();
                         EnqueueEvent(netEvent);
 
                         RemovePeerAt(i);
@@ -620,6 +622,7 @@ namespace LiteNetLib
                     }
 
                     var netEvent = CreateEvent(NetEventType.Disconnect);
+                    netPeer.SetDisconnectedState();
                     netEvent.Peer = netPeer;
                     netEvent.DataReader.SetSource(packet.RawData, 9, packet.Size);
                     netEvent.DisconnectReason = DisconnectReason.RemoteConnectionClose;

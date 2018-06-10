@@ -836,6 +836,11 @@ namespace LiteNetLib
             }
         }
 
+        internal void SetDisconnectedState()
+        {
+            _connectionState = ConnectionState.Disconnected;
+        }
+
         //For channels
         internal void Recycle(NetPacket packet)
         {
