@@ -1,6 +1,8 @@
-# LiteNetLib 
+# LiteNetLib 0.8 indev
 
 Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Standart 2.0.
+
+[stable branch 0.7.x](https://github.com/RevenantX/LiteNetLib/tree/0.7)
 
 ## Build
 
