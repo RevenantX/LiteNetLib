@@ -3,16 +3,16 @@
   <metadata>
     <id>LiteNetLib</id>
     <title>LiteNetLib</title>
-    <version>0.7.7.1</version>
+    <version>0.7.7.2</version>
     <authors>Ruslan Pyrch</authors>
     <owners>RevenantX</owners>
     <licenseUrl>https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/RevenantX/LiteNetLib</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Lite reliable UDP library for .NET, Mono, and .NET Core.</description>
-    <copyright>Copyright 2017 Ruslan Pyrch</copyright>
+    <copyright>Copyright 2018 Ruslan Pyrch</copyright>
     <language>en</language>
-    <releaseNotes>Fixed reliable channel, fixed socket errors</releaseNotes>
+    <releaseNotes>Fixed .NET core Stop() block, set disconnected state on disconnected peer, add max string length to NetSerializer constructor</releaseNotes>
     <tags>udp reliable-udp network</tags>
     <dependencies>
 	  <group targetFramework="net35">
