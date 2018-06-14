@@ -1040,6 +1040,10 @@ namespace LiteNetLib
             _logicThread = null;
             _socket.Close();
             _peers.Clear();
+#if DEBUG
+            lock(_pingSimulationList)
+                _pingSimulationList.Clear();
+#endif
             _connectedPeersCount = 0;
             lock(_netEventsQueue)
                 _netEventsQueue.Clear();
