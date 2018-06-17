@@ -128,6 +128,7 @@ namespace LiteNetLib.Utils
             typeof(long),
             typeof(ulong),
             typeof(string),
+            typeof(NetEndPoint),
             typeof(float),
             typeof(double),
             typeof(bool)
@@ -135,15 +136,16 @@ namespace LiteNetLib.Utils
 
         private readonly NetDataWriter _writer;
         private readonly NetSerializerHasher _hasher;
-        private int _maxStringLength;
+        private readonly int _maxStringLength;
 
         public NetSerializer(int maxStringLength = 1024) : this(new FNVHasher(), maxStringLength)
         {
-            _maxStringLength = maxStringLength;
+            
         }
 
         public NetSerializer(NetSerializerHasher hasher, int maxStringLength = 1024)
         {
+            _maxStringLength = maxStringLength;
             _hasher = hasher;
             _cache = new Dictionary<ulong, StructInfo>();
             _registeredCustomTypes = new Dictionary<Type, CustomType>();
@@ -307,6 +309,13 @@ namespace LiteNetLib.Utils
                     {
                         throw new Exception("Not supported enum underlying type: " + underlyingType.Name);
                     }
+                }
+                else if (propertyType == typeof(NetEndPoint))
+                {
+                    var setDelegate = ExtractSetDelegate<T, NetEndPoint>(setMethod);
+                    var getDelegate = ExtractGetDelegate<T, NetEndPoint>(getMethod);
+                    info.ReadDelegate[i] = reader => setDelegate((T) info.Reference, reader.GetNetEndPoint());
+                    info.WriteDelegate[i] = writer => writer.Put(getDelegate((T) info.Reference));
                 }
                 else if (propertyType == typeof(string))
                 {
