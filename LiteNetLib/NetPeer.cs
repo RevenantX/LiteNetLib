@@ -75,6 +75,8 @@ namespace LiteNetLib
             {
                 _connectNum = value;
                 _mergeData.ConnectionNumber = value;
+                _pingPacket.ConnectionNumber = value;
+                _pongPacket.ConnectionNumber = value;
             }
         }
  
@@ -106,7 +108,7 @@ namespace LiteNetLib
         private Dictionary<ushort, IncomingFragments> _holdedFragments;
 
         //Merging
-        private NetPacket _mergeData;
+        private readonly NetPacket _mergeData;
         private int _mergePos;
         private int _mergeCount;
 
@@ -117,8 +119,8 @@ namespace LiteNetLib
         private byte _connectNum;
         private ConnectionState _connectionState;
         private NetPacket _shutdownPacket;
-        private NetPacket _pingPacket;
-        private NetPacket _pongPacket;
+        private readonly NetPacket _pingPacket;
+        private readonly NetPacket _pongPacket;
         private readonly NetPacket _connectRequestPacket;
         private NetPacket _connectAcceptPacket;
 
@@ -181,6 +183,9 @@ namespace LiteNetLib
             _netManager = netManager;
             _remoteEndPoint = remoteEndPoint;
             _connectionState = ConnectionState.Incoming;
+            _mergeData = new NetPacket(PacketProperty.Merged, NetConstants.MaxPacketSize);
+            _pongPacket = new NetPacket(PacketProperty.Pong, 0);
+            _pingPacket = new NetPacket(PacketProperty.Ping, 0);
         }
 
         //for low memory consumption
@@ -192,9 +197,6 @@ namespace LiteNetLib
             _unreliableChannel = new SimpleChannel(this);
             _reliableSequencedChannel = new SequencedChannel(this, true);
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
-            _mergeData = new NetPacket(PacketProperty.Merged, NetConstants.MaxPacketSize);
-            _pongPacket = new NetPacket(PacketProperty.Pong, 0);
-            _pingPacket = new NetPacket(PacketProperty.Ping, 0);
         }
 
         //"Connect to" constructor
