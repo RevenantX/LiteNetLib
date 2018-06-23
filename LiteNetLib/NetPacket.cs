@@ -178,7 +178,7 @@ namespace LiteNetLib
         
         public static NetConnectRequestPacket FromData(NetPacket packet)
         {
-            if (packet.Size < 12 || packet.ConnectionNumber >= NetConstants.MaxConnectionNumber)
+            if (packet.Size < 13 || packet.ConnectionNumber >= NetConstants.MaxConnectionNumber)
                 return null;
 
             int protoId = BitConverter.ToInt32(packet.RawData, 1);
@@ -194,7 +194,7 @@ namespace LiteNetLib
 
             // Read data and create request
             var reader = new NetDataReader(null, 0, 0);
-            if (packet.Size > 12)
+            if (packet.Size > 13)
                 reader.SetSource(packet.RawData, 13, packet.Size);
 
             return new NetConnectRequestPacket(connectionId, packet.ConnectionNumber, reader);
