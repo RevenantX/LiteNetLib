@@ -1,6 +1,6 @@
 # LiteNetLib 0.8 indev
 
-Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Standart 2.0.
+Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Standard 2.0.
 
 [STABLE BRANCH (and exmaples) for 0.7.x](https://github.com/RevenantX/LiteNetLib/tree/0.7)
 
@@ -20,7 +20,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
 
 * Lightweight
   * Small CPU and RAM usage
-  * Small packet size overhead ( 1 byte for unrealiable, 3 bytes for reliable packets )
+  * Small packet size overhead ( 1 byte for unreliable, 3 bytes for reliable packets )
 * Simple connection handling
 * Peer to peer connections
 * Helper classes for sending and reading messages
@@ -39,14 +39,14 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
 * IPv6 support (dual mode)
 * Connection statisitcs (need DEBUG or STATS_ENABLED flag)
 * Multicasting (for discovering hosts in local network)
-* Unity3d support
+* Unity support
 * Supported platforms:
-  * Windows/Mac/Linux (.net framework, Mono, .net core)
-  * Android (unity3d)
-  * iOS (unity3d)
+  * Windows/Mac/Linux (.NET Framework, Mono, .NET Core)
+  * Android (Unity)
+  * iOS (Unity)
   * UWP Windows 10 including phones
 
-## Unity3d notes!!!
+## Unity notes!!!
 * Always use library sources instead of precompiled DLL files. 
 
 ## Usage samples
@@ -106,7 +106,7 @@ server.Stop();
   * enable messages receiving without connection. (with SendUnconnectedMessage method)
   * default value: **false**
 * **NatPunchEnabled**
-  * enable nat punch messages
+  * enable NAT punch messages
   * default value: **false**
 * **UpdateTime**
   * library logic update (and send) period in milliseconds
