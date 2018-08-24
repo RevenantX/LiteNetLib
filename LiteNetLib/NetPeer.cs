@@ -119,6 +119,8 @@ namespace LiteNetLib
         private byte _connectNum;
         private ConnectionState _connectionState;
         private NetPacket _shutdownPacket;
+        private const int ShutdownDelay = 300;
+        private int _shutdownTimer;
         private readonly NetPacket _pingPacket;
         private readonly NetPacket _pongPacket;
         private readonly NetPacket _connectRequestPacket;
@@ -467,6 +469,13 @@ namespace LiteNetLib
             return DisconnectResult.None;
         }
 
+        internal void Reject(long connectionId, byte connectionNumber, byte[] data, int start, int length)
+        {
+            _connectId = connectionId;
+            _connectNum = connectionNumber;
+            Shutdown(data, start, length, false);
+        }
+
         internal bool Shutdown(byte[] data, int start, int length, bool force)
         {
             lock (this)
@@ -490,8 +499,9 @@ namespace LiteNetLib
 
                 //send shitdown packet
                 _shutdownPacket = new NetPacket(PacketProperty.Disconnect, 8 + length);
+                _shutdownPacket.ConnectionNumber = _connectNum;
                 FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectId);
-                if (length + 8 >= _mtu)
+                if (_shutdownPacket.Size >= _mtu)
                 {
                     //Drop additional data
                     NetUtils.DebugWriteError("[Peer] Disconnect additional data size more than MTU - 8!");
@@ -877,9 +887,18 @@ namespace LiteNetLib
 
                 case ConnectionState.ShutdownRequested:
                     if (_timeSinceLastPacket > _netManager.DisconnectTimeout)
+                    {
                         _connectionState = ConnectionState.Disconnected;
+                    }
                     else
-                        _netManager.SendRaw(_shutdownPacket, _remoteEndPoint);
+                    {
+                        _shutdownTimer += deltaTime;
+                        if (_shutdownTimer >= ShutdownDelay)
+                        {
+                            _shutdownTimer = 0;
+                            _netManager.SendRaw(_shutdownPacket, _remoteEndPoint);
+                        }
+                    }
                     return;
 
                 case ConnectionState.InProgress:

@@ -119,6 +119,41 @@ namespace LiteNetLib
         public event OnNetworkLatencyUpdate NetworkLatencyUpdateEvent;
         public event OnConnectionRequest ConnectionRequestEvent;
 
+        public void ClearPeerConnectedEvent()
+        {
+            PeerConnectedEvent = null;
+        }
+
+        public void ClearPeerDisconnectedEvent()
+        {
+            PeerConnectedEvent = null;
+        }
+
+        public void ClearNetworkErrorEvent()
+        {
+            NetworkErrorEvent = null;
+        }
+
+        public void ClearNetworkReceiveEvent()
+        {
+            NetworkReceiveEvent = null;
+        }
+
+        public void ClearNetworkReceiveUnconnectedEvent()
+        {
+            NetworkReceiveUnconnectedEvent = null;
+        }
+
+        public void ClearNetworkLatencyUpdateEvent()
+        {
+            NetworkLatencyUpdateEvent = null;
+        }
+
+        public void ClearConnectionRequestEvent()
+        {
+            ConnectionRequestEvent = null;
+        }
+
         void INetEventListener.OnPeerConnected(NetPeer peer)
         {
             if (PeerConnectedEvent != null)

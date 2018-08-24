@@ -11,9 +11,6 @@ namespace LiteNetLib.Tests
 {
     [TestFixture]
     [Category("Communication")]
-#if !NETCOREAPP2_0
-    [Timeout(10000)]
-#endif
     public class CommunicationTest
     {
         [SetUp]
@@ -116,12 +113,39 @@ namespace LiteNetLib.Tests
             }
         }
 
+        [Test]
+        public void RejectTest()
+        {
+            var server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
+            bool rejectReceived = false;
+            
+            ManagerStack.ServerListener(1).ClearConnectionRequestEvent();
+            ManagerStack.ServerListener(1).ConnectionRequestEvent += request =>
+            {
+                request.Reject(Encoding.UTF8.GetBytes("reject_test"));
+            };
+            ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) =>
+                {
+                    Assert.AreEqual(true, info.Reason == DisconnectReason.ConnectionRejected);
+                    Assert.AreEqual("reject_test", Encoding.UTF8.GetString(info.AdditionalData.GetRemainingBytes()));
+                    rejectReceived = true;
+                };
 
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
-#if !NETCOREAPP2_0
-        //TODO: Timeout attribute not work in netcoreapp
+            while (!rejectReceived)
+            {
+                client.PollEvents();
+                server.PollEvents();
+                Thread.Sleep(15);
+            }
+
+            Assert.AreEqual(0, server.PeersCount);
+            Assert.AreEqual(0, client.PeersCount);
+        }
+
         [Test, MaxTime(10000)]
-#endif
         public void NetPeerDisconnectAll()
         {
             NetManager client = ManagerStack.Client(1);

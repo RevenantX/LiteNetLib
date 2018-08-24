@@ -491,7 +491,7 @@ namespace LiteNetLib
             if (request.Result == ConnectionRequestResult.Reject)
             {
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
-                request.Peer.Shutdown(rejectData, start, length, false);
+                request.Peer.Reject(request.ConnectionId, request.ConnectionNumber, rejectData, start, length);
             }
             else
             {
