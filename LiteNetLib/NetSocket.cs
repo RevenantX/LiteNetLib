@@ -97,9 +97,7 @@ namespace LiteNetLib
             _udpSocketv4.Ttl = NetConstants.SocketTTL;
             if(reuseAddress)
                 _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-#if !NETCORE
             _udpSocketv4.DontFragment = true;
-#endif
             try
             {
                 _udpSocketv4.EnableBroadcast = true;

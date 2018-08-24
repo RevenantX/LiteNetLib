@@ -147,7 +147,7 @@ namespace LiteNetLib
         public bool FromBytes(byte[] data, int start, int packetSize)
         {
             //Reading property
-            byte property = (byte)(data[start] & 0x7F);
+            byte property = (byte)(data[start] & 0x1F);
             bool fragmented = (data[start] & 0x80) != 0;
             int headerSize = GetHeaderSize((PacketProperty) property);
 
