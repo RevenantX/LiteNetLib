@@ -37,7 +37,7 @@
     <NoWarn>1591</NoWarn>
     <DefineConstants>
     </DefineConstants>
-    <LangVersion>3</LangVersion>
+    <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
