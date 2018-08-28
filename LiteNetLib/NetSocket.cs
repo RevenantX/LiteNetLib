@@ -5,6 +5,11 @@ using System.Threading;
 
 namespace LiteNetLib
 {
+    internal interface INetSocketListener
+    {
+        void OnMessageReceived(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint);
+    }
+
     internal sealed class NetSocket
     {
         private Socket _udpSocketv4;
@@ -12,7 +17,7 @@ namespace LiteNetLib
         private Thread _threadv4;
         private Thread _threadv6;
         private bool _running;
-        private readonly NetManager.OnMessageReceived _onMessageReceived;
+        private readonly INetSocketListener _listener;
 
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
         internal static readonly bool IPv6Support;
@@ -41,9 +46,9 @@ namespace LiteNetLib
 #endif
         }
 
-        public NetSocket(NetManager.OnMessageReceived onMessageReceived)
+        public NetSocket(INetSocketListener listener)
         {
-            _onMessageReceived = onMessageReceived;
+            _listener = listener;
         }
 
         private void ReceiveLogic(object state)
@@ -77,14 +82,14 @@ namespace LiteNetLib
                         continue;
                     }
                     NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
-                    _onMessageReceived(null, 0, (int) ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
+                    _listener.OnMessageReceived(null, 0, (int) ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
 
                     continue;
                 }
 
                 //All ok!
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
-                _onMessageReceived(receiveBuffer, result, 0, (IPEndPoint)bufferEndPoint);
+                _listener.OnMessageReceived(receiveBuffer, result, 0, (IPEndPoint)bufferEndPoint);
             }
         }
 

@@ -10,9 +10,14 @@ namespace LiteNetLib.Utils
         protected int _position;
         protected int _dataSize;
 
-        public byte[] Data
+        public byte this[int i]
         {
-            get { return _data; }
+            get { return _data[i+_position]; }
+        }
+
+        public bool IsNull
+        {
+            get { return _data == null; }
         }
 
         public int Position
@@ -351,16 +356,16 @@ namespace LiteNetLib.Utils
             return outgoingData;
         }
 
-        public void GetRemainingBytes(byte[] destination)
+        public void GetBytes(byte[] destination, int start, int count)
         {
-            Buffer.BlockCopy(_data, _position, destination, 0, AvailableBytes);
-            _position = _data.Length;
+            Buffer.BlockCopy(_data, _position, destination, start, count);
+            _position += count;
         }
 
-        public void GetBytes(byte[] destination, int lenght)
+        public void GetBytes(byte[] destination, int count)
         {
-            Buffer.BlockCopy(_data, _position, destination, 0, lenght);
-            _position += lenght;
+            Buffer.BlockCopy(_data, _position, destination, 0, count);
+            _position += count;
         }
 
         public byte[] GetBytesWithLength()

@@ -40,11 +40,7 @@ namespace LiteNetLib
             else
             {
                 //reallocate packet data if packet not fits
-                if (!packet.Realloc(size) && clear)
-                {
-                    //clear in not reallocated
-                    Array.Clear(packet.RawData, 0, size);
-                }
+                packet.Realloc(size, clear);
             }
             return packet;
         }
@@ -60,7 +56,7 @@ namespace LiteNetLib
 
         public void Recycle(NetPacket packet)
         {
-            if (packet.Size > NetConstants.MaxPacketSize)
+            if (packet.RawData.Length > NetConstants.MaxPacketSize)
             {
                 //Dont pool big packets. Save memory
                 return;

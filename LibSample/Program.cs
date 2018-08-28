@@ -8,7 +8,7 @@ namespace LibSample
         static void Main(string[] args)
         {
             //Test ntp
-            NetUtils.RequestTimeFromNTP("pool.ntp.org", 123, dateTime =>
+            NtpRequest.Make("pool.ntp.org", 123, dateTime =>
             {
                 if (dateTime.HasValue)
                 {

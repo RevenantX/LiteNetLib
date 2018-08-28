@@ -72,46 +72,6 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Request time from NTP server and calls callback (if success)
-        /// </summary>
-        /// <param name="ntpServerAddress">NTP Server address</param>
-        /// <param name="port">port</param>
-        /// <param name="onRequestComplete">callback (called from other thread!)</param>
-        public static void RequestTimeFromNTP(string ntpServerAddress, int port, Action<DateTime?> onRequestComplete)
-        {
-            NetSocket socket = null;
-            var ntpEndPoint = MakeEndPoint(ntpServerAddress, port);
-
-            NetManager.OnMessageReceived onReceive = (data, length, code, point) =>
-            {
-                if (!point.Equals(ntpEndPoint) || length < 48)
-                {
-                    return;
-                }
-                socket.Close();
-
-                ulong intPart = (ulong)data[40] << 24 | (ulong)data[41] << 16 | (ulong)data[42] << 8 | (ulong)data[43];
-                ulong fractPart = (ulong)data[44] << 24 | (ulong)data[45] << 16 | (ulong)data[46] << 8 | (ulong)data[47];
-                var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
-                onRequestComplete(new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long) milliseconds));
-            };
-
-            //Create and start socket
-            socket = new NetSocket(onReceive);
-            socket.Bind(IPAddress.Any, IPAddress.IPv6Any, 0, false);
-
-            //Send request
-            int errorCode = 0;
-            var sendData = new byte[48];
-            sendData[0] = 0x1B;
-            var sendCount = socket.SendTo(sendData, 0, sendData.Length, ntpEndPoint, ref errorCode);
-            if (errorCode != 0 || sendCount != sendData.Length)
-            {
-                onRequestComplete(null);
-            }
-        }
-
-        /// <summary>
         /// Get all local ip addresses
         /// </summary>
         /// <param name="addrType">type of address (IPv4, IPv6 or both)</param>
@@ -285,6 +245,56 @@ namespace LiteNetLib
         internal static void DebugWriteError(string str, params object[] args)
         {
             DebugWriteLogic(ConsoleColor.Red, str, args);
+        }
+    }
+
+    public sealed class NtpRequest : INetSocketListener
+    {
+        private readonly NetSocket _socket;
+        private readonly Action<DateTime?> _onRequestComplete;
+        private readonly IPEndPoint _ntpEndPoint;
+
+        private NtpRequest(IPEndPoint endPoint, Action<DateTime?> onRequestComplete)
+        {
+            _ntpEndPoint = endPoint;
+            _onRequestComplete = onRequestComplete;
+            //Create and start socket
+            _socket = new NetSocket(this);
+            _socket.Bind(IPAddress.Any, IPAddress.IPv6Any, 0, false);
+
+            //Send request
+            int errorCode = 0;
+            var sendData = new byte[48];
+            sendData[0] = 0x1B;
+            var sendCount = _socket.SendTo(sendData, 0, sendData.Length, _ntpEndPoint, ref errorCode);
+            if (errorCode != 0 || sendCount != sendData.Length)
+            {
+                _onRequestComplete(null);
+            }
+        }
+
+        /// <summary>
+        /// Request time from NTP server and calls callback (if success)
+        /// </summary>
+        /// <param name="ntpServerAddress">NTP Server address</param>
+        /// <param name="port">port</param>
+        /// <param name="onRequestComplete">callback (called from other thread!)</param>
+        public static void Make(string ntpServerAddress, int port, Action<DateTime?> onRequestComplete)
+        {
+            new NtpRequest(NetUtils.MakeEndPoint(ntpServerAddress, port), onRequestComplete);
+        }
+
+        public void OnMessageReceived(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint)
+        {
+            if (!remoteEndPoint.Equals(_ntpEndPoint))
+                return;
+            if (length < 48)
+                _onRequestComplete(null);
+            _socket.Close();
+            ulong intPart = (ulong)data[40] << 24 | (ulong)data[41] << 16 | (ulong)data[42] << 8 | (ulong)data[43];
+            ulong fractPart = (ulong)data[44] << 24 | (ulong)data[45] << 16 | (ulong)data[46] << 8 | (ulong)data[47];
+            var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
+            _onRequestComplete(new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long)milliseconds));
         }
     }
 }

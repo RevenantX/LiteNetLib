@@ -497,8 +497,8 @@ namespace LiteNetLib
                 //reset time for reconnect protection
                 _timeSinceLastPacket = 0;
 
-                //send shitdown packet
-                _shutdownPacket = new NetPacket(PacketProperty.Disconnect, 8 + length);
+                //send shutdown packet
+                _shutdownPacket = new NetPacket(PacketProperty.Disconnect, length);
                 _shutdownPacket.ConnectionNumber = _connectNum;
                 FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectId);
                 if (_shutdownPacket.Size >= _mtu)
@@ -599,13 +599,11 @@ namespace LiteNetLib
                 _netManager.ReceiveFromPeer(resultingPacket, _remoteEndPoint);
 
                 //Clear memory
-                _packetPool.Recycle(resultingPacket);
                 _holdedFragments.Remove(packetFragId);
             }
             else //Just simple packet
             {
                 _netManager.ReceiveFromPeer(p, _remoteEndPoint);
-                _packetPool.Recycle(p);
             }
         }
 

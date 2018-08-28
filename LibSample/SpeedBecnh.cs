@@ -43,7 +43,7 @@ namespace LibSample
                 request.AcceptIfKey("ConnKey");
             }
 
-            void INetEventListener.OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
+            void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
             {
                 var isReliable = reader.GetBool();
                 var data = reader.GetString();
@@ -58,7 +58,7 @@ namespace LibSample
                 }
             }
 
-            void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader,
+            void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader,
                 UnconnectedMessageType messageType)
             {
             }
@@ -140,12 +140,12 @@ namespace LibSample
                 request.AcceptIfKey("ConnKey");
             }
 
-            void INetEventListener.OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
+            void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
             {
 
             }
 
-            void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader,
+            void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader,
                 UnconnectedMessageType messageType)
             {
             }

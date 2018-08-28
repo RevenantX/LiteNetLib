@@ -99,15 +99,16 @@ namespace LiteNetLib
             Size = size;
         }
 
-        public bool Realloc(int toSize)
+        public void Realloc(int toSize, bool clear)
         {
             Size = toSize;
             if (RawData.Length < toSize)
             {
                 RawData = new byte[toSize];
-                return true;
+                return;
             }
-            return false;
+            if (clear)  //clear not reallocated
+                Array.Clear(RawData, 0, toSize);
         }
 
         public static int GetHeaderSize(PacketProperty property)
@@ -124,6 +125,12 @@ namespace LiteNetLib
                 case PacketProperty.AckReliableOrdered:
                 case PacketProperty.AckReliableSequenced:
                     return NetConstants.SequencedHeaderSize;
+                case PacketProperty.ConnectRequest:
+                    return NetConnectRequestPacket.HeaderSize;
+                case PacketProperty.ConnectAccept:
+                    return NetConnectAcceptPacket.Size;
+                case PacketProperty.Disconnect:
+                    return NetConstants.HeaderSize + 8;
                 default:
                     return NetConstants.HeaderSize;
             }
@@ -132,15 +139,6 @@ namespace LiteNetLib
         public int GetHeaderSize()
         {
             return GetHeaderSize(Property);
-        }
-
-        public byte[] CopyPacketData()
-        {
-            int headerSize = GetHeaderSize(Property);
-            int dataSize = Size - headerSize;
-            byte[] data = new byte[dataSize];
-            Buffer.BlockCopy(RawData, headerSize, data, 0, dataSize);
-            return data;
         }
 
         //Packet contstructor from byte array
@@ -165,6 +163,7 @@ namespace LiteNetLib
 
     internal sealed class NetConnectRequestPacket
     {
+        public const int HeaderSize = 13;
         public readonly long ConnectionId;
         public readonly byte ConnectionNumber;
         public readonly NetDataReader Data;
@@ -178,7 +177,7 @@ namespace LiteNetLib
         
         public static NetConnectRequestPacket FromData(NetPacket packet)
         {
-            if (packet.Size < 13 || packet.ConnectionNumber >= NetConstants.MaxConnectionNumber)
+            if (packet.ConnectionNumber >= NetConstants.MaxConnectionNumber)
                 return null;
 
             int protoId = BitConverter.ToInt32(packet.RawData, 1);
@@ -194,8 +193,8 @@ namespace LiteNetLib
 
             // Read data and create request
             var reader = new NetDataReader(null, 0, 0);
-            if (packet.Size > 13)
-                reader.SetSource(packet.RawData, 13, packet.Size);
+            if (packet.Size > HeaderSize)
+                reader.SetSource(packet.RawData, HeaderSize, packet.Size);
 
             return new NetConnectRequestPacket(connectionId, packet.ConnectionNumber, reader);
         }
@@ -203,18 +202,19 @@ namespace LiteNetLib
         public static NetPacket Make(NetDataWriter connectData, long connectId)
         {
             //Make initial packet
-            var packet = new NetPacket(PacketProperty.ConnectRequest, 12 + connectData.Length);
+            var packet = new NetPacket(PacketProperty.ConnectRequest, connectData.Length);
 
             //Add data
             FastBitConverter.GetBytes(packet.RawData, 1, NetConstants.ProtocolId);
             FastBitConverter.GetBytes(packet.RawData, 5, connectId);
-            Buffer.BlockCopy(connectData.Data, 0, packet.RawData, 13, connectData.Length);
+            Buffer.BlockCopy(connectData.Data, 0, packet.RawData, HeaderSize, connectData.Length);
             return packet;
         }
     }
 
     internal sealed class NetConnectAcceptPacket
     {
+        public const int Size = 11;
         public readonly long ConnectionId;
         public readonly byte ConnectionNumber;
         public readonly bool IsReusedPeer;
@@ -228,7 +228,7 @@ namespace LiteNetLib
 
         public static NetConnectAcceptPacket FromData(NetPacket packet)
         {
-            if (packet.Size != 11)
+            if (packet.Size > Size)
                 return null;
 
             long connectionId = BitConverter.ToInt64(packet.RawData, 1);
@@ -246,7 +246,7 @@ namespace LiteNetLib
 
         public static NetPacket Make(long connectId, byte connectNum, bool reusedPeer)
         {
-            var packet = new NetPacket(PacketProperty.ConnectAccept, 10);
+            var packet = new NetPacket(PacketProperty.ConnectAccept, 0);
             FastBitConverter.GetBytes(packet.RawData, 1, connectId);
             packet.RawData[9] = connectNum;
             packet.RawData[10] = (byte)(reusedPeer ? 1 : 0);

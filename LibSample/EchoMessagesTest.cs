@@ -62,11 +62,11 @@ namespace LibSample
                 Console.WriteLine("[Client] error! " + socketErrorCode);
             }
 
-            public void OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
+            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
             {
                 if (reader.AvailableBytes == 13218)
                 {
-                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", peer.NetManager.LocalPort, reader.Data[0], reader.Data[13217]);
+                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", peer.NetManager.LocalPort, reader[0], reader[13217]);
                 }
                 else
                 {
@@ -77,7 +77,7 @@ namespace LibSample
                 }
             }
 
-            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
+            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
             {
 
             }
@@ -117,19 +117,19 @@ namespace LibSample
                 Console.WriteLine("[Server] error: " + socketErrorCode);
             }
 
-            public void OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
+            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
             {
                 //echo
-                peer.Send(reader.Data, deliveryMethod);
+                peer.Send(reader.GetRemainingBytes(), deliveryMethod);
 
                 //fragment log
                 if (reader.AvailableBytes == 13218)
                 {
-                    Console.WriteLine("[Server] TestFrag: {0}, {1}", reader.Data[0], reader.Data[13217]);
+                    Console.WriteLine("[Server] TestFrag: {0}, {1}", reader[0], reader[13217]);
                 }
             }
 
-            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetDataReader reader, UnconnectedMessageType messageType)
+            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
             {
                 Console.WriteLine("[Server] ReceiveUnconnected: {0}", reader.GetString(100));
             }

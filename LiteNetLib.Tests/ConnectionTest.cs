@@ -114,6 +114,47 @@ namespace LiteNetLib.Tests
         }
 
         [Test]
+        public void ReconnectTest()
+        {
+            var server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
+            int connectCount = 0;
+            bool reconnected = false;
+            ManagerStack.ServerListener(1).PeerConnectedEvent += peer =>
+            {
+                if (connectCount == 0)
+                {
+                    byte[] data = {1,2,3,4,5,6,7,8,9};
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        peer.Send(data, DeliveryMethod.ReliableOrdered);
+                    }
+                }
+                connectCount++;
+            };
+
+            client.Stop();
+            client.Start(10123);
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+
+            while (connectCount < 2)
+            {
+                if (connectCount == 1 && !reconnected)
+                {
+                    client.Stop();
+                    Thread.Sleep(500);
+                    client.Start(10123);
+                    client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+                    reconnected = true;
+                }
+                client.PollEvents();
+                server.PollEvents();
+                Thread.Sleep(15);
+            }
+            Assert.AreEqual(2, connectCount);
+        }
+
+        [Test]
         public void RejectTest()
         {
             var server = ManagerStack.Server(1);
@@ -399,7 +440,7 @@ namespace LiteNetLib.Tests
             var dataStack = new Stack<byte[]>(clientCount);
 
             ManagerStack.ClientForeach(
-                (i, manager, l) => l.NetworkReceiveEvent += (peer, reader, type) => dataStack.Push(reader.Data));
+                (i, manager, l) => l.NetworkReceiveEvent += (peer, reader, type) => dataStack.Push(reader.GetRemainingBytes()));
 
             var data = Encoding.Default.GetBytes("TextForTest");
             server.SendToAll(data, DeliveryMethod.ReliableUnordered);

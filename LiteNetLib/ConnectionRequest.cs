@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading;
 using LiteNetLib.Utils;
 
@@ -18,9 +17,14 @@ namespace LiteNetLib
         PeerToPeer
     }
 
+    internal interface IConnectionRequestListener
+    {
+        void OnConnectionSolved(ConnectionRequest request, byte[] rejectData, int start, int length);
+    }
+
     public class ConnectionRequest
     {
-        private readonly NetManager.ConnectionSolved _onUserAction;
+        private readonly IConnectionRequestListener _listener;
         private int _used;
 
         public IPEndPoint RemoteEndPoint { get { return Peer.EndPoint; } }
@@ -43,14 +47,14 @@ namespace LiteNetLib
             ConnectionRequestType type,
             NetDataReader netDataReader,
             NetPeer peer,
-            NetManager.ConnectionSolved onUserAction)
+            IConnectionRequestListener listener)
         {
             ConnectionId = connectionId;
             ConnectionNumber = connectionNumber;
             Type = type;
             Peer = peer;
             Data = netDataReader;
-            _onUserAction = onUserAction;
+            _listener = listener;
         }
 
         public NetPeer AcceptIfKey(string key)
@@ -63,7 +67,7 @@ namespace LiteNetLib
                 if (dataKey == key)
                 {
                     Result = ConnectionRequestResult.Accept;
-                    _onUserAction(this, null, 0, 0);
+                    _listener.OnConnectionSolved(this, null, 0, 0);
                     return Peer;
                 }
             }
@@ -72,7 +76,7 @@ namespace LiteNetLib
                 NetUtils.DebugWriteError("[AC] Invalid incoming data");
             }
             Result = ConnectionRequestResult.Reject;
-            _onUserAction(this, null, 0, 0);
+            _listener.OnConnectionSolved(this, null, 0, 0);
             return null;
         }
 
@@ -85,7 +89,7 @@ namespace LiteNetLib
             if (!TryActivate())
                 return null;
             Result = ConnectionRequestResult.Accept;
-            _onUserAction(this, null, 0, 0);
+            _listener.OnConnectionSolved(this, null, 0, 0);
             return Peer;
         }
 
@@ -94,7 +98,7 @@ namespace LiteNetLib
             if (!TryActivate())
                 return;
             Result = ConnectionRequestResult.Reject;
-            _onUserAction(this, rejectData, start, length);
+            _listener.OnConnectionSolved(this, rejectData, start, length);
         }
 
         public void Reject()
