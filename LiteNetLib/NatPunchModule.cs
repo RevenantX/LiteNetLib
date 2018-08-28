@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using LiteNetLib.Utils;
 
 //Some code parts taken from lidgren-network-gen3
@@ -88,7 +89,7 @@ namespace LiteNetLib
             dw.Put(hostInternal);
             dw.Put(hostExternal);
             dw.Put(additionalInfo, MaxTokenLength);
-            int errorCode = 0;
+            SocketError errorCode = 0;
             _socket.SendTo(dw.Data, 0, dw.Length, clientExternal, ref errorCode);
 
             //Second packet (client)
@@ -139,7 +140,7 @@ namespace LiteNetLib
             dw.Put(additionalInfo, MaxTokenLength);
 
             //prepare packet
-            int errorCode = 0;
+            SocketError errorCode = 0;
             _socket.SendTo(dw.Data, 0, dw.Length, masterServerEndPoint, ref errorCode);
         }
 
@@ -178,7 +179,7 @@ namespace LiteNetLib
             writer.Put((byte)PacketProperty.NatPunchMessage);
             writer.Put(hostByte);
             writer.Put(token);
-            int errorCode = 0;
+            SocketError errorCode = 0;
             _socket.SendTo(writer.Data, 0, writer.Length, remoteInternal, ref errorCode);
             NetUtils.DebugWrite(ConsoleColor.Cyan, "[NAT] internal punch sent to " + remoteInternal);
 

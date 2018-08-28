@@ -263,7 +263,7 @@ namespace LiteNetLib
             _socket.Bind(IPAddress.Any, IPAddress.IPv6Any, 0, false);
 
             //Send request
-            int errorCode = 0;
+            SocketError errorCode = 0;
             var sendData = new byte[48];
             sendData[0] = 0x1B;
             var sendCount = _socket.SendTo(sendData, 0, sendData.Length, _ntpEndPoint, ref errorCode);
@@ -284,7 +284,7 @@ namespace LiteNetLib
             new NtpRequest(NetUtils.MakeEndPoint(ntpServerAddress, port), onRequestComplete);
         }
 
-        public void OnMessageReceived(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint)
+        public void OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint)
         {
             if (!remoteEndPoint.Equals(_ntpEndPoint))
                 return;

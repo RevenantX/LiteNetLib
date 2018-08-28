@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using LiteNetLib;
@@ -30,7 +31,7 @@ namespace LibSample
                 _server.PollEvents();
             }
 
-            void INetEventListener.OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
+            void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
             {
             }
 
@@ -127,7 +128,7 @@ namespace LibSample
                 _client.PollEvents();
             }
 
-            void INetEventListener.OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
+            void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
             {
             }
 

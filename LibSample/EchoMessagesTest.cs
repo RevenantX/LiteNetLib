@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using LiteNetLib;
 using LiteNetLib.Utils;
@@ -57,7 +58,7 @@ namespace LibSample
                 Console.WriteLine("[Client] disconnected: " + disconnectInfo.Reason);
             }
 
-            public void OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
+            public void OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
             {
                 Console.WriteLine("[Client] error! " + socketErrorCode);
             }
@@ -112,7 +113,7 @@ namespace LibSample
                 Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + disconnectInfo.Reason);
             }
 
-            public void OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
+            public void OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
             {
                 Console.WriteLine("[Server] error: " + socketErrorCode);
             }

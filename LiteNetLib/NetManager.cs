@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using LiteNetLib.Utils;
 
@@ -60,7 +61,8 @@ namespace LiteNetLib
 
         public NetPeer Peer;
         public IPEndPoint RemoteEndPoint;
-        public int AdditionalData;
+        public int Latency;
+        public SocketError ErrorCode;
         public DisconnectReason DisconnectReason;
         public ConnectionRequest ConnectionRequest;
         public DeliveryMethod DeliveryMethod;
@@ -246,7 +248,7 @@ namespace LiteNetLib
 
         internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
         {
-            CreateEvent(NetEvent.EType.ConnectionLatencyUpdated, fromPeer, additionalData: latency);
+            CreateEvent(NetEvent.EType.ConnectionLatencyUpdated, fromPeer, latency: latency);
         }
 
         internal bool SendRawAndRecycle(NetPacket packet, IPEndPoint remoteEndPoint)
@@ -266,22 +268,22 @@ namespace LiteNetLib
             if (!IsRunning)
                 return false;
 
-            int errorCode = 0;
+            SocketError errorCode = 0;
             if (_socket.SendTo(message, start, length, remoteEndPoint, ref errorCode) <= 0)
                 return false;
 
             NetPeer fromPeer;
             switch (errorCode)
             {
-                case 10040: //message to long... need to check
+                case SocketError.MessageSize:
                     NetUtils.DebugWrite(ConsoleColor.Red, "[SRD] 10040, datalen: {0}", length);
                     return false;
-                case 10065: //no route to host  
+                case SocketError.HostUnreachable:
                     if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
                         DisconnectPeer(fromPeer, DisconnectReason.SocketSendError, errorCode, true, null, 0, 0);
-                    CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, additionalData: errorCode);
+                    CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
                     return false;
-                case 10054: //connection reset (connection closed)
+                case SocketError.ConnectionReset: //connection reset (connection closed)
                     if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
                         DisconnectPeer(fromPeer, DisconnectReason.RemoteConnectionClose, errorCode, true, null, 0, 0);
                     return false;
@@ -296,8 +298,8 @@ namespace LiteNetLib
 
         internal void DisconnectPeer(
             NetPeer peer, 
-            DisconnectReason reason, 
-            int socketErrorCode, 
+            DisconnectReason reason,
+            SocketError socketErrorCode, 
             bool force,
             byte[] data,
             int start,
@@ -312,7 +314,7 @@ namespace LiteNetLib
             CreateEvent(
                 NetEvent.EType.Disconnect,
                 peer: peer,
-                additionalData: socketErrorCode,
+                errorCode: socketErrorCode,
                 disconnectReason: reason);
         }
 
@@ -320,7 +322,8 @@ namespace LiteNetLib
             NetEvent.EType type,
             NetPeer peer = null,
             IPEndPoint remoteEndPoint = null,
-            int additionalData = 0,
+            SocketError errorCode = 0,
+            int latency = 0,
             DisconnectReason disconnectReason = DisconnectReason.ConnectionFailed,
             ConnectionRequest connectionRequest = null,
             DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable,
@@ -340,7 +343,8 @@ namespace LiteNetLib
             evt.DataReader.SetSource(readerSource);
             evt.Peer = peer;
             evt.RemoteEndPoint = remoteEndPoint;
-            evt.AdditionalData = additionalData;
+            evt.Latency = latency;
+            evt.ErrorCode = errorCode;
             evt.DisconnectReason = disconnectReason;
             evt.ConnectionRequest = connectionRequest;
             evt.DeliveryMethod = deliveryMethod;
@@ -368,7 +372,7 @@ namespace LiteNetLib
                     {
                         Reason = evt.DisconnectReason,
                         AdditionalData = evt.DataReader,
-                        SocketErrorCode = evt.AdditionalData
+                        SocketErrorCode = evt.ErrorCode
                     };
                     _netEventListener.OnPeerDisconnected(evt.Peer, info);
                     break;
@@ -385,10 +389,10 @@ namespace LiteNetLib
                     _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryResponse);
                     break;
                 case NetEvent.EType.Error:
-                    _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.AdditionalData);
+                    _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.ErrorCode);
                     break;
                 case NetEvent.EType.ConnectionLatencyUpdated:
-                    _netEventListener.OnNetworkLatencyUpdate(evt.Peer, evt.AdditionalData);
+                    _netEventListener.OnNetworkLatencyUpdate(evt.Peer, evt.Latency);
                     break;
                 case NetEvent.EType.ConnectionRequest:
                     _netEventListener.OnConnectionRequest(evt.ConnectionRequest);
@@ -403,7 +407,7 @@ namespace LiteNetLib
         internal void RecycleEvent(NetEvent evt)
         {
             evt.Peer = null;
-            evt.AdditionalData = 0;
+            evt.ErrorCode = 0;
             evt.RemoteEndPoint = null;
             evt.ConnectionRequest = null;
             lock (_netEventsPool)
@@ -474,12 +478,12 @@ namespace LiteNetLib
             stopwatch.Stop();
         }
         
-        void INetSocketListener.OnMessageReceived(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint)
+        void INetSocketListener.OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint)
         {
             if (errorCode != 0)
             {
                 _peers.Clear();
-                CreateEvent(NetEvent.EType.Error, additionalData: errorCode);
+                CreateEvent(NetEvent.EType.Error, errorCode: errorCode);
                 NetUtils.DebugWriteError("[NM] Receive error: {0}", errorCode);
                 return;
             }

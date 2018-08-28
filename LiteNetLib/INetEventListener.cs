@@ -1,5 +1,5 @@
 using System.Net;
-using LiteNetLib.Utils;
+using System.Net.Sockets;
 
 namespace LiteNetLib
 {
@@ -40,7 +40,7 @@ namespace LiteNetLib
         /// <summary>
         /// Error code (if reason is SocketSendError or SocketReceiveError)
         /// </summary>
-        public int SocketErrorCode;
+        public SocketError SocketErrorCode;
 
         /// <summary>
         /// Additional data that can be accessed (only if reason is RemoteConnectionClose)
@@ -67,8 +67,8 @@ namespace LiteNetLib
         /// Network error (on send or receive)
         /// </summary>
         /// <param name="endPoint">From endPoint (can be null)</param>
-        /// <param name="socketErrorCode">Socket error code</param>
-        void OnNetworkError(IPEndPoint endPoint, int socketErrorCode);
+        /// <param name="socketError">Socket error</param>
+        void OnNetworkError(IPEndPoint endPoint, SocketError socketError);
 
         /// <summary>
         /// Received some data
@@ -104,7 +104,7 @@ namespace LiteNetLib
     {
         public delegate void OnPeerConnected(NetPeer peer);
         public delegate void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
-        public delegate void OnNetworkError(IPEndPoint endPoint, int socketErrorCode);
+        public delegate void OnNetworkError(IPEndPoint endPoint, SocketError socketError);
         public delegate void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod);
         public delegate void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType);
         public delegate void OnNetworkLatencyUpdate(NetPeer peer, int latency);
@@ -166,7 +166,7 @@ namespace LiteNetLib
                 PeerDisconnectedEvent(peer, disconnectInfo);
         }
 
-        void INetEventListener.OnNetworkError(IPEndPoint endPoint, int socketErrorCode)
+        void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
         {
             if (NetworkErrorEvent != null)
                 NetworkErrorEvent(endPoint, socketErrorCode);

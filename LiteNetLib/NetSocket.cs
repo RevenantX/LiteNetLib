@@ -7,7 +7,7 @@ namespace LiteNetLib
 {
     internal interface INetSocketListener
     {
-        void OnMessageReceived(byte[] data, int length, int errorCode, IPEndPoint remoteEndPoint);
+        void OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint);
     }
 
     internal sealed class NetSocket
@@ -82,7 +82,7 @@ namespace LiteNetLib
                         continue;
                     }
                     NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
-                    _listener.OnMessageReceived(null, 0, (int) ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
+                    _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
 
                     continue;
                 }
@@ -211,7 +211,7 @@ namespace LiteNetLib
             return success;
         }
 
-        public int SendTo(byte[] data, int offset, int size, IPEndPoint remoteEndPoint, ref int errorCode)
+        public int SendTo(byte[] data, int offset, int size, IPEndPoint remoteEndPoint, ref SocketError errorCode)
         {
             try
             {
@@ -240,7 +240,7 @@ namespace LiteNetLib
                     NetUtils.DebugWriteError("[S]" + ex);
                 }
                 
-                errorCode = (int)ex.SocketErrorCode;
+                errorCode = ex.SocketErrorCode;
                 return -1;
             }
             catch (Exception ex)
