@@ -47,6 +47,7 @@ namespace LibSample
             listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
             {
                 Console.WriteLine("We got: {0}", dataReader.GetString(100 /* max length of string */));
+                dataReader.Recycle();
             };
 
             while (!Console.KeyAvailable)
