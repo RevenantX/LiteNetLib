@@ -362,6 +362,7 @@ namespace LiteNetLib
         private void ProcessEvent(NetEvent evt)
         {
             NetUtils.DebugWrite("[NM] Processing event: " + evt.Type);
+            bool recycleEvent = evt.DataReader.IsNull;
             switch (evt.Type)
             {
                 case NetEvent.EType.Connect:
@@ -398,9 +399,8 @@ namespace LiteNetLib
                     _netEventListener.OnConnectionRequest(evt.ConnectionRequest);
                     break;
             }
-
             //Recycle if not message
-            if (evt.DataReader.IsNull)
+            if (recycleEvent)
                 RecycleEvent(evt);
         }
 
