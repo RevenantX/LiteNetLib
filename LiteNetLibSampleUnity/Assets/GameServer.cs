@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Sockets;
 using UnityEngine;
 using LiteNetLib;
 using LiteNetLib.Utils;
@@ -13,7 +15,7 @@ public class GameServer : MonoBehaviour, INetEventListener
     void Start()
     {
         _dataWriter = new NetDataWriter();
-        _netServer = new NetManager(this, 100);
+        _netServer = new NetManager(this);
         _netServer.Start(5000);
         _netServer.DiscoveryEnabled = true;
         _netServer.UpdateTime = 15;
@@ -47,16 +49,12 @@ public class GameServer : MonoBehaviour, INetEventListener
         _ourPeer = peer;
     }
 
-    public void OnPeerDisconnected(NetPeer peer, DisconnectReason reason, int socketErrorCode)
-    {
-    }
-
-    public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
+    public void OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
     {
         Debug.Log("[SERVER] error " + socketErrorCode);
     }
 
-    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader,
+    public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader,
         UnconnectedMessageType messageType)
     {
         if (messageType == UnconnectedMessageType.DiscoveryRequest)
@@ -82,7 +80,7 @@ public class GameServer : MonoBehaviour, INetEventListener
             _ourPeer = null;
     }
 
-    public void OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
+    public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
     {
     }
 }

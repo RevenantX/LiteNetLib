@@ -1,6 +1,7 @@
+using System.Net;
+using System.Net.Sockets;
 using UnityEngine;
 using LiteNetLib;
-using LiteNetLib.Utils;
 
 public class GameClient : MonoBehaviour, INetEventListener
 {
@@ -52,12 +53,12 @@ public class GameClient : MonoBehaviour, INetEventListener
         Debug.Log("[CLIENT] We connected to " + peer.EndPoint);
     }
 
-    public void OnNetworkError(NetEndPoint endPoint, int socketErrorCode)
+    public void OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
     {
         Debug.Log("[CLIENT] We received error " + socketErrorCode);
     }
 
-    public void OnNetworkReceive(NetPeer peer, NetDataReader reader, DeliveryMethod deliveryMethod)
+    public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
     {
         _newBallPosX = reader.GetFloat();
 
@@ -71,8 +72,7 @@ public class GameClient : MonoBehaviour, INetEventListener
         _lerpTime = 0f;
     }
 
-    public void OnNetworkReceiveUnconnected(NetEndPoint remoteEndPoint, NetDataReader reader,
-        UnconnectedMessageType messageType)
+    public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
     {
         if (messageType == UnconnectedMessageType.DiscoveryResponse && _netClient.PeersCount == 0)
         {
