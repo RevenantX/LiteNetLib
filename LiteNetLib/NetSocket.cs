@@ -64,7 +64,7 @@ namespace LiteNetLib
                 //Reading data
                 try
                 {
-                    if(socket.Available == 0 || !socket.Poll(SocketReceivePollTime, SelectMode.SelectRead))
+                    if(socket.Available == 0 && !socket.Poll(SocketReceivePollTime, SelectMode.SelectRead))
                         continue;
                     result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
                 }
