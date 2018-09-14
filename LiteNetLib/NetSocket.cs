@@ -64,10 +64,8 @@ namespace LiteNetLib
                 //Reading data
                 try
                 {
-                    if (!socket.Poll(SocketReceivePollTime, SelectMode.SelectRead))
-                    {
+                    if(socket.Available == 0 || !socket.Poll(SocketReceivePollTime, SelectMode.SelectRead))
                         continue;
-                    }
                     result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
                 }
                 catch (SocketException ex)
@@ -83,7 +81,6 @@ namespace LiteNetLib
                     }
                     NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
                     _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
-
                     continue;
                 }
 
