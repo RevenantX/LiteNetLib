@@ -57,9 +57,9 @@ namespace LiteNetLib
             }
             _lock.EnterWriteLock();
    
-            peer.NextPeer = HeadPeer;
             if (HeadPeer != null)
             {
+                peer.NextPeer = HeadPeer;
                 HeadPeer.PrevPeer = peer;
             }
             HeadPeer = peer;
@@ -72,13 +72,9 @@ namespace LiteNetLib
 
         public void RemovePeers(List<NetPeer> peersList)
         {
-            if (peersList.Count == 0)
-                return;
             _lock.EnterWriteLock();
             for (int i = 0; i < peersList.Count; i++)
-            {
                 RemovePeerInternal(peersList[i]);
-            }
             _lock.ExitWriteLock();
         }
 
@@ -92,23 +88,15 @@ namespace LiteNetLib
         private void RemovePeerInternal(NetPeer peer)
         {
             if (!_peersDict.Remove(peer.EndPoint))
-            {
                 return;
-            }
             if (peer == HeadPeer)
-            {
                 HeadPeer = peer.NextPeer;
-            }
             if (peer.PrevPeer != null)
-            {
                 peer.PrevPeer.NextPeer = peer.NextPeer;
-                peer.PrevPeer = null;
-            }
             if (peer.NextPeer != null)
-            {
                 peer.NextPeer.PrevPeer = peer.PrevPeer;
-                peer.NextPeer = null;
-            }
+            peer.PrevPeer = null;
+            peer.NextPeer = null;
             Count--;
         }
     }

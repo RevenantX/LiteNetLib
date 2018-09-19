@@ -163,7 +163,7 @@ namespace LiteNetLib
             try
             {
                 socket.Bind(ep);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Succesfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
+                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
             }
             catch (SocketException ex)
             {

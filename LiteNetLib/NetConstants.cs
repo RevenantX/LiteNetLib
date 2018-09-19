@@ -55,13 +55,11 @@ namespace LiteNetLib
         public const int MinSequencedPacketDataSize = MinPacketSize - SequencedHeaderSize;
 
         //internal
-        internal const string MulticastGroupIPv4 = "224.0.0.1";
         internal const string MulticastGroupIPv6 = "FF02:0:0:0:0:0:0:1";
 
         //protocol
         internal const int ProtocolId = 3;
         internal const int MaxUdpHeaderSize = 68;
-        internal const int PacketSizeLimit = ushort.MaxValue - MaxUdpHeaderSize;
 
         internal static readonly int[] PossibleMtu =
         {

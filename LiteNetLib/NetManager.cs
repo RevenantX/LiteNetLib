@@ -449,7 +449,6 @@ namespace LiteNetLib
                 int elapsed = (int)stopwatch.ElapsedMilliseconds;
                 if (elapsed <= 0)
                     elapsed = 1;
-                //Process acks
                 for(var netPeer = _peers.HeadPeer; netPeer != null; netPeer = netPeer.NextPeer)
                 {
                     if (netPeer.ConnectionState == ConnectionState.Disconnected && netPeer.TimeSinceLastPacket > DisconnectTimeout)
@@ -464,8 +463,11 @@ namespace LiteNetLib
 #endif
                     }
                 }
-                _peers.RemovePeers(peersToRemove);
-                peersToRemove.Clear();
+                if (peersToRemove.Count > 0)
+                {
+                    _peers.RemovePeers(peersToRemove);
+                    peersToRemove.Clear();
+                }               
 #if STATS_ENABLED
                 Statistics.PacketLoss = totalPacketLoss;
 #endif
@@ -1047,7 +1049,7 @@ namespace LiteNetLib
 
             //Send last disconnect
             for(var netPeer = _peers.HeadPeer; netPeer != null; netPeer = netPeer.NextPeer)
-                netPeer.Shutdown(null, 0, 0, true);
+                netPeer.Shutdown(null, 0, 0, false);
 
             //For working send
             IsRunning = false;
