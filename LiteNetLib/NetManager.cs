@@ -597,7 +597,7 @@ namespace LiteNetLib
             //Add new peer and craete ConnectRequest event
             NetUtils.DebugWrite("[NM] Creating request event: " + connRequest.ConnectionId);
             netPeer = new NetPeer(this, remoteEndPoint);
-            if (_peers.TryAdd(netPeer))
+            if (_peers.TryAdd(netPeer) == netPeer)
             {
                 CreateEvent(NetEvent.EType.ConnectionRequest, connectionRequest: new ConnectionRequest(
                     connRequest.ConnectionId,
@@ -964,7 +964,7 @@ namespace LiteNetLib
         /// <param name="address">Server IP or hostname</param>
         /// <param name="port">Server Port</param>
         /// <param name="key">Connection key</param>
-        /// <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
+        /// <returns>New NetPeer if new connection, Old NetPeer if already connected</returns>
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(string address, int port, string key)
         {
@@ -978,7 +978,7 @@ namespace LiteNetLib
         /// <param name="address">Server IP or hostname</param>
         /// <param name="port">Server Port</param>
         /// <param name="connectionData">Additional data for remote peer</param>
-        /// <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
+        /// <returns>New NetPeer if new connection, Old NetPeer if already connected</returns>
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(string address, int port, NetDataWriter connectionData)
         {
@@ -991,7 +991,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="target">Server end point (ip and port)</param>
         /// <param name="key">Connection key</param>
-        /// <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
+        /// <returns>New NetPeer if new connection, Old NetPeer if already connected</returns>
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(IPEndPoint target, string key)
         {
@@ -1003,7 +1003,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="target">Server end point (ip and port)</param>
         /// <param name="connectionData">Additional data for remote peer</param>
-        /// <returns>Null if connections limit reached, New NetPeer if new connection, Old NetPeer if already connected</returns>
+        /// <returns>New NetPeer if new connection, Old NetPeer if already connected</returns>
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(IPEndPoint target, NetDataWriter connectionData)
         {
@@ -1011,6 +1011,7 @@ namespace LiteNetLib
                 throw new InvalidOperationException("Client is not running");
 
             NetPeer peer;
+            byte connectionNumber = 0;
             if (_peers.TryGetValue(target, out peer))
             {
                 switch (peer.ConnectionState)
@@ -1020,22 +1021,14 @@ namespace LiteNetLib
                     case ConnectionState.InProgress:
                     case ConnectionState.Incoming:
                         return peer;
-                }              
-            }
-
-            //clean before add new
-            byte connectionNumber = 0;
-            if (peer != null)
-            {
+                }
+                //else reconnect
                 connectionNumber = (byte)((peer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
                 _peers.RemovePeer(peer);
             }
-
             //Create reliable connection
             //And send connection request
-            peer = new NetPeer(this, target, connectionNumber, connectionData);
-            _peers.TryAdd(peer);
-            return peer;
+            return _peers.TryAdd(new NetPeer(this, target, connectionNumber, connectionData));
         }
 
         /// <summary>

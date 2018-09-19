@@ -47,16 +47,16 @@ namespace LiteNetLib
             _lock.ExitWriteLock();
         }
 
-        public bool TryAdd(NetPeer peer)
+        public NetPeer TryAdd(NetPeer peer)
         {
             _lock.EnterUpgradeableReadLock();
-            if (_peersDict.ContainsKey(peer.EndPoint))
+            NetPeer existingPeer;
+            if (_peersDict.TryGetValue(peer.EndPoint, out existingPeer))
             {
                 _lock.ExitUpgradeableReadLock();
-                return false;
+                return existingPeer;
             }
             _lock.EnterWriteLock();
-   
             if (HeadPeer != null)
             {
                 peer.NextPeer = HeadPeer;
@@ -67,7 +67,7 @@ namespace LiteNetLib
             Count++;
             _lock.ExitWriteLock();
             _lock.ExitUpgradeableReadLock();
-            return true;
+            return peer;
         }
 
         public void RemovePeers(List<NetPeer> peersList)
