@@ -555,11 +555,11 @@ namespace LiteNetLib
             NetConnectRequestPacket connRequest)
         {
             byte connectionNumber = connRequest.ConnectionNumber;
-            NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectId, connRequest.ConnectionId, remoteEndPoint);
 
             //if we have peer
             if (netPeer != null)
             {
+                NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectId, connRequest.ConnectionId, remoteEndPoint);
                 var processResult = netPeer.ProcessConnectRequest(connRequest);
                 switch (processResult)
                 {
@@ -593,6 +593,10 @@ namespace LiteNetLib
                 //Set next connection number
                 connectionNumber = (byte)((netPeer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
                 //To reconnect peer
+            }
+            else
+            {
+                NetUtils.DebugWrite("ConnectRequest Id: {0}, EP: {1}", connRequest.ConnectionId, remoteEndPoint);
             }
             //Add new peer and craete ConnectRequest event
             NetUtils.DebugWrite("[NM] Creating request event: " + connRequest.ConnectionId);
