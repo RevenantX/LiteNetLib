@@ -8,7 +8,7 @@ using LiteNetLib.Utils;
 
 namespace LibSample
 {
-    internal class SpeedBecnh
+    internal class SpeedBench
     {
         public class Server : INetEventListener
         {

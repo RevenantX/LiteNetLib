@@ -21,7 +21,7 @@ namespace LibSample
             //new BroadcastTest().Run();
             //new BenchmarkTest.TestHost().Run();
             //new SerializerBenchmark().Run();
-            //new SpeedBecnh().Run();
+            //new SpeedBench().Run();
             //new PacketProcessorExample().Run();
         }
     }
