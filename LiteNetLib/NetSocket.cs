@@ -128,6 +128,9 @@ namespace LiteNetLib
             _udpSocketv6.Blocking = false;
             _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
+#if NETCORE
+            _udpSocketv6.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, true);
+#endif
             //_udpSocketv6.Ttl = NetConstants.SocketTTL;
             if (reuseAddress)
                 _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
