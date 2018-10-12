@@ -20,8 +20,9 @@ namespace LibSample
             public Server()
             {
                 _server = new NetManager(this);
+                _server.AutoRecycle = true;
                 _server.UpdateTime = 1;
-                _server.SimulatePacketLoss = true;
+                _server.SimulatePacketLoss = false;
                 _server.SimulationPacketLossChance = 20;
                 _server.Start(9050);
             }
@@ -93,7 +94,8 @@ namespace LibSample
                 _writer = new NetDataWriter();
 
                 _client = new NetManager(this);
-                _client.SimulatePacketLoss = true;
+                _client.AutoRecycle = true;
+                _client.SimulatePacketLoss = false;
                 _client.SimulationPacketLossChance = 20;
                 _client.Start();
             }

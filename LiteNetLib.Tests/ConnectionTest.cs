@@ -275,7 +275,7 @@ namespace LiteNetLib.Tests
 
             EventBasedNetListener listener = new EventBasedNetListener();
             NetManager client = new NetManager(listener);
-            client.Start(9049);
+            Assert.True(client.Start(9049));
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             while (server.PeersCount != 1)
             {
@@ -289,7 +289,7 @@ namespace LiteNetLib.Tests
             {
                 connected = true;
             };
-            client.Start(9049);
+            Assert.True(client.Start(9049));
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
             while (!connected)

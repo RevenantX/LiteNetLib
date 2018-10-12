@@ -21,9 +21,7 @@ namespace LiteNetLib
         public void AddToQueue(NetPacket packet)
         {
             lock (OutgoingQueue)
-            {
                 OutgoingQueue.Enqueue(packet);
-            }
         }
 
         public abstract void SendNextPackets();

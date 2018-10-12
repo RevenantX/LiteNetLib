@@ -161,16 +161,13 @@ namespace LiteNetLib
             {
                 PendingPacket currentPacket = _pendingPackets[pendingSeq % _windowSize];
                 if (currentPacket.Packet == null)
-                {
                     continue;
-                }
+
                 if (currentPacket.Sended) //check send time
                 {
                     double packetHoldTime = currentTime - currentPacket.TimeStamp;
                     if (packetHoldTime < resendDelay * TimeSpan.TicksPerMillisecond)
-                    {
                         continue;
-                    }
                     NetUtils.DebugWrite("[RC]Resend: {0} > {1}", (int) packetHoldTime, resendDelay);
                 }
 

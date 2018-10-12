@@ -19,10 +19,9 @@ namespace LiteNetLib
         private bool _running;
         private readonly INetSocketListener _listener;
 
+        private const int Timeout = 1000;
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
         internal static readonly bool IPv6Support;
-        private const int SocketReceivePollTime = 100000;
-        private const int SocketSendPollTime = 1000;
 
         public int LocalPort { get; private set; }
 
@@ -64,23 +63,24 @@ namespace LiteNetLib
                 //Reading data
                 try
                 {
-                    if(socket.Available == 0 && !socket.Poll(SocketReceivePollTime, SelectMode.SelectRead))
-                        continue;
                     result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
                 }
                 catch (SocketException ex)
                 {
-                    if (ex.SocketErrorCode == SocketError.ConnectionReset ||
-                        ex.SocketErrorCode == SocketError.MessageSize)
+                    switch (ex.SocketErrorCode)
                     {
-                        //10040 - message too long
-                        //10054 - remote close (not error)
-                        //Just UDP
-                        NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString() );
-                        continue;
+                        case SocketError.Interrupted:
+                            return;
+                        case SocketError.ConnectionReset:
+                        case SocketError.MessageSize:
+                        case SocketError.TimedOut:
+                            NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
+                            break;
+                        default:
+                            NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
+                            _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
+                            break;
                     }
-                    NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
-                    _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
                     continue;
                 }
 
@@ -90,24 +90,37 @@ namespace LiteNetLib
             }
         }
 
+        private void SetupSocket(Socket socket, bool reuseAddress)
+        {
+            socket.ReceiveTimeout = Timeout;
+            socket.SendTimeout = Timeout;
+            socket.ExclusiveAddressUse = true;
+            socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
+            socket.SendBufferSize = NetConstants.SocketBufferSize;
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
+            if (socket.AddressFamily == AddressFamily.InterNetwork)
+            {
+                socket.Ttl = NetConstants.SocketTTL;
+                socket.DontFragment = true;
+                try
+                {
+                    socket.EnableBroadcast = true;
+                }
+                catch (SocketException e)
+                {
+                    NetUtils.DebugWriteError("Broadcast error: {0}", e.ToString());
+                }
+            }
+            else
+            {
+                socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
+            }
+        }
+
         public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress)
         {
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _udpSocketv4.Blocking = false;
-            _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
-            _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
-            _udpSocketv4.Ttl = NetConstants.SocketTTL;
-            _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
-            _udpSocketv4.DontFragment = true;
-            try
-            {
-                _udpSocketv4.EnableBroadcast = true;
-            }
-            catch (SocketException e)
-            {
-                NetUtils.DebugWriteError("Broadcast error: {0}", e.ToString());
-            }
-
+            SetupSocket(_udpSocketv4, reuseAddress);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port)))
             {
                 return false;
@@ -124,12 +137,7 @@ namespace LiteNetLib
                 return true;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
-            _udpSocketv6.Blocking = false;
-            _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
-            _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
-            _udpSocketv6.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
-            _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
-
+            SetupSocket(_udpSocketv6, reuseAddress);
             //Use one port for two sockets
             if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort)))
             {
@@ -212,29 +220,24 @@ namespace LiteNetLib
             {
                 var socket = _udpSocketv4;
                 if (remoteEndPoint.AddressFamily == AddressFamily.InterNetworkV6 && IPv6Support)
-                {
                     socket = _udpSocketv6;
-                }
-
-                int result;
-                if (!socket.Poll(SocketSendPollTime, SelectMode.SelectWrite))
-                    return -1;
-                result = socket.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint);
-
+                int result = socket.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint);
                 NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
                 return result;
             }
             catch (SocketException ex)
             {
-                if (ex.SocketErrorCode == SocketError.NoBufferSpaceAvailable)
+                switch (ex.SocketErrorCode)
                 {
-                    return 0;
-                }
-                if (ex.SocketErrorCode != SocketError.MessageSize)
-                {
-                    NetUtils.DebugWriteError("[S]" + ex);
-                }
-                
+                    case SocketError.NoBufferSpaceAvailable:
+                    case SocketError.Interrupted:
+                        return 0;
+                    case SocketError.MessageSize: //do nothing              
+                        break;
+                    default:
+                        NetUtils.DebugWriteError("[S]" + ex);
+                        break;
+                }    
                 errorCode = ex.SocketErrorCode;
                 return -1;
             }
@@ -248,33 +251,17 @@ namespace LiteNetLib
         public void Close()
         {
             _running = false;
-
-            //Close IPv4
-            if (Thread.CurrentThread != _threadv4)
-            {
-                _threadv4.Join();
-            }
             if (_udpSocketv4 != null)
             {
                 _udpSocketv4.Close();
                 _udpSocketv4 = null;
-            }
-            _threadv4 = null;
-
-            //No ipv6
-            if (_udpSocketv6 == null)
-                return;
-
-            //Close IPv6
-            if (Thread.CurrentThread != _threadv6)
-            {
-                _threadv6.Join();
             }
             if (_udpSocketv6 != null)
             {
                 _udpSocketv6.Close();
                 _udpSocketv6 = null;
             }
+            _threadv4 = null;
             _threadv6 = null;
         }
     }

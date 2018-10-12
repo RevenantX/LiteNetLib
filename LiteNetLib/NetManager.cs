@@ -209,6 +209,11 @@ namespace LiteNetLib
         /// Local EndPoint (host and port)
         /// </summary>
         public int LocalPort { get { return _socket.LocalPort; } }
+
+        /// <summary>
+        /// Automatically recycle NetPacketReader after OnReceive event
+        /// </summary>
+        public bool AutoRecycle;
         
         public List<NetPeer> ConnectedPeerList
         {
@@ -362,7 +367,7 @@ namespace LiteNetLib
         private void ProcessEvent(NetEvent evt)
         {
             NetUtils.DebugWrite("[NM] Processing event: " + evt.Type);
-            bool recycleEvent = evt.DataReader.IsNull;
+            bool emptyData = evt.DataReader.IsNull;
             switch (evt.Type)
             {
                 case NetEvent.EType.Connect:
@@ -400,8 +405,10 @@ namespace LiteNetLib
                     break;
             }
             //Recycle if not message
-            if (recycleEvent)
+            if (emptyData)
                 RecycleEvent(evt);
+            else if (AutoRecycle)
+                evt.DataReader.Recycle();
         }
 
         internal void RecycleEvent(NetEvent evt)
