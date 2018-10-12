@@ -97,8 +97,7 @@ namespace LiteNetLib
             _udpSocketv4.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.SendBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv4.Ttl = NetConstants.SocketTTL;
-            if(reuseAddress)
-                _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            _udpSocketv4.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
             _udpSocketv4.DontFragment = true;
             try
             {
@@ -128,12 +127,8 @@ namespace LiteNetLib
             _udpSocketv6.Blocking = false;
             _udpSocketv6.ReceiveBufferSize = NetConstants.SocketBufferSize;
             _udpSocketv6.SendBufferSize = NetConstants.SocketBufferSize;
-#if NETCORE
-            _udpSocketv6.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, true);
-#endif
-            //_udpSocketv6.Ttl = NetConstants.SocketTTL;
-            if (reuseAddress)
-                _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            _udpSocketv6.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
+            _udpSocketv6.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
 
             //Use one port for two sockets
             if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort)))
