@@ -90,41 +90,11 @@ namespace LiteNetLib
             }
         }
 
-        private void SetupSocket(Socket socket, bool reuseAddress)
-        {
-            socket.ReceiveTimeout = Timeout;
-            socket.SendTimeout = Timeout;
-            socket.ExclusiveAddressUse = true;
-            socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
-            socket.SendBufferSize = NetConstants.SocketBufferSize;
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
-            if (socket.AddressFamily == AddressFamily.InterNetwork)
-            {
-                socket.Ttl = NetConstants.SocketTTL;
-                socket.DontFragment = true;
-                try
-                {
-                    socket.EnableBroadcast = true;
-                }
-                catch (SocketException e)
-                {
-                    NetUtils.DebugWriteError("Broadcast error: {0}", e.ToString());
-                }
-            }
-            else
-            {
-                socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
-            }
-        }
-
         public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress)
         {
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            SetupSocket(_udpSocketv4, reuseAddress);
-            if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port)))
-            {
+            if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port), reuseAddress))
                 return false;
-            }
             LocalPort = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
             _running = true;
             _threadv4 = new Thread(ReceiveLogic);
@@ -137,9 +107,8 @@ namespace LiteNetLib
                 return true;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
-            SetupSocket(_udpSocketv6, reuseAddress);
             //Use one port for two sockets
-            if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort)))
+            if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort), reuseAddress))
             {
                 try
                 {
@@ -164,8 +133,34 @@ namespace LiteNetLib
             return true;
         }
 
-        private bool BindSocket(Socket socket, IPEndPoint ep)
+        private bool BindSocket(Socket socket, IPEndPoint ep, bool reuseAddress)
         {
+            //Setup socket
+            socket.ReceiveTimeout = Timeout;
+            socket.SendTimeout = Timeout;
+            socket.ExclusiveAddressUse = true;
+            socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
+            socket.SendBufferSize = NetConstants.SocketBufferSize;
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
+            if (socket.AddressFamily == AddressFamily.InterNetwork)
+            {
+                socket.Ttl = NetConstants.SocketTTL;
+                socket.DontFragment = true;
+                try
+                {
+                    socket.EnableBroadcast = true;
+                }
+                catch (SocketException e)
+                {
+                    NetUtils.DebugWriteError("[B]Broadcast error: {0}", e.ToString());
+                }
+            }
+            else
+            {
+                socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
+            }
+
+            //Bind
             try
             {
                 socket.Bind(ep);
@@ -174,11 +169,9 @@ namespace LiteNetLib
             catch (SocketException ex)
             {
                 NetUtils.DebugWriteError("[B]Bind exception: {0}", ex.ToString());
-                //TODO: very temporary hack for iOS (Unity3D)
+                //hack for iOS (Unity3D)
                 if (ex.SocketErrorCode == SocketError.AddressFamilyNotSupported)
-                {
                     return true;
-                }
                 return false;
             }
             return true;
