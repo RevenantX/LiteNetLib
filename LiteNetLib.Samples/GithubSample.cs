@@ -3,7 +3,7 @@ using System.Threading;
 using LiteNetLib;
 using LiteNetLib.Utils;
 
-namespace LibSample
+namespace LiteNetLib.Samples
 {
     class GithubSample
     {

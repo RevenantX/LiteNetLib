@@ -1,7 +1,7 @@
 using System;
 using LiteNetLib;
 
-namespace LibSample
+namespace LiteNetLib.Samples
 {
     class Program
     {

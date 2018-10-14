@@ -5,7 +5,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-namespace LibSample
+namespace LiteNetLib.Samples
 {
     class SerializerBenchmark
     {

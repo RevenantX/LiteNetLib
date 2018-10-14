@@ -4,7 +4,7 @@ using System.Net;
 using System.Threading;
 using LiteNetLib;
 
-namespace LibSample
+namespace LiteNetLib.Samples
 {
     class WaitPeer
     {
