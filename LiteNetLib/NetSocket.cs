@@ -1,3 +1,7 @@
+#if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#define UNITY
+#endif
+
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -36,7 +40,7 @@ namespace LiteNetLib
 
         static NetSocket()
         {
-#if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#if UNITY
             IPv6Support = Socket.SupportsIPv6;
 #elif DISABLE_IPV6
             IPv6Support = false;
@@ -157,7 +161,15 @@ namespace LiteNetLib
             }
             else
             {
-                socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
+#if !UNITY
+                try
+                {
+                    socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName) 27, true);
+                }
+                catch (SocketException)
+                {
+                }
+#endif
             }
 
             //Bind
