@@ -38,8 +38,11 @@ namespace LiteNetLib
         public void Recycle()
         {
             Clear();
-            _manager.NetPacketPool.Recycle(_packet);
-            _manager.RecycleEvent(_evt);
+            if (_packet != null)
+            {
+                _manager.NetPacketPool.Recycle(_packet);
+                _manager.RecycleEvent(_evt);
+            }
         }
     }
 
