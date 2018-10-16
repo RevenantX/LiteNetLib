@@ -609,28 +609,28 @@ namespace LiteNetLib
 
         private void ProcessMtuPacket(NetPacket packet)
         {
-            if (packet.Size == 1 || 
-                packet.RawData[1] >= NetConstants.PossibleMtu.Length)
+            if (packet.Size < 2)
+                return;
+            byte receivedMtuIdx = packet.RawData[1];
+            if (receivedMtuIdx >= NetConstants.PossibleMtu.Length)
                 return;
 
             //MTU auto increase
             if (packet.Property == PacketProperty.MtuCheck)
             {
-                if (packet.Size != NetConstants.PossibleMtu[packet.RawData[1]])
-                {
+                if (packet.Size != NetConstants.PossibleMtu[receivedMtuIdx])
                     return;
-                }
                 _mtuCheckAttempts = 0;
-                NetUtils.DebugWrite("MTU check. Resend: " + packet.RawData[1]);
+                NetUtils.DebugWrite("MTU check. Resend: " + receivedMtuIdx);
                 var mtuOkPacket = _packetPool.GetWithProperty(PacketProperty.MtuOk, 1);
-                mtuOkPacket.RawData[1] = packet.RawData[1];
+                mtuOkPacket.RawData[1] = receivedMtuIdx;
                 _netManager.SendRawAndRecycle(mtuOkPacket, _remoteEndPoint);
             }
-            else if(packet.RawData[1] > _mtuIdx) //MtuOk
+            else if(receivedMtuIdx > _mtuIdx) //MtuOk
             {
                 lock (_mtuMutex)
                 {
-                    _mtuIdx = packet.RawData[1];
+                    _mtuIdx = receivedMtuIdx;
                     _mtu = NetConstants.PossibleMtu[_mtuIdx];
                 }
                 //if maxed - finish.
