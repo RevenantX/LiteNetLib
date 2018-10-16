@@ -39,10 +39,9 @@ namespace LiteNetLib
         {
             Clear();
             if (_packet != null)
-            {
                 _manager.NetPacketPool.Recycle(_packet);
-                _manager.RecycleEvent(_evt);
-            }
+            _packet = null;
+            _manager.RecycleEvent(_evt);
         }
     }
 
