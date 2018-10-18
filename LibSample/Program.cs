@@ -1,5 +1,5 @@
 using System;
-using LiteNetLib;
+using LiteNetLib.Ntp;
 
 namespace LibSample
 {
@@ -8,13 +8,16 @@ namespace LibSample
         static void Main(string[] args)
         {
             //Test ntp
-            NtpRequest.Make("pool.ntp.org", 123, dateTime =>
+            NtpRequest ntpRequest = null;
+            ntpRequest = NtpRequest.Create("pool.ntp.org", ntpPacket =>
             {
-                if (dateTime.HasValue)
-                {
-                    Console.WriteLine("[MAIN] Synced time test: " + dateTime.Value);
-                }
+                ntpRequest.Close();
+                if (ntpPacket != null)
+                    Console.WriteLine("[MAIN] NTP time test offset: " + ntpPacket.CorrectionOffset);
+                else
+                    Console.WriteLine("[MAIN] NTP time error");
             });
+            ntpRequest.Send();
 
             new EchoMessagesTest().Run();
             //new HolePunchServerTest().Run();
