@@ -130,7 +130,7 @@ namespace LiteNetLib
                 _mustSendAcks = false;
                 NetUtils.DebugWrite("[RR]SendAcks");
                 Monitor.Enter(_outgoingAcks);
-                Peer.SendRawData(_outgoingAcks);
+                Peer.SendUserData(_outgoingAcks);
                 Monitor.Exit(_outgoingAcks);
             }
 
@@ -173,7 +173,7 @@ namespace LiteNetLib
 
                 currentPacket.TimeStamp = currentTime;
                 currentPacket.Sended = true;
-                Peer.SendRawData(currentPacket.Packet);
+                Peer.SendUserData(currentPacket.Packet);
             }
             Monitor.Exit(_pendingPackets);
         }

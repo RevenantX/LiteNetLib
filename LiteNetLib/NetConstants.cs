@@ -55,15 +55,17 @@ namespace LiteNetLib
         internal const string MulticastGroupIPv6 = "FF02:0:0:0:0:0:0:1";
 
         //protocol
-        internal const int ProtocolId = 3;
+        internal const int ProtocolId = 4;
         internal const int MaxUdpHeaderSize = 68;
 
         internal static readonly int[] PossibleMtu =
         {
-            576 - MaxUdpHeaderSize,  //Internet Path MTU for X.25 (RFC 879)
+            576  - MaxUdpHeaderSize, //minimal
+            1232 - MaxUdpHeaderSize,
+            1460 - MaxUdpHeaderSize, //google cloud
+            1472 - MaxUdpHeaderSize, //VPN
             1492 - MaxUdpHeaderSize, //Ethernet with LLC and SNAP, PPPoE (RFC 1042)
-            1500 - MaxUdpHeaderSize, //Ethernet II (RFC 1191)
-            2304 - MaxUdpHeaderSize  //WLAN
+            1500 - MaxUdpHeaderSize  //Ethernet II (RFC 1191)
         };
 
         internal static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];

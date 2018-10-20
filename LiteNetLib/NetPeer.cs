@@ -609,36 +609,86 @@ namespace LiteNetLib
 
         private void ProcessMtuPacket(NetPacket packet)
         {
-            if (packet.Size < 2)
+            //header + int
+            if (packet.Size < 5)
                 return;
-            byte receivedMtuIdx = packet.RawData[1];
-            if (receivedMtuIdx >= NetConstants.PossibleMtu.Length)
+
+            //first stage check (mtu check and mtu ok)
+            int receivedMtu = BitConverter.ToInt32(packet.RawData, 1);
+            if (receivedMtu >= NetConstants.MaxPacketSize)
                 return;
 
             //MTU auto increase
             if (packet.Property == PacketProperty.MtuCheck)
             {
-                if (packet.Size != NetConstants.PossibleMtu[receivedMtuIdx])
+                int endMtuCheck = BitConverter.ToInt32(packet.RawData, packet.Size - 4);
+                if (receivedMtu != packet.Size ||
+                    receivedMtu != endMtuCheck)
+                {
+                    NetUtils.DebugWriteError("[MTU] Broken packet. RMTU {0}, EMTU {1}, PSIZE {2}", receivedMtu, endMtuCheck, packet.Size);
                     return;
+                }
+
                 _mtuCheckAttempts = 0;
-                NetUtils.DebugWrite("MTU check. Resend: " + receivedMtuIdx);
-                var mtuOkPacket = _packetPool.GetWithProperty(PacketProperty.MtuOk, 1);
-                mtuOkPacket.RawData[1] = receivedMtuIdx;
+                NetUtils.DebugWrite("[MTU] check. Resend: " + receivedMtu);
+
+                var mtuOkPacket = _packetPool.GetWithProperty(PacketProperty.MtuOk, 4);
+                FastBitConverter.GetBytes(mtuOkPacket.RawData, 1, receivedMtu);
                 _netManager.SendRawAndRecycle(mtuOkPacket, _remoteEndPoint);
             }
-            else if(receivedMtuIdx > _mtuIdx) //MtuOk
+            else if(receivedMtu > _mtu && _mtuIdx < NetConstants.PossibleMtu.Length) //MtuOk
             {
+                //invalid packet
+                if (receivedMtu != NetConstants.PossibleMtu[_mtuIdx + 1])
+                    return;
+
                 lock (_mtuMutex)
                 {
-                    _mtuIdx = receivedMtuIdx;
-                    _mtu = NetConstants.PossibleMtu[_mtuIdx];
+                    _mtuIdx++;
+                    _mtu = receivedMtu;
                 }
                 //if maxed - finish.
                 if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
                 {
                     _finishMtu = true;
                 }
-                NetUtils.DebugWrite("MTU ok. Increase to: " + _mtu);
+                NetUtils.DebugWrite("[MTU] ok. Increase to: " + _mtu);
+            }
+        }
+
+        private void UpdateMtuLogic(int deltaTime)
+        {
+            if (_finishMtu)
+                return;
+
+            _mtuCheckTimer += deltaTime;
+            if (_mtuCheckTimer < MtuCheckDelay)
+                return;
+
+            _mtuCheckTimer = 0;
+            _mtuCheckAttempts++;
+            if (_mtuCheckAttempts >= MaxMtuCheckAttempts)
+            {
+                _finishMtu = true;
+                return;
+            }
+
+            lock (_mtuMutex)
+            {
+                if (_mtuIdx >= NetConstants.PossibleMtu.Length - 1)
+                    return;
+
+                //Send increased packet
+                int newMtu = NetConstants.PossibleMtu[_mtuIdx + 1];
+                var p = _packetPool.GetWithProperty(PacketProperty.MtuCheck, newMtu - NetConstants.HeaderSize);
+                FastBitConverter.GetBytes(p.RawData, 1, newMtu);         //place into start
+                FastBitConverter.GetBytes(p.RawData, p.Size - 4, newMtu);//and end of packet
+
+                //Must check result for MTU fix
+                if (!_netManager.SendRawAndRecycle(p, _remoteEndPoint))
+                {
+                    _finishMtu = true;
+                }
             }
         }
 
@@ -803,7 +853,7 @@ namespace LiteNetLib
             }
         }
 
-        internal void SendRawData(NetPacket packet)
+        internal void SendUserData(NetPacket packet)
         {
             packet.ConnectionNumber = _connectNum;
             //2 - merge byte + minimal packet size + datalen(ushort)
@@ -932,7 +982,7 @@ namespace LiteNetLib
 
                 //send ping
                 _pingPacket.Sequence = _pingSequence;
-                SendRawData(_pingPacket);
+                _netManager.SendRaw(_pingPacket, _remoteEndPoint);
 
                 //reset timer
                 _pingTimeStart = DateTime.UtcNow;
@@ -950,40 +1000,8 @@ namespace LiteNetLib
                 _rttCount = 1;
             }
 
-            //MTU - Maximum transmission unit
-            if (!_finishMtu)
-            {
-                _mtuCheckTimer += deltaTime;
-                if (_mtuCheckTimer >= MtuCheckDelay)
-                {
-                    _mtuCheckTimer = 0;
-                    _mtuCheckAttempts++;
-                    if (_mtuCheckAttempts >= MaxMtuCheckAttempts)
-                    {
-                        _finishMtu = true;
-                    }
-                    else
-                    {
-                        lock (_mtuMutex)
-                        {
-                            //Send increased packet
-                            if (_mtuIdx < NetConstants.PossibleMtu.Length - 1)
-                            {
-                                int newMtu = NetConstants.PossibleMtu[_mtuIdx + 1] - NetConstants.HeaderSize;
-                                var p = _packetPool.GetWithProperty(PacketProperty.MtuCheck, newMtu);
-                                p.RawData[1] = (byte)(_mtuIdx + 1);
+            UpdateMtuLogic(deltaTime);
 
-                                //Must check result for MTU fix
-                                if (!_netManager.SendRawAndRecycle(p, _remoteEndPoint))
-                                {
-                                    _finishMtu = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            //MTU - end
             //Pending send
             Flush();
         }

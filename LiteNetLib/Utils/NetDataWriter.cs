@@ -8,8 +8,7 @@ namespace LiteNetLib.Utils
     {
         protected byte[] _data;
         protected int _position;
-
-        private int _maxLength;
+        private const int InitialSize = 64;
         private readonly bool _autoResize;
 
         public int Capacity
@@ -17,24 +16,17 @@ namespace LiteNetLib.Utils
             get { return _data.Length; }
         }
 
-        public NetDataWriter()
+        public NetDataWriter() : this(true, InitialSize)
         {
-            _maxLength = 64;
-            _data = new byte[_maxLength];
-            _autoResize = true;
         }
 
-        public NetDataWriter(bool autoResize)
+        public NetDataWriter(bool autoResize) : this(autoResize, InitialSize)
         {
-            _maxLength = 64;
-            _data = new byte[_maxLength];
-            _autoResize = autoResize;
         }
 
         public NetDataWriter(bool autoResize, int initialSize)
         {
-            _maxLength = initialSize;
-            _data = new byte[_maxLength];
+            _data = new byte[initialSize];
             _autoResize = autoResize;
         }
 
@@ -76,13 +68,12 @@ namespace LiteNetLib.Utils
 
         public void ResizeIfNeed(int newSize)
         {
-            if (_maxLength < newSize)
+            int len = _data.Length;
+            if (len < newSize)
             {
-                while (_maxLength < newSize)
-                {
-                    _maxLength *= 2;
-                }
-                Array.Resize(ref _data, _maxLength);
+                while (len < newSize)
+                    len *= 2;
+                Array.Resize(ref _data, len);
             }
         }
 

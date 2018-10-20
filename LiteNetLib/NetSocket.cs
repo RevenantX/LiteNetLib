@@ -149,23 +149,23 @@ namespace LiteNetLib
             if (socket.AddressFamily == AddressFamily.InterNetwork)
             {
                 socket.Ttl = NetConstants.SocketTTL;
-                socket.DontFragment = true;
-                try
-                {
-                    socket.EnableBroadcast = true;
-                }
+                
+                try { socket.DontFragment = true; }
                 catch (SocketException e)
                 {
-                    NetUtils.DebugWriteError("[B]Broadcast error: {0}", e.ToString());
+                    NetUtils.DebugWriteError("[B]DontFragment error: {0}", e.SocketErrorCode);
+                }
+
+                try { socket.EnableBroadcast = true; }
+                catch (SocketException e)
+                {
+                    NetUtils.DebugWriteError("[B]Broadcast error: {0}", e.SocketErrorCode);
                 }
             }
             else
             {
 #if !UNITY
-                try
-                {
-                    socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName) 27, true);
-                }
+                try { socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName) 27, true); }
                 catch (SocketException)
                 {
                 }

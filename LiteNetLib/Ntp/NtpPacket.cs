@@ -1,4 +1,5 @@
 ﻿using System;
+using LiteNetLib.Utils;
 
 namespace LiteNetLib.Ntp
 {
@@ -26,7 +27,7 @@ namespace LiteNetLib.Ntp
     /// </remarks>
     public class NtpPacket
     {
-        private static readonly DateTime epoch = new DateTime(1900, 1, 1);
+        private static readonly DateTime Epoch = new DateTime(1900, 1, 1);
 
         /// <summary>
         /// Gets RFC4330-encoded SNTP packet.
@@ -268,8 +269,7 @@ namespace LiteNetLib.Ntp
         /// are set appropriately for request packet. Property <see cref="NtpPacket.TransmitTimestamp" />
         /// is set to <see cref="System.DateTime.UtcNow" />.
         /// </remarks>
-        public NtpPacket()
-            : this(new byte[48])
+        public NtpPacket() : this(new byte[48])
         {
             Mode = NtpMode.Client;
             VersionNumber = 4;
@@ -282,7 +282,7 @@ namespace LiteNetLib.Ntp
         internal NtpPacket(byte[] bytes)
         {
             if (bytes.Length < 48)
-                throw new ArgumentException(null, "SNTP reply packet must be at least 48 bytes long.");
+                throw new ArgumentException("SNTP reply packet must be at least 48 bytes long.", "bytes");
             Bytes = bytes;
         }
 
@@ -339,32 +339,48 @@ namespace LiteNetLib.Ntp
             var field = GetUInt64BE(offset);
             if (field == 0)
                 return null;
-            return new DateTime(epoch.Ticks + Convert.ToInt64(field * (1.0 / (1L << 32) * 10000000.0)));
+            return new DateTime(Epoch.Ticks + Convert.ToInt64(field * (1.0 / (1L << 32) * 10000000.0)));
         }
 
         private void SetDateTime64(int offset, DateTime? value)
-        { SetUInt64BE(offset, value == null ? 0 : Convert.ToUInt64((value.Value.Ticks - epoch.Ticks) * (0.0000001 * (1L << 32)))); }
+        {
+            SetUInt64BE(offset, value == null ? 0 : Convert.ToUInt64((value.Value.Ticks - Epoch.Ticks) * (0.0000001 * (1L << 32))));
+        }
 
         private TimeSpan GetTimeSpan32(int offset)
-        { return TimeSpan.FromSeconds(GetInt32BE(offset) / (double)(1 << 16)); }
+        {
+            return TimeSpan.FromSeconds(GetInt32BE(offset) / (double)(1 << 16));
+        }
 
         private ulong GetUInt64BE(int offset)
-        { return SwapEndianness(BitConverter.ToUInt64(Bytes, offset)); }
+        {
+            return SwapEndianness(BitConverter.ToUInt64(Bytes, offset));
+        }
 
         private void SetUInt64BE(int offset, ulong value)
-        { Array.Copy(BitConverter.GetBytes(SwapEndianness(value)), 0, Bytes, offset, 8); }
+        {
+            FastBitConverter.GetBytes(Bytes, offset, SwapEndianness(value));
+        }
 
         private int GetInt32BE(int offset)
-        { return (int)GetUInt32BE(offset); }
+        {
+            return (int)GetUInt32BE(offset);
+        }
 
         private uint GetUInt32BE(int offset)
-        { return SwapEndianness(BitConverter.ToUInt32(Bytes, offset)); }
+        {
+            return SwapEndianness(BitConverter.ToUInt32(Bytes, offset));
+        }
 
         private static uint SwapEndianness(uint x)
-        { return ((x & 0xff) << 24) | ((x & 0xff00) << 8) | ((x & 0xff0000) >> 8) | ((x & 0xff000000) >> 24); }
+        {
+            return ((x & 0xff) << 24) | ((x & 0xff00) << 8) | ((x & 0xff0000) >> 8) | ((x & 0xff000000) >> 24);
+        }
 
         private static ulong SwapEndianness(ulong x)
-        { return ((ulong)SwapEndianness((uint)x) << 32) | SwapEndianness((uint)(x >> 32)); }
+        {
+            return ((ulong)SwapEndianness((uint)x) << 32) | SwapEndianness((uint)(x >> 32));
+        }
     }
 
     /// <summary>

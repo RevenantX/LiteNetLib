@@ -236,6 +236,12 @@ namespace LiteNetLib
         }
 
         [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
+        internal static void DebugWriteForce(string str, params object[] args)
+        {
+            DebugWriteLogic(ConsoleColor.DarkGreen, str, args);
+        }
+
+        [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
         internal static void DebugWriteForce(ConsoleColor color, string str, params object[] args)
         {
             DebugWriteLogic(color, str, args);
