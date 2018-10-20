@@ -615,7 +615,7 @@ namespace LiteNetLib
 
             //first stage check (mtu check and mtu ok)
             int receivedMtu = BitConverter.ToInt32(packet.RawData, 1);
-            if (receivedMtu >= NetConstants.MaxPacketSize)
+            if (receivedMtu > NetConstants.MaxPacketSize)
                 return;
 
             //MTU auto increase
@@ -639,7 +639,8 @@ namespace LiteNetLib
             else if(receivedMtu > _mtu && _mtuIdx < NetConstants.PossibleMtu.Length) //MtuOk
             {
                 //invalid packet
-                if (receivedMtu != NetConstants.PossibleMtu[_mtuIdx + 1])
+                if (packet.Size > 5 ||
+                    receivedMtu != NetConstants.PossibleMtu[_mtuIdx + 1])
                     return;
 
                 lock (_mtuMutex)
