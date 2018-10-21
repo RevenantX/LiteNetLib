@@ -610,37 +610,29 @@ namespace LiteNetLib
         private void ProcessMtuPacket(NetPacket packet)
         {
             //header + int
-            if (packet.Size < 5)
+            if (packet.Size < NetConstants.PossibleMtu[0])
                 return;
 
             //first stage check (mtu check and mtu ok)
             int receivedMtu = BitConverter.ToInt32(packet.RawData, 1);
-            if (receivedMtu > NetConstants.MaxPacketSize)
+            int endMtuCheck = BitConverter.ToInt32(packet.RawData, packet.Size - 4);
+            if (receivedMtu != packet.Size || receivedMtu != endMtuCheck || receivedMtu > NetConstants.MaxPacketSize)
+            {
+                NetUtils.DebugWriteError("[MTU] Broken packet. RMTU {0}, EMTU {1}, PSIZE {2}", receivedMtu, endMtuCheck, packet.Size);
                 return;
+            }
 
-            //MTU auto increase
             if (packet.Property == PacketProperty.MtuCheck)
             {
-                int endMtuCheck = BitConverter.ToInt32(packet.RawData, packet.Size - 4);
-                if (receivedMtu != packet.Size ||
-                    receivedMtu != endMtuCheck)
-                {
-                    NetUtils.DebugWriteError("[MTU] Broken packet. RMTU {0}, EMTU {1}, PSIZE {2}", receivedMtu, endMtuCheck, packet.Size);
-                    return;
-                }
-
                 _mtuCheckAttempts = 0;
-                NetUtils.DebugWrite("[MTU] check. Resend: " + receivedMtu);
-
-                var mtuOkPacket = _packetPool.GetWithProperty(PacketProperty.MtuOk, 4);
-                FastBitConverter.GetBytes(mtuOkPacket.RawData, 1, receivedMtu);
-                _netManager.SendRawAndRecycle(mtuOkPacket, _remoteEndPoint);
+                NetUtils.DebugWrite("[MTU] check. send back: " + receivedMtu);
+                packet.Property = PacketProperty.MtuOk;
+                _netManager.SendRawAndRecycle(packet, _remoteEndPoint);
             }
-            else if(receivedMtu > _mtu && _mtuIdx < NetConstants.PossibleMtu.Length) //MtuOk
+            else if(receivedMtu > _mtu && !_finishMtu) //MtuOk
             {
                 //invalid packet
-                if (packet.Size > 5 ||
-                    receivedMtu != NetConstants.PossibleMtu[_mtuIdx + 1])
+                if (receivedMtu != NetConstants.PossibleMtu[_mtuIdx + 1])
                     return;
 
                 lock (_mtuMutex)
@@ -650,9 +642,8 @@ namespace LiteNetLib
                 }
                 //if maxed - finish.
                 if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
-                {
                     _finishMtu = true;
-                }
+
                 NetUtils.DebugWrite("[MTU] ok. Increase to: " + _mtu);
             }
         }
@@ -687,9 +678,7 @@ namespace LiteNetLib
 
                 //Must check result for MTU fix
                 if (!_netManager.SendRawAndRecycle(p, _remoteEndPoint))
-                {
                     _finishMtu = true;
-                }
             }
         }
 
