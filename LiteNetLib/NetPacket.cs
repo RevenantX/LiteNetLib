@@ -27,13 +27,13 @@ namespace LiteNetLib
         Merged,                 //19
         ShutdownOk,             //20 *   
         ReliableSequenced,      //21
-        AckReliableSequenced    //22
+        AckReliableSequenced,   //22
+        PeerNotFound            //23
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 22;
-
+        private const int LastProperty = 23;
         //Header
         public PacketProperty Property
         {

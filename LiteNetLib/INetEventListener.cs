@@ -18,10 +18,9 @@ namespace LiteNetLib
     /// </summary>
     public enum DisconnectReason
     {
-        SocketReceiveError,
         ConnectionFailed,
         Timeout,
-        SocketSendError,
+        HostUnreachable,
         RemoteConnectionClose,
         DisconnectPeerCalled,
         ConnectionRejected

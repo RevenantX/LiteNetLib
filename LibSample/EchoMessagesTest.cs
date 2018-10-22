@@ -67,7 +67,10 @@ namespace LibSample
             {
                 if (reader.AvailableBytes == 13218)
                 {
-                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", peer.NetManager.LocalPort, reader[0], reader[13217]);
+                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", 
+                        peer.NetManager.LocalPort, 
+                        reader.RawData[reader.UserDataOffset], 
+                        reader.RawData[reader.UserDataOffset + 13217]);
                 }
                 else
                 {
@@ -126,7 +129,9 @@ namespace LibSample
                 //fragment log
                 if (reader.AvailableBytes == 13218)
                 {
-                    Console.WriteLine("[Server] TestFrag: {0}, {1}", reader[0], reader[13217]);
+                    Console.WriteLine("[Server] TestFrag: {0}, {1}",
+                        reader.RawData[reader.UserDataOffset],
+                        reader.RawData[reader.UserDataOffset + 13217]);
                 }
             }
 
