@@ -28,12 +28,13 @@ namespace LiteNetLib
         ShutdownOk,             //20 *   
         ReliableSequenced,      //21
         AckReliableSequenced,   //22
-        PeerNotFound            //23
+        PeerNotFound,           //23
+        InvalidProtocol         //24
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 23;
+        private const int LastProperty = 24;
         //Header
         public PacketProperty Property
         {
@@ -174,19 +175,16 @@ namespace LiteNetLib
             ConnectionNumber = connectionNumber;
             Data = data;
         }
+
+        public static int GetProtocolId(NetPacket packet)
+        {
+            return BitConverter.ToInt32(packet.RawData, 1);
+        }
         
         public static NetConnectRequestPacket FromData(NetPacket packet)
         {
             if (packet.ConnectionNumber >= NetConstants.MaxConnectionNumber)
                 return null;
-
-            int protoId = BitConverter.ToInt32(packet.RawData, 1);
-            if (protoId != NetConstants.ProtocolId)
-            {
-                NetUtils.DebugWrite(ConsoleColor.Cyan,
-                    "[NM] Peer connect reject. Invalid protocol ID: " + protoId);
-                return null;
-            }
 
             //Getting new id for peer
             long connectionId = BitConverter.ToInt64(packet.RawData, 5);

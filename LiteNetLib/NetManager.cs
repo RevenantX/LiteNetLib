@@ -285,12 +285,12 @@ namespace LiteNetLib
                     return false;
                 case SocketError.HostUnreachable:
                     if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
-                        DisconnectPeer(fromPeer, DisconnectReason.HostUnreachable, errorCode, true, null, 0, 0);
+                        DisconnectPeerForce(fromPeer, DisconnectReason.HostUnreachable, errorCode, null);
                     CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
                     return false;
                 case SocketError.ConnectionReset: //connection reset (connection closed)
                     if (_peers.TryGetValue(remoteEndPoint, out fromPeer))
-                        DisconnectPeer(fromPeer, DisconnectReason.RemoteConnectionClose, errorCode, true, null, 0, 0);
+                        DisconnectPeerForce(fromPeer, DisconnectReason.RemoteConnectionClose, errorCode, null);
                     return false;
             }
 #if STATS_ENABLED
@@ -301,6 +301,14 @@ namespace LiteNetLib
             return true;
         }
 
+        internal void DisconnectPeerForce(NetPeer peer,
+            DisconnectReason reason,
+            SocketError socketErrorCode,
+            NetPacket eventData)
+        {
+            DisconnectPeer(peer, reason, socketErrorCode, true, null, 0, 0, eventData);
+        }
+
         internal void DisconnectPeer(
             NetPeer peer, 
             DisconnectReason reason,
@@ -308,7 +316,8 @@ namespace LiteNetLib
             bool force,
             byte[] data,
             int start,
-            int count)
+            int count,
+            NetPacket eventData)
         {
             bool isConnected = peer.ConnectionState == ConnectionState.Connected;
             //if already shutdowned. no need send event
@@ -320,7 +329,8 @@ namespace LiteNetLib
                 NetEvent.EType.Disconnect,
                 peer: peer,
                 errorCode: socketErrorCode,
-                disconnectReason: reason);
+                disconnectReason: reason,
+                readerSource: eventData);
         }
 
         private void CreateEvent(
@@ -661,7 +671,7 @@ namespace LiteNetLib
                         {
                             //second reply
                             NetUtils.DebugWrite("PeerNotFound received our connectId: {0}", netPeer.ConnectId);
-                            DisconnectPeer(netPeer, DisconnectReason.RemoteConnectionClose, 0, true, null, 0, 0);
+                            DisconnectPeerForce(netPeer, DisconnectReason.RemoteConnectionClose, 0, null);
                         }
                     }
                     else if (packet.Size == 10 && packet.RawData[1] == 0)
@@ -693,7 +703,10 @@ namespace LiteNetLib
                     if (NatPunchEnabled)
                         NatPunchModule.ProcessMessage(remoteEndPoint, packet);
                     break;
-
+                case PacketProperty.InvalidProtocol:
+                    if (peerFound)
+                        DisconnectPeerForce(netPeer, DisconnectReason.InvalidProtocol, 0, null);
+                    break;
                 case PacketProperty.Disconnect:
                     if (peerFound)
                     {
@@ -703,16 +716,12 @@ namespace LiteNetLib
                             NetPacketPool.Recycle(packet);
                             return;
                         }
-                        if (disconnectResult == DisconnectResult.Disconnect)
-                            _connectedPeersCount--;
-                        CreateEvent(
-                            NetEvent.EType.Disconnect, 
-                            netPeer,
-                            disconnectReason: disconnectResult == DisconnectResult.Disconnect 
-                                ? DisconnectReason.RemoteConnectionClose 
-                                : DisconnectReason.ConnectionRejected,
-                            readerSource: packet
-                        );
+                        DisconnectPeerForce(
+                            netPeer, 
+                            disconnectResult == DisconnectResult.Disconnect
+                            ? DisconnectReason.RemoteConnectionClose
+                            : DisconnectReason.ConnectionRejected,
+                            0, packet);
                     }
                     else
                     {
@@ -728,6 +737,11 @@ namespace LiteNetLib
                         CreateEvent(NetEvent.EType.Connect, netPeer);
                     break;
                 case PacketProperty.ConnectRequest:
+                    if (NetConnectRequestPacket.GetProtocolId(packet) != NetConstants.ProtocolId)
+                    {
+                        SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.InvalidProtocol, 0), remoteEndPoint);
+                        break;
+                    }
                     var connRequest = NetConnectRequestPacket.FromData(packet);
                     if (connRequest != null)
                         ProcessConnectRequest(remoteEndPoint, netPeer, connRequest);
@@ -1183,7 +1197,8 @@ namespace LiteNetLib
                     false,
                     data, 
                     start, 
-                    count);
+                    count,
+                    null);
             }
         }
 
@@ -1193,7 +1208,7 @@ namespace LiteNetLib
         /// <param name="peer">peer to disconnect</param>
         public void DisconnectPeerForce(NetPeer peer)
         {
-            DisconnectPeer(peer, DisconnectReason.DisconnectPeerCalled, 0, true, null, 0, 0);
+            DisconnectPeerForce(peer, DisconnectReason.DisconnectPeerCalled, 0, null);
         }
 
         /// <summary>
@@ -1241,7 +1256,8 @@ namespace LiteNetLib
                 false,
                 data, 
                 start, 
-                count);
+                count,
+                null);
         }
 
         public IEnumerator<NetPeer> GetEnumerator()

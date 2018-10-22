@@ -23,7 +23,8 @@ namespace LiteNetLib
         HostUnreachable,
         RemoteConnectionClose,
         DisconnectPeerCalled,
-        ConnectionRejected
+        ConnectionRejected,
+        InvalidProtocol
     }
 
     /// <summary>

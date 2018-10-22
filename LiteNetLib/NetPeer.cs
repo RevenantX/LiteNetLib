@@ -449,22 +449,14 @@ namespace LiteNetLib
 
         internal DisconnectResult ProcessDisconnect(NetPacket packet)
         {
-            switch (_connectionState)
+            if ((_connectionState == ConnectionState.Connected || _connectionState == ConnectionState.InProgress) &&
+                packet.Size >= 9 &&
+                BitConverter.ToInt64(packet.RawData, 1) == _connectId &&
+                packet.ConnectionNumber == _connectNum)
             {
-                case ConnectionState.Connected:
-                case ConnectionState.InProgress:
-                    if (packet.Size >= 9 &&
-                        BitConverter.ToInt64(packet.RawData, 1) == _connectId &&
-                        packet.ConnectionNumber == _connectNum)
-                    {
-                        DisconnectResult result = _connectionState == ConnectionState.Connected 
-                            ? DisconnectResult.Disconnect 
-                            : DisconnectResult.Reject;
-
-                        _connectionState = ConnectionState.Disconnected;
-                        return result;
-                    }
-                    break;
+                return _connectionState == ConnectionState.Connected
+                    ? DisconnectResult.Disconnect
+                    : DisconnectResult.Reject;
             }
             return DisconnectResult.None;
         }
@@ -918,7 +910,7 @@ namespace LiteNetLib
                             "[UPDATE] Disconnect by timeout: {0} > {1}",
                             _timeSinceLastPacket,
                             _netManager.DisconnectTimeout);
-                        _netManager.DisconnectPeer(this, DisconnectReason.Timeout, 0, true, null, 0, 0);
+                        _netManager.DisconnectPeerForce(this, DisconnectReason.Timeout, 0, null);
                         return;
                     }
                     break;
@@ -947,7 +939,7 @@ namespace LiteNetLib
                         _connectAttempts++;
                         if (_connectAttempts > _netManager.MaxConnectAttempts)
                         {
-                            _netManager.DisconnectPeer(this, DisconnectReason.ConnectionFailed, 0, true, null, 0, 0);
+                            _netManager.DisconnectPeerForce(this, DisconnectReason.ConnectionFailed, 0, null);
                             return;
                         }
 
