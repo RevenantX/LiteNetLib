@@ -704,7 +704,7 @@ namespace LiteNetLib
                         NatPunchModule.ProcessMessage(remoteEndPoint, packet);
                     break;
                 case PacketProperty.InvalidProtocol:
-                    if (peerFound)
+                    if (peerFound && netPeer.ConnectionState == ConnectionState.InProgress)
                         DisconnectPeerForce(netPeer, DisconnectReason.InvalidProtocol, 0, null);
                     break;
                 case PacketProperty.Disconnect:
