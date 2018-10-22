@@ -9,10 +9,26 @@ namespace LiteNetLib.Utils
         protected byte[] _data;
         protected int _position;
         protected int _dataSize;
+        private int _offset;
 
-        public byte this[int i]
+        public byte[] RawData
         {
-            get { return _data[i+_position]; }
+            get { return _data; }
+        }
+
+        public int RawDataSize
+        {
+            get { return _dataSize; }
+        }
+
+        public int UserDataOffset
+        {
+            get { return _offset; }
+        }
+
+        public int UserDataSize
+        {
+            get { return _dataSize - _offset; }
         }
 
         public bool IsNull
@@ -39,6 +55,7 @@ namespace LiteNetLib.Utils
         {
             _data = dataWriter.Data;
             _position = 0;
+            _offset = 0;
             _dataSize = dataWriter.Length;
         }
 
@@ -46,6 +63,7 @@ namespace LiteNetLib.Utils
         {
             _data = source;
             _position = 0;
+            _offset = 0;
             _dataSize = source.Length;
         }
 
@@ -53,6 +71,7 @@ namespace LiteNetLib.Utils
         {
             _data = source;
             _position = offset;
+            _offset = offset;
             _dataSize = source.Length;
         }
 
@@ -60,16 +79,8 @@ namespace LiteNetLib.Utils
         {
             _data = source;
             _position = offset;
+            _offset = offset;
             _dataSize = maxSize;
-        }
-
-        /// <summary>
-        /// Clone NetDataReader without data copy (usable for OnReceive)
-        /// </summary>
-        /// <returns>new NetDataReader instance</returns>
-        public NetDataReader Clone()
-        {
-            return new NetDataReader(_data, _position, _dataSize);
         }
 
         public NetDataReader()
