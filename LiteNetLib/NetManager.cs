@@ -101,7 +101,7 @@ namespace LiteNetLib
         }
         private readonly List<IncomingData> _pingSimulationList = new List<IncomingData>(); 
         private readonly Random _randomGenerator = new Random();
-        private const int MinLatencyTreshold = 5;
+        private const int MinLatencyThreshold = 5;
 #endif
 
         private readonly NetSocket _socket;
@@ -386,7 +386,7 @@ namespace LiteNetLib
             DisconnectPeer(peer, reason, socketErrorCode, true, null, 0, 0, eventData);
         }
 
-        internal void DisconnectPeer(
+        private void DisconnectPeer(
             NetPeer peer, 
             DisconnectReason reason,
             SocketError socketErrorCode, 
@@ -591,7 +591,7 @@ namespace LiteNetLib
             if (SimulateLatency)
             {
                 int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
-                if (latency > MinLatencyTreshold)
+                if (latency > MinLatencyThreshold)
                 {
                     byte[] holdedData = new byte[length];
                     Buffer.BlockCopy(data, 0, holdedData, 0, length);
