@@ -52,7 +52,6 @@
     <Compile Include="NetDebug.cs" />
     <Compile Include="NetExceptions.cs" />
     <Compile Include="NetPacketPool.cs" />
-    <Compile Include="NetPeerCollection.cs" />
     <Compile Include="NetStatistics.cs" />
     <Compile Include="Ntp\NtpPacket.cs" />
     <Compile Include="Ntp\NtpRequest.cs" />

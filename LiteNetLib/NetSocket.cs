@@ -32,10 +32,7 @@ namespace LiteNetLib
         public short Ttl
         {
             get { return _udpSocketv4.Ttl; }
-            set
-            {
-                _udpSocketv4.Ttl = value;
-            }
+            set { _udpSocketv4.Ttl = value; }
         }
 
         static NetSocket()
@@ -116,7 +113,7 @@ namespace LiteNetLib
             {
                 try
                 {
-#if !ENABLE_IL2CPP
+#if !UNITY
                     _udpSocketv6.SetSocketOption(
                         SocketOptionLevel.IPv6, 
                         SocketOptionName.AddMembership,
