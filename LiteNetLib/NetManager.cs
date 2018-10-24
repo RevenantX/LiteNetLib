@@ -111,6 +111,9 @@ namespace LiteNetLib
         private readonly Stack<NetEvent> _netEventsPool;
         private readonly INetEventListener _netEventListener;
 
+        private readonly Dictionary<IPEndPoint, NetPeer> _peersDict;
+        private readonly ReaderWriterLockSlim _peersLock;
+        private volatile NetPeer _headPeer;
         private volatile int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
 
@@ -245,11 +248,6 @@ namespace LiteNetLib
         /// </summary>
         public int PeersCount { get { return _connectedPeersCount; } }
 
-#region NetPeerCollection
-        private readonly Dictionary<IPEndPoint, NetPeer> _peersDict;
-        private readonly ReaderWriterLockSlim _peersLock;
-        private volatile NetPeer _headPeer;
-
         private bool TryGetPeer(IPEndPoint endPoint, out NetPeer peer)
         {
             _peersLock.EnterReadLock();
@@ -308,7 +306,6 @@ namespace LiteNetLib
             peer.PrevPeer = null;
             peer.NextPeer = null;
         }
-#endregion
 
         /// <summary>
         /// NetManager constructor

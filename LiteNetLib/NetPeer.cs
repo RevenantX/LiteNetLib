@@ -562,9 +562,7 @@ namespace LiteNetLib
 
                 //Check for finish
                 if (incomingFragments.ReceivedCount != fragments.Length)
-                {
                     return;
-                }
 
                 NetUtils.DebugWrite("Received all fragments!");
                 NetPacket resultingPacket = _packetPool.GetWithProperty( p.Property, incomingFragments.TotalSize );

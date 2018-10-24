@@ -22,8 +22,6 @@ namespace LiteNetLib
         private Thread _threadv6;
         private bool _running;
         private readonly INetSocketListener _listener;
-
-        private const int Timeout = 100;
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
         internal static readonly bool IPv6Support;
 
@@ -51,6 +49,7 @@ namespace LiteNetLib
             _listener = listener;
         }
 
+        [System.Diagnostics.DebuggerHidden] //fix netcore log with TimeoutExceptions
         private void ReceiveLogic(object state)
         {
             Socket socket = (Socket)state;
@@ -137,8 +136,8 @@ namespace LiteNetLib
         private bool BindSocket(Socket socket, IPEndPoint ep, bool reuseAddress)
         {
             //Setup socket
-            socket.ReceiveTimeout = Timeout;
-            socket.SendTimeout = Timeout;
+            socket.ReceiveTimeout = 500;
+            socket.SendTimeout = 500;
             socket.ExclusiveAddressUse = true;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
