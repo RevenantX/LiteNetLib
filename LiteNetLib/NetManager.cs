@@ -116,6 +116,8 @@ namespace LiteNetLib
         private volatile NetPeer _headPeer;
         private volatile int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
+        private int _lastPeerId;
+        private readonly Queue<int> _peerIds;
 
         internal readonly NetPacketPool NetPacketPool;
 
@@ -228,7 +230,16 @@ namespace LiteNetLib
         /// Automatically recycle NetPacketReader after OnReceive event
         /// </summary>
         public bool AutoRecycle;
-        
+
+        /// <summary>
+        /// First peer. Useful for Client mode
+        /// </summary>
+        /// <returns></returns>
+        public NetPeer FirstPeer
+        {
+            get { return _headPeer; }
+        }
+
         public List<NetPeer> ConnectedPeerList
         {
             get
@@ -262,6 +273,10 @@ namespace LiteNetLib
             NetPeer existingPeer;
             if (_peersDict.TryGetValue(peer.EndPoint, out existingPeer))
             {
+                //return back unused peerId
+                lock (_peerIds)
+                    _peerIds.Enqueue(peer.Id);
+
                 _peersLock.ExitUpgradeableReadLock();
                 return existingPeer;
             }
@@ -305,6 +320,8 @@ namespace LiteNetLib
                 peer.NextPeer.PrevPeer = peer.PrevPeer;
             peer.PrevPeer = null;
             peer.NextPeer = null;
+            lock(_peerIds)
+                _peerIds.Enqueue(peer.Id);
         }
 
         /// <summary>
@@ -323,6 +340,7 @@ namespace LiteNetLib
             _connectedPeerListCache = new List<NetPeer>();
             _peersDict = new Dictionary<IPEndPoint, NetPeer>(new IPEndPointComparer());
             _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+            _peerIds = new Queue<int>();
         }
 
         internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
@@ -629,12 +647,22 @@ namespace LiteNetLib
             {
                 //Accept
                 request.Peer.Accept(request.ConnectionId, request.ConnectionNumber);
-
+                //TODO: sync
                 //Add event
                 CreateEvent(NetEvent.EType.Connect, request.Peer);
 
                 NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connection Id: {0}, EP: {1}",
-                    request.Peer.ConnectId, request.Peer.EndPoint);
+                    request.Peer.ConnectTime, request.Peer.EndPoint);
+            }
+        }
+
+        private int GetNextPeerId()
+        {
+            lock (_peerIds)
+            {
+                if (_peerIds.Count == 0)
+                    return _lastPeerId++;
+                return _peerIds.Dequeue();
             }
         }
 
@@ -648,7 +676,7 @@ namespace LiteNetLib
             //if we have peer
             if (netPeer != null)
             {
-                NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectId, connRequest.ConnectionTime, remoteEndPoint);
+                NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectTime, connRequest.ConnectionTime, remoteEndPoint);
                 var processResult = netPeer.ProcessConnectRequest(connRequest);
                 switch (processResult)
                 {
@@ -665,7 +693,7 @@ namespace LiteNetLib
                         CreateEvent(
                             NetEvent.EType.ConnectionRequest,
                             connectionRequest: new ConnectionRequest(
-                                netPeer.ConnectId,
+                                netPeer.ConnectTime,
                                 connectionNumber,
                                 ConnectionRequestType.PeerToPeer,
                                 connRequest.Data,
@@ -688,7 +716,7 @@ namespace LiteNetLib
             }
             //Add new peer and craete ConnectRequest event
             NetUtils.DebugWrite("[NM] Creating request event: " + connRequest.ConnectionTime);
-            netPeer = new NetPeer(this, remoteEndPoint);
+            netPeer = new NetPeer(this, remoteEndPoint, GetNextPeerId());
             if (TryAddPeer(netPeer) == netPeer)
             {
                 CreateEvent(NetEvent.EType.ConnectionRequest, connectionRequest: new ConnectionRequest(
@@ -735,14 +763,14 @@ namespace LiteNetLib
                             //first reply
                             var p = NetPacketPool.GetWithProperty(PacketProperty.PeerNotFound, 9);
                             p.RawData[1] = 0;
-                            FastBitConverter.GetBytes(p.RawData, 2, netPeer.ConnectId);
+                            FastBitConverter.GetBytes(p.RawData, 2, netPeer.ConnectTime);
                             SendRawAndRecycle(p, remoteEndPoint);
-                            NetUtils.DebugWrite("PeerNotFound sending connectId: {0}", netPeer.ConnectId);
+                            NetUtils.DebugWrite("PeerNotFound sending connectId: {0}", netPeer.ConnectTime);
                         }
-                        else if (packet.Size == 10 && packet.RawData[1] == 1 && BitConverter.ToInt64(packet.RawData, 2) == netPeer.ConnectId) 
+                        else if (packet.Size == 10 && packet.RawData[1] == 1 && BitConverter.ToInt64(packet.RawData, 2) == netPeer.ConnectTime) 
                         {
                             //second reply
-                            NetUtils.DebugWrite("PeerNotFound received our connectId: {0}", netPeer.ConnectId);
+                            NetUtils.DebugWrite("PeerNotFound received our connectId: {0}", netPeer.ConnectTime);
                             DisconnectPeerForce(netPeer, DisconnectReason.RemoteConnectionClose, 0, null);
                         }
                     }
@@ -1154,7 +1182,7 @@ namespace LiteNetLib
             }
             //Create reliable connection
             //And send connection request
-            return TryAddPeer(new NetPeer(this, target, connectionNumber, connectionData));
+            return TryAddPeer(new NetPeer(this, target, GetNextPeerId(), connectionNumber, connectionData));
         }
 
         /// <summary>
@@ -1199,15 +1227,6 @@ namespace LiteNetLib
             _connectedPeersCount = 0;
             lock(_netEventsQueue)
                 _netEventsQueue.Clear();
-        }
-
-        /// <summary>
-        /// Get first peer. Usefull for Client mode
-        /// </summary>
-        /// <returns></returns>
-        public NetPeer GetFirstPeer()
-        {
-            return _headPeer;
         }
 
         public int GetPeersCount(ConnectionState peerState)

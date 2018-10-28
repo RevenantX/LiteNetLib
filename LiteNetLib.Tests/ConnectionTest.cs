@@ -278,7 +278,7 @@ namespace LiteNetLib.Tests
                 server.PollEvents();
             }
 
-            server.DisconnectPeer(server.GetFirstPeer());
+            server.DisconnectPeer(server.FirstPeer);
 
             while (!(clientDisconnected && serverDisconnected))
             {

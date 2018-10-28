@@ -63,7 +63,7 @@ namespace LibSample
                 var peers = Server.GetPeers(ConnectionState.Connected);
                 foreach (var netPeer in peers)
                 {
-                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.ConnectId, netPeer.EndPoint);
+                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);
                 }
             }
 

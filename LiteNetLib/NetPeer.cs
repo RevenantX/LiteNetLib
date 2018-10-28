@@ -132,9 +132,14 @@ namespace LiteNetLib
         public ConnectionState ConnectionState { get { return _connectionState; } }
 
         /// <summary>
-        /// Connection id for internal purposes, but can be used as key in your dictionary of peers
+        /// Connection time for internal purposes
         /// </summary>
-        public long ConnectId { get { return _connectTime; } }
+        internal long ConnectTime { get { return _connectTime; } }
+
+        /// <summary>
+        /// Peer id can be used as key in your dictionary of peers
+        /// </summary>
+        public readonly int Id;
 
         /// <summary>
         /// Peer ip address and port
@@ -178,8 +183,9 @@ namespace LiteNetLib
         public readonly NetStatistics Statistics;
 
         //incoming connection constructor
-        internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint)
+        internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id)
         {
+            Id = id;
             Statistics = new NetStatistics();
             _packetPool = netManager.NetPacketPool;
             _netManager = netManager;
@@ -202,7 +208,8 @@ namespace LiteNetLib
         }
 
         //"Connect to" constructor
-        internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, byte connectNum, NetDataWriter connectData) : this(netManager, remoteEndPoint)
+        internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id, byte connectNum, NetDataWriter connectData) 
+            : this(netManager, remoteEndPoint, id)
         {
             Initialize();
             _connectTime = DateTime.UtcNow.Ticks;

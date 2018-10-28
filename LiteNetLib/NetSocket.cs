@@ -89,7 +89,7 @@ namespace LiteNetLib
 
                     continue;
                 }
-                catch (ObjectDisposedException ex)
+                catch (ObjectDisposedException)
                 {
                     return;
                 }
