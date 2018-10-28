@@ -63,7 +63,10 @@ namespace LiteNetLib
                 //Reading data
                 try
                 {
-                    result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
+                    if (socket.Available == 0 && !socket.Poll(5000, SelectMode.SelectRead))
+                        continue;
+                    result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None,
+                        ref bufferEndPoint);
                 }
                 catch (SocketException ex)
                 {
@@ -74,14 +77,21 @@ namespace LiteNetLib
                         case SocketError.ConnectionReset:
                         case SocketError.MessageSize:
                         case SocketError.TimedOut:
-                            NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
+                            NetUtils.DebugWriteForce(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}",
+                                (int) ex.SocketErrorCode, ex.ToString());
                             break;
                         default:
-                            NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
-                            _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
+                            NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int) ex.SocketErrorCode,
+                                ex.ToString());
+                            _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint) bufferEndPoint);
                             break;
                     }
+
                     continue;
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    return;
                 }
 
                 //All ok!
