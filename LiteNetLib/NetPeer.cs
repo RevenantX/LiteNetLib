@@ -15,11 +15,11 @@ namespace LiteNetLib
     public enum ConnectionState : byte
     {
         Incoming          = 1 << 1,
-        InProgress        = 1 << 2,
+        Outcoming         = 1 << 2,
         Connected         = 1 << 3,
         ShutdownRequested = 1 << 4,
         Disconnected      = 1 << 5,
-        Any = Incoming | InProgress | Connected | ShutdownRequested
+        Any = Incoming | Outcoming | Connected | ShutdownRequested
     }
 
     internal enum ConnectRequestResult
@@ -206,7 +206,7 @@ namespace LiteNetLib
         {
             Initialize();
             _connectTime = DateTime.UtcNow.Ticks;
-            _connectionState = ConnectionState.InProgress;
+            _connectionState = ConnectionState.Outcoming;
             ConnectionNum = connectNum;
 
             //Make initial packet
@@ -237,7 +237,7 @@ namespace LiteNetLib
 
         internal bool ProcessConnectAccept(NetConnectAcceptPacket packet)
         {
-            if (_connectionState != ConnectionState.InProgress)
+            if (_connectionState != ConnectionState.Outcoming)
                 return false;
 
             //check connection id
@@ -449,7 +449,7 @@ namespace LiteNetLib
 
         internal DisconnectResult ProcessDisconnect(NetPacket packet)
         {
-            if ((_connectionState == ConnectionState.Connected || _connectionState == ConnectionState.InProgress) &&
+            if ((_connectionState == ConnectionState.Connected || _connectionState == ConnectionState.Outcoming) &&
                 packet.Size >= 9 &&
                 BitConverter.ToInt64(packet.RawData, 1) == _connectTime &&
                 packet.ConnectionNumber == _connectNum)
@@ -678,29 +678,28 @@ namespace LiteNetLib
             switch (_connectionState)
             {
                 //P2P case or just ID update
-                case ConnectionState.InProgress:
+                case ConnectionState.Outcoming:
                 case ConnectionState.Incoming:
-                    _connectionState = ConnectionState.Incoming;
                     //change connect id if newer
-                    if (connRequest.ConnectionId >= _connectTime)
+                    if (connRequest.ConnectionTime >= _connectTime)
                     {
                         //Change connect id
-                        _connectTime = connRequest.ConnectionId;
+                        _connectTime = connRequest.ConnectionTime;
                         ConnectionNum = connRequest.ConnectionNumber;
                     }
-                    return _connectionState == ConnectionState.InProgress 
+                    return _connectionState == ConnectionState.Outcoming 
                         ? ConnectRequestResult.P2PConnection 
                         : ConnectRequestResult.None;
 
                 case ConnectionState.Connected:
                     //Old connect request
-                    if (connRequest.ConnectionId == _connectTime)
+                    if (connRequest.ConnectionTime == _connectTime)
                     {
                         //just reply accept
                         _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
                     }
                     //New connect request
-                    else if (connRequest.ConnectionId > _connectTime)
+                    else if (connRequest.ConnectionTime > _connectTime)
                     {
                         return ConnectRequestResult.Reconnection;
                     }
@@ -708,7 +707,7 @@ namespace LiteNetLib
 
                 case ConnectionState.Disconnected:
                 case ConnectionState.ShutdownRequested:
-                    if (connRequest.ConnectionId >= _connectTime)
+                    if (connRequest.ConnectionTime >= _connectTime)
                     {
                         return ConnectRequestResult.NewConnection;
                     }
@@ -934,7 +933,7 @@ namespace LiteNetLib
                     }
                     return;
 
-                case ConnectionState.InProgress:
+                case ConnectionState.Outcoming:
                     _connectTimer += deltaTime;
                     if (_connectTimer > _netManager.ReconnectDelay)
                     {

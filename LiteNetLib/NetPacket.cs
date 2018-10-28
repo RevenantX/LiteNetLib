@@ -165,13 +165,13 @@ namespace LiteNetLib
     internal sealed class NetConnectRequestPacket
     {
         public const int HeaderSize = 13;
-        public readonly long ConnectionId;
+        public readonly long ConnectionTime;
         public readonly byte ConnectionNumber;
         public readonly NetDataReader Data;
 
         private NetConnectRequestPacket(long connectionId, byte connectionNumber, NetDataReader data)
         {
-            ConnectionId = connectionId;
+            ConnectionTime = connectionId;
             ConnectionNumber = connectionNumber;
             Data = data;
         }

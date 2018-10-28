@@ -401,7 +401,7 @@ namespace LiteNetLib
                 _connectedPeersCount--;
             CreateEvent(
                 NetEvent.EType.Disconnect,
-                peer: peer,
+                peer,
                 errorCode: socketErrorCode,
                 disconnectReason: reason,
                 readerSource: eventData);
@@ -649,14 +649,12 @@ namespace LiteNetLib
             //if we have peer
             if (netPeer != null)
             {
-                NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectId, connRequest.ConnectionId, remoteEndPoint);
+                NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectId, connRequest.ConnectionTime, remoteEndPoint);
                 var processResult = netPeer.ProcessConnectRequest(connRequest);
                 switch (processResult)
                 {
                     case ConnectRequestResult.Reconnection:
-                        _connectedPeersCount--;
-                        CreateEvent(NetEvent.EType.Disconnect, netPeer, disconnectReason: DisconnectReason.RemoteConnectionClose);
-                        RemovePeer(netPeer);
+                        DisconnectPeerForce(netPeer, DisconnectReason.RemoteConnectionClose, 0, null);
                         //go to new connection
                         break;
                     case ConnectRequestResult.NewConnection:
@@ -686,15 +684,15 @@ namespace LiteNetLib
             }
             else
             {
-                NetUtils.DebugWrite("ConnectRequest Id: {0}, EP: {1}", connRequest.ConnectionId, remoteEndPoint);
+                NetUtils.DebugWrite("ConnectRequest Id: {0}, EP: {1}", connRequest.ConnectionTime, remoteEndPoint);
             }
             //Add new peer and craete ConnectRequest event
-            NetUtils.DebugWrite("[NM] Creating request event: " + connRequest.ConnectionId);
+            NetUtils.DebugWrite("[NM] Creating request event: " + connRequest.ConnectionTime);
             netPeer = new NetPeer(this, remoteEndPoint);
             if (TryAddPeer(netPeer) == netPeer)
             {
                 CreateEvent(NetEvent.EType.ConnectionRequest, connectionRequest: new ConnectionRequest(
-                    connRequest.ConnectionId,
+                    connRequest.ConnectionTime,
                     connectionNumber,
                     ConnectionRequestType.Incoming,
                     connRequest.Data,
@@ -778,7 +776,7 @@ namespace LiteNetLib
                         NatPunchModule.ProcessMessage(remoteEndPoint, packet);
                     break;
                 case PacketProperty.InvalidProtocol:
-                    if (peerFound && netPeer.ConnectionState == ConnectionState.InProgress)
+                    if (peerFound && netPeer.ConnectionState == ConnectionState.Outcoming)
                         DisconnectPeerForce(netPeer, DisconnectReason.InvalidProtocol, 0, null);
                     break;
                 case PacketProperty.Disconnect:
@@ -1146,7 +1144,7 @@ namespace LiteNetLib
                 {
                     //just return already connected peer
                     case ConnectionState.Connected:
-                    case ConnectionState.InProgress:
+                    case ConnectionState.Outcoming:
                     case ConnectionState.Incoming:
                         return peer;
                 }
@@ -1230,7 +1228,7 @@ namespace LiteNetLib
         [Obsolete("Use GetPeers(ConnectionState peerState)")]
         public NetPeer[] GetPeers()
         {
-            return GetPeers(ConnectionState.Connected | ConnectionState.InProgress);
+            return GetPeers(ConnectionState.Connected | ConnectionState.Outcoming);
         } 
 
         /// <summary>
