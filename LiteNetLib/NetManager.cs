@@ -393,11 +393,10 @@ namespace LiteNetLib
             int count,
             NetPacket eventData)
         {
-            bool isConnected = peer.ConnectionState == ConnectionState.Connected;
-            //if already shutdowned. no need send event
+            bool wasConnected = peer.ConnectionState == ConnectionState.Connected;
             if (!peer.Shutdown(data, start, count, force))
                 return;
-            if(isConnected)
+            if(wasConnected)
                 _connectedPeersCount--;
             CreateEvent(
                 NetEvent.EType.Disconnect,
@@ -655,6 +654,7 @@ namespace LiteNetLib
                 {
                     case ConnectRequestResult.Reconnection:
                         DisconnectPeerForce(netPeer, DisconnectReason.RemoteConnectionClose, 0, null);
+                        RemovePeer(netPeer);
                         //go to new connection
                         break;
                     case ConnectRequestResult.NewConnection:
