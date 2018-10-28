@@ -115,7 +115,7 @@ namespace LiteNetLib
         //Connection
         private int _connectAttempts;
         private int _connectTimer;
-        private long _connectId;
+        private long _connectTime;
         private byte _connectNum;
         private ConnectionState _connectionState;
         private NetPacket _shutdownPacket;
@@ -134,7 +134,7 @@ namespace LiteNetLib
         /// <summary>
         /// Connection id for internal purposes, but can be used as key in your dictionary of peers
         /// </summary>
-        public long ConnectId { get { return _connectId; } }
+        public long ConnectId { get { return _connectTime; } }
 
         /// <summary>
         /// Peer ip address and port
@@ -205,34 +205,34 @@ namespace LiteNetLib
         internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, byte connectNum, NetDataWriter connectData) : this(netManager, remoteEndPoint)
         {
             Initialize();
-            _connectId = DateTime.UtcNow.Ticks;
+            _connectTime = DateTime.UtcNow.Ticks;
             _connectionState = ConnectionState.InProgress;
             ConnectionNum = connectNum;
 
             //Make initial packet
-            _connectRequestPacket = NetConnectRequestPacket.Make(connectData, _connectId);
+            _connectRequestPacket = NetConnectRequestPacket.Make(connectData, _connectTime);
             _connectRequestPacket.ConnectionNumber = connectNum;
 
             //Send request
             _netManager.SendRaw(_connectRequestPacket, _remoteEndPoint);
 
-            NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}, ConnectNum: {1}", _connectId, connectNum);
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}, ConnectNum: {1}", _connectTime, connectNum);
         }
 
         //"Accept" incoming constructor
         internal void Accept(long connectId, byte connectNum)
         {
             Initialize();
-            _connectId = connectId;
+            _connectTime = connectId;
             _connectionState = ConnectionState.Connected;
             ConnectionNum = connectNum;
 
             //Make initial packet
-            _connectAcceptPacket = NetConnectAcceptPacket.Make(_connectId, connectNum, false);
+            _connectAcceptPacket = NetConnectAcceptPacket.Make(_connectTime, connectNum, false);
             //Send
             _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
 
-            NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}", _connectId);
+            NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}", _connectTime);
         }
 
         internal bool ProcessConnectAccept(NetConnectAcceptPacket packet)
@@ -241,9 +241,9 @@ namespace LiteNetLib
                 return false;
 
             //check connection id
-            if (packet.ConnectionId != _connectId)
+            if (packet.ConnectionId != _connectTime)
             {
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Invalid connectId: {0}", _connectId);
+                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Invalid connectId: {0}", _connectTime);
                 return false;
             }
             //check connect num
@@ -451,7 +451,7 @@ namespace LiteNetLib
         {
             if ((_connectionState == ConnectionState.Connected || _connectionState == ConnectionState.InProgress) &&
                 packet.Size >= 9 &&
-                BitConverter.ToInt64(packet.RawData, 1) == _connectId &&
+                BitConverter.ToInt64(packet.RawData, 1) == _connectTime &&
                 packet.ConnectionNumber == _connectNum)
             {
                 return _connectionState == ConnectionState.Connected
@@ -463,7 +463,7 @@ namespace LiteNetLib
 
         internal void Reject(long connectionId, byte connectionNumber, byte[] data, int start, int length)
         {
-            _connectId = connectionId;
+            _connectTime = connectionId;
             _connectNum = connectionNumber;
             Shutdown(data, start, length, false);
         }
@@ -492,7 +492,7 @@ namespace LiteNetLib
                 //send shutdown packet
                 _shutdownPacket = new NetPacket(PacketProperty.Disconnect, length);
                 _shutdownPacket.ConnectionNumber = _connectNum;
-                FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectId);
+                FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectTime);
                 if (_shutdownPacket.Size >= _mtu)
                 {
                     //Drop additional data
@@ -682,10 +682,10 @@ namespace LiteNetLib
                 case ConnectionState.Incoming:
                     _connectionState = ConnectionState.Incoming;
                     //change connect id if newer
-                    if (connRequest.ConnectionId >= _connectId)
+                    if (connRequest.ConnectionId >= _connectTime)
                     {
                         //Change connect id
-                        _connectId = connRequest.ConnectionId;
+                        _connectTime = connRequest.ConnectionId;
                         ConnectionNum = connRequest.ConnectionNumber;
                     }
                     return _connectionState == ConnectionState.InProgress 
@@ -694,13 +694,13 @@ namespace LiteNetLib
 
                 case ConnectionState.Connected:
                     //Old connect request
-                    if (connRequest.ConnectionId == _connectId)
+                    if (connRequest.ConnectionId == _connectTime)
                     {
                         //just reply accept
                         _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
                     }
                     //New connect request
-                    else if (connRequest.ConnectionId > _connectId)
+                    else if (connRequest.ConnectionId > _connectTime)
                     {
                         return ConnectRequestResult.Reconnection;
                     }
@@ -708,7 +708,7 @@ namespace LiteNetLib
 
                 case ConnectionState.Disconnected:
                 case ConnectionState.ShutdownRequested:
-                    if (connRequest.ConnectionId >= _connectId)
+                    if (connRequest.ConnectionId >= _connectTime)
                     {
                         return ConnectRequestResult.NewConnection;
                     }
@@ -720,14 +720,19 @@ namespace LiteNetLib
         //Process incoming packet
         internal void ProcessPacket(NetPacket packet)
         {
-            _timeSinceLastPacket = 0;
-            if (packet.ConnectionNumber != _connectNum && 
-                packet.Property != PacketProperty.ShutdownOk) //withou connectionNum
+            //not initialized
+            if (_connectionState == ConnectionState.Incoming)
+            {
+                _packetPool.Recycle(packet);
+                return;
+            }
+            if (packet.ConnectionNumber != _connectNum && packet.Property != PacketProperty.ShutdownOk) //without connectionNum
             {
                 NetUtils.DebugWrite(ConsoleColor.Red, "[RR]Old packet");
                 _packetPool.Recycle(packet);
                 return;
             }
+            _timeSinceLastPacket = 0;
 
             NetUtils.DebugWrite("[RR]PacketProperty: {0}", packet.Property);
             switch (packet.Property)
