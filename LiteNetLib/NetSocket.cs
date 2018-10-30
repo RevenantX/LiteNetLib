@@ -20,7 +20,7 @@ namespace LiteNetLib
         private Socket _udpSocketv6;
         private Thread _threadv4;
         private Thread _threadv6;
-        private bool _running;
+        private volatile bool _running;
         private readonly INetSocketListener _listener;
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
         internal static readonly bool IPv6Support;
@@ -262,18 +262,26 @@ namespace LiteNetLib
         public void Close()
         {
             _running = false;
+            // first close sockets
             if (_udpSocketv4 != null)
             {
                 _udpSocketv4.Close();
                 _udpSocketv4 = null;
-                if (_threadv4 != Thread.CurrentThread)
-                    _threadv4.Join();
-                _threadv4 = null;
             }
             if (_udpSocketv6 != null)
             {
                 _udpSocketv6.Close();
                 _udpSocketv6 = null;
+            }
+            // then join threads
+            if (_threadv4 != null)
+            {
+                if (_threadv4 != Thread.CurrentThread)
+                    _threadv4.Join();
+                _threadv4 = null;
+            }
+            if (_threadv6 != null)
+            {
                 if (_threadv6 != Thread.CurrentThread)
                     _threadv6.Join();
                 _threadv6 = null;
