@@ -148,7 +148,7 @@ namespace LiteNetLib
             //Setup socket
             socket.ReceiveTimeout = 500;
             socket.SendTimeout = 500;
-            socket.ExclusiveAddressUse = true;
+            socket.ExclusiveAddressUse = !reuseAddress;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
