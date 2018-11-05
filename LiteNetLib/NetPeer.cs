@@ -81,11 +81,11 @@ namespace LiteNetLib
         }
  
         //Channels
-        private ReliableChannel _reliableOrderedChannel;
-        private ReliableChannel _reliableUnorderedChannel;
-        private SequencedChannel _sequencedChannel;
-        private SimpleChannel _unreliableChannel;
-        private SequencedChannel _reliableSequencedChannel;
+        private readonly ReliableChannel _reliableOrderedChannel;
+        private readonly ReliableChannel _reliableUnorderedChannel;
+        private readonly SequencedChannel _sequencedChannel;
+        private readonly SimpleChannel _unreliableChannel;
+        private readonly SequencedChannel _reliableSequencedChannel;
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
@@ -105,7 +105,7 @@ namespace LiteNetLib
             public int TotalSize;
         }
         private ushort _fragmentId;
-        private Dictionary<ushort, IncomingFragments> _holdedFragments;
+        private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
 
         //Merging
         private readonly NetPacket _mergeData;
@@ -194,11 +194,6 @@ namespace LiteNetLib
             _mergeData = new NetPacket(PacketProperty.Merged, NetConstants.MaxPacketSize);
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
             _pingPacket = new NetPacket(PacketProperty.Ping, 0);
-        }
-
-        //for low memory consumption
-        private void Initialize()
-        {
             _reliableOrderedChannel = new ReliableChannel(this, true);
             _reliableUnorderedChannel = new ReliableChannel(this, false);
             _sequencedChannel = new SequencedChannel(this, false);
@@ -211,7 +206,6 @@ namespace LiteNetLib
         internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id, byte connectNum, NetDataWriter connectData) 
             : this(netManager, remoteEndPoint, id)
         {
-            Initialize();
             _connectTime = DateTime.UtcNow.Ticks;
             _connectionState = ConnectionState.Outcoming;
             ConnectionNum = connectNum;
@@ -229,7 +223,6 @@ namespace LiteNetLib
         //"Accept" incoming constructor
         internal void Accept(long connectId, byte connectNum)
         {
-            Initialize();
             _connectTime = connectId;
             _connectionState = ConnectionState.Connected;
             ConnectionNum = connectNum;
@@ -335,9 +328,8 @@ namespace LiteNetLib
         {
             if (_connectionState == ConnectionState.ShutdownRequested || 
                 _connectionState == ConnectionState.Disconnected)
-            {
                 return;
-            }
+
             //Prepare
             PacketProperty property = SendOptionsToProperty(options);
             NetUtils.DebugWrite("[RS]Packet: " + property);
@@ -872,6 +864,8 @@ namespace LiteNetLib
         /// </summary>
         public void Flush()
         {
+            if (_connectionState != ConnectionState.Connected)
+                return;
             lock (_flushLock)
             {
                 _reliableOrderedChannel.SendNextPackets();
