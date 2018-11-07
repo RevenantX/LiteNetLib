@@ -400,7 +400,7 @@ namespace LiteNetLib.Tests
             ManagerStack.ServerListener(1).NetworkReceiveUnconnectedEvent += (point, reader, type) =>
             {
                 var serverWriter = new NetDataWriter();
-                writer.Put("Server reponse");
+                writer.Put("Server response");
                 server.SendDiscoveryResponse(serverWriter, point);
             };
 
