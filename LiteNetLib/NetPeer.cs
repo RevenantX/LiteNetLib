@@ -510,14 +510,10 @@ namespace LiteNetLib
 
         private void UpdateRoundTripTime(int roundTripTime)
         {
-            //Calc average round trip time
             _rtt += roundTripTime;
             _rttCount++;
             _avgRtt = _rtt/_rttCount;
-
-            //recalc resend delay
-            double avgRtt = _avgRtt <= 0 ? 0.1 : _avgRtt;
-            _resendDelay = 25 + (avgRtt * 2.1); // 25 ms + double rtt
+            _resendDelay = 25.0 + _avgRtt * 2.1; // 25 ms + double rtt
         }
 
         internal void AddIncomingPacket(NetPacket p)
