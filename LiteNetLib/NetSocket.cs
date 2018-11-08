@@ -77,7 +77,7 @@ namespace LiteNetLib
                         case SocketError.ConnectionReset:
                         case SocketError.MessageSize:
                         case SocketError.TimedOut:
-                            NetUtils.DebugWriteForce(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}",
+                            NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Ignored error: {0} - {1}",
                                 (int) ex.SocketErrorCode, ex.ToString());
                             break;
                         default:
