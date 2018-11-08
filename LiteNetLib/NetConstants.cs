@@ -47,11 +47,8 @@ namespace LiteNetLib
         public const ushort MaxSequence = 32768;
         public const ushort HalfMaxSequence = MaxSequence / 2;
 
-        //internal
-        internal const string MulticastGroupIPv6 = "FF02:0:0:0:0:0:0:1";
-
         //protocol
-        internal const int ProtocolId = 5;
+        internal const int ProtocolId = 6;
         internal const int MaxUdpHeaderSize = 68;
 
         internal static readonly int[] PossibleMtu =

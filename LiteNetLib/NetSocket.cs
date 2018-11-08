@@ -22,7 +22,7 @@ namespace LiteNetLib
         private Thread _threadv6;
         private volatile bool _running;
         private readonly INetSocketListener _listener;
-        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
+        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("FF02:0:0:0:0:0:0:1");
         internal static readonly bool IPv6Support;
 
         public int LocalPort { get; private set; }

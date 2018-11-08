@@ -3,6 +3,7 @@
 #endif
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using LiteNetLib.Utils;
 
@@ -47,15 +48,13 @@ namespace LiteNetLib
         private int _rtt;
         private int _avgRtt;
         private int _rttCount;
-        private ushort _pingSequence;
-        private ushort _remotePingSequence;
         private double _resendDelay = 27.0;
 
         private int _pingSendTimer;
         private const int RttResetDelay = 1000;
         private int _rttResetTimer;
 
-        private DateTime _pingTimeStart;
+        private readonly Stopwatch _pingTimer = new Stopwatch();
         private int _timeSinceLastPacket;
 
         //Common            
@@ -194,6 +193,7 @@ namespace LiteNetLib
             _mergeData = new NetPacket(PacketProperty.Merged, NetConstants.MaxPacketSize);
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
             _pingPacket = new NetPacket(PacketProperty.Ping, 0);
+            _pingPacket.Sequence = 1;
             _reliableOrderedChannel = new ReliableChannel(this, true);
             _reliableUnorderedChannel = new ReliableChannel(this, false);
             _sequencedChannel = new SequencedChannel(this, false);
@@ -516,9 +516,7 @@ namespace LiteNetLib
             _avgRtt = _rtt/_rttCount;
 
             //recalc resend delay
-            double avgRtt = _avgRtt;
-            if (avgRtt <= 0.0)
-                avgRtt = 0.1;
+            double avgRtt = _avgRtt <= 0 ? 0.1 : _avgRtt;
             _resendDelay = 25 + (avgRtt * 2.1); // 25 ms + double rtt
         }
 
@@ -753,31 +751,23 @@ namespace LiteNetLib
                     break;
                 //If we get ping, send pong
                 case PacketProperty.Ping:
-                    if (NetUtils.RelativeSequenceNumber(packet.Sequence, _remotePingSequence) < 0)
+                    if (NetUtils.RelativeSequenceNumber(packet.Sequence, _pongPacket.Sequence) > 0)
                     {
-                        _packetPool.Recycle(packet);
-                        break;
+                        NetUtils.DebugWrite("[PP]Ping receive, send pong");
+                        _pongPacket.Sequence = packet.Sequence;
+                        _netManager.SendRaw(_pongPacket, _remoteEndPoint);
                     }
-                    NetUtils.DebugWrite("[PP]Ping receive, send pong");
-                    _remotePingSequence = packet.Sequence;
                     _packetPool.Recycle(packet);
-
-                    //send
-                    _pongPacket.Sequence = _remotePingSequence;
-                    _netManager.SendRaw(_pongPacket, _remoteEndPoint);
                     break;
 
                 //If we get pong, calculate ping time and rtt
                 case PacketProperty.Pong:
-                    if (NetUtils.RelativeSequenceNumber(packet.Sequence, _pingSequence) < 0)
+                    if (packet.Sequence == _pingPacket.Sequence)
                     {
-                        _packetPool.Recycle(packet);
-                        break;
+                        _pingTimer.Stop();
+                        UpdateRoundTripTime((int)_pingTimer.ElapsedMilliseconds);
+                        NetUtils.DebugWrite("[PP]Ping: {0} - {1}", packet.Sequence, _pingTimer.ElapsedMilliseconds);
                     }
-                    _pingSequence = packet.Sequence;
-                    int rtt = (int)(DateTime.UtcNow - _pingTimeStart).TotalMilliseconds;
-                    UpdateRoundTripTime(rtt);
-                    NetUtils.DebugWrite("[PP]Ping: {0}", rtt);
                     _packetPool.Recycle(packet);
                     break;
 
@@ -961,16 +951,16 @@ namespace LiteNetLib
             if (_pingSendTimer >= _netManager.PingInterval)
             {
                 NetUtils.DebugWrite("[PP] Send ping...");
-
                 //reset timer
                 _pingSendTimer = 0;
-
                 //send ping
-                _pingPacket.Sequence = _pingSequence;
+                _pingPacket.Sequence++;
+                //ping timeout
+                if (_pingTimer.IsRunning)
+                    UpdateRoundTripTime((int)_pingTimer.ElapsedMilliseconds);
+                _pingTimer.Reset();
+                _pingTimer.Start();
                 _netManager.SendRaw(_pingPacket, _remoteEndPoint);
-
-                //reset timer
-                _pingTimeStart = DateTime.UtcNow;
             }
 
             //RTT - round trip time
