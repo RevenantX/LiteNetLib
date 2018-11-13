@@ -54,14 +54,8 @@ namespace LiteNetLib
 
         private static IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily)
         {
-#if NETCORE
-            var hostTask = Dns.GetHostEntryAsync(hostStr);
-            hostTask.Wait();
-            var host = hostTask.Result;
-#else
-            var host = Dns.GetHostEntry(hostStr);
-#endif
-            foreach (IPAddress ip in host.AddressList)
+            IPAddress[] addresses = ResolveAddresses(hostStr);
+            foreach (IPAddress ip in addresses)
             {
                 if (ip.AddressFamily == addressFamily)
                 {
@@ -69,6 +63,18 @@ namespace LiteNetLib
                 }
             }
             return null;
+        }
+
+        private static IPAddress[] ResolveAddresses(string hostStr)
+        {
+#if NETCORE
+            var hostTask = Dns.GetHostEntryAsync(hostStr);
+            hostTask.GetAwaiter().GetResult();
+            var host = hostTask.Result;
+#else
+            var host = Dns.GetHostEntry(hostStr);
+#endif
+            return host.AddressList;
         }
 
         /// <summary>
@@ -124,14 +130,9 @@ namespace LiteNetLib
             //Fallback mode (unity android)
             if (targetList.Count == 0)
             {
-#if NETCORE
-                var hostTask = Dns.GetHostEntryAsync(Dns.GetHostName());
-                hostTask.Wait();
-                var host = hostTask.Result;
-#else
-                var host = Dns.GetHostEntry(Dns.GetHostName());
-#endif
-                foreach (IPAddress ip in host.AddressList)
+                string hostname = Dns.GetHostName();
+                IPAddress[] addresses = ResolveAddresses(Dns.GetHostName());
+                foreach (IPAddress ip in addresses)
                 {
                     if((ipv4 && ip.AddressFamily == AddressFamily.InterNetwork) ||
                        (ipv6 && ip.AddressFamily == AddressFamily.InterNetworkV6))
