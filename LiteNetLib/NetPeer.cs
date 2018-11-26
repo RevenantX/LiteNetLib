@@ -44,18 +44,15 @@ namespace LiteNetLib
     public sealed class NetPeer
     {
         //Ping and RTT
-        private int _ping;
         private int _rtt;
         private int _avgRtt;
         private int _rttCount;
         private double _resendDelay = 27.0;
-
         private int _pingSendTimer;
-        private const int RttResetDelay = 1000;
         private int _rttResetTimer;
-
         private readonly Stopwatch _pingTimer = new Stopwatch();
         private int _timeSinceLastPacket;
+        private long _remoteDelta;
 
         //Common            
         private readonly IPEndPoint _remoteEndPoint;
@@ -148,12 +145,29 @@ namespace LiteNetLib
         /// <summary>
         /// Current ping in milliseconds
         /// </summary>
-        public int Ping { get { return _ping; } }
+        public int Ping { get { return _avgRtt/2; } }
 
         /// <summary>
         /// Current MTU - Maximum Transfer Unit ( maximum udp packet size without fragmentation )
         /// </summary>
         public int Mtu { get { return _mtu; } }
+
+        /// <summary>
+        /// Delta with remote time in ticks (not accurate)
+        /// positive - remote time > our time
+        /// </summary>
+        public long RemoteTimeDelta
+        {
+            get { return _remoteDelta; }
+        }
+
+        /// <summary>
+        /// Remote UTC time (not accurate)
+        /// </summary>
+        public DateTime RemoteUtcTime
+        {
+            get { return new DateTime(DateTime.UtcNow.Ticks + _remoteDelta); }
+        }
 
         /// <summary>
         /// Time since last packet received (including internal library packets)
@@ -750,6 +764,7 @@ namespace LiteNetLib
                     if (NetUtils.RelativeSequenceNumber(packet.Sequence, _pongPacket.Sequence) > 0)
                     {
                         NetUtils.DebugWrite("[PP]Ping receive, send pong");
+                        FastBitConverter.GetBytes(_pongPacket.RawData, 3, DateTime.UtcNow.Ticks);
                         _pongPacket.Sequence = packet.Sequence;
                         _netManager.SendRaw(_pongPacket, _remoteEndPoint);
                     }
@@ -761,8 +776,10 @@ namespace LiteNetLib
                     if (packet.Sequence == _pingPacket.Sequence)
                     {
                         _pingTimer.Stop();
-                        UpdateRoundTripTime((int)_pingTimer.ElapsedMilliseconds);
-                        NetUtils.DebugWrite("[PP]Ping: {0} - {1}", packet.Sequence, _pingTimer.ElapsedMilliseconds);
+                        long elapsedMs = _pingTimer.ElapsedMilliseconds;
+                        _remoteDelta = BitConverter.ToInt64(packet.RawData, 3) + (elapsedMs * TimeSpan.TicksPerMillisecond ) / 2 - DateTime.UtcNow.Ticks;
+                        UpdateRoundTripTime((int)elapsedMs);
+                        NetUtils.DebugWrite("[PP]Ping: {0} - {1} - {2}", packet.Sequence, elapsedMs, _remoteDelta);
                     }
                     _packetPool.Recycle(packet);
                     break;
@@ -961,13 +978,11 @@ namespace LiteNetLib
 
             //RTT - round trip time
             _rttResetTimer += deltaTime;
-            if (_rttResetTimer >= RttResetDelay)
+            if (_rttResetTimer >= _netManager.PingInterval * 3)
             {
                 _rttResetTimer = 0;
-                //Rtt update
                 _rtt = _avgRtt;
-                _ping = _avgRtt;
-                _netManager.ConnectionLatencyUpdated(this, _ping);
+                _netManager.ConnectionLatencyUpdated(this, _avgRtt/2);
                 _rttCount = 1;
             }
 

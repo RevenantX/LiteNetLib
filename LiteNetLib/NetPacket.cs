@@ -120,11 +120,10 @@ namespace LiteNetLib
                 case PacketProperty.ReliableUnordered:
                 case PacketProperty.ReliableSequenced:
                 case PacketProperty.Sequenced:
-                case PacketProperty.Ping:
-                case PacketProperty.Pong:
                 case PacketProperty.AckReliable:
                 case PacketProperty.AckReliableOrdered:
                 case PacketProperty.AckReliableSequenced:
+                case PacketProperty.Ping:
                     return NetConstants.SequencedHeaderSize;
                 case PacketProperty.ConnectRequest:
                     return NetConnectRequestPacket.HeaderSize;
@@ -132,6 +131,8 @@ namespace LiteNetLib
                     return NetConnectAcceptPacket.Size;
                 case PacketProperty.Disconnect:
                     return NetConstants.HeaderSize + 8;
+                case PacketProperty.Pong:
+                    return NetConstants.SequencedHeaderSize + 8;
                 default:
                     return NetConstants.HeaderSize;
             }
