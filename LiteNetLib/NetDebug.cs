@@ -1,13 +1,19 @@
-﻿using System;
-
-namespace LiteNetLib
+﻿namespace LiteNetLib
 {
+    public enum NetLogLevel
+    {
+        Warning,
+        Error,
+        Trace,
+        Info
+    }
+
     /// <summary>
     /// Interface to implement for your own logger
     /// </summary>
     public interface INetLogger
     {
-        void WriteNet(ConsoleColor color, string str, params object[] args);
+        void WriteNet(NetLogLevel level, string str, params object[] args);
     }
 
     /// <summary>

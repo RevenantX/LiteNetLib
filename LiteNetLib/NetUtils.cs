@@ -169,7 +169,7 @@ namespace LiteNetLib
         // ===========================================
         internal static void PrintInterfaceInfos()
         {
-            DebugWriteForce(ConsoleColor.Green, "IPv6Support: {0}", NetSocket.IPv6Support);
+            DebugWriteForce(NetLogLevel.Info, "IPv6Support: {0}", NetSocket.IPv6Support);
             try
             {
                 foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
@@ -180,7 +180,7 @@ namespace LiteNetLib
                             ip.Address.AddressFamily == AddressFamily.InterNetworkV6)
                         {
                             DebugWriteForce(
-                                ConsoleColor.Green,
+                                NetLogLevel.Info,
                                 "Interface: {0}, Type: {1}, Ip: {2}, OpStatus: {3}",
                                 ni.Name,
                                 ni.NetworkInterfaceType.ToString(),
@@ -192,7 +192,7 @@ namespace LiteNetLib
             }
             catch (Exception e)
             {
-                DebugWriteForce(ConsoleColor.Red, "Error while getting interface infos: {0}", e.ToString());
+                DebugWriteForce(NetLogLevel.Info, "Error while getting interface infos: {0}", e.ToString());
             }
         }
 
@@ -202,24 +202,21 @@ namespace LiteNetLib
         }
 
         private static readonly object DebugLogLock = new object();
-        private static void DebugWriteLogic(ConsoleColor color, string str, params object[] args)
+        private static void DebugWriteLogic(NetLogLevel logLevel, string str, params object[] args)
         {
             lock (DebugLogLock)
             {
-
                 if (NetDebug.Logger == null)
                 {
 #if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
                     UnityEngine.Debug.Log(string.Format(str, args));
 #else
-                    Console.ForegroundColor = color;
                     Console.WriteLine(str, args);
-                    Console.ForegroundColor = ConsoleColor.Gray;
 #endif
                 }
                 else
                 {
-                    NetDebug.Logger.WriteNet(color, str, args);
+                    NetDebug.Logger.WriteNet(logLevel, str, args);
                 }
             }
         }
@@ -227,31 +224,31 @@ namespace LiteNetLib
         [Conditional("DEBUG_MESSAGES")]
         internal static void DebugWrite(string str, params object[] args)
         {
-            DebugWriteLogic(ConsoleColor.DarkGreen, str, args);
+            DebugWriteLogic(NetLogLevel.Trace, str, args);
         }
 
         [Conditional("DEBUG_MESSAGES")]
-        internal static void DebugWrite(ConsoleColor color, string str, params object[] args)
+        internal static void DebugWrite(NetLogLevel level, string str, params object[] args)
         {
-            DebugWriteLogic(color, str, args);
+            DebugWriteLogic(level, str, args);
         }
 
         [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
         internal static void DebugWriteForce(string str, params object[] args)
         {
-            DebugWriteLogic(ConsoleColor.DarkGreen, str, args);
+            DebugWriteLogic(NetLogLevel.Trace, str, args);
         }
 
         [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
-        internal static void DebugWriteForce(ConsoleColor color, string str, params object[] args)
+        internal static void DebugWriteForce(NetLogLevel level, string str, params object[] args)
         {
-            DebugWriteLogic(color, str, args);
+            DebugWriteLogic(level, str, args);
         }
 
         [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
         internal static void DebugWriteError(string str, params object[] args)
         {
-            DebugWriteLogic(ConsoleColor.Red, str, args);
+            DebugWriteLogic(NetLogLevel.Error, str, args);
         }
     }
 }

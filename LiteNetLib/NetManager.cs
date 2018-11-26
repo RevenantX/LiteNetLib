@@ -373,7 +373,7 @@ namespace LiteNetLib
             switch (errorCode)
             {
                 case SocketError.MessageSize:
-                    NetUtils.DebugWrite(ConsoleColor.Red, "[SRD] 10040, datalen: {0}", length);
+                    NetUtils.DebugWrite(NetLogLevel.Trace, "[SRD] 10040, datalen: {0}", length);
                     return false;
                 case SocketError.HostUnreachable:
                     if (TryGetPeer(remoteEndPoint, out fromPeer))
@@ -640,7 +640,7 @@ namespace LiteNetLib
         {
             if (request.Result == ConnectionRequestResult.Reject)
             {
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Peer connect reject.");
+                NetUtils.DebugWrite(NetLogLevel.Trace, "[NM] Peer connect reject.");
                 request.Peer.Reject(request.ConnectionId, request.ConnectionNumber, rejectData, start, length);
             }
             else
@@ -651,7 +651,7 @@ namespace LiteNetLib
                 //Add event
                 CreateEvent(NetEvent.EType.Connect, request.Peer);
 
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received peer connection Id: {0}, EP: {1}",
+                NetUtils.DebugWrite(NetLogLevel.Trace, "[NM] Received peer connection Id: {0}, EP: {1}",
                     request.Peer.ConnectTime, request.Peer.EndPoint);
             }
         }
@@ -861,7 +861,7 @@ namespace LiteNetLib
             if (!TryGetPeer(remoteEndPoint, out fromPeer))
                 return;
 
-            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NM] Received message");
+            NetUtils.DebugWrite(NetLogLevel.Trace, "[NM] Received message");
             DeliveryMethod deliveryMethod;
             switch (packet.Property)
             {

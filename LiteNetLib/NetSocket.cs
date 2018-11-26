@@ -79,7 +79,7 @@ namespace LiteNetLib
                         case SocketError.ConnectionReset:
                         case SocketError.MessageSize:
                         case SocketError.TimedOut:
-                            NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R]Ignored error: {0} - {1}",
+                            NetUtils.DebugWrite(NetLogLevel.Trace, "[R]Ignored error: {0} - {1}",
                                 (int) ex.SocketErrorCode, ex.ToString());
                             break;
                         default:
@@ -97,7 +97,7 @@ namespace LiteNetLib
                 }
 
                 //All ok!
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
+                NetUtils.DebugWrite(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
                 _listener.OnMessageReceived(receiveBuffer, result, 0, (IPEndPoint)bufferEndPoint);
             }
         }
@@ -187,7 +187,7 @@ namespace LiteNetLib
             try
             {
                 socket.Bind(ep);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
+                NetUtils.DebugWrite(NetLogLevel.Trace, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
             }
             catch (SocketException ex)
             {
@@ -238,7 +238,7 @@ namespace LiteNetLib
                 if (remoteEndPoint.AddressFamily == AddressFamily.InterNetworkV6 && IPv6Support)
                     socket = _udpSocketv6;
                 int result = socket.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
+                NetUtils.DebugWrite(NetLogLevel.Trace, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
                 return result;
             }
             catch (SocketException ex)

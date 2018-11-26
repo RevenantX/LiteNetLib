@@ -217,7 +217,7 @@ namespace LiteNetLib
             //Send request
             _netManager.SendRaw(_connectRequestPacket, _remoteEndPoint);
 
-            NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}, ConnectNum: {1}", _connectTime, connectNum);
+            NetUtils.DebugWrite(NetLogLevel.Trace, "[CC] ConnectId: {0}, ConnectNum: {1}", _connectTime, connectNum);
         }
 
         //"Accept" incoming constructor
@@ -232,7 +232,7 @@ namespace LiteNetLib
             //Send
             _netManager.SendRaw(_connectAcceptPacket, _remoteEndPoint);
 
-            NetUtils.DebugWrite(ConsoleColor.Cyan, "[CC] ConnectId: {0}", _connectTime);
+            NetUtils.DebugWrite(NetLogLevel.Trace, "[CC] ConnectId: {0}", _connectTime);
         }
 
         internal bool ProcessConnectAccept(NetConnectAcceptPacket packet)
@@ -243,13 +243,13 @@ namespace LiteNetLib
             //check connection id
             if (packet.ConnectionId != _connectTime)
             {
-                NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Invalid connectId: {0}", _connectTime);
+                NetUtils.DebugWrite(NetLogLevel.Trace, "[NC] Invalid connectId: {0}", _connectTime);
                 return false;
             }
             //check connect num
             ConnectionNum = packet.ConnectionNumber;
 
-            NetUtils.DebugWrite(ConsoleColor.Cyan, "[NC] Received connection accept");
+            NetUtils.DebugWrite(NetLogLevel.Trace, "[NC] Received connection accept");
             _timeSinceLastPacket = 0;
             _connectionState = ConnectionState.Connected;
             return true;
@@ -720,7 +720,7 @@ namespace LiteNetLib
             }
             if (packet.ConnectionNumber != _connectNum && packet.Property != PacketProperty.ShutdownOk) //without connectionNum
             {
-                NetUtils.DebugWrite(ConsoleColor.Red, "[RR]Old packet");
+                NetUtils.DebugWrite(NetLogLevel.Trace, "[RR]Old packet");
                 _packetPool.Recycle(packet);
                 return;
             }
@@ -837,7 +837,7 @@ namespace LiteNetLib
                 return;
             }
 
-            NetUtils.DebugWrite(ConsoleColor.DarkYellow, "[P]SendingPacket: " + packet.Property);
+            NetUtils.DebugWrite(NetLogLevel.Trace, "[P]SendingPacket: " + packet.Property);
             _netManager.SendRaw(packet, _remoteEndPoint);
 #if STATS_ENABLED
             Statistics.PacketsSent++;
