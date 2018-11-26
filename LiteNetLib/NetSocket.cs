@@ -1,6 +1,9 @@
 #if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
 #define UNITY
 #endif
+#if NETCORE
+using System.Runtime.InteropServices;
+#endif
 
 using System;
 using System.Net;
@@ -49,7 +52,6 @@ namespace LiteNetLib
             _listener = listener;
         }
 
-        [System.Diagnostics.DebuggerHidden] //fix netcore log with TimeoutExceptions
         private void ReceiveLogic(object state)
         {
             Socket socket = (Socket)state;
@@ -155,7 +157,10 @@ namespace LiteNetLib
             if (socket.AddressFamily == AddressFamily.InterNetwork)
             {
                 socket.Ttl = NetConstants.SocketTTL;
-                
+
+#if NETCORE
+                if(!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+#endif
                 try { socket.DontFragment = true; }
                 catch (SocketException e)
                 {
