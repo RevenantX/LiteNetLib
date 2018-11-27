@@ -79,11 +79,11 @@ namespace LiteNetLib
                         case SocketError.ConnectionReset:
                         case SocketError.MessageSize:
                         case SocketError.TimedOut:
-                            NetUtils.DebugWrite(NetLogLevel.Trace, "[R]Ignored error: {0} - {1}",
+                            NetDebug.Write(NetLogLevel.Trace, "[R]Ignored error: {0} - {1}",
                                 (int) ex.SocketErrorCode, ex.ToString());
                             break;
                         default:
-                            NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int) ex.SocketErrorCode,
+                            NetDebug.WriteError("[R]Error code: {0} - {1}", (int) ex.SocketErrorCode,
                                 ex.ToString());
                             _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint) bufferEndPoint);
                             break;
@@ -97,7 +97,7 @@ namespace LiteNetLib
                 }
 
                 //All ok!
-                NetUtils.DebugWrite(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
+                NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
                 _listener.OnMessageReceived(receiveBuffer, result, 0, (IPEndPoint)bufferEndPoint);
             }
         }
@@ -164,13 +164,13 @@ namespace LiteNetLib
                 try { socket.DontFragment = true; }
                 catch (SocketException e)
                 {
-                    NetUtils.DebugWriteError("[B]DontFragment error: {0}", e.SocketErrorCode);
+                    NetDebug.WriteError("[B]DontFragment error: {0}", e.SocketErrorCode);
                 }
 
                 try { socket.EnableBroadcast = true; }
                 catch (SocketException e)
                 {
-                    NetUtils.DebugWriteError("[B]Broadcast error: {0}", e.SocketErrorCode);
+                    NetDebug.WriteError("[B]Broadcast error: {0}", e.SocketErrorCode);
                 }
             }
             else
@@ -187,11 +187,11 @@ namespace LiteNetLib
             try
             {
                 socket.Bind(ep);
-                NetUtils.DebugWrite(NetLogLevel.Trace, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
+                NetDebug.Write(NetLogLevel.Trace, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
             }
             catch (SocketException ex)
             {
-                NetUtils.DebugWriteError("[B]Bind exception: {0}", ex.ToString());
+                NetDebug.WriteError("[B]Bind exception: {0}", ex.ToString());
                 //hack for iOS (Unity3D)
                 if (ex.SocketErrorCode == SocketError.AddressFamilyNotSupported)
                     return true;
@@ -224,7 +224,7 @@ namespace LiteNetLib
             }
             catch (Exception ex)
             {
-                NetUtils.DebugWriteError("[S][MCAST]" + ex);
+                NetDebug.WriteError("[S][MCAST]" + ex);
                 return false;
             }
             return success;
@@ -238,7 +238,7 @@ namespace LiteNetLib
                 if (remoteEndPoint.AddressFamily == AddressFamily.InterNetworkV6 && IPv6Support)
                     socket = _udpSocketv6;
                 int result = socket.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint);
-                NetUtils.DebugWrite(NetLogLevel.Trace, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
+                NetDebug.Write(NetLogLevel.Trace, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
                 return result;
             }
             catch (SocketException ex)
@@ -251,7 +251,7 @@ namespace LiteNetLib
                     case SocketError.MessageSize: //do nothing              
                         break;
                     default:
-                        NetUtils.DebugWriteError("[S]" + ex);
+                        NetDebug.WriteError("[S]" + ex);
                         break;
                 }    
                 errorCode = ex.SocketErrorCode;
@@ -259,7 +259,7 @@ namespace LiteNetLib
             }
             catch (Exception ex)
             {
-                NetUtils.DebugWriteError("[S]" + ex);
+                NetDebug.WriteError("[S]" + ex);
                 return -1;
             }
         }

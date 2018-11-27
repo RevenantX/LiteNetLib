@@ -120,7 +120,7 @@ namespace LiteNetLib.Ntp
 
             if (length < 48)
             {
-                NetUtils.DebugWrite(NetLogLevel.Trace, "NTP response too short: {}", length);
+                NetDebug.Write(NetLogLevel.Trace, "NTP response too short: {}", length);
                 _onRequestComplete(null);
                 return;
             }
@@ -132,7 +132,7 @@ namespace LiteNetLib.Ntp
             }
             catch (InvalidOperationException ex)
             {
-                NetUtils.DebugWrite(NetLogLevel.Trace, "NTP response error: {}", ex.Message);
+                NetDebug.Write(NetLogLevel.Trace, "NTP response error: {}", ex.Message);
                 packet = null;
             }
             _onRequestComplete(packet);

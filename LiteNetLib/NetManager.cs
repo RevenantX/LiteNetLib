@@ -373,7 +373,7 @@ namespace LiteNetLib
             switch (errorCode)
             {
                 case SocketError.MessageSize:
-                    NetUtils.DebugWrite(NetLogLevel.Trace, "[SRD] 10040, datalen: {0}", length);
+                    NetDebug.Write(NetLogLevel.Trace, "[SRD] 10040, datalen: {0}", length);
                     return false;
                 case SocketError.HostUnreachable:
                     if (TryGetPeer(remoteEndPoint, out fromPeer))
@@ -467,7 +467,7 @@ namespace LiteNetLib
 
         private void ProcessEvent(NetEvent evt)
         {
-            NetUtils.DebugWrite("[NM] Processing event: " + evt.Type);
+            NetDebug.Write("[NM] Processing event: " + evt.Type);
             bool emptyData = evt.DataReader.IsNull;
             switch (evt.Type)
             {
@@ -593,7 +593,7 @@ namespace LiteNetLib
             if (errorCode != 0)
             {
                 CreateEvent(NetEvent.EType.Error, errorCode: errorCode);
-                NetUtils.DebugWriteError("[NM] Receive error: {0}", errorCode);
+                NetDebug.WriteError("[NM] Receive error: {0}", errorCode);
                 return;
             }
 #if DEBUG
@@ -632,7 +632,7 @@ namespace LiteNetLib
             catch(Exception e)
             {
                 //protects socket receive thread
-                NetUtils.DebugWriteError("[NM] SocketReceiveThread error: " + e );
+                NetDebug.WriteError("[NM] SocketReceiveThread error: " + e );
             }
         }
 
@@ -640,7 +640,7 @@ namespace LiteNetLib
         {
             if (request.Result == ConnectionRequestResult.Reject)
             {
-                NetUtils.DebugWrite(NetLogLevel.Trace, "[NM] Peer connect reject.");
+                NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
                 request.Peer.Reject(request.ConnectionId, request.ConnectionNumber, rejectData, start, length);
             }
             else
@@ -651,7 +651,7 @@ namespace LiteNetLib
                 //Add event
                 CreateEvent(NetEvent.EType.Connect, request.Peer);
 
-                NetUtils.DebugWrite(NetLogLevel.Trace, "[NM] Received peer connection Id: {0}, EP: {1}",
+                NetDebug.Write(NetLogLevel.Trace, "[NM] Received peer connection Id: {0}, EP: {1}",
                     request.Peer.ConnectTime, request.Peer.EndPoint);
             }
         }
@@ -676,7 +676,7 @@ namespace LiteNetLib
             //if we have peer
             if (netPeer != null)
             {
-                NetUtils.DebugWrite("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectTime, connRequest.ConnectionTime, remoteEndPoint);
+                NetDebug.Write("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}", netPeer.ConnectTime, connRequest.ConnectionTime, remoteEndPoint);
                 var processResult = netPeer.ProcessConnectRequest(connRequest);
                 switch (processResult)
                 {
@@ -712,10 +712,10 @@ namespace LiteNetLib
             }
             else
             {
-                NetUtils.DebugWrite("ConnectRequest Id: {0}, EP: {1}", connRequest.ConnectionTime, remoteEndPoint);
+                NetDebug.Write("ConnectRequest Id: {0}, EP: {1}", connRequest.ConnectionTime, remoteEndPoint);
             }
             //Add new peer and craete ConnectRequest event
-            NetUtils.DebugWrite("[NM] Creating request event: " + connRequest.ConnectionTime);
+            NetDebug.Write("[NM] Creating request event: " + connRequest.ConnectionTime);
             netPeer = new NetPeer(this, remoteEndPoint, GetNextPeerId());
             if (TryAddPeer(netPeer) == netPeer)
             {
@@ -740,7 +740,7 @@ namespace LiteNetLib
             if (!packet.FromBytes(reusableBuffer, 0, count))
             {
                 NetPacketPool.Recycle(packet);
-                NetUtils.DebugWriteError("[NM] DataReceived: bad!");
+                NetDebug.WriteError("[NM] DataReceived: bad!");
                 return;
             }
 
@@ -765,12 +765,12 @@ namespace LiteNetLib
                             p.RawData[1] = 0;
                             FastBitConverter.GetBytes(p.RawData, 2, netPeer.ConnectTime);
                             SendRawAndRecycle(p, remoteEndPoint);
-                            NetUtils.DebugWrite("PeerNotFound sending connectId: {0}", netPeer.ConnectTime);
+                            NetDebug.Write("PeerNotFound sending connectId: {0}", netPeer.ConnectTime);
                         }
                         else if (packet.Size == 10 && packet.RawData[1] == 1 && BitConverter.ToInt64(packet.RawData, 2) == netPeer.ConnectTime) 
                         {
                             //second reply
-                            NetUtils.DebugWrite("PeerNotFound received our connectId: {0}", netPeer.ConnectTime);
+                            NetDebug.Write("PeerNotFound received our connectId: {0}", netPeer.ConnectTime);
                             DisconnectPeerForce(netPeer, DisconnectReason.RemoteConnectionClose, 0, null);
                         }
                     }
@@ -861,7 +861,7 @@ namespace LiteNetLib
             if (!TryGetPeer(remoteEndPoint, out fromPeer))
                 return;
 
-            NetUtils.DebugWrite(NetLogLevel.Trace, "[NM] Received message");
+            NetDebug.Write(NetLogLevel.Trace, "[NM] Received message");
             DeliveryMethod deliveryMethod;
             switch (packet.Property)
             {
@@ -1201,7 +1201,7 @@ namespace LiteNetLib
         {
             if (!IsRunning)
                 return;
-            NetUtils.DebugWrite("[NM] Stop");
+            NetDebug.Write("[NM] Stop");
 
             //Send last disconnect
             for(var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)

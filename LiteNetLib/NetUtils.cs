@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
@@ -169,7 +168,7 @@ namespace LiteNetLib
         // ===========================================
         internal static void PrintInterfaceInfos()
         {
-            DebugWriteForce(NetLogLevel.Info, "IPv6Support: {0}", NetSocket.IPv6Support);
+            NetDebug.WriteForce(NetLogLevel.Info, "IPv6Support: {0}", NetSocket.IPv6Support);
             try
             {
                 foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
@@ -179,7 +178,7 @@ namespace LiteNetLib
                         if (ip.Address.AddressFamily == AddressFamily.InterNetwork ||
                             ip.Address.AddressFamily == AddressFamily.InterNetworkV6)
                         {
-                            DebugWriteForce(
+                            NetDebug.WriteForce(
                                 NetLogLevel.Info,
                                 "Interface: {0}, Type: {1}, Ip: {2}, OpStatus: {3}",
                                 ni.Name,
@@ -192,63 +191,13 @@ namespace LiteNetLib
             }
             catch (Exception e)
             {
-                DebugWriteForce(NetLogLevel.Info, "Error while getting interface infos: {0}", e.ToString());
+                NetDebug.WriteForce(NetLogLevel.Info, "Error while getting interface infos: {0}", e.ToString());
             }
         }
 
         internal static int RelativeSequenceNumber(int number, int expected)
         {
             return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
-        }
-
-        private static readonly object DebugLogLock = new object();
-        private static void DebugWriteLogic(NetLogLevel logLevel, string str, params object[] args)
-        {
-            lock (DebugLogLock)
-            {
-                if (NetDebug.Logger == null)
-                {
-#if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
-                    UnityEngine.Debug.Log(string.Format(str, args));
-#else
-                    Console.WriteLine(str, args);
-#endif
-                }
-                else
-                {
-                    NetDebug.Logger.WriteNet(logLevel, str, args);
-                }
-            }
-        }
-
-        [Conditional("DEBUG_MESSAGES")]
-        internal static void DebugWrite(string str, params object[] args)
-        {
-            DebugWriteLogic(NetLogLevel.Trace, str, args);
-        }
-
-        [Conditional("DEBUG_MESSAGES")]
-        internal static void DebugWrite(NetLogLevel level, string str, params object[] args)
-        {
-            DebugWriteLogic(level, str, args);
-        }
-
-        [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
-        internal static void DebugWriteForce(string str, params object[] args)
-        {
-            DebugWriteLogic(NetLogLevel.Trace, str, args);
-        }
-
-        [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
-        internal static void DebugWriteForce(NetLogLevel level, string str, params object[] args)
-        {
-            DebugWriteLogic(level, str, args);
-        }
-
-        [Conditional("DEBUG_MESSAGES"), Conditional("DEBUG")]
-        internal static void DebugWriteError(string str, params object[] args)
-        {
-            DebugWriteLogic(NetLogLevel.Error, str, args);
         }
     }
 }

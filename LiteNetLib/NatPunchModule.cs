@@ -154,7 +154,7 @@ namespace LiteNetLib
 
             //Read info
             string additionalInfo = dr.GetString(MaxTokenLength);
-            NetUtils.DebugWrite(NetLogLevel.Trace, "[NAT] punch received from {0} - additional info: {1}", senderEndPoint, additionalInfo);
+            NetDebug.Write(NetLogLevel.Trace, "[NAT] punch received from {0} - additional info: {1}", senderEndPoint, additionalInfo);
 
             //Release punch success to client; enabling him to Connect() to msg.Sender if token is ok
             lock (_successEvents)
@@ -171,7 +171,7 @@ namespace LiteNetLib
             IPEndPoint remoteExternal = dr.GetNetEndPoint();
             string token = dr.GetString(MaxTokenLength);
 
-            NetUtils.DebugWrite(NetLogLevel.Trace, "[NAT] introduction received; we are designated " + (hostByte == HostByte ? "host" : "client"));
+            NetDebug.Write(NetLogLevel.Trace, "[NAT] introduction received; we are designated " + (hostByte == HostByte ? "host" : "client"));
             NetDataWriter writer = new NetDataWriter();
 
             // send internal punch
@@ -180,7 +180,7 @@ namespace LiteNetLib
             writer.Put(token);
             SocketError errorCode = 0;
             _socket.SendTo(writer.Data, 0, writer.Length, remoteInternal, ref errorCode);
-            NetUtils.DebugWrite(NetLogLevel.Trace, "[NAT] internal punch sent to " + remoteInternal);
+            NetDebug.Write(NetLogLevel.Trace, "[NAT] internal punch sent to " + remoteInternal);
 
             // send external punch
             writer.Reset();
@@ -198,7 +198,7 @@ namespace LiteNetLib
                 _socket.SendTo(writer.Data, 0, writer.Length, remoteExternal, ref errorCode);
             }
     
-            NetUtils.DebugWrite(NetLogLevel.Trace, "[NAT] external punch sent to " + remoteExternal);
+            NetDebug.Write(NetLogLevel.Trace, "[NAT] external punch sent to " + remoteExternal);
         }
 
         private void HandleNatIntroductionRequest(IPEndPoint senderEndPoint, NetDataReader dr)

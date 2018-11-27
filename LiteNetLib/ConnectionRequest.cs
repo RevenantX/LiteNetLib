@@ -73,7 +73,7 @@ namespace LiteNetLib
             }
             catch
             {
-                NetUtils.DebugWriteError("[AC] Invalid incoming data");
+                NetDebug.WriteError("[AC] Invalid incoming data");
             }
             Result = ConnectionRequestResult.Reject;
             _listener.OnConnectionSolved(this, null, 0, 0);
