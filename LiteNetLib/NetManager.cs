@@ -293,14 +293,6 @@ namespace LiteNetLib
             return peer;
         }
 
-        private void RemovePeers(List<NetPeer> peersList)
-        {
-            _peersLock.EnterWriteLock();
-            for (int i = 0; i < peersList.Count; i++)
-                RemovePeerInternal(peersList[i]);
-            _peersLock.ExitWriteLock();
-        }
-
         private void RemovePeer(NetPeer peer)
         {
             _peersLock.EnterWriteLock();
@@ -573,7 +565,10 @@ namespace LiteNetLib
                 }
                 if (peersToRemove.Count > 0)
                 {
-                    RemovePeers(peersToRemove);
+                    _peersLock.EnterWriteLock();
+                    for (int i = 0; i < peersToRemove.Count; i++)
+                        RemovePeerInternal(peersToRemove[i]);
+                    _peersLock.ExitWriteLock();
                     peersToRemove.Clear();
                 }               
 #if STATS_ENABLED
