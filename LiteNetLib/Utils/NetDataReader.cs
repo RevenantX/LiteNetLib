@@ -482,6 +482,192 @@ namespace LiteNetLib.Utils
         }
         #endregion
 
+        #region TryGetMethods
+        public bool TryGetByte(out byte result)
+        {
+            if (AvailableBytes >= 1)
+            {
+                result = GetByte();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetSByte(out sbyte result)
+        {
+            if (AvailableBytes >= 1)
+            {
+                result = GetSByte();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetBool(out bool result)
+        {
+            if (AvailableBytes >= 1)
+            {
+                result = GetBool();
+                return true;
+            }
+            result = false;
+            return false;
+        }
+
+        public bool TryGetChar(out char result)
+        {
+            if (AvailableBytes >= 2)
+            {
+                result = GetChar();
+                return true;
+            }
+            result = '\0';
+            return false;
+        }
+
+        public bool TryGetShort(out short result)
+        {
+            if (AvailableBytes >= 2)
+            {
+                result = GetShort();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetUShort(out ushort result)
+        {
+            if (AvailableBytes >= 2)
+            {
+                result = GetUShort();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetInt(out int result)
+        {
+            if (AvailableBytes >= 4)
+            {
+                result = GetInt();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetUInt(out uint result)
+        {
+            if (AvailableBytes >= 4)
+            {
+                result = GetUInt();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetLong(out long result)
+        {
+            if (AvailableBytes >= 8)
+            {
+                result = GetLong();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetULong(out ulong result)
+        {
+            if (AvailableBytes >= 8)
+            {
+                result = GetULong();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetFloat(out float result)
+        {
+            if (AvailableBytes >= 4)
+            {
+                result = GetFloat();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetDouble(out double result)
+        {
+            if (AvailableBytes >= 8)
+            {
+                result = GetDouble();
+                return true;
+            }
+            result = 0;
+            return false;
+        }
+
+        public bool TryGetString(out string result)
+        {
+            if (AvailableBytes >= 4)
+            {
+                var bytesCount = PeekInt();
+                if (AvailableBytes >= bytesCount + 4)
+                {
+                    result = GetString();
+                    return true;
+                }
+            }
+            result = null;
+            return false;
+        }
+
+        public bool TryGetStringArray(out string[] result)
+        {
+            ushort size;
+            if (!TryGetUShort(out size))
+            {
+                result = null;
+                return false;
+            }
+
+            result = new string[size];
+            for (int i = 0; i < size; i++)
+            {
+                if (!TryGetString(out result[i]))
+                {
+                    result = null;
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool TryGetBytesWithLength(out byte[] result)
+        {
+            if (AvailableBytes >= 4)
+            {
+                var length = PeekInt();
+                if (AvailableBytes >= length + 4)
+                {
+                    result = GetBytesWithLength();
+                    return true;
+                }
+            }
+            result = null;
+            return false;
+        }
+        #endregion
+
         public void Clear()
         {
             _position = 0;
