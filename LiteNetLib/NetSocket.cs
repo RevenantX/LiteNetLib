@@ -173,15 +173,6 @@ namespace LiteNetLib
                     NetDebug.WriteError("[B]Broadcast error: {0}", e.SocketErrorCode);
                 }
             }
-            else
-            {
-#if !UNITY
-                try { socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName) 27, true); }
-                catch (SocketException)
-                {
-                }
-#endif
-            }
 
             //Bind
             try
@@ -189,12 +180,32 @@ namespace LiteNetLib
                 socket.Bind(ep);
                 NetDebug.Write(NetLogLevel.Trace, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
             }
-            catch (SocketException ex)
+            catch (SocketException bindException)
             {
-                NetDebug.WriteError("[B]Bind exception: {0}", ex.ToString());
-                //hack for iOS (Unity3D)
-                if (ex.SocketErrorCode == SocketError.AddressFamilyNotSupported)
-                    return true;
+                switch (bindException.SocketErrorCode)
+                {
+                    //IPv6 bind fix
+                    case SocketError.AddressAlreadyInUse:
+                        if (socket.AddressFamily == AddressFamily.InterNetworkV6)
+                        {
+                            try
+                            {
+                                socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
+                                socket.Bind(ep);
+                            }
+                            catch (SocketException ex)
+                            {
+                                NetDebug.WriteError("[B]Bind exception: {0}, errorCode: {1}", ex.ToString(), ex.SocketErrorCode);
+                                return false;
+                            }
+                            return true;
+                        }
+                        break;
+                    //hack for iOS (Unity3D)
+                    case SocketError.AddressFamilyNotSupported:
+                        return true;
+                }
+                NetDebug.WriteError("[B]Bind exception: {0}, errorCode: {1}", bindException.ToString(), bindException.SocketErrorCode);
                 return false;
             }
             return true;

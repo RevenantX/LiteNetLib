@@ -4,7 +4,7 @@ using UnityEngine;
 using LiteNetLib;
 using LiteNetLib.Utils;
 
-public class GameServer : MonoBehaviour, INetEventListener
+public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 {
     private NetManager _netServer;
     private NetPeer _ourPeer;
@@ -14,6 +14,7 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     void Start()
     {
+        NetDebug.Logger = this;
         _dataWriter = new NetDataWriter();
         _netServer = new NetManager(this);
         _netServer.Start(5000);
@@ -39,6 +40,7 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     void OnDestroy()
     {
+        NetDebug.Logger = null;
         if (_netServer != null)
             _netServer.Stop();
     }
@@ -82,5 +84,10 @@ public class GameServer : MonoBehaviour, INetEventListener
 
     public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
     {
+    }
+
+    public void WriteNet(NetLogLevel level, string str, params object[] args)
+    {
+        Debug.LogFormat(str, args);
     }
 }

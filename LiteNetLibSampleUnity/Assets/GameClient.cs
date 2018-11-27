@@ -25,7 +25,7 @@ public class GameClient : MonoBehaviour, INetEventListener
     {
         _netClient.PollEvents();
 
-        var peer = _netClient.GetFirstPeer();
+        var peer = _netClient.FirstPeer;
         if (peer != null && peer.ConnectionState == ConnectionState.Connected)
         {
             //Fixed delta set to 0.05
