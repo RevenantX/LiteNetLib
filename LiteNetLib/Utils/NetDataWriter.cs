@@ -242,9 +242,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + len * 4 + 2);
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(double[] value)
@@ -254,9 +252,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + len * 8 + 2);
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(long[] value)
@@ -266,9 +262,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + len * 8 + 2);
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(ulong[] value)
@@ -278,9 +272,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + len * 8 + 2);
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(int[] value)
@@ -290,9 +282,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + len * 4 + 2);
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(uint[] value)
@@ -302,9 +292,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + len * 4 + 2);
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(ushort[] value)
@@ -314,9 +302,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + len * 2 + 2);
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(short[] value)
@@ -326,9 +312,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + len * 2 + 2);
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(bool[] value)
@@ -338,9 +322,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + len + 2);
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(string[] value)
@@ -348,9 +330,7 @@ namespace LiteNetLib.Utils
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i]);
-            }
         }
 
         public void PutArray(string[] value, int maxLength)
@@ -358,9 +338,7 @@ namespace LiteNetLib.Utils
             ushort len = value == null ? (ushort)0 : (ushort)value.Length;
             Put(len);
             for (int i = 0; i < len; i++)
-            {
                 Put(value[i], maxLength);
-            }
         }
 
         public void Put(IPEndPoint endPoint)
