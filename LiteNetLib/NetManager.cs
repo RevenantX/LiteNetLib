@@ -184,11 +184,6 @@ namespace LiteNetLib
         public bool DiscoveryEnabled = false;
 
         /// <summary>
-        /// Merge small packets into one before sending to reduce outgoing packets count. (May increase a bit outgoing data size)
-        /// </summary>
-        public bool MergeEnabled = false;
-
-        /// <summary>
         /// Delay betwen initial connection attempts
         /// </summary>
         public int ReconnectDelay = 500;
@@ -340,49 +335,48 @@ namespace LiteNetLib
             CreateEvent(NetEvent.EType.ConnectionLatencyUpdated, fromPeer, latency: latency);
         }
 
-        internal bool SendRawAndRecycle(NetPacket packet, IPEndPoint remoteEndPoint)
+        internal int SendRawAndRecycle(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             var result = SendRaw(packet.RawData, 0, packet.Size, remoteEndPoint);
             NetPacketPool.Recycle(packet);
             return result;
         }
 
-        internal bool SendRaw(NetPacket packet, IPEndPoint remoteEndPoint)
+        internal int SendRaw(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             return SendRaw(packet.RawData, 0, packet.Size, remoteEndPoint);
         }
 
-        internal bool SendRaw(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
+        internal int SendRaw(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
             if (!IsRunning)
-                return false;
+                return 0;
 
             SocketError errorCode = 0;
-            if (_socket.SendTo(message, start, length, remoteEndPoint, ref errorCode) <= 0)
-                return false;
-
+            int result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode);
             NetPeer fromPeer;
             switch (errorCode)
             {
                 case SocketError.MessageSize:
                     NetDebug.Write(NetLogLevel.Trace, "[SRD] 10040, datalen: {0}", length);
-                    return false;
+                    return -1;
                 case SocketError.HostUnreachable:
                     if (TryGetPeer(remoteEndPoint, out fromPeer))
                         DisconnectPeerForce(fromPeer, DisconnectReason.HostUnreachable, errorCode, null);
                     CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
-                    return false;
+                    return -1;
                 case SocketError.ConnectionReset: //connection reset (connection closed)
                     if (TryGetPeer(remoteEndPoint, out fromPeer))
                         DisconnectPeerForce(fromPeer, DisconnectReason.RemoteConnectionClose, errorCode, null);
-                    return false;
+                    return -1;
             }
+            if (result <= 0)
+                return 0;
 #if STATS_ENABLED
             Statistics.PacketsSent++;
             Statistics.BytesSent += (uint)length;
 #endif
-
-            return true;
+            return result;
         }
 
         internal void DisconnectPeerForce(NetPeer peer,

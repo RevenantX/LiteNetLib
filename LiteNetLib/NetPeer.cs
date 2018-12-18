@@ -77,11 +77,9 @@ namespace LiteNetLib
         }
  
         //Channels
-        private readonly ReliableChannel _reliableOrderedChannel;
-        private readonly ReliableChannel _reliableUnorderedChannel;
-        private readonly SequencedChannel _sequencedChannel;
         private readonly SimpleChannel _unreliableChannel;
-        private readonly SequencedChannel _reliableSequencedChannel;
+        private readonly Dictionary<byte, BaseChannel> _channels;
+        private BaseChannel _headChannel;
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
@@ -179,10 +177,6 @@ namespace LiteNetLib
         /// </summary>
         public NetManager NetManager { get { return _netManager; } }
 
-        public int PacketsCountInReliableQueue { get { return _reliableUnorderedChannel.PacketsInQueue; } }
-
-        public int PacketsCountInReliableOrderedQueue { get { return _reliableOrderedChannel.PacketsInQueue; } }
-
         internal double ResendDelay { get { return _resendDelay; } }
 
         /// <summary>
@@ -194,6 +188,12 @@ namespace LiteNetLib
         /// Statistics of peer connection
         /// </summary>
         public readonly NetStatistics Statistics;
+
+        private const int ChannelsCount = 32;
+        private const int ChannelReliableOrderedIdx = 0;
+        private const int ChannelReliableUnorderedIdx = ChannelsCount;
+        private const int ChannelReliableSequencedIdx = ChannelsCount * 2;
+        private const int ChannelSequencedIdx = ChannelsCount * 3;
 
         //incoming connection constructor
         internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id)
@@ -208,12 +208,16 @@ namespace LiteNetLib
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
             _pingPacket = new NetPacket(PacketProperty.Ping, 0);
             _pingPacket.Sequence = 1;
-            _reliableOrderedChannel = new ReliableChannel(this, true);
-            _reliableUnorderedChannel = new ReliableChannel(this, false);
-            _sequencedChannel = new SequencedChannel(this, false);
+            _channels = new Dictionary<byte, BaseChannel>(8);
             _unreliableChannel = new SimpleChannel(this);
-            _reliableSequencedChannel = new SequencedChannel(this, true);
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
+        }
+
+        private void CreateChannel(BaseChannel newChannel, byte idx)
+        {
+            _channels[idx] = newChannel;
+            newChannel.Next = _headChannel;
+            _headChannel = newChannel;
         }
 
         //"Connect to" constructor
@@ -269,23 +273,6 @@ namespace LiteNetLib
             return true;
         }
 
-        private static PacketProperty SendOptionsToProperty(DeliveryMethod options)
-        {
-            switch (options)
-            {
-                case DeliveryMethod.ReliableUnordered:
-                    return PacketProperty.ReliableUnordered;
-                case DeliveryMethod.Sequenced:
-                    return PacketProperty.Sequenced;
-                case DeliveryMethod.ReliableOrdered:
-                    return PacketProperty.ReliableOrdered;
-                case DeliveryMethod.ReliableSequenced:
-                    return PacketProperty.ReliableSequenced;
-                default:
-                    return PacketProperty.Unreliable;
-            }
-        }
-
         /// <summary>
         /// Gets maximum size of packet that will be not fragmented.
         /// </summary>
@@ -293,7 +280,26 @@ namespace LiteNetLib
         /// <returns>size in bytes</returns>
         public int GetMaxSinglePacketSize(DeliveryMethod options)
         {
-            return _mtu - NetPacket.GetHeaderSize(SendOptionsToProperty(options));
+            PacketProperty property;
+            switch (options)
+            {
+                case DeliveryMethod.ReliableUnordered:
+                    property = PacketProperty.ReliableUnordered;
+                    break;
+                case DeliveryMethod.Sequenced:
+                    property = PacketProperty.Sequenced;
+                    break;
+                case DeliveryMethod.ReliableOrdered:
+                    property = PacketProperty.ReliableOrdered;
+                    break;
+                case DeliveryMethod.ReliableSequenced:
+                    property = PacketProperty.ReliableSequenced;
+                    break;
+                default:
+                    property = PacketProperty.Unreliable;
+                    break;
+            }
+            return _mtu - NetPacket.GetHeaderSize(property);
         }
 
         /// <summary>
@@ -308,7 +314,7 @@ namespace LiteNetLib
         /// </exception>
         public void Send(byte[] data, DeliveryMethod options)
         {
-            Send(data, 0, data.Length, options);
+            SendInternal(data, 0, data.Length, 0, options);
         }
 
         /// <summary>
@@ -323,7 +329,7 @@ namespace LiteNetLib
         /// </exception>
         public void Send(NetDataWriter dataWriter, DeliveryMethod options)
         {
-            Send(dataWriter.Data, 0, dataWriter.Length, options);
+            SendInternal(dataWriter.Data, 0, dataWriter.Length, 0, options);
         }
 
         /// <summary>
@@ -340,36 +346,53 @@ namespace LiteNetLib
         /// </exception>
         public void Send(byte[] data, int start, int length, DeliveryMethod options)
         {
-            if (_connectionState == ConnectionState.ShutdownRequested || 
+            SendInternal(data, start, length, 0, options);
+        }
+
+        private void SendInternal(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
+        {
+            if (_connectionState == ConnectionState.ShutdownRequested ||
                 _connectionState == ConnectionState.Disconnected)
                 return;
-
-            //Prepare
-            PacketProperty property = SendOptionsToProperty(options);
-            NetDebug.Write("[RS]Packet: " + property);
+            if (channelNumber >= ChannelsCount)
+                return;
 
             //Select channel
-            BaseChannel channel;
-            switch (property)
+            PacketProperty property = PacketProperty.Unreliable;
+            bool canBeFragmented = false;
+            switch (options)
             {
-                case PacketProperty.ReliableUnordered:
-                    channel = _reliableUnorderedChannel;
+                case DeliveryMethod.ReliableUnordered:
+                    channelNumber += ChannelReliableUnorderedIdx;
+                    if (_channels[channelNumber] == null)
+                        CreateChannel(new ReliableChannel(this, false, channelNumber), channelNumber);
+                    property = PacketProperty.ReliableUnordered;
+                    canBeFragmented = true;
                     break;
-                case PacketProperty.Sequenced:
-                    channel = _sequencedChannel;
+                case DeliveryMethod.Sequenced:
+                    channelNumber += ChannelSequencedIdx;
+                    if (_channels[channelNumber] == null)
+                        CreateChannel(new SequencedChannel(this, false, channelNumber), channelNumber);
+                    property = PacketProperty.Sequenced;
                     break;
-                case PacketProperty.ReliableOrdered:
-                    channel = _reliableOrderedChannel;
+                case DeliveryMethod.ReliableOrdered:
+                    channelNumber += ChannelReliableOrderedIdx;
+                    if (_channels[channelNumber] == null)
+                        CreateChannel(new ReliableChannel(this, true, channelNumber), channelNumber);
+                    property = PacketProperty.ReliableOrdered;
+                    canBeFragmented = true;
                     break;
-                case PacketProperty.Unreliable:
-                    channel = _unreliableChannel;
+                case DeliveryMethod.ReliableSequenced:
+                    channelNumber += ChannelReliableSequencedIdx;
+                    if (_channels[channelNumber] == null)
+                        CreateChannel(new SequencedChannel(this, true, channelNumber), channelNumber);
+                    property = PacketProperty.ReliableSequenced;
                     break;
-                case PacketProperty.ReliableSequenced:
-                    channel = _reliableSequencedChannel;
-                    break;
-                default:
-                    throw new InvalidPacketException("Unknown packet property: " + property);
             }
+            BaseChannel channel = options == DeliveryMethod.Unreliable ? _unreliableChannel : _channels[channelNumber];
+
+            //Prepare  
+            NetDebug.Write("[RS]Packet: " + property);
 
             //Check fragmentation
             int headerSize = NetPacket.GetHeaderSize(property);
@@ -377,13 +400,9 @@ namespace LiteNetLib
             int mtu = _mtu;
             if (length + headerSize > mtu)
             {
-                if (options == DeliveryMethod.Sequenced || 
-                    options == DeliveryMethod.Unreliable ||
-                    options == DeliveryMethod.ReliableSequenced)
-                {
+                if (!canBeFragmented)
                     throw new TooBigPacketException("Unreliable packet size exceeded maximum of " + (_mtu - headerSize) + " bytes");
-                }
-                
+
                 int packetFullSize = mtu - headerSize;
                 int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
 
@@ -674,7 +693,7 @@ namespace LiteNetLib
                 FastBitConverter.GetBytes(p.RawData, p.Size - 4, newMtu);//and end of packet
 
                 //Must check result for MTU fix
-                if (!_netManager.SendRawAndRecycle(p, _remoteEndPoint))
+                if (_netManager.SendRawAndRecycle(p, _remoteEndPoint) == -1)
                     _finishMtu = true;
             }
         }
@@ -785,37 +804,26 @@ namespace LiteNetLib
                     _packetPool.Recycle(packet);
                     break;
 
-                //Process ack
-                case PacketProperty.AckReliable:
-                    _reliableUnorderedChannel.ProcessAck(packet);
-                    _packetPool.Recycle(packet);
-                    break;
-
-                case PacketProperty.AckReliableOrdered:
-                    _reliableOrderedChannel.ProcessAck(packet);
-                    _packetPool.Recycle(packet);
-                    break;
-
-                //Process in order packets
-                case PacketProperty.Sequenced:
-                    _sequencedChannel.ProcessPacket(packet);
+                case PacketProperty.Ack:
+                    BaseChannel channel;
+                    if (_channels.TryGetValue(packet.RawData[3], out channel))
+                        channel.ProcessPacket(packet);
                     break;
 
                 case PacketProperty.ReliableUnordered:
-                    _reliableUnorderedChannel.ProcessPacket(packet);
+                    _channels[ChannelReliableUnorderedIdx].ProcessPacket(packet);
                     break;
 
                 case PacketProperty.ReliableOrdered:
-                    _reliableOrderedChannel.ProcessPacket(packet);
+                    _channels[ChannelReliableOrderedIdx].ProcessPacket(packet);
+                    break;
+
+                case PacketProperty.Sequenced:
+                    _channels[ChannelSequencedIdx].ProcessPacket(packet);
                     break;
 
                 case PacketProperty.ReliableSequenced:
-                    _reliableSequencedChannel.ProcessPacket(packet);
-                    break;
-
-                case PacketProperty.AckReliableSequenced:
-                    _reliableSequencedChannel.ProcessAck(packet);
-                    _packetPool.Recycle(packet);
+                    _channels[ChannelReliableSequencedIdx].ProcessPacket(packet);
                     break;
 
                 //Simple packet without acks
@@ -840,27 +848,53 @@ namespace LiteNetLib
             }
         }
 
+        private void SendMerged()
+        {
+            if (_mergeCount == 0)
+                return;
+            int bytesSent;
+            if (_mergeCount > 1)
+            {
+                NetDebug.Write("[P]Send merged: " + _mergePos + ", count: " + _mergeCount);
+                bytesSent = _netManager.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
+            }
+            else
+            {
+                //Send without length information and merging
+                bytesSent = _netManager.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, _remoteEndPoint);
+            }
+#if STATS_ENABLED
+            Statistics.PacketsSent++;
+            Statistics.BytesSent += (ulong)bytesSent;
+#endif
+            _mergePos = 0;
+            _mergeCount = 0;
+        }
+
         internal void SendUserData(NetPacket packet)
         {
             packet.ConnectionNumber = _connectNum;
-            //2 - merge byte + minimal packet size + datalen(ushort)
-            if (_netManager.MergeEnabled && _mergePos + packet.Size + NetConstants.HeaderSize*2 + 2 < _mtu)
+            //merge header + siz
+            int mergedPacketSize = NetConstants.HeaderSize + packet.Size + 2;
+            const int sizeTreshold = 20;
+            if (mergedPacketSize + sizeTreshold >= _mtu)
             {
-                FastBitConverter.GetBytes(_mergeData.RawData, _mergePos + NetConstants.HeaderSize, (ushort)packet.Size);
-                Buffer.BlockCopy(packet.RawData, 0, _mergeData.RawData, _mergePos + NetConstants.HeaderSize + 2, packet.Size);
-                _mergePos += packet.Size + 2;
-                _mergeCount++;
-
-                //DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2) + ", count: " + _mergeCount);
+                NetDebug.Write(NetLogLevel.Trace, "[P]SendingPacket: " + packet.Property);
+                int bytesSent = _netManager.SendRaw(packet, _remoteEndPoint);
+#if STATS_ENABLED
+                Statistics.PacketsSent++;
+                Statistics.BytesSent += (ulong)bytesSent;
+#endif
                 return;
             }
+            if (_mergePos + mergedPacketSize > _mtu)
+                SendMerged();
 
-            NetDebug.Write(NetLogLevel.Trace, "[P]SendingPacket: " + packet.Property);
-            _netManager.SendRaw(packet, _remoteEndPoint);
-#if STATS_ENABLED
-            Statistics.PacketsSent++;
-            Statistics.BytesSent += (ulong)packet.Size;
-#endif
+            FastBitConverter.GetBytes(_mergeData.RawData, _mergePos + NetConstants.HeaderSize, (ushort)packet.Size);
+            Buffer.BlockCopy(packet.RawData, 0, _mergeData.RawData, _mergePos + NetConstants.HeaderSize + 2, packet.Size);
+            _mergePos += packet.Size + 2;
+            _mergeCount++;
+            //DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2) + ", count: " + _mergeCount);
         }
 
         /// <summary>
@@ -872,36 +906,13 @@ namespace LiteNetLib
                 return;
             lock (_flushLock)
             {
-                _reliableOrderedChannel.SendNextPackets();
-                _reliableUnorderedChannel.SendNextPackets();
-                _reliableSequencedChannel.SendNextPackets();
-                _sequencedChannel.SendNextPackets();
-                _unreliableChannel.SendNextPackets();
-
-                //If merging enabled
-                if (_mergePos > 0)
+                BaseChannel currentChannel = _headChannel;
+                while (currentChannel != null)
                 {
-                    if (_mergeCount > 1)
-                    {
-                        NetDebug.Write("[P]Send merged: " + _mergePos + ", count: " + _mergeCount);
-                        _netManager.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
-#if STATS_ENABLED
-                        Statistics.PacketsSent++;
-                        Statistics.BytesSent += (ulong)(NetConstants.HeaderSize + _mergePos);
-#endif
-                    }
-                    else
-                    {
-                        //Send without length information and merging
-                        _netManager.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, _remoteEndPoint);
-#if STATS_ENABLED
-                        Statistics.PacketsSent++;
-                        Statistics.BytesSent += (ulong)(_mergePos - 2);
-#endif
-                    }
-                    _mergePos = 0;
-                    _mergeCount = 0;
+                    currentChannel.SendNextPackets();
+                    currentChannel = currentChannel.Next;
                 }
+                SendMerged();
             }
         }
 

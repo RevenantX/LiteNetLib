@@ -8,14 +8,14 @@ namespace LiteNetLib
         private NetPacket _lastPacket;
         private readonly NetPacket _ackPacket;
         private bool _mustSendAck;
+        private byte _id;
 
-        public SequencedChannel(NetPeer peer, bool reliable) : base(peer)
+        public SequencedChannel(NetPeer peer, bool reliable, byte id) : base(peer)
         {
+            _id = id;
             _reliable = reliable;
             if (_reliable)
-            {
-                _ackPacket = new NetPacket(PacketProperty.AckReliableSequenced, 0);
-            }
+                _ackPacket = new NetPacket(PacketProperty.Ack, 0);
         }
 
         public override void SendNextPackets()
@@ -52,17 +52,20 @@ namespace LiteNetLib
             }
         }
 
-        public void ProcessAck(NetPacket packet)
-        {
-            if (_lastPacket != null && packet.Sequence == _lastPacket.Sequence)
-            {
-                //TODO: recycle?
-                _lastPacket = null;
-            }
-        }
-
         public override void ProcessPacket(NetPacket packet)
         {
+            if (packet.Property == PacketProperty.Ack)
+            {
+                if (_reliable)
+                {
+                    if (_lastPacket != null && packet.Sequence == _lastPacket.Sequence)
+                    {
+                        //TODO: recycle?
+                        _lastPacket = null;
+                    }
+                }
+                return;
+            }
             int relative = NetUtils.RelativeSequenceNumber(packet.Sequence, _remoteSequence);
             if (packet.Sequence < NetConstants.MaxSequence && relative > 0)
             {

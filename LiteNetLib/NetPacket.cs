@@ -9,32 +9,30 @@ namespace LiteNetLib
         ReliableUnordered,      //1
         Sequenced,              //2
         ReliableOrdered,        //3
-        AckReliable,            //4
-        AckReliableOrdered,     //5
-        Ping,                   //6 *
-        Pong,                   //7 *
-        ConnectRequest,         //8 *
-        ConnectAccept,          //9 *
-        Disconnect,             //10 *
-        UnconnectedMessage,     //11
-        NatIntroductionRequest, //12 *
-        NatIntroduction,        //13 *
-        NatPunchMessage,        //14 *
-        MtuCheck,               //15 *
-        MtuOk,                  //16 *
-        DiscoveryRequest,       //17 *
-        DiscoveryResponse,      //18 *
-        Merged,                 //19
-        ShutdownOk,             //20 *   
-        ReliableSequenced,      //21
-        AckReliableSequenced,   //22
-        PeerNotFound,           //23
-        InvalidProtocol         //24
+        Ack,                    //4
+        Ping,                   //5 *
+        Pong,                   //6 *
+        ConnectRequest,         //7 *
+        ConnectAccept,          //8 *
+        Disconnect,             //9 *
+        UnconnectedMessage,     //10
+        NatIntroductionRequest, //11 *
+        NatIntroduction,        //12 *
+        NatPunchMessage,        //13 *
+        MtuCheck,               //14 *
+        MtuOk,                  //15 *
+        DiscoveryRequest,       //16 *
+        DiscoveryResponse,      //17 *
+        Merged,                 //18
+        ShutdownOk,             //19 *   
+        ReliableSequenced,      //20
+        PeerNotFound,           //21
+        InvalidProtocol         //22
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 24;
+        private const int LastProperty = 22;
         //Header
         public PacketProperty Property
         {
@@ -64,22 +62,28 @@ namespace LiteNetLib
             RawData[0] |= 0x80; //set first bit
         }
 
+        public byte ChannelId
+        {
+            get { return RawData[3]; }
+            set { RawData[3] = value; }
+        }
+
         public ushort FragmentId
         {
-            get { return BitConverter.ToUInt16(RawData, 3); }
-            set { FastBitConverter.GetBytes(RawData, 3, value); }
+            get { return BitConverter.ToUInt16(RawData, 4); }
+            set { FastBitConverter.GetBytes(RawData, 4, value); }
         }
 
         public ushort FragmentPart
         {
-            get { return BitConverter.ToUInt16(RawData, 5); }
-            set { FastBitConverter.GetBytes(RawData, 5, value); }
+            get { return BitConverter.ToUInt16(RawData, 6); }
+            set { FastBitConverter.GetBytes(RawData, 6, value); }
         }
 
         public ushort FragmentsTotal
         {
-            get { return BitConverter.ToUInt16(RawData, 7); }
-            set { FastBitConverter.GetBytes(RawData, 7, value); }
+            get { return BitConverter.ToUInt16(RawData, 8); }
+            set { FastBitConverter.GetBytes(RawData, 8, value); }
         }
 
         //Data
@@ -120,9 +124,8 @@ namespace LiteNetLib
                 case PacketProperty.ReliableUnordered:
                 case PacketProperty.ReliableSequenced:
                 case PacketProperty.Sequenced:
-                case PacketProperty.AckReliable:
-                case PacketProperty.AckReliableOrdered:
-                case PacketProperty.AckReliableSequenced:
+                case PacketProperty.Ack:
+                    return NetConstants.ChanneledHeaderSize;
                 case PacketProperty.Ping:
                     return NetConstants.SequencedHeaderSize;
                 case PacketProperty.ConnectRequest:

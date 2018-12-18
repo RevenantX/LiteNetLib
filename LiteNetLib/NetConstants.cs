@@ -43,12 +43,13 @@ namespace LiteNetLib
 
         public const int HeaderSize = 1;
         public const int SequencedHeaderSize = 3;
+        public const int ChanneledHeaderSize = 4;
         public const int FragmentHeaderSize = 6;
         public const ushort MaxSequence = 32768;
         public const ushort HalfMaxSequence = MaxSequence / 2;
 
         //protocol
-        internal const int ProtocolId = 7;
+        internal const int ProtocolId = 8;
         internal const int MaxUdpHeaderSize = 68;
 
         internal static readonly int[] PossibleMtu =
