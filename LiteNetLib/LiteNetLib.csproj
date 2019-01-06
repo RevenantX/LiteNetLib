@@ -2,10 +2,13 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Copyright>Ruslan Pyrch (RevenantX</Copyright>
+    <PackageProjectUrl>https://github.com/Chompetto/LiteNetLib</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Chompetto/LiteNetLib</RepositoryUrl>
+    <Description>Fork of LiteNetLib.  
+New project format with only .NetStandard.</Description>
+    <Version>0.8.0</Version>
+    <PackageId>LiteNetLib.NetStandard</PackageId>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageTags>LiteNetLib C# Networking UDP</PackageTags>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.IO.Pipelines">
-      <Version>4.5.2</Version>
-    </PackageReference>
-  </ItemGroup>
 </Project>
