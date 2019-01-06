@@ -27,13 +27,14 @@ namespace LiteNetLib
         Merged,                 //19
         ShutdownOk,             //20 *   
         ReliableSequenced,      //21
-        AckReliableSequenced    //22
+        AckReliableSequenced,   //22
+        PeerNotFound,           //23
+        InvalidProtocol         //24
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 22;
-
+        private const int LastProperty = 24;
         //Header
         public PacketProperty Property
         {
@@ -119,11 +120,10 @@ namespace LiteNetLib
                 case PacketProperty.ReliableUnordered:
                 case PacketProperty.ReliableSequenced:
                 case PacketProperty.Sequenced:
-                case PacketProperty.Ping:
-                case PacketProperty.Pong:
                 case PacketProperty.AckReliable:
                 case PacketProperty.AckReliableOrdered:
                 case PacketProperty.AckReliableSequenced:
+                case PacketProperty.Ping:
                     return NetConstants.SequencedHeaderSize;
                 case PacketProperty.ConnectRequest:
                     return NetConnectRequestPacket.HeaderSize;
@@ -131,6 +131,8 @@ namespace LiteNetLib
                     return NetConnectAcceptPacket.Size;
                 case PacketProperty.Disconnect:
                     return NetConstants.HeaderSize + 8;
+                case PacketProperty.Pong:
+                    return NetConstants.SequencedHeaderSize + 8;
                 default:
                     return NetConstants.HeaderSize;
             }
@@ -164,29 +166,26 @@ namespace LiteNetLib
     internal sealed class NetConnectRequestPacket
     {
         public const int HeaderSize = 13;
-        public readonly long ConnectionId;
+        public readonly long ConnectionTime;
         public readonly byte ConnectionNumber;
         public readonly NetDataReader Data;
 
         private NetConnectRequestPacket(long connectionId, byte connectionNumber, NetDataReader data)
         {
-            ConnectionId = connectionId;
+            ConnectionTime = connectionId;
             ConnectionNumber = connectionNumber;
             Data = data;
+        }
+
+        public static int GetProtocolId(NetPacket packet)
+        {
+            return BitConverter.ToInt32(packet.RawData, 1);
         }
         
         public static NetConnectRequestPacket FromData(NetPacket packet)
         {
             if (packet.ConnectionNumber >= NetConstants.MaxConnectionNumber)
                 return null;
-
-            int protoId = BitConverter.ToInt32(packet.RawData, 1);
-            if (protoId != NetConstants.ProtocolId)
-            {
-                NetUtils.DebugWrite(ConsoleColor.Cyan,
-                    "[NM] Peer connect reject. Invalid protocol ID: " + protoId);
-                return null;
-            }
 
             //Getting new id for peer
             long connectionId = BitConverter.ToInt64(packet.RawData, 5);

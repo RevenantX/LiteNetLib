@@ -67,7 +67,10 @@ namespace LiteNetLib.Samples
             {
                 if (reader.AvailableBytes == 13218)
                 {
-                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", peer.NetManager.LocalPort, reader[0], reader[13217]);
+                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", 
+                        peer.NetManager.LocalPort, 
+                        reader.RawData[reader.UserDataOffset], 
+                        reader.RawData[reader.UserDataOffset + 13217]);
                 }
                 else
                 {
@@ -104,7 +107,7 @@ namespace LiteNetLib.Samples
                 var peers = Server.GetPeers(ConnectionState.Connected);
                 foreach (var netPeer in peers)
                 {
-                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.ConnectId, netPeer.EndPoint);
+                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);
                 }
             }
 
@@ -126,7 +129,9 @@ namespace LiteNetLib.Samples
                 //fragment log
                 if (reader.AvailableBytes == 13218)
                 {
-                    Console.WriteLine("[Server] TestFrag: {0}, {1}", reader[0], reader[13217]);
+                    Console.WriteLine("[Server] TestFrag: {0}, {1}",
+                        reader.RawData[reader.UserDataOffset],
+                        reader.RawData[reader.UserDataOffset + 13217]);
                 }
             }
 

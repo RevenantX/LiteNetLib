@@ -94,6 +94,7 @@ namespace LiteNetLib.Samples
                 _writer = new NetDataWriter();
 
                 _client = new NetManager(this);
+                _client.UnsyncedEvents = true;
                 _client.AutoRecycle = true;
                 _client.SimulatePacketLoss = false;
                 _client.SimulationPacketLossChance = 20;
@@ -123,11 +124,6 @@ namespace LiteNetLib.Samples
             public void Connect()
             {
                 _peer = _client.Connect("localhost", 9050, "ConnKey");
-            }
-
-            public void PollEvents()
-            {
-                _client.PollEvents();
             }
 
             void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
@@ -205,14 +201,13 @@ namespace LiteNetLib.Samples
 
                 for (int ri = 0; ri < RELIABLE_MESSAGES_PER_LOOP; ri++)
                     c.SendReliable(DATA);
-                c.PollEvents();
             }
 
             int dataSize = MAX_LOOP_COUNT * Encoding.UTF8.GetByteCount(DATA) * (UNRELIABLE_MESSAGES_PER_LOOP + RELIABLE_MESSAGES_PER_LOOP);
             Console.WriteLine("DataSize: {0}b, {1}kb, {2}mb", dataSize, dataSize/1024, dataSize/1024/1024);
 
-            CLIENT_RUNNING = false;
             Thread.Sleep(10000);
+            CLIENT_RUNNING = false;
 
             Console.WriteLine("CLIENT SENT -> Reliable: " + c.ReliableSent + ", Unreliable: " + c.UnreliableSent);
             Console.WriteLine("CLIENT STATS:\n" + c.Stats);

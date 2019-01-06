@@ -3,7 +3,7 @@
   <metadata>
     <id>LiteNetLib</id>
     <title>LiteNetLib</title>
-    <version>0.8</version>
+    <version>0.8.2.0-beta</version>
     <authors>Ruslan Pyrch</authors>
     <owners>RevenantX</owners>
     <licenseUrl>https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt</licenseUrl>
@@ -12,6 +12,7 @@
     <description>Lite reliable UDP library for .NET, Mono, and .NET Core.</description>
     <copyright>Copyright 2017 Ruslan Pyrch</copyright>
     <tags>udp reliable-udp network</tags>
+    <releaseNotes>Many bugfixes and improvements</releaseNotes>
     <dependencies>
 	  <group targetFramework="net35">
 	  </group>
@@ -19,13 +20,12 @@
       </group>
 	  <group targetFramework="netstandard2.0">
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
-		<dependency id="System.Net.NameResolution" version="4.3.0" />
-		<dependency id="System.Threading.Thread" version="4.3.0" />
+		    <dependency id="System.Net.NameResolution" version="4.3.0" />
+		    <dependency id="System.Threading.Thread" version="4.3.0" />
       </group>
     </dependencies>
   </metadata>
   <files>
-	<file src="HelpBuilder\Help\Documentation.chm" target="" />
 	<file src="LiteNetLib\bin\$configuration$\**" target="lib\net35"/>
 	<file src="LiteNetLibNetCore\bin\$configuration$\netcoreapp2.0\**" target="lib\netcoreapp2.0"/>
 	<file src="LiteNetLibStandard\bin\$configuration$\netstandard2.0\**" target="lib\netstandard2.0"/>

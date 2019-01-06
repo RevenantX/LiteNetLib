@@ -24,7 +24,7 @@ namespace LiteNetLib
             {
                 var packet = _lastPacket;
                 if(packet != null)
-                    Peer.SendRawData(packet);
+                    Peer.SendUserData(packet);
             }
             else
             {
@@ -35,7 +35,7 @@ namespace LiteNetLib
                         NetPacket packet = OutgoingQueue.Dequeue();
                         _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
                         packet.Sequence = (ushort)_localSequence;
-                        Peer.SendRawData(packet);
+                        Peer.SendUserData(packet);
 
                         if (_reliable && OutgoingQueue.Count == 0)
                             _lastPacket = packet;
@@ -48,7 +48,7 @@ namespace LiteNetLib
             if (_reliable && _mustSendAck)
             {
                 _ackPacket.Sequence = _remoteSequence;
-                Peer.SendRawData(_ackPacket);
+                Peer.SendUserData(_ackPacket);
             }
         }
 

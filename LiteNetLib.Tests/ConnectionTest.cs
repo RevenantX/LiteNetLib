@@ -47,6 +47,34 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client.PeersCount);
         }
 
+        [Test, MaxTime(2000)]
+        public void PeerNotFoundTest()
+        {
+            var server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
+            DisconnectInfo? disconnectInfo = null;
+            ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) => disconnectInfo = info;
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+
+            while (server.PeersCount != 1 || client.PeersCount != 1)
+            {
+                Thread.Sleep(15);
+                server.PollEvents();
+            }
+            server.Stop(false);
+            server.Start(DefaultPort);
+            while (client.PeersCount == 1)
+            {
+                Thread.Sleep(15);
+            }
+            client.PollEvents();
+
+            Assert.AreEqual(0, server.PeersCount);
+            Assert.AreEqual(0, client.PeersCount);
+            Assert.IsTrue(disconnectInfo.HasValue);
+            Assert.AreEqual(DisconnectReason.RemoteConnectionClose, disconnectInfo.Value.Reason);
+        }
+
         [Test, MaxTime(10000)]
         public void ConnectionFailedTest()
         {
@@ -250,7 +278,7 @@ namespace LiteNetLib.Tests
                 server.PollEvents();
             }
 
-            server.DisconnectPeer(server.GetFirstPeer());
+            server.DisconnectPeer(server.FirstPeer);
 
             while (!(clientDisconnected && serverDisconnected))
             {
@@ -372,7 +400,7 @@ namespace LiteNetLib.Tests
             ManagerStack.ServerListener(1).NetworkReceiveUnconnectedEvent += (point, reader, type) =>
             {
                 var serverWriter = new NetDataWriter();
-                writer.Put("Server reponse");
+                writer.Put("Server response");
                 server.SendDiscoveryResponse(serverWriter, point);
             };
 

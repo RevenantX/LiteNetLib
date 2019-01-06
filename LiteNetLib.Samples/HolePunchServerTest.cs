@@ -154,7 +154,7 @@ namespace LiteNetLib.Samples
                     if (key == ConsoleKey.A)
                     {
                         Console.WriteLine("C1 stopped");
-                        _c1.DisconnectPeer(_c1.GetFirstPeer(), new byte[] {1,2,3,4});
+                        _c1.DisconnectPeer(_c1.FirstPeer, new byte[] {1,2,3,4});
                         _c1.Stop();
                     }
                 }

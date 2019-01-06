@@ -38,11 +38,7 @@ namespace LiteNetLib
     {
         //can be tuned
         public const int DefaultWindowSize = 64;
-#if UNITY_PS4
         public const int SocketBufferSize = 1024 * 1024; //1mb
-#else
-        public const int SocketBufferSize = 1024 * 1024 * 4; //4mb
-#endif
         public const int SocketTTL = 255;
 
         public const int HeaderSize = 1;
@@ -50,25 +46,19 @@ namespace LiteNetLib
         public const int FragmentHeaderSize = 6;
         public const ushort MaxSequence = 32768;
         public const ushort HalfMaxSequence = MaxSequence / 2;
-        public const int MinPacketSize = 576 - MaxUdpHeaderSize;
-        public const int MinPacketDataSize = MinPacketSize - HeaderSize;
-        public const int MinSequencedPacketDataSize = MinPacketSize - SequencedHeaderSize;
-
-        //internal
-        internal const string MulticastGroupIPv6 = "FF02:0:0:0:0:0:0:1";
 
         //protocol
-        internal const int ProtocolId = 3;
+        internal const int ProtocolId = 7;
         internal const int MaxUdpHeaderSize = 68;
 
         internal static readonly int[] PossibleMtu =
         {
-            576 - MaxUdpHeaderSize,  //Internet Path MTU for X.25 (RFC 879)
+            576  - MaxUdpHeaderSize, //minimal
+            1232 - MaxUdpHeaderSize,
+            1460 - MaxUdpHeaderSize, //google cloud
+            1472 - MaxUdpHeaderSize, //VPN
             1492 - MaxUdpHeaderSize, //Ethernet with LLC and SNAP, PPPoE (RFC 1042)
-            1500 - MaxUdpHeaderSize, //Ethernet II (RFC 1191)
-            4352 - MaxUdpHeaderSize, //FDDI
-            4464 - MaxUdpHeaderSize, //Token ring
-            7981 - MaxUdpHeaderSize  //WLAN
+            1500 - MaxUdpHeaderSize  //Ethernet II (RFC 1191)
         };
 
         internal static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];

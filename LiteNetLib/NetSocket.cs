@@ -1,3 +1,10 @@
+#if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#define UNITY
+#endif
+#if NETCORE
+using System.Runtime.InteropServices;
+#endif
+
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -16,11 +23,9 @@ namespace LiteNetLib
         private Socket _udpSocketv6;
         private Thread _threadv4;
         private Thread _threadv6;
-        private bool _running;
+        private volatile bool _running;
         private readonly INetSocketListener _listener;
-
-        private const int Timeout = 100;
-        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse (NetConstants.MulticastGroupIPv6);
+        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("FF02:0:0:0:0:0:0:1");
         internal static readonly bool IPv6Support;
 
         public int LocalPort { get; private set; }
@@ -28,15 +33,12 @@ namespace LiteNetLib
         public short Ttl
         {
             get { return _udpSocketv4.Ttl; }
-            set
-            {
-                _udpSocketv4.Ttl = value;
-            }
+            set { _udpSocketv4.Ttl = value; }
         }
 
         static NetSocket()
         {
-#if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#if UNITY
             IPv6Support = Socket.SupportsIPv6;
 #elif DISABLE_IPV6
             IPv6Support = false;
@@ -63,7 +65,10 @@ namespace LiteNetLib
                 //Reading data
                 try
                 {
-                    result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref bufferEndPoint);
+                    if (socket.Available == 0 && !socket.Poll(5000, SelectMode.SelectRead))
+                        continue;
+                    result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None,
+                        ref bufferEndPoint);
                 }
                 catch (SocketException ex)
                 {
@@ -74,18 +79,25 @@ namespace LiteNetLib
                         case SocketError.ConnectionReset:
                         case SocketError.MessageSize:
                         case SocketError.TimedOut:
-                            NetUtils.DebugWrite(ConsoleColor.DarkRed, "[R] Ingored error: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
+                            NetDebug.Write(NetLogLevel.Trace, "[R]Ignored error: {0} - {1}",
+                                (int) ex.SocketErrorCode, ex.ToString());
                             break;
                         default:
-                            NetUtils.DebugWriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode, ex.ToString());
-                            _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
+                            NetDebug.WriteError("[R]Error code: {0} - {1}", (int) ex.SocketErrorCode,
+                                ex.ToString());
+                            _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint) bufferEndPoint);
                             break;
                     }
+
                     continue;
+                }
+                catch (ObjectDisposedException)
+                {
+                    return;
                 }
 
                 //All ok!
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
+                NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
                 _listener.OnMessageReceived(receiveBuffer, result, 0, (IPEndPoint)bufferEndPoint);
             }
         }
@@ -112,7 +124,7 @@ namespace LiteNetLib
             {
                 try
                 {
-#if !ENABLE_IL2CPP
+#if !UNITY
                     _udpSocketv6.SetSocketOption(
                         SocketOptionLevel.IPv6, 
                         SocketOptionName.AddMembership,
@@ -136,42 +148,64 @@ namespace LiteNetLib
         private bool BindSocket(Socket socket, IPEndPoint ep, bool reuseAddress)
         {
             //Setup socket
-            socket.ReceiveTimeout = Timeout;
-            socket.SendTimeout = Timeout;
-            socket.ExclusiveAddressUse = true;
+            socket.ReceiveTimeout = 500;
+            socket.SendTimeout = 500;
+            socket.ExclusiveAddressUse = !reuseAddress;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
             if (socket.AddressFamily == AddressFamily.InterNetwork)
             {
                 socket.Ttl = NetConstants.SocketTTL;
-                socket.DontFragment = true;
-                try
-                {
-                    socket.EnableBroadcast = true;
-                }
+
+#if NETCORE
+                if(!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+#endif
+                try { socket.DontFragment = true; }
                 catch (SocketException e)
                 {
-                    NetUtils.DebugWriteError("[B]Broadcast error: {0}", e.ToString());
+                    NetDebug.WriteError("[B]DontFragment error: {0}", e.SocketErrorCode);
                 }
-            }
-            else
-            {
-                socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
+
+                try { socket.EnableBroadcast = true; }
+                catch (SocketException e)
+                {
+                    NetDebug.WriteError("[B]Broadcast error: {0}", e.SocketErrorCode);
+                }
             }
 
             //Bind
             try
             {
                 socket.Bind(ep);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
+                NetDebug.Write(NetLogLevel.Trace, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
             }
-            catch (SocketException ex)
+            catch (SocketException bindException)
             {
-                NetUtils.DebugWriteError("[B]Bind exception: {0}", ex.ToString());
-                //hack for iOS (Unity3D)
-                if (ex.SocketErrorCode == SocketError.AddressFamilyNotSupported)
-                    return true;
+                switch (bindException.SocketErrorCode)
+                {
+                    //IPv6 bind fix
+                    case SocketError.AddressAlreadyInUse:
+                        if (socket.AddressFamily == AddressFamily.InterNetworkV6)
+                        {
+                            try
+                            {
+                                socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
+                                socket.Bind(ep);
+                            }
+                            catch (SocketException ex)
+                            {
+                                NetDebug.WriteError("[B]Bind exception: {0}, errorCode: {1}", ex.ToString(), ex.SocketErrorCode);
+                                return false;
+                            }
+                            return true;
+                        }
+                        break;
+                    //hack for iOS (Unity3D)
+                    case SocketError.AddressFamilyNotSupported:
+                        return true;
+                }
+                NetDebug.WriteError("[B]Bind exception: {0}, errorCode: {1}", bindException.ToString(), bindException.SocketErrorCode);
                 return false;
             }
             return true;
@@ -201,7 +235,7 @@ namespace LiteNetLib
             }
             catch (Exception ex)
             {
-                NetUtils.DebugWriteError("[S][MCAST]" + ex);
+                NetDebug.WriteError("[S][MCAST]" + ex);
                 return false;
             }
             return success;
@@ -215,7 +249,7 @@ namespace LiteNetLib
                 if (remoteEndPoint.AddressFamily == AddressFamily.InterNetworkV6 && IPv6Support)
                     socket = _udpSocketv6;
                 int result = socket.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint);
-                NetUtils.DebugWrite(ConsoleColor.Blue, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
+                NetDebug.Write(NetLogLevel.Trace, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
                 return result;
             }
             catch (SocketException ex)
@@ -228,7 +262,7 @@ namespace LiteNetLib
                     case SocketError.MessageSize: //do nothing              
                         break;
                     default:
-                        NetUtils.DebugWriteError("[S]" + ex);
+                        NetDebug.WriteError("[S]" + ex);
                         break;
                 }    
                 errorCode = ex.SocketErrorCode;
@@ -236,7 +270,7 @@ namespace LiteNetLib
             }
             catch (Exception ex)
             {
-                NetUtils.DebugWriteError("[S]" + ex);
+                NetDebug.WriteError("[S]" + ex);
                 return -1;
             }
         }
@@ -244,18 +278,26 @@ namespace LiteNetLib
         public void Close()
         {
             _running = false;
+            // first close sockets
             if (_udpSocketv4 != null)
             {
                 _udpSocketv4.Close();
                 _udpSocketv4 = null;
-                if (_threadv4 != Thread.CurrentThread)
-                    _threadv4.Join();
-                _threadv4 = null;
             }
             if (_udpSocketv6 != null)
             {
                 _udpSocketv6.Close();
                 _udpSocketv6 = null;
+            }
+            // then join threads
+            if (_threadv4 != null)
+            {
+                if (_threadv4 != Thread.CurrentThread)
+                    _threadv4.Join();
+                _threadv4 = null;
+            }
+            if (_threadv6 != null)
+            {
                 if (_threadv6 != Thread.CurrentThread)
                     _threadv6.Join();
                 _threadv6 = null;

@@ -14,7 +14,7 @@ namespace LiteNetLib
                 while (OutgoingQueue.Count > 0)
                 {
                     NetPacket packet = OutgoingQueue.Dequeue();
-                    Peer.SendRawData(packet);
+                    Peer.SendUserData(packet);
                     Peer.Recycle(packet);
                 }
             }
