@@ -38,10 +38,10 @@ namespace LiteNetLib
 
         static NetSocket()
         {
-#if UNITY
-            IPv6Support = Socket.SupportsIPv6;
-#elif DISABLE_IPV6
+#if DISABLE_IPV6
             IPv6Support = false;
+#elif UNITY
+            IPv6Support = Socket.SupportsIPv6;
 #else
             IPv6Support = Socket.OSSupportsIPv6;
 #endif
