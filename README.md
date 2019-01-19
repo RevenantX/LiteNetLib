@@ -47,6 +47,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
   * Android (Unity)
   * iOS (Unity)
   * UWP Windows 10 including phones
+  * Lumin OS (Magic Leap)
 
 ## Unity notes!!!
 * Always use library sources instead of precompiled DLL files. 
