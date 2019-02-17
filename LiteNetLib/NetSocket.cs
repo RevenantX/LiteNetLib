@@ -42,7 +42,9 @@ namespace LiteNetLib
             IPv6Support = false;
 #elif ENABLE_IL2CPP && UNITY_2018_3_OR_NEWER
             string version = Application.unityVersion;
-            IPv6Support = Socket.SupportsIPv6 && int.Parse(version.Remove(version.IndexOf('f')).Split('.')[2]) >= 6;;
+            IPv6Support = Socket.OSSupportsIPv6 && int.Parse(version.Remove(version.IndexOf('f')).Split('.')[2]) >= 6;;
+#elif UNITY_2018_2_OR_NEWER
+            IPv6Support = Socket.OSSupportsIPv6;
 #elif UNITY
             IPv6Support = Socket.SupportsIPv6;
 #else
