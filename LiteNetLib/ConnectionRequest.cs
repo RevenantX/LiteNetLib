@@ -63,8 +63,7 @@ namespace LiteNetLib
                 return null;
             try
             {
-                string dataKey = Data.GetString(key.Length);
-                if (dataKey == key)
+                if (Data.GetString() == key)
                 {
                     Result = ConnectionRequestResult.Accept;
                     _listener.OnConnectionSolved(this, null, 0, 0);

@@ -47,6 +47,7 @@ namespace LiteNetLib
 
             if (_reliable && _mustSendAck)
             {
+                _mustSendAck = false;
                 _ackPacket.Sequence = _remoteSequence;
                 Peer.SendUserData(_ackPacket);
             }
