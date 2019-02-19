@@ -38,15 +38,17 @@ namespace LiteNetLib
 
         static NetSocket()
         {
-#if DISABLE_IPV6 || (ENABLE_IL2CPP && !UNITY_2018_3_OR_NEWER)
+#if DISABLE_IPV6 || (!UNITY_EDITOR && ENABLE_IL2CPP && !UNITY_2018_3_OR_NEWER)
             IPv6Support = false;
-#elif ENABLE_IL2CPP && UNITY_2018_3_OR_NEWER
+#elif !UNITY_EDITOR && ENABLE_IL2CPP && UNITY_2018_3_OR_NEWER
             string version = Application.unityVersion;
-            IPv6Support = Socket.OSSupportsIPv6 && int.Parse(version.Remove(version.IndexOf('f')).Split('.')[2]) >= 6;;
+            IPv6Support = Socket.OSSupportsIPv6 && int.Parse(version.Remove(version.IndexOf('f')).Split('.')[2]) >= 6;
 #elif UNITY_2018_2_OR_NEWER
             IPv6Support = Socket.OSSupportsIPv6;
 #elif UNITY
+#pragma warning disable 618
             IPv6Support = Socket.SupportsIPv6;
+#pragma warning restore 618
 #else
             IPv6Support = Socket.OSSupportsIPv6;
 #endif
