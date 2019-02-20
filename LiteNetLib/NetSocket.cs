@@ -38,10 +38,17 @@ namespace LiteNetLib
 
         static NetSocket()
         {
-#if DISABLE_IPV6
+#if DISABLE_IPV6 || (!UNITY_EDITOR && ENABLE_IL2CPP && !UNITY_2018_3_OR_NEWER)
             IPv6Support = false;
+#elif !UNITY_EDITOR && ENABLE_IL2CPP && UNITY_2018_3_OR_NEWER
+            string version = Application.unityVersion;
+            IPv6Support = Socket.OSSupportsIPv6 && int.Parse(version.Remove(version.IndexOf('f')).Split('.')[2]) >= 6;
+#elif UNITY_2018_2_OR_NEWER
+            IPv6Support = Socket.OSSupportsIPv6;
 #elif UNITY
+#pragma warning disable 618
             IPv6Support = Socket.SupportsIPv6;
+#pragma warning restore 618
 #else
             IPv6Support = Socket.OSSupportsIPv6;
 #endif
@@ -150,10 +157,17 @@ namespace LiteNetLib
             //Setup socket
             socket.ReceiveTimeout = 500;
             socket.SendTimeout = 500;
-            socket.ExclusiveAddressUse = !reuseAddress;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
+            try
+            {
+                socket.ExclusiveAddressUse = !reuseAddress;
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, reuseAddress);
+            }
+            catch
+            {
+                NetDebug.WriteError("IL2CPP SetSocketOption error");
+            }
             if (socket.AddressFamily == AddressFamily.InterNetwork)
             {
                 socket.Ttl = NetConstants.SocketTTL;
