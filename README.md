@@ -2,7 +2,7 @@
 
 Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Standard 2.0.
 
-[STABLE BRANCH (and examples) for 0.7.x](https://github.com/RevenantX/LiteNetLib/tree/0.7)
+[STABLE BRANCH (and examples) for 0.8.x](https://github.com/RevenantX/LiteNetLib/tree/v0.8.3)
 
 [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
