@@ -86,7 +86,7 @@ namespace LiteNetLib
             _localSeqence = 0;
             _remoteSequence = 0;
             _remoteWindowStart = 0;
-            _outgoingAcks = new NetPacket(PacketProperty.Ack, (_windowSize - 1) / BitsInByte + 2);
+            _outgoingAcks = new NetPacket(PacketProperty.Ack, (_windowSize - 1) / BitsInByte + 2) {ChannelId = id};
         }
 
         //ProcessAck in packet

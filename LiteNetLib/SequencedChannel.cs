@@ -8,14 +8,14 @@ namespace LiteNetLib
         private NetPacket _lastPacket;
         private readonly NetPacket _ackPacket;
         private bool _mustSendAck;
-        private byte _id;
+        private readonly byte _id;
 
         public SequencedChannel(NetPeer peer, bool reliable, byte id) : base(peer)
         {
             _id = id;
             _reliable = reliable;
             if (_reliable)
-                _ackPacket = new NetPacket(PacketProperty.Ack, 0);
+                _ackPacket = new NetPacket(PacketProperty.Ack, 0) {ChannelId = id};
         }
 
         public override void SendNextPackets()
