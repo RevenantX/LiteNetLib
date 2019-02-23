@@ -232,8 +232,6 @@ namespace LiteNetLib
                 case DeliveryMethod.ReliableSequenced:
                     newChannel = new SequencedChannel(this, true, idx);
                     break;
-                case DeliveryMethod.Unreliable:
-                    return _unreliableChannel;
             }
             _channels[idx] = newChannel;
             newChannel.Next = _headChannel;
@@ -305,7 +303,7 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Send data to peer
+        /// Send data to peer (channel - 0)
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
@@ -316,11 +314,11 @@ namespace LiteNetLib
         /// </exception>
         public void Send(byte[] data, DeliveryMethod options)
         {
-            SendInternal(data, 0, data.Length, 0, options);
+            Send(data, 0, data.Length, 0, options);
         }
 
         /// <summary>
-        /// Send data to peer
+        /// Send data to peer (channel - 0)
         /// </summary>
         /// <param name="dataWriter">DataWriter with data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
@@ -331,11 +329,11 @@ namespace LiteNetLib
         /// </exception>
         public void Send(NetDataWriter dataWriter, DeliveryMethod options)
         {
-            SendInternal(dataWriter.Data, 0, dataWriter.Length, 0, options);
+            Send(dataWriter.Data, 0, dataWriter.Length, 0, options);
         }
 
         /// <summary>
-        /// Send data to peer
+        /// Send data to peer (channel - 0)
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="start">Start of data</param>
@@ -348,10 +346,55 @@ namespace LiteNetLib
         /// </exception>
         public void Send(byte[] data, int start, int length, DeliveryMethod options)
         {
-            SendInternal(data, start, length, 0, options);
+            Send(data, start, length, 0, options);
         }
 
-        private void SendInternal(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
+        /// <summary>
+        /// Send data to peer
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <exception cref="TooBigPacketException">
+        ///     If size exceeds maximum limit:<para/>
+        ///     MTU - headerSize bytes for Unreliable<para/>
+        ///     Fragment count exceeded ushort.MaxValue<para/>
+        /// </exception>
+        public void Send(byte[] data, byte channelNumber, DeliveryMethod options)
+        {
+            Send(data, 0, data.Length, channelNumber, options);
+        }
+
+        /// <summary>
+        /// Send data to peer
+        /// </summary>
+        /// <param name="dataWriter">DataWriter with data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <exception cref="TooBigPacketException">
+        ///     If size exceeds maximum limit:<para/>
+        ///     MTU - headerSize bytes for Unreliable<para/>
+        ///     Fragment count exceeded ushort.MaxValue<para/>
+        /// </exception>
+        public void Send(NetDataWriter dataWriter, byte channelNumber, DeliveryMethod options)
+        {
+            Send(dataWriter.Data, 0, dataWriter.Length, channelNumber, options);
+        }
+
+        /// <summary>
+        /// Send data to peer
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="start">Start of data</param>
+        /// <param name="length">Length of data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <exception cref="TooBigPacketException">
+        ///     If size exceeds maximum limit:<para/>
+        ///     MTU - headerSize bytes for Unreliable<para/>
+        ///     Fragment count exceeded ushort.MaxValue<para/>
+        /// </exception>
+        public void Send(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
         {
             if (_connectionState == ConnectionState.ShutdownRequested ||
                 _connectionState == ConnectionState.Disconnected)
@@ -360,9 +403,19 @@ namespace LiteNetLib
                 return;
 
             //Select channel
-            PacketProperty property = PacketProperty.Channeled;
-            bool canBeFragmented = options == DeliveryMethod.ReliableOrdered || options == DeliveryMethod.ReliableUnordered;
-            BaseChannel channel = CreateChannel(NetConstants.ChannelNumberToId(options, channelNumber, _channelsCount));
+            PacketProperty property;
+            BaseChannel channel;
+
+            if (options == DeliveryMethod.Unreliable)
+            {
+                property = PacketProperty.Unreliable;
+                channel = _unreliableChannel;
+            }
+            else
+            {
+                property = PacketProperty.Channeled;
+                channel = CreateChannel(NetConstants.ChannelNumberToId(options, channelNumber, _channelsCount));
+            }
 
             //Prepare  
             NetDebug.Write("[RS]Packet: " + property);
@@ -373,7 +426,8 @@ namespace LiteNetLib
             int mtu = _mtu;
             if (length + headerSize > mtu)
             {
-                if (!canBeFragmented)
+                //if cannot be fragmented
+                if (options != DeliveryMethod.ReliableOrdered && options != DeliveryMethod.ReliableUnordered)
                     throw new TooBigPacketException("Unreliable packet size exceeded maximum of " + (_mtu - headerSize) + " bytes");
 
                 int packetFullSize = mtu - headerSize;

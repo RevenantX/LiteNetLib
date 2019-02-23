@@ -1,5 +1,5 @@
 using System;
-using LiteNetLib.Ntp;
+using LiteNetLib.Utils;
 
 namespace LibSample
 {
