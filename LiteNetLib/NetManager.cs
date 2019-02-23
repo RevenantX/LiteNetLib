@@ -118,6 +118,7 @@ namespace LiteNetLib
         private readonly List<NetPeer> _connectedPeerListCache;
         private int _lastPeerId;
         private readonly Queue<int> _peerIds;
+        private byte _channelsCount = 1;
 
         internal readonly NetPacketPool NetPacketPool;
 
@@ -232,8 +233,6 @@ namespace LiteNetLib
         {
             get { return _headPeer; }
         }
-
-        private byte _channelsCount = 1;
 
         /// <summary>
         /// QoS channel count per message type (value must be between 1 and 64 channels)
