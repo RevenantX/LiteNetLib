@@ -27,8 +27,6 @@
     <Compile Include="..\LiteNetLib\ConnectionRequest.cs" Link="ConnectionRequest.cs" />
     <Compile Include="..\LiteNetLib\NetExceptions.cs" Link="NetExceptions.cs" />
     <Compile Include="..\LiteNetLib\NetStatistics.cs" Link="NetStatistics.cs" />
-    <Compile Include="..\LiteNetLib\Ntp\NtpPacket.cs" Link="Ntp\NtpPacket.cs" />
-    <Compile Include="..\LiteNetLib\Ntp\NtpRequest.cs" Link="Ntp\NtpRequest.cs" />
     <Compile Include="..\LiteNetLib\Properties\AssemblyInfo.cs" />
     <Compile Include="..\LiteNetLib\INetEventListener.cs" Link="INetEventListener.cs" />
     <Compile Include="..\LiteNetLib\NatPunchModule.cs" Link="NatPunchModule.cs" />
@@ -50,6 +48,8 @@
     <Compile Include="..\LiteNetLib\Utils\NetPacketProcessor.cs" Link="Utils\NetPacketProcessor.cs" />
     <Compile Include="..\LiteNetLib\Utils\NetSerializer.cs" Link="Utils\NetSerializer.cs" />
     <Compile Include="..\LiteNetLib\Utils\NetSerializerExceptions.cs" Link="Utils\NetSerializerExceptions.cs" />
+    <Compile Include="..\LiteNetLib\Utils\NtpPacket.cs" Link="Utils\NtpPacket.cs" />
+    <Compile Include="..\LiteNetLib\Utils\NtpRequest.cs" Link="Utils\NtpRequest.cs" />
   </ItemGroup>
 
   <ItemGroup>
