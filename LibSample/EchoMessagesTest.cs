@@ -180,7 +180,6 @@ namespace LibSample
             {
                 SimulationMaxLatency = 1500,
                 //SimulateLatency = true,
-                MergeEnabled = true
             };
             //client1
             if (!client1.Start())

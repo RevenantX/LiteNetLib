@@ -693,7 +693,7 @@ namespace LiteNetLib
                 FastBitConverter.GetBytes(p.RawData, p.Size - 4, newMtu);//and end of packet
 
                 //Must check result for MTU fix
-                if (_netManager.SendRawAndRecycle(p, _remoteEndPoint) == -1)
+                if (_netManager.SendRawAndRecycle(p, _remoteEndPoint) <= 0)
                     _finishMtu = true;
             }
         }
@@ -874,7 +874,6 @@ namespace LiteNetLib
         internal void SendUserData(NetPacket packet)
         {
             packet.ConnectionNumber = _connectNum;
-            //merge header + siz
             int mergedPacketSize = NetConstants.HeaderSize + packet.Size + 2;
             const int sizeTreshold = 20;
             if (mergedPacketSize + sizeTreshold >= _mtu)

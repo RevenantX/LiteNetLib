@@ -1028,7 +1028,7 @@ namespace LiteNetLib
             if (!IsRunning)
                 return false;
             var packet = NetPacketPool.GetWithData(PacketProperty.UnconnectedMessage, message, start, length);
-            bool result = SendRawAndRecycle(packet, remoteEndPoint);
+            bool result = SendRawAndRecycle(packet, remoteEndPoint) > 0;
             return result;
         }
 
@@ -1067,7 +1067,7 @@ namespace LiteNetLib
             if (!IsRunning)
                 return false;
             var packet = NetPacketPool.GetWithData(PacketProperty.DiscoveryResponse, data, start, length);
-            bool result = SendRawAndRecycle(packet, remoteEndPoint);
+            bool result = SendRawAndRecycle(packet, remoteEndPoint) > 0;
             return result;
         }
 
