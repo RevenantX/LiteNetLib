@@ -674,7 +674,7 @@ namespace LiteNetLib
                 FastBitConverter.GetBytes(p.RawData, p.Size - 4, newMtu);//and end of packet
 
                 //Must check result for MTU fix
-                if (!_netManager.SendRawAndRecycle(p, _remoteEndPoint))
+                if (_netManager.SendRawAndRecycle(p, _remoteEndPoint) <= 0)
                     _finishMtu = true;
             }
         }
@@ -840,27 +840,52 @@ namespace LiteNetLib
             }
         }
 
+        private void SendMerged()
+        {
+            if (_mergeCount == 0)
+                return;
+            int bytesSent;
+            if (_mergeCount > 1)
+            {
+                NetDebug.Write("[P]Send merged: " + _mergePos + ", count: " + _mergeCount);
+                bytesSent = _netManager.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
+            }
+            else
+            {
+                //Send without length information and merging
+                bytesSent = _netManager.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, _remoteEndPoint);
+            }
+#if STATS_ENABLED
+            Statistics.PacketsSent++;
+            Statistics.BytesSent += (ulong)bytesSent;
+#endif
+            _mergePos = 0;
+            _mergeCount = 0;
+        }
+
         internal void SendUserData(NetPacket packet)
         {
             packet.ConnectionNumber = _connectNum;
-            //2 - merge byte + minimal packet size + datalen(ushort)
-            if (_netManager.MergeEnabled && _mergePos + packet.Size + NetConstants.HeaderSize*2 + 2 < _mtu)
+            int mergedPacketSize = NetConstants.HeaderSize + packet.Size + 2;
+            const int sizeTreshold = 20;
+            if (mergedPacketSize + sizeTreshold >= _mtu)
             {
-                FastBitConverter.GetBytes(_mergeData.RawData, _mergePos + NetConstants.HeaderSize, (ushort)packet.Size);
-                Buffer.BlockCopy(packet.RawData, 0, _mergeData.RawData, _mergePos + NetConstants.HeaderSize + 2, packet.Size);
-                _mergePos += packet.Size + 2;
-                _mergeCount++;
-
-                //DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2) + ", count: " + _mergeCount);
+                NetDebug.Write(NetLogLevel.Trace, "[P]SendingPacket: " + packet.Property);
+                int bytesSent = _netManager.SendRaw(packet, _remoteEndPoint);
+#if STATS_ENABLED
+                Statistics.PacketsSent++;
+                Statistics.BytesSent += (ulong)bytesSent;
+#endif
                 return;
             }
+            if (_mergePos + mergedPacketSize > _mtu)
+                SendMerged();
 
-            NetDebug.Write(NetLogLevel.Trace, "[P]SendingPacket: " + packet.Property);
-            _netManager.SendRaw(packet, _remoteEndPoint);
-#if STATS_ENABLED
-            Statistics.PacketsSent++;
-            Statistics.BytesSent += (ulong)packet.Size;
-#endif
+            FastBitConverter.GetBytes(_mergeData.RawData, _mergePos + NetConstants.HeaderSize, (ushort)packet.Size);
+            Buffer.BlockCopy(packet.RawData, 0, _mergeData.RawData, _mergePos + NetConstants.HeaderSize + 2, packet.Size);
+            _mergePos += packet.Size + 2;
+            _mergeCount++;
+            //DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2) + ", count: " + _mergeCount);
         }
 
         /// <summary>
@@ -877,31 +902,7 @@ namespace LiteNetLib
                 _reliableSequencedChannel.SendNextPackets();
                 _sequencedChannel.SendNextPackets();
                 _unreliableChannel.SendNextPackets();
-
-                //If merging enabled
-                if (_mergePos > 0)
-                {
-                    if (_mergeCount > 1)
-                    {
-                        NetDebug.Write("[P]Send merged: " + _mergePos + ", count: " + _mergeCount);
-                        _netManager.SendRaw(_mergeData.RawData, 0, NetConstants.HeaderSize + _mergePos, _remoteEndPoint);
-#if STATS_ENABLED
-                        Statistics.PacketsSent++;
-                        Statistics.BytesSent += (ulong)(NetConstants.HeaderSize + _mergePos);
-#endif
-                    }
-                    else
-                    {
-                        //Send without length information and merging
-                        _netManager.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, _remoteEndPoint);
-#if STATS_ENABLED
-                        Statistics.PacketsSent++;
-                        Statistics.BytesSent += (ulong)(_mergePos - 2);
-#endif
-                    }
-                    _mergePos = 0;
-                    _mergeCount = 0;
-                }
+                SendMerged();
             }
         }
 

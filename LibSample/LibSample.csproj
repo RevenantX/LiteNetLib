@@ -50,9 +50,6 @@
     <Compile Include="SpeedBench.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\LiteNetLib\LiteNetLib.csproj">
       <Project>{b0a014e4-0392-4e35-aa42-8fb5a40417e0}</Project>
       <Name>LiteNetLib</Name>

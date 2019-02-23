@@ -463,6 +463,7 @@ namespace LiteNetLib.Tests
             }
 
             Assert.AreEqual(server.PeersCount, clientCount);
+            Thread.Sleep(100);
             ManagerStack.ClientForeach((i, manager, l) => Assert.AreEqual(manager.PeersCount, 1));
 
             var dataStack = new Stack<byte[]>(clientCount);

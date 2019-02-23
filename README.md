@@ -32,7 +32,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
   * Ordered but unreliable with duplication prevention
   * Simple UDP packets without order and reliability
 * Fast packet serializer [(Usage manual)](https://github.com/RevenantX/LiteNetLib/wiki/NetSerializer-usage)
-* Automatic small packets merging ( if enabled )
+* Automatic small packets merging
 * Automatic fragmentation of reliable packets
 * Automatic MTU detection
 * UDP NAT hole punching
@@ -139,9 +139,6 @@ server.Stop();
   * default value: **100 msec**
 * **DiscoveryEnabled**
   * Allows receive DiscoveryRequests
-  * default value: **false**
-* **MergeEnabled**
-  * Merge small packets into one before sending to reduce outgoing packets count. (May increase a bit outgoing data size)
   * default value: **false**
 * **ReconnectDelay**
   * delay betwen connection attempts
