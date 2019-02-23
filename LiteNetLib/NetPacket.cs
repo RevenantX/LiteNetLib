@@ -5,34 +5,31 @@ namespace LiteNetLib
 {
     internal enum PacketProperty : byte
     {
-        Unreliable,             //0
-        ReliableUnordered,      //1
-        Sequenced,              //2
-        ReliableOrdered,        //3
-        Ack,                    //4
-        Ping,                   //5 *
-        Pong,                   //6 *
-        ConnectRequest,         //7 *
-        ConnectAccept,          //8 *
-        Disconnect,             //9 *
-        UnconnectedMessage,     //10
-        NatIntroductionRequest, //11 *
-        NatIntroduction,        //12 *
-        NatPunchMessage,        //13 *
-        MtuCheck,               //14 *
-        MtuOk,                  //15 *
-        DiscoveryRequest,       //16 *
-        DiscoveryResponse,      //17 *
-        Merged,                 //18
-        ShutdownOk,             //19 *   
-        ReliableSequenced,      //20
-        PeerNotFound,           //21
-        InvalidProtocol         //22
+        Unreliable,
+        Channeled,
+        Ack,
+        Ping,
+        Pong,
+        ConnectRequest,
+        ConnectAccept,
+        Disconnect,
+        UnconnectedMessage,
+        NatIntroductionRequest,
+        NatIntroduction,
+        NatPunchMessage,
+        MtuCheck,
+        MtuOk,
+        DiscoveryRequest,
+        DiscoveryResponse,
+        Merged,
+        ShutdownOk,
+        PeerNotFound,
+        InvalidProtocol
     }
 
     internal sealed class NetPacket
     {
-        private const int LastProperty = 22;
+        private static readonly int LastProperty = Enum.GetValues(typeof(PacketProperty)).Length;
         //Header
         public PacketProperty Property
         {
@@ -120,14 +117,11 @@ namespace LiteNetLib
         {
             switch (property)
             {
-                case PacketProperty.ReliableOrdered:
-                case PacketProperty.ReliableUnordered:
-                case PacketProperty.ReliableSequenced:
-                case PacketProperty.Sequenced:
+                case PacketProperty.Channeled:
                 case PacketProperty.Ack:
                     return NetConstants.ChanneledHeaderSize;
                 case PacketProperty.Ping:
-                    return NetConstants.SequencedHeaderSize;
+                    return NetConstants.HeaderSize + 2;
                 case PacketProperty.ConnectRequest:
                     return NetConnectRequestPacket.HeaderSize;
                 case PacketProperty.ConnectAccept:
@@ -135,7 +129,7 @@ namespace LiteNetLib
                 case PacketProperty.Disconnect:
                     return NetConstants.HeaderSize + 8;
                 case PacketProperty.Pong:
-                    return NetConstants.SequencedHeaderSize + 8;
+                    return NetConstants.HeaderSize + 10;
                 default:
                     return NetConstants.HeaderSize;
             }

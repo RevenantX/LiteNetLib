@@ -78,7 +78,7 @@ namespace LiteNetLib
  
         //Channels
         private readonly SimpleChannel _unreliableChannel;
-        private readonly Dictionary<byte, BaseChannel> _channels;
+        private readonly BaseChannel[] _channels;
         private BaseChannel _headChannel;
 
         //MTU
@@ -189,11 +189,8 @@ namespace LiteNetLib
         /// </summary>
         public readonly NetStatistics Statistics;
 
-        private const int ChannelsCount = 32;
-        private const int ChannelReliableOrderedIdx = 0;
-        private const int ChannelReliableUnorderedIdx = ChannelsCount;
-        private const int ChannelReliableSequencedIdx = ChannelsCount * 2;
-        private const int ChannelSequencedIdx = ChannelsCount * 3;
+        private readonly byte _channelsCount;
+        private readonly int _channelsTotalCount;
 
         //incoming connection constructor
         internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id)
@@ -206,18 +203,42 @@ namespace LiteNetLib
             _connectionState = ConnectionState.Incoming;
             _mergeData = new NetPacket(PacketProperty.Merged, NetConstants.MaxPacketSize);
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
-            _pingPacket = new NetPacket(PacketProperty.Ping, 0);
-            _pingPacket.Sequence = 1;
-            _channels = new Dictionary<byte, BaseChannel>(8);
+            _pingPacket = new NetPacket(PacketProperty.Ping, 0) {Sequence = 1};
+           
             _unreliableChannel = new SimpleChannel(this);
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
+            
+            _channelsCount = netManager.ChannelsCount;
+            _channelsTotalCount = (byte)(_channelsCount * 4);
+            _channels = new BaseChannel[_channelsTotalCount];
         }
 
-        private void CreateChannel(BaseChannel newChannel, byte idx)
+        private BaseChannel CreateChannel(DeliveryMethod deliveryMethod, byte idx)
         {
+            BaseChannel newChannel = _channels[idx];
+            if (newChannel != null)
+                return newChannel;
+            switch (deliveryMethod)
+            {
+                case DeliveryMethod.ReliableUnordered:
+                    newChannel = new ReliableChannel(this, false, idx);
+                    break;
+                case DeliveryMethod.Sequenced:
+                    newChannel = new SequencedChannel(this, false, idx);
+                    break;
+                case DeliveryMethod.ReliableOrdered:
+                    newChannel = new ReliableChannel(this, true, idx);
+                    break;
+                case DeliveryMethod.ReliableSequenced:
+                    newChannel = new SequencedChannel(this, true, idx);
+                    break;
+                case DeliveryMethod.Unreliable:
+                    return _unreliableChannel;
+            }
             _channels[idx] = newChannel;
             newChannel.Next = _headChannel;
             _headChannel = newChannel;
+            return newChannel;
         }
 
         //"Connect to" constructor
@@ -280,26 +301,7 @@ namespace LiteNetLib
         /// <returns>size in bytes</returns>
         public int GetMaxSinglePacketSize(DeliveryMethod options)
         {
-            PacketProperty property;
-            switch (options)
-            {
-                case DeliveryMethod.ReliableUnordered:
-                    property = PacketProperty.ReliableUnordered;
-                    break;
-                case DeliveryMethod.Sequenced:
-                    property = PacketProperty.Sequenced;
-                    break;
-                case DeliveryMethod.ReliableOrdered:
-                    property = PacketProperty.ReliableOrdered;
-                    break;
-                case DeliveryMethod.ReliableSequenced:
-                    property = PacketProperty.ReliableSequenced;
-                    break;
-                default:
-                    property = PacketProperty.Unreliable;
-                    break;
-            }
-            return _mtu - NetPacket.GetHeaderSize(property);
+            return _mtu - NetPacket.GetHeaderSize(options == DeliveryMethod.Unreliable ? PacketProperty.Unreliable : PacketProperty.Channeled);
         }
 
         /// <summary>
@@ -354,42 +356,14 @@ namespace LiteNetLib
             if (_connectionState == ConnectionState.ShutdownRequested ||
                 _connectionState == ConnectionState.Disconnected)
                 return;
-            if (channelNumber >= ChannelsCount)
+            if (channelNumber >= _channelsTotalCount)
                 return;
 
             //Select channel
-            PacketProperty property = PacketProperty.Unreliable;
-            bool canBeFragmented = false;
-            switch (options)
-            {
-                case DeliveryMethod.ReliableUnordered:
-                    channelNumber += ChannelReliableUnorderedIdx;
-                    if (_channels[channelNumber] == null)
-                        CreateChannel(new ReliableChannel(this, false, channelNumber), channelNumber);
-                    property = PacketProperty.ReliableUnordered;
-                    canBeFragmented = true;
-                    break;
-                case DeliveryMethod.Sequenced:
-                    channelNumber += ChannelSequencedIdx;
-                    if (_channels[channelNumber] == null)
-                        CreateChannel(new SequencedChannel(this, false, channelNumber), channelNumber);
-                    property = PacketProperty.Sequenced;
-                    break;
-                case DeliveryMethod.ReliableOrdered:
-                    channelNumber += ChannelReliableOrderedIdx;
-                    if (_channels[channelNumber] == null)
-                        CreateChannel(new ReliableChannel(this, true, channelNumber), channelNumber);
-                    property = PacketProperty.ReliableOrdered;
-                    canBeFragmented = true;
-                    break;
-                case DeliveryMethod.ReliableSequenced:
-                    channelNumber += ChannelReliableSequencedIdx;
-                    if (_channels[channelNumber] == null)
-                        CreateChannel(new SequencedChannel(this, true, channelNumber), channelNumber);
-                    property = PacketProperty.ReliableSequenced;
-                    break;
-            }
-            BaseChannel channel = options == DeliveryMethod.Unreliable ? _unreliableChannel : _channels[channelNumber];
+            PacketProperty property = PacketProperty.Channeled;
+            bool canBeFragmented = options == DeliveryMethod.ReliableOrdered || options == DeliveryMethod.ReliableUnordered;
+            channelNumber += (byte)(_channelsCount * NetConstants.DeliveryMethodToChannelMultiplier(options));
+            BaseChannel channel = CreateChannel(options, channelNumber);
 
             //Prepare  
             NetDebug.Write("[RS]Packet: " + property);
@@ -805,25 +779,24 @@ namespace LiteNetLib
                     break;
 
                 case PacketProperty.Ack:
-                    BaseChannel channel;
-                    if (_channels.TryGetValue(packet.RawData[3], out channel))
+                    if (packet.ChannelId > _channelsTotalCount)
+                    {
+                        _packetPool.Recycle(packet);
+                        break;
+                    }
+                    BaseChannel channel = _channels[packet.ChannelId];
+                    if (channel != null)
                         channel.ProcessPacket(packet);
                     break;
 
-                case PacketProperty.ReliableUnordered:
-                    _channels[ChannelReliableUnorderedIdx].ProcessPacket(packet);
-                    break;
-
-                case PacketProperty.ReliableOrdered:
-                    _channels[ChannelReliableOrderedIdx].ProcessPacket(packet);
-                    break;
-
-                case PacketProperty.Sequenced:
-                    _channels[ChannelSequencedIdx].ProcessPacket(packet);
-                    break;
-
-                case PacketProperty.ReliableSequenced:
-                    _channels[ChannelReliableSequencedIdx].ProcessPacket(packet);
+                case PacketProperty.Channeled:
+                    if (packet.ChannelId > _channelsTotalCount)
+                    {
+                        _packetPool.Recycle(packet);
+                        break;
+                    }
+                    channel = _channels[packet.ChannelId] ?? CreateChannel(NetConstants.ChannelIdToDeliveryMethod(packet.ChannelId, _channelsCount), packet.ChannelId);
+                    channel.ProcessPacket(packet);
                     break;
 
                 //Simple packet without acks

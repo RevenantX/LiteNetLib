@@ -135,7 +135,7 @@ namespace LiteNetLib
         /// <summary>
         /// Library logic update and send period in milliseconds
         /// </summary>
-        public int UpdateTime = DefaultUpdateTime;
+        public int UpdateTime = 15;
 
         /// <summary>
         /// Interval for latency detection and checking connection
@@ -198,8 +198,6 @@ namespace LiteNetLib
         /// </summary>
         public bool ReuseAddress = false;
 
-        private const int DefaultUpdateTime = 15;
-
         /// <summary>
         /// Statistics of all connections
         /// </summary>
@@ -235,6 +233,25 @@ namespace LiteNetLib
             get { return _headPeer; }
         }
 
+        private byte _channelsCount = 1;
+
+        /// <summary>
+        /// QoS channel count per message type (value must be between 1 and 64 channels)
+        /// </summary>
+        public byte ChannelsCount
+        {
+            get { return _channelsCount; }
+            set
+            {
+                if(value < 1 || value > 64)
+                    throw new ArgumentException("Channels count must be between 1 and 64");
+                _channelsCount = value;
+            }
+        }
+
+        /// <summary>
+        /// Returns connected peers list (with internal cached list)
+        /// </summary>
         public List<NetPeer> ConnectedPeerList
         {
             get
@@ -857,17 +874,8 @@ namespace LiteNetLib
                 default: //PacketProperty.Unreliable
                     deliveryMethod = DeliveryMethod.Unreliable;
                     break;
-                case PacketProperty.ReliableUnordered:
-                    deliveryMethod = DeliveryMethod.ReliableUnordered;
-                    break;
-                case PacketProperty.ReliableOrdered:
-                    deliveryMethod = DeliveryMethod.ReliableOrdered;
-                    break;
-                case PacketProperty.Sequenced:
-                    deliveryMethod = DeliveryMethod.Sequenced;
-                    break;
-                case PacketProperty.ReliableSequenced:
-                    deliveryMethod = DeliveryMethod.ReliableSequenced;
+                case PacketProperty.Channeled:
+                    deliveryMethod = NetConstants.ChannelIdToDeliveryMethod(packet.ChannelId, _channelsCount);
                     break;
             }
             CreateEvent(NetEvent.EType.Receive, fromPeer, fromPeer.EndPoint, deliveryMethod: deliveryMethod, readerSource: packet);

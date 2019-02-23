@@ -35,6 +35,7 @@ namespace LiteNetLib
                         NetPacket packet = OutgoingQueue.Dequeue();
                         _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
                         packet.Sequence = (ushort)_localSequence;
+                        packet.ChannelId = _id;
                         Peer.SendUserData(packet);
 
                         if (_reliable && OutgoingQueue.Count == 0)
