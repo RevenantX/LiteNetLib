@@ -36,15 +36,16 @@ namespace LiteNetLib
     /// </summary>
     public static class NetConstants
     {
-        internal static int DeliveryMethodToChannelMultiplier(DeliveryMethod method)
+        internal static byte ChannelNumberToId(DeliveryMethod method, byte channelNumber, byte channelsCount)
         {
+            int multiplier = 0;
             switch (method)
             {
-                case DeliveryMethod.Sequenced:         return 1;
-                case DeliveryMethod.ReliableOrdered:   return 2;
-                case DeliveryMethod.ReliableSequenced: return 3;
+                case DeliveryMethod.Sequenced: multiplier = 1; break;
+                case DeliveryMethod.ReliableOrdered: multiplier = 2; break;
+                case DeliveryMethod.ReliableSequenced: multiplier = 3; break;
             }
-            return 0;
+            return (byte)(channelNumber + multiplier * channelsCount);
         }
 
         internal static DeliveryMethod ChannelIdToDeliveryMethod(byte channelId, byte channelsCount)

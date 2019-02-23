@@ -213,12 +213,12 @@ namespace LiteNetLib
             _channels = new BaseChannel[_channelsTotalCount];
         }
 
-        private BaseChannel CreateChannel(DeliveryMethod deliveryMethod, byte idx)
+        private BaseChannel CreateChannel(byte idx)
         {
             BaseChannel newChannel = _channels[idx];
             if (newChannel != null)
                 return newChannel;
-            switch (deliveryMethod)
+            switch (NetConstants.ChannelIdToDeliveryMethod(idx, _channelsCount))
             {
                 case DeliveryMethod.ReliableUnordered:
                     newChannel = new ReliableChannel(this, false, idx);
@@ -362,8 +362,7 @@ namespace LiteNetLib
             //Select channel
             PacketProperty property = PacketProperty.Channeled;
             bool canBeFragmented = options == DeliveryMethod.ReliableOrdered || options == DeliveryMethod.ReliableUnordered;
-            channelNumber += (byte)(_channelsCount * NetConstants.DeliveryMethodToChannelMultiplier(options));
-            BaseChannel channel = CreateChannel(options, channelNumber);
+            BaseChannel channel = CreateChannel(NetConstants.ChannelNumberToId(options, channelNumber, _channelsCount));
 
             //Prepare  
             NetDebug.Write("[RS]Packet: " + property);
@@ -795,7 +794,7 @@ namespace LiteNetLib
                         _packetPool.Recycle(packet);
                         break;
                     }
-                    channel = _channels[packet.ChannelId] ?? CreateChannel(NetConstants.ChannelIdToDeliveryMethod(packet.ChannelId, _channelsCount), packet.ChannelId);
+                    channel = _channels[packet.ChannelId] ?? CreateChannel(packet.ChannelId);
                     channel.ProcessPacket(packet);
                     break;
 

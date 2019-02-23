@@ -1226,6 +1226,11 @@ namespace LiteNetLib
                 _netEventsQueue.Clear();
         }
 
+        /// <summary>
+        /// Return peers count with connection state
+        /// </summary>
+        /// <param name="peerState">peer connection state (you can use as bit flags)</param>
+        /// <returns>peers count</returns>
         public int GetPeersCount(ConnectionState peerState)
         {
             int count = 0;
@@ -1273,11 +1278,20 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Disconnect all peers without any additional data
+        /// </summary>
         public void DisconnectAll()
         {
             DisconnectAll(null, 0, 0);
         }
 
+        /// <summary>
+        /// Disconnect all peers with shutdown message
+        /// </summary>
+        /// <param name="data">Data to send (must be less or equal MTU)</param>
+        /// <param name="start">Data start</param>
+        /// <param name="count">Data count</param>
         public void DisconnectAll(byte[] data, int start, int count)
         {
             //Send disconnect packets
