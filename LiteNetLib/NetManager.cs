@@ -877,7 +877,7 @@ namespace LiteNetLib
                     deliveryMethod = NetConstants.ChannelIdToDeliveryMethod(packet.ChannelId, _channelsCount);
                     break;
             }
-            CreateEvent(NetEvent.EType.Receive, fromPeer, fromPeer.EndPoint, deliveryMethod: deliveryMethod, readerSource: packet);
+            CreateEvent(NetEvent.EType.Receive, fromPeer, deliveryMethod: deliveryMethod, readerSource: packet);
         }
 
         /// <summary>
