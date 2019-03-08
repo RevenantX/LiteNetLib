@@ -24,7 +24,8 @@ namespace LiteNetLib
         RemoteConnectionClose,
         DisconnectPeerCalled,
         ConnectionRejected,
-        InvalidProtocol
+        InvalidProtocol,
+        UnknownHost
     }
 
     /// <summary>

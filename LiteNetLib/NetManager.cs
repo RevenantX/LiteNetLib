@@ -1192,8 +1192,7 @@ namespace LiteNetLib
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(string address, int port, string key)
         {
-            var ep = NetUtils.MakeEndPoint(address, port);
-            return Connect(ep, key);
+            return Connect(address, port, NetDataWriter.FromString(key));
         }
 
         /// <summary>
@@ -1206,7 +1205,16 @@ namespace LiteNetLib
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(string address, int port, NetDataWriter connectionData)
         {
-            var ep = NetUtils.MakeEndPoint(address, port);
+            IPEndPoint ep;
+            try
+            {
+                ep = NetUtils.MakeEndPoint(address, port);
+            }
+            catch
+            {
+                CreateEvent(NetEvent.EType.Disconnect, disconnectReason: DisconnectReason.UnknownHost);
+                return null;
+            }
             return Connect(ep, connectionData);
         }
 
