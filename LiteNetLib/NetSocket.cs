@@ -166,7 +166,7 @@ namespace LiteNetLib
             }
             catch
             {
-                NetDebug.WriteError("IL2CPP SetSocketOption error");
+                //Unity with IL2CPP throws an exception here, it doesn't matter in most cases so just ignore it
             }
             if (socket.AddressFamily == AddressFamily.InterNetwork)
             {
