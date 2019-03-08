@@ -1,8 +1,8 @@
-# LiteNetLib 0.8 indev
+# LiteNetLib 0.9 indev
 
 Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Standard 2.0.
 
-[STABLE BRANCH (and examples) for 0.8.x](https://github.com/RevenantX/LiteNetLib/tree/v0.8.3)
+[STABLE BRANCH (and examples) for 0.8.x](https://github.com/RevenantX/LiteNetLib/tree/0.8)
 
 [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
@@ -26,9 +26,11 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
 * Simple connection handling
 * Peer to peer connections
 * Helper classes for sending and reading messages
+* Multiple data channels
 * Different send mechanics
   * Reliable with order
   * Reliable without order
+  * Reliable sequenced (realiable only last packet)
   * Ordered but unreliable with duplication prevention
   * Simple UDP packets without order and reliability
 * Fast packet serializer [(Usage manual)](https://github.com/RevenantX/LiteNetLib/wiki/NetSerializer-usage)
