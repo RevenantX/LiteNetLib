@@ -4,6 +4,7 @@ namespace LiteNetLib
 {
     internal abstract class BaseChannel
     {
+        public BaseChannel Next;
         protected readonly NetPeer Peer;
         protected readonly Queue<NetPacket> OutgoingQueue;
 

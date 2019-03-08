@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace LiteNetLib.Ntp
+namespace LiteNetLib.Utils
 {
     /// <summary>
     /// Make NTP request.

@@ -118,6 +118,7 @@ namespace LiteNetLib
         private readonly List<NetPeer> _connectedPeerListCache;
         private int _lastPeerId;
         private readonly Queue<int> _peerIds;
+        private byte _channelsCount = 1;
 
         internal readonly NetPacketPool NetPacketPool;
 
@@ -135,7 +136,7 @@ namespace LiteNetLib
         /// <summary>
         /// Library logic update and send period in milliseconds
         /// </summary>
-        public int UpdateTime = DefaultUpdateTime;
+        public int UpdateTime = 15;
 
         /// <summary>
         /// Interval for latency detection and checking connection
@@ -198,8 +199,6 @@ namespace LiteNetLib
         /// </summary>
         public bool ReuseAddress = false;
 
-        private const int DefaultUpdateTime = 15;
-
         /// <summary>
         /// Statistics of all connections
         /// </summary>
@@ -235,6 +234,23 @@ namespace LiteNetLib
             get { return _headPeer; }
         }
 
+        /// <summary>
+        /// QoS channel count per message type (value must be between 1 and 64 channels)
+        /// </summary>
+        public byte ChannelsCount
+        {
+            get { return _channelsCount; }
+            set
+            {
+                if(value < 1 || value > 64)
+                    throw new ArgumentException("Channels count must be between 1 and 64");
+                _channelsCount = value;
+            }
+        }
+
+        /// <summary>
+        /// Returns connected peers list (with internal cached list)
+        /// </summary>
         public List<NetPeer> ConnectedPeerList
         {
             get
@@ -857,24 +873,15 @@ namespace LiteNetLib
                 default: //PacketProperty.Unreliable
                     deliveryMethod = DeliveryMethod.Unreliable;
                     break;
-                case PacketProperty.ReliableUnordered:
-                    deliveryMethod = DeliveryMethod.ReliableUnordered;
-                    break;
-                case PacketProperty.ReliableOrdered:
-                    deliveryMethod = DeliveryMethod.ReliableOrdered;
-                    break;
-                case PacketProperty.Sequenced:
-                    deliveryMethod = DeliveryMethod.Sequenced;
-                    break;
-                case PacketProperty.ReliableSequenced:
-                    deliveryMethod = DeliveryMethod.ReliableSequenced;
+                case PacketProperty.Channeled:
+                    deliveryMethod = NetConstants.ChannelIdToDeliveryMethod(packet.ChannelId, _channelsCount);
                     break;
             }
-            CreateEvent(NetEvent.EType.Receive, fromPeer, fromPeer.EndPoint, deliveryMethod: deliveryMethod, readerSource: packet);
+            CreateEvent(NetEvent.EType.Receive, fromPeer, deliveryMethod: deliveryMethod, readerSource: packet);
         }
 
         /// <summary>
-        /// Send data to all connected peers
+        /// Send data to all connected peers (channel - 0)
         /// </summary>
         /// <param name="writer">DataWriter with data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
@@ -884,7 +891,7 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Send data to all connected peers
+        /// Send data to all connected peers (channel - 0)
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
@@ -894,7 +901,7 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Send data to all connected peers
+        /// Send data to all connected peers (channel - 0)
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="start">Start of data</param>
@@ -902,34 +909,69 @@ namespace LiteNetLib
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         public void SendToAll(byte[] data, int start, int length, DeliveryMethod options)
         {
-            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
-                netPeer.Send(data, start, length, options);
+            SendToAll(data, start, length, 0, options);
         }
 
         /// <summary>
         /// Send data to all connected peers
         /// </summary>
         /// <param name="writer">DataWriter with data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        /// <param name="excludePeer">Excluded peer</param>
-        public void SendToAll(NetDataWriter writer, DeliveryMethod options, NetPeer excludePeer)
+        public void SendToAll(NetDataWriter writer, byte channelNumber, DeliveryMethod options)
         {
-            SendToAll(writer.Data, 0, writer.Length, options, excludePeer);
+            SendToAll(writer.Data, 0, writer.Length, channelNumber, options);
         }
 
         /// <summary>
         /// Send data to all connected peers
         /// </summary>
         /// <param name="data">Data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        /// <param name="excludePeer">Excluded peer</param>
-        public void SendToAll(byte[] data, DeliveryMethod options, NetPeer excludePeer)
+        public void SendToAll(byte[] data, byte channelNumber, DeliveryMethod options)
         {
-            SendToAll(data, 0, data.Length, options, excludePeer);
+            SendToAll(data, 0, data.Length, channelNumber, options);
         }
 
         /// <summary>
         /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="start">Start of data</param>
+        /// <param name="length">Length of data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
+        {
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                netPeer.Send(data, start, length, channelNumber, options);
+        }
+
+        /// <summary>
+        /// Send data to all connected peers (channel - 0)
+        /// </summary>
+        /// <param name="writer">DataWriter with data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(NetDataWriter writer, DeliveryMethod options, NetPeer excludePeer)
+        {
+            SendToAll(writer.Data, 0, writer.Length, 0, options, excludePeer);
+        }
+
+        /// <summary>
+        /// Send data to all connected peers (channel - 0)
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(byte[] data, DeliveryMethod options, NetPeer excludePeer)
+        {
+            SendToAll(data, 0, data.Length, 0, options, excludePeer);
+        }
+
+        /// <summary>
+        /// Send data to all connected peers (channel - 0)
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="start">Start of data</param>
@@ -938,10 +980,49 @@ namespace LiteNetLib
         /// <param name="excludePeer">Excluded peer</param>
         public void SendToAll(byte[] data, int start, int length, DeliveryMethod options, NetPeer excludePeer)
         {
+            SendToAll(data, start, length, 0, options, excludePeer);
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="writer">DataWriter with data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(NetDataWriter writer, byte channelNumber, DeliveryMethod options, NetPeer excludePeer)
+        {
+            SendToAll(writer.Data, 0, writer.Length, channelNumber, options, excludePeer);
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(byte[] data, byte channelNumber, DeliveryMethod options, NetPeer excludePeer)
+        {
+            SendToAll(data, 0, data.Length, channelNumber, options, excludePeer);
+        }
+
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="start">Start of data</param>
+        /// <param name="length">Length of data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options, NetPeer excludePeer)
+        {
             for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
             {
                 if (netPeer != excludePeer)
-                    netPeer.Send(data, start, length, options);
+                    netPeer.Send(data, start, length, channelNumber, options);
             }
         }
 
@@ -1218,6 +1299,11 @@ namespace LiteNetLib
                 _netEventsQueue.Clear();
         }
 
+        /// <summary>
+        /// Return peers count with connection state
+        /// </summary>
+        /// <param name="peerState">peer connection state (you can use as bit flags)</param>
+        /// <returns>peers count</returns>
         public int GetPeersCount(ConnectionState peerState)
         {
             int count = 0;
@@ -1265,11 +1351,20 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Disconnect all peers without any additional data
+        /// </summary>
         public void DisconnectAll()
         {
             DisconnectAll(null, 0, 0);
         }
 
+        /// <summary>
+        /// Disconnect all peers with shutdown message
+        /// </summary>
+        /// <param name="data">Data to send (must be less or equal MTU)</param>
+        /// <param name="start">Data start</param>
+        /// <param name="count">Data count</param>
         public void DisconnectAll(byte[] data, int start, int count)
         {
             //Send disconnect packets

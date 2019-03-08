@@ -36,19 +36,42 @@ namespace LiteNetLib
     /// </summary>
     public static class NetConstants
     {
+        internal static byte ChannelNumberToId(DeliveryMethod method, byte channelNumber, byte channelsCount)
+        {
+            int multiplier = 0;
+            switch (method)
+            {
+                case DeliveryMethod.Sequenced: multiplier = 1; break;
+                case DeliveryMethod.ReliableOrdered: multiplier = 2; break;
+                case DeliveryMethod.ReliableSequenced: multiplier = 3; break;
+            }
+            return (byte)(channelNumber + multiplier * channelsCount);
+        }
+
+        internal static DeliveryMethod ChannelIdToDeliveryMethod(byte channelId, byte channelsCount)
+        {
+            switch (channelId / channelsCount)
+            {
+                case 1: return DeliveryMethod.Sequenced;
+                case 2: return DeliveryMethod.ReliableOrdered;
+                case 3: return DeliveryMethod.ReliableSequenced;
+            }
+            return DeliveryMethod.ReliableUnordered;
+        }
+
         //can be tuned
         public const int DefaultWindowSize = 64;
         public const int SocketBufferSize = 1024 * 1024; //1mb
         public const int SocketTTL = 255;
 
         public const int HeaderSize = 1;
-        public const int SequencedHeaderSize = 3;
+        public const int ChanneledHeaderSize = 4;
         public const int FragmentHeaderSize = 6;
         public const ushort MaxSequence = 32768;
         public const ushort HalfMaxSequence = MaxSequence / 2;
 
         //protocol
-        internal const int ProtocolId = 7;
+        internal const int ProtocolId = 8;
         internal const int MaxUdpHeaderSize = 68;
 
         internal static readonly int[] PossibleMtu =
