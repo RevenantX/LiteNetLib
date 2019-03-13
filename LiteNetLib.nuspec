@@ -3,7 +3,7 @@
   <metadata>
     <id>LiteNetLib</id>
     <title>LiteNetLib</title>
-    <version>0.8.3</version>
+    <version>0.8.3.1</version>
     <authors>Ruslan Pyrch</authors>
     <owners>RevenantX</owners>
     <licenseUrl>https://github.com/RevenantX/LiteNetLib/blob/master/LICENSE.txt</licenseUrl>
@@ -12,7 +12,7 @@
     <description>Lite reliable UDP library for .NET, Mono, and .NET Core.</description>
     <copyright>Copyright 2017 Ruslan Pyrch</copyright>
     <tags>udp reliable-udp network</tags>
-    <releaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/v0.8.3</releaseNotes>
+    <releaseNotes>Add IPEndPoint to serializer</releaseNotes>
     <dependencies>
 	  <group targetFramework="net35">
 	  </group>
