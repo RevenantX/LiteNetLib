@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Net;
+
 #if NETCORE
 using System.Linq;
 #endif
@@ -70,7 +72,8 @@ namespace LiteNetLib.Utils
             typeof(float),
             typeof(double),
             typeof(bool),
-            typeof(char)
+            typeof(char),
+            typeof(IPEndPoint)
         };
 
         private readonly NetDataWriter _writer;
@@ -342,6 +345,13 @@ namespace LiteNetLib.Utils
                     var setDelegate = ExtractSetDelegate<T, char>(setMethod);
                     var getDelegate = ExtractGetDelegate<T, char>(getMethod);
                     info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetChar());
+                    info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference));
+                }
+                else if (propertyType == typeof(IPEndPoint))
+                {
+                    var setDelegate = ExtractSetDelegate<T, IPEndPoint>(setMethod);
+                    var getDelegate = ExtractGetDelegate<T, IPEndPoint>(getMethod);
+                    info.ReadDelegate[i] = reader => setDelegate((T)info.Reference, reader.GetNetEndPoint());
                     info.WriteDelegate[i] = writer => writer.Put(getDelegate((T)info.Reference));
                 }
                 // Array types
