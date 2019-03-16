@@ -361,8 +361,9 @@ namespace LiteNetLib.Utils
 
         public ArraySegment<byte> GetRemainingBytesSegment()
         {
+            ArraySegment<byte> segment = new ArraySegment<byte>(_data, _position, AvailableBytes);
             _position = _data.Length;
-            return new ArraySegment<byte>(_data, _position, AvailableBytes);
+            return segment;
         }
 
         public byte[] GetRemainingBytes()
