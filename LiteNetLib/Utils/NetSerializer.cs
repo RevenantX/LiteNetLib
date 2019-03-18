@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Net;
 
-#if NETCORE
+#if NETSTANDARD2_0 || NETCOREAPP2_0
 using System.Linq;
 #endif
 
@@ -161,7 +161,7 @@ namespace LiteNetLib.Utils
 
         private static Delegate CreateDelegate(Type type, MethodInfo info)
         {
-#if NETCORE
+#if NETSTANDARD2_0 || NETCOREAPP2_0
             return info.CreateDelegate(type);
 #else
             return Delegate.CreateDelegate(type, info);
@@ -188,7 +188,7 @@ namespace LiteNetLib.Utils
                 return info;
             }
 
-#if NETCORE
+#if NETSTANDARD2_0 || NETCOREAPP2_0
             var props = t.GetRuntimeProperties().ToArray();
 #else
             var props = t.GetProperties(
@@ -209,7 +209,7 @@ namespace LiteNetLib.Utils
                 var property = props[i];
                 var propertyType = property.PropertyType;
 
-#if NETCORE
+#if NETSTANDARD2_0 || NETCOREAPP2_0
                 bool isEnum = propertyType.GetTypeInfo().IsEnum;
                 var getMethod = property.GetMethod;
                 var setMethod = property.SetMethod;

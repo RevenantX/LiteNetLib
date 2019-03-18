@@ -1,78 +1,22 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B0A014E4-0392-4E35-AA42-8FB5A40417E0}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>LiteNetLib</RootNamespace>
     <AssemblyName>LiteNetLib</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <RootNamespace>LiteNetLib</RootNamespace>
+    <LangVersion>4</LangVersion>
+    <TargetFrameworks>net45;netstandard2.0;netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Optimize>false</Optimize>
-    <Externalconsole>true</Externalconsole>
-    <WarningLevel>3</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\LiteNetLib.xml</DocumentationFile>
-    <NoWarn>1591</NoWarn>
-    <DefineConstants>
-    </DefineConstants>
-    <LangVersion>4</LangVersion>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\netcoreapp2.0\LiteNetLib.xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BaseChannel.cs" />
-    <Compile Include="ConnectionRequest.cs" />
-    <Compile Include="INetEventListener.cs" />
-    <Compile Include="NetDebug.cs" />
-    <Compile Include="NetExceptions.cs" />
-    <Compile Include="NetPacketPool.cs" />
-    <Compile Include="NetStatistics.cs" />
-    <Compile Include="Utils\NtpPacket.cs" />
-    <Compile Include="Utils\NtpRequest.cs" />
-    <Compile Include="Utils\FastBitConverter.cs" />
-    <Compile Include="NatPunchModule.cs" />
-    <Compile Include="NetConstants.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="NetManager.cs" />
-    <Compile Include="NetPacket.cs" />
-    <Compile Include="NetPeer.cs" />
-    <Compile Include="NetSocket.cs" />
-    <Compile Include="NetUtils.cs" />
-    <Compile Include="SequencedChannel.cs" />
-    <Compile Include="ReliableChannel.cs" />
-    <Compile Include="SimpleChannel.cs" />
-    <Compile Include="Utils\INetSerializable.cs" />
-    <Compile Include="Utils\NetDataReader.cs" />
-    <Compile Include="Utils\NetDataWriter.cs" />
-    <Compile Include="Utils\NetPacketProcessor.cs" />
-    <Compile Include="Utils\NetSerializer.cs" />
-    <Compile Include="Utils\NetSerializerExceptions.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
 </Project>

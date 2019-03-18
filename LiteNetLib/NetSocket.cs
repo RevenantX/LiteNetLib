@@ -1,7 +1,7 @@
 #if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
 #define UNITY
 #endif
-#if NETCORE
+#if NETSTANDARD2_0 || NETCOREAPP2_0
 using System.Runtime.InteropServices;
 #endif
 
@@ -172,7 +172,7 @@ namespace LiteNetLib
             {
                 socket.Ttl = NetConstants.SocketTTL;
 
-#if NETCORE
+#if NETSTANDARD2_0 || NETCOREAPP2_0
                 if(!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 #endif
                 try { socket.DontFragment = true; }

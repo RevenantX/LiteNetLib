@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LiteNetLib\LiteNetLib.csproj">
-      <Project>{b0a014e4-0392-4e35-aa42-8fb5a40417e0}</Project>
+      <Project>{2f98f12c-b72a-48fe-a7e5-6d8b0c5abacb}</Project>
       <Name>LiteNetLib</Name>
     </ProjectReference>
   </ItemGroup>

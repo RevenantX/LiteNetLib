@@ -1,5 +1,5 @@
 image: Visual Studio 2017
-version: 0.8.{build}
+version: 0.9.{build}
 configuration:
   - Release
 before_build:
@@ -16,12 +16,12 @@ test:
   assemblies:
     - '**\*.Tests.dll'
 artifacts:
-  - path: LiteNetLib/bin/Release
+  - path: LiteNetLib/bin/Release/net45
     name: LiteNetLib-$(appveyor_build_version)
     type: Zip
-  - path: LiteNetLibStandard/bin/Release
+  - path: LiteNetLib/bin/Release/netstandard2.0
     name: LiteNetLibStandard-$(appveyor_build_version)
     type: Zip
-  - path: LiteNetLibNetCore/bin/Release
+  - path: LiteNetLib/bin/Release/netcoreapp2.0
     name: LiteNetLibNetCore-$(appveyor_build_version)
     type: Zip
