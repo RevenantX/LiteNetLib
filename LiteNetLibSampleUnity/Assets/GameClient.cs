@@ -17,8 +17,9 @@ public class GameClient : MonoBehaviour, INetEventListener
     void Start()
     {
         _netClient = new NetManager(this);
-        _netClient.Start();
+        _netClient.UnconnectedMessagesEnabled = true;
         _netClient.UpdateTime = 15;
+        _netClient.Start();
     }
 
     void Update()
@@ -38,7 +39,7 @@ public class GameClient : MonoBehaviour, INetEventListener
         }
         else
         {
-            _netClient.SendDiscoveryRequest(new byte[] {1}, 5000);
+            _netClient.SendBroadcast(new byte[] {1}, 5000);
         }
     }
 
@@ -74,7 +75,7 @@ public class GameClient : MonoBehaviour, INetEventListener
 
     public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
     {
-        if (messageType == UnconnectedMessageType.DiscoveryResponse && _netClient.PeersCount == 0)
+        if (messageType == UnconnectedMessageType.BasicMessage && _netClient.PeersCount == 0 && reader.GetInt() == 1)
         {
             Debug.Log("[CLIENT] Received discovery response. Connecting to: " + remoteEndPoint);
             _netClient.Connect(remoteEndPoint, "sample_app");

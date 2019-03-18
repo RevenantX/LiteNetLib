@@ -127,4 +127,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <LibraryRelease Include="$(TargetDir)**\LiteNetLib.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibraryRelease)" DestinationFolder="..\LiteNetLibSampleUnity\Assets" />
+  </Target>
+
 </Project>
