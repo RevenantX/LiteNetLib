@@ -7,7 +7,7 @@ namespace LiteNetLib.Utils
     /// <summary>
     /// Make NTP request.
     /// <para>
-    /// 1. Create the object by <see cref="Create"/> method. 
+    /// 1. Create the object by <see cref="Create(IPEndPoint,Action&lt;NtpPacket&gt;)"/> method. 
     /// </para>
     /// <para>
     /// 2. Use <see cref="Send"/> method to send requests. 3. Call <see cref="Close"/> to release the socket
