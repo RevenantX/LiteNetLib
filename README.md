@@ -139,8 +139,8 @@ server.Stop();
 * **SimulationMaxLatency**
   * maximum simulated latency
   * default value: **100 msec**
-* **DiscoveryEnabled**
-  * Allows receive DiscoveryRequests
+* **BroadcastEnabled**
+  * Allows receive Broadcast packets
   * default value: **false**
 * **ReconnectDelay**
   * delay betwen connection attempts
