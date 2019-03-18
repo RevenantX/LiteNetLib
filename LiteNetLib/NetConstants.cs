@@ -71,7 +71,7 @@ namespace LiteNetLib
         public const ushort HalfMaxSequence = MaxSequence / 2;
 
         //protocol
-        internal const int ProtocolId = 8;
+        internal const int ProtocolId = 9;
         internal const int MaxUdpHeaderSize = 68;
 
         internal static readonly int[] PossibleMtu =

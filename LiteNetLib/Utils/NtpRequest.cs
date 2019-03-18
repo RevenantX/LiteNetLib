@@ -29,6 +29,7 @@ namespace LiteNetLib.Utils
         /// <summary>
         /// Initialize object, open socket.
         /// </summary>
+        /// <param name="endPoint">NTP Server endpoint</param>
         /// <param name="onRequestComplete">callback (called from other thread!)</param>
         private NtpRequest(IPEndPoint endPoint, Action<NtpPacket> onRequestComplete)
         {
@@ -37,7 +38,7 @@ namespace LiteNetLib.Utils
 
             // Create and start socket
             _socket = new NetSocket(this);
-            _socket.Bind(IPAddress.Any, IPAddress.IPv6Any, 0, false);
+            _socket.Bind(IPAddress.Any, IPAddress.IPv6Any, 0, false, true);
         }
 
         /// <summary>

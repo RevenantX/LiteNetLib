@@ -392,29 +392,34 @@ namespace LiteNetLib.Tests
             var server = ManagerStack.Server(1);
             var clientCount = 10;
 
-            server.DiscoveryEnabled = true;
+            server.BroadcastReceiveEnabled = true;
 
             var writer = new NetDataWriter();
             writer.Put("Client request");
 
             ManagerStack.ServerListener(1).NetworkReceiveUnconnectedEvent += (point, reader, type) =>
             {
-                var serverWriter = new NetDataWriter();
-                writer.Put("Server response");
-                server.SendDiscoveryResponse(serverWriter, point);
+                if (type == UnconnectedMessageType.Broadcast)
+                {
+                    var serverWriter = new NetDataWriter();
+                    serverWriter.Put("Server response");
+                    server.SendUnconnectedMessage(serverWriter, point);
+                }
             };
 
             for (ushort i = 1; i <= clientCount; i++)
             {
                 var cache = i;
+                ManagerStack.Client(i).UnconnectedMessagesEnabled = true;
                 ManagerStack.ClientListener(i).NetworkReceiveUnconnectedEvent += (point, reader, type) =>
                 {
-                    Assert.AreEqual(type, UnconnectedMessageType.DiscoveryResponse);
+                    Assert.AreEqual(type, UnconnectedMessageType.BasicMessage);
+                    Assert.AreEqual("Server response", reader.GetString());
                     ManagerStack.Client(cache).Connect(point, DefaultAppKey);
                 };
             }
 
-            ManagerStack.ClientForeach((i, manager, l) => manager.SendDiscoveryRequest(writer, DefaultPort));
+            ManagerStack.ClientForeach((i, manager, l) => manager.SendBroadcast(writer, DefaultPort));
 
             while (server.PeersCount < clientCount)
             {

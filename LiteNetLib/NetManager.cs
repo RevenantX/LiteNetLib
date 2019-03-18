@@ -53,8 +53,7 @@ namespace LiteNetLib
             ReceiveUnconnected,
             Error,
             ConnectionLatencyUpdated,
-            DiscoveryRequest,
-            DiscoveryResponse,
+            Broadcast,
             ConnectionRequest
         }
         public EType Type;
@@ -180,9 +179,9 @@ namespace LiteNetLib
         public bool UnsyncedEvents = false;
 
         /// <summary>
-        /// Allows receive DiscoveryRequests
+        /// Allows receive broadcast packets
         /// </summary>
-        public bool DiscoveryEnabled = false;
+        public bool BroadcastReceiveEnabled = false;
 
         /// <summary>
         /// Delay betwen initial connection attempts
@@ -224,6 +223,11 @@ namespace LiteNetLib
         /// Automatically recycle NetPacketReader after OnReceive event
         /// </summary>
         public bool AutoRecycle;
+
+        /// <summary>
+        /// IPv6 support
+        /// </summary>
+        public bool IPv6Enabled = true;
 
         /// <summary>
         /// First peer. Useful for Client mode
@@ -491,11 +495,8 @@ namespace LiteNetLib
                 case NetEvent.EType.ReceiveUnconnected:
                     _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.BasicMessage);
                     break;
-                case NetEvent.EType.DiscoveryRequest:
-                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryRequest);
-                    break;
-                case NetEvent.EType.DiscoveryResponse:
-                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.DiscoveryResponse);
+                case NetEvent.EType.Broadcast:
+                    _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.Broadcast);
                     break;
                 case NetEvent.EType.Error:
                     _netEventListener.OnNetworkError(evt.RemoteEndPoint, evt.ErrorCode);
@@ -786,14 +787,10 @@ namespace LiteNetLib
                         SendRawAndRecycle(packet, remoteEndPoint);
                     }
                     break;
-                case PacketProperty.DiscoveryRequest:
-                    if (!DiscoveryEnabled)
+                case PacketProperty.Broadcast:
+                    if (!BroadcastReceiveEnabled)
                         break;
-                    CreateEvent(NetEvent.EType.DiscoveryRequest, remoteEndPoint: remoteEndPoint, readerSource: packet);
-                    break;
-
-                case PacketProperty.DiscoveryResponse:
-                    CreateEvent(NetEvent.EType.DiscoveryResponse, remoteEndPoint: remoteEndPoint, readerSource: packet);
+                    CreateEvent(NetEvent.EType.Broadcast, remoteEndPoint: remoteEndPoint, readerSource: packet);
                     break;
 
                 case PacketProperty.UnconnectedMessage:
@@ -1044,7 +1041,7 @@ namespace LiteNetLib
         {
             if (IsRunning)
                 return false;
-            if (!_socket.Bind(addressIPv4, addressIPv6, port, ReuseAddress))
+            if (!_socket.Bind(addressIPv4, addressIPv6, port, ReuseAddress, IPv6Enabled))
                 return false;
             IsRunning = true;
             _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
@@ -1113,42 +1110,23 @@ namespace LiteNetLib
             return result;
         }
 
-        public bool SendDiscoveryRequest(NetDataWriter writer, int port)
+        public bool SendBroadcast(NetDataWriter writer, int port)
         {
-            return SendDiscoveryRequest(writer.Data, 0, writer.Length, port);
+            return SendBroadcast(writer.Data, 0, writer.Length, port);
         }
 
-        public bool SendDiscoveryRequest(byte[] data, int port)
+        public bool SendBroadcast(byte[] data, int port)
         {
-            return SendDiscoveryRequest(data, 0, data.Length, port);
+            return SendBroadcast(data, 0, data.Length, port);
         }
 
-        public bool SendDiscoveryRequest(byte[] data, int start, int length, int port)
+        public bool SendBroadcast(byte[] data, int start, int length, int port)
         {
             if (!IsRunning)
                 return false;
-            var packet = NetPacketPool.GetWithData(PacketProperty.DiscoveryRequest, data, start, length);
+            var packet = NetPacketPool.GetWithData(PacketProperty.Broadcast, data, start, length);
             bool result = _socket.SendBroadcast(packet.RawData, 0, packet.Size, port);
             NetPacketPool.Recycle(packet);
-            return result;
-        }
-
-        public bool SendDiscoveryResponse(NetDataWriter writer, IPEndPoint remoteEndPoint)
-        {
-            return SendDiscoveryResponse(writer.Data, 0, writer.Length, remoteEndPoint);
-        }
-
-        public bool SendDiscoveryResponse(byte[] data, IPEndPoint remoteEndPoint)
-        {
-            return SendDiscoveryResponse(data, 0, data.Length, remoteEndPoint);
-        }
-
-        public bool SendDiscoveryResponse(byte[] data, int start, int length, IPEndPoint remoteEndPoint)
-        {
-            if (!IsRunning)
-                return false;
-            var packet = NetPacketPool.GetWithData(PacketProperty.DiscoveryResponse, data, start, length);
-            bool result = SendRawAndRecycle(packet, remoteEndPoint) > 0;
             return result;
         }
 

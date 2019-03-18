@@ -9,8 +9,7 @@ namespace LiteNetLib
     public enum UnconnectedMessageType
     {
         BasicMessage,
-        DiscoveryRequest,
-        DiscoveryResponse
+        Broadcast
     }
 
     /// <summary>
