@@ -64,14 +64,14 @@ namespace LiteNetLib.Utils
         private delegate void NestedTypeWriter(NetDataWriter writer, object customObj);
         private delegate object NestedTypeReader(NetDataReader reader);
 
-        private sealed class StructInfo<T>
+        private sealed class ClassInfo<T>
         {
-            public static StructInfo<T> Instance;
+            public static ClassInfo<T> Instance;
             public readonly Action<T, NetDataWriter>[] WriteDelegate;
             public readonly Action<T, NetDataReader>[] ReadDelegate;
             private readonly int _membersCount;
 
-            public StructInfo(int membersCount)
+            public ClassInfo(int membersCount)
             {
                 _membersCount = membersCount;
                 WriteDelegate = new Action<T, NetDataWriter>[membersCount];
@@ -129,9 +129,7 @@ namespace LiteNetLib.Utils
         {
             var t = typeof(T);
             if (_registeredNestedTypes.ContainsKey(t))
-            {
                 return false;
-            }
 
             var rwDelegates = new NestedType(
                 (writer, obj) =>
@@ -178,9 +176,7 @@ namespace LiteNetLib.Utils
         {
             var t = typeof(T);
             if (BasicTypes.Contains(t) || _registeredNestedTypes.ContainsKey(t))
-            {
                 return false;
-            }
 
             var rwDelegates = new NestedType(
                 (writer, obj) => writeDelegate(writer, (T)obj),
@@ -209,10 +205,10 @@ namespace LiteNetLib.Utils
             return (Action<TClass, TProperty>)CreateDelegate(typeof(Action<TClass, TProperty>), info);
         }
 
-        private StructInfo<T> RegisterInternal<T>()
+        private ClassInfo<T> RegisterInternal<T>()
         {
-            if (StructInfo<T>.Instance != null)
-                return StructInfo<T>.Instance;
+            if (ClassInfo<T>.Instance != null)
+                return ClassInfo<T>.Instance;
 
             Type t = typeof(T);
 #if NETSTANDARD2_0 || NETCOREAPP2_0
@@ -228,7 +224,7 @@ namespace LiteNetLib.Utils
             if (props == null)
                 throw new InvalidTypeException("Type does not contain acceptable fields");
 
-            var info = new StructInfo<T>(propsCount);
+            var info = new ClassInfo<T>(propsCount);
             for (int i = 0; i < propsCount; i++)
             {
                 var property = props[i];
@@ -525,7 +521,7 @@ namespace LiteNetLib.Utils
                     }
                 }
             }
-            StructInfo<T>.Instance = info;
+            ClassInfo<T>.Instance = info;
             return info;
         }
 
