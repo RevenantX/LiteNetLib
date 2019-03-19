@@ -19,7 +19,7 @@
     <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
 
-  <Target Name="UpdateUnityDLLS" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(TargetFramework)' == 'net35' ">
+  <Target Name="UpdateUnityDLLS" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(TargetFramework)' == 'net35' and '$(Configuration)' == 'Release' ">
     <ItemGroup>
       <LibraryRelease Include="$(TargetDir)LiteNetLib.dll;$(TargetDir)LiteNetLib.pdb;$(TargetDir)LiteNetLib.xml" />
     </ItemGroup>
