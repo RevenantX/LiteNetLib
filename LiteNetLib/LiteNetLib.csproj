@@ -4,7 +4,7 @@
     <AssemblyName>LiteNetLib</AssemblyName>
     <RootNamespace>LiteNetLib</RootNamespace>
     <LangVersion>4</LangVersion>
-    <TargetFrameworks>net45;netstandard2.0;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net35;netstandard2.0;netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,5 +18,12 @@
     <DocumentationFile>bin\Release\netcoreapp2.0\LiteNetLib.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
+
+  <Target Name="UpdateUnityDLLS" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(TargetFramework)' == 'net35' ">
+    <ItemGroup>
+      <LibraryRelease Include="$(TargetDir)LiteNetLib.dll;$(TargetDir)LiteNetLib.pdb;$(TargetDir)LiteNetLib.xml" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibraryRelease)" DestinationFolder="..\LiteNetLibSampleUnity\Assets" />
+  </Target>
 
 </Project>

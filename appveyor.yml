@@ -16,7 +16,7 @@ test:
   assemblies:
     - '**\*.Tests.dll'
 artifacts:
-  - path: LiteNetLib/bin/Release/net45
+  - path: LiteNetLib/bin/Release/net35
     name: LiteNetLib-$(appveyor_build_version)
     type: Zip
   - path: LiteNetLib/bin/Release/netstandard2.0
