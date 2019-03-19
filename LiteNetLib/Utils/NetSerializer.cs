@@ -66,6 +66,7 @@ namespace LiteNetLib.Utils
 
         private sealed class StructInfo<T>
         {
+            public static StructInfo<T> Instance;
             public readonly Action<T, NetDataWriter>[] WriteDelegate;
             public readonly Action<T, NetDataReader>[] ReadDelegate;
             private readonly int _membersCount;
@@ -88,11 +89,6 @@ namespace LiteNetLib.Utils
                 for (int i = 0; i < _membersCount; i++)
                     ReadDelegate[i](obj, reader);
             }
-        }
-
-        private static class StructInfoContainer<T>
-        {
-            public static StructInfo<T> Info;
         }
 
         private static readonly HashSet<Type> BasicTypes = new HashSet<Type>
@@ -215,8 +211,8 @@ namespace LiteNetLib.Utils
 
         private StructInfo<T> RegisterInternal<T>()
         {
-            if (StructInfoContainer<T>.Info != null)
-                return StructInfoContainer<T>.Info;
+            if (StructInfo<T>.Instance != null)
+                return StructInfo<T>.Instance;
 
             Type t = typeof(T);
 #if NETSTANDARD2_0 || NETCOREAPP2_0
@@ -529,7 +525,7 @@ namespace LiteNetLib.Utils
                     }
                 }
             }
-            StructInfoContainer<T>.Info = info;
+            StructInfo<T>.Instance = info;
             return info;
         }
 
