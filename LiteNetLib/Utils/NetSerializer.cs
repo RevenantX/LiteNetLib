@@ -259,9 +259,9 @@ namespace LiteNetLib.Utils
                         {
                             property.SetValue(inf, Enum.ToObject(propertyType, r.GetByte()), null);
                         };
-                        info.WriteDelegate[i] = (inf, writer) =>
+                        info.WriteDelegate[i] = (inf, w) =>
                         {
-                            writer.Put((byte)property.GetValue(inf, null));
+                            w.Put((byte)property.GetValue(inf, null));
                         };
                     }
                     else if (underlyingType == typeof(int))
