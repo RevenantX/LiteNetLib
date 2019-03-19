@@ -90,6 +90,11 @@ namespace LiteNetLib.Utils
             }
         }
 
+        private static class StructInfoContainer<T>
+        {
+            public static StructInfo<T> Info;
+        }
+
         private static readonly HashSet<Type> BasicTypes = new HashSet<Type>
         {
             typeof(int),
@@ -110,7 +115,6 @@ namespace LiteNetLib.Utils
 
         private readonly NetDataWriter _writer;
         private readonly int _maxStringLength;
-        private readonly Dictionary<string, object> _registeredTypes;
         private readonly Dictionary<Type, NestedType> _registeredNestedTypes;
 
         public NetSerializer() : this(0)
@@ -121,7 +125,6 @@ namespace LiteNetLib.Utils
         public NetSerializer(int maxStringLength)
         {
             _maxStringLength = maxStringLength;
-            _registeredTypes = new Dictionary<string, object>();
             _registeredNestedTypes = new Dictionary<Type, NestedType>();
             _writer = new NetDataWriter();
         }
@@ -212,14 +215,10 @@ namespace LiteNetLib.Utils
 
         private StructInfo<T> RegisterInternal<T>()
         {
-            Type t = typeof(T);
-            string typeName = t.FullName;
-            object basicInfo;
-            if (_registeredTypes.TryGetValue(typeName, out basicInfo))
-            {
-                return (StructInfo<T>)basicInfo;
-            }
+            if (StructInfoContainer<T>.Info != null)
+                return StructInfoContainer<T>.Info;
 
+            Type t = typeof(T);
 #if NETSTANDARD2_0 || NETCOREAPP2_0
             var props = t.GetRuntimeProperties().ToArray();
 #else
@@ -231,9 +230,7 @@ namespace LiteNetLib.Utils
 #endif
             int propsCount = props.Length;
             if (props == null)
-            {
                 throw new InvalidTypeException("Type does not contain acceptable fields");
-            }
 
             var info = new StructInfo<T>(propsCount);
             for (int i = 0; i < propsCount; i++)
@@ -532,8 +529,7 @@ namespace LiteNetLib.Utils
                     }
                 }
             }
-            _registeredTypes.Add(typeName, info);
-
+            StructInfoContainer<T>.Info = info;
             return info;
         }
 
