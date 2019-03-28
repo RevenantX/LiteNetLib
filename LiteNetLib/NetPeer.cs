@@ -206,6 +206,7 @@ namespace LiteNetLib
             _pingPacket = new NetPacket(PacketProperty.Ping, 0) {Sequence = 1};
            
             _unreliableChannel = new SimpleChannel(this);
+            _headChannel = _unreliableChannel;
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
             
             _channelsCount = netManager.ChannelsCount;
