@@ -20,7 +20,8 @@ namespace LiteNetLib.Tests
                 SomeVectors = new[] {new SomeVector2(1, 2), new SomeVector2(3, 4)},
                 SomeEnum = TestEnum.B,
                 SomeByteArray = new byte[] { 255, 1, 0 },
-                TestObj = new SampleNetSerializable {Value = 5}
+                TestObj = new SampleNetSerializable {Value = 5},
+                TestArray = new [] { new SampleNetSerializable { Value = 6 }, new SampleNetSerializable { Value = 15 } }
             };
 
             _packetProcessor = new NetPacketProcessor();
@@ -90,6 +91,7 @@ namespace LiteNetLib.Tests
             public SomeVector2[] SomeVectors { get; set; }
             public TestEnum SomeEnum { get; set; }
             public SampleNetSerializable TestObj { get; set; }
+            public SampleNetSerializable[] TestArray { get; set; }
         }
 
         private static bool AreSame(string s1, string s2)
@@ -127,6 +129,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(_samplePacket.SomeVectors, readPackage.SomeVectors);
             Assert.AreEqual(_samplePacket.SomeEnum, readPackage.SomeEnum);
             Assert.AreEqual(_samplePacket.TestObj.Value, readPackage.TestObj.Value);
+            Assert.AreEqual(_samplePacket.TestArray, readPackage.TestArray);
             Assert.AreEqual(_samplePacket.SomeByteArray, readPackage.SomeByteArray);
         }
     }

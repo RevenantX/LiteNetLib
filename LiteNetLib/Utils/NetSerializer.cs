@@ -53,11 +53,15 @@ namespace LiteNetLib.Utils
         {
             public readonly NestedTypeWriter WriteDelegate;
             public readonly NestedTypeReader ReadDelegate;
+            public readonly NestedTypeWriter ArrayWriter;
+            public readonly NestedTypeReader ArrayReader;
 
-            public NestedType(NestedTypeWriter writeDelegate, NestedTypeReader readDelegate)
+            public NestedType(NestedTypeWriter writeDelegate, NestedTypeReader readDelegate, NestedTypeWriter arrayWriter, NestedTypeReader arrayReader)
             {
                 WriteDelegate = writeDelegate;
                 ReadDelegate = readDelegate;
+                ArrayWriter = arrayWriter;
+                ArrayReader = arrayReader;
             }
         }
 
@@ -132,15 +136,26 @@ namespace LiteNetLib.Utils
                 return false;
 
             var rwDelegates = new NestedType(
-                (writer, obj) =>
-                {
-                    ((T)obj).Serialize(writer);
-                },
+                (writer, obj) => ((T)obj).Serialize(writer),
                 reader =>
                 {
                     var instance = constructor();
                     instance.Deserialize(reader);
                     return instance;
+                },
+                (writer, arr) =>
+                {
+                    var typedArr = (T[])arr;
+                    writer.Put((ushort)typedArr.Length);
+                    for (int i = 0; i < typedArr.Length; i++)
+                        typedArr[i].Serialize(writer);
+                },
+                reader =>
+                {
+                    var typedArr = new T[reader.GetUShort()];
+                    for (int i = 0; i < typedArr.Length; i++)
+                        typedArr[i].Deserialize(reader);
+                    return typedArr;
                 });
             _registeredNestedTypes.Add(t, rwDelegates);
             return true;
@@ -180,7 +195,21 @@ namespace LiteNetLib.Utils
 
             var rwDelegates = new NestedType(
                 (writer, obj) => writeDelegate(writer, (T)obj),
-                reader => readDelegate(reader));
+                reader => readDelegate(reader),
+                (writer, arr) =>
+                {
+                    var typedArr = (T[])arr;
+                    writer.Put((ushort)typedArr.Length);
+                    for (int i = 0; i < typedArr.Length; i++)
+                        writeDelegate(writer, typedArr[i]);
+                },
+                reader =>
+                {
+                    var typedArr = new T[reader.GetUShort()];
+                    for (int i = 0; i < typedArr.Length; i++)
+                        typedArr[i] = readDelegate(reader);
+                    return typedArr;
+                });
 
             _registeredNestedTypes.Add(t, rwDelegates);
             return true;
@@ -480,39 +509,13 @@ namespace LiteNetLib.Utils
                     {
                         if (array) //Array type serialize/deserialize
                         {
-                            info.ReadDelegate[i] = (inf, r) =>
-                            {
-                                ushort arrLength = r.GetUShort();
-                                Array arr = Array.CreateInstance(propertyType, arrLength);
-                                for (int k = 0; k < arrLength; k++)
-                                {
-                                    arr.SetValue(registeredNestedType.ReadDelegate(r), k);
-                                }
-
-                                property.SetValue(inf, arr, null);
-                            };
-
-                            info.WriteDelegate[i] = (inf, w) =>
-                            {
-                                Array arr = (Array)property.GetValue(inf, null);
-                                w.Put((ushort)arr.Length);
-                                for (int k = 0; k < arr.Length; k++)
-                                {
-                                    registeredNestedType.WriteDelegate(w, arr.GetValue(k));
-                                }
-                            };
+                            info.ReadDelegate[i] = (inf, r) => property.SetValue(inf, registeredNestedType.ArrayReader(r), null);
+                            info.WriteDelegate[i] = (inf, w) => registeredNestedType.ArrayWriter(w, property.GetValue(inf, null));
                         }
                         else //Simple
                         {
-                            info.ReadDelegate[i] = (inf, r) =>
-                            {
-                                property.SetValue(inf, registeredNestedType.ReadDelegate(r), null);
-                            };
-
-                            info.WriteDelegate[i] = (inf, w) =>
-                            {
-                                registeredNestedType.WriteDelegate(w, property.GetValue(inf, null));
-                            };
+                            info.ReadDelegate[i] = (inf, r) => property.SetValue(inf, registeredNestedType.ReadDelegate(r), null);
+                            info.WriteDelegate[i] = (inf, w) => registeredNestedType.WriteDelegate(w, property.GetValue(inf, null));
                         }
                     }
                     else

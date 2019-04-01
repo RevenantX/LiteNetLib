@@ -107,8 +107,12 @@ namespace LibSample
                 SomeString = "TEST",
                 SomeIntArray = new [] { 1, 2, 3 },
                 SomeVector2 = new SomeVector2(1, 2),
-                SomeVectors = new [] { new SomeVector2(3,4), new SomeVector2(5,6) }
+                SomeVectors = new SomeVector2[20]
             };
+            for (int i = 0; i < samplePacket.SomeVectors.Length; i++)
+            {
+                samplePacket.SomeVectors[i] = new SomeVector2(i, i);
+            }
 
             NetSerializer netSerializer = new NetSerializer();
             netSerializer.RegisterNestedType<SampleNetSerializable>();
