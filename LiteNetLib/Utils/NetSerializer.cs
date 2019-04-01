@@ -134,33 +134,59 @@ namespace LiteNetLib.Utils
             var t = typeof(T);
             if (_registeredNestedTypes.ContainsKey(t))
                 return false;
+            NestedType nestedType;
+            NestedTypeWriter nestedTypeWriter = (writer, obj) => ((T) obj).Serialize(writer);
+            NestedTypeWriter nestedTypeArrayWriter = (writer, arr) =>
+            {
+                var typedArr = (T[]) arr;
+                writer.Put((ushort) typedArr.Length);
+                for (int i = 0; i < typedArr.Length; i++)
+                    typedArr[i].Serialize(writer);
+            };
 
-            var rwDelegates = new NestedType(
-                (writer, obj) => ((T)obj).Serialize(writer),
-                reader =>
-                {
-                    var instance = constructor();
-                    instance.Deserialize(reader);
-                    return instance;
-                },
-                (writer, arr) =>
-                {
-                    var typedArr = (T[])arr;
-                    writer.Put((ushort)typedArr.Length);
-                    for (int i = 0; i < typedArr.Length; i++)
-                        typedArr[i].Serialize(writer);
-                },
-                reader =>
-                {
-                    var typedArr = new T[reader.GetUShort()];
-                    for (int i = 0; i < typedArr.Length; i++)
+            //struct
+            if (constructor == null)
+            {
+                nestedType = new NestedType(
+                    nestedTypeWriter,
+                    reader =>
                     {
-                        typedArr[i] = constructor();
-                        typedArr[i].Deserialize(reader);
-                    }
-                    return typedArr;
-                });
-            _registeredNestedTypes.Add(t, rwDelegates);
+                        var instance = default(T);
+                        instance.Deserialize(reader);
+                        return instance;
+                    },
+                    nestedTypeArrayWriter,
+                    reader =>
+                    {
+                        var typedArr = new T[reader.GetUShort()];
+                        for (int i = 0; i < typedArr.Length; i++)
+                            typedArr[i].Deserialize(reader);
+                        return typedArr;
+                    });
+            }
+            else //class
+            {
+                nestedType = new NestedType(
+                    nestedTypeWriter,
+                    reader =>
+                    {
+                        var instance = constructor();
+                        instance.Deserialize(reader);
+                        return instance;
+                    },
+                    nestedTypeArrayWriter,
+                    reader =>
+                    {
+                        var typedArr = new T[reader.GetUShort()];
+                        for (int i = 0; i < typedArr.Length; i++)
+                        {
+                            typedArr[i] = constructor();
+                            typedArr[i].Deserialize(reader);
+                        }
+                        return typedArr;
+                    });
+            }
+            _registeredNestedTypes.Add(t, nestedType);
             return true;
         }
 
@@ -171,7 +197,7 @@ namespace LiteNetLib.Utils
         /// <returns>True - if register successful, false - if type already registered</returns>
         public bool RegisterNestedType<T>() where T : struct, INetSerializable
         {
-            return RegisterNestedTypeInternal(() => new T());
+            return RegisterNestedTypeInternal<T>(null);
         }
 
         /// <summary>

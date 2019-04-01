@@ -93,6 +93,11 @@ namespace LiteNetLib.Tests
             {
                 return ((SampleClass)obj).Value == Value;
             }
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
         }
 
         private enum TestEnum
