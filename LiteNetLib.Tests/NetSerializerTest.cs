@@ -21,11 +21,13 @@ namespace LiteNetLib.Tests
                 SomeEnum = TestEnum.B,
                 SomeByteArray = new byte[] { 255, 1, 0 },
                 TestObj = new SampleNetSerializable {Value = 5},
-                TestArray = new [] { new SampleNetSerializable { Value = 6 }, new SampleNetSerializable { Value = 15 } }
+                TestArray = new [] { new SampleNetSerializable { Value = 6 }, new SampleNetSerializable { Value = 15 } },
+                SampleClassArray = new[] { new SampleClass { Value = 6 }, new SampleClass { Value = 15 } }
             };
 
             _packetProcessor = new NetPacketProcessor();
             _packetProcessor.RegisterNestedType<SampleNetSerializable>();
+            _packetProcessor.RegisterNestedType(() => new SampleClass());
             _packetProcessor.RegisterNestedType(SomeVector2.Serialize, SomeVector2.Deserialize);
         }
 
@@ -73,6 +75,26 @@ namespace LiteNetLib.Tests
             }
         }
 
+        private class SampleClass : INetSerializable
+        {
+            public int Value;
+
+            public void Serialize(NetDataWriter writer)
+            {
+                writer.Put(Value);
+            }
+
+            public void Deserialize(NetDataReader reader)
+            {
+                Value = reader.GetInt();
+            }
+
+            public override bool Equals(object obj)
+            {
+                return ((SampleClass)obj).Value == Value;
+            }
+        }
+
         private enum TestEnum
         {
             A = 1,
@@ -92,6 +114,7 @@ namespace LiteNetLib.Tests
             public TestEnum SomeEnum { get; set; }
             public SampleNetSerializable TestObj { get; set; }
             public SampleNetSerializable[] TestArray { get; set; }
+            public SampleClass[] SampleClassArray { get; set; }
         }
 
         private static bool AreSame(string s1, string s2)
@@ -131,6 +154,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(_samplePacket.TestObj.Value, readPackage.TestObj.Value);
             Assert.AreEqual(_samplePacket.TestArray, readPackage.TestArray);
             Assert.AreEqual(_samplePacket.SomeByteArray, readPackage.SomeByteArray);
+            Assert.AreEqual(_samplePacket.SampleClassArray, readPackage.SampleClassArray);
         }
     }
 }

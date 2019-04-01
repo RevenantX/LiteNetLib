@@ -154,7 +154,10 @@ namespace LiteNetLib.Utils
                 {
                     var typedArr = new T[reader.GetUShort()];
                     for (int i = 0; i < typedArr.Length; i++)
+                    {
+                        typedArr[i] = constructor();
                         typedArr[i].Deserialize(reader);
+                    }
                     return typedArr;
                 });
             _registeredNestedTypes.Add(t, rwDelegates);
