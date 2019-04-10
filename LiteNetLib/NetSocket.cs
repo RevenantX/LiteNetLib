@@ -19,6 +19,7 @@ namespace LiteNetLib
 
     internal sealed class NetSocket
     {
+        public const int ReceivePollingTime = 1000000; //1 second
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
         private Thread _threadv4;
@@ -72,7 +73,7 @@ namespace LiteNetLib
                 //Reading data
                 try
                 {
-                    if (socket.Available == 0 && !socket.Poll(5000, SelectMode.SelectRead))
+                    if (socket.Available == 0 && !socket.Poll(ReceivePollingTime, SelectMode.SelectRead))
                         continue;
                     result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None,
                         ref bufferEndPoint);
