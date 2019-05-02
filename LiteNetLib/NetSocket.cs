@@ -83,6 +83,7 @@ namespace LiteNetLib
                     switch (ex.SocketErrorCode)
                     {
                         case SocketError.Interrupted:
+                        case SocketError.NotSocket:
                             return;
                         case SocketError.ConnectionReset:
                         case SocketError.MessageSize:

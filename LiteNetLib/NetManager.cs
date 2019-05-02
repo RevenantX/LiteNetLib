@@ -232,7 +232,6 @@ namespace LiteNetLib
         /// <summary>
         /// First peer. Useful for Client mode
         /// </summary>
-        /// <returns></returns>
         public NetPeer FirstPeer
         {
             get { return _headPeer; }

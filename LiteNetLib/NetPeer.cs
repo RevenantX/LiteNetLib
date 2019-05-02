@@ -60,6 +60,7 @@ namespace LiteNetLib
         private readonly NetPacketPool _packetPool;
         private readonly object _flushLock = new object();
         private readonly object _sendLock = new object();
+        private readonly object _shutdownLock = new object();
 
         internal NetPeer NextPeer;
         internal NetPeer PrevPeer;
@@ -80,6 +81,8 @@ namespace LiteNetLib
         private readonly SimpleChannel _unreliableChannel;
         private readonly BaseChannel[] _channels;
         private BaseChannel _headChannel;
+        private readonly byte _channelsCount;
+        private readonly int _channelsTotalCount;
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
@@ -188,9 +191,6 @@ namespace LiteNetLib
         /// Statistics of peer connection
         /// </summary>
         public readonly NetStatistics Statistics;
-
-        private readonly byte _channelsCount;
-        private readonly int _channelsTotalCount;
 
         //incoming connection constructor
         internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id)
@@ -530,7 +530,7 @@ namespace LiteNetLib
 
         internal bool Shutdown(byte[] data, int start, int length, bool force)
         {
-            lock (this)
+            lock (_shutdownLock)
             {
                 //trying to shutdown already disconnected
                 if (_connectionState == ConnectionState.Disconnected ||

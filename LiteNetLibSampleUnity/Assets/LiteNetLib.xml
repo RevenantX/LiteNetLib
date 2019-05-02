@@ -255,7 +255,6 @@
             <summary>
             First peer. Useful for Client mode
             </summary>
-            <returns></returns>
         </member>
         <member name="P:LiteNetLib.NetManager.ChannelsCount">
             <summary>

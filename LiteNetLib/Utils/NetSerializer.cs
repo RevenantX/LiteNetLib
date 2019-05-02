@@ -440,17 +440,13 @@ namespace LiteNetLib.Utils
                     var getDelegate = ExtractGetDelegate<T, string[]>(getMethod);
                     if (_maxStringLength <= 0)
                     {
-                        info.ReadDelegate[i] =
-                            (inf, r) => setDelegate( inf, r.GetStringArray());
-                        info.WriteDelegate[i] =
-                            (inf, w) => w.PutArray(getDelegate( inf));
+                        info.ReadDelegate[i] = (inf, r) => setDelegate( inf, r.GetStringArray());
+                        info.WriteDelegate[i] = (inf, w) => w.PutArray(getDelegate( inf));
                     }
                     else
                     {
-                        info.ReadDelegate[i] =
-                            (inf, r) => setDelegate(inf, r.GetStringArray(_maxStringLength));
-                        info.WriteDelegate[i] =
-                            (inf, w) => w.PutArray(getDelegate(inf), _maxStringLength);
+                        info.ReadDelegate[i] = (inf, r) => setDelegate(inf, r.GetStringArray(_maxStringLength));
+                        info.WriteDelegate[i] = (inf, w) => w.PutArray(getDelegate(inf), _maxStringLength);
                     }
                 }
                 else if (propertyType == typeof(bool[]))
