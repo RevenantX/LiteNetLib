@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
@@ -413,6 +414,8 @@ namespace LiteNetLib.Tests
                 ManagerStack.Client(i).UnconnectedMessagesEnabled = true;
                 ManagerStack.ClientListener(i).NetworkReceiveUnconnectedEvent += (point, reader, type) =>
                 {
+                    if (point.AddressFamily == AddressFamily.InterNetworkV6)
+                        return;
                     Assert.AreEqual(type, UnconnectedMessageType.BasicMessage);
                     Assert.AreEqual("Server response", reader.GetString());
                     ManagerStack.Client(cache).Connect(point, DefaultAppKey);
