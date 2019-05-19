@@ -229,10 +229,11 @@ namespace LiteNetLib
 
         public bool SendBroadcast(byte[] data, int offset, int size, int port)
         {
-            bool success;
+            bool broadcastSuccess;
+            bool multicastSuccess = false;
             try
             {
-                success = _udpSocketv4.SendTo(
+                broadcastSuccess = _udpSocketv4.SendTo(
                              data,
                              offset,
                              size,
@@ -241,12 +242,12 @@ namespace LiteNetLib
            
                 if (IPv6Support)
                 {
-                    success = success || _udpSocketv6.SendTo(
-                                 data,
-                                 offset,
-                                 size,
-                                 SocketFlags.None,
-                                 new IPEndPoint(MulticastAddressV6, port)) > 0;
+                    multicastSuccess = _udpSocketv6.SendTo(
+                                                data,
+                                                offset,
+                                                size,
+                                                SocketFlags.None,
+                                                new IPEndPoint(MulticastAddressV6, port)) > 0;
                 }
             }
             catch (Exception ex)
@@ -254,7 +255,7 @@ namespace LiteNetLib
                 NetDebug.WriteError("[S][MCAST]" + ex);
                 return false;
             }
-            return success;
+            return broadcastSuccess || multicastSuccess;
         }
 
         public int SendTo(byte[] data, int offset, int size, IPEndPoint remoteEndPoint, ref SocketError errorCode)

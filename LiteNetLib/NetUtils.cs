@@ -29,24 +29,19 @@ namespace LiteNetLib
 
         public static IPAddress ResolveAddress(string hostStr)
         {
+            if(hostStr == "localhost")
+                return IPAddress.Loopback;
+            
             IPAddress ipAddress;
             if (!IPAddress.TryParse(hostStr, out ipAddress))
             {
                 if (NetSocket.IPv6Support)
-                {
-                    ipAddress = hostStr == "localhost"
-                        ? IPAddress.IPv6Loopback
-                        : ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
-                }
+                    ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
                 if (ipAddress == null)
-                {
                     ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetwork);
-                }
             }
             if (ipAddress == null)
-            {
                 throw new ArgumentException("Invalid address: " + hostStr);
-            }
 
             return ipAddress;
         }
