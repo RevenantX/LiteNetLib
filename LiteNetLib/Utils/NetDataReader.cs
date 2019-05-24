@@ -366,7 +366,14 @@ namespace LiteNetLib.Utils
             return segment;
         }
 
-        public byte[] GetRemainingBytes()
+		public T Get<T>() where T : INetSerializable, new()
+		{
+			var obj = new T();
+			obj.Deserialize(this);
+			return obj;
+		}
+
+		public byte[] GetRemainingBytes()
         {
             byte[] outgoingData = new byte[AvailableBytes];
             Buffer.BlockCopy(_data, _position, outgoingData, 0, AvailableBytes);
