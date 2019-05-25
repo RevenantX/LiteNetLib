@@ -388,5 +388,10 @@ namespace LiteNetLib.Utils
 
             _position += bytesCount;
         }
+
+        public void Put<T>(T obj) where T : INetSerializable
+        {
+            obj.Serialize(this);
+        }
     }
 }

@@ -366,6 +366,13 @@ namespace LiteNetLib.Utils
             return segment;
         }
 
+        public T Get<T>() where T : INetSerializable, new()
+        {
+            var obj = new T();
+            obj.Deserialize(this);
+            return obj;
+        }
+
         public byte[] GetRemainingBytes()
         {
             byte[] outgoingData = new byte[AvailableBytes];
