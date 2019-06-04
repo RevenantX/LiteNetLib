@@ -126,7 +126,7 @@ namespace LiteNetLib
 
         public void ClearPeerDisconnectedEvent()
         {
-            PeerConnectedEvent = null;
+            PeerDisconnectedEvent = null;
         }
 
         public void ClearNetworkErrorEvent()
