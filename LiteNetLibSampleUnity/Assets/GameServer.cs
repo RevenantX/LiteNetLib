@@ -19,7 +19,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         _dataWriter = new NetDataWriter();
         _netServer = new NetManager(this);
         _netServer.Start(5000);
-        _netServer.BroadcastReceiveEnabled = true;
+        _netServer.DiscoveryEnabled = true;
         _netServer.UpdateTime = 15;
     }
 
@@ -60,7 +60,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader,
         UnconnectedMessageType messageType)
     {
-        if (messageType == UnconnectedMessageType.Broadcast)
+        if (messageType == UnconnectedMessageType.DiscoveryRequest)
         {
             Debug.Log("[SERVER] Received discovery request. Send discovery response");
             NetDataWriter resp = new NetDataWriter();

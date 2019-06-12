@@ -39,7 +39,7 @@ public class GameClient : MonoBehaviour, INetEventListener
         }
         else
         {
-            _netClient.SendBroadcast(new byte[] {1}, 5000);
+            _netClient.SendDiscoveryRequest(new byte[] {1}, 5000);
         }
     }
 
