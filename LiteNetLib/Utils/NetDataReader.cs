@@ -392,7 +392,16 @@ namespace LiteNetLib.Utils
             Buffer.BlockCopy(_data, _position, destination, 0, count);
             _position += count;
         }
-
+        
+        public sbyte[] GetSBytesWithLength()
+        {
+            int length = GetInt();
+            sbyte[] outgoingData = new sbyte[length];
+            Buffer.BlockCopy(_data, _position, outgoingData, 0, length);
+            _position += length;
+            return outgoingData;
+        }
+        
         public byte[] GetBytesWithLength()
         {
             int length = GetInt();
