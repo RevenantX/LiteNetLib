@@ -208,6 +208,24 @@ namespace LiteNetLib.Utils
             Buffer.BlockCopy(data, 0, _data, _position, data.Length);
             _position += data.Length;
         }
+        
+        public void PutSBytesWithLength(sbyte[] data, int offset, int length)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + length + 4);
+            FastBitConverter.GetBytes(_data, _position, length);
+            Buffer.BlockCopy(data, offset, _data, _position + 4, length);
+            _position += length + 4;
+        }
+        
+        public void PutSBytesWithLength(sbyte[] data)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + data.Length + 4);
+            FastBitConverter.GetBytes(_data, _position, data.Length);
+            Buffer.BlockCopy(data, 0, _data, _position + 4, data.Length);
+            _position += data.Length + 4;
+        }
 
         public void PutBytesWithLength(byte[] data, int offset, int length)
         {
