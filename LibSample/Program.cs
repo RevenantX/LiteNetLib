@@ -19,11 +19,11 @@ namespace LibSample
             });
             ntpRequest.Send();
 
-            new EchoMessagesTest().Run();
+            //new EchoMessagesTest().Run();
             //new HolePunchServerTest().Run();
             //new BroadcastTest().Run();
             //new BenchmarkTest.TestHost().Run();
-            //new SerializerBenchmark().Run();
+            new SerializerBenchmark().Run();
             //new SpeedBench().Run();
             //new PacketProcessorExample().Run();
         }
