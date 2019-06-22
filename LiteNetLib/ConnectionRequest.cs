@@ -22,7 +22,7 @@ namespace LiteNetLib
         void OnConnectionSolved(ConnectionRequest request, byte[] rejectData, int start, int length);
     }
 
-    public sealed class ConnectionRequest
+    public class ConnectionRequest
     {
         private readonly IConnectionRequestListener _listener;
         private int _used;

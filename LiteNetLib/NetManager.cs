@@ -13,7 +13,7 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    public sealed class NetPacketReader : NetDataReader
+    public class NetPacketReader : NetDataReader
     {
         private NetPacket _packet;
         private readonly NetManager _manager;
@@ -76,7 +76,7 @@ namespace LiteNetLib
     /// <summary>
     /// Main class for all network operations. Can be used as client and/or server.
     /// </summary>
-    public sealed class NetManager : INetSocketListener, IConnectionRequestListener, IEnumerable<NetPeer>
+    public class NetManager : INetSocketListener, IConnectionRequestListener, IEnumerable<NetPeer>
     {
         private class IPEndPointComparer : IEqualityComparer<IPEndPoint>
         {
