@@ -188,18 +188,18 @@ namespace LiteNetLib
         }
 
         //Process incoming packet
-        public override void ProcessPacket(NetPacket packet)
+        public override bool ProcessPacket(NetPacket packet)
         {
             if (packet.Property == PacketProperty.Ack)
             {
                 ProcessAck(packet);
-                return;
+                return false;
             }
             int seq = packet.Sequence;
             if (seq >= NetConstants.MaxSequence)
             {
                 NetDebug.Write("[RR]Bad sequence");
-                return;
+                return false;
             }
 
             int relate = NetUtils.RelativeSequenceNumber(seq, _remoteWindowStart);
@@ -208,7 +208,7 @@ namespace LiteNetLib
             if (relateSeq > _windowSize)
             {
                 NetDebug.Write("[RR]Bad sequence");
-                return;
+                return false;
             }
 
             //Drop bad packets
@@ -216,13 +216,13 @@ namespace LiteNetLib
             {
                 //Too old packet doesn't ack
                 NetDebug.Write("[RR]ReliableInOrder too old");
-                return;
+                return false;
             }
             if (relate >= _windowSize * 2)
             {
                 //Some very new packet
                 NetDebug.Write("[RR]ReliableInOrder too new");
-                return;
+                return false;
             }
 
             //If very new - move window
@@ -257,7 +257,7 @@ namespace LiteNetLib
                 if ((_outgoingAcks.RawData[ackByte] & (1 << ackBit)) != 0)
                 {
                     NetDebug.Write("[RR]ReliableInOrder duplicate");
-                    return;
+                    return false;
                 }
 
                 //save ack
@@ -291,8 +291,7 @@ namespace LiteNetLib
                         _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
                     }
                 }
-
-                return;
+                return true;
             }
 
             //holded packet
@@ -305,6 +304,7 @@ namespace LiteNetLib
                 _earlyReceived[ackIdx] = true;
                 Peer.AddIncomingPacket(packet);
             }
+            return true;
         }
     }
 }

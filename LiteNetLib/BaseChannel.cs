@@ -26,6 +26,6 @@ namespace LiteNetLib
         }
 
         public abstract void SendNextPackets();
-        public abstract void ProcessPacket(NetPacket packet);
+        public abstract bool ProcessPacket(NetPacket packet);
     }
 }

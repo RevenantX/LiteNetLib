@@ -54,28 +54,25 @@ namespace LiteNetLib
             }
         }
 
-        public override void ProcessPacket(NetPacket packet)
+        public override bool ProcessPacket(NetPacket packet)
         {
             if (packet.Property == PacketProperty.Ack)
             {
-                if (_reliable)
-                {
-                    if (_lastPacket != null && packet.Sequence == _lastPacket.Sequence)
-                    {
-                        //TODO: recycle?
-                        _lastPacket = null;
-                    }
-                }
-                return;
+                if (_reliable && _lastPacket != null && packet.Sequence == _lastPacket.Sequence)
+                    _lastPacket = null;
+                return false;
             }
             int relative = NetUtils.RelativeSequenceNumber(packet.Sequence, _remoteSequence);
+            bool packetProcessed = false;
             if (packet.Sequence < NetConstants.MaxSequence && relative > 0)
             {
                 Peer.Statistics.PacketLoss += (ulong)(relative - 1);
                 _remoteSequence = packet.Sequence;
                 Peer.AddIncomingPacket(packet);
+                packetProcessed = true;
             }
             _mustSendAck = true;
+            return packetProcessed;
         }
     }
 }
