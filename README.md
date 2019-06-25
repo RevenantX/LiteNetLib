@@ -54,7 +54,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
   * Lumin OS (Magic Leap)
 
 ## Unity notes!!!
-* Always use library sources instead of precompiled DLL files ( because there platform specific #ifdefs and workarounds for unity bugs )
+* Always use library sources instead of precompiled DLL files ( because there are platform specific #ifdefs and workarounds for unity bugs )
 
 ## Usage samples
 
