@@ -12,7 +12,6 @@ namespace LiteNetLib.Utils
         }
 
         protected delegate void SubscribeDelegate(NetDataReader reader, object userData);
-        private readonly char[] _hashBuffer = new char[1024];
         private readonly NetSerializer _netSerializer;
         private readonly Dictionary<ulong, SubscribeDelegate> _callbacks = new Dictionary<ulong, SubscribeDelegate>();
         private readonly NetDataWriter _netDataWriter = new NetDataWriter();
@@ -35,10 +34,9 @@ namespace LiteNetLib.Utils
 
             ulong hash = 14695981039346656037UL; //offset
             string typeName = typeof(T).FullName;
-            typeName.CopyTo(0, _hashBuffer, 0, typeName.Length);
             for (var i = 0; i < typeName.Length; i++)
             {
-                hash = hash ^ _hashBuffer[i];
+                hash = hash ^ typeName[i];
                 hash *= 1099511628211UL; //prime
             }
             HashCache<T>.Initialized = true;
