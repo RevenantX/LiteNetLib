@@ -18,7 +18,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
 ( Warning! Master branch can be unstable! )
 
 ### Donations are welcome and will help further development of this project.
-[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=G9PDX5KLGKBA2&currency_code=USD&source=url)
+[![Bountysource](https://img.shields.io/badge/bountysource-donate-green.svg)](https://salt.bountysource.com/checkout/amount?team=litenetlib)
 
 ## Features
 
