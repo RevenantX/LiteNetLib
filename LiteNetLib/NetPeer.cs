@@ -183,8 +183,8 @@ namespace LiteNetLib
         internal double ResendDelay { get { return _resendDelay; } }
 
         /// <summary>
-		/// Application defined object containing data about the connection
-		/// </summary>
+        /// Application defined object containing data about the connection
+        /// </summary>
         public object Tag;
 
         /// <summary>
