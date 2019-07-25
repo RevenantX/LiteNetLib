@@ -1,35 +1,35 @@
-namespace LiteNetLib
+﻿namespace LiteNetLib
 {
     /// <summary>
     /// Sending method type
     /// </summary>
     public enum DeliveryMethod
     {
-        /// <summary>
-        /// Unreliable. Packets can be dropped, duplicated or arrive without order
-        /// </summary>
-        Unreliable,
+		/// <summary>
+		/// Unreliable. Packets can be dropped, can be duplicated, can arrive without order.
+		/// </summary>
+		Unreliable,
 
-        /// <summary>
-        /// Reliable. All packets will be sent and received, but without order
-        /// </summary>
-        ReliableUnordered,
+		/// <summary>
+		/// Reliable. Packets won't be dropped, won't be duplicated, can arrive without order.
+		/// </summary>
+		ReliableUnordered,
 
-        /// <summary>
-        /// Unreliable. Packets can be dropped, but never duplicated and arrive in order
-        /// </summary>
-        Sequenced,
+		/// <summary>
+		/// Unreliable. Packets can be dropped, won't be duplicated, will arrive in order.
+		/// </summary>
+		Sequenced,
 
-        /// <summary>
-        /// Reliable and ordered. All packets will be sent and received in order
-        /// </summary>
-        ReliableOrdered,
+		/// <summary>
+		/// Reliable and ordered. Packets won't be dropped, won't be duplicated, will arrive in order.
+		/// </summary>
+		ReliableOrdered,
 
-        /// <summary>
-        /// Reliable only last packet
-        /// </summary>
-        ReliableSequenced
-    }
+		/// <summary>
+		/// Reliable only last packet. Packets can be dropped (except the last one), won't be duplicated, will arrive in order.
+		/// </summary>
+		ReliableSequenced
+	}
 
     /// <summary>
     /// Network constants. Can be tuned from sources for your purposes.
