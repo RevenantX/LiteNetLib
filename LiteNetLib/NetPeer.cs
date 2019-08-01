@@ -82,7 +82,6 @@ namespace LiteNetLib
         private readonly BaseChannel[] _channels;
         private BaseChannel _headChannel;
         private readonly byte _channelsCount;
-        private readonly int _channelsTotalCount;
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
@@ -210,8 +209,7 @@ namespace LiteNetLib
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
             
             _channelsCount = netManager.ChannelsCount;
-            _channelsTotalCount = (byte)(_channelsCount * 4);
-            _channels = new BaseChannel[_channelsTotalCount];
+            _channels = new BaseChannel[_channelsCount * 4];
         }
 
         private BaseChannel CreateChannel(byte idx)
@@ -400,7 +398,7 @@ namespace LiteNetLib
             if (_connectionState == ConnectionState.ShutdownRequested ||
                 _connectionState == ConnectionState.Disconnected)
                 return;
-            if (channelNumber >= _channelsTotalCount)
+            if (channelNumber >= _channels.Length)
                 return;
 
             //Select channel
@@ -834,7 +832,7 @@ namespace LiteNetLib
 
                 case PacketProperty.Ack:
                 case PacketProperty.Channeled:
-                    if (packet.ChannelId > _channelsTotalCount)
+                    if (packet.ChannelId > _channels.Length)
                     {
                         _packetPool.Recycle(packet);
                         break;
