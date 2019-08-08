@@ -81,7 +81,6 @@ namespace LiteNetLib
         private readonly SimpleChannel _unreliableChannel;
         private readonly BaseChannel[] _channels;
         private BaseChannel _headChannel;
-        private readonly byte _channelsCount;
 
         //MTU
         private int _mtu = NetConstants.PossibleMtu[0];
@@ -208,8 +207,7 @@ namespace LiteNetLib
             _headChannel = _unreliableChannel;
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
             
-            _channelsCount = netManager.ChannelsCount;
-            _channels = new BaseChannel[_channelsCount * 4];
+            _channels = new BaseChannel[netManager.ChannelsCount * 4];
         }
 
         private BaseChannel CreateChannel(byte idx)
@@ -217,7 +215,7 @@ namespace LiteNetLib
             BaseChannel newChannel = _channels[idx];
             if (newChannel != null)
                 return newChannel;
-            switch (NetConstants.ChannelIdToDeliveryMethod(idx, _channelsCount))
+            switch ((DeliveryMethod)(idx % 4))
             {
                 case DeliveryMethod.ReliableUnordered:
                     newChannel = new ReliableChannel(this, false, idx);
@@ -305,30 +303,30 @@ namespace LiteNetLib
         /// Send data to peer (channel - 0)
         /// </summary>
         /// <param name="data">Data</param>
-        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="deliveryMethod">Send options (reliable, unreliable, etc.)</param>
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
         ///     Fragment count exceeded ushort.MaxValue<para/>
         /// </exception>
-        public void Send(byte[] data, DeliveryMethod options)
+        public void Send(byte[] data, DeliveryMethod deliveryMethod)
         {
-            Send(data, 0, data.Length, 0, options);
+            Send(data, 0, data.Length, 0, deliveryMethod);
         }
 
         /// <summary>
         /// Send data to peer (channel - 0)
         /// </summary>
         /// <param name="dataWriter">DataWriter with data</param>
-        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="deliveryMethod">Send options (reliable, unreliable, etc.)</param>
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
         ///     Fragment count exceeded ushort.MaxValue<para/>
         /// </exception>
-        public void Send(NetDataWriter dataWriter, DeliveryMethod options)
+        public void Send(NetDataWriter dataWriter, DeliveryMethod deliveryMethod)
         {
-            Send(dataWriter.Data, 0, dataWriter.Length, 0, options);
+            Send(dataWriter.Data, 0, dataWriter.Length, 0, deliveryMethod);
         }
 
         /// <summary>
@@ -353,15 +351,15 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="data">Data</param>
         /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
-        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="deliveryMethod">Send options (reliable, unreliable, etc.)</param>
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
         ///     Fragment count exceeded ushort.MaxValue<para/>
         /// </exception>
-        public void Send(byte[] data, byte channelNumber, DeliveryMethod options)
+        public void Send(byte[] data, byte channelNumber, DeliveryMethod deliveryMethod)
         {
-            Send(data, 0, data.Length, channelNumber, options);
+            Send(data, 0, data.Length, channelNumber, deliveryMethod);
         }
 
         /// <summary>
@@ -369,15 +367,15 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="dataWriter">DataWriter with data</param>
         /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
-        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="deliveryMethod">Send options (reliable, unreliable, etc.)</param>
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
         ///     Fragment count exceeded ushort.MaxValue<para/>
         /// </exception>
-        public void Send(NetDataWriter dataWriter, byte channelNumber, DeliveryMethod options)
+        public void Send(NetDataWriter dataWriter, byte channelNumber, DeliveryMethod deliveryMethod)
         {
-            Send(dataWriter.Data, 0, dataWriter.Length, channelNumber, options);
+            Send(dataWriter.Data, 0, dataWriter.Length, channelNumber, deliveryMethod);
         }
 
         /// <summary>
@@ -387,13 +385,13 @@ namespace LiteNetLib
         /// <param name="start">Start of data</param>
         /// <param name="length">Length of data</param>
         /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
-        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="deliveryMethod">Delivery method (reliable, unreliable, etc.)</param>
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
         ///     Fragment count exceeded ushort.MaxValue<para/>
         /// </exception>
-        public void Send(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
+        public void Send(byte[] data, int start, int length, byte channelNumber, DeliveryMethod deliveryMethod)
         {
             if (_connectionState == ConnectionState.ShutdownRequested ||
                 _connectionState == ConnectionState.Disconnected)
@@ -405,7 +403,7 @@ namespace LiteNetLib
             PacketProperty property;
             BaseChannel channel;
 
-            if (options == DeliveryMethod.Unreliable)
+            if (deliveryMethod == DeliveryMethod.Unreliable)
             {
                 property = PacketProperty.Unreliable;
                 channel = _unreliableChannel;
@@ -413,7 +411,7 @@ namespace LiteNetLib
             else
             {
                 property = PacketProperty.Channeled;
-                channel = CreateChannel(NetConstants.ChannelNumberToId(options, channelNumber, _channelsCount));
+                channel = CreateChannel((byte)(channelNumber*4 + (byte)deliveryMethod));
             }
 
             //Prepare  
@@ -426,7 +424,7 @@ namespace LiteNetLib
             if (length + headerSize > mtu)
             {
                 //if cannot be fragmented
-                if (options != DeliveryMethod.ReliableOrdered && options != DeliveryMethod.ReliableUnordered)
+                if (deliveryMethod != DeliveryMethod.ReliableOrdered && deliveryMethod != DeliveryMethod.ReliableUnordered)
                     throw new TooBigPacketException("Unreliable packet size exceeded maximum of " + (_mtu - headerSize) + " bytes");
 
                 int packetFullSize = mtu - headerSize;

@@ -863,16 +863,9 @@ namespace LiteNetLib
                 return;
 
             NetDebug.Write(NetLogLevel.Trace, "[NM] Received message");
-            DeliveryMethod deliveryMethod;
-            switch (packet.Property)
-            {
-                default: //PacketProperty.Unreliable
-                    deliveryMethod = DeliveryMethod.Unreliable;
-                    break;
-                case PacketProperty.Channeled:
-                    deliveryMethod = NetConstants.ChannelIdToDeliveryMethod(packet.ChannelId, _channelsCount);
-                    break;
-            }
+            var deliveryMethod = packet.Property == PacketProperty.Channeled
+                ? (DeliveryMethod) (packet.ChannelId % 4)
+                : DeliveryMethod.Unreliable;
             CreateEvent(NetEvent.EType.Receive, fromPeer, deliveryMethod: deliveryMethod, readerSource: packet);
         }
 

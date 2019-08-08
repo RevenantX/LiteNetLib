@@ -371,6 +371,51 @@ namespace LiteNetLib.Tests
         }
 
         [Test, MaxTime(2000)]
+        public void ChannelsTest()
+        {
+            const int channelsCount = 64;
+            var server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
+            server.ChannelsCount = channelsCount;
+            client.ChannelsCount = channelsCount;
+            int messagesReceived = 0;
+            ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, method) =>
+            {
+                Assert.AreEqual(reader.GetByte(), (byte)method);
+                messagesReceived++;
+            };
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+            NetDataWriter writer = new NetDataWriter();
+            var methods = new[]
+            {
+                DeliveryMethod.Unreliable,
+                DeliveryMethod.Sequenced,
+                DeliveryMethod.ReliableOrdered,
+                DeliveryMethod.ReliableSequenced,
+                DeliveryMethod.ReliableUnordered
+            };
+            for (int i = 0; i < channelsCount; i++)
+            {
+                foreach (var deliveryMethod in methods)
+                {
+                    writer.Reset();
+                    writer.Put((byte)deliveryMethod);
+                    client.FirstPeer.Send(writer, (byte)i, deliveryMethod);
+                }
+            }
+
+            while (messagesReceived != methods.Length*channelsCount)
+            {
+                Thread.Sleep(15);
+                server.PollEvents();
+            }
+
+            Assert.AreEqual(methods.Length*channelsCount, messagesReceived);
+            Assert.AreEqual(1, server.PeersCount);
+            Assert.AreEqual(1, client.PeersCount);
+        }
+
+        [Test, MaxTime(2000)]
         public void ConnectionByIpV6()
         {
             var server = ManagerStack.Server(1);
