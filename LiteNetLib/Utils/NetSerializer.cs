@@ -67,27 +67,27 @@ namespace LiteNetLib.Utils
         private sealed class ClassInfo<T>
         {
             public static ClassInfo<T> Instance;
-            public readonly Action<T, NetDataWriter>[] WriteDelegate;
-            public readonly Action<T, NetDataReader>[] ReadDelegate;
+            private readonly Action<T, NetDataWriter>[] _writeDelegate;
+            private readonly Action<T, NetDataReader>[] _readDelegate;
             private readonly int _membersCount;
 
             public ClassInfo(List<Action<T, NetDataReader>> readDelegates, List<Action<T, NetDataWriter>> writeDelegates)
             {
                 _membersCount = readDelegates.Count;
-                WriteDelegate = writeDelegates.ToArray();
-                ReadDelegate = readDelegates.ToArray();
+                _writeDelegate = writeDelegates.ToArray();
+                _readDelegate = readDelegates.ToArray();
             }
 
             public void Write(T obj, NetDataWriter writer)
             {
                 for (int i = 0; i < _membersCount; i++)
-                    WriteDelegate[i](obj, writer);
+                    _writeDelegate[i](obj, writer);
             }
 
             public void Read(T obj, NetDataReader reader)
             {
                 for (int i = 0; i < _membersCount; i++)
-                    ReadDelegate[i](obj, reader);
+                    _readDelegate[i](obj, reader);
             }
         }
 

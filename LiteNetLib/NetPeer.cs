@@ -98,6 +98,7 @@ namespace LiteNetLib
             public NetPacket[] Fragments;
             public int ReceivedCount;
             public int TotalSize;
+            public byte ChannelId;
         }
         private ushort _fragmentId;
         private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
@@ -585,7 +586,8 @@ namespace LiteNetLib
                 {
                     incomingFragments = new IncomingFragments
                     {
-                        Fragments = new NetPacket[p.FragmentsTotal]
+                        Fragments = new NetPacket[p.FragmentsTotal],
+                        ChannelId = p.ChannelId
                     };
                     _holdedFragments.Add(packetFragId, incomingFragments);
                 }
@@ -594,7 +596,9 @@ namespace LiteNetLib
                 var fragments = incomingFragments.Fragments;
 
                 //Error check
-                if (p.FragmentPart >= fragments.Length || fragments[p.FragmentPart] != null)
+                if (p.FragmentPart >= fragments.Length || 
+                    fragments[p.FragmentPart] != null || 
+                    p.ChannelId != incomingFragments.ChannelId)
                 {
                     _packetPool.Recycle(p);
                     NetDebug.WriteError("Invalid fragment packet");
@@ -614,8 +618,8 @@ namespace LiteNetLib
                 if (incomingFragments.ReceivedCount != fragments.Length)
                     return;
 
-                NetDebug.Write("Received all fragments!");
                 NetPacket resultingPacket = _packetPool.GetWithProperty( p.Property, incomingFragments.TotalSize );
+                resultingPacket.ChannelId = incomingFragments.ChannelId;
 
                 int resultingPacketOffset = resultingPacket.GetHeaderSize();
                 int firstFragmentSize = fragments[0].Size - dataOffset;
@@ -636,14 +640,14 @@ namespace LiteNetLib
                 }
 
                 //Send to process
-                _netManager.ReceiveFromPeer(resultingPacket, _remoteEndPoint);
+                _netManager.ReceiveFromPeer(resultingPacket, this);
 
                 //Clear memory
                 _holdedFragments.Remove(packetFragId);
             }
             else //Just simple packet
             {
-                _netManager.ReceiveFromPeer(p, _remoteEndPoint);
+                _netManager.ReceiveFromPeer(p, this);
             }
         }
 

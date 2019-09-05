@@ -381,7 +381,7 @@ namespace LiteNetLib.Tests
             int messagesReceived = 0;
             ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, method) =>
             {
-                Assert.AreEqual(reader.GetByte(), (byte)method);
+                Assert.AreEqual((DeliveryMethod)reader.GetByte(), method);
                 messagesReceived++;
             };
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
@@ -400,6 +400,8 @@ namespace LiteNetLib.Tests
                 {
                     writer.Reset();
                     writer.Put((byte)deliveryMethod);
+                    if(deliveryMethod == DeliveryMethod.ReliableOrdered || deliveryMethod == DeliveryMethod.ReliableUnordered)
+                        writer.Put(new byte[506]);
                     client.FirstPeer.Send(writer, (byte)i, deliveryMethod);
                 }
             }
