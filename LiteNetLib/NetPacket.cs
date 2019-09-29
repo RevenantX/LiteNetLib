@@ -148,7 +148,8 @@ namespace LiteNetLib
             int headerSize = GetHeaderSize((PacketProperty) property);
 
             if (property > LastProperty || packetSize < headerSize ||
-               (fragmented && packetSize < headerSize + NetConstants.FragmentHeaderSize))
+               (fragmented && packetSize < headerSize + NetConstants.FragmentHeaderSize) ||
+               data.Length < start + packetSize)
             {
                 return false;
             }

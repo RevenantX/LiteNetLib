@@ -685,7 +685,7 @@ namespace LiteNetLib.Utils
             if (AvailableBytes >= 4)
             {
                 var length = PeekInt();
-                if (AvailableBytes >= length + 4)
+                if (length >= 0 && AvailableBytes >= length + 4)
                 {
                     result = GetBytesWithLength();
                     return true;
