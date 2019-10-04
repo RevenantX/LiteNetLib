@@ -384,6 +384,11 @@ namespace LiteNetLib
                         DisconnectPeerForce(fromPeer, DisconnectReason.HostUnreachable, errorCode, null);
                     CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
                     return -1;
+                case SocketError.NetworkUnreachable:
+	                if (TryGetPeer(remoteEndPoint, out fromPeer))
+		                DisconnectPeerForce(fromPeer, DisconnectReason.NetworkUnreachable, errorCode, null);
+	                CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
+	                return -1;
                 case SocketError.ConnectionReset: //connection reset (connection closed)
                     if (TryGetPeer(remoteEndPoint, out fromPeer))
                         DisconnectPeerForce(fromPeer, DisconnectReason.RemoteConnectionClose, errorCode, null);
