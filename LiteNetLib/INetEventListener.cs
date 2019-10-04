@@ -20,7 +20,7 @@ namespace LiteNetLib
         ConnectionFailed,
         Timeout,
         HostUnreachable,
-		NetworkUnreachable,
+        NetworkUnreachable,
         RemoteConnectionClose,
         DisconnectPeerCalled,
         ConnectionRejected,
