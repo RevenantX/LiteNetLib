@@ -91,6 +91,44 @@ namespace LiteNetLib
             }
         }
 
+        private struct NetPeerEnumerator : IEnumerator<NetPeer>
+        {
+            private readonly NetPeer _initialPeer;
+            private NetPeer _p;
+
+            public NetPeerEnumerator(NetPeer p)
+            {
+                _initialPeer = p;
+                _p = null;
+            }
+
+            public void Dispose()
+            {
+
+            }
+
+            public bool MoveNext()
+            {
+                _p = _p == null ? _initialPeer : _p.NextPeer;
+                return _p != null;
+            }
+
+            public void Reset()
+            {
+                throw new NotSupportedException();
+            }
+
+            public NetPeer Current
+            {
+                get { return _p; }
+            }
+
+            object IEnumerator.Current
+            {
+                get { return _p; }
+            }
+        }
+
 #if DEBUG
         private struct IncomingData
         {
@@ -1420,17 +1458,12 @@ namespace LiteNetLib
 
         public IEnumerator<NetPeer> GetEnumerator()
         {
-            var peer = _headPeer;
-            while (peer != null)
-            {
-                yield return peer;
-                peer = peer.NextPeer;
-            }
+            return new NetPeerEnumerator(_headPeer);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return new NetPeerEnumerator(_headPeer);
         }
     }
 }

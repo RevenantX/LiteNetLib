@@ -104,10 +104,10 @@ namespace LibSample
             public void OnPeerConnected(NetPeer peer)
             {
                 Console.WriteLine("[Server] Peer connected: " + peer.EndPoint);
-                var peers = Server.GetPeers(ConnectionState.Connected);
-                foreach (var netPeer in peers)
+                foreach (var netPeer in Server)
                 {
-                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);
+                    if(netPeer.ConnectionState == ConnectionState.Connected)
+                        Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);
                 }
             }
 
