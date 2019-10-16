@@ -91,7 +91,7 @@ namespace LiteNetLib
             }
         }
 
-        private struct NetPeerEnumerator : IEnumerator<NetPeer>
+        public struct NetPeerEnumerator : IEnumerator<NetPeer>
         {
             private readonly NetPeer _initialPeer;
             private NetPeer _p;
@@ -423,10 +423,10 @@ namespace LiteNetLib
                     CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
                     return -1;
                 case SocketError.NetworkUnreachable:
-	                if (TryGetPeer(remoteEndPoint, out fromPeer))
-		                DisconnectPeerForce(fromPeer, DisconnectReason.NetworkUnreachable, errorCode, null);
-	                CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
-	                return -1;
+                    if (TryGetPeer(remoteEndPoint, out fromPeer))
+                        DisconnectPeerForce(fromPeer, DisconnectReason.NetworkUnreachable, errorCode, null);
+                    CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
+                    return -1;
                 case SocketError.ConnectionReset: //connection reset (connection closed)
                     if (TryGetPeer(remoteEndPoint, out fromPeer))
                         DisconnectPeerForce(fromPeer, DisconnectReason.RemoteConnectionClose, errorCode, null);
@@ -1456,7 +1456,12 @@ namespace LiteNetLib
                 null);
         }
 
-        public IEnumerator<NetPeer> GetEnumerator()
+        public NetPeerEnumerator GetEnumerator()
+        {
+            return new NetPeerEnumerator(_headPeer);
+        }
+
+        IEnumerator<NetPeer> IEnumerable<NetPeer>.GetEnumerator()
         {
             return new NetPeerEnumerator(_headPeer);
         }
