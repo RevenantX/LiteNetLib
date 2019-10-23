@@ -54,12 +54,14 @@ namespace LiteNetLib
             Error,
             ConnectionLatencyUpdated,
             Broadcast,
-            ConnectionRequest
+            ConnectionRequest,
+            MessageDelivered
         }
         public EType Type;
 
         public NetPeer Peer;
         public IPEndPoint RemoteEndPoint;
+        public object UserData;
         public int Latency;
         public SocketError ErrorCode;
         public DisconnectReason DisconnectReason;
@@ -147,6 +149,7 @@ namespace LiteNetLib
         private readonly Queue<NetEvent> _netEventsQueue;
         private readonly Stack<NetEvent> _netEventsPool;
         private readonly INetEventListener _netEventListener;
+        private readonly IDeliveryEventListener _deliveryEventListener;
 
         private readonly Dictionary<IPEndPoint, NetPeer> _peersDict;
         private readonly ReaderWriterLockSlim _peersLock;
@@ -215,6 +218,11 @@ namespace LiteNetLib
         /// Experimental feature. Events automatically will be called without PollEvents method from another thread
         /// </summary>
         public bool UnsyncedEvents = false;
+
+        /// <summary>
+        /// If true - delivery event will be called from "receive" thread otherwise on PollEvents call
+        /// </summary>
+        public bool UnsyncedDeliveryEvent = false;
 
         /// <summary>
         /// Allows receive broadcast packets
@@ -358,24 +366,26 @@ namespace LiteNetLib
                 return;
             if (peer == _headPeer)
                 _headPeer = peer.NextPeer;
+
             if (peer.PrevPeer != null)
                 peer.PrevPeer.NextPeer = peer.NextPeer;
             if (peer.NextPeer != null)
                 peer.NextPeer.PrevPeer = peer.PrevPeer;
             peer.PrevPeer = null;
-            peer.NextPeer = null;
-            lock(_peerIds)
+
+            lock (_peerIds)
                 _peerIds.Enqueue(peer.Id);
         }
 
         /// <summary>
         /// NetManager constructor
         /// </summary>
-        /// <param name="listener">Network events listener</param>
+        /// <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
         public NetManager(INetEventListener listener)
         {
             _socket = new NetSocket(this);
             _netEventListener = listener;
+            _deliveryEventListener = listener as IDeliveryEventListener;
             _netEventsQueue = new Queue<NetEvent>();
             _netEventsPool = new Stack<NetEvent>();
             NetPacketPool = new NetPacketPool();
@@ -390,6 +400,12 @@ namespace LiteNetLib
         internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
         {
             CreateEvent(NetEvent.EType.ConnectionLatencyUpdated, fromPeer, latency: latency);
+        }
+
+        internal void MessageDelivered(NetPeer fromPeer, object userData)
+        {
+            if(_deliveryEventListener != null)
+                CreateEvent(NetEvent.EType.MessageDelivered, fromPeer, userData: userData);
         }
 
         internal int SendRawAndRecycle(NetPacket packet, IPEndPoint remoteEndPoint)
@@ -481,11 +497,17 @@ namespace LiteNetLib
             DisconnectReason disconnectReason = DisconnectReason.ConnectionFailed,
             ConnectionRequest connectionRequest = null,
             DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable,
-            NetPacket readerSource = null)
+            NetPacket readerSource = null,
+            object userData = null)
         {
             NetEvent evt = null;
+            bool unsyncEvent = UnsyncedEvents;
+            
             if (type == NetEvent.EType.Connect)
                 _connectedPeersCount++;
+            else if (type == NetEvent.EType.MessageDelivered)
+                unsyncEvent = UnsyncedDeliveryEvent;
+
             lock (_netEventsPool)
             {
                 if (_netEventsPool.Count > 0)
@@ -502,7 +524,9 @@ namespace LiteNetLib
             evt.DisconnectReason = disconnectReason;
             evt.ConnectionRequest = connectionRequest;
             evt.DeliveryMethod = deliveryMethod;
-            if (UnsyncedEvents)
+            evt.UserData = userData;
+
+            if (unsyncEvent)
             {
                 ProcessEvent(evt);
             }
@@ -548,6 +572,9 @@ namespace LiteNetLib
                     break;
                 case NetEvent.EType.ConnectionRequest:
                     _netEventListener.OnConnectionRequest(evt.ConnectionRequest);
+                    break;
+                case NetEvent.EType.MessageDelivered:
+                    _deliveryEventListener.OnMessageDelivered(evt.Peer, evt.UserData);
                     break;
             }
             //Recycle if not message

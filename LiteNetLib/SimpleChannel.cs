@@ -15,7 +15,7 @@ namespace LiteNetLib
                 {
                     NetPacket packet = OutgoingQueue.Dequeue();
                     Peer.SendUserData(packet);
-                    Peer.Recycle(packet);
+                    Peer.NetManager.NetPacketPool.Recycle(packet);
                 }
             }
         }

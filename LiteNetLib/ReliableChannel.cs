@@ -42,7 +42,7 @@ namespace LiteNetLib
             {
                 if (_packet != null)
                 {
-                    peer.Recycle(_packet);
+                    peer.RecycleAndDeliver(_packet);
                     _packet = null;
                     return true;
                 }

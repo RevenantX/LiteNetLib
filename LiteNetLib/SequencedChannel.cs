@@ -41,7 +41,7 @@ namespace LiteNetLib
                         if (_reliable && OutgoingQueue.Count == 0)
                             _lastPacket = packet;
                         else
-                            Peer.Recycle(packet);
+                            Peer.NetManager.NetPacketPool.Recycle(packet);
                     }
                 }
             }
