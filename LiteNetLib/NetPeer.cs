@@ -571,11 +571,13 @@ namespace LiteNetLib
             return DisconnectResult.None;
         }
 
-        internal void Reject(long connectionId, byte connectionNumber, byte[] data, int start, int length)
+        internal void Reject(long connectionId, byte connectionNumber, byte[] data, int start, int length, bool force)
         {
             _connectTime = connectionId;
             _connectNum = connectionNumber;
             Shutdown(data, start, length, false);
+            if (force)
+                _connectionState = ConnectionState.Disconnected;
         }
 
         internal bool Shutdown(byte[] data, int start, int length, bool force)

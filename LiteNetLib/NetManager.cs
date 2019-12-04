@@ -698,12 +698,17 @@ namespace LiteNetLib
             }
         }
 
-        void IConnectionRequestListener.OnConnectionSolved(ConnectionRequest request, byte[] rejectData, int start, int length)
+        internal void OnConnectionSolved(ConnectionRequest request, byte[] rejectData, int start, int length)
         {
             if (request.Result == ConnectionRequestResult.Reject)
             {
                 NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
-                request.Peer.Reject(request.ConnectionId, request.ConnectionNumber, rejectData, start, length);
+                request.Peer.Reject(request.ConnectionId, request.ConnectionNumber, rejectData, start, length, false);
+            }
+            else if (request.Result == ConnectionRequestResult.RejectForce)
+            {
+                NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject force.");
+                request.Peer.Reject(request.ConnectionId, request.ConnectionNumber, rejectData, start, length, true);
             }
             else
             {
