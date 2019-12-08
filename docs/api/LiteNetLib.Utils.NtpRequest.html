@@ -1,0 +1,393 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class NtpRequest
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class NtpRequest
+   ">
+    <meta name="generator" content="docfx 2.47.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LiteNetLib.Utils.NtpRequest">
+  
+  
+  <h1 id="LiteNetLib_Utils_NtpRequest" data-uid="LiteNetLib.Utils.NtpRequest" class="text-break">Class NtpRequest
+  </h1>
+  <div class="markdown level0 summary"><p>Make NTP request.</p>
+<p>
+1. Create the object by <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Create_System_Net_IPEndPoint_System_Action_LiteNetLib_Utils_NtpPacket__">Create(IPEndPoint, Action&lt;NtpPacket&gt;)</a> method. 
+</p>
+<p>
+2. Use <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Send">Send()</a> method to send requests. 3. Call <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Close">Close()</a> to release the socket
+AFTER you have received the response or some timeout. If you close the socket too early, you may miss the response.
+</p>
+<p>
+3. Call <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Close">Close()</a> to release the socket AFTER you have received the response or some timeout.
+If you close the socket too early, you may miss the response.
+</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">NtpRequest</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.Utils.html">LiteNetLib.Utils</a></h6>
+  <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
+  <h5 id="LiteNetLib_Utils_NtpRequest_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class NtpRequest : INetSocketListener</code></pre>
+  </div>
+  <h3 id="fields">Fields
+  </h3>
+  
+  
+  <h4 id="LiteNetLib_Utils_NtpRequest_DefaultPort" data-uid="LiteNetLib.Utils.NtpRequest.DefaultPort">DefaultPort</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int DefaultPort = 123</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="LiteNetLib_Utils_NtpRequest_Close_" data-uid="LiteNetLib.Utils.NtpRequest.Close*"></a>
+  <h4 id="LiteNetLib_Utils_NtpRequest_Close" data-uid="LiteNetLib.Utils.NtpRequest.Close">Close()</h4>
+  <div class="markdown level1 summary"><p>Close socket.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Close()</code></pre>
+  </div>
+  
+  
+  <a id="LiteNetLib_Utils_NtpRequest_Create_" data-uid="LiteNetLib.Utils.NtpRequest.Create*"></a>
+  <h4 id="LiteNetLib_Utils_NtpRequest_Create_System_Net_IPAddress_System_Action_LiteNetLib_Utils_NtpPacket__" data-uid="LiteNetLib.Utils.NtpRequest.Create(System.Net.IPAddress,System.Action{LiteNetLib.Utils.NtpPacket})">Create(IPAddress, Action&lt;NtpPacket&gt;)</h4>
+  <div class="markdown level1 summary"><p>Create the requests for NTP server (default port), open socket.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static NtpRequest Create(IPAddress ipAddress, Action&lt;NtpPacket&gt; onRequestComplete)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.IPAddress</span></td>
+        <td><span class="parametername">ipAddress</span></td>
+        <td><p>NTP Server address.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="LiteNetLib.Utils.NtpPacket.html">NtpPacket</a>&gt;</td>
+        <td><span class="parametername">onRequestComplete</span></td>
+        <td><p>callback (called from other thread!)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NtpRequest.html">NtpRequest</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_Utils_NtpRequest_Create_" data-uid="LiteNetLib.Utils.NtpRequest.Create*"></a>
+  <h4 id="LiteNetLib_Utils_NtpRequest_Create_System_Net_IPEndPoint_System_Action_LiteNetLib_Utils_NtpPacket__" data-uid="LiteNetLib.Utils.NtpRequest.Create(System.Net.IPEndPoint,System.Action{LiteNetLib.Utils.NtpPacket})">Create(IPEndPoint, Action&lt;NtpPacket&gt;)</h4>
+  <div class="markdown level1 summary"><p>Create the requests for NTP server, open socket.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static NtpRequest Create(IPEndPoint endPoint, Action&lt;NtpPacket&gt; onRequestComplete)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.IPEndPoint</span></td>
+        <td><span class="parametername">endPoint</span></td>
+        <td><p>NTP Server address.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="LiteNetLib.Utils.NtpPacket.html">NtpPacket</a>&gt;</td>
+        <td><span class="parametername">onRequestComplete</span></td>
+        <td><p>callback (called from other thread!)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NtpRequest.html">NtpRequest</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_Utils_NtpRequest_Create_" data-uid="LiteNetLib.Utils.NtpRequest.Create*"></a>
+  <h4 id="LiteNetLib_Utils_NtpRequest_Create_System_String_System_Action_LiteNetLib_Utils_NtpPacket__" data-uid="LiteNetLib.Utils.NtpRequest.Create(System.String,System.Action{LiteNetLib.Utils.NtpPacket})">Create(String, Action&lt;NtpPacket&gt;)</h4>
+  <div class="markdown level1 summary"><p>Create the requests for NTP server (default port), open socket.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static NtpRequest Create(string ntpServerAddress, Action&lt;NtpPacket&gt; onRequestComplete)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">ntpServerAddress</span></td>
+        <td><p>NTP Server address.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="LiteNetLib.Utils.NtpPacket.html">NtpPacket</a>&gt;</td>
+        <td><span class="parametername">onRequestComplete</span></td>
+        <td><p>callback (called from other thread!)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NtpRequest.html">NtpRequest</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_Utils_NtpRequest_Create_" data-uid="LiteNetLib.Utils.NtpRequest.Create*"></a>
+  <h4 id="LiteNetLib_Utils_NtpRequest_Create_System_String_System_Int32_System_Action_LiteNetLib_Utils_NtpPacket__" data-uid="LiteNetLib.Utils.NtpRequest.Create(System.String,System.Int32,System.Action{LiteNetLib.Utils.NtpPacket})">Create(String, Int32, Action&lt;NtpPacket&gt;)</h4>
+  <div class="markdown level1 summary"><p>Create the requests for NTP server, open socket.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static NtpRequest Create(string ntpServerAddress, int port, Action&lt;NtpPacket&gt; onRequestComplete)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">ntpServerAddress</span></td>
+        <td><p>NTP Server address.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">port</span></td>
+        <td><p>port</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="LiteNetLib.Utils.NtpPacket.html">NtpPacket</a>&gt;</td>
+        <td><span class="parametername">onRequestComplete</span></td>
+        <td><p>callback (called from other thread!)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NtpRequest.html">NtpRequest</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_Utils_NtpRequest_Send_" data-uid="LiteNetLib.Utils.NtpRequest.Send*"></a>
+  <h4 id="LiteNetLib_Utils_NtpRequest_Send" data-uid="LiteNetLib.Utils.NtpRequest.Send">Send()</h4>
+  <div class="markdown level1 summary"><p>Send request to the NTP server calls callback (if success).
+In case of error the callbacke is called with null param.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Send()</code></pre>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

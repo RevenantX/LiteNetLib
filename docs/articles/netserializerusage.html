@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Supported property types </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Supported property types ">
+    <meta name="generator" content="docfx 2.47.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+
+<p><strong>NetPacketProcessor</strong> - fast specialized for network purposes serializer.<br>
+It supports <strong>classes</strong> with <strong>public properties with &quot;get&quot; and &quot;set&quot;</strong> methods or <strong>classes/structs with implemented <code>INetSerializable</code></strong>.<br>
+Serializer adds some overhead in size: 64 bit hash of class name and namespace (8 bytes). All other class fields will be as is in resulting packet.</p>
+<h3 id="supported-property-types">Supported property types</h3>
+<pre><code class="lang-csharp">byte sbyte short ushort int uint long ulong float double bool string char IPEndPoint
+byte[] short[] ushort[] int[] uint[] long[] ulong[] float[] double[] bool[] string[] 
+</code></pre>
+<h3 id="serialization-speed-comparsion">Serialization speed comparsion</h3>
+<p>Serialization 100_000 times of simple structure from <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">example</a>:</p>
+<pre><code>BinaryFormatter time: 3418 ms
+NetSerializer first run time: 127 ms
+NetSerializer second run time: 99 ms
+DataWriter (raw put method calls) time: 24 ms
+</code></pre>
+<h3 id="packet-example">Packet Example</h3>
+<pre><code class="lang-csharp">class SamplePacket
+{
+    public string SomeString { get; set; }
+    public float SomeFloat { get; set; }
+    public int[] SomeIntArray { get; set; }
+}
+</code></pre>
+<h3 id="nested-structs-or-classes">Nested structs or classes</h3>
+<p>It does not supports nested structs or classes.<br>
+But you can register custom type processor.<br>
+That usefull for game engine types such as Vector3 and Quaternion (in Unity3d).</p>
+<pre><code class="lang-csharp">//Your packet that will be sent over network
+class SamplePacket
+{
+    public MyType SomeMyType { get; set; }
+
+    //Arrays of custom types supported too
+    public MyType[] SomeMyTypes { get; set; } 
+}
+
+//Some custom type (variant 1)
+struct MyType
+{
+    public int Value1;
+    public string Value2;
+
+    public static void Serialize(NetDataWriter writer, SomeMyType mytype)
+    {
+        writer.Put(mytype.Value1);
+        writer.Put(mytype.Value2);
+    }
+
+    public static MyType Deserialize(NetDataReader reader)
+    {
+        MyType res = new MyType();
+        res.Value1 = reader.GetInt();
+        res.Value2 = reader.GetString();
+        return res;
+    }
+}
+...
+netPacketProcessor = new NetPacketProcessor();
+netPacketProcessor.RegisterNestedType( MyType.Serialize, MyType.Deserialize );
+</code></pre>
+<p>Another variant you can implement INetSerializable interface:</p>
+<pre><code class="lang-csharp">//Some custom type (variant 2)
+struct SomeMyType : INetSerializable
+{
+    public int Value1;
+    public string Value2;
+
+    public void Serialize(NetDataWriter writer)
+    {
+        writer.Put(Value1);
+        writer.Put(Value2);
+    }
+
+    public void Deserialize(NetDataReader reader)
+    {
+        Value1 = reader.GetInt();
+        Value2 = reader.GetString();
+    }
+}
+...
+netPacketProcessor = new NetPacketProcessor();
+netPacketProcessor.RegisterNestedType&lt;SomeMyType&gt;();
+</code></pre>
+<p>Or if you want use struct instead of class (and implement INetSerializable interface)
+you must provide constructor:</p>
+<pre><code class="lang-csharp">netPacketProcessor.RegisterNestedType&lt;SomeMyType&gt;(() =&gt; { return new SomeMyType(); });
+</code></pre>
+<h1 id="usage-example-for-full-example-look-at-source-serializerbenchmark">Usage example (for full example look at source <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">SerializerBenchmark</a>)</h1>
+<pre><code class="lang-csharp">//First side
+class SomeClientListener : INetEventListener
+{
+   private readonly NetPacketProcessor _netPacketProcessor = new NetPacketProcessor();
+...
+   public void OnPeerConnected(NetPeer peer)
+   {
+       SamplePacket sp = new SamplePacket
+       {
+           SomeFloat = 3.42f,
+           SomeIntArray = new[] {6, 5, 4},
+           SomeString = &quot;Test String&quot;,
+       }
+       peer.Send(_netPacketProcessor.Write(sp), DeliveryMethod.ReliableOrdered);
+       //or you can use _netPacketProcessor.Send(peer, sp, DeliveryMethod.ReliableOrdered);
+   }
+}
+
+//Other side 
+class SomeServerListener : INetEventListener
+{
+    private readonly NetPacketProcessor _netPacketProcessor = new NetPacketProcessor();
+
+    public SomeServerListener()
+    {
+        //Subscribe to packet receiving
+        _netPacketProcessor.SubscribeReusable&lt;SamplePacket, NetPeer&gt;(OnSamplePacketReceived);
+    }
+
+    private void OnSamplePacketReceived(SamplePacket samplePacket, NetPeer peer)
+    {
+        Console.WriteLine(&quot;[Server] ReceivedPacket:\n&quot; + samplePacket.SomeString);
+    }
+
+    public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+    {
+        Console.WriteLine(&quot;[Server] received data. Processing...&quot;);
+        _netPacketProcessor.ReadAllPackets(reader, peer);
+    }
+}
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>LiteNetLib </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="LiteNetLib ">
+    <meta name="generator" content="docfx 2.47.0.0">
+    
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="litenetlib">LiteNetLib</h1>
+
+<p>Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Standard 2.0.</p>
+<p><a href="https://discord.gg/FATFPdy"><img src="https://img.shields.io/discord/501682175930925058.svg" alt="Discord"></a></p>
+<p><a href="https://github.com/RevenantX/NetGameExample">Little Game Example on Unity</a></p>
+<h2 id="features">Features</h2>
+<ul>
+<li>Lightweight
+<ul>
+<li>Small CPU and RAM usage</li>
+<li>Small packet size overhead ( 1 byte for unreliable, 3 bytes for reliable packets )</li>
+</ul>
+</li>
+<li>Simple connection handling</li>
+<li>Peer to peer connections</li>
+<li>Helper classes for sending and reading messages</li>
+<li>Multiple data channels</li>
+<li>Different send mechanics
+<ul>
+<li>Reliable with order</li>
+<li>Reliable without order</li>
+<li>Reliable sequenced (realiable only last packet)</li>
+<li>Ordered but unreliable with duplication prevention</li>
+<li>Simple UDP packets without order and reliability</li>
+</ul>
+</li>
+<li>Fast packet serializer <a href="https://github.com/RevenantX/LiteNetLib/wiki/NetSerializer-usage">(Usage manual)</a></li>
+<li>Automatic small packets merging</li>
+<li>Automatic fragmentation of reliable packets</li>
+<li>Automatic MTU detection</li>
+<li>UDP NAT hole punching</li>
+<li>NTP time requests</li>
+<li>Packet loss and latency simulation</li>
+<li>IPv6 support (dual mode)</li>
+<li>Connection statisitcs (need DEBUG or STATS_ENABLED flag)</li>
+<li>Multicasting (for discovering hosts in local network)</li>
+<li>Unity support</li>
+<li>Supported platforms:
+<ul>
+<li>Windows/Mac/Linux (.NET Framework, Mono, .NET Core)</li>
+<li>Android (Unity)</li>
+<li>iOS (Unity)</li>
+<li>UWP Windows 10 including phones</li>
+<li>Lumin OS (Magic Leap)</li>
+</ul>
+</li>
+</ul>
+<h2 id="unity-notes">Unity notes!!!</h2>
+<ul>
+<li>Always use library sources instead of precompiled DLL files ( because there are platform specific #ifdefs and workarounds for unity bugs )</li>
+</ul>
+<h2 id="usage-samples">Usage samples</h2>
+<h3 id="client">Client</h3>
+<pre><code class="lang-csharp">EventBasedNetListener listener = new EventBasedNetListener();
+NetManager client = new NetManager(listener);
+client.Start();
+client.Connect(&quot;localhost&quot; /* host ip or name */, 9050 /* port */, &quot;SomeConnectionKey&quot; /* text key or NetDataWriter */);
+listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =&gt;
+{
+    Console.WriteLine(&quot;We got: {0}&quot;, dataReader.GetString(100 /* max length of string */));
+    dataReader.Recycle();
+};
+
+while (!Console.KeyAvailable)
+{
+    client.PollEvents();
+    Thread.Sleep(15);
+}
+
+client.Stop();
+</code></pre>
+<h3 id="server">Server</h3>
+<pre><code class="lang-csharp">EventBasedNetListener listener = new EventBasedNetListener();
+NetManager server = new NetManager(listener);
+server.Start(9050 /* port */);
+
+listener.ConnectionRequestEvent += request =&gt;
+{
+    if(server.PeersCount &lt; 10 /* max connections */)
+        request.AcceptIfKey(&quot;SomeConnectionKey&quot;);
+    else
+        request.Reject();
+};
+
+listener.PeerConnectedEvent += peer =&gt;
+{
+    Console.WriteLine(&quot;We got connection: {0}&quot;, peer.EndPoint); // Show peer ip
+    NetDataWriter writer = new NetDataWriter();                 // Create writer class
+    writer.Put(&quot;Hello client!&quot;);                                // Put some string
+    peer.Send(writer, DeliveryMethod.ReliableOrdered);             // Send with reliability
+};
+
+while (!Console.KeyAvailable)
+{
+    server.PollEvents();
+    Thread.Sleep(15);
+}
+server.Stop();
+</code></pre>
+<h2 id="netmanager-settings-description">NetManager settings description</h2>
+<ul>
+<li><strong>UnconnectedMessagesEnabled</strong>
+<ul>
+<li>enable messages receiving without connection. (with SendUnconnectedMessage method)</li>
+<li>default value: <strong>false</strong></li>
+</ul>
+</li>
+<li><strong>NatPunchEnabled</strong>
+<ul>
+<li>enable NAT punch messages</li>
+<li>default value: <strong>false</strong></li>
+</ul>
+</li>
+<li><strong>UpdateTime</strong>
+<ul>
+<li>library logic update (and send) period in milliseconds</li>
+<li>default value: <strong>15 msec</strong>.</li>
+</ul>
+</li>
+<li><strong>PingInterval</strong>
+<ul>
+<li>Interval for latency detection and checking connection</li>
+<li>default value: <strong>1000 msec</strong>.</li>
+</ul>
+</li>
+<li><strong>DisconnectTimeout</strong>
+<ul>
+<li>if client or server doesn't receive any packet from remote peer during this time then connection will be closed</li>
+<li>(including library internal keepalive packets)</li>
+<li>default value: <strong>5000 msec</strong>.</li>
+</ul>
+</li>
+<li><strong>SimulatePacketLoss</strong>
+<ul>
+<li>simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)</li>
+<li>default value: <strong>false</strong></li>
+</ul>
+</li>
+<li><strong>SimulateLatency</strong>
+<ul>
+<li>simulate latency by holding packets for random time. (Works only in DEBUG mode)</li>
+<li>default value: <strong>false</strong></li>
+</ul>
+</li>
+<li><strong>SimulationPacketLossChance</strong>
+<ul>
+<li>chance of packet loss when simulation enabled. value in percents.</li>
+<li>default value: <strong>10 (%)</strong></li>
+</ul>
+</li>
+<li><strong>SimulationMinLatency</strong>
+<ul>
+<li>minimum simulated latency</li>
+<li>default value: <strong>30 msec</strong></li>
+</ul>
+</li>
+<li><strong>SimulationMaxLatency</strong>
+<ul>
+<li>maximum simulated latency</li>
+<li>default value: <strong>100 msec</strong></li>
+</ul>
+</li>
+<li><strong>BroadcastEnabled</strong>
+<ul>
+<li>Allows receive Broadcast packets</li>
+<li>default value: <strong>false</strong></li>
+</ul>
+</li>
+<li><strong>ReconnectDelay</strong>
+<ul>
+<li>delay betwen connection attempts</li>
+<li>default value: <strong>500 msec</strong></li>
+</ul>
+</li>
+<li><strong>MaxConnectAttempts</strong>
+<ul>
+<li>maximum connection attempts before client stops and call disconnect event.</li>
+<li>default value: <strong>10</strong></li>
+</ul>
+</li>
+<li><strong>UnsyncedEvents</strong>
+<ul>
+<li>Experimental feature. Events automatically will be called without PollEvents method from another thread</li>
+<li>default value: <strong>false</strong></li>
+</ul>
+</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>

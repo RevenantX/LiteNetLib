@@ -1,0 +1,618 @@
+{
+  "homepages": [],
+  "source_base_path": "E:/Projects/LiteNetLib/docfx_project",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.ConnectionRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.ConnectionRequest.html",
+          "hash": "vGAmCz0sDrRmix4QOrDLew=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.ConnectionRequestType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.ConnectionRequestType.html",
+          "hash": "aGcKDl1caOliCmYFbLIqyg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.ConnectionState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.ConnectionState.html",
+          "hash": "VG64pBOi/xM9cK5NM/uzyQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.DeliveryMethod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.DeliveryMethod.html",
+          "hash": "JzdHBSzdib2JBHFz7SdWjQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.DisconnectInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.DisconnectInfo.html",
+          "hash": "7gidP7cD1PDPfFGaeCuzAA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.DisconnectReason.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.DisconnectReason.html",
+          "hash": "tF5XlVYs2sNZp42XCR+aOQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.EventBasedNatPunchListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.EventBasedNatPunchListener.html",
+          "hash": "Oc1p0EyPt9hAWQMNJQ3XqA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.EventBasedNetListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.EventBasedNetListener.html",
+          "hash": "/ia/VpfYfpSqri4pzYqqfw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.IDeliveryEventListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.IDeliveryEventListener.html",
+          "hash": "RW6qK9AlKkkT+zWW+O7WWA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.INatPunchListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.INatPunchListener.html",
+          "hash": "INiuEicsC6zqQKhA58X4Ag=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.INetEventListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.INetEventListener.html",
+          "hash": "VOVA1Ujfd191BX5fX1pXDA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.INetLogger.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.INetLogger.html",
+          "hash": "RUdfvdsH5AcIypIcWalYVA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.InvalidPacketException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.InvalidPacketException.html",
+          "hash": "hTaG2y8/5r4lZ+BLmaAkhA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.LocalAddrType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.LocalAddrType.html",
+          "hash": "rovQ0FpjP1OuZpgk5CqJMA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NatPunchModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NatPunchModule.html",
+          "hash": "mgnUj5uiJV3t50JyQNbR6g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetConstants.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetConstants.html",
+          "hash": "JRyBwCUltaUgqs6io2ymjg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetDebug.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetDebug.html",
+          "hash": "XYpKs2q3BU5M6RCVaIwgbQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetLogLevel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetLogLevel.html",
+          "hash": "35fiG6+iusCnnVU0gBZHuQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.html",
+          "hash": "LfWEuOYi6xDLjZL01HoYTA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetManager.html",
+          "hash": "/nA/ADgjmXsX+FgKmMkA0A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetPacketReader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetPacketReader.html",
+          "hash": "9dHh5XxlcCeb2K83pKQM4A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetPeer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetPeer.html",
+          "hash": "CfUMKFtp7TivsbHT7bmgzQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetStatistics.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetStatistics.html",
+          "hash": "36Vu/8cw1P8aKCSM9uIn3A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetUtils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetUtils.html",
+          "hash": "rQ3lJcl+QO007jMcZjPFJw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.TooBigPacketException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.TooBigPacketException.html",
+          "hash": "ocHTVNxcxoIFvQfhkHwsJw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.UnconnectedMessageType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.UnconnectedMessageType.html",
+          "hash": "2CjTODzoL4TI7MrCZtzvLg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.FastBitConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.FastBitConverter.html",
+          "hash": "YAVWfLPP78SCAjuH/Usw1g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.INetSerializable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.INetSerializable.html",
+          "hash": "MF30tbH6EK9WddtcnqXBEQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.InvalidTypeException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.InvalidTypeException.html",
+          "hash": "qVgSY6t2rO6+Cy7x7/VcRw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.NetDataReader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.NetDataReader.html",
+          "hash": "u3NxtM096n9W5eoVjgznLw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.NetDataWriter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.NetDataWriter.html",
+          "hash": "dntvdmGb76rrffkkf+lHxg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.NetPacketProcessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.NetPacketProcessor.html",
+          "hash": "MJL8DRl5UmTRMLEVhIXseg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.NetSerializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.NetSerializer.html",
+          "hash": "gXBlw7I4Za5HvTIhpig1kg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.NtpLeapIndicator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.NtpLeapIndicator.html",
+          "hash": "Ti0tKqozAR1ko45p7oxmpQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.NtpMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.NtpMode.html",
+          "hash": "kJBpz8QEtoQrcJpmNp6fAw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.NtpPacket.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.NtpPacket.html",
+          "hash": "inXgcaLJcmZGmJu86oI84w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.NtpRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.NtpRequest.html",
+          "hash": "nC+q8AZc4aJ+/q30bRE0yg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.ParseException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.ParseException.html",
+          "hash": "J1zoAtjAtr8jzzucv6Sulw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.html",
+          "hash": "JT5tZ1XYchhDMBqzu/nI+g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.html",
+          "hash": "f2iu4i46zDCC/ELQSFDx+w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "p/U6XZXuE/M9TtqgP/nhmQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "xXBEinm+vky9fW9pCxQuPQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html",
+          "hash": "HjhdRbhgXLuu+xvFYgnObQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/netserializerusage.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/netserializerusage.html",
+          "hash": "Gn8+mHuqmY02c2YD1YxLGA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "qzqDYS06xf+AljnrgcmZiw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "vxwBs/uutHU5S2OaVcsZbQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "W7jy2EhK8cjyrdOBaz/Y7w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        },
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 4,
+          "skipped_file_count": 3
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 40,
+          "skipped_file_count": 40
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": true,
+        "details": "Can support incremental post processing.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
