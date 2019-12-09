@@ -8,6 +8,8 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
 
 [Little Game Example on Unity](https://github.com/RevenantX/NetGameExample)
 
+[Documentation](https://revenantx.github.io/LiteNetLib/index.html)
+
 ## Build
 
 ### [NuGet](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/v/LiteNetLib.svg)](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/dt/LiteNetLib.svg)](https://www.nuget.org/packages/LiteNetLib/)
@@ -35,7 +37,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
   * Reliable sequenced (realiable only last packet)
   * Ordered but unreliable with duplication prevention
   * Simple UDP packets without order and reliability
-* Fast packet serializer [(Usage manual)](https://github.com/RevenantX/LiteNetLib/wiki/NetSerializer-usage)
+* Fast packet serializer [(Usage manual)](https://revenantx.github.io/LiteNetLib/articles/netserializerusage.html)
 * Automatic small packets merging
 * Automatic fragmentation of reliable packets
 * Automatic MTU detection
