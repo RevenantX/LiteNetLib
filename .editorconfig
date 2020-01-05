@@ -2,3 +2,7 @@ root = true
 [*]
 indent_style = space
 indent_size = 4
+[*.cs]
+
+# IDE0032: Use auto property
+dotnet_style_prefer_auto_properties = true:none

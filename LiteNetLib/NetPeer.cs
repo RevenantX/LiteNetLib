@@ -828,7 +828,8 @@ namespace LiteNetLib
         internal void ProcessPacket(NetPacket packet)
         {
             //not initialized
-            if (_connectionState == ConnectionState.Incoming)
+            if (_connectionState == ConnectionState.Incoming || 
+                _connectionState == ConnectionState.Outcoming)
             {
                 _packetPool.Recycle(packet);
                 return;
