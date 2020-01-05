@@ -89,6 +89,13 @@
             </summary>
             <param name="request">Request information (EndPoint, internal id, additional data)</param>
         </member>
+        <member name="M:LiteNetLib.IDeliveryEventListener.OnMessageDelivered(LiteNetLib.NetPeer,System.Object)">
+            <summary>
+            On reliable message delivered
+            </summary>
+            <param name="peer"></param>
+            <param name="userData"></param>
+        </member>
         <member name="T:LiteNetLib.NatPunchModule">
             <summary>
             Module for UDP NAT Hole punching operations. Can be accessed from NetManager
@@ -201,6 +208,11 @@
             Experimental feature. Events automatically will be called without PollEvents method from another thread
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.UnsyncedDeliveryEvent">
+            <summary>
+            If true - delivery event will be called from "receive" thread otherwise on PollEvents call
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.BroadcastReceiveEnabled">
             <summary>
             Allows receive broadcast packets
@@ -275,7 +287,7 @@
             <summary>
             NetManager constructor
             </summary>
-            <param name="listener">Network events listener</param>
+            <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
         </member>
         <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">
             <summary>
@@ -577,6 +589,16 @@
             Network peer. Main purpose is sending messages to specific peer.
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetPeer.EndPoint">
+            <summary>
+            Peer ip address and port
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.NetPeer.NetManager">
+            <summary>
+            Peer parent NetManager
+            </summary>
+        </member>
         <member name="P:LiteNetLib.NetPeer.ConnectionState">
             <summary>
             Current connection state
@@ -590,11 +612,6 @@
         <member name="F:LiteNetLib.NetPeer.Id">
             <summary>
             Peer id can be used as key in your dictionary of peers
-            </summary>
-        </member>
-        <member name="P:LiteNetLib.NetPeer.EndPoint">
-            <summary>
-            Peer ip address and port
             </summary>
         </member>
         <member name="P:LiteNetLib.NetPeer.Ping">
@@ -623,11 +640,6 @@
             Time since last packet received (including internal library packets)
             </summary>
         </member>
-        <member name="P:LiteNetLib.NetPeer.NetManager">
-            <summary>
-            Peer parent NetManager
-            </summary>
-        </member>
         <member name="F:LiteNetLib.NetPeer.Tag">
             <summary>
             Application defined object containing data about the connection
@@ -644,6 +656,44 @@
             </summary>
             <param name="options">Type of packet that you want send</param>
             <returns>size in bytes</returns>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.SendWithDeliveryEvent(System.Byte[],System.Byte,LiteNetLib.DeliveryMethod,System.Object)">
+            <summary>
+            Send data to peer with delivery event called
+            </summary>
+            <param name="data">Data</param>
+            <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+            <param name="deliveryMethod">Delivery method (reliable, unreliable, etc.)</param>
+            <param name="userData">User data that will be received in DeliveryEvent</param>
+            <exception cref="T:System.ArgumentException">
+                If you trying to send unreliable packet type<para/>
+            </exception>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.SendWithDeliveryEvent(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod,System.Object)">
+            <summary>
+            Send data to peer with delivery event called
+            </summary>
+            <param name="data">Data</param>
+            <param name="start">Start of data</param>
+            <param name="length">Length of data</param>
+            <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+            <param name="deliveryMethod">Delivery method (reliable, unreliable, etc.)</param>
+            <param name="userData">User data that will be received in DeliveryEvent</param>
+            <exception cref="T:System.ArgumentException">
+                If you trying to send unreliable packet type<para/>
+            </exception>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.SendWithDeliveryEvent(LiteNetLib.Utils.NetDataWriter,System.Byte,LiteNetLib.DeliveryMethod,System.Object)">
+            <summary>
+            Send data to peer with delivery event called
+            </summary>
+            <param name="dataWriter">Data</param>
+            <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+            <param name="deliveryMethod">Delivery method (reliable, unreliable, etc.)</param>
+            <param name="userData">User data that will be received in DeliveryEvent</param>
+            <exception cref="T:System.ArgumentException">
+                If you trying to send unreliable packet type<para/>
+            </exception>
         </member>
         <member name="M:LiteNetLib.NetPeer.Send(System.Byte[],LiteNetLib.DeliveryMethod)">
             <summary>
@@ -746,7 +796,7 @@
             <param name="addrType">type of address (IPv4, IPv6 or both)</param>
             <returns>List with all local ip adresses</returns>
         </member>
-        <member name="M:LiteNetLib.NetUtils.GetLocalIpList(System.Collections.Generic.List{System.String},LiteNetLib.LocalAddrType)">
+        <member name="M:LiteNetLib.NetUtils.GetLocalIpList(System.Collections.Generic.IList{System.String},LiteNetLib.LocalAddrType)">
             <summary>
             Get all local ip addresses (non alloc version)
             </summary>
