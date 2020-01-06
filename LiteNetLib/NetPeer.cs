@@ -575,9 +575,7 @@ namespace LiteNetLib
         {
             _connectTime = connectionId;
             _connectNum = connectionNumber;
-            Shutdown(data, start, length, false);
-            if (force)
-                _connectionState = ConnectionState.Disconnected;
+            Shutdown(data, start, length, force);
         }
 
         internal bool Shutdown(byte[] data, int start, int length, bool force)

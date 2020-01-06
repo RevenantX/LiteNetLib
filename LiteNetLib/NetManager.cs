@@ -709,6 +709,7 @@ namespace LiteNetLib
             {
                 NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject force.");
                 request.Peer.Reject(request.ConnectionId, request.ConnectionNumber, rejectData, start, length, true);
+                RemovePeer(request.Peer);
             }
             else
             {
