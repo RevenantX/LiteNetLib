@@ -713,6 +713,17 @@ namespace LiteNetLib
             else if (request.Result == ConnectionRequestResult.RejectForce)
             {
                 NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject force.");
+                if (rejectData != null && length > 0)
+                {
+                    var shutdownPacket = NetPacketPool.GetWithProperty(PacketProperty.Disconnect, length);
+                    shutdownPacket.ConnectionNumber = request.ConnectionNumber;
+                    FastBitConverter.GetBytes(shutdownPacket.RawData, 1, request.ConnectionTime);
+                    if (shutdownPacket.Size >= NetConstants.PossibleMtu[0])
+                        NetDebug.WriteError("[Peer] Disconnect additional data size more than MTU!");
+                    else
+                        Buffer.BlockCopy(rejectData, start, shutdownPacket.RawData, 9, length);
+                    SendRawAndRecycle(shutdownPacket, request.RemoteEndPoint);
+                }
             }
             else
             {
