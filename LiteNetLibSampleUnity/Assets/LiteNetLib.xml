@@ -278,6 +278,13 @@
             Returns connected peers list (with internal cached list)
             </summary>
         </member>
+        <member name="M:LiteNetLib.NetManager.GetPeerById(System.Int32)">
+            <summary>
+            Gets peer by peer id
+            </summary>
+            <param name="id">id of peer</param>
+            <returns>Peer if peer with id exist, otherwise null</returns>
+        </member>
         <member name="P:LiteNetLib.NetManager.ConnectedPeersCount">
             <summary>
             Returns connected peers count

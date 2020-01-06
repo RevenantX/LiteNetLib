@@ -157,6 +157,7 @@ namespace LiteNetLib
         private volatile NetPeer _headPeer;
         private volatile int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
+        private NetPeer[] _peersArray;
         private int _lastPeerId;
         private readonly Queue<int> _peerIds;
         private byte _channelsCount = 1;
@@ -311,6 +312,16 @@ namespace LiteNetLib
         }
 
         /// <summary>
+        /// Gets peer by peer id
+        /// </summary>
+        /// <param name="id">id of peer</param>
+        /// <returns>Peer if peer with id exist, otherwise null</returns>
+        public NetPeer GetPeerById(int id)
+        {
+            return _peersArray[id];
+        }
+
+        /// <summary>
         /// Returns connected peers count
         /// </summary>
         public int ConnectedPeersCount { get { return _connectedPeersCount; } }
@@ -333,6 +344,14 @@ namespace LiteNetLib
             }
             _headPeer = peer;
             _peersDict.Add(peer.EndPoint, peer);
+            if (peer.Id >= _peersArray.Length)
+            {
+                int newSize = _peersArray.Length * 2;
+                while (peer.Id >= newSize)
+                    newSize *= 2;
+                Array.Resize(ref _peersArray, newSize);
+            }
+            _peersArray[peer.Id] = peer;
             _peersLock.ExitWriteLock();
         }
 
@@ -356,6 +375,7 @@ namespace LiteNetLib
                 peer.NextPeer.PrevPeer = peer.PrevPeer;
             peer.PrevPeer = null;
 
+            _peersArray[peer.Id] = null;
             lock (_peerIds)
                 _peerIds.Enqueue(peer.Id);
         }
@@ -379,6 +399,7 @@ namespace LiteNetLib
             _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>(new IPEndPointComparer());
             _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _peerIds = new Queue<int>();
+            _peersArray = new NetPeer[32];
         }
 
         internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
