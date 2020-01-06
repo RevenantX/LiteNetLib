@@ -15,12 +15,11 @@ namespace LiteNetLib
     [Flags]
     public enum ConnectionState : byte
     {
-        Incoming          = 1 << 1,
-        Outcoming         = 1 << 2,
-        Connected         = 1 << 3,
-        ShutdownRequested = 1 << 4,
-        Disconnected      = 1 << 5,
-        Any = Incoming | Outcoming | Connected | ShutdownRequested
+        Outgoing         = 1 << 1,
+        Connected         = 1 << 2,
+        ShutdownRequested = 1 << 3,
+        Disconnected      = 1 << 4,
+        Any = Outgoing | Connected | ShutdownRequested
     }
 
     internal enum ConnectRequestResult
@@ -198,7 +197,7 @@ namespace LiteNetLib
             _packetPool = netManager.NetPacketPool;
             NetManager = netManager;
             EndPoint = remoteEndPoint;
-            _connectionState = ConnectionState.Incoming;
+            _connectionState = ConnectionState.Connected;
             _mergeData = new NetPacket(PacketProperty.Merged, NetConstants.MaxPacketSize);
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
             _pingPacket = new NetPacket(PacketProperty.Ping, 0) {Sequence = 1};
@@ -242,7 +241,7 @@ namespace LiteNetLib
             : this(netManager, remoteEndPoint, id)
         {
             _connectTime = DateTime.UtcNow.Ticks;
-            _connectionState = ConnectionState.Outcoming;
+            _connectionState = ConnectionState.Outgoing;
             ConnectionNum = connectNum;
 
             //Make initial packet
@@ -256,7 +255,8 @@ namespace LiteNetLib
         }
 
         //"Accept" incoming constructor
-        internal void Accept(long connectId, byte connectNum)
+        internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id, long connectId, byte connectNum)
+            : this(netManager, remoteEndPoint, id)
         {
             _connectTime = connectId;
             _connectionState = ConnectionState.Connected;
@@ -270,9 +270,17 @@ namespace LiteNetLib
             NetDebug.Write(NetLogLevel.Trace, "[CC] ConnectId: {0}", _connectTime);
         }
 
+        //Reject
+        internal void Reject(long connectionId, byte connectionNumber, byte[] data, int start, int length)
+        {
+            _connectTime = connectionId;
+            _connectNum = connectionNumber;
+            Shutdown(data, start, length, false);
+        }
+
         internal bool ProcessConnectAccept(NetConnectAcceptPacket packet)
         {
-            if (_connectionState != ConnectionState.Outcoming)
+            if (_connectionState != ConnectionState.Outgoing)
                 return false;
 
             //check connection id
@@ -559,7 +567,7 @@ namespace LiteNetLib
 
         internal DisconnectResult ProcessDisconnect(NetPacket packet)
         {
-            if ((_connectionState == ConnectionState.Connected || _connectionState == ConnectionState.Outcoming) &&
+            if ((_connectionState == ConnectionState.Connected || _connectionState == ConnectionState.Outgoing) &&
                 packet.Size >= 9 &&
                 BitConverter.ToInt64(packet.RawData, 1) == _connectTime &&
                 packet.ConnectionNumber == _connectNum)
@@ -569,13 +577,6 @@ namespace LiteNetLib
                     : DisconnectResult.Reject;
             }
             return DisconnectResult.None;
-        }
-
-        internal void Reject(long connectionId, byte connectionNumber, byte[] data, int start, int length, bool force)
-        {
-            _connectTime = connectionId;
-            _connectNum = connectionNumber;
-            Shutdown(data, start, length, force);
         }
 
         internal bool Shutdown(byte[] data, int start, int length, bool force)
@@ -784,8 +785,7 @@ namespace LiteNetLib
             switch (_connectionState)
             {
                 //P2P case or just ID update
-                case ConnectionState.Outcoming:
-                case ConnectionState.Incoming:
+                case ConnectionState.Outgoing:
                     //change connect id if newer
                     if (connRequest.ConnectionTime >= _connectTime)
                     {
@@ -793,9 +793,7 @@ namespace LiteNetLib
                         _connectTime = connRequest.ConnectionTime;
                         ConnectionNum = connRequest.ConnectionNumber;
                     }
-                    return _connectionState == ConnectionState.Outcoming 
-                        ? ConnectRequestResult.P2PConnection 
-                        : ConnectRequestResult.None;
+                    return ConnectRequestResult.P2PConnection;
 
                 case ConnectionState.Connected:
                     //Old connect request
@@ -826,8 +824,7 @@ namespace LiteNetLib
         internal void ProcessPacket(NetPacket packet)
         {
             //not initialized
-            if (_connectionState == ConnectionState.Incoming || 
-                _connectionState == ConnectionState.Outcoming)
+            if (_connectionState == ConnectionState.Outgoing)
             {
                 _packetPool.Recycle(packet);
                 return;
@@ -1022,7 +1019,7 @@ namespace LiteNetLib
                     }
                     return;
 
-                case ConnectionState.Outcoming:
+                case ConnectionState.Outgoing:
                     _connectTimer += deltaTime;
                     if (_connectTimer > NetManager.ReconnectDelay)
                     {
@@ -1040,7 +1037,6 @@ namespace LiteNetLib
                     return;
 
                 case ConnectionState.Disconnected:
-                case ConnectionState.Incoming:
                     return;
             }
 

@@ -491,7 +491,7 @@
             </summary>
             <param name="target">Server end point (ip and port)</param>
             <param name="connectionData">Additional data for remote peer</param>
-            <returns>New NetPeer if new connection, Old NetPeer if already connected</returns>
+            <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
             <exception cref="T:System.InvalidOperationException">Manager is not running. Call <see cref="M:LiteNetLib.NetManager.Start"/></exception>
         </member>
         <member name="M:LiteNetLib.NetManager.Stop">

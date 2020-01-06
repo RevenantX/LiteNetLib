@@ -23,18 +23,26 @@ namespace LiteNetLib
         private readonly NetManager _listener;
         private int _used;
 
-        public IPEndPoint RemoteEndPoint { get { return Peer.EndPoint; } }
         public readonly NetDataReader Data;
         public ConnectionRequestType Type { get; private set; }
 
         internal ConnectionRequestResult Result { get; private set; }
-        internal readonly long ConnectionId;
-        internal readonly byte ConnectionNumber;
-        internal readonly NetPeer Peer;
+        internal long ConnectionTime;
+        internal byte ConnectionNumber;
+        public readonly IPEndPoint RemoteEndPoint;
 
         private bool TryActivate()
         {
             return Interlocked.CompareExchange(ref _used, 1, 0) == 0;
+        }
+
+        internal void UpdateRequest(NetConnectRequestPacket connRequest)
+        {
+            if (connRequest.ConnectionTime >= ConnectionTime)
+            {
+                ConnectionTime = connRequest.ConnectionTime;
+                ConnectionNumber = connRequest.ConnectionNumber;
+            }
         }
 
         internal ConnectionRequest(
@@ -42,13 +50,13 @@ namespace LiteNetLib
             byte connectionNumber,
             ConnectionRequestType type,
             NetDataReader netDataReader,
-            NetPeer peer,
+            IPEndPoint endPoint,
             NetManager listener)
         {
-            ConnectionId = connectionId;
+            ConnectionTime = connectionId;
             ConnectionNumber = connectionNumber;
             Type = type;
-            Peer = peer;
+            RemoteEndPoint = endPoint;
             Data = netDataReader;
             _listener = listener;
         }
@@ -62,8 +70,7 @@ namespace LiteNetLib
                 if (Data.GetString() == key)
                 {
                     Result = ConnectionRequestResult.Accept;
-                    _listener.OnConnectionSolved(this, null, 0, 0);
-                    return Peer;
+                    return _listener.OnConnectionSolved(this, null, 0, 0);
                 }
             }
             catch
@@ -84,8 +91,7 @@ namespace LiteNetLib
             if (!TryActivate())
                 return null;
             Result = ConnectionRequestResult.Accept;
-            _listener.OnConnectionSolved(this, null, 0, 0);
-            return Peer;
+            return _listener.OnConnectionSolved(this, null, 0, 0);
         }
         
         public void Reject(byte[] rejectData, int start, int length, bool force)
