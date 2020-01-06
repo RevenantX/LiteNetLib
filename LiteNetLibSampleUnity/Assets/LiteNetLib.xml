@@ -278,7 +278,7 @@
             Returns connected peers list (with internal cached list)
             </summary>
         </member>
-        <member name="P:LiteNetLib.NetManager.PeersCount">
+        <member name="P:LiteNetLib.NetManager.ConnectedPeersCount">
             <summary>
             Returns connected peers count
             </summary>
@@ -511,18 +511,6 @@
             </summary>
             <param name="peerState">peer connection state (you can use as bit flags)</param>
             <returns>peers count</returns>
-        </member>
-        <member name="M:LiteNetLib.NetManager.GetPeers">
-            <summary>
-            Get copy of current connected peers (slow! use GetPeersNonAlloc for best performance)
-            </summary>
-            <returns>Array with connected peers</returns>
-        </member>
-        <member name="M:LiteNetLib.NetManager.GetPeers(LiteNetLib.ConnectionState)">
-            <summary>
-            Get copy of current connected peers (slow! use GetPeersNonAlloc for best performance)
-            </summary>
-            <returns>Array with connected peers</returns>
         </member>
         <member name="M:LiteNetLib.NetManager.GetPeersNonAlloc(System.Collections.Generic.List{LiteNetLib.NetPeer},LiteNetLib.ConnectionState)">
             <summary>

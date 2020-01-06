@@ -61,7 +61,7 @@ namespace LibSample
             public void OnPeerConnected(NetPeer peer)
             {
                 Console.WriteLine("[Server] Peer connected: " + peer.EndPoint);
-                var peers = Server.GetPeers(ConnectionState.Connected);
+                var peers = Server.ConnectedPeerList;
                 foreach (var netPeer in peers)
                 {
                     Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);

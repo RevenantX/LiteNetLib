@@ -15,7 +15,7 @@ namespace LibSample
 
             listener.ConnectionRequestEvent += request =>
             {
-                if(server.PeersCount < 10 /* max connections */)
+                if(server.ConnectedPeersCount < 10 /* max connections */)
                     request.AcceptIfKey("SomeConnectionKey");
                 else
                     request.Reject();

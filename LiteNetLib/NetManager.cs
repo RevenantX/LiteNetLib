@@ -305,12 +305,7 @@ namespace LiteNetLib
         {
             get
             {
-                _connectedPeerListCache.Clear();
-                for(var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
-                {
-                    if ((netPeer.ConnectionState & ConnectionState.Connected) != 0)
-                        _connectedPeerListCache.Add(netPeer);
-                }
+                GetPeersNonAlloc(_connectedPeerListCache, ConnectionState.Connected);
                 return _connectedPeerListCache;
             }
         }
@@ -318,7 +313,7 @@ namespace LiteNetLib
         /// <summary>
         /// Returns connected peers count
         /// </summary>
-        public int PeersCount { get { return _connectedPeersCount; } }
+        public int ConnectedPeersCount { get { return _connectedPeersCount; } }
 
         private bool TryGetPeer(IPEndPoint endPoint, out NetPeer peer)
         {
@@ -1402,27 +1397,6 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Get copy of current connected peers (slow! use GetPeersNonAlloc for best performance)
-        /// </summary>
-        /// <returns>Array with connected peers</returns>
-        [Obsolete("Use GetPeers(ConnectionState peerState)")]
-        public NetPeer[] GetPeers()
-        {
-            return GetPeers(ConnectionState.Connected | ConnectionState.Outgoing);
-        } 
-
-        /// <summary>
-        /// Get copy of current connected peers (slow! use GetPeersNonAlloc for best performance)
-        /// </summary>
-        /// <returns>Array with connected peers</returns>
-        public NetPeer[] GetPeers(ConnectionState peerState)
-        {
-            List<NetPeer> peersList = new List<NetPeer>();
-            GetPeersNonAlloc(peersList, peerState);
-            return peersList.ToArray();
-        }
-
-        /// <summary>
         /// Get copy of peers (without allocations)
         /// </summary>
         /// <param name="peers">List that will contain result</param>
@@ -1430,11 +1404,13 @@ namespace LiteNetLib
         public void GetPeersNonAlloc(List<NetPeer> peers, ConnectionState peerState)
         {
             peers.Clear();
+            _peersLock.EnterReadLock();
             for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
             {
                 if ((netPeer.ConnectionState & peerState) != 0)
                     peers.Add(netPeer);
             }
+            _peersLock.ExitReadLock();
         }
 
         /// <summary>

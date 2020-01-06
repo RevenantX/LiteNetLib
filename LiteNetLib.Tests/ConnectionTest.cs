@@ -38,14 +38,14 @@ namespace LiteNetLib.Tests
             var client = ManagerStack.Client(1);
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
-            while (server.PeersCount != 1 || client.PeersCount != 1)
+            while (server.ConnectedPeersCount != 1 || client.ConnectedPeersCount != 1)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
             }
 
-            Assert.AreEqual(1, server.PeersCount);
-            Assert.AreEqual(1, client.PeersCount);
+            Assert.AreEqual(1, server.ConnectedPeersCount);
+            Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
         [Test, Timeout(2000)]
@@ -74,15 +74,15 @@ namespace LiteNetLib.Tests
 
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
-            while (server.PeersCount != 1 || client.PeersCount != 1 || !msgDelivered || !msgReceived)
+            while (server.ConnectedPeersCount != 1 || client.ConnectedPeersCount != 1 || !msgDelivered || !msgReceived)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
                 client.PollEvents();
             }
 
-            Assert.AreEqual(1, server.PeersCount);
-            Assert.AreEqual(1, client.PeersCount);
+            Assert.AreEqual(1, server.ConnectedPeersCount);
+            Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
         [Test, Timeout(2000)]
@@ -94,21 +94,21 @@ namespace LiteNetLib.Tests
             ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) => disconnectInfo = info;
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
-            while (server.PeersCount != 1 || client.PeersCount != 1)
+            while (server.ConnectedPeersCount != 1 || client.ConnectedPeersCount != 1)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
             }
             server.Stop(false);
             server.Start(DefaultPort);
-            while (client.PeersCount == 1)
+            while (client.ConnectedPeersCount == 1)
             {
                 Thread.Sleep(15);
             }
             client.PollEvents();
 
-            Assert.AreEqual(0, server.PeersCount);
-            Assert.AreEqual(0, client.PeersCount);
+            Assert.AreEqual(0, server.ConnectedPeersCount);
+            Assert.AreEqual(0, client.ConnectedPeersCount);
             Assert.IsTrue(disconnectInfo.HasValue);
             Assert.AreEqual(DisconnectReason.RemoteConnectionClose, disconnectInfo.Value.Reason);
         }
@@ -162,7 +162,7 @@ namespace LiteNetLib.Tests
             }
 
             Assert.AreEqual(ConnectionState.Connected, clientServerPeer.ConnectionState);
-            Assert.True(server.PeersCount == 1);
+            Assert.True(server.ConnectedPeersCount == 1);
 
             ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) =>
             {
@@ -172,8 +172,8 @@ namespace LiteNetLib.Tests
 
             server.Stop();
             
-            Assert.True(server.PeersCount == 0);
-            while (client.PeersCount == 1)
+            Assert.True(server.ConnectedPeersCount == 0);
+            while (client.ConnectedPeersCount == 1)
             {
                 Thread.Sleep(15);
             }
@@ -248,8 +248,8 @@ namespace LiteNetLib.Tests
                 Thread.Sleep(15);
             }
 
-            Assert.AreEqual(0, server.PeersCount);
-            Assert.AreEqual(0, client.PeersCount);
+            Assert.AreEqual(0, server.ConnectedPeersCount);
+            Assert.AreEqual(0, client.ConnectedPeersCount);
         }
 
         [Test]
@@ -280,8 +280,8 @@ namespace LiteNetLib.Tests
                 Thread.Sleep(15);
             }
 
-            Assert.AreEqual(0, server.PeersCount);
-            Assert.AreEqual(0, client.PeersCount);
+            Assert.AreEqual(0, server.ConnectedPeersCount);
+            Assert.AreEqual(0, client.ConnectedPeersCount);
         }
 
         [Test, Timeout(10000)]
@@ -327,7 +327,7 @@ namespace LiteNetLib.Tests
             //Wait for client 'ShutdownOk' response
             Thread.Sleep(100);
 
-            Assert.AreEqual(0, server.PeersCount);
+            Assert.AreEqual(0, server.ConnectedPeersCount);
             Assert.AreEqual(ConnectionState.Disconnected, clientServerPeer.ConnectionState);
         }
 
@@ -342,7 +342,7 @@ namespace LiteNetLib.Tests
             ManagerStack.ServerListener(1).PeerDisconnectedEvent += (peer, info) => { serverDisconnected = true; };
 
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
-            while (server.PeersCount != 1)
+            while (server.ConnectedPeersCount != 1)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
@@ -362,8 +362,8 @@ namespace LiteNetLib.Tests
 
             Assert.True(clientDisconnected);
             Assert.True(serverDisconnected);
-            Assert.AreEqual(0, server.PeersCount);
-            Assert.AreEqual(0, client.PeersCount);
+            Assert.AreEqual(0, server.ConnectedPeersCount);
+            Assert.AreEqual(0, client.ConnectedPeersCount);
         }
 
         [Test, Timeout(5000)]
@@ -375,7 +375,7 @@ namespace LiteNetLib.Tests
             NetManager client = new NetManager(listener);
             Assert.True(client.Start(9049));
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
-            while (server.PeersCount != 1)
+            while (server.ConnectedPeersCount != 1)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
@@ -398,8 +398,8 @@ namespace LiteNetLib.Tests
             }
 
             Assert.True(connected);
-            Assert.AreEqual(1, server.PeersCount);
-            Assert.AreEqual(1, client.PeersCount);
+            Assert.AreEqual(1, server.ConnectedPeersCount);
+            Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
         [Test, Timeout(2000)]
@@ -414,7 +414,7 @@ namespace LiteNetLib.Tests
             ManagerStack.ServerListener(1).PeerDisconnectedEvent += (peer, info) => { serverDisconnected = true; };
 
             NetPeer serverPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
-            while (server.PeersCount != 1)
+            while (server.ConnectedPeersCount != 1)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
@@ -435,8 +435,8 @@ namespace LiteNetLib.Tests
 
             Assert.True(clientDisconnected);
             Assert.True(serverDisconnected);
-            Assert.AreEqual(0, server.PeersCount);
-            Assert.AreEqual(0, client.PeersCount);
+            Assert.AreEqual(0, server.ConnectedPeersCount);
+            Assert.AreEqual(0, client.ConnectedPeersCount);
         }
 
         [Test, Timeout(2000)]
@@ -482,8 +482,8 @@ namespace LiteNetLib.Tests
             }
 
             Assert.AreEqual(methods.Length*channelsCount, messagesReceived);
-            Assert.AreEqual(1, server.PeersCount);
-            Assert.AreEqual(1, client.PeersCount);
+            Assert.AreEqual(1, server.ConnectedPeersCount);
+            Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
         [Test, Timeout(2000)]
@@ -493,14 +493,14 @@ namespace LiteNetLib.Tests
             var client = ManagerStack.Client(1);
             client.Connect("::1", DefaultPort, DefaultAppKey);
 
-            while (server.PeersCount != 1 || client.PeersCount != 1)
+            while (server.ConnectedPeersCount != 1 || client.ConnectedPeersCount != 1)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
             }
 
-            Assert.AreEqual(1, server.PeersCount);
-            Assert.AreEqual(1, client.PeersCount);
+            Assert.AreEqual(1, server.ConnectedPeersCount);
+            Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
         [Test, Timeout(2000)]
@@ -540,7 +540,7 @@ namespace LiteNetLib.Tests
 
             ManagerStack.ClientForeach((i, manager, l) => manager.SendBroadcast(writer, DefaultPort));
 
-            while (server.PeersCount < clientCount)
+            while (server.ConnectedPeersCount < clientCount)
             {
                 server.PollEvents();
                 ManagerStack.ClientForeach((i, manager, l) => manager.PollEvents());
@@ -548,11 +548,11 @@ namespace LiteNetLib.Tests
                 Thread.Sleep(15);
             }
 
-            Assert.AreEqual(clientCount, server.PeersCount);
+            Assert.AreEqual(clientCount, server.ConnectedPeersCount);
             ManagerStack.ClientForeach(
                 (i, manager, l) =>
                 {
-                    Assert.AreEqual(manager.PeersCount, 1);
+                    Assert.AreEqual(manager.ConnectedPeersCount, 1);
                 });
         }
 
@@ -580,15 +580,15 @@ namespace LiteNetLib.Tests
                 ManagerStack.Client(i).Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             }
 
-            while (server.PeersCount < clientCount)
+            while (server.ConnectedPeersCount < clientCount)
             {
                 Thread.Sleep(15);
                 server.PollEvents();
             }
 
-            Assert.AreEqual(server.PeersCount, clientCount);
+            Assert.AreEqual(server.ConnectedPeersCount, clientCount);
             Thread.Sleep(100);
-            ManagerStack.ClientForeach((i, manager, l) => Assert.AreEqual(manager.PeersCount, 1));
+            ManagerStack.ClientForeach((i, manager, l) => Assert.AreEqual(manager.ConnectedPeersCount, 1));
 
             var dataStack = new Stack<byte[]>(clientCount);
 
@@ -607,10 +607,10 @@ namespace LiteNetLib.Tests
 
             Assert.AreEqual(dataStack.Count, clientCount);
 
-            Assert.AreEqual(server.PeersCount, clientCount);
+            Assert.AreEqual(server.ConnectedPeersCount, clientCount);
             for (ushort i = 1; i <= clientCount; i++)
             {
-                Assert.AreEqual(ManagerStack.Client(i).PeersCount, 1);
+                Assert.AreEqual(ManagerStack.Client(i).ConnectedPeersCount, 1);
                 Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
             }
         }
