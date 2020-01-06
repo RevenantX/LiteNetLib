@@ -1391,7 +1391,10 @@ namespace LiteNetLib
             _peersLock.EnterWriteLock();
             _headPeer = null;
             _peersDict.Clear();
+            _peersArray = new NetPeer[32];
             _peersLock.ExitWriteLock();
+            lock(_peerIds)
+                _peerIds.Clear();
 #if DEBUG
             lock (_pingSimulationList)
                 _pingSimulationList.Clear();
