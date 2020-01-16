@@ -131,14 +131,7 @@ references:
 - uid: LiteNetLib.ConnectionRequest.RemoteEndPoint
   name: RemoteEndPoint
   href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RemoteEndPoint
-  commentId: P:LiteNetLib.ConnectionRequest.RemoteEndPoint
-  fullName: LiteNetLib.ConnectionRequest.RemoteEndPoint
-  nameWithType: ConnectionRequest.RemoteEndPoint
-- uid: LiteNetLib.ConnectionRequest.RemoteEndPoint*
-  name: RemoteEndPoint
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RemoteEndPoint_
-  commentId: Overload:LiteNetLib.ConnectionRequest.RemoteEndPoint
-  isSpec: "True"
+  commentId: F:LiteNetLib.ConnectionRequest.RemoteEndPoint
   fullName: LiteNetLib.ConnectionRequest.RemoteEndPoint
   nameWithType: ConnectionRequest.RemoteEndPoint
 - uid: LiteNetLib.ConnectionRequest.Type
@@ -196,18 +189,12 @@ references:
   commentId: F:LiteNetLib.ConnectionState.Disconnected
   fullName: LiteNetLib.ConnectionState.Disconnected
   nameWithType: ConnectionState.Disconnected
-- uid: LiteNetLib.ConnectionState.Incoming
-  name: Incoming
-  href: api/LiteNetLib.ConnectionState.html#LiteNetLib_ConnectionState_Incoming
-  commentId: F:LiteNetLib.ConnectionState.Incoming
-  fullName: LiteNetLib.ConnectionState.Incoming
-  nameWithType: ConnectionState.Incoming
-- uid: LiteNetLib.ConnectionState.Outcoming
-  name: Outcoming
-  href: api/LiteNetLib.ConnectionState.html#LiteNetLib_ConnectionState_Outcoming
-  commentId: F:LiteNetLib.ConnectionState.Outcoming
-  fullName: LiteNetLib.ConnectionState.Outcoming
-  nameWithType: ConnectionState.Outcoming
+- uid: LiteNetLib.ConnectionState.Outgoing
+  name: Outgoing
+  href: api/LiteNetLib.ConnectionState.html#LiteNetLib_ConnectionState_Outgoing
+  commentId: F:LiteNetLib.ConnectionState.Outgoing
+  fullName: LiteNetLib.ConnectionState.Outgoing
+  nameWithType: ConnectionState.Outgoing
 - uid: LiteNetLib.ConnectionState.ShutdownRequested
   name: ShutdownRequested
   href: api/LiteNetLib.ConnectionState.html#LiteNetLib_ConnectionState_ShutdownRequested
@@ -1171,6 +1158,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.ConnectedPeerList
   nameWithType: NetManager.ConnectedPeerList
+- uid: LiteNetLib.NetManager.ConnectedPeersCount
+  name: ConnectedPeersCount
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ConnectedPeersCount
+  commentId: P:LiteNetLib.NetManager.ConnectedPeersCount
+  fullName: LiteNetLib.NetManager.ConnectedPeersCount
+  nameWithType: NetManager.ConnectedPeersCount
+- uid: LiteNetLib.NetManager.ConnectedPeersCount*
+  name: ConnectedPeersCount
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ConnectedPeersCount_
+  commentId: Overload:LiteNetLib.NetManager.ConnectedPeersCount
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.ConnectedPeersCount
+  nameWithType: NetManager.ConnectedPeersCount
 - uid: LiteNetLib.NetManager.DisconnectAll
   name: DisconnectAll()
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DisconnectAll
@@ -1288,25 +1288,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.GetEnumerator
   nameWithType: NetManager.GetEnumerator
-- uid: LiteNetLib.NetManager.GetPeers
-  name: GetPeers()
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetPeers
-  commentId: M:LiteNetLib.NetManager.GetPeers
-  fullName: LiteNetLib.NetManager.GetPeers()
-  nameWithType: NetManager.GetPeers()
-- uid: LiteNetLib.NetManager.GetPeers(LiteNetLib.ConnectionState)
-  name: GetPeers(ConnectionState)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetPeers_LiteNetLib_ConnectionState_
-  commentId: M:LiteNetLib.NetManager.GetPeers(LiteNetLib.ConnectionState)
-  fullName: LiteNetLib.NetManager.GetPeers(LiteNetLib.ConnectionState)
-  nameWithType: NetManager.GetPeers(ConnectionState)
-- uid: LiteNetLib.NetManager.GetPeers*
-  name: GetPeers
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetPeers_
-  commentId: Overload:LiteNetLib.NetManager.GetPeers
+- uid: LiteNetLib.NetManager.GetPeerById(System.Int32)
+  name: GetPeerById(Int32)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetPeerById_System_Int32_
+  commentId: M:LiteNetLib.NetManager.GetPeerById(System.Int32)
+  fullName: LiteNetLib.NetManager.GetPeerById(System.Int32)
+  nameWithType: NetManager.GetPeerById(Int32)
+- uid: LiteNetLib.NetManager.GetPeerById*
+  name: GetPeerById
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetPeerById_
+  commentId: Overload:LiteNetLib.NetManager.GetPeerById
   isSpec: "True"
-  fullName: LiteNetLib.NetManager.GetPeers
-  nameWithType: NetManager.GetPeers
+  fullName: LiteNetLib.NetManager.GetPeerById
+  nameWithType: NetManager.GetPeerById
 - uid: LiteNetLib.NetManager.GetPeersCount(LiteNetLib.ConnectionState)
   name: GetPeersCount(ConnectionState)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetPeersCount_LiteNetLib_ConnectionState_
@@ -1474,19 +1468,6 @@ references:
   fullName: LiteNetLib.NetManager.NetPeerEnumerator.System.Collections.IEnumerator.Current
   nameWithType: NetManager.NetPeerEnumerator.IEnumerator.Current
   nameWithType.vb: NetManager.NetPeerEnumerator.System.Collections.IEnumerator.Current
-- uid: LiteNetLib.NetManager.PeersCount
-  name: PeersCount
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_PeersCount
-  commentId: P:LiteNetLib.NetManager.PeersCount
-  fullName: LiteNetLib.NetManager.PeersCount
-  nameWithType: NetManager.PeersCount
-- uid: LiteNetLib.NetManager.PeersCount*
-  name: PeersCount
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_PeersCount_
-  commentId: Overload:LiteNetLib.NetManager.PeersCount
-  isSpec: "True"
-  fullName: LiteNetLib.NetManager.PeersCount
-  nameWithType: NetManager.PeersCount
 - uid: LiteNetLib.NetManager.PingInterval
   name: PingInterval
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_PingInterval
