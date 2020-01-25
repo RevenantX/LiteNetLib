@@ -153,5 +153,11 @@ server.Stop();
   * maximum connection attempts before client stops and call disconnect event.
   * default value: **10**
 * **UnsyncedEvents**
-  * Experimental feature. Events automatically will be called without PollEvents method from another thread
+  * Warning! Use this only when you know what are you doing, and sync data manually
+  * Events automatically will be called without PollEvents method from socket recieve thread
   * default value: **false**
+* **EnableChecksums**
+  * CRC32C checksums write and check (for send/receive)
+  * NetManager with enabled checksums cannot communicate with NetManager without checksums
+  * Increases all packet sizes by 4 bytes
+  * default value: **false** 
