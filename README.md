@@ -26,7 +26,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
 
 * Lightweight
   * Small CPU and RAM usage
-  * Small packet size overhead ( 1 byte for unreliable, 3 bytes for reliable packets )
+  * Small packet size overhead ( 1 byte for unreliable, 4 bytes for reliable packets )
 * Simple connection handling
 * Peer to peer connections
 * Helper classes for sending and reading messages
@@ -41,6 +41,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.0, .NET Stan
 * Automatic small packets merging
 * Automatic fragmentation of reliable packets
 * Automatic MTU detection
+* Optional CRC32C checksums (NetManager.EnableChecksums)
 * UDP NAT hole punching
 * NTP time requests
 * Packet loss and latency simulation
