@@ -1249,6 +1249,12 @@ references:
   commentId: F:LiteNetLib.NetManager.DisconnectTimeout
   fullName: LiteNetLib.NetManager.DisconnectTimeout
   nameWithType: NetManager.DisconnectTimeout
+- uid: LiteNetLib.NetManager.EnableChecksums
+  name: EnableChecksums
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_EnableChecksums
+  commentId: F:LiteNetLib.NetManager.EnableChecksums
+  fullName: LiteNetLib.NetManager.EnableChecksums
+  nameWithType: NetManager.EnableChecksums
 - uid: LiteNetLib.NetManager.FirstPeer
   name: FirstPeer
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_FirstPeer
@@ -2293,6 +2299,34 @@ references:
   commentId: N:LiteNetLib.Utils
   fullName: LiteNetLib.Utils
   nameWithType: LiteNetLib.Utils
+- uid: LiteNetLib.Utils.CRC32C
+  name: CRC32C
+  href: api/LiteNetLib.Utils.CRC32C.html
+  commentId: T:LiteNetLib.Utils.CRC32C
+  fullName: LiteNetLib.Utils.CRC32C
+  nameWithType: CRC32C
+- uid: LiteNetLib.Utils.CRC32C.ChecksumSize
+  name: ChecksumSize
+  href: api/LiteNetLib.Utils.CRC32C.html#LiteNetLib_Utils_CRC32C_ChecksumSize
+  commentId: F:LiteNetLib.Utils.CRC32C.ChecksumSize
+  fullName: LiteNetLib.Utils.CRC32C.ChecksumSize
+  nameWithType: CRC32C.ChecksumSize
+- uid: LiteNetLib.Utils.CRC32C.Compute(System.Byte[],System.Int32,System.Int32)
+  name: Compute(Byte[], Int32, Int32)
+  href: api/LiteNetLib.Utils.CRC32C.html#LiteNetLib_Utils_CRC32C_Compute_System_Byte___System_Int32_System_Int32_
+  commentId: M:LiteNetLib.Utils.CRC32C.Compute(System.Byte[],System.Int32,System.Int32)
+  name.vb: Compute(Byte(), Int32, Int32)
+  fullName: LiteNetLib.Utils.CRC32C.Compute(System.Byte[], System.Int32, System.Int32)
+  fullName.vb: LiteNetLib.Utils.CRC32C.Compute(System.Byte(), System.Int32, System.Int32)
+  nameWithType: CRC32C.Compute(Byte[], Int32, Int32)
+  nameWithType.vb: CRC32C.Compute(Byte(), Int32, Int32)
+- uid: LiteNetLib.Utils.CRC32C.Compute*
+  name: Compute
+  href: api/LiteNetLib.Utils.CRC32C.html#LiteNetLib_Utils_CRC32C_Compute_
+  commentId: Overload:LiteNetLib.Utils.CRC32C.Compute
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.CRC32C.Compute
+  nameWithType: CRC32C.Compute
 - uid: LiteNetLib.Utils.FastBitConverter
   name: FastBitConverter
   href: api/LiteNetLib.Utils.FastBitConverter.html
