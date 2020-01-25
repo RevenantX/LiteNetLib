@@ -390,6 +390,7 @@ namespace LiteNetLib.Tests
 
             EventBasedNetListener listener = new EventBasedNetListener();
             NetManager client = new NetManager(listener);
+            client.EnableChecksums = true;
             Assert.True(client.Start(9049));
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             while (server.ConnectedPeersCount != 1)
