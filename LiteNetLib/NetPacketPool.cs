@@ -11,16 +11,33 @@ namespace LiteNetLib
 
         public NetPacket GetWithData(PacketProperty property, byte[] data, int start, int length)
         {
-            var packet = GetWithProperty(property, length);
-            Buffer.BlockCopy(data, start, packet.RawData, NetPacket.GetHeaderSize(property), length);
+            int headerSize = NetPacket.GetHeaderSize(property);
+            NetPacket packet = GetPacket(length + headerSize);
+            packet.Property = property;
+            Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
             return packet;
         }
 
-        public NetPacket GetPacket(int size, bool clear)
+        //Get packet with size
+        public NetPacket GetWithProperty(PacketProperty property, int size)
         {
-            NetPacket packet = null;
+            NetPacket packet = GetPacket(size + NetPacket.GetHeaderSize(property));
+            packet.Property = property;
+            return packet;
+        }
+
+        public NetPacket GetWithProperty(PacketProperty property)
+        {
+            NetPacket packet = GetPacket(NetPacket.GetHeaderSize(property));
+            packet.Property = property;
+            return packet;
+        }
+
+        public NetPacket GetPacket(int size)
+        {
             if (size <= NetConstants.MaxPacketSize)
             {
+                NetPacket packet = null;
                 _lock.EnterUpgradeableReadLock();
                 if (_count > 0)
                 {
@@ -31,27 +48,15 @@ namespace LiteNetLib
                     _lock.ExitWriteLock();
                 }
                 _lock.ExitUpgradeableReadLock();
+                if (packet != null)
+                {
+                    packet.Size = (ushort)size;
+                    if (packet.RawData.Length < size)
+                        packet.RawData = new byte[size];
+                    return packet;
+                }
             }
-            if (packet == null)
-            {
-                //allocate new packet
-                packet = new NetPacket(size);
-            }
-            else
-            {
-                //reallocate packet data if packet not fits
-                packet.Realloc(size, clear);
-            }
-            return packet;
-        }
-
-        //Get packet with size
-        public NetPacket GetWithProperty(PacketProperty property, int size)
-        {
-            size += NetPacket.GetHeaderSize(property);
-            NetPacket packet = GetPacket(size, true);
-            packet.Property = property;
-            return packet;
+            return new NetPacket(size);
         }
 
         public void Recycle(NetPacket packet)

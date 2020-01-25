@@ -80,7 +80,7 @@ namespace LiteNetLib
         private BaseChannel _headChannel;
 
         //MTU
-        private int _mtu = NetConstants.PossibleMtu[0];
+        private int _mtu;
         private int _mtuIdx;
         private bool _finishMtu;
         private int _mtuCheckTimer;
@@ -118,7 +118,7 @@ namespace LiteNetLib
         private readonly NetPacket _pingPacket;
         private readonly NetPacket _pongPacket;
         private readonly NetPacket _connectRequestPacket;
-        private NetPacket _connectAcceptPacket;
+        private readonly NetPacket _connectAcceptPacket;
 
         /// <summary>
         /// Peer ip address and port
@@ -196,6 +196,8 @@ namespace LiteNetLib
             Statistics = new NetStatistics();
             _packetPool = netManager.NetPacketPool;
             NetManager = netManager;
+            SetMtu(0);
+
             EndPoint = remoteEndPoint;
             _connectionState = ConnectionState.Connected;
             _mergeData = new NetPacket(PacketProperty.Merged, NetConstants.MaxPacketSize);
@@ -208,6 +210,11 @@ namespace LiteNetLib
             _deliveredFramgnets = new Dictionary<ushort, ushort>();
 
             _channels = new BaseChannel[netManager.ChannelsCount * 4];
+        }
+
+        private void SetMtu(int mtuIdx)
+        {
+            _mtu = NetManager.EnableChecksums ? NetConstants.PossibleMtu[mtuIdx] - 4 : NetConstants.PossibleMtu[mtuIdx];
         }
 
         private BaseChannel CreateChannel(byte idx)
@@ -498,7 +505,7 @@ namespace LiteNetLib
             {
                 //if cannot be fragmented
                 if (deliveryMethod != DeliveryMethod.ReliableOrdered && deliveryMethod != DeliveryMethod.ReliableUnordered)
-                    throw new TooBigPacketException("Unreliable packet size exceeded maximum of " + (_mtu - headerSize) + " bytes");
+                    throw new TooBigPacketException("Unreliable packet size exceeded maximum of " + (mtu - headerSize) + " bytes");
 
                 int packetFullSize = mtu - headerSize;
                 int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
@@ -521,14 +528,14 @@ namespace LiteNetLib
                     {
                         int sendLength = length > packetDataSize ? packetDataSize : length;
 
-                        NetPacket p = _packetPool.GetWithProperty(property, sendLength + NetConstants.FragmentHeaderSize);
+                        NetPacket p = _packetPool.GetPacket(headerSize + sendLength + NetConstants.FragmentHeaderSize);
+                        p.Property = property;
                         p.UserData = userData;
                         p.FragmentId = _fragmentId;
                         p.FragmentPart = partIdx;
                         p.FragmentsTotal = (ushort)totalPackets;
                         p.MarkFragmented();
 
-                        
                         Buffer.BlockCopy(data, partIdx * packetDataSize, p.RawData, NetConstants.FragmentTotalSize, sendLength);
                         channel.AddToQueue(p);
 
@@ -540,7 +547,9 @@ namespace LiteNetLib
             }
 
             //Else just send
-            NetPacket packet = _packetPool.GetWithData(property, data, start, length);
+            NetPacket packet = _packetPool.GetPacket(headerSize + length);
+            packet.Property = property;
+            Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
             packet.UserData = userData;
             channel.AddToQueue(packet);
         }
@@ -671,10 +680,12 @@ namespace LiteNetLib
                 if (incomingFragments.ReceivedCount != fragments.Length)
                     return;
 
-                NetPacket resultingPacket = _packetPool.GetWithProperty( p.Property, incomingFragments.TotalSize );
+                int resultingPacketHeaderSize = NetPacket.GetHeaderSize(p.Property);
+
+                NetPacket resultingPacket = _packetPool.GetPacket(resultingPacketHeaderSize + incomingFragments.TotalSize);
+                resultingPacket.Property = p.Property;
                 resultingPacket.ChannelId = incomingFragments.ChannelId;
 
-                int resultingPacketOffset = resultingPacket.GetHeaderSize();
                 int firstFragmentSize = fragments[0].Size - NetConstants.FragmentTotalSize;
                 for (int i = 0; i < incomingFragments.ReceivedCount; i++)
                 {
@@ -684,7 +695,7 @@ namespace LiteNetLib
                         fragments[i].RawData,
                         NetConstants.FragmentTotalSize,
                         resultingPacket.RawData,
-                        resultingPacketOffset + firstFragmentSize * i,
+                        resultingPacketHeaderSize + firstFragmentSize * i,
                         fragmentSize);
 
                     //Free memory
@@ -735,7 +746,7 @@ namespace LiteNetLib
                 lock (_mtuMutex)
                 {
                     _mtuIdx++;
-                    _mtu = receivedMtu;
+                    SetMtu(_mtuIdx);
                 }
                 //if maxed - finish.
                 if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
@@ -769,7 +780,8 @@ namespace LiteNetLib
 
                 //Send increased packet
                 int newMtu = NetConstants.PossibleMtu[_mtuIdx + 1];
-                var p = _packetPool.GetWithProperty(PacketProperty.MtuCheck, newMtu - NetConstants.HeaderSize);
+                var p = _packetPool.GetPacket(newMtu);
+                p.Property = PacketProperty.MtuCheck;
                 FastBitConverter.GetBytes(p.RawData, 1, newMtu);         //place into start
                 FastBitConverter.GetBytes(p.RawData, p.Size - 4, newMtu);//and end of packet
 
@@ -846,7 +858,7 @@ namespace LiteNetLib
                     {
                         ushort size = BitConverter.ToUInt16(packet.RawData, pos);
                         pos += 2;
-                        NetPacket mergedPacket = _packetPool.GetPacket(size, false);
+                        NetPacket mergedPacket = _packetPool.GetPacket(size);
                         if (!mergedPacket.FromBytes(packet.RawData, pos, size))
                         {
                             _packetPool.Recycle(packet);

@@ -103,18 +103,6 @@ namespace LiteNetLib
             Size = (ushort)size;
         }
 
-        public void Realloc(int toSize, bool clear)
-        {
-            Size = (ushort)toSize;
-            if (RawData.Length < toSize)
-            {
-                RawData = new byte[toSize];
-                return;
-            }
-            if (clear)  //clear not reallocated
-                Array.Clear(RawData, 0, toSize);
-        }
-
         public static int GetHeaderSize(PacketProperty property)
         {
             switch (property)

@@ -263,6 +263,11 @@
             IPv6 support
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.EnableChecksums">
+            <summary>
+            CRC32C checksums write and check (for send/receive)
+            </summary>
+        </member>
         <member name="P:LiteNetLib.NetManager.FirstPeer">
             <summary>
             First peer. Useful for Client mode
@@ -804,6 +809,15 @@
             </summary>
             <param name="addrType">type of address (IPv4, IPv6 or both)</param>
             <returns>IP address if available. Else - string.Empty</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.CRC32C.Compute(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Compute CRC32C for data
+            </summary>
+            <param name="input">input data</param>
+            <param name="offset">offset</param>
+            <param name="length">length</param>
+            <returns>CRC32C checksum</returns>
         </member>
         <member name="M:LiteNetLib.Utils.NetDataWriter.FromBytes(System.Byte[],System.Boolean)">
             <summary>

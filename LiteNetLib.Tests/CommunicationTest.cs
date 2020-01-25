@@ -10,6 +10,15 @@ using NUnit.Framework;
 
 namespace LiteNetLib.Tests
 {
+    class LibErrorChecker : INetLogger
+    {
+        public void WriteNet(NetLogLevel level, string str, params object[] args)
+        {
+            if(level == NetLogLevel.Error || level == NetLogLevel.Warning)
+                Assert.Fail(str);
+        }
+    }
+
     [TestFixture]
     [Category("Communication")]
     public class CommunicationTest
@@ -17,6 +26,7 @@ namespace LiteNetLib.Tests
         [SetUp]
         public void Init()
         {
+            NetDebug.Logger = new LibErrorChecker();
             ManagerStack = new NetManagerStack(DefaultAppKey, DefaultPort);
         }
 
@@ -64,11 +74,18 @@ namespace LiteNetLib.Tests
             ManagerStack.ClientListener(1).PeerConnectedEvent += peer =>
             {
                 int testData = 5;
-                peer.SendWithDeliveryEvent(new byte[12500], 0, DeliveryMethod.ReliableUnordered, testData);
+                byte[] arr = new byte[12500];
+                arr[0] = 196;
+                arr[7000] = 32;
+                arr[12499] = 200;
+                peer.SendWithDeliveryEvent(arr, 0, DeliveryMethod.ReliableUnordered, testData);
             };
             ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, method) =>
             {
                 Assert.AreEqual(12500, reader.UserDataSize);
+                Assert.AreEqual(196, reader.RawData[reader.UserDataOffset]);
+                Assert.AreEqual(32, reader.RawData[reader.UserDataOffset + 7000]);
+                Assert.AreEqual(200, reader.RawData[reader.UserDataOffset + 12499]);
                 msgReceived = true;
             };
 

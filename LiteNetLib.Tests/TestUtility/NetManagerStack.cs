@@ -101,10 +101,10 @@ namespace LiteNetLib.Tests.TestUtility
                 {
                     request.AcceptIfKey(_appKey);
                 };
-                NetManager netManager;
+                NetManager netManager = new NetManager(listener);
+                netManager.EnableChecksums = true;
                 if (isClient)
                 {
-                    netManager = new NetManager(listener);
                     if (!netManager.Start())
                     {
                         Assert.Fail($"Client {id} start failed");
@@ -112,7 +112,6 @@ namespace LiteNetLib.Tests.TestUtility
                 }
                 else
                 {
-                    netManager = new NetManager(listener);
                     if (!netManager.Start(_serverPort))
                     {
                         Assert.Fail($"Server {id} on port{_serverPort} start failed");

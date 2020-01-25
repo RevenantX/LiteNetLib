@@ -278,6 +278,12 @@ namespace LiteNetLib
         public bool IPv6Enabled = true;
 
         /// <summary>
+        /// CRC32C checksums write and check (for send/receive)
+        /// NetManager with enabled checksums cannot communicate with NetManager without checksums
+        /// </summary>
+        public bool EnableChecksums = false;
+
+        /// <summary>
         /// First peer. Useful for Client mode
         /// </summary>
         public NetPeer FirstPeer
@@ -431,7 +437,20 @@ namespace LiteNetLib
                 return 0;
 
             SocketError errorCode = 0;
-            int result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode);
+            int result;
+            if (EnableChecksums)
+            {
+                var packetWithChecksum = NetPacketPool.GetPacket(length + CRC32C.ChecksumSize);
+                Buffer.BlockCopy(message, start, packetWithChecksum.RawData, 0, length);
+                FastBitConverter.GetBytes(packetWithChecksum.RawData, length, CRC32C.Compute(message, start, length));
+                result = _socket.SendTo(packetWithChecksum.RawData, 0, packetWithChecksum.Size, remoteEndPoint, ref errorCode);
+                NetPacketPool.Recycle(packetWithChecksum);
+            }
+            else
+            {
+                result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode);
+            }
+            
             NetPeer fromPeer;
             switch (errorCode)
             {
@@ -849,8 +868,25 @@ namespace LiteNetLib
             Statistics.PacketsReceived++;
             Statistics.BytesReceived += (uint) count;
 #endif
+            if (EnableChecksums)
+            {
+                if (count < NetConstants.HeaderSize + CRC32C.ChecksumSize)
+                {
+                    NetDebug.WriteError("[NM] DataReceived size: bad!");
+                    return;
+                }
+
+                int checksumPoint = count - CRC32C.ChecksumSize;
+                if (CRC32C.Compute(reusableBuffer, 0, checksumPoint) != BitConverter.ToUInt32(reusableBuffer, checksumPoint))
+                {
+                    NetDebug.Write("[NM] DataReceived checksum: bad!");
+                    return;
+                }
+                count -= 4;
+            }
+
             //Try read packet
-            NetPacket packet = NetPacketPool.GetPacket(count, false);
+            NetPacket packet = NetPacketPool.GetPacket(count);
             if (!packet.FromBytes(reusableBuffer, 0, count))
             {
                 NetPacketPool.Recycle(packet);
@@ -865,7 +901,7 @@ namespace LiteNetLib
             {
                 if (NetConnectRequestPacket.GetProtocolId(packet) != NetConstants.ProtocolId)
                 {
-                    SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.InvalidProtocol, 0), remoteEndPoint);
+                    SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.InvalidProtocol), remoteEndPoint);
                     return;
                 }
                 var connRequest = NetConnectRequestPacket.FromData(packet);
@@ -899,12 +935,12 @@ namespace LiteNetLib
                             p.RawData[1] = 0;
                             FastBitConverter.GetBytes(p.RawData, 2, netPeer.ConnectTime);
                             SendRawAndRecycle(p, remoteEndPoint);
-                            NetDebug.Write("PeerNotFound sending connectId: {0}", netPeer.ConnectTime);
+                            NetDebug.Write("PeerNotFound sending connectTime: {0}", netPeer.ConnectTime);
                         }
                         else if (packet.Size == 10 && packet.RawData[1] == 1 && BitConverter.ToInt64(packet.RawData, 2) == netPeer.ConnectTime) 
                         {
                             //second reply
-                            NetDebug.Write("PeerNotFound received our connectId: {0}", netPeer.ConnectTime);
+                            NetDebug.Write("PeerNotFound received our connectTime: {0}", netPeer.ConnectTime);
                             DisconnectPeerForce(netPeer, DisconnectReason.RemoteConnectionClose, 0, null);
                         }
                     }
@@ -958,7 +994,7 @@ namespace LiteNetLib
                         NetPacketPool.Recycle(packet);
                     }
                     //Send shutdown
-                    SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.ShutdownOk, 0), remoteEndPoint);
+                    SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.ShutdownOk), remoteEndPoint);
                     break;
 
                 case PacketProperty.ConnectAccept:
@@ -970,7 +1006,7 @@ namespace LiteNetLib
                     if(peerFound)
                         netPeer.ProcessPacket(packet);
                     else
-                        SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.PeerNotFound, 0), remoteEndPoint);
+                        SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.PeerNotFound), remoteEndPoint);
                     break;
             }
         }
@@ -1211,9 +1247,21 @@ namespace LiteNetLib
         {
             if (!IsRunning)
                 return false;
-            var packet = NetPacketPool.GetWithData(PacketProperty.UnconnectedMessage, message, start, length);
-            bool result = SendRawAndRecycle(packet, remoteEndPoint) > 0;
-            return result;
+
+            NetPacket packet;
+            if (EnableChecksums)
+            {
+                var headerSize = NetPacket.GetHeaderSize(PacketProperty.UnconnectedMessage);
+                packet = NetPacketPool.GetPacket(headerSize + length + CRC32C.ChecksumSize);
+                packet.Property = PacketProperty.UnconnectedMessage;
+                Buffer.BlockCopy(message, start, packet.RawData, headerSize, length);
+                FastBitConverter.GetBytes(packet.RawData, length + headerSize, CRC32C.Compute(packet.RawData,0,length + headerSize));
+            }
+            else
+            {
+                packet = NetPacketPool.GetWithData(PacketProperty.UnconnectedMessage, message, start, length);
+            }
+            return SendRawAndRecycle(packet, remoteEndPoint) > 0;
         }
 
         public bool SendBroadcast(NetDataWriter writer, int port)
@@ -1230,7 +1278,21 @@ namespace LiteNetLib
         {
             if (!IsRunning)
                 return false;
-            var packet = NetPacketPool.GetWithData(PacketProperty.Broadcast, data, start, length);
+
+            NetPacket packet;
+            if (EnableChecksums)
+            {
+                var headerSize = NetPacket.GetHeaderSize(PacketProperty.Broadcast);
+                packet = NetPacketPool.GetPacket(headerSize + length + CRC32C.ChecksumSize);
+                packet.Property = PacketProperty.Broadcast;
+                Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
+                FastBitConverter.GetBytes(packet.RawData, length + headerSize, CRC32C.Compute(packet.RawData, 0, length + headerSize));
+            }
+            else
+            {
+                packet = NetPacketPool.GetWithData(PacketProperty.Broadcast, data, start, length);
+            }
+
             bool result = _socket.SendBroadcast(packet.RawData, 0, packet.Size, port);
             NetPacketPool.Recycle(packet);
             return result;
