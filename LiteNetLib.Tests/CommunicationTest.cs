@@ -23,6 +23,7 @@ namespace LiteNetLib.Tests
     [Category("Communication")]
     public class CommunicationTest
     {
+        const int TestTimeout = 4000;
         [SetUp]
         public void Init()
         {
@@ -41,7 +42,7 @@ namespace LiteNetLib.Tests
 
         public NetManagerStack ManagerStack { get; set; }
 
-        [Test, Timeout(2000)]
+        [Test, Timeout(TestTimeout)]
         public void ConnectionByIpV4()
         {
             var server = ManagerStack.Server(1);
@@ -58,7 +59,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
-        [Test, Timeout(2000)]
+        [Test, Timeout(TestTimeout)]
         public void DeliveryTest()
         {
             var server = ManagerStack.Server(1);
@@ -102,7 +103,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
-        [Test, Timeout(2000)]
+        [Test, Timeout(TestTimeout)]
         public void PeerNotFoundTest()
         {
             var server = ManagerStack.Server(1);
@@ -348,7 +349,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(ConnectionState.Disconnected, clientServerPeer.ConnectionState);
         }
 
-        [Test, Timeout(2000)]
+        [Test, Timeout(TestTimeout)]
         public void DisconnectFromServerTest()
         {
             NetManager server = ManagerStack.Server(1);
@@ -418,9 +419,10 @@ namespace LiteNetLib.Tests
             Assert.True(connected);
             Assert.AreEqual(1, server.ConnectedPeersCount);
             Assert.AreEqual(1, client.ConnectedPeersCount);
+            client.Stop();
         }
 
-        [Test, Timeout(2000)]
+        [Test, Timeout(TestTimeout)]
         public void DisconnectFromClientTest()
         {
             NetManager server = ManagerStack.Server(1);
@@ -457,7 +459,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(0, client.ConnectedPeersCount);
         }
 
-        [Test, Timeout(2000)]
+        [Test]
         public void ChannelsTest()
         {
             const int channelsCount = 64;
@@ -504,7 +506,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
-        [Test, Timeout(2000)]
+        [Test, Timeout(TestTimeout)]
         public void ConnectionByIpV6()
         {
             var server = ManagerStack.Server(1);
@@ -521,7 +523,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
-        [Test, Timeout(2000)]
+        [Test, Timeout(TestTimeout)]
         public void DiscoveryBroadcastTest()
         {
             var server = ManagerStack.Server(1);

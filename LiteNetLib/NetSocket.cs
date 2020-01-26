@@ -1,7 +1,7 @@
 #if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
 #define UNITY
 #endif
-#if NETSTANDARD2_0 || NETCOREAPP2_0
+#if NETSTANDARD || NETCOREAPP
 using System.Runtime.InteropServices;
 #endif
 
@@ -19,7 +19,7 @@ namespace LiteNetLib
 
     internal sealed class NetSocket
     {
-        public const int ReceivePollingTime = 1000000; //1 second
+        public const int ReceivePollingTime = 500000; //0.5 second
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
         private Thread _threadv4;
@@ -162,6 +162,9 @@ namespace LiteNetLib
             socket.SendTimeout = 500;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
+#if NETSTANDARD || NETCOREAPP
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+#endif
             try
             {
                 socket.IOControl(SioUdpConnreset, new byte[] {0}, null);
@@ -184,7 +187,7 @@ namespace LiteNetLib
             {
                 socket.Ttl = NetConstants.SocketTTL;
 
-#if NETSTANDARD2_0 || NETCOREAPP2_0
+#if NETSTANDARD || NETCOREAPP
                 if(!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 #endif
                 try { socket.DontFragment = true; }
