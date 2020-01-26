@@ -523,7 +523,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
-        [Test, Timeout(TestTimeout)]
+        [Test, Timeout(10000)]
         public void DiscoveryBroadcastTest()
         {
             var server = ManagerStack.Server(1);
