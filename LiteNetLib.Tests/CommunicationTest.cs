@@ -15,7 +15,7 @@ namespace LiteNetLib.Tests
         public void WriteNet(NetLogLevel level, string str, params object[] args)
         {
             if(level == NetLogLevel.Error || level == NetLogLevel.Warning)
-                Assert.Fail(str);
+                Assert.Fail(str, args);
         }
     }
 
