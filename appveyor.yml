@@ -22,6 +22,6 @@ artifacts:
   - path: LiteNetLib/bin/Release/netstandard2.0
     name: LiteNetLibStandard-$(appveyor_build_version)
     type: Zip
-  - path: LiteNetLib/bin/Release/netcoreapp2.0
+  - path: LiteNetLib/bin/Release/netcoreapp2.1
     name: LiteNetLibNetCore-$(appveyor_build_version)
     type: Zip
