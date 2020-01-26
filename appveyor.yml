@@ -6,7 +6,7 @@ before_build:
   - nuget restore
   - dotnet restore
 assembly_info:
-  patch: true
+  patch: false
   file: AssemblyInfo.cs
   assembly_version: '{version}'
   assembly_file_version: '{version}'
