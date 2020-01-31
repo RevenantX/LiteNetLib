@@ -1,14 +1,30 @@
-﻿namespace LiteNetLib.Utils
+﻿#if NETCOREAPP3_0
+using System;
+using System.Runtime.Intrinsics.X86;
+#endif
+
+namespace LiteNetLib.Utils
 {
     //Implemenatation from Crc32.NET
     public static class CRC32C
     {
+#if NETCOREAPP3_0
+        private static bool _x64Available;
+        private static bool _sseAvailable;
+#endif
         public const int ChecksumSize = 4;
         private const uint Poly = 0x82F63B78u;
-        private static readonly uint[] Table = new uint[16 * 256];
+        private static readonly uint[] Table;
 
         static CRC32C()
         {
+#if NETCOREAPP3_0
+            _sseAvailable = Sse42.IsSupported;
+            _x64Available = Sse42.X64.IsSupported;
+            if(_sseAvailable)
+                return;
+#endif
+            Table = new uint[16 * 256];
             for (uint i = 0; i < 256; i++)
             {
                 uint res = i;
@@ -31,6 +47,27 @@
         public static uint Compute(byte[] input, int offset, int length)
         {
             uint crcLocal = uint.MaxValue;
+#if NETCOREAPP3_0
+            if(_sseAvailable)
+            {
+                if (_x64Available)
+                {
+                    while (length >= 8)
+                    {
+                        crcLocal = (uint)Sse42.X64.Crc32(crcLocal, BitConverter.ToUInt64(input, offset));
+                        offset += 8;
+                        length -= 8;
+                    }
+                }
+                while (length > 0)
+                {
+                    crcLocal = Sse42.Crc32(crcLocal, input[offset]);
+                    offset++;
+                    length--;
+                }
+                return crcLocal ^ uint.MaxValue;
+            }
+#endif
             while (length >= 16)
             {
                 var a = Table[(3 * 256) + input[offset + 12]]
