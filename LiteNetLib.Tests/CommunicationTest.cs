@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-
+using LiteNetLib.Layers;
 using LiteNetLib.Tests.TestUtility;
 using LiteNetLib.Utils;
 
@@ -390,8 +390,7 @@ namespace LiteNetLib.Tests
             NetManager server = ManagerStack.Server(1);
 
             EventBasedNetListener listener = new EventBasedNetListener();
-            NetManager client = new NetManager(listener);
-            client.EnableChecksums = true;
+            NetManager client = new NetManager(listener, new Crc32cLayer());
             Assert.True(client.Start(9049));
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             while (server.ConnectedPeersCount != 1)

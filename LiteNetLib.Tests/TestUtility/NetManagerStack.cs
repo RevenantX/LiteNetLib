@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using LiteNetLib.Layers;
 using NUnit.Framework;
 
 namespace LiteNetLib.Tests.TestUtility
@@ -101,8 +101,7 @@ namespace LiteNetLib.Tests.TestUtility
                 {
                     request.AcceptIfKey(_appKey);
                 };
-                NetManager netManager = new NetManager(listener);
-                netManager.EnableChecksums = true;
+                NetManager netManager = new NetManager(listener, new Crc32cLayer());
                 if (isClient)
                 {
                     if (!netManager.Start())

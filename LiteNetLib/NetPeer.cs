@@ -214,7 +214,8 @@ namespace LiteNetLib
 
         private void SetMtu(int mtuIdx)
         {
-            _mtu = NetManager.EnableChecksums ? NetConstants.PossibleMtu[mtuIdx] - 4 : NetConstants.PossibleMtu[mtuIdx];
+            int extraLayerSpace = NetManager._extraPacketLayer != null ? NetManager._extraPacketLayer.ExtraPacketSizeForLayer : 0;
+            _mtu = NetConstants.PossibleMtu[mtuIdx] - extraLayerSpace;
         }
 
         private BaseChannel CreateChannel(byte idx)
