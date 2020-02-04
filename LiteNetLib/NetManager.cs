@@ -159,7 +159,7 @@ namespace LiteNetLib
         private volatile int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
         private NetPeer[] _peersArray;
-        internal readonly IPacketLayer _extraPacketLayer;
+        internal readonly PacketLayerBase _extraPacketLayer;
         private int _lastPeerId;
         private readonly Queue<int> _peerIds;
         private byte _channelsCount = 1;
@@ -387,7 +387,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
         /// <param name="extraPacketLayer">Extra processing of packages, like CRC checksum or encryption. All connected NetManagers must have same layer.</param>
-        public NetManager(INetEventListener listener, IPacketLayer extraPacketLayer = null)
+        public NetManager(INetEventListener listener, PacketLayerBase extraPacketLayer = null)
         {
             _socket = new NetSocket(this);
             _netEventListener = listener;

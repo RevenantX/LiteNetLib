@@ -263,11 +263,6 @@
             IPv6 support
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetManager.EnableChecksums">
-            <summary>
-            CRC32C checksums write and check (for send/receive)
-            </summary>
-        </member>
         <member name="P:LiteNetLib.NetManager.FirstPeer">
             <summary>
             First peer. Useful for Client mode
@@ -295,11 +290,12 @@
             Returns connected peers count
             </summary>
         </member>
-        <member name="M:LiteNetLib.NetManager.#ctor(LiteNetLib.INetEventListener)">
+        <member name="M:LiteNetLib.NetManager.#ctor(LiteNetLib.INetEventListener,LiteNetLib.Layers.PacketLayerBase)">
             <summary>
             NetManager constructor
             </summary>
             <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
+            <param name="extraPacketLayer">Extra processing of packages, like CRC checksum or encryption. All connected NetManagers must have same layer.</param>
         </member>
         <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">
             <summary>
