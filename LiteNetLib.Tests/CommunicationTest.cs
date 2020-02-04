@@ -385,6 +385,30 @@ namespace LiteNetLib.Tests
         }
 
         [Test, Timeout(5000)]
+        public void EncryptTest()
+        {
+            EventBasedNetListener srvListener = new EventBasedNetListener();
+            EventBasedNetListener cliListener = new EventBasedNetListener();
+            NetManager srv = new NetManager(srvListener, new XorEncryptLayer("secret_key"));
+            NetManager cli = new NetManager(cliListener, new XorEncryptLayer("secret_key"));
+            srv.Start(DefaultPort);
+            cli.Start();
+
+            srvListener.ConnectionRequestEvent += request => { request.AcceptIfKey(DefaultAppKey); };
+            cli.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+
+            while (srv.ConnectedPeersCount != 1)
+            {
+                Thread.Sleep(15);
+                srv.PollEvents();
+            }
+            Assert.AreEqual(1, srv.ConnectedPeersCount);
+            Assert.AreEqual(1, cli.ConnectedPeersCount);
+            cli.Stop();
+            srv.Stop();
+        }
+
+        [Test, Timeout(5000)]
         public void ConnectAfterDisconnectWithSamePort()
         {
             NetManager server = ManagerStack.Server(1);
