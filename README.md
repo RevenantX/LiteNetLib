@@ -41,7 +41,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.1, .NET Stan
 * Automatic small packets merging
 * Automatic fragmentation of reliable packets
 * Automatic MTU detection
-* Optional CRC32C checksums (NetManager.EnableChecksums)
+* Optional CRC32C checksums
 * UDP NAT hole punching
 * NTP time requests
 * Packet loss and latency simulation
@@ -157,8 +157,3 @@ server.Stop();
   * Warning! Use this only when you know what are you doing, and sync data manually
   * Events automatically will be called without PollEvents method from socket recieve thread
   * default value: **false**
-* **EnableChecksums**
-  * CRC32C checksums write and check (for send/receive)
-  * NetManager with enabled checksums cannot communicate with NetManager without checksums
-  * Increases all packet sizes by 4 bytes
-  * default value: **false** 

@@ -5,7 +5,10 @@ namespace LiteNetLib.Layers
 {
     public sealed class Crc32cLayer : PacketLayerBase
     {
-        public Crc32cLayer() : base(extraPacketSizeForLayer: CRC32C.ChecksumSize) { }
+        public Crc32cLayer() : base(CRC32C.ChecksumSize)
+        {
+
+        }
 
         public override void ProcessInboundPacket(ref byte[] data, ref int length)
         {
