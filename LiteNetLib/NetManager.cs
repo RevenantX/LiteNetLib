@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using LiteNetLib.Layers;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -158,6 +159,7 @@ namespace LiteNetLib
         private volatile int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
         private NetPeer[] _peersArray;
+        internal readonly PacketLayerBase _extraPacketLayer;
         private int _lastPeerId;
         private readonly Queue<int> _peerIds;
         private byte _channelsCount = 1;
@@ -278,12 +280,6 @@ namespace LiteNetLib
         public bool IPv6Enabled = true;
 
         /// <summary>
-        /// CRC32C checksums write and check (for send/receive)
-        /// NetManager with enabled checksums cannot communicate with NetManager without checksums
-        /// </summary>
-        public bool EnableChecksums = false;
-
-        /// <summary>
         /// First peer. Useful for Client mode
         /// </summary>
         public NetPeer FirstPeer
@@ -299,7 +295,7 @@ namespace LiteNetLib
             get { return _channelsCount; }
             set
             {
-                if(value < 1 || value > 64)
+                if (value < 1 || value > 64)
                     throw new ArgumentException("Channels count must be between 1 and 64");
                 _channelsCount = value;
             }
@@ -390,7 +386,8 @@ namespace LiteNetLib
         /// NetManager constructor
         /// </summary>
         /// <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
-        public NetManager(INetEventListener listener)
+        /// <param name="extraPacketLayer">Extra processing of packages, like CRC checksum or encryption. All connected NetManagers must have same layer.</param>
+        public NetManager(INetEventListener listener, PacketLayerBase extraPacketLayer = null)
         {
             _socket = new NetSocket(this);
             _netEventListener = listener;
@@ -406,6 +403,7 @@ namespace LiteNetLib
             _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _peerIds = new Queue<int>();
             _peersArray = new NetPeer[32];
+            _extraPacketLayer = extraPacketLayer;
         }
 
         internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
@@ -438,19 +436,20 @@ namespace LiteNetLib
 
             SocketError errorCode = 0;
             int result;
-            if (EnableChecksums)
+            if (_extraPacketLayer != null)
             {
-                var packetWithChecksum = NetPacketPool.GetPacket(length + CRC32C.ChecksumSize);
-                Buffer.BlockCopy(message, start, packetWithChecksum.RawData, 0, length);
-                FastBitConverter.GetBytes(packetWithChecksum.RawData, length, CRC32C.Compute(message, start, length));
-                result = _socket.SendTo(packetWithChecksum.RawData, 0, packetWithChecksum.Size, remoteEndPoint, ref errorCode);
-                NetPacketPool.Recycle(packetWithChecksum);
+                var expandedPacket = NetPacketPool.GetPacket(length + _extraPacketLayer.ExtraPacketSizeForLayer);
+                Buffer.BlockCopy(message, start, expandedPacket.RawData, 0, length);
+                var newStart = 0;
+                _extraPacketLayer.ProcessOutBoundPacket(ref expandedPacket.RawData, ref newStart, ref length);
+                result = _socket.SendTo(expandedPacket.RawData, newStart, length, remoteEndPoint, ref errorCode);
+                NetPacketPool.Recycle(expandedPacket);
             }
             else
             {
                 result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode);
             }
-            
+
             NetPeer fromPeer;
             switch (errorCode)
             {
@@ -866,23 +865,11 @@ namespace LiteNetLib
         {
 #if STATS_ENABLED
             Statistics.PacketsReceived++;
-            Statistics.BytesReceived += (uint) count;
+            Statistics.BytesReceived += (uint)count;
 #endif
-            if (EnableChecksums)
+            if (_extraPacketLayer != null)
             {
-                if (count < NetConstants.HeaderSize + CRC32C.ChecksumSize)
-                {
-                    NetDebug.WriteError("[NM] DataReceived size: bad!");
-                    return;
-                }
-
-                int checksumPoint = count - CRC32C.ChecksumSize;
-                if (CRC32C.Compute(reusableBuffer, 0, checksumPoint) != BitConverter.ToUInt32(reusableBuffer, checksumPoint))
-                {
-                    NetDebug.Write("[NM] DataReceived checksum: bad!");
-                    return;
-                }
-                count -= 4;
+                _extraPacketLayer.ProcessInboundPacket(ref reusableBuffer, ref count);
             }
 
             //Try read packet
@@ -1248,19 +1235,9 @@ namespace LiteNetLib
             if (!IsRunning)
                 return false;
 
-            NetPacket packet;
-            if (EnableChecksums)
-            {
-                var headerSize = NetPacket.GetHeaderSize(PacketProperty.UnconnectedMessage);
-                packet = NetPacketPool.GetPacket(headerSize + length + CRC32C.ChecksumSize);
-                packet.Property = PacketProperty.UnconnectedMessage;
-                Buffer.BlockCopy(message, start, packet.RawData, headerSize, length);
-                FastBitConverter.GetBytes(packet.RawData, length + headerSize, CRC32C.Compute(packet.RawData,0,length + headerSize));
-            }
-            else
-            {
-                packet = NetPacketPool.GetWithData(PacketProperty.UnconnectedMessage, message, start, length);
-            }
+            //No need for CRC here, SendRaw does that
+            NetPacket packet = NetPacketPool.GetWithData(PacketProperty.UnconnectedMessage, message, start, length);
+
             return SendRawAndRecycle(packet, remoteEndPoint) > 0;
         }
 
@@ -1280,13 +1257,15 @@ namespace LiteNetLib
                 return false;
 
             NetPacket packet;
-            if (EnableChecksums)
+            if (_extraPacketLayer != null)
             {
                 var headerSize = NetPacket.GetHeaderSize(PacketProperty.Broadcast);
-                packet = NetPacketPool.GetPacket(headerSize + length + CRC32C.ChecksumSize);
+                packet = NetPacketPool.GetPacket(headerSize + length + _extraPacketLayer.ExtraPacketSizeForLayer);
                 packet.Property = PacketProperty.Broadcast;
                 Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
-                FastBitConverter.GetBytes(packet.RawData, length + headerSize, CRC32C.Compute(packet.RawData, 0, length + headerSize));
+                var checksumComputeStart = 0;
+                int preCrcLength = length + headerSize;
+                _extraPacketLayer.ProcessOutBoundPacket(ref packet.RawData, ref checksumComputeStart, ref preCrcLength);
             }
             else
             {

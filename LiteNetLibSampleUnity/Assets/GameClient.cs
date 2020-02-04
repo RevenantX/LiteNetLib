@@ -75,7 +75,7 @@ public class GameClient : MonoBehaviour, INetEventListener
 
     public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
     {
-        if (messageType == UnconnectedMessageType.BasicMessage && _netClient.PeersCount == 0 && reader.GetInt() == 1)
+        if (messageType == UnconnectedMessageType.BasicMessage && _netClient.ConnectedPeersCount == 0 && reader.GetInt() == 1)
         {
             Debug.Log("[CLIENT] Received discovery response. Connecting to: " + remoteEndPoint);
             _netClient.Connect(remoteEndPoint, "sample_app");
