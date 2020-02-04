@@ -391,17 +391,18 @@ namespace LiteNetLib.Tests
             EventBasedNetListener cliListener = new EventBasedNetListener();
             NetManager srv = new NetManager(srvListener, new XorEncryptLayer("secret_key"));
             NetManager cli = new NetManager(cliListener, new XorEncryptLayer("secret_key"));
-            srv.Start(DefaultPort);
+            srv.Start(DefaultPort + 1);
             cli.Start();
 
             srvListener.ConnectionRequestEvent += request => { request.AcceptIfKey(DefaultAppKey); };
-            cli.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+            cli.Connect("127.0.0.1", DefaultPort + 1, DefaultAppKey);
 
             while (srv.ConnectedPeersCount != 1)
             {
                 Thread.Sleep(15);
                 srv.PollEvents();
             }
+            Thread.Sleep(200);
             Assert.AreEqual(1, srv.ConnectedPeersCount);
             Assert.AreEqual(1, cli.ConnectedPeersCount);
             cli.Stop();
