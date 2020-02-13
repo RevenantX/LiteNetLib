@@ -777,11 +777,7 @@ namespace LiteNetLib
         private int GetNextPeerId()
         {
             lock (_peerIds)
-            {
-                if (_peerIds.Count == 0)
-                    return _lastPeerId++;
-                return _peerIds.Dequeue();
-            }
+                return _peerIds.Count == 0 ? _lastPeerId++ : _peerIds.Dequeue();
         }
 
         private void ProcessConnectRequest(
