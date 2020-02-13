@@ -139,10 +139,6 @@ namespace LiteNetLib.Tests
             var result = false;
             DisconnectInfo disconnectInfo = default(DisconnectInfo);
 
-            ManagerStack.ClientListener(1).PeerConnectedEvent += peer =>
-            {
-                result = true;
-            };
             ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) => 
             {
                 result = true;
@@ -483,7 +479,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(0, client.ConnectedPeersCount);
         }
 
-        [Test]
+        [Test, Timeout(10000)]
         public void ChannelsTest()
         {
             const int channelsCount = 64;
@@ -491,13 +487,7 @@ namespace LiteNetLib.Tests
             var client = ManagerStack.Client(1);
             server.ChannelsCount = channelsCount;
             client.ChannelsCount = channelsCount;
-            int messagesReceived = 0;
-            ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, method) =>
-            {
-                Assert.AreEqual((DeliveryMethod)reader.GetByte(), method);
-                messagesReceived++;
-            };
-            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+
             NetDataWriter writer = new NetDataWriter();
             var methods = new[]
             {
@@ -507,22 +497,35 @@ namespace LiteNetLib.Tests
                 DeliveryMethod.ReliableSequenced,
                 DeliveryMethod.ReliableUnordered
             };
-            for (int i = 0; i < channelsCount; i++)
+
+            int messagesReceived = 0;
+            ManagerStack.ClientListener(1).PeerConnectedEvent += peer =>
             {
-                foreach (var deliveryMethod in methods)
+                for (int i = 0; i < channelsCount; i++)
                 {
-                    writer.Reset();
-                    writer.Put((byte)deliveryMethod);
-                    if(deliveryMethod == DeliveryMethod.ReliableOrdered || deliveryMethod == DeliveryMethod.ReliableUnordered)
-                        writer.Put(new byte[506]);
-                    client.FirstPeer.Send(writer, (byte)i, deliveryMethod);
+                    foreach (var deliveryMethod in methods)
+                    {
+                        writer.Reset();
+                        writer.Put((byte) deliveryMethod);
+                        if (deliveryMethod == DeliveryMethod.ReliableOrdered ||
+                            deliveryMethod == DeliveryMethod.ReliableUnordered)
+                            writer.Put(new byte[506]);
+                        peer.Send(writer, (byte) i, deliveryMethod);
+                    }
                 }
-            }
+            };
+            ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, method) =>
+            {
+                Assert.AreEqual((DeliveryMethod)reader.GetByte(), method);
+                messagesReceived++;
+            };
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
             while (messagesReceived != methods.Length*channelsCount)
             {
-                Thread.Sleep(15);
                 server.PollEvents();
+                client.PollEvents();
+                Thread.Sleep(15);
             }
 
             Assert.AreEqual(methods.Length*channelsCount, messagesReceived);

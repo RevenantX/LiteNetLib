@@ -474,10 +474,7 @@ namespace LiteNetLib
             DeliveryMethod deliveryMethod,
             object userData)
         {
-            if (_connectionState == ConnectionState.ShutdownRequested ||
-                _connectionState == ConnectionState.Disconnected)
-                return;
-            if (channelNumber >= _channels.Length)
+            if (_connectionState != ConnectionState.Connected || channelNumber >= _channels.Length)
                 return;
 
             //Select channel
@@ -523,26 +520,29 @@ namespace LiteNetLib
                 if (totalPackets > ushort.MaxValue)
                     throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + ushort.MaxValue);
 
+                ushort currentFramentId;
                 lock (_sendLock)
                 {
-                    for(ushort partIdx = 0; partIdx < totalPackets; partIdx++)
-                    {
-                        int sendLength = length > packetDataSize ? packetDataSize : length;
-
-                        NetPacket p = _packetPool.GetPacket(headerSize + sendLength + NetConstants.FragmentHeaderSize);
-                        p.Property = property;
-                        p.UserData = userData;
-                        p.FragmentId = _fragmentId;
-                        p.FragmentPart = partIdx;
-                        p.FragmentsTotal = (ushort)totalPackets;
-                        p.MarkFragmented();
-
-                        Buffer.BlockCopy(data, partIdx * packetDataSize, p.RawData, NetConstants.FragmentTotalSize, sendLength);
-                        channel.AddToQueue(p);
-
-                        length -= sendLength;
-                    }
+                    currentFramentId = _fragmentId;
                     _fragmentId++;
+                }
+
+                for(ushort partIdx = 0; partIdx < totalPackets; partIdx++)
+                {
+                    int sendLength = length > packetDataSize ? packetDataSize : length;
+
+                    NetPacket p = _packetPool.GetPacket(headerSize + sendLength + NetConstants.FragmentHeaderSize);
+                    p.Property = property;
+                    p.UserData = userData;
+                    p.FragmentId = currentFramentId;
+                    p.FragmentPart = partIdx;
+                    p.FragmentsTotal = (ushort)totalPackets;
+                    p.MarkFragmented();
+
+                    Buffer.BlockCopy(data, partIdx * packetDataSize, p.RawData, NetConstants.FragmentTotalSize, sendLength);
+                    channel.AddToQueue(p);
+
+                    length -= sendLength;
                 }
                 return;
             }
