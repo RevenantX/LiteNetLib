@@ -1,4 +1,4 @@
-#if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER
 #define UNITY
 #endif
 #if NETSTANDARD || NETCOREAPP
@@ -162,6 +162,7 @@ namespace LiteNetLib
             socket.SendTimeout = 500;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
+#if !UNITY || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
 #if NETSTANDARD || NETCOREAPP
             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 #endif
@@ -173,6 +174,7 @@ namespace LiteNetLib
             {
                 //ignored
             }
+#endif
 
             try
             {
