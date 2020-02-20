@@ -7,7 +7,7 @@ namespace LiteNetLib.Layers
     /// Uses AES encryption in CBC mode. Make sure you handle your key properly.
     /// GCHandle.Alloc(key, GCHandleType.Pinned) to avoid your key being moved around different memory segments.
     /// ZeroMemory(gch.AddrOfPinnedObject(), key.Length); to erase it when you are done.
-    /// About 4 times slower than XOR, but this is secure, XOR is not. 
+    /// Speed varies greatly depending on hardware encryption support. 
     /// Why encrypt: http://ithare.com/udp-for-games-security-encryption-and-ddos-protection/
     /// </summary>
     public class AesEncryptLayer : PacketLayerBase
@@ -21,9 +21,11 @@ namespace LiteNetLib.Layers
         private ICryptoTransform _encryptor;
         private byte[] cipherBuffer = new byte[1500]; //Max possible UDP packet size
         private ICryptoTransform _decryptor;
+        private byte[] ivBuffer = new byte[BlockSizeInBytes];
 
         /// <summary>
         /// Should be safe against eavesdropping, but is vulnerable to tampering
+        /// Needs a HMAC on top of the encrypted content to be fully safe
         /// </summary>
         /// <param name="key"></param>
         /// <param name="initializationVector"></param>
@@ -32,15 +34,13 @@ namespace LiteNetLib.Layers
             if (key.Length != KeySizeInBytes) throw new NotSupportedException("EncryptLayer only supports keysize " + KeySize);
 
             //Switch this with AesGCM for better performance, requires .NET Core 3.0 or Standard 2.1
-            _aes = new AesCryptoServiceProvider
-            {
-                KeySize = KeySize,
-                BlockSize = BlockSize,
-                Key = key,
+            _aes = new AesCryptoServiceProvider();
+            _aes.KeySize = KeySize;
+            _aes.BlockSize = BlockSize;
+            _aes.Key = key;
+            _aes.Mode = CipherMode.CBC;
+            _aes.Padding = PaddingMode.PKCS7;
 
-                Mode = CipherMode.CBC,
-                Padding = PaddingMode.PKCS7
-            };
             _encryptor = _aes.CreateEncryptor();
             _decryptor = _aes.CreateDecryptor();
         }
@@ -48,25 +48,18 @@ namespace LiteNetLib.Layers
         public override void ProcessInboundPacket(ref byte[] data, ref int length)
         {
             //Can't copy directly to _aes.IV. It won't work for some reason.
-            byte[] iv = new byte[_aes.IV.Length];
-            Buffer.BlockCopy(data, 0, iv, 0, iv.Length);
-            _aes.IV = iv;
-            _decryptor = _aes.CreateDecryptor();
+            Buffer.BlockCopy(data, 0, ivBuffer, 0, ivBuffer.Length);
+            //_aes.IV = ivBuffer;
+            _decryptor = _aes.CreateDecryptor(_aes.Key, ivBuffer);
 
-            int currentRead = iv.Length;
-            int currentWrite = 0;
-            while (length - currentRead > _decryptor.InputBlockSize)
-            {
-                int decryptedCount = _decryptor.TransformBlock(data, currentRead, _decryptor.InputBlockSize, cipherBuffer, currentWrite);
-                currentWrite += decryptedCount;
-                currentRead += decryptedCount;
-            }
+            //int currentRead = ivBuffer.Length;
+            //int currentWrite = 0;
 
-            byte[] lastblock = _decryptor.TransformFinalBlock(data, currentRead, length - currentRead);
-            Buffer.BlockCopy(lastblock, 0, cipherBuffer, currentWrite, lastblock.Length);
+            //TransformBlocks(_decryptor, data, length, ref currentRead, ref currentWrite);
+            byte[] lastBytes = _decryptor.TransformFinalBlock(data, BlockSizeInBytes, length - BlockSizeInBytes);
 
-            data = cipherBuffer;
-            length = currentWrite + lastblock.Length;
+            data = lastBytes;
+            length = lastBytes.Length;
         }
 
         public override void ProcessOutBoundPacket(ref byte[] data, ref int offset, ref int length)
@@ -83,34 +76,33 @@ namespace LiteNetLib.Layers
 
             int currentRead = offset;
             int currentWrite = _aes.IV.Length;
-            if (_decryptor.CanTransformMultipleBlocks)
+            byte[] lastBytes = _encryptor.TransformFinalBlock(data, currentRead, length - offset);
+            lastBytes.CopyTo(cipherBuffer, currentWrite);
+            //TransformBlocks(_encryptor, data, length, ref currentRead, ref currentWrite);
+
+            data = cipherBuffer;
+            offset = 0;
+            length = lastBytes.Length + BlockSizeInBytes;
+        }
+
+        private void TransformBlocks(ICryptoTransform transform, byte[] input, int inputLength, ref int currentRead, ref int currentWrite)
+        {
+            //This loop produces a invalid padding exception
+            //I'm leaving it here as a start point in case others need support for 
+            //Platforms wheere !transfom.CanTransformMultipleBlocks
+            if (!transform.CanTransformMultipleBlocks)
             {
-                int len = length / BlockSizeInBytes;
-                //Make sure there is some for the last block
-                if (length % BlockSizeInBytes == 0) len--;
-                int count = _encryptor.TransformBlock(data, currentRead, len, cipherBuffer, currentWrite);
-            }
-            else
-            {
-                while (length - currentRead >= _encryptor.InputBlockSize)
+                while (inputLength - currentRead > BlockSizeInBytes)
                 {
-                    int encryptedCount = _encryptor.TransformBlock(data, currentRead, _encryptor.InputBlockSize, cipherBuffer, currentWrite);
+                    int encryptedCount = transform.TransformBlock(input, currentRead, BlockSizeInBytes, cipherBuffer, currentWrite);
                     currentRead += encryptedCount;
                     currentWrite += encryptedCount;
                 }
             }
 
-            if (length - currentRead > 0)
-            {
-                //Encrypt and write last block to output
-                byte[] lastBytes = _encryptor.TransformFinalBlock(data, currentRead, length - currentRead);
-                lastBytes.CopyTo(cipherBuffer, currentWrite);
-                currentWrite += lastBytes.Length;
-            }
-
-            data = cipherBuffer;
-            offset = 0;
-            length = currentWrite;
+            byte[] lastBytes = transform.TransformFinalBlock(input, currentRead, inputLength - currentRead);
+            lastBytes.CopyTo(cipherBuffer, currentWrite);
+            currentWrite += lastBytes.Length;
         }
     }
 }

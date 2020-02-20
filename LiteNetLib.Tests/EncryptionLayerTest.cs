@@ -29,20 +29,27 @@ namespace LiteNetLib.Tests
             const string testData = "This text is long enough to need multiple blocks to encrypt";
 
             var outboudLayer = new AesEncryptLayer(key);
-            byte[] outboundPlaintext = Encoding.ASCII.GetBytes(testData);
-            byte[] cipherText = outboundPlaintext;
-            int lengthOfPacket = outboundPlaintext.Length;
+            byte[] outbound = Encoding.ASCII.GetBytes(testData);
+            int lengthOfPacket = outbound.Length;
             int start = 0;
-            int length = outboundPlaintext.Length;
-            outboudLayer.ProcessOutBoundPacket(ref cipherText, ref start, ref length);
+            int length = outbound.Length;
+            outboudLayer.ProcessOutBoundPacket(ref outbound, ref start, ref length);
 
-            //Console.WriteLine(BitConverter.ToString(cipherText, 0, length).Replace("-", ""));
             Assert.That(length, Is.InRange(lengthOfPacket + AesEncryptLayer.BlockSizeInBytes, lengthOfPacket + outboudLayer.ExtraPacketSizeForLayer));
 
             var inboundLayer = new AesEncryptLayer(key);
-            byte[] inboundPlaintext = cipherText;
-            inboundLayer.ProcessInboundPacket(ref inboundPlaintext, ref length);
-            Assert.That(inboundPlaintext, Is.EquivalentTo(Encoding.ASCII.GetBytes(testData)));
+            //Copy array so we dont read and write to same array
+            byte[] inboundData = new byte[outbound.Length];
+            outbound.CopyTo(inboundData, 0);
+            inboundLayer.ProcessInboundPacket(ref inboundData, ref length);
+
+            Console.WriteLine(Encoding.ASCII.GetString(inboundData, 0, length));
+            byte[] expectedPlaintext = Encoding.ASCII.GetBytes(testData);
+            Assert.AreEqual(expectedPlaintext.Length, length);
+            for (int i = 0; i < expectedPlaintext.Length; i++)
+            {
+                Assert.AreEqual(expectedPlaintext[i], inboundData[i]);
+            }
         }
 
         [Test]
@@ -53,8 +60,9 @@ namespace LiteNetLib.Tests
             byte[] key = new byte[1500]; //As long as packet size since XOR alone is very unsafe
             keyGen.GetBytes(key);
             PacketLayerBase layer = new XorEncryptLayer(key);
-            byte[][] sampleData = GenerateData(10000, 1500);
+            byte[][] sampleData = GenerateData(100000, 1500);
             Encrypt(sampleData, layer);
+            Decrypt(sampleData, layer);
             //Check console output for ticks spent to compare with AES
         }
 
@@ -68,8 +76,9 @@ namespace LiteNetLib.Tests
             byte[] iv = new byte[AesEncryptLayer.BlockSizeInBytes];
             keyGen.GetBytes(iv);
             PacketLayerBase layer = new AesEncryptLayer(key);
-            byte[][] sampleData = GenerateData(10000, 1500 - layer.ExtraPacketSizeForLayer);
+            byte[][] sampleData = GenerateData(100000, 1500 - layer.ExtraPacketSizeForLayer);
             Encrypt(sampleData, layer);
+            Decrypt(sampleData, layer);
             //Check output for ticks spent to compare with XOR
         }
 
@@ -86,15 +95,38 @@ namespace LiteNetLib.Tests
 
         private void Encrypt(byte[][] sampleData, PacketLayerBase layer)
         {
-            _stopwatch.Start();
-            for (int i = 0; i <= sampleData.Length; i++)
+            GC.Collect();
+            long totalMemoryAllocated = 0;
+            for (int i = 0; i < sampleData.Length; i++)
             {
                 int length = sampleData[i].Length;
                 int start = 0;
+                long memUsagePreEncrypt = GC.GetTotalMemory(false);
+                _stopwatch.Start();
                 layer.ProcessOutBoundPacket(ref sampleData[i], ref start, ref length);
+                _stopwatch.Stop();
+                totalMemoryAllocated += GC.GetTotalMemory(false) - memUsagePreEncrypt;
+                byte[] output = sampleData[i];
+                sampleData[i] = new byte[length];
+                Buffer.BlockCopy(output, 0, sampleData[i], 0, length);
+            }
+            Console.WriteLine("Encrypt with {0} took {1} ticks", layer.GetType().Name, _stopwatch.ElapsedTicks);
+            Console.WriteLine("Encrypt with {0} generated {1}bytes memory garbage", layer.GetType().Name, totalMemoryAllocated);
+        }
+
+        private void Decrypt(byte[][] sampleData, PacketLayerBase layer)
+        {
+            long memUsagePreDecrypt = GC.GetTotalMemory(true);
+            _stopwatch.Start();
+            for (int i = 0; i < sampleData.Length; i++)
+            {
+                int length = sampleData[i].Length;
+                layer.ProcessInboundPacket(ref sampleData[i], ref length);
             }
             _stopwatch.Stop();
-            Console.WriteLine("Decrypt with " + layer.GetType().Name + " took " + _stopwatch.ElapsedTicks + " ticks");
+            long memoryAllocated = GC.GetTotalMemory(false) - memUsagePreDecrypt;
+            Console.WriteLine("Decrypt with {0} took {1} ticks", layer.GetType().Name, _stopwatch.ElapsedTicks);
+            Console.WriteLine("Decrypt with {0} generated {1}bytes memory garbage", layer.GetType().Name, memoryAllocated);
         }
     }
 }
