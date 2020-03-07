@@ -14,7 +14,7 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    public class NetPacketReader : NetDataReader
+    public sealed class NetPacketReader : NetDataReader
     {
         private NetPacket _packet;
         private readonly NetManager _manager;
@@ -34,13 +34,20 @@ namespace LiteNetLib
             SetSource(packet.RawData, packet.GetHeaderSize(), packet.Size);
         }
 
-        public void Recycle()
+        internal void RecycleInternal()
         {
             Clear();
             if (_packet != null)
                 _manager.NetPacketPool.Recycle(_packet);
             _packet = null;
             _manager.RecycleEvent(_evt);
+        }
+
+        public void Recycle()
+        {
+            if(_manager.AutoRecycle)
+                throw new Exception("Recycle called with AutoRecycle enabled");
+            RecycleInternal();
         }
     }
 
@@ -604,7 +611,7 @@ namespace LiteNetLib
             if (emptyData)
                 RecycleEvent(evt);
             else if (AutoRecycle)
-                evt.DataReader.Recycle();
+                evt.DataReader.RecycleInternal();
         }
 
         internal void RecycleEvent(NetEvent evt)
