@@ -422,6 +422,8 @@ namespace LiteNetLib.Utils
         /// Register custom property type
         /// </summary>
         /// <typeparam name="T">Any packet</typeparam>
+        /// <param name="writer">custom type writer</param>
+        /// <param name="reader">custom type reader</param>
         public void RegisterNestedType<T>(Action<NetDataWriter, T> writer, Func<NetDataReader, T> reader)
         {
             _registeredTypes.Add(typeof(T), new CustomTypeStatic<T>(writer, reader));
