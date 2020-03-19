@@ -73,18 +73,20 @@
   
   <h1 id="LiteNetLib_Utils_NtpRequest" data-uid="LiteNetLib.Utils.NtpRequest" class="text-break">Class NtpRequest
   </h1>
-  <div class="markdown level0 summary"><p>Make NTP request.</p>
+  <div class="markdown level0 summary"><p>Make NTP request.
 <p>
-1. Create the object by <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Create_System_Net_IPEndPoint_System_Action_LiteNetLib_Utils_NtpPacket__">Create(IPEndPoint, Action&lt;NtpPacket&gt;)</a> method. 
-</p>
+<ol>
+<li>Create the object by <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Create_System_Net_IPEndPoint_System_Action_LiteNetLib_Utils_NtpPacket__">Create(IPEndPoint, Action&lt;NtpPacket&gt;)</a> method. 
 <p>
-2. Use <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Send">Send()</a> method to send requests. 3. Call <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Close">Close()</a> to release the socket
+<p></li>
+<li>Use <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Send">Send()</a> method to send requests. 3. Call <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Close">Close()</a> to release the socket
 AFTER you have received the response or some timeout. If you close the socket too early, you may miss the response.
-</p>
 <p>
-3. Call <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Close">Close()</a> to release the socket AFTER you have received the response or some timeout.
+<p></li>
+<li>Call <a class="xref" href="LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Close">Close()</a> to release the socket AFTER you have received the response or some timeout.
 If you close the socket too early, you may miss the response.
-</p>
+<p></li>
+</ol>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">

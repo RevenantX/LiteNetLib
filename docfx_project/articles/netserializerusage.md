@@ -10,12 +10,12 @@ Arrays of all this types and custom types also supported <br>
 Enums also supported but work a bit slower than other types
 ## Serialization speed comparsion
 Serialization 100000 times of simple structure from [example](https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs) (`NET 4.5`):
-|Serializer|Time|Size|
-|---|---|---|
-|BinaryFormatter|3334 ms|1096 bytes|
-|NetSerializer (first run)|45 ms|204 bytes|
-|NetSerializer (second run)|37 ms|204 bytes|
-|Raw|24 ms|204 bytes|
+Serializer|Time|Size
+---|---|---|
+BinaryFormatter|3334 ms|1096 bytes
+NetSerializer (first run)|45 ms|204 bytes
+NetSerializer (second run)|37 ms|204 bytes
+Raw|24 ms|204 bytes
 ## Packet Example
 ```csharp
 class SamplePacket

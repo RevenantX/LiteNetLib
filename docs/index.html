@@ -67,8 +67,7 @@
 <p><a href="https://github.com/RevenantX/NetGameExample">Little Game Example on Unity</a></p>
 <h2 id="features">Features</h2>
 <ul>
-<li>Lightweight
-<ul>
+<li>Lightweight<ul>
 <li>Small CPU and RAM usage</li>
 <li>Small packet size overhead ( 1 byte for unreliable, 3 bytes for reliable packets )</li>
 </ul>
@@ -77,8 +76,7 @@
 <li>Peer to peer connections</li>
 <li>Helper classes for sending and reading messages</li>
 <li>Multiple data channels</li>
-<li>Different send mechanics
-<ul>
+<li>Different send mechanics<ul>
 <li>Reliable with order</li>
 <li>Reliable without order</li>
 <li>Reliable sequenced (realiable only last packet)</li>
@@ -97,8 +95,7 @@
 <li>Connection statisitcs (need DEBUG or STATS_ENABLED flag)</li>
 <li>Multicasting (for discovering hosts in local network)</li>
 <li>Unity support</li>
-<li>Supported platforms:
-<ul>
+<li>Supported platforms:<ul>
 <li>Windows/Mac/Linux (.NET Framework, Mono, .NET Core)</li>
 <li>Android (Unity)</li>
 <li>iOS (Unity)</li>
@@ -130,8 +127,7 @@ while (!Console.KeyAvailable)
 }
 
 client.Stop();
-</code></pre>
-<h3 id="server">Server</h3>
+</code></pre><h3 id="server">Server</h3>
 <pre><code class="lang-csharp">EventBasedNetListener listener = new EventBasedNetListener();
 NetManager server = new NetManager(listener);
 server.Start(9050 /* port */);
@@ -158,90 +154,75 @@ while (!Console.KeyAvailable)
     Thread.Sleep(15);
 }
 server.Stop();
-</code></pre>
-<h2 id="netmanager-settings-description">NetManager settings description</h2>
+</code></pre><h2 id="netmanager-settings-description">NetManager settings description</h2>
 <ul>
-<li><strong>UnconnectedMessagesEnabled</strong>
-<ul>
+<li><strong>UnconnectedMessagesEnabled</strong><ul>
 <li>enable messages receiving without connection. (with SendUnconnectedMessage method)</li>
 <li>default value: <strong>false</strong></li>
 </ul>
 </li>
-<li><strong>NatPunchEnabled</strong>
-<ul>
+<li><strong>NatPunchEnabled</strong><ul>
 <li>enable NAT punch messages</li>
 <li>default value: <strong>false</strong></li>
 </ul>
 </li>
-<li><strong>UpdateTime</strong>
-<ul>
+<li><strong>UpdateTime</strong><ul>
 <li>library logic update (and send) period in milliseconds</li>
 <li>default value: <strong>15 msec</strong>.</li>
 </ul>
 </li>
-<li><strong>PingInterval</strong>
-<ul>
+<li><strong>PingInterval</strong><ul>
 <li>Interval for latency detection and checking connection</li>
 <li>default value: <strong>1000 msec</strong>.</li>
 </ul>
 </li>
-<li><strong>DisconnectTimeout</strong>
-<ul>
-<li>if client or server doesn't receive any packet from remote peer during this time then connection will be closed</li>
+<li><strong>DisconnectTimeout</strong><ul>
+<li>if client or server doesn&#39;t receive any packet from remote peer during this time then connection will be closed</li>
 <li>(including library internal keepalive packets)</li>
 <li>default value: <strong>5000 msec</strong>.</li>
 </ul>
 </li>
-<li><strong>SimulatePacketLoss</strong>
-<ul>
+<li><strong>SimulatePacketLoss</strong><ul>
 <li>simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)</li>
 <li>default value: <strong>false</strong></li>
 </ul>
 </li>
-<li><strong>SimulateLatency</strong>
-<ul>
+<li><strong>SimulateLatency</strong><ul>
 <li>simulate latency by holding packets for random time. (Works only in DEBUG mode)</li>
 <li>default value: <strong>false</strong></li>
 </ul>
 </li>
-<li><strong>SimulationPacketLossChance</strong>
-<ul>
+<li><strong>SimulationPacketLossChance</strong><ul>
 <li>chance of packet loss when simulation enabled. value in percents.</li>
 <li>default value: <strong>10 (%)</strong></li>
 </ul>
 </li>
-<li><strong>SimulationMinLatency</strong>
-<ul>
+<li><strong>SimulationMinLatency</strong><ul>
 <li>minimum simulated latency</li>
 <li>default value: <strong>30 msec</strong></li>
 </ul>
 </li>
-<li><strong>SimulationMaxLatency</strong>
-<ul>
+<li><strong>SimulationMaxLatency</strong><ul>
 <li>maximum simulated latency</li>
 <li>default value: <strong>100 msec</strong></li>
 </ul>
 </li>
-<li><strong>BroadcastEnabled</strong>
-<ul>
+<li><strong>BroadcastEnabled</strong><ul>
 <li>Allows receive Broadcast packets</li>
 <li>default value: <strong>false</strong></li>
 </ul>
 </li>
-<li><strong>ReconnectDelay</strong>
-<ul>
+<li><strong>ReconnectDelay</strong><ul>
 <li>delay betwen connection attempts</li>
 <li>default value: <strong>500 msec</strong></li>
 </ul>
 </li>
-<li><strong>MaxConnectAttempts</strong>
-<ul>
+<li><strong>MaxConnectAttempts</strong><ul>
 <li>maximum connection attempts before client stops and call disconnect event.</li>
 <li>default value: <strong>10</strong></li>
 </ul>
 </li>
-<li><strong>UnsyncedEvents</strong>
-<ul>
+<li><strong>UnsyncedEvents</strong><ul>
 <li>Experimental feature. Events automatically will be called without PollEvents method from another thread</li>
 <li>default value: <strong>false</strong></li>
 </ul>

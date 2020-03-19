@@ -58,7 +58,7 @@
       "default"
     ],
     "postProcessors": [],
-    "markdownEngineName": "markdig",
+    "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,
     "cleanupCacheHistory": false,
