@@ -9,6 +9,8 @@ namespace LibSample
 {
     class SerializerBenchmark
     {
+        const int LoopLength = 100000;
+
         [Serializable] //Just for test binary formatter
         private struct SampleNetSerializable : INetSerializable
         {
@@ -90,11 +92,43 @@ namespace LibSample
             }
         }
 
+        private void NetSerializerTest(NetSerializer serializer, NetDataWriter netDataWriter, Stopwatch stopwatch, SamplePacket samplePacket)
+        {
+            netDataWriter.Reset();
+            stopwatch.Restart();
+            for (int i = 0; i < LoopLength; i++)
+                serializer.Serialize(netDataWriter, samplePacket);
+            stopwatch.Stop();
+            Console.WriteLine($"NetSerializer time: {stopwatch.ElapsedMilliseconds} ms, size: { netDataWriter.Length / LoopLength} bytes");
+        }
+
+        private void DataWriterTest(NetDataWriter netDataWriter, Stopwatch stopwatch, SamplePacket samplePacket)
+        {
+            netDataWriter.Reset();
+            stopwatch.Restart();
+            for (int i = 0; i < LoopLength; i++)
+            {
+                netDataWriter.Put(samplePacket.SomeString);
+                netDataWriter.Put(samplePacket.SomeFloat);
+                netDataWriter.PutArray(samplePacket.SomeIntArray);
+                SomeVector2.Serialize(netDataWriter, samplePacket.SomeVector2);
+                netDataWriter.Put((ushort)samplePacket.SomeVectors.Length);
+                for (int j = 0; j < samplePacket.SomeVectors.Length; j++)
+                {
+                    SomeVector2.Serialize(netDataWriter, samplePacket.SomeVectors[j]);
+                }
+                netDataWriter.Put(samplePacket.EmptyString);
+                netDataWriter.Put(samplePacket.TestObj);
+            }
+            stopwatch.Stop();
+            Console.WriteLine($"Raw time: {stopwatch.ElapsedMilliseconds} ms, size: { netDataWriter.Length / LoopLength} bytes");
+        }
+
         public void Run()
         {
             Console.WriteLine("=== Serializer benchmark ===");
             
-            const int LoopLength = 100000;
+            
             //Test serializer performance
             Stopwatch stopwatch = new Stopwatch();
             BinaryFormatter binaryFormatter = new BinaryFormatter();
@@ -114,7 +148,7 @@ namespace LibSample
                 samplePacket.SomeVectors[i] = new SomeVector2(i, i);
             }
 
-            NetSerializer netSerializer = new NetSerializer();
+            var netSerializer = new NetSerializer();
             netSerializer.RegisterNestedType<SampleNetSerializable>();
             netSerializer.RegisterNestedType( SomeVector2.Serialize, SomeVector2.Deserialize );
 
@@ -127,52 +161,21 @@ namespace LibSample
             //Test binary formatter
             stopwatch.Start();
             for (int i = 0; i < LoopLength; i++)
-            {
                 binaryFormatter.Serialize(memoryStream, samplePacket);
-            }
             stopwatch.Stop();
             Console.WriteLine("BinaryFormatter time: " + stopwatch.ElapsedMilliseconds + " ms");
+            Console.WriteLine("BinaryFormatter size: " + memoryStream.Position / LoopLength);
 
-            //Test NetSerializer
-            stopwatch.Restart();
-            for (int i = 0; i < LoopLength; i++)
-            {
-                netSerializer.Serialize(netDataWriter, samplePacket);
-            }
-            stopwatch.Stop();
-            Console.WriteLine("NetSerializer first run time: " + stopwatch.ElapsedMilliseconds + " ms");
+            DataWriterTest(netDataWriter, stopwatch, samplePacket);
+            NetSerializerTest(netSerializer, netDataWriter, stopwatch, samplePacket);
 
-            //Test NetSerializer
-            netDataWriter.Reset();
-            stopwatch.Restart();
-            for (int i = 0; i < LoopLength; i++)
-            {
-                netSerializer.Serialize(netDataWriter, samplePacket);
-            }
-            stopwatch.Stop();
-            Console.WriteLine("NetSerializer second run time: " + stopwatch.ElapsedMilliseconds + " ms");
+            DataWriterTest(netDataWriter, stopwatch, samplePacket);
+            NetSerializerTest(netSerializer, netDataWriter, stopwatch, samplePacket);
 
-            //Test RAW
-            netDataWriter.Reset();
-            stopwatch.Restart();
-            for (int i = 0; i < LoopLength; i++)
-            {
-                netDataWriter.Put(samplePacket.SomeFloat);
-                netDataWriter.Put(samplePacket.SomeString);
-                netDataWriter.PutArray(samplePacket.SomeIntArray);
-                netDataWriter.Put(samplePacket.SomeVector2.X);
-                netDataWriter.Put(samplePacket.SomeVector2.Y);
-                netDataWriter.Put(samplePacket.SomeVectors.Length);
-                for (int j = 0; j < samplePacket.SomeVectors.Length; j++)
-                {
-                    netDataWriter.Put(samplePacket.SomeVectors[j].X);
-                    netDataWriter.Put(samplePacket.SomeVectors[j].Y);
-                }
-                netDataWriter.Put(samplePacket.EmptyString);
-                netDataWriter.Put(samplePacket.TestObj.Value);
-            }
-            stopwatch.Stop();
-            Console.WriteLine("DataWriter (raw put method calls) time: " + stopwatch.ElapsedMilliseconds + " ms");
+            DataWriterTest(netDataWriter, stopwatch, samplePacket);
+            NetSerializerTest(netSerializer, netDataWriter, stopwatch, samplePacket);
+
+            Console.ReadKey();
         }
     }
 }

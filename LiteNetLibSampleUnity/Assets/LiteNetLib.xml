@@ -835,7 +835,6 @@
             Register nested property type
             </summary>
             <typeparam name="T">INetSerializable structure</typeparam>
-            <returns>True - if register successful, false - if type already registered</returns>
         </member>
         <member name="M:LiteNetLib.Utils.NetPacketProcessor.RegisterNestedType``1(System.Action{LiteNetLib.Utils.NetDataWriter,``0},System.Func{LiteNetLib.Utils.NetDataReader,``0})">
             <summary>
@@ -843,14 +842,12 @@
             </summary>
             <param name="writeDelegate"></param>
             <param name="readDelegate"></param>
-            <returns>True - if register successful, false - if type already registered</returns>
         </member>
         <member name="M:LiteNetLib.Utils.NetPacketProcessor.RegisterNestedType``1(System.Func{``0})">
             <summary>
             Register nested property type
             </summary>
             <typeparam name="T">INetSerializable class</typeparam>
-            <returns>True - if register successful, false - if type already registered</returns>
         </member>
         <member name="M:LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader)">
             <summary>
@@ -922,25 +919,21 @@
         </member>
         <member name="M:LiteNetLib.Utils.NetSerializer.RegisterNestedType``1">
             <summary>
-            Register nested property type
+            Register custom property type
             </summary>
             <typeparam name="T">INetSerializable structure</typeparam>
-            <returns>True - if register successful, false - if type already registered</returns>
         </member>
         <member name="M:LiteNetLib.Utils.NetSerializer.RegisterNestedType``1(System.Func{``0})">
             <summary>
-            Register nested property type
+            Register custom property type
             </summary>
             <typeparam name="T">INetSerializable class</typeparam>
-            <returns>True - if register successful, false - if type already registered</returns>
         </member>
         <member name="M:LiteNetLib.Utils.NetSerializer.RegisterNestedType``1(System.Action{LiteNetLib.Utils.NetDataWriter,``0},System.Func{LiteNetLib.Utils.NetDataReader,``0})">
             <summary>
-            Register nested property type
+            Register custom property type
             </summary>
-            <param name="writeDelegate"></param>
-            <param name="readDelegate"></param>
-            <returns>True - if register successful, false - if type already registered</returns>
+            <typeparam name="T">Any packet</typeparam>
         </member>
         <member name="M:LiteNetLib.Utils.NetSerializer.Register``1">
             <exception cref="T:LiteNetLib.Utils.InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
