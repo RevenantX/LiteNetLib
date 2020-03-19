@@ -75,7 +75,7 @@ namespace LiteNetLib
         }
  
         //Channels
-        private readonly SimpleChannel _unreliableChannel;
+        private readonly Queue<NetPacket> _unreliableChannel;
         private readonly BaseChannel[] _channels;
         private BaseChannel _headChannel;
 
@@ -204,8 +204,8 @@ namespace LiteNetLib
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
             _pingPacket = new NetPacket(PacketProperty.Ping, 0) {Sequence = 1};
            
-            _unreliableChannel = new SimpleChannel(this);
-            _headChannel = _unreliableChannel;
+            _unreliableChannel = new Queue<NetPacket>(64);
+            _headChannel = null;
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
             _deliveredFramgnets = new Dictionary<ushort, ushort>();
 
@@ -479,12 +479,11 @@ namespace LiteNetLib
 
             //Select channel
             PacketProperty property;
-            BaseChannel channel;
+            BaseChannel channel = null;
 
             if (deliveryMethod == DeliveryMethod.Unreliable)
             {
                 property = PacketProperty.Unreliable;
-                channel = _unreliableChannel;
             }
             else
             {
@@ -552,7 +551,11 @@ namespace LiteNetLib
             packet.Property = property;
             Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
             packet.UserData = userData;
-            channel.AddToQueue(packet);
+
+            if (channel == null) //unreliable
+                _unreliableChannel.Enqueue(packet);
+            else
+                channel.AddToQueue(packet);
         }
 
         public void Disconnect(byte[] data)
@@ -995,6 +998,17 @@ namespace LiteNetLib
                     currentChannel.SendNextPackets();
                     currentChannel = currentChannel.Next;
                 }
+
+                lock (_unreliableChannel)
+                {
+                    while (_unreliableChannel.Count > 0)
+                    {
+                        NetPacket packet = _unreliableChannel.Dequeue();
+                        SendUserData(packet);
+                        NetManager.NetPacketPool.Recycle(packet);
+                    }
+                }
+
                 SendMerged();
             }
         }
