@@ -1,20 +1,22 @@
-**NetPacketProcessor** - fast specialized for network purposes serializer.<br>
+# NetPacketProcessor
+Fast specialized for network purposes serializer.<br>
 It supports **classes** with **public properties with "get" and "set"** methods or **classes/structs with implemented `INetSerializable`**.<br>
 Serializer adds some overhead in size: 64 bit hash of class name and namespace (8 bytes). All other class fields will be as is in resulting packet.
-### Supported property types
+## Supported property types
 ```csharp
 byte sbyte short ushort int uint long ulong float double bool string char IPEndPoint
-byte[] short[] ushort[] int[] uint[] long[] ulong[] float[] double[] bool[] string[] 
 ```
-### Serialization speed comparsion
-Serialization 100_000 times of simple structure from [example](https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs):
-```
-BinaryFormatter time: 3418 ms
-NetSerializer first run time: 127 ms
-NetSerializer second run time: 99 ms
-DataWriter (raw put method calls) time: 24 ms
-```
-### Packet Example
+Arrays of all this types and custom types also supported <br>
+Enums also supported but work a bit slower than other types
+## Serialization speed comparsion
+Serialization 100000 times of simple structure from [example](https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs) (`NET 4.5`):
+|Serializer|Time|Size|
+|-|-|-|
+|BinaryFormatter|3334 ms|1096 bytes|
+|NetSerializer (first run)|45 ms|204 bytes|
+|NetSerializer (second run)|37 ms|204 bytes|
+|Raw|24 ms|204 bytes|
+## Packet Example
 ```csharp
 class SamplePacket
 {
@@ -23,8 +25,8 @@ class SamplePacket
     public int[] SomeIntArray { get; set; }
 }
 ```
-### Nested structs or classes
-It does not supports nested structs or classes.<br>
+## Custom field
+NetPacketProcessor doesn't support nested structs or classes.<br>
 But you can register custom type processor.<br>
 That usefull for game engine types such as Vector3 and Quaternion (in Unity3d).
 ```csharp
@@ -32,7 +34,6 @@ That usefull for game engine types such as Vector3 and Quaternion (in Unity3d).
 class SamplePacket
 {
     public MyType SomeMyType { get; set; }
-
     //Arrays of custom types supported too
     public MyType[] SomeMyTypes { get; set; } 
 }
@@ -90,7 +91,7 @@ you must provide constructor:
 ```csharp
 netPacketProcessor.RegisterNestedType<SomeMyType>(() => { return new SomeMyType(); });
 ```
-# Usage example (for full example look at source [SerializerBenchmark](https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs))
+## Usage example (for full example look at source [SerializerBenchmark](https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs))
 ```csharp
 //First side
 class SomeClientListener : INetEventListener
@@ -133,3 +134,8 @@ class SomeServerListener : INetEventListener
     }
 }
 ```
+
+### Mini FAQ
+
+Q: `NetPacketProcessor` throws "`Undefined packet in NetDataReader`" but all packets registered <br>
+A: check that registered packet classes in same namespace (and better use shared code for packets)

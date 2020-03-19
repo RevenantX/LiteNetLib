@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class NetPacketProcessor
    ">
-    <meta name="generator" content="docfx 2.47.0.0">
+    <meta name="generator" content="docfx 2.50.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -394,25 +394,9 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool RegisterNestedType&lt;T&gt;()
+    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;()
     where T : struct, INetSerializable</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><p>True - if register successful, false - if type already registered</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <h5 class="typeParameters">Type Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -438,7 +422,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool RegisterNestedType&lt;T&gt;(Action&lt;NetDataWriter, T&gt; writeDelegate, Func&lt;NetDataReader, T&gt; readDelegate)</code></pre>
+    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Action&lt;NetDataWriter, T&gt; writeDelegate, Func&lt;NetDataReader, T&gt; readDelegate)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -459,22 +443,6 @@
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a>, T&gt;</td>
         <td><span class="parametername">readDelegate</span></td>
         <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><p>True - if register successful, false - if type already registered</p>
-</td>
       </tr>
     </tbody>
   </table>
@@ -502,7 +470,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool RegisterNestedType&lt;T&gt;(Func&lt;T&gt; constructor)
+    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Func&lt;T&gt; constructor)
     where T : class, INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -519,22 +487,6 @@
         <td><span class="xref">System.Func</span>&lt;T&gt;</td>
         <td><span class="parametername">constructor</span></td>
         <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><p>True - if register successful, false - if type already registered</p>
-</td>
       </tr>
     </tbody>
   </table>

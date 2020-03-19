@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class NetSerializer
    ">
-    <meta name="generator" content="docfx 2.47.0.0">
+    <meta name="generator" content="docfx 2.50.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -84,7 +84,7 @@
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
   <h5 id="LiteNetLib_Utils_NetSerializer_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class NetSerializer</code></pre>
+    <pre><code class="lang-csharp hljs">public class NetSerializer</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -332,30 +332,14 @@
   
   <a id="LiteNetLib_Utils_NetSerializer_RegisterNestedType_" data-uid="LiteNetLib.Utils.NetSerializer.RegisterNestedType*"></a>
   <h4 id="LiteNetLib_Utils_NetSerializer_RegisterNestedType__1" data-uid="LiteNetLib.Utils.NetSerializer.RegisterNestedType``1">RegisterNestedType&lt;T&gt;()</h4>
-  <div class="markdown level1 summary"><p>Register nested property type</p>
+  <div class="markdown level1 summary"><p>Register custom property type</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool RegisterNestedType&lt;T&gt;()
+    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;()
     where T : struct, INetSerializable</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><p>True - if register successful, false - if type already registered</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <h5 class="typeParameters">Type Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -376,12 +360,12 @@
   
   <a id="LiteNetLib_Utils_NetSerializer_RegisterNestedType_" data-uid="LiteNetLib.Utils.NetSerializer.RegisterNestedType*"></a>
   <h4 id="LiteNetLib_Utils_NetSerializer_RegisterNestedType__1_System_Action_LiteNetLib_Utils_NetDataWriter___0__System_Func_LiteNetLib_Utils_NetDataReader___0__" data-uid="LiteNetLib.Utils.NetSerializer.RegisterNestedType``1(System.Action{LiteNetLib.Utils.NetDataWriter,``0},System.Func{LiteNetLib.Utils.NetDataReader,``0})">RegisterNestedType&lt;T&gt;(Action&lt;NetDataWriter, T&gt;, Func&lt;NetDataReader, T&gt;)</h4>
-  <div class="markdown level1 summary"><p>Register nested property type</p>
+  <div class="markdown level1 summary"><p>Register custom property type</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool RegisterNestedType&lt;T&gt;(Action&lt;NetDataWriter, T&gt; writeDelegate, Func&lt;NetDataReader, T&gt; readDelegate)</code></pre>
+    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Action&lt;NetDataWriter, T&gt; writer, Func&lt;NetDataReader, T&gt; reader)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -395,28 +379,14 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a>, T&gt;</td>
-        <td><span class="parametername">writeDelegate</span></td>
-        <td></td>
+        <td><span class="parametername">writer</span></td>
+        <td><p>custom type writer</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a>, T&gt;</td>
-        <td><span class="parametername">readDelegate</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><p>True - if register successful, false - if type already registered</p>
+        <td><span class="parametername">reader</span></td>
+        <td><p>custom type reader</p>
 </td>
       </tr>
     </tbody>
@@ -432,7 +402,8 @@
     <tbody>
       <tr>
         <td><span class="parametername">T</span></td>
-        <td></td>
+        <td><p>Any packet</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -440,12 +411,12 @@
   
   <a id="LiteNetLib_Utils_NetSerializer_RegisterNestedType_" data-uid="LiteNetLib.Utils.NetSerializer.RegisterNestedType*"></a>
   <h4 id="LiteNetLib_Utils_NetSerializer_RegisterNestedType__1_System_Func___0__" data-uid="LiteNetLib.Utils.NetSerializer.RegisterNestedType``1(System.Func{``0})">RegisterNestedType&lt;T&gt;(Func&lt;T&gt;)</h4>
-  <div class="markdown level1 summary"><p>Register nested property type</p>
+  <div class="markdown level1 summary"><p>Register custom property type</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool RegisterNestedType&lt;T&gt;(Func&lt;T&gt; constructor)
+    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Func&lt;T&gt; constructor)
     where T : class, INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -462,22 +433,6 @@
         <td><span class="xref">System.Func</span>&lt;T&gt;</td>
         <td><span class="parametername">constructor</span></td>
         <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><p>True - if register successful, false - if type already registered</p>
-</td>
       </tr>
     </tbody>
   </table>

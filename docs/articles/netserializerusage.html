@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Supported property types </title>
+    <title>NetPacketProcessor </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Supported property types ">
-    <meta name="generator" content="docfx 2.47.0.0">
+    <meta name="title" content="NetPacketProcessor ">
+    <meta name="generator" content="docfx 2.50.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -67,22 +67,25 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
+<h1 id="netpacketprocessor">NetPacketProcessor</h1>
 
-<p><strong>NetPacketProcessor</strong> - fast specialized for network purposes serializer.<br>
+<p>Fast specialized for network purposes serializer.<br>
 It supports <strong>classes</strong> with <strong>public properties with &quot;get&quot; and &quot;set&quot;</strong> methods or <strong>classes/structs with implemented <code>INetSerializable</code></strong>.<br>
 Serializer adds some overhead in size: 64 bit hash of class name and namespace (8 bytes). All other class fields will be as is in resulting packet.</p>
-<h3 id="supported-property-types">Supported property types</h3>
+<h2 id="supported-property-types">Supported property types</h2>
 <pre><code class="lang-csharp">byte sbyte short ushort int uint long ulong float double bool string char IPEndPoint
-byte[] short[] ushort[] int[] uint[] long[] ulong[] float[] double[] bool[] string[] 
 </code></pre>
-<h3 id="serialization-speed-comparsion">Serialization speed comparsion</h3>
-<p>Serialization 100_000 times of simple structure from <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">example</a>:</p>
-<pre><code>BinaryFormatter time: 3418 ms
-NetSerializer first run time: 127 ms
-NetSerializer second run time: 99 ms
-DataWriter (raw put method calls) time: 24 ms
-</code></pre>
-<h3 id="packet-example">Packet Example</h3>
+<p>Arrays of all this types and custom types also supported <br>
+Enums also supported but work a bit slower than other types</p>
+<h2 id="serialization-speed-comparsion">Serialization speed comparsion</h2>
+<p>Serialization 100000 times of simple structure from <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">example</a> (<code>NET 4.5</code>):
+|Serializer|Time|Size|
+|-|-|-|
+|BinaryFormatter|3334 ms|1096 bytes|
+|NetSerializer (first run)|45 ms|204 bytes|
+|NetSerializer (second run)|37 ms|204 bytes|
+|Raw|24 ms|204 bytes|</p>
+<h2 id="packet-example">Packet Example</h2>
 <pre><code class="lang-csharp">class SamplePacket
 {
     public string SomeString { get; set; }
@@ -90,15 +93,14 @@ DataWriter (raw put method calls) time: 24 ms
     public int[] SomeIntArray { get; set; }
 }
 </code></pre>
-<h3 id="nested-structs-or-classes">Nested structs or classes</h3>
-<p>It does not supports nested structs or classes.<br>
+<h2 id="custom-field">Custom field</h2>
+<p>NetPacketProcessor doesn't support nested structs or classes.<br>
 But you can register custom type processor.<br>
 That usefull for game engine types such as Vector3 and Quaternion (in Unity3d).</p>
 <pre><code class="lang-csharp">//Your packet that will be sent over network
 class SamplePacket
 {
     public MyType SomeMyType { get; set; }
-
     //Arrays of custom types supported too
     public MyType[] SomeMyTypes { get; set; } 
 }
@@ -154,7 +156,7 @@ netPacketProcessor.RegisterNestedType&lt;SomeMyType&gt;();
 you must provide constructor:</p>
 <pre><code class="lang-csharp">netPacketProcessor.RegisterNestedType&lt;SomeMyType&gt;(() =&gt; { return new SomeMyType(); });
 </code></pre>
-<h1 id="usage-example-for-full-example-look-at-source-serializerbenchmark">Usage example (for full example look at source <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">SerializerBenchmark</a>)</h1>
+<h2 id="usage-example-for-full-example-look-at-source-serializerbenchmark">Usage example (for full example look at source <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">SerializerBenchmark</a>)</h2>
 <pre><code class="lang-csharp">//First side
 class SomeClientListener : INetEventListener
 {
@@ -196,6 +198,9 @@ class SomeServerListener : INetEventListener
     }
 }
 </code></pre>
+<h3 id="mini-faq">Mini FAQ</h3>
+<p>Q: <code>NetPacketProcessor</code> throws &quot;<code>Undefined packet in NetDataReader</code>&quot; but all packets registered <br>
+A: check that registered packet classes in same namespace (and better use shared code for packets)</p>
 </article>
           </div>
           
