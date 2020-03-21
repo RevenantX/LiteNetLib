@@ -201,7 +201,7 @@ namespace LiteNetLib
         public int DisconnectTimeout = 5000;
 
         /// <summary>
-        /// Simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)
+        /// Simulate packet loss by dropping random amount of packets. (Works only in DEBUG mode)
         /// </summary>
         public bool SimulatePacketLoss = false;
 
@@ -241,7 +241,7 @@ namespace LiteNetLib
         public bool BroadcastReceiveEnabled = false;
 
         /// <summary>
-        /// Delay betwen initial connection attempts
+        /// Delay between initial connection attempts
         /// </summary>
         public int ReconnectDelay = 500;
 
@@ -712,14 +712,14 @@ namespace LiteNetLib
                 int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
                 if (latency > MinLatencyThreshold)
                 {
-                    byte[] holdedData = new byte[length];
-                    Buffer.BlockCopy(data, 0, holdedData, 0, length);
+                    byte[] heldData = new byte[length];
+                    Buffer.BlockCopy(data, 0, heldData, 0, length);
 
                     lock (_pingSimulationList)
                     {
                         _pingSimulationList.Add(new IncomingData
                         {
-                            Data = holdedData,
+                            Data = heldData,
                             EndPoint = remoteEndPoint,
                             TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
                         });
@@ -1156,14 +1156,6 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Start logic thread and listening on available port
-        /// </summary>
-        public bool Start()
-        {
-            return Start(0);
-        }
-
-        /// <summary>
         /// Start logic thread and listening on selected port
         /// </summary>
         /// <param name="addressIPv4">bind to specific ipv4 address</param>
@@ -1198,7 +1190,7 @@ namespace LiteNetLib
         /// Start logic thread and listening on selected port
         /// </summary>
         /// <param name="port">port to listen</param>
-        public bool Start(int port)
+        public bool Start(int port = 0)
         {
             return Start(IPAddress.Any, IPAddress.IPv6Any, port);
         }
@@ -1373,8 +1365,11 @@ namespace LiteNetLib
             NetPeer peer;
             byte connectionNumber = 0;
 
-            if (_requestsDict.ContainsKey(target))
-                return null;
+            lock (_requestsDict)
+            {
+                if (_requestsDict.ContainsKey(target))
+                    return null;
+            }
 
             _peersLock.EnterUpgradeableReadLock();
             if (_peersDict.TryGetValue(target, out peer))
@@ -1404,16 +1399,8 @@ namespace LiteNetLib
         /// <summary>
         /// Force closes connection and stop all threads.
         /// </summary>
-        public void Stop()
-        {
-            Stop(true);
-        }
-
-        /// <summary>
-        /// Force closes connection and stop all threads.
-        /// </summary>
         /// <param name="sendDisconnectMessages">Send disconnect messages</param>
-        public void Stop(bool sendDisconnectMessages)
+        public void Stop(bool sendDisconnectMessages = true)
         {
             if (!IsRunning)
                 return;
@@ -1482,20 +1469,12 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Disconnect all peers without any additional data
-        /// </summary>
-        public void DisconnectAll()
-        {
-            DisconnectAll(null, 0, 0);
-        }
-
-        /// <summary>
         /// Disconnect all peers with shutdown message
         /// </summary>
         /// <param name="data">Data to send (must be less or equal MTU)</param>
         /// <param name="start">Data start</param>
         /// <param name="count">Data count</param>
-        public void DisconnectAll(byte[] data, int start, int count)
+        public void DisconnectAll(byte[] data = null, int start = 0, int count = 0)
         {
             //Send disconnect packets
             for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
@@ -1519,15 +1498,6 @@ namespace LiteNetLib
         public void DisconnectPeerForce(NetPeer peer)
         {
             DisconnectPeerForce(peer, DisconnectReason.DisconnectPeerCalled, 0, null);
-        }
-
-        /// <summary>
-        /// Disconnect peer from server
-        /// </summary>
-        /// <param name="peer">peer to disconnect</param>
-        public void DisconnectPeer(NetPeer peer)
-        {
-            DisconnectPeer(peer, null, 0, 0);
         }
 
         /// <summary>
@@ -1557,7 +1527,7 @@ namespace LiteNetLib
         /// <param name="data">additional data</param>
         /// <param name="start">data start</param>
         /// <param name="count">data length</param>
-        public void DisconnectPeer(NetPeer peer, byte[] data, int start, int count)
+        public void DisconnectPeer(NetPeer peer, byte[] data = null, int start = 0, int count = 0)
         {
             DisconnectPeer(
                 peer, 

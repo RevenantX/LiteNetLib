@@ -16,7 +16,13 @@ namespace LiteNetLib
 
         public int PacketsInQueue
         {
-            get { return OutgoingQueue.Count; }
+            get
+            {
+                lock (OutgoingQueue)
+                {
+                    return OutgoingQueue.Count;
+                }
+            }
         }
 
         public void AddToQueue(NetPacket packet)

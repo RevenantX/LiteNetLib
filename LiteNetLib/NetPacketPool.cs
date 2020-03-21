@@ -63,7 +63,7 @@ namespace LiteNetLib
         {
             if (packet.RawData.Length > NetConstants.MaxPacketSize)
             {
-                //Dont pool big packets. Save memory
+                //Don't pool big packets. Save memory
                 return;
             }
 

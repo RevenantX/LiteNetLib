@@ -92,7 +92,7 @@ namespace LiteNetLib.Utils
         /// <para>
         /// Distance from the reference clock. This property is set only in server reply packets.
         /// Servers connected directly to reference clock hardware set this property to 1.
-        /// Statum number is incremented by 1 on every hop down the NTP server hierarchy.
+        /// Stratum number is incremented by 1 on every hop down the NTP server hierarchy.
         /// </para>
         /// <para>
         /// Special value 0 indicates that this packet is a Kiss-o'-Death message
@@ -293,8 +293,7 @@ namespace LiteNetLib.Utils
         /// <returns></returns>
         public static NtpPacket FromServerResponse(byte[] bytes, DateTime destinationTimestamp)
         {
-            var packet = new NtpPacket(bytes);
-            packet.DestinationTimestamp = destinationTimestamp;
+            var packet = new NtpPacket(bytes) {DestinationTimestamp = destinationTimestamp};
             return packet;
         }
 
@@ -423,6 +422,6 @@ namespace LiteNetLib.Utils
         /// <summary>
         /// Identifies server-to-client SNTP packet.
         /// </summary>
-        Server = 4,
+        Server = 4
     }
 }

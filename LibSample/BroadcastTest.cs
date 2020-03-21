@@ -112,8 +112,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener);
-            server.BroadcastReceiveEnabled = true;
+            NetManager server = new NetManager(_serverListener) {BroadcastReceiveEnabled = true};
             if (!server.Start(9050))
             {
                 Console.WriteLine("Server start failed");

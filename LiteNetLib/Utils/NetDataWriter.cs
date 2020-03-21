@@ -20,11 +20,7 @@ namespace LiteNetLib.Utils
         {
         }
 
-        public NetDataWriter(bool autoResize) : this(autoResize, InitialSize)
-        {
-        }
-
-        public NetDataWriter(bool autoResize, int initialSize)
+        public NetDataWriter(bool autoResize, int initialSize = InitialSize)
         {
             _data = new byte[initialSize];
             _autoResize = autoResize;

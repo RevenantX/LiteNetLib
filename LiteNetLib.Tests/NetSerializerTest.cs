@@ -53,9 +53,7 @@ namespace LiteNetLib.Tests
 
             public static SomeVector2 Deserialize(NetDataReader reader)
             {
-                var res = new SomeVector2();
-                res.X = reader.GetInt();
-                res.Y = reader.GetInt();
+                var res = new SomeVector2 {X = reader.GetInt(), Y = reader.GetInt()};
                 return res;
             }
         }

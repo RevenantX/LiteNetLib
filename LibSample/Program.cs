@@ -5,7 +5,7 @@ namespace LibSample
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             //Test ntp
             NtpRequest ntpRequest = null;

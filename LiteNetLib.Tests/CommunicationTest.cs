@@ -422,7 +422,7 @@ namespace LiteNetLib.Tests
             client.Stop();
 
             var connected = false;
-            listener.PeerConnectedEvent += (peer) =>
+            listener.PeerConnectedEvent += peer =>
             {
                 connected = true;
             };

@@ -94,17 +94,12 @@ namespace LiteNetLib
             return _listener.OnConnectionSolved(this, null, 0, 0);
         }
         
-        public void Reject(byte[] rejectData, int start, int length, bool force)
+        public void Reject(byte[] rejectData, int start, int length, bool force = false)
         {
             if (!TryActivate())
                 return;
             Result = force ? ConnectionRequestResult.RejectForce : ConnectionRequestResult.Reject;
             _listener.OnConnectionSolved(this, rejectData, start, length);
-        }
-
-        public void Reject(byte[] rejectData, int start, int length)
-        {
-            Reject(rejectData, start, length, false);
         }
 
 

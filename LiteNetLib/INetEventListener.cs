@@ -84,7 +84,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="remoteEndPoint">From address (IP and Port)</param>
         /// <param name="reader">Message data</param>
-        /// <param name="messageType">Message type (simple, discovery request or responce)</param>
+        /// <param name="messageType">Message type (simple, discovery request or response)</param>
         void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType);
 
         /// <summary>

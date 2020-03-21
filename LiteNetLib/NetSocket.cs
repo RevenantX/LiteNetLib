@@ -119,9 +119,7 @@ namespace LiteNetLib
                 return false;
             LocalPort = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
             _running = true;
-            _threadv4 = new Thread(ReceiveLogic);
-            _threadv4.Name = "SocketThreadv4(" + LocalPort + ")";
-            _threadv4.IsBackground = true;
+            _threadv4 = new Thread(ReceiveLogic) {Name = "SocketThreadv4(" + LocalPort + ")", IsBackground = true};
             _threadv4.Start(_udpSocketv4);
 
             //Check IPv6 support
@@ -146,9 +144,7 @@ namespace LiteNetLib
                     // Unity3d throws exception - ignored
                 }
 
-                _threadv6 = new Thread(ReceiveLogic);
-                _threadv6.Name = "SocketThreadv6(" + LocalPort + ")";
-                _threadv6.IsBackground = true;
+                _threadv6 = new Thread(ReceiveLogic) {Name = "SocketThreadv6(" + LocalPort + ")", IsBackground = true};
                 _threadv6.Start(_udpSocketv6);
             }
 
@@ -195,7 +191,7 @@ namespace LiteNetLib
                 try { socket.DontFragment = true; }
                 catch (SocketException e)
                 {
-                    NetDebug.WriteError("[B]DontFragment error: {0}", e.SocketErrorCode);
+                    NetDebug.WriteError("[B]Don'tFragment error: {0}", e.SocketErrorCode);
                 }
 
                 try { socket.EnableBroadcast = true; }
@@ -209,7 +205,7 @@ namespace LiteNetLib
             try
             {
                 socket.Bind(ep);
-                NetDebug.Write(NetLogLevel.Trace, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
+                NetDebug.Write(NetLogLevel.Trace, "[B]Successfully bound to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
             }
             catch (SocketException bindException)
             {

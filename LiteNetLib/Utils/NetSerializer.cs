@@ -464,57 +464,57 @@ namespace LiteNetLib.Utils
                 if (getMethod == null || setMethod == null)
                     continue;
 
-                FastCall<T> serialzer = null;
+                FastCall<T> serializer = null;
                 if (propertyType.IsEnum)
                 {
                     var underlyingType = Enum.GetUnderlyingType(propertyType);
                     if (underlyingType == typeof(byte))
-                        serialzer = new EnumByteSerializer<T>(property, propertyType);
+                        serializer = new EnumByteSerializer<T>(property, propertyType);
                     else if (underlyingType == typeof(int))
-                        serialzer = new EnumIntSerializer<T>(property, propertyType);
+                        serializer = new EnumIntSerializer<T>(property, propertyType);
                     else
                         throw new InvalidTypeException("Not supported enum underlying type: " + underlyingType.Name);
                 }
                 else if (elementType == typeof(string))
-                    serialzer = new StringSerializer<T>(_maxStringLength);
+                    serializer = new StringSerializer<T>(_maxStringLength);
                 else if (elementType == typeof(bool))
-                    serialzer = new BoolSerializer<T>();
+                    serializer = new BoolSerializer<T>();
                 else if (elementType == typeof(byte))
-                    serialzer = new ByteSerializer<T>();
+                    serializer = new ByteSerializer<T>();
                 else if (elementType == typeof(sbyte))
-                    serialzer = new SByteSerializer<T>();
+                    serializer = new SByteSerializer<T>();
                 else if (elementType == typeof(short))
-                    serialzer = new ShortSerializer<T>();
+                    serializer = new ShortSerializer<T>();
                 else if (elementType == typeof(ushort))
-                    serialzer = new UShortSerializer<T>();
+                    serializer = new UShortSerializer<T>();
                 else if (elementType == typeof(int))
-                    serialzer = new IntSerializer<T>();
+                    serializer = new IntSerializer<T>();
                 else if (elementType == typeof(uint))
-                    serialzer = new UIntSerializer<T>();
+                    serializer = new UIntSerializer<T>();
                 else if (elementType == typeof(long))
-                    serialzer = new LongSerializer<T>();
+                    serializer = new LongSerializer<T>();
                 else if (elementType == typeof(ulong))
-                    serialzer = new ULongSerializer<T>();
+                    serializer = new ULongSerializer<T>();
                 else if (elementType == typeof(float))
-                    serialzer = new FloatSerializer<T>();
+                    serializer = new FloatSerializer<T>();
                 else if (elementType == typeof(double))
-                    serialzer = new DoubleSerializer<T>();
+                    serializer = new DoubleSerializer<T>();
                 else if (elementType == typeof(char))
-                    serialzer = new CharSerializer<T>();
+                    serializer = new CharSerializer<T>();
                 else if (elementType == typeof(IPEndPoint))
-                    serialzer = new IPEndPointSerializer<T>();
+                    serializer = new IPEndPointSerializer<T>();
                 else
                 {
                     CustomType customType;
                     _registeredTypes.TryGetValue(elementType, out customType);
                     if (customType != null)
-                        serialzer = customType.Get<T>();
+                        serializer = customType.Get<T>();
                 }
 
-                if (serialzer != null)
+                if (serializer != null)
                 {
-                    serialzer.Init(getMethod, setMethod, propertyType.IsArray);
-                    serializers.Add(serialzer);
+                    serializer.Init(getMethod, setMethod, propertyType.IsArray);
+                    serializers.Add(serializer);
                 }
                 else
                 {

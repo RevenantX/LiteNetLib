@@ -19,11 +19,10 @@ namespace LibSample
 
             public Server()
             {
-                _server = new NetManager(this);
-                _server.AutoRecycle = true;
-                _server.UpdateTime = 1;
-                _server.SimulatePacketLoss = false;
-                _server.SimulationPacketLossChance = 20;
+                _server = new NetManager(this)
+                {
+                    AutoRecycle = true, UpdateTime = 1, SimulatePacketLoss = false, SimulationPacketLossChance = 20
+                };
                 _server.Start(9050);
             }
 
@@ -93,11 +92,10 @@ namespace LibSample
             {
                 _writer = new NetDataWriter();
 
-                _client = new NetManager(this);
-                _client.UnsyncedEvents = true;
-                _client.AutoRecycle = true;
-                _client.SimulatePacketLoss = false;
-                _client.SimulationPacketLossChance = 20;
+                _client = new NetManager(this)
+                {
+                    UnsyncedEvents = true, AutoRecycle = true, SimulatePacketLoss = false, SimulationPacketLossChance = 20
+                };
                 _client.Start();
             }
 
@@ -158,9 +156,9 @@ namespace LibSample
             }
         }
         private const string DATA = "The quick brown fox jumps over the lazy dog";
-        private static int MAX_LOOP_COUNT = 750;
-        private static int UNRELIABLE_MESSAGES_PER_LOOP = 1000;
-        private static int RELIABLE_MESSAGES_PER_LOOP = 350;
+        private const int MAX_LOOP_COUNT = 750;
+        private const int UNRELIABLE_MESSAGES_PER_LOOP = 1000;
+        private const int RELIABLE_MESSAGES_PER_LOOP = 350;
         private static bool CLIENT_RUNNING = true;
 
         public void Run()

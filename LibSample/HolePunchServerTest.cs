@@ -8,8 +8,8 @@ namespace LibSample
 {
     class WaitPeer
     {
-        public IPEndPoint InternalAddr { get; private set; }
-        public IPEndPoint ExternalAddr { get; private set; }
+        public IPEndPoint InternalAddr { get; }
+        public IPEndPoint ExternalAddr { get; }
         public DateTime RefreshTime { get; private set; }
 
         public void Refresh()
@@ -39,8 +39,7 @@ namespace LibSample
 
         void INatPunchListener.OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token)
         {
-            WaitPeer wpeer;
-            if (_waitingPeers.TryGetValue(token, out wpeer))
+            if (_waitingPeers.TryGetValue(token, out WaitPeer wpeer))
             {
                 if (wpeer.InternalAddr.Equals(localEndPoint) &&
                     wpeer.ExternalAddr.Equals(remoteEndPoint))
@@ -121,13 +120,11 @@ namespace LibSample
                 Console.WriteLine("Success C2. Connecting to C1: {0}, connection created: {1}", point, peer != null);
             };
 
-            _c1 = new NetManager(netListener);
-            _c1.NatPunchEnabled = true;
+            _c1 = new NetManager(netListener) {NatPunchEnabled = true};
             _c1.NatPunchModule.Init(natPunchListener1);
             _c1.Start();
 
-            _c2 = new NetManager(netListener);
-            _c2.NatPunchEnabled = true;
+            _c2 = new NetManager(netListener) {NatPunchEnabled = true};
             _c2.NatPunchModule.Init(natPunchListener2);
             _c2.Start();
 

@@ -87,14 +87,13 @@ namespace LiteNetLib.Tests.TestUtility
 
         private NetContainer GetNetworkManager(ushort id, bool isClient)
         {
-            NetContainer container;
             if (id == 0)
             {
                 Assert.Fail("Id cannot be 0");
             }
 
             var key = isClient ? id : (uint) id << 16;
-            if (!_managers.TryGetValue(key, out container))
+            if (!_managers.TryGetValue(key, out NetContainer container))
             {
                 var listener = new EventBasedNetListener();
                 listener.ConnectionRequestEvent += request =>

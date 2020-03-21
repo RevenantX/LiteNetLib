@@ -85,9 +85,7 @@ namespace LibSample
 
             public static SomeVector2 Deserialize(NetDataReader reader)
             {
-                SomeVector2 res = new SomeVector2();
-                res.X = reader.GetInt();
-                res.Y = reader.GetInt();
+                SomeVector2 res = new SomeVector2 {X = reader.GetInt(), Y = reader.GetInt()};
                 return res;
             }
         }
@@ -155,7 +153,7 @@ namespace LibSample
             //Prewarm cpu
             for (int i = 0; i < 10000000; i++)
             {
-                double c = Math.Sin(i);
+                _ = Math.Sin(i);
             }
 
             //Test binary formatter

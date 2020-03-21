@@ -130,7 +130,7 @@ namespace LiteNetLib
             return GetHeaderSize(Property);
         }
 
-        //Packet contstructor from byte array
+        //Packet constructor from byte array
         public bool FromBytes(byte[] data, int start, int packetSize)
         {
             //Reading property

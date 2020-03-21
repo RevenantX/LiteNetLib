@@ -227,10 +227,10 @@ namespace LiteNetLib
 
             //If very new - move window
             int ackIdx;
-            int ackByte;
-            int ackBit;
             lock (_outgoingAcks)
             {
+                int ackByte;
+                int ackBit;
                 if (relate >= _windowSize)
                 {
                     //New window position
@@ -267,7 +267,7 @@ namespace LiteNetLib
             //detailed check
             if (seq == _remoteSequence)
             {
-                NetDebug.Write("[RR]ReliableInOrder packet succes");
+                NetDebug.Write("[RR]ReliableInOrder packet success");
                 Peer.AddIncomingPacket(packet);
                 _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
 
@@ -276,7 +276,7 @@ namespace LiteNetLib
                     NetPacket p;
                     while ((p = _receivedPackets[_remoteSequence % _windowSize]) != null)
                     {
-                        //process holded packet
+                        //process held packet
                         _receivedPackets[_remoteSequence % _windowSize] = null;
                         Peer.AddIncomingPacket(p);
                         _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
@@ -294,7 +294,7 @@ namespace LiteNetLib
                 return true;
             }
 
-            //holded packet
+            //Held packet
             if (_ordered)
             {
                 _receivedPackets[ackIdx] = packet;
