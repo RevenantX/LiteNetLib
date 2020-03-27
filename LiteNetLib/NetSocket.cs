@@ -1,5 +1,6 @@
 #if UNITY_5_3_OR_NEWER
 #define UNITY
+using UnityEngine;
 #endif
 #if NETSTANDARD || NETCOREAPP
 using System.Runtime.InteropServices;
@@ -12,6 +13,27 @@ using System.Threading;
 
 namespace LiteNetLib
 {
+#if UNITY
+    public class UnitySocketFix : MonoBehaviour
+    {
+        private NetSocket _s;
+
+        internal void Init(NetSocket socket)
+        {
+            _s = socket;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnApplicationPause(bool pause)
+        {
+            if(pause)
+                _s.Close();
+            else
+                _s.Restore();
+        }
+    }
+#endif
+
     internal interface INetSocketListener
     {
         void OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint);
@@ -19,6 +41,12 @@ namespace LiteNetLib
 
     internal sealed class NetSocket
     {
+        private IPAddress _bindAddrIPv4;
+        private IPAddress _bindAddrIPv6;
+        private bool _reuse;
+        private bool _ipv6;
+        private int _port;
+
         public const int ReceivePollingTime = 500000; //0.5 second
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
@@ -59,6 +87,10 @@ namespace LiteNetLib
         public NetSocket(INetSocketListener listener)
         {
             _listener = listener;
+#if UNITY
+            var unityFixObj = new GameObject("LiteNetLib_UnitySocketFix");
+            unityFixObj.AddComponent<UnitySocketFix>().Init(this);
+#endif
         }
 
         private void ReceiveLogic(object state)
@@ -112,12 +144,25 @@ namespace LiteNetLib
             }
         }
 
+        public void Restore()
+        {
+            if (_bindAddrIPv4 != null)
+                Bind(_bindAddrIPv4, _bindAddrIPv6, _port, _reuse, _ipv6);
+        }
+
         public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress, bool ipv6)
         {
+            _bindAddrIPv4 = addressIPv4;
+            _bindAddrIPv6 = addressIPv6;
+            _reuse = reuseAddress;
+            _port = port;
+            _ipv6 = ipv6;
+
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port), reuseAddress))
                 return false;
-            LocalPort = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
+
+            LocalPort = ((IPEndPoint)_udpSocketv4.LocalEndPoint).Port;
             _running = true;
             _threadv4 = new Thread(ReceiveLogic);
             _threadv4.Name = "SocketThreadv4(" + LocalPort + ")";
@@ -244,6 +289,8 @@ namespace LiteNetLib
 
         public bool SendBroadcast(byte[] data, int offset, int size, int port)
         {
+            if (!_running)
+                return false;
             bool broadcastSuccess = false;
             bool multicastSuccess = false;
             try
@@ -275,6 +322,8 @@ namespace LiteNetLib
 
         public int SendTo(byte[] data, int offset, int size, IPEndPoint remoteEndPoint, ref SocketError errorCode)
         {
+            if (!_running)
+                return 0;
             try
             {
                 var socket = _udpSocketv4;
