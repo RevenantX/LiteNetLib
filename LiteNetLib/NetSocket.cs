@@ -27,7 +27,7 @@ namespace LiteNetLib
         private void OnApplicationPause(bool pause)
         {
             if(pause)
-                _s.Close();
+                _s.Suspend();
             else
                 _s.Restore();
         }
@@ -46,6 +46,7 @@ namespace LiteNetLib
         private bool _reuse;
         private bool _ipv6;
         private int _port;
+        private bool _suspended;
 
         public const int ReceivePollingTime = 500000; //0.5 second
         private Socket _udpSocketv4;
@@ -146,8 +147,18 @@ namespace LiteNetLib
 
         public void Restore()
         {
-            if (_bindAddrIPv4 != null)
+            if (_suspended)
+            {
+                _suspended = false;
                 Bind(_bindAddrIPv4, _bindAddrIPv6, _port, _reuse, _ipv6);
+            }
+        }
+
+        public void Suspend()
+        {
+            if (_running)
+                _suspended = true;
+            Close();
         }
 
         public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress, bool ipv6)
