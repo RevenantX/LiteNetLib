@@ -269,7 +269,7 @@ namespace LiteNetLib
         /// <summary>
         /// Returns true if socket listening and update thread is running
         /// </summary>
-        public bool IsRunning { get; private set; }
+        public bool IsRunning { get { return _socket.IsRunning; } }
 
         /// <summary>
         /// Local EndPoint (host and port)
@@ -438,7 +438,7 @@ namespace LiteNetLib
 
         internal int SendRaw(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
-            if (!IsRunning)
+            if (!_socket.IsRunning)
                 return 0;
 
             SocketError errorCode = 0;
@@ -631,7 +631,7 @@ namespace LiteNetLib
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            while (IsRunning)
+            while (_socket.IsRunning)
             {
 #if DEBUG
                 if (SimulateLatency)
@@ -1171,11 +1171,8 @@ namespace LiteNetLib
         /// <param name="port">port to listen</param>
         public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port)
         {
-            if (IsRunning)
-                return false;
             if (!_socket.Bind(addressIPv4, addressIPv6, port, ReuseAddress, IPv6Enabled))
                 return false;
-            IsRunning = true;
             _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
             _logicThread.Start();
             return true;
@@ -1235,12 +1232,8 @@ namespace LiteNetLib
         /// <returns>Operation result</returns>
         public bool SendUnconnectedMessage(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
-            if (!IsRunning)
-                return false;
-
             //No need for CRC here, SendRaw does that
             NetPacket packet = NetPacketPool.GetWithData(PacketProperty.UnconnectedMessage, message, start, length);
-
             return SendRawAndRecycle(packet, remoteEndPoint) > 0;
         }
 
@@ -1256,9 +1249,6 @@ namespace LiteNetLib
 
         public bool SendBroadcast(byte[] data, int start, int length, int port)
         {
-            if (!IsRunning)
-                return false;
-
             NetPacket packet;
             if (_extraPacketLayer != null)
             {
@@ -1367,7 +1357,7 @@ namespace LiteNetLib
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(IPEndPoint target, NetDataWriter connectionData)
         {
-            if (!IsRunning)
+            if (!_socket.IsRunning)
                 throw new InvalidOperationException("Client is not running");
 
             NetPeer peer;
@@ -1415,7 +1405,7 @@ namespace LiteNetLib
         /// <param name="sendDisconnectMessages">Send disconnect messages</param>
         public void Stop(bool sendDisconnectMessages)
         {
-            if (!IsRunning)
+            if (!_socket.IsRunning)
                 return;
             NetDebug.Write("[NM] Stop");
 
@@ -1423,13 +1413,10 @@ namespace LiteNetLib
             for(var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
                 netPeer.Shutdown(null, 0, 0, !sendDisconnectMessages);
 
-            //For working send
-            IsRunning = false;
-
             //Stop
             _logicThread.Join();
             _logicThread = null;
-            _socket.Close();
+            _socket.Close(false);
 
             //clear peers
             _peersLock.EnterWriteLock();

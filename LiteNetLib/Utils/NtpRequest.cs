@@ -107,7 +107,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         public void Close()
         {
-            _socket.Close();
+            _socket.Close(false);
         }
 
         /// <summary>

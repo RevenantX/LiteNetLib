@@ -16,20 +16,38 @@ namespace LiteNetLib
 #if UNITY
     public class UnitySocketFix : MonoBehaviour
     {
-        private NetSocket _s;
+        internal IPAddress BindAddrIPv4;
+        internal IPAddress BindAddrIPv6;
+        internal bool Reuse;
+        internal bool IPv6;
+        internal int Port;
+        internal bool Paused;
+        internal NetSocket Socket;
 
-        internal void Init(NetSocket socket)
+        private void Update()
         {
-            _s = socket;
-            DontDestroyOnLoad(gameObject);
+            if (Socket == null)
+                Destroy(gameObject);
         }
 
         private void OnApplicationPause(bool pause)
         {
-            if(pause)
-                _s.Suspend();
-            else
-                _s.Restore();
+            if (Socket == null)
+                return;
+            if (pause)
+            {
+                Socket.Close(true);
+                Paused = true;
+            }
+            else if (Paused)
+            {
+                if (!Socket.Bind(BindAddrIPv4, BindAddrIPv6, Port, Reuse, IPv6))
+                {
+                    NetDebug.WriteError("[S] Cannot restore connection \"{0}\",\"{1}\" port {2}", BindAddrIPv4, BindAddrIPv6, Port);
+                    Socket.OnErrorRestore();
+                }
+                Paused = false;
+            }
         }
     }
 #endif
@@ -41,25 +59,26 @@ namespace LiteNetLib
 
     internal sealed class NetSocket
     {
-        private IPAddress _bindAddrIPv4;
-        private IPAddress _bindAddrIPv6;
-        private bool _reuse;
-        private bool _ipv6;
-        private int _port;
-        private bool _suspended;
-
         public const int ReceivePollingTime = 500000; //0.5 second
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
         private Thread _threadv4;
         private Thread _threadv6;
-        private volatile bool _running;
         private readonly INetSocketListener _listener;
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("FF02:0:0:0:0:0:0:1");
         internal static readonly bool IPv6Support;
+#if UNITY
+        private UnitySocketFix _unitySocketFix;
 
+        public void OnErrorRestore()
+        {
+            Close(false);
+            _listener.OnMessageReceived(null, 0, SocketError.NotConnected, new IPEndPoint(0,0));
+        }
+#endif
         public int LocalPort { get; private set; }
+        public volatile bool IsRunning;
 
         public short Ttl
         {
@@ -88,10 +107,16 @@ namespace LiteNetLib
         public NetSocket(INetSocketListener listener)
         {
             _listener = listener;
+        }
+
+        private bool IsActive()
+        {
 #if UNITY
-            var unityFixObj = new GameObject("LiteNetLib_UnitySocketFix");
-            unityFixObj.AddComponent<UnitySocketFix>().Init(this);
+            var unitySocketFix = _unitySocketFix; //save for multithread
+            if (unitySocketFix != null && unitySocketFix.Paused)
+                return false;
 #endif
+            return IsRunning;
         }
 
         private void ReceiveLogic(object state)
@@ -100,7 +125,7 @@ namespace LiteNetLib
             EndPoint bufferEndPoint = new IPEndPoint(socket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
             byte[] receiveBuffer = new byte[NetConstants.MaxPacketSize];
 
-            while (_running)
+            while (IsActive())
             {
                 int result;
 
@@ -116,6 +141,9 @@ namespace LiteNetLib
                 {
                     switch (ex.SocketErrorCode)
                     {
+#if UNITY
+                        case SocketError.NotConnected:
+#endif
                         case SocketError.Interrupted:
                         case SocketError.NotSocket:
                             return;
@@ -123,15 +151,14 @@ namespace LiteNetLib
                         case SocketError.MessageSize:
                         case SocketError.TimedOut:
                             NetDebug.Write(NetLogLevel.Trace, "[R]Ignored error: {0} - {1}",
-                                (int) ex.SocketErrorCode, ex.ToString());
+                                (int)ex.SocketErrorCode, ex.ToString());
                             break;
                         default:
-                            NetDebug.WriteError("[R]Error code: {0} - {1}", (int) ex.SocketErrorCode,
+                            NetDebug.WriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode,
                                 ex.ToString());
-                            _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint) bufferEndPoint);
+                            _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
                             break;
                     }
-
                     continue;
                 }
                 catch (ObjectDisposedException)
@@ -145,39 +172,36 @@ namespace LiteNetLib
             }
         }
 
-        public void Restore()
-        {
-            if (_suspended)
-            {
-                _suspended = false;
-                Bind(_bindAddrIPv4, _bindAddrIPv6, _port, _reuse, _ipv6);
-            }
-        }
-
-        public void Suspend()
-        {
-            if (_running)
-                _suspended = true;
-            Close();
-        }
-
         public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress, bool ipv6)
         {
-            _bindAddrIPv4 = addressIPv4;
-            _bindAddrIPv6 = addressIPv6;
-            _reuse = reuseAddress;
-            _port = port;
-            _ipv6 = ipv6;
+            if (IsActive())
+                return false;
 
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port), reuseAddress))
                 return false;
+#if UNITY
+            if (_unitySocketFix == null)
+            {
+                var unityFixObj = new GameObject("LiteNetLib_UnitySocketFix");
+                GameObject.DontDestroyOnLoad(unityFixObj);
+                _unitySocketFix = unityFixObj.AddComponent<UnitySocketFix>();
+                _unitySocketFix.Socket = this;
+                _unitySocketFix.BindAddrIPv4 = addressIPv4;
+                _unitySocketFix.BindAddrIPv6 = addressIPv6;
+                _unitySocketFix.Reuse = reuseAddress;
+                _unitySocketFix.Port = port;
+                _unitySocketFix.IPv6 = ipv6;
+            }
+#endif
 
             LocalPort = ((IPEndPoint)_udpSocketv4.LocalEndPoint).Port;
-            _running = true;
-            _threadv4 = new Thread(ReceiveLogic);
-            _threadv4.Name = "SocketThreadv4(" + LocalPort + ")";
-            _threadv4.IsBackground = true;
+            IsRunning = true;
+            _threadv4 = new Thread(ReceiveLogic)
+            {
+                Name = "SocketThreadv4(" + LocalPort + ")",
+                IsBackground = true
+            };
             _threadv4.Start(_udpSocketv4);
 
             //Check IPv6 support
@@ -192,19 +216,21 @@ namespace LiteNetLib
                 {
 #if !UNITY
                     _udpSocketv6.SetSocketOption(
-                        SocketOptionLevel.IPv6, 
+                        SocketOptionLevel.IPv6,
                         SocketOptionName.AddMembership,
                         new IPv6MulticastOption(MulticastAddressV6));
 #endif
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     // Unity3d throws exception - ignored
                 }
 
-                _threadv6 = new Thread(ReceiveLogic);
-                _threadv6.Name = "SocketThreadv6(" + LocalPort + ")";
-                _threadv6.IsBackground = true;
+                _threadv6 = new Thread(ReceiveLogic)
+                {
+                    Name = "SocketThreadv6(" + LocalPort + ")",
+                    IsBackground = true
+                };
                 _threadv6.Start(_udpSocketv6);
             }
 
@@ -224,7 +250,7 @@ namespace LiteNetLib
 #endif
             try
             {
-                socket.IOControl(SioUdpConnreset, new byte[] {0}, null);
+                socket.IOControl(SioUdpConnreset, new byte[] { 0 }, null);
             }
             catch
             {
@@ -300,7 +326,7 @@ namespace LiteNetLib
 
         public bool SendBroadcast(byte[] data, int offset, int size, int port)
         {
-            if (!_running)
+            if (!IsActive())
                 return false;
             bool broadcastSuccess = false;
             bool multicastSuccess = false;
@@ -312,7 +338,7 @@ namespace LiteNetLib
                              size,
                              SocketFlags.None,
                              new IPEndPoint(IPAddress.Broadcast, port)) > 0;
-           
+
                 if (_udpSocketv6 != null)
                 {
                     multicastSuccess = _udpSocketv6.SendTo(
@@ -333,7 +359,7 @@ namespace LiteNetLib
 
         public int SendTo(byte[] data, int offset, int size, IPEndPoint remoteEndPoint, ref SocketError errorCode)
         {
-            if (!_running)
+            if (!IsActive())
                 return 0;
             try
             {
@@ -356,7 +382,7 @@ namespace LiteNetLib
                     default:
                         NetDebug.WriteError("[S]" + ex);
                         break;
-                }    
+                }
                 errorCode = ex.SocketErrorCode;
                 return -1;
             }
@@ -367,10 +393,17 @@ namespace LiteNetLib
             }
         }
 
-        public void Close()
+        public void Close(bool suspend)
         {
-            _running = false;
-            // first close sockets
+            if (!suspend)
+            {
+                IsRunning = false;
+#if UNITY
+                _unitySocketFix.Socket = null;
+                _unitySocketFix = null;
+#endif
+            }
+
             if (_udpSocketv4 != null)
             {
                 _udpSocketv4.Close();
@@ -381,19 +414,8 @@ namespace LiteNetLib
                 _udpSocketv6.Close();
                 _udpSocketv6 = null;
             }
-            // then join threads
-            if (_threadv4 != null)
-            {
-                if (_threadv4 != Thread.CurrentThread)
-                    _threadv4.Join();
-                _threadv4 = null;
-            }
-            if (_threadv6 != null)
-            {
-                if (_threadv6 != Thread.CurrentThread)
-                    _threadv6.Join();
-                _threadv6 = null;
-            }
+            _threadv4 = null;
+            _threadv6 = null;
         }
     }
 }
