@@ -308,7 +308,10 @@ namespace LiteNetLib
                             }
                             catch (SocketException ex)
                             {
+#if UNITY_2018_3_OR_NEWER
+                                //because its fixed in 2018_3
                                 NetDebug.WriteError("[B]Bind exception: {0}, errorCode: {1}", ex.ToString(), ex.SocketErrorCode);
+#endif
                                 return false;
                             }
                             return true;
