@@ -1416,9 +1416,9 @@ namespace LiteNetLib
                 netPeer.Shutdown(null, 0, 0, !sendDisconnectMessages);
 
             //Stop
+            _socket.Close(false);
             _logicThread.Join();
             _logicThread = null;
-            _socket.Close(false);
 
             //clear peers
             _peersLock.EnterWriteLock();
