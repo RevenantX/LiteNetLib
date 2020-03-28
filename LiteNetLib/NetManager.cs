@@ -873,6 +873,8 @@ namespace LiteNetLib
             if (_extraPacketLayer != null)
             {
                 _extraPacketLayer.ProcessInboundPacket(ref reusableBuffer, ref count);
+                if (count == 0)
+                    return;
             }
 
             //Try read packet
