@@ -473,10 +473,6 @@ namespace LiteNetLib
                         DisconnectPeerForce(fromPeer, DisconnectReason.NetworkUnreachable, errorCode, null);
                     CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
                     return -1;
-                case SocketError.ConnectionReset: //connection reset (connection closed)
-                    if (TryGetPeer(remoteEndPoint, out fromPeer))
-                        DisconnectPeerForce(fromPeer, DisconnectReason.RemoteConnectionClose, errorCode, null);
-                    return -1;
             }
             if (result <= 0)
                 return 0;
@@ -808,7 +804,7 @@ namespace LiteNetLib
                 switch (processResult)
                 {
                     case ConnectRequestResult.Reconnection:
-                        DisconnectPeerForce(netPeer, DisconnectReason.RemoteConnectionClose, 0, null);
+                        DisconnectPeerForce(netPeer, DisconnectReason.Reconnect, 0, null);
                         RemovePeer(netPeer);
                         //go to new connection
                         break;
