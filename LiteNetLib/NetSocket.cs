@@ -26,6 +26,7 @@ namespace LiteNetLib
         private volatile bool _running;
         private readonly INetSocketListener _listener;
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("FF02:0:0:0:0:0:0:1");
+        private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
         internal static readonly bool IPv6Support;
 
         public int LocalPort { get; private set; }
@@ -159,6 +160,20 @@ namespace LiteNetLib
             socket.SendTimeout = 500;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
+#if !UNITY || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+#if NETSTANDARD || NETCOREAPP || NETCORE
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+#endif
+            try
+            {
+                socket.IOControl(SioUdpConnreset, new byte[] { 0 }, null);
+            }
+            catch
+            {
+                //ignored
+            }
+#endif
+
             try
             {
                 socket.ExclusiveAddressUse = !reuseAddress;
