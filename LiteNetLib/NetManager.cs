@@ -526,7 +526,7 @@ namespace LiteNetLib
             NetPacket readerSource = null,
             object userData = null)
         {
-            NetEvent evt = null;
+            NetEvent evt;
             bool unsyncEvent = UnsyncedEvents;
             
             if (type == NetEvent.EType.Connect)
@@ -536,11 +536,8 @@ namespace LiteNetLib
 
             lock (_netEventsPool)
             {
-                if (_netEventsPool.Count > 0)
-                    evt = _netEventsPool.Pop();
+                evt = _netEventsPool.Count > 0 ? _netEventsPool.Pop() : new NetEvent(this);
             }
-            if(evt == null)
-                evt = new NetEvent(this);
             evt.Type = type;
             evt.DataReader.SetSource(readerSource);
             evt.Peer = peer;
@@ -999,9 +996,26 @@ namespace LiteNetLib
             }
         }
 
-        internal void ReceiveFromPeer(NetPacket packet, DeliveryMethod method, NetPeer fromPeer)
+        internal void CreateReceiveEvent(NetPacket packet, DeliveryMethod method, NetPeer fromPeer)
         {
-            CreateEvent(NetEvent.EType.Receive, fromPeer, deliveryMethod: method, readerSource: packet);
+            NetEvent evt;
+            lock (_netEventsPool)
+            {
+                evt = _netEventsPool.Count > 0 ? _netEventsPool.Pop() : new NetEvent(this);
+            }
+            evt.Type = NetEvent.EType.Receive;
+            evt.DataReader.SetSource(packet);
+            evt.Peer = fromPeer;
+            evt.DeliveryMethod = method;
+            if (UnsyncedEvents)
+            {
+                ProcessEvent(evt);
+            }
+            else
+            {
+                lock (_netEventsQueue)
+                    _netEventsQueue.Enqueue(evt);
+            }
         }
 
         /// <summary>

@@ -85,7 +85,7 @@ namespace LiteNetLib
             {
                 Peer.Statistics.PacketLoss += (ulong)(relative - 1);
                 _remoteSequence = packet.Sequence;
-                Peer.NetManager.ReceiveFromPeer(
+                Peer.NetManager.CreateReceiveEvent(
                     packet, 
                     _reliable ? DeliveryMethod.ReliableSequenced : DeliveryMethod.Sequenced, 
                     Peer);

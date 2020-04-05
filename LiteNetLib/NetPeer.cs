@@ -707,14 +707,14 @@ namespace LiteNetLib
                 Array.Clear(fragments, 0, incomingFragments.ReceivedCount);
 
                 //Send to process
-                NetManager.ReceiveFromPeer(resultingPacket, method, this);
+                NetManager.CreateReceiveEvent(resultingPacket, method, this);
 
                 //Clear memory
                 _holdedFragments.Remove(packetFragId);
             }
             else //Just simple packet
             {
-                NetManager.ReceiveFromPeer(p, method, this);
+                NetManager.CreateReceiveEvent(p, method, this);
             }
         }
 
@@ -914,7 +914,7 @@ namespace LiteNetLib
 
                 //Simple packet without acks
                 case PacketProperty.Unreliable:
-                    NetManager.ReceiveFromPeer(packet, DeliveryMethod.Unreliable, this);
+                    NetManager.CreateReceiveEvent(packet, DeliveryMethod.Unreliable, this);
                     return;
 
                 case PacketProperty.MtuCheck:
