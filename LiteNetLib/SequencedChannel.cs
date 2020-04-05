@@ -71,6 +71,8 @@ namespace LiteNetLib
 
         public override bool ProcessPacket(NetPacket packet)
         {
+            if (packet.IsFragmented)
+                return false;
             if (packet.Property == PacketProperty.Ack)
             {
                 if (_reliable && _lastPacket != null && packet.Sequence == _lastPacket.Sequence)
@@ -83,7 +85,10 @@ namespace LiteNetLib
             {
                 Peer.Statistics.PacketLoss += (ulong)(relative - 1);
                 _remoteSequence = packet.Sequence;
-                Peer.AddIncomingPacket(packet);
+                Peer.NetManager.ReceiveFromPeer(
+                    packet, 
+                    _reliable ? DeliveryMethod.ReliableSequenced : DeliveryMethod.Sequenced, 
+                    Peer);
                 packetProcessed = true;
             }
             _mustSendAck = true;

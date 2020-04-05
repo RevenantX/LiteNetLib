@@ -66,7 +66,7 @@ namespace LiteNetLib.Tests
             var client = ManagerStack.Client(1);
             bool msgDelivered = false;
             bool msgReceived = false;
-
+            const int testSize = 250 * 1024;
             ManagerStack.ClientListener(1).DeliveryEvent += (peer, obj) =>
             {
                 Assert.AreEqual(5, (int)obj);
@@ -75,18 +75,20 @@ namespace LiteNetLib.Tests
             ManagerStack.ClientListener(1).PeerConnectedEvent += peer =>
             {
                 int testData = 5;
-                byte[] arr = new byte[12500];
+                byte[] arr = new byte[testSize];
                 arr[0] = 196;
                 arr[7000] = 32;
                 arr[12499] = 200;
+                arr[testSize - 1] = 254;
                 peer.SendWithDeliveryEvent(arr, 0, DeliveryMethod.ReliableUnordered, testData);
             };
             ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, method) =>
             {
-                Assert.AreEqual(12500, reader.UserDataSize);
+                Assert.AreEqual(testSize, reader.UserDataSize);
                 Assert.AreEqual(196, reader.RawData[reader.UserDataOffset]);
                 Assert.AreEqual(32, reader.RawData[reader.UserDataOffset + 7000]);
                 Assert.AreEqual(200, reader.RawData[reader.UserDataOffset + 12499]);
+                Assert.AreEqual(254, reader.RawData[reader.UserDataOffset + testSize - 1]);
                 msgReceived = true;
             };
 

@@ -50,7 +50,7 @@ namespace LiteNetLib
                 _lock.ExitUpgradeableReadLock();
                 if (packet != null)
                 {
-                    packet.Size = (ushort)size;
+                    packet.Size = size;
                     if (packet.RawData.Length < size)
                         packet.RawData = new byte[size];
                     return packet;

@@ -999,12 +999,9 @@ namespace LiteNetLib
             }
         }
 
-        internal void ReceiveFromPeer(NetPacket packet, NetPeer fromPeer)
+        internal void ReceiveFromPeer(NetPacket packet, DeliveryMethod method, NetPeer fromPeer)
         {
-            var deliveryMethod = packet.Property == PacketProperty.Channeled
-                ? (DeliveryMethod) (packet.ChannelId % 4)
-                : DeliveryMethod.Unreliable;
-            CreateEvent(NetEvent.EType.Receive, fromPeer, deliveryMethod: deliveryMethod, readerSource: packet);
+            CreateEvent(NetEvent.EType.Receive, fromPeer, deliveryMethod: method, readerSource: packet);
         }
 
         /// <summary>

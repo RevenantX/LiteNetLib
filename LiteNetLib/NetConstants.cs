@@ -44,7 +44,7 @@
         public const int HeaderSize = 1;
         public const int ChanneledHeaderSize = 4;
         public const int FragmentHeaderSize = 6;
-        public const int FragmentTotalSize = ChanneledHeaderSize + FragmentHeaderSize;
+        public const int FragmentedHeaderTotalSize = ChanneledHeaderSize + FragmentHeaderSize;
         public const ushort MaxSequence = 32768;
         public const ushort HalfMaxSequence = MaxSequence / 2;
 

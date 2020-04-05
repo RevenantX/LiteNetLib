@@ -62,6 +62,7 @@ namespace LiteNetLib
 
         private bool _mustSendAcks;
 
+        private readonly DeliveryMethod _deliveryMethod;
         private readonly bool _ordered;
         private readonly int _windowSize;
         private const int BitsInByte = 8;
@@ -77,9 +78,15 @@ namespace LiteNetLib
                 _pendingPackets[i] = new PendingPacket();
 
             if (_ordered)
+            {
+                _deliveryMethod = DeliveryMethod.ReliableOrdered;
                 _receivedPackets = new NetPacket[_windowSize];
+            }
             else
+            {
+                _deliveryMethod = DeliveryMethod.ReliableUnordered;
                 _earlyReceived = new bool[_windowSize];
+            }
 
             _localWindowStart = 0;
             _localSeqence = 0;
@@ -268,7 +275,7 @@ namespace LiteNetLib
             if (seq == _remoteSequence)
             {
                 NetDebug.Write("[RR]ReliableInOrder packet succes");
-                Peer.AddIncomingPacket(packet);
+                Peer.AddReliablePacket(_deliveryMethod, packet);
                 _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
 
                 if (_ordered)
@@ -278,7 +285,7 @@ namespace LiteNetLib
                     {
                         //process holded packet
                         _receivedPackets[_remoteSequence % _windowSize] = null;
-                        Peer.AddIncomingPacket(p);
+                        Peer.AddReliablePacket(_deliveryMethod, p);
                         _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
                     }
                 }
@@ -302,7 +309,7 @@ namespace LiteNetLib
             else
             {
                 _earlyReceived[ackIdx] = true;
-                Peer.AddIncomingPacket(packet);
+                Peer.AddReliablePacket(_deliveryMethod, packet);
             }
             return true;
         }

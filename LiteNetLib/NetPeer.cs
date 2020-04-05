@@ -538,7 +538,7 @@ namespace LiteNetLib
                     p.FragmentsTotal = (ushort)totalPackets;
                     p.MarkFragmented();
 
-                    Buffer.BlockCopy(data, partIdx * packetDataSize, p.RawData, NetConstants.FragmentTotalSize, sendLength);
+                    Buffer.BlockCopy(data, partIdx * packetDataSize, p.RawData, NetConstants.FragmentedHeaderTotalSize, sendLength);
                     channel.AddToQueue(p);
 
                     length -= sendLength;
@@ -641,7 +641,7 @@ namespace LiteNetLib
             _resendDelay = 25.0 + _avgRtt * 2.1; // 25 ms + double rtt
         }
 
-        internal void AddIncomingPacket(NetPacket p)
+        internal void AddReliablePacket(DeliveryMethod method, NetPacket p)
         {
             if (p.IsFragmented)
             {
@@ -678,44 +678,43 @@ namespace LiteNetLib
                 incomingFragments.ReceivedCount++;
 
                 //Increase total size
-                incomingFragments.TotalSize += p.Size - NetConstants.FragmentTotalSize;
+                incomingFragments.TotalSize += p.Size - NetConstants.FragmentedHeaderTotalSize;
 
                 //Check for finish
                 if (incomingFragments.ReceivedCount != fragments.Length)
                     return;
 
-                int resultingPacketHeaderSize = NetPacket.GetHeaderSize(p.Property);
+                //unreliable to save header space
+                NetPacket resultingPacket = _packetPool.GetWithProperty(
+                    PacketProperty.Unreliable, 
+                    incomingFragments.TotalSize);
 
-                NetPacket resultingPacket = _packetPool.GetPacket(resultingPacketHeaderSize + incomingFragments.TotalSize);
-                resultingPacket.Property = p.Property;
-                resultingPacket.ChannelId = incomingFragments.ChannelId;
-
-                int firstFragmentSize = fragments[0].Size - NetConstants.FragmentTotalSize;
+                int firstFragmentSize = fragments[0].Size - NetConstants.FragmentedHeaderTotalSize;
                 for (int i = 0; i < incomingFragments.ReceivedCount; i++)
                 {
+                    var fragment = fragments[i];
                     //Create resulting big packet
-                    int fragmentSize = fragments[i].Size - NetConstants.FragmentTotalSize;
                     Buffer.BlockCopy(
-                        fragments[i].RawData,
-                        NetConstants.FragmentTotalSize,
+                        fragment.RawData,
+                        NetConstants.FragmentedHeaderTotalSize,
                         resultingPacket.RawData,
-                        resultingPacketHeaderSize + firstFragmentSize * i,
-                        fragmentSize);
+                        NetConstants.HeaderSize + firstFragmentSize * i,
+                        fragment.Size - NetConstants.FragmentedHeaderTotalSize);
 
                     //Free memory
-                    _packetPool.Recycle(fragments[i]);
-                    fragments[i] = null;
+                    _packetPool.Recycle(fragment);
                 }
+                Array.Clear(fragments, 0, incomingFragments.ReceivedCount);
 
                 //Send to process
-                NetManager.ReceiveFromPeer(resultingPacket, this);
+                NetManager.ReceiveFromPeer(resultingPacket, method, this);
 
                 //Clear memory
                 _holdedFragments.Remove(packetFragId);
             }
             else //Just simple packet
             {
-                NetManager.ReceiveFromPeer(p, this);
+                NetManager.ReceiveFromPeer(p, method, this);
             }
         }
 
@@ -915,7 +914,7 @@ namespace LiteNetLib
 
                 //Simple packet without acks
                 case PacketProperty.Unreliable:
-                    AddIncomingPacket(packet);
+                    NetManager.ReceiveFromPeer(packet, DeliveryMethod.Unreliable, this);
                     return;
 
                 case PacketProperty.MtuCheck:
