@@ -737,14 +737,8 @@ namespace LiteNetLib
         internal NetPeer OnConnectionSolved(ConnectionRequest request, byte[] rejectData, int start, int length)
         {
             NetPeer netPeer = null;
-            if (request.Result == ConnectionRequestResult.Reject)
-            {
-                netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId());
-                netPeer.Reject(request.ConnectionTime, request.ConnectionNumber, rejectData, start, length);
-                AddPeer(netPeer);
-                NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
-            }
-            else if (request.Result == ConnectionRequestResult.RejectForce)
+
+            if (request.Result == ConnectionRequestResult.RejectForce)
             {
                 NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject force.");
                 if (rejectData != null && length > 0)
@@ -761,13 +755,31 @@ namespace LiteNetLib
             }
             else
             {
-                //Accept
-                netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId(), request.ConnectionTime, request.ConnectionNumber);
-                AddPeer(netPeer);
-                //TODO: sync
-                CreateEvent(NetEvent.EType.Connect, netPeer);
-                NetDebug.Write(NetLogLevel.Trace, "[NM] Received peer connection Id: {0}, EP: {1}", netPeer.ConnectTime, netPeer.EndPoint);
+                _peersLock.EnterUpgradeableReadLock();
+                if (_peersDict.TryGetValue(request.RemoteEndPoint, out netPeer))
+                {
+                    //already have peer
+                    _peersLock.ExitUpgradeableReadLock();
+                }
+                else if (request.Result == ConnectionRequestResult.Reject)
+                {
+                    netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId());
+                    netPeer.Reject(request.ConnectionTime, request.ConnectionNumber, rejectData, start, length);
+                    AddPeer(netPeer);
+                    _peersLock.ExitUpgradeableReadLock();
+                    NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
+                }
+                else //Accept
+                {
+                    netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId(), request.ConnectionTime, request.ConnectionNumber);
+                    AddPeer(netPeer);
+                    _peersLock.ExitUpgradeableReadLock();
+                    CreateEvent(NetEvent.EType.Connect, netPeer);
+                    NetDebug.Write(NetLogLevel.Trace, "[NM] Received peer connection Id: {0}, EP: {1}",
+                        netPeer.ConnectTime, netPeer.EndPoint);
+                }
             }
+
             lock(_requestsDict)
                 _requestsDict.Remove(request.RemoteEndPoint);
 

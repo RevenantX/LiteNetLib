@@ -68,15 +68,15 @@ namespace LiteNetLib
             try
             {
                 if (Data.GetString() == key)
-                {
                     Result = ConnectionRequestResult.Accept;
-                    return _listener.OnConnectionSolved(this, null, 0, 0);
-                }
             }
             catch
             {
                 NetDebug.WriteError("[AC] Invalid incoming data");
             }
+            if (Result == ConnectionRequestResult.Accept)
+                return _listener.OnConnectionSolved(this, null, 0, 0);
+
             Result = ConnectionRequestResult.Reject;
             _listener.OnConnectionSolved(this, null, 0, 0);
             return null;
