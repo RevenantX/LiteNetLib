@@ -149,6 +149,28 @@ namespace LiteNetLib
             Size = (ushort)packetSize;
             return true;
         }
+
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        //Packet contstructor from byte array
+        public bool FromBytes(ReadOnlySpan<byte> data)
+        {
+            int packetSize = data.Length;
+            //Reading property
+            byte property = (byte)(data[0] & 0x1F);
+            bool fragmented = (data[0] & 0x80) != 0;
+            int headerSize = GetHeaderSize((PacketProperty)property);
+
+            if (property > LastProperty || packetSize < headerSize ||
+                (fragmented && packetSize < headerSize + NetConstants.FragmentHeaderSize))
+            {
+                return false;
+            }
+
+            data.CopyTo(new Span<byte>(RawData, 0, packetSize));
+            Size = (ushort)packetSize;
+            return true;
+        }
+#endif
     }
 
     internal sealed class NetConnectRequestPacket

@@ -18,6 +18,18 @@ namespace LiteNetLib
             return packet;
         }
 
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        public NetPacket GetWithData(PacketProperty property, ReadOnlySpan<byte> data)
+        {
+            int length = data.Length;
+            int headerSize = NetPacket.GetHeaderSize(property);
+            NetPacket packet = GetPacket(length + headerSize);
+            packet.Property = property;
+            data.CopyTo(new Span<byte>(packet.RawData, headerSize, length));
+            return packet;
+        }
+#endif
+
         //Get packet with size
         public NetPacket GetWithProperty(PacketProperty property, int size)
         {

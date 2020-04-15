@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 
 namespace LiteNetLib.Utils
@@ -114,5 +115,98 @@ namespace LiteNetLib.Utils
         {
             WriteLittleEndian(bytes, startIndex, value);
         }
+
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        private static void WriteLittleEndian(Span<byte> bytes, ulong data)
+        {
+#if BIGENDIAN
+            bytes[7] = (byte)(data);
+            bytes[6] = (byte)(data >> 8);
+            bytes[5] = (byte)(data >> 16);
+            bytes[4] = (byte)(data >> 24);
+            bytes[3] = (byte)(data >> 32);
+            bytes[2] = (byte)(data >> 40);
+            bytes[1] = (byte)(data >> 48);
+            bytes[0] = (byte)(data >> 56);
+#else
+            bytes[0] = (byte)(data);
+            bytes[1] = (byte)(data >> 8);
+            bytes[2] = (byte)(data >> 16);
+            bytes[3] = (byte)(data >> 24);
+            bytes[4] = (byte)(data >> 32);
+            bytes[5] = (byte)(data >> 40);
+            bytes[6] = (byte)(data >> 48);
+            bytes[7] = (byte)(data >> 56);
+#endif
+        }
+
+        private static void WriteLittleEndian(Span<byte> bytes, int data)
+        {
+#if BIGENDIAN
+            bytes[3] = (byte)(data);
+            bytes[2] = (byte)(data >> 8);
+            bytes[1] = (byte)(data >> 16);
+            bytes[0] = (byte)(data >> 24);
+#else
+            bytes[0] = (byte)(data);
+            bytes[1] = (byte)(data >> 8);
+            bytes[2] = (byte)(data >> 16);
+            bytes[3] = (byte)(data >> 24);
+#endif
+        }
+
+        public static void WriteLittleEndian(Span<byte> bytes, short data)
+        {
+#if BIGENDIAN
+            bytes[1] = (byte)(data);
+            bytes[0] = (byte)(data >> 8);
+#else
+            bytes[0] = (byte)(data);
+            bytes[1] = (byte)(data >> 8);
+#endif
+        }
+
+        public static void GetBytes(Span<byte> bytes, double value)
+        {
+            ConverterHelperDouble ch = new ConverterHelperDouble { Adouble = value };
+            WriteLittleEndian(bytes, ch.Along);
+        }
+
+        public static void GetBytes(Span<byte> bytes, float value)
+        {
+            ConverterHelperFloat ch = new ConverterHelperFloat { Afloat = value };
+            WriteLittleEndian(bytes, ch.Aint);
+        }
+
+        public static void GetBytes(Span<byte> bytes, short value)
+        {
+            WriteLittleEndian(bytes, value);
+        }
+
+        public static void GetBytes(Span<byte> bytes, ushort value)
+        {
+            WriteLittleEndian(bytes, (short)value);
+        }
+
+        public static void GetBytes(Span<byte> bytes, int value)
+        {
+            WriteLittleEndian(bytes, value);
+        }
+
+        public static void GetBytes(Span<byte> bytes, uint value)
+        {
+            WriteLittleEndian(bytes, (int)value);
+        }
+
+        public static void GetBytes(Span<byte> bytes, long value)
+        {
+            WriteLittleEndian(bytes, (ulong)value);
+        }
+
+        public static void GetBytes(Span<byte> bytes, ulong value)
+        {
+            WriteLittleEndian(bytes, value);
+        }
+#endif
     }
 }

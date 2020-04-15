@@ -208,7 +208,17 @@ namespace LiteNetLib.Utils
             Buffer.BlockCopy(data, 0, _data, _position, data.Length);
             _position += data.Length;
         }
-        
+
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        public void Put(ReadOnlySpan<byte> data)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + data.Length);
+            data.CopyTo(new Span<byte>(_data, _position, data.Length));
+            _position += data.Length;
+        }
+#endif
+
         public void PutSBytesWithLength(sbyte[] data, int offset, int length)
         {
             if (_autoResize)

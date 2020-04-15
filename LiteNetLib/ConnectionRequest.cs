@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading;
 using LiteNetLib.Utils;
 
@@ -93,7 +94,27 @@ namespace LiteNetLib
             Result = ConnectionRequestResult.Accept;
             return _listener.OnConnectionSolved(this, null, 0, 0);
         }
-        
+
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        public void Reject(ReadOnlySpan<byte> rejectData, bool force)
+        {
+            if (!TryActivate())
+                return;
+            Result = force ? ConnectionRequestResult.RejectForce : ConnectionRequestResult.Reject;
+            _listener.OnConnectionSolved(this, rejectData);
+        }
+
+        public void Reject(ReadOnlySpan<byte> rejectData)
+        {
+            Reject(rejectData, false);
+        }
+
+        public void RejectForce(ReadOnlySpan<byte> rejectData)
+        {
+            Reject(rejectData, true);
+        }
+#endif
+
         public void Reject(byte[] rejectData, int start, int length, bool force)
         {
             if (!TryActivate())
@@ -106,7 +127,6 @@ namespace LiteNetLib
         {
             Reject(rejectData, start, length, false);
         }
-
 
         public void RejectForce(byte[] rejectData, int start, int length)
         {

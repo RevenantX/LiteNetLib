@@ -514,6 +514,29 @@ namespace LiteNetLib
                 readerSource: eventData);
         }
 
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        private void DisconnectPeer(
+            NetPeer peer,
+            DisconnectReason reason,
+            SocketError socketErrorCode,
+            bool force,
+            ReadOnlySpan<byte> data,
+            NetPacket eventData)
+        {
+            bool wasConnected = peer.ConnectionState == ConnectionState.Connected;
+            if (!peer.Shutdown(data, force))
+                return;
+            if (wasConnected)
+                _connectedPeersCount--;
+            CreateEvent(
+                NetEvent.EType.Disconnect,
+                peer,
+                errorCode: socketErrorCode,
+                disconnectReason: reason,
+                readerSource: eventData);
+        }
+#endif
+
         private void CreateEvent(
             NetEvent.EType type,
             NetPeer peer = null,
@@ -785,6 +808,60 @@ namespace LiteNetLib
 
             return netPeer;
         }
+
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        internal NetPeer OnConnectionSolved(ConnectionRequest request, ReadOnlySpan<byte> rejectData)
+        {
+            NetPeer netPeer = null;
+            int length = rejectData.Length;
+            if (request.Result == ConnectionRequestResult.RejectForce)
+            {
+                NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject force.");
+                if (rejectData != null && length > 0)
+                {
+                    var shutdownPacket = NetPacketPool.GetWithProperty(PacketProperty.Disconnect, length);
+                    shutdownPacket.ConnectionNumber = request.ConnectionNumber;
+                    FastBitConverter.GetBytes(shutdownPacket.RawData, 1, request.ConnectionTime);
+                    if (shutdownPacket.Size >= NetConstants.PossibleMtu[0])
+                        NetDebug.WriteError("[Peer] Disconnect additional data size more than MTU!");
+                    else
+                        rejectData.CopyTo(new Span<byte>(shutdownPacket.RawData, 9, length));
+                    SendRawAndRecycle(shutdownPacket, request.RemoteEndPoint);
+                }
+            }
+            else
+            {
+                _peersLock.EnterUpgradeableReadLock();
+                if (_peersDict.TryGetValue(request.RemoteEndPoint, out netPeer))
+                {
+                    //already have peer
+                    _peersLock.ExitUpgradeableReadLock();
+                }
+                else if (request.Result == ConnectionRequestResult.Reject)
+                {
+                    netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId());
+                    netPeer.Reject(request.ConnectionTime, request.ConnectionNumber, rejectData);
+                    AddPeer(netPeer);
+                    _peersLock.ExitUpgradeableReadLock();
+                    NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
+                }
+                else //Accept
+                {
+                    netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId(), request.ConnectionTime, request.ConnectionNumber);
+                    AddPeer(netPeer);
+                    _peersLock.ExitUpgradeableReadLock();
+                    CreateEvent(NetEvent.EType.Connect, netPeer);
+                    NetDebug.Write(NetLogLevel.Trace, "[NM] Received peer connection Id: {0}, EP: {1}",
+                        netPeer.ConnectTime, netPeer.EndPoint);
+                }
+            }
+
+            lock (_requestsDict)
+                _requestsDict.Remove(request.RemoteEndPoint);
+
+            return netPeer;
+        }
+#endif
 
         private int GetNextPeerId()
         {
@@ -1157,7 +1234,6 @@ namespace LiteNetLib
             SendToAll(data, 0, data.Length, channelNumber, options, excludePeer);
         }
 
-
         /// <summary>
         /// Send data to all connected peers
         /// </summary>
@@ -1175,6 +1251,62 @@ namespace LiteNetLib
                     netPeer.Send(data, start, length, channelNumber, options);
             }
         }
+
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        public void SendToAll(ReadOnlySpan<byte> data, DeliveryMethod options)
+        {
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                netPeer.Send(data, 0, options);
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        public void SendToAll(ReadOnlySpan<byte> data, byte channelNumber, DeliveryMethod options)
+        {
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                netPeer.Send(data, channelNumber, options);
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(ReadOnlySpan<byte> data, DeliveryMethod options, NetPeer excludePeer)
+        {
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+            {
+                if (netPeer != excludePeer)
+                    netPeer.Send(data, 0, options);
+            }
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(ReadOnlySpan<byte> data, byte channelNumber, DeliveryMethod options, NetPeer excludePeer)
+        {
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+            {
+                if (netPeer != excludePeer)
+                    netPeer.Send(data, channelNumber, options);
+            }
+        }
+#endif
 
         /// <summary>
         /// Start logic thread and listening on available port
@@ -1258,6 +1390,21 @@ namespace LiteNetLib
             return SendRawAndRecycle(packet, remoteEndPoint) > 0;
         }
 
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        /// <summary>
+        /// Send message without connection
+        /// </summary>
+        /// <param name="message">Raw data</param>
+        /// <param name="remoteEndPoint">Packet destination</param>
+        /// <returns>Operation result</returns>
+        public bool SendUnconnectedMessage(ReadOnlySpan<byte> message, IPEndPoint remoteEndPoint)
+        {
+            //No need for CRC here, SendRaw does that
+            NetPacket packet = NetPacketPool.GetWithData(PacketProperty.UnconnectedMessage, message);
+            return SendRawAndRecycle(packet, remoteEndPoint) > 0;
+        }
+#endif
+
         public bool SendBroadcast(NetDataWriter writer, int port)
         {
             return SendBroadcast(writer.Data, 0, writer.Length, port);
@@ -1290,6 +1437,32 @@ namespace LiteNetLib
             NetPacketPool.Recycle(packet);
             return result;
         }
+
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        public bool SendBroadcast(ReadOnlySpan<byte> data, int port)
+        {
+            int length = data.Length;
+            NetPacket packet;
+            if (_extraPacketLayer != null)
+            {
+                var headerSize = NetPacket.GetHeaderSize(PacketProperty.Broadcast);
+                packet = NetPacketPool.GetPacket(headerSize + length + _extraPacketLayer.ExtraPacketSizeForLayer);
+                packet.Property = PacketProperty.Broadcast;
+                data.CopyTo(new Span<byte>(packet.RawData, headerSize, length));
+                var checksumComputeStart = 0;
+                int preCrcLength = length + headerSize;
+                _extraPacketLayer.ProcessOutBoundPacket(ref packet.RawData, ref checksumComputeStart, ref preCrcLength);
+            }
+            else
+            {
+                packet = NetPacketPool.GetWithData(PacketProperty.Broadcast, data);
+            }
+
+            bool result = _socket.SendBroadcast(packet.RawData, 0, packet.Size, port);
+            NetPacketPool.Recycle(packet);
+            return result;
+        }
+#endif
 
         /// <summary>
         /// Flush all queued packets of all peers
@@ -1520,6 +1693,27 @@ namespace LiteNetLib
             }
         }
 
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        /// <summary>
+        /// Disconnect all peers with shutdown message
+        /// </summary>
+        /// <param name="data">Data to send (must be less or equal MTU)</param>
+        public void DisconnectAll(ReadOnlySpan<byte> data)
+        {
+            //Send disconnect packets
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+            {
+                DisconnectPeer(
+                    netPeer,
+                    DisconnectReason.DisconnectPeerCalled,
+                    0,
+                    false,
+                    data,
+                    null);
+            }
+        }
+#endif
+
         /// <summary>
         /// Immediately disconnect peer from server without additional data
         /// </summary>
@@ -1577,6 +1771,24 @@ namespace LiteNetLib
                 count,
                 null);
         }
+
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+        /// <summary>
+        /// Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
+        /// </summary>
+        /// <param name="peer">peer to disconnect</param>
+        /// <param name="data">additional data</param>
+        public void DisconnectPeer(NetPeer peer, ReadOnlySpan<byte> data)
+        {
+            DisconnectPeer(
+                peer,
+                DisconnectReason.DisconnectPeerCalled,
+                0,
+                false,
+                data,
+                null);
+        }
+#endif
 
         public NetPeerEnumerator GetEnumerator()
         {
