@@ -372,9 +372,6 @@ namespace LiteNetLib.Tests
                 client.PollEvents();
                 server.PollEvents();
             }
-            
-            // Wait that server remove disconnected peers
-            Thread.Sleep(100);
 
             Assert.True(clientDisconnected);
             Assert.True(serverDisconnected);
@@ -452,8 +449,17 @@ namespace LiteNetLib.Tests
             var clientDisconnected = false;
             var serverDisconnected = false;
             
-            ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) => { clientDisconnected = true; };
-            ManagerStack.ServerListener(1).PeerDisconnectedEvent += (peer, info) => { serverDisconnected = true; };
+            ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) =>
+            {
+                Assert.AreEqual(DisconnectReason.DisconnectPeerCalled, info.Reason);
+                Assert.AreEqual(0, client.ConnectedPeersCount);
+                clientDisconnected = true;
+            };
+            ManagerStack.ServerListener(1).PeerDisconnectedEvent += (peer, info) =>
+            {
+                Assert.AreEqual(DisconnectReason.RemoteConnectionClose, info.Reason);
+                serverDisconnected = true;
+            };
 
             NetPeer serverPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             while (server.ConnectedPeersCount != 1)
@@ -471,9 +477,6 @@ namespace LiteNetLib.Tests
                 client.PollEvents();
                 server.PollEvents();
             }
-
-            // Wait that server remove disconnected peers
-            Thread.Sleep(100);
 
             Assert.True(clientDisconnected);
             Assert.True(serverDisconnected);

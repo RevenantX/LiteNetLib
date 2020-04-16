@@ -501,10 +501,10 @@ namespace LiteNetLib
             int count,
             NetPacket eventData)
         {
-            bool wasConnected = peer.ConnectionState == ConnectionState.Connected;
-            if (!peer.Shutdown(data, start, count, force))
+            var shutdownResult = peer.Shutdown(data, start, count, force);
+            if (shutdownResult == ShutdownResult.None)
                 return;
-            if(wasConnected)
+            if(shutdownResult == ShutdownResult.WasConnected)
                 _connectedPeersCount--;
             CreateEvent(
                 NetEvent.EType.Disconnect,

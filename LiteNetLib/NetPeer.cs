@@ -37,6 +37,13 @@ namespace LiteNetLib
         Disconnect
     }
 
+    internal enum ShutdownResult
+    {
+        None,
+        Success,
+        WasConnected
+    }
+
     /// <summary>
     /// Network peer. Main purpose is sending messages to specific peer.
     /// </summary>
@@ -592,7 +599,7 @@ namespace LiteNetLib
             return DisconnectResult.None;
         }
 
-        internal bool Shutdown(byte[] data, int start, int length, bool force)
+        internal ShutdownResult Shutdown(byte[] data, int start, int length, bool force)
         {
             lock (_shutdownLock)
             {
@@ -600,14 +607,18 @@ namespace LiteNetLib
                 if (_connectionState == ConnectionState.Disconnected ||
                     _connectionState == ConnectionState.ShutdownRequested)
                 {
-                    return false;
+                    return ShutdownResult.None;
                 }
 
+                var result = _connectionState == ConnectionState.Connected
+                    ? ShutdownResult.WasConnected
+                    : ShutdownResult.Success;
+;
                 //don't send anything
                 if (force)
                 {
                     _connectionState = ConnectionState.Disconnected;
-                    return true;
+                    return result;
                 }
 
                 //reset time for reconnect protection
@@ -629,7 +640,7 @@ namespace LiteNetLib
                 _connectionState = ConnectionState.ShutdownRequested;
                 NetDebug.Write("[Peer] Send disconnect");
                 NetManager.SendRaw(_shutdownPacket, EndPoint);
-                return true;
+                return result;
             }
         }
 
