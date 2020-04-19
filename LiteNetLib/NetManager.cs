@@ -1094,8 +1094,16 @@ namespace LiteNetLib
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
         public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
         {
-            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
-                netPeer.Send(data, start, length, channelNumber, options);
+            try
+            {
+                _peersLock.EnterReadLock();
+                for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                    netPeer.Send(data, start, length, channelNumber, options);
+            }
+            finally
+            {
+                _peersLock.ExitReadLock();
+            }
         }
 
         /// <summary>
@@ -1169,10 +1177,18 @@ namespace LiteNetLib
         /// <param name="excludePeer">Excluded peer</param>
         public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options, NetPeer excludePeer)
         {
-            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+            try
             {
-                if (netPeer != excludePeer)
-                    netPeer.Send(data, start, length, channelNumber, options);
+                _peersLock.EnterReadLock();
+                for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                {
+                    if (netPeer != excludePeer)
+                        netPeer.Send(data, start, length, channelNumber, options);
+                }
+            }
+            finally
+            {
+                _peersLock.ExitReadLock();
             }
         }
 
@@ -1464,11 +1480,13 @@ namespace LiteNetLib
         public int GetPeersCount(ConnectionState peerState)
         {
             int count = 0;
+            _peersLock.EnterReadLock();
             for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
             {
                 if ((netPeer.ConnectionState & peerState) != 0)
                     count++;
             }
+            _peersLock.ExitReadLock();
             return count;
         }
 
@@ -1506,6 +1524,7 @@ namespace LiteNetLib
         public void DisconnectAll(byte[] data, int start, int count)
         {
             //Send disconnect packets
+            _peersLock.EnterReadLock();
             for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
             {
                 DisconnectPeer(
@@ -1518,6 +1537,7 @@ namespace LiteNetLib
                     count,
                     null);
             }
+            _peersLock.ExitReadLock();
         }
 
         /// <summary>
