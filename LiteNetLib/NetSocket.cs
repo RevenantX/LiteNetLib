@@ -1,6 +1,8 @@
 #if UNITY_5_3_OR_NEWER
 #define UNITY
+#if UNITY_IOS && !UNITY_EDITOR
 using UnityEngine;
+#endif
 #endif
 #if NETSTANDARD || NETCOREAPP
 using System.Runtime.InteropServices;
@@ -13,7 +15,7 @@ using System.Threading;
 
 namespace LiteNetLib
 {
-#if UNITY
+#if UNITY_IOS && !UNITY_EDITOR
     public class UnitySocketFix : MonoBehaviour
     {
         internal IPAddress BindAddrIPv4;
@@ -68,7 +70,7 @@ namespace LiteNetLib
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("FF02:0:0:0:0:0:0:1");
         internal static readonly bool IPv6Support;
-#if UNITY
+#if UNITY_IOS && !UNITY_EDITOR
         private UnitySocketFix _unitySocketFix;
 
         public void OnErrorRestore()
@@ -111,7 +113,7 @@ namespace LiteNetLib
 
         private bool IsActive()
         {
-#if UNITY
+#if UNITY_IOS && !UNITY_EDITOR
             var unitySocketFix = _unitySocketFix; //save for multithread
             if (unitySocketFix != null && unitySocketFix.Paused)
                 return false;
@@ -141,7 +143,7 @@ namespace LiteNetLib
                 {
                     switch (ex.SocketErrorCode)
                     {
-#if UNITY
+#if UNITY_IOS && !UNITY_EDITOR
                         case SocketError.NotConnected:
 #endif
                         case SocketError.Interrupted:
@@ -180,7 +182,7 @@ namespace LiteNetLib
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port), reuseAddress))
                 return false;
-#if UNITY
+#if UNITY_IOS && !UNITY_EDITOR
             if (_unitySocketFix == null)
             {
                 var unityFixObj = new GameObject("LiteNetLib_UnitySocketFix");
@@ -401,7 +403,7 @@ namespace LiteNetLib
             if (!suspend)
             {
                 IsRunning = false;
-#if UNITY
+#if UNITY_IOS && !UNITY_EDITOR
                 _unitySocketFix.Socket = null;
                 _unitySocketFix = null;
 #endif
