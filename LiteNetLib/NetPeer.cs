@@ -225,6 +225,20 @@ namespace LiteNetLib
             _mtu = NetConstants.PossibleMtu[mtuIdx] - extraLayerSpace;
         }
 
+        /// <summary>
+        /// Returns packets count in queue for reliable channel
+        /// </summary>
+        /// <param name="channelNumber">number of channel 0-63</param>
+        /// <param name="ordered">type of channel ReliableOrdered or ReliableUnordered</param>
+        /// <returns>packets count in channel queue</returns>
+        public int GetPacketsCountInReliableQueue(byte channelNumber, bool ordered)
+        {
+            int idx = channelNumber * 4 +
+                       (byte) (ordered ? DeliveryMethod.ReliableOrdered : DeliveryMethod.ReliableUnordered);
+            var channel = _channels[idx];
+            return channel != null ? ((ReliableChannel)channel).PacketsInQueue : 0;
+        }
+
         private BaseChannel CreateChannel(byte idx)
         {
             BaseChannel newChannel = _channels[idx];
