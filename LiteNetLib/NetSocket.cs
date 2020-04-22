@@ -410,15 +410,16 @@ namespace LiteNetLib
             }
 
             if (_udpSocketv4 != null)
-            {
                 _udpSocketv4.Close();
-                _udpSocketv4 = null;
-            }
             if (_udpSocketv6 != null)
-            {
                 _udpSocketv6.Close();
-                _udpSocketv6 = null;
-            }
+            _udpSocketv4 = null;
+            _udpSocketv6 = null;
+
+            if (_threadv4 != null && _threadv4 != Thread.CurrentThread)
+                _threadv4.Join();
+            if (_threadv6 != null && _threadv6 != Thread.CurrentThread)
+                _threadv6.Join();
             _threadv4 = null;
             _threadv6 = null;
         }
