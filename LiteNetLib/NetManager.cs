@@ -1,7 +1,3 @@
-#if DEBUG
-#define STATS_ENABLED
-#endif
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -260,6 +256,11 @@ namespace LiteNetLib
         /// </summary>
         public readonly NetStatistics Statistics;
 
+        /// <summary>
+        /// Toggles the collection of network statistics for the instance and all known peers
+        /// </summary>
+        public bool EnableStatistics = false;
+
         //modules
         /// <summary>
         /// NatPunchModule for NAT hole punching operations
@@ -476,10 +477,13 @@ namespace LiteNetLib
             }
             if (result <= 0)
                 return 0;
-#if STATS_ENABLED
-            Statistics.PacketsSent++;
-            Statistics.BytesSent += (uint)length;
-#endif
+
+            if (EnableStatistics)
+            {
+                Statistics.PacketsSent++;
+                Statistics.BytesSent += (uint)length;
+            }
+
             return result;
         }
 
@@ -646,9 +650,8 @@ namespace LiteNetLib
                 }
 #endif
 
-#if STATS_ENABLED
                 ulong totalPacketLoss = 0;
-#endif
+
                 int elapsed = (int)stopwatch.ElapsedMilliseconds;
                 if (elapsed <= 0)
                     elapsed = 1;
@@ -661,9 +664,11 @@ namespace LiteNetLib
                     else
                     {
                         netPeer.Update(elapsed);
-#if STATS_ENABLED
-                        totalPacketLoss += netPeer.Statistics.PacketLoss;
-#endif
+
+                        if (EnableStatistics)
+                        {
+                            totalPacketLoss += netPeer.Statistics.PacketLoss;
+                        }
                     }
                 }
                 if (peersToRemove.Count > 0)
@@ -673,10 +678,13 @@ namespace LiteNetLib
                         RemovePeerInternal(peersToRemove[i]);
                     _peersLock.ExitWriteLock();
                     peersToRemove.Clear();
-                }               
-#if STATS_ENABLED
-                Statistics.PacketLoss = totalPacketLoss;
-#endif
+                }
+
+                if (EnableStatistics)
+                {
+                    Statistics.PacketLoss = totalPacketLoss;
+                }
+
                 int sleepTime = UpdateTime - (int)(stopwatch.ElapsedMilliseconds - elapsed);
                 stopwatch.Reset();
                 stopwatch.Start();
@@ -871,10 +879,12 @@ namespace LiteNetLib
 
         private void DataReceived(byte[] reusableBuffer, int count, IPEndPoint remoteEndPoint)
         {
-#if STATS_ENABLED
-            Statistics.PacketsReceived++;
-            Statistics.BytesReceived += (uint)count;
-#endif
+            if (EnableStatistics)
+            {
+                Statistics.PacketsReceived++;
+                Statistics.BytesReceived += (uint)count;
+            }
+
             if (_extraPacketLayer != null)
             {
                 _extraPacketLayer.ProcessInboundPacket(ref reusableBuffer, ref count);
