@@ -138,9 +138,15 @@ namespace LiteNetLib
                     int currentBit = pendingIdx % BitsInByte;
                     if ((acksData[currentByte] & (1 << currentBit)) == 0)
                     {
-#if STATS_ENABLED || DEBUG
-                    Peer.Statistics.PacketLoss++;
+#if DEBUG
+                        Peer.Statistics.PacketLoss++;
+#else
+                        if (Peer.NetManager.EnableStatistics) 
+                        {
+                            Peer.Statistics.PacketLoss++;
+                        }
 #endif
+
                         //Skip false ack
                         NetDebug.Write("[PA]False ack: {0}", pendingSeq);
                         continue;

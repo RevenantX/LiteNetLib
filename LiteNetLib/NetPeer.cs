@@ -974,10 +974,13 @@ namespace LiteNetLib
                 //Send without length information and merging
                 bytesSent = NetManager.SendRaw(_mergeData.RawData, NetConstants.HeaderSize + 2, _mergePos - 2, EndPoint);
             }
-#if STATS_ENABLED
-            Statistics.PacketsSent++;
-            Statistics.BytesSent += (ulong)bytesSent;
-#endif
+
+            if (NetManager.EnableStatistics)
+            {
+                Statistics.PacketsSent++;
+                Statistics.BytesSent += (ulong)bytesSent;
+            }
+
             _mergePos = 0;
             _mergeCount = 0;
         }
@@ -991,10 +994,13 @@ namespace LiteNetLib
             {
                 NetDebug.Write(NetLogLevel.Trace, "[P]SendingPacket: " + packet.Property);
                 int bytesSent = NetManager.SendRaw(packet, EndPoint);
-#if STATS_ENABLED
-                Statistics.PacketsSent++;
-                Statistics.BytesSent += (ulong)bytesSent;
-#endif
+
+                if (NetManager.EnableStatistics)
+                {
+                    Statistics.PacketsSent++;
+                    Statistics.BytesSent += (ulong)bytesSent;
+                }
+
                 return;
             }
             if (_mergePos + mergedPacketSize > _mtu)
