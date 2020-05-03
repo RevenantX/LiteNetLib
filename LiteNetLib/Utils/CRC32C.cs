@@ -9,8 +9,8 @@ namespace LiteNetLib.Utils
     public static class CRC32C
     {
 #if NETCOREAPP3_0
-        private static bool _x64Available;
-        private static bool _sseAvailable;
+        private static readonly bool _x64Available;
+        private static readonly bool _sseAvailable;
 #endif
         public const int ChecksumSize = 4;
         private const uint Poly = 0x82F63B78u;

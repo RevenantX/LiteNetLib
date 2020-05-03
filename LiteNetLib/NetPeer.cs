@@ -627,7 +627,7 @@ namespace LiteNetLib
                 var result = _connectionState == ConnectionState.Connected
                     ? ShutdownResult.WasConnected
                     : ShutdownResult.Success;
-;
+
                 //don't send anything
                 if (force)
                 {
@@ -639,8 +639,7 @@ namespace LiteNetLib
                 _timeSinceLastPacket = 0;
 
                 //send shutdown packet
-                _shutdownPacket = new NetPacket(PacketProperty.Disconnect, length);
-                _shutdownPacket.ConnectionNumber = _connectNum;
+                _shutdownPacket = new NetPacket(PacketProperty.Disconnect, length) {ConnectionNumber = _connectNum};
                 FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectTime);
                 if (_shutdownPacket.Size >= _mtu)
                 {

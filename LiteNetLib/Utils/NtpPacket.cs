@@ -293,9 +293,7 @@ namespace LiteNetLib.Utils
         /// <returns></returns>
         public static NtpPacket FromServerResponse(byte[] bytes, DateTime destinationTimestamp)
         {
-            var packet = new NtpPacket(bytes);
-            packet.DestinationTimestamp = destinationTimestamp;
-            return packet;
+            return new NtpPacket(bytes) { DestinationTimestamp = destinationTimestamp };
         }
 
         internal void ValidateRequest()

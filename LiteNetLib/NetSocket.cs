@@ -308,11 +308,15 @@ namespace LiteNetLib
                                 socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
                                 socket.Bind(ep);
                             }
+#if UNITY_2018_3_OR_NEWER
                             catch (SocketException ex)
                             {
-#if UNITY_2018_3_OR_NEWER
+
                                 //because its fixed in 2018_3
                                 NetDebug.WriteError("[B]Bind exception: {0}, errorCode: {1}", ex.ToString(), ex.SocketErrorCode);
+#else
+                            catch(SocketException)
+                            {
 #endif
                                 return false;
                             }
