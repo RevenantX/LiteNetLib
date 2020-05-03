@@ -2,7 +2,7 @@
 
 Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.1, .NET Standard 2.0.
 
-[STABLE BRANCH (and examples) for 0.8.x](https://github.com/RevenantX/LiteNetLib/tree/0.8)
+[OLD BRANCH (and examples) for 0.8.x](https://github.com/RevenantX/LiteNetLib/tree/0.8)
 
 [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
@@ -110,50 +110,3 @@ while (!Console.KeyAvailable)
 }
 server.Stop();
 ```
-
-## NetManager settings description
-
-* **UnconnectedMessagesEnabled**
-  * enable messages receiving without connection. (with SendUnconnectedMessage method)
-  * default value: **false**
-* **NatPunchEnabled**
-  * enable NAT punch messages
-  * default value: **false**
-* **UpdateTime**
-  * library logic update (and send) period in milliseconds
-  * default value: **15 msec**.
-* **PingInterval**
-  * Interval for latency detection and checking connection
-  * default value: **1000 msec**.
-* **DisconnectTimeout**
-  * if client or server doesn't receive any packet from remote peer during this time then connection will be closed
-  * (including library internal keepalive packets)
-  * default value: **5000 msec**.
-* **SimulatePacketLoss**
-  * simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)
-  * default value: **false**
-* **SimulateLatency**
-  * simulate latency by holding packets for random time. (Works only in DEBUG mode)
-  * default value: **false**
-* **SimulationPacketLossChance**
-  * chance of packet loss when simulation enabled. value in percents.
-  * default value: **10 (%)**
-* **SimulationMinLatency**
-  * minimum simulated latency
-  * default value: **30 msec**
-* **SimulationMaxLatency**
-  * maximum simulated latency
-  * default value: **100 msec**
-* **BroadcastEnabled**
-  * Allows receive Broadcast packets
-  * default value: **false**
-* **ReconnectDelay**
-  * delay betwen connection attempts
-  * default value: **500 msec**
-* **MaxConnectAttempts**
-  * maximum connection attempts before client stops and call disconnect event.
-  * default value: **10**
-* **UnsyncedEvents**
-  * Warning! Use this only when you know what are you doing, and sync data manually
-  * Events automatically will be called without PollEvents method from socket recieve thread
-  * default value: **false**
