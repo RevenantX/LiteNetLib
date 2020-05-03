@@ -46,7 +46,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.1, .NET Stan
 * NTP time requests
 * Packet loss and latency simulation
 * IPv6 support (dual mode)
-* Connection statisitcs (need DEBUG or STATS_ENABLED flag)
+* Connection statisitcs
 * Multicasting (for discovering hosts in local network)
 * Unity support
 * Supported platforms:
