@@ -534,6 +534,57 @@ positive - remote time &gt; our time</p>
   </table>
   
   
+  <a id="LiteNetLib_NetPeer_GetPacketsCountInReliableQueue_" data-uid="LiteNetLib.NetPeer.GetPacketsCountInReliableQueue*"></a>
+  <h4 id="LiteNetLib_NetPeer_GetPacketsCountInReliableQueue_System_Byte_System_Boolean_" data-uid="LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Byte,System.Boolean)">GetPacketsCountInReliableQueue(Byte, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Returns packets count in queue for reliable channel</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetPacketsCountInReliableQueue(byte channelNumber, bool ordered)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span></td>
+        <td><span class="parametername">channelNumber</span></td>
+        <td><p>number of channel 0-63</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">ordered</span></td>
+        <td><p>type of channel ReliableOrdered or ReliableUnordered</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>packets count in channel queue</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="LiteNetLib_NetPeer_Send_" data-uid="LiteNetLib.NetPeer.Send*"></a>
   <h4 id="LiteNetLib_NetPeer_Send_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetPeer.Send(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">Send(NetDataWriter, DeliveryMethod)</h4>
   <div class="markdown level1 summary"><p>Send data to peer (channel - 0)</p>

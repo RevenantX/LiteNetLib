@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "E:/Projects/LiteNetLib/docfx_project",
+  "source_base_path": "e:/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -69,7 +69,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.DisconnectReason.html",
-          "hash": "bwiXxzvDldsUl2V2qjk6+w=="
+          "hash": "KZu1v51wJ+p3k8siuBsACA=="
         }
       },
       "is_incremental": false,
@@ -237,7 +237,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetConstants.html",
-          "hash": "fGPFM2XaFvNUlCUHGxe6sQ=="
+          "hash": "IIxHFuHh8rBmmM8sxxr8jQ=="
         }
       },
       "is_incremental": false,
@@ -285,7 +285,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetManager.html",
-          "hash": "2wkgtoSnum4DI4S2JdDi5g=="
+          "hash": "HGMnfqkyhA5uY6cGkfHuRA=="
         }
       },
       "is_incremental": false,
@@ -309,7 +309,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetPeer.html",
-          "hash": "9T+30gYn5ZmiDwoy+5WbEA=="
+          "hash": "Y8MVN7aLRlYWtmmh9Rav1A=="
         }
       },
       "is_incremental": false,
@@ -552,7 +552,7 @@
           "hash": "WZ1EOM3Cf/oichDNKx9s9Q=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -576,7 +576,7 @@
           "hash": "H1MRW3oqFMr9r3YtBFLKMw=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -600,7 +600,7 @@
           "hash": "dXc0cXBRoSPBAJd8n67QxQ=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -619,25 +619,23 @@
   "incremental_info": [
     {
       "status": {
-        "can_incremental": false,
-        "details": "Cannot build incrementally because config changed.",
+        "can_incremental": true,
         "incrementalPhase": "build",
         "total_file_count": 0,
-        "skipped_file_count": 0,
-        "full_build_reason_code": "ConfigChanged"
+        "skipped_file_count": 0
       },
       "processors": {
         "ConceptualDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 3,
-          "skipped_file_count": 0
+          "skipped_file_count": 3
         },
         "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 45,
-          "skipped_file_count": 0
+          "skipped_file_count": 3
         },
         "TocDocumentProcessor": {
           "can_incremental": false,

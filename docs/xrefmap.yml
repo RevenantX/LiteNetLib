@@ -303,6 +303,12 @@ references:
   commentId: F:LiteNetLib.DisconnectReason.NetworkUnreachable
   fullName: LiteNetLib.DisconnectReason.NetworkUnreachable
   nameWithType: DisconnectReason.NetworkUnreachable
+- uid: LiteNetLib.DisconnectReason.Reconnect
+  name: Reconnect
+  href: api/LiteNetLib.DisconnectReason.html#LiteNetLib_DisconnectReason_Reconnect
+  commentId: F:LiteNetLib.DisconnectReason.Reconnect
+  fullName: LiteNetLib.DisconnectReason.Reconnect
+  nameWithType: DisconnectReason.Reconnect
 - uid: LiteNetLib.DisconnectReason.RemoteConnectionClose
   name: RemoteConnectionClose
   href: api/LiteNetLib.DisconnectReason.html#LiteNetLib_DisconnectReason_RemoteConnectionClose
@@ -1176,18 +1182,18 @@ references:
   commentId: F:LiteNetLib.NetConstants.DefaultWindowSize
   fullName: LiteNetLib.NetConstants.DefaultWindowSize
   nameWithType: NetConstants.DefaultWindowSize
+- uid: LiteNetLib.NetConstants.FragmentedHeaderTotalSize
+  name: FragmentedHeaderTotalSize
+  href: api/LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_FragmentedHeaderTotalSize
+  commentId: F:LiteNetLib.NetConstants.FragmentedHeaderTotalSize
+  fullName: LiteNetLib.NetConstants.FragmentedHeaderTotalSize
+  nameWithType: NetConstants.FragmentedHeaderTotalSize
 - uid: LiteNetLib.NetConstants.FragmentHeaderSize
   name: FragmentHeaderSize
   href: api/LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_FragmentHeaderSize
   commentId: F:LiteNetLib.NetConstants.FragmentHeaderSize
   fullName: LiteNetLib.NetConstants.FragmentHeaderSize
   nameWithType: NetConstants.FragmentHeaderSize
-- uid: LiteNetLib.NetConstants.FragmentTotalSize
-  name: FragmentTotalSize
-  href: api/LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_FragmentTotalSize
-  commentId: F:LiteNetLib.NetConstants.FragmentTotalSize
-  fullName: LiteNetLib.NetConstants.FragmentTotalSize
-  nameWithType: NetConstants.FragmentTotalSize
 - uid: LiteNetLib.NetConstants.HalfMaxSequence
   name: HalfMaxSequence
   href: api/LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_HalfMaxSequence
@@ -1451,6 +1457,12 @@ references:
   commentId: F:LiteNetLib.NetManager.DisconnectTimeout
   fullName: LiteNetLib.NetManager.DisconnectTimeout
   nameWithType: NetManager.DisconnectTimeout
+- uid: LiteNetLib.NetManager.EnableStatistics
+  name: EnableStatistics
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_EnableStatistics
+  commentId: F:LiteNetLib.NetManager.EnableStatistics
+  fullName: LiteNetLib.NetManager.EnableStatistics
+  nameWithType: NetManager.EnableStatistics
 - uid: LiteNetLib.NetManager.FirstPeer
   name: FirstPeer
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_FirstPeer
@@ -2117,6 +2129,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetPeer.GetMaxSinglePacketSize
   nameWithType: NetPeer.GetMaxSinglePacketSize
+- uid: LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Byte,System.Boolean)
+  name: GetPacketsCountInReliableQueue(Byte, Boolean)
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_GetPacketsCountInReliableQueue_System_Byte_System_Boolean_
+  commentId: M:LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Byte,System.Boolean)
+  fullName: LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Byte, System.Boolean)
+  nameWithType: NetPeer.GetPacketsCountInReliableQueue(Byte, Boolean)
+- uid: LiteNetLib.NetPeer.GetPacketsCountInReliableQueue*
+  name: GetPacketsCountInReliableQueue
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_GetPacketsCountInReliableQueue_
+  commentId: Overload:LiteNetLib.NetPeer.GetPacketsCountInReliableQueue
+  isSpec: "True"
+  fullName: LiteNetLib.NetPeer.GetPacketsCountInReliableQueue
+  nameWithType: NetPeer.GetPacketsCountInReliableQueue
 - uid: LiteNetLib.NetPeer.Id
   name: Id
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Id
