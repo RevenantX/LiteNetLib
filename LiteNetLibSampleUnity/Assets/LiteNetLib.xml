@@ -238,6 +238,11 @@
             Statistics of all connections
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.EnableStatistics">
+            <summary>
+            Toggles the collection of network statistics for the instance and all known peers
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.NatPunchModule">
             <summary>
             NatPunchModule for NAT hole punching operations
@@ -645,6 +650,14 @@
             <summary>
             Statistics of peer connection
             </summary>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Byte,System.Boolean)">
+            <summary>
+            Returns packets count in queue for reliable channel
+            </summary>
+            <param name="channelNumber">number of channel 0-63</param>
+            <param name="ordered">type of channel ReliableOrdered or ReliableUnordered</param>
+            <returns>packets count in channel queue</returns>
         </member>
         <member name="M:LiteNetLib.NetPeer.GetMaxSinglePacketSize(LiteNetLib.DeliveryMethod)">
             <summary>
