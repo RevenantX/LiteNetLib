@@ -137,6 +137,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public T Deserialize&lt;T&gt;(NetDataReader reader)
+
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -214,6 +215,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public bool Deserialize&lt;T&gt;(NetDataReader reader, T target)
+
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -338,6 +340,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;()
+
     where T : struct, INetSerializable</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
@@ -417,6 +420,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Func&lt;T&gt; constructor)
+
     where T : class, INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -462,6 +466,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public byte[] Serialize&lt;T&gt;(T obj)
+
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -523,6 +528,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Serialize&lt;T&gt;(NetDataWriter writer, T obj)
+
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
