@@ -687,7 +687,7 @@ namespace LiteNetLib
                     Statistics.PacketLoss = totalPacketLoss;
                 }
 
-                int sleepTime = UpdateTime - (int)(stopwatch.ElapsedMilliseconds - elapsed);
+                int sleepTime = UpdateTime - (int)stopwatch.ElapsedMilliseconds;
                 if (sleepTime > 0)
                     Thread.Sleep(sleepTime);
             }
