@@ -59,7 +59,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
-        [Test, Timeout(TestTimeout)]
+        [Test, Timeout(TestTimeout + 1000)]
         public void DeliveryTest()
         {
             var server = ManagerStack.Server(1);
