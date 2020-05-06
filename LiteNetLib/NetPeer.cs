@@ -574,9 +574,14 @@ namespace LiteNetLib
             packet.UserData = userData;
 
             if (channel == null) //unreliable
-                _unreliableChannel.Enqueue(packet);
+            {
+                lock(_unreliableChannel)
+                    _unreliableChannel.Enqueue(packet);
+            }
             else
+            {
                 channel.AddToQueue(packet);
+            }
         }
 
         public void Disconnect(byte[] data)
