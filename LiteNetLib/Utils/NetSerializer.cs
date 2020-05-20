@@ -574,7 +574,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serialize struct to NetDataWriter (fast)
+        /// Serialize object to NetDataWriter (fast)
         /// </summary>
         /// <param name="writer">Serialization target NetDataWriter</param>
         /// <param name="obj">Object to serialize</param>
@@ -585,7 +585,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serialize struct to byte array
+        /// Serialize object to byte array
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>byte array with serialized data</returns>

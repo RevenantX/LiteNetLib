@@ -901,28 +901,15 @@ namespace LiteNetLib
                 return;
             }
 
-            NetPeer netPeer;
-
             //special case connect request
-            if (packet.Property == PacketProperty.ConnectRequest)
+            if (packet.Property == PacketProperty.ConnectRequest && 
+            NetConnectRequestPacket.GetProtocolId(packet) != NetConstants.ProtocolId)
             {
-                if (NetConnectRequestPacket.GetProtocolId(packet) != NetConstants.ProtocolId)
-                {
-                    SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.InvalidProtocol), remoteEndPoint);
-                    return;
-                }
-                var connRequest = NetConnectRequestPacket.FromData(packet);
-                if (connRequest != null)
-                {
-                    _peersLock.EnterUpgradeableReadLock();
-                    _peersDict.TryGetValue(remoteEndPoint, out netPeer);
-                    //here new peer can be created
-                    ProcessConnectRequest(remoteEndPoint, netPeer, connRequest);
-                    _peersLock.ExitUpgradeableReadLock();
-                }
+                SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.InvalidProtocol), remoteEndPoint);
                 return;
             }
 
+            NetPeer netPeer;
             _peersLock.EnterReadLock();
             bool peerFound = _peersDict.TryGetValue(remoteEndPoint, out netPeer);
             _peersLock.ExitReadLock();
@@ -930,6 +917,11 @@ namespace LiteNetLib
             //Check normal packets
             switch (packet.Property)
             {
+                case PacketProperty.ConnectRequest:
+                    var connRequest = NetConnectRequestPacket.FromData(packet);
+                    if (connRequest != null)
+                        ProcessConnectRequest(remoteEndPoint, netPeer, connRequest);
+                    break;
                 case PacketProperty.PeerNotFound:
                     if (peerFound)
                     {

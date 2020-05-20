@@ -60,6 +60,24 @@ namespace LiteNetLib.Tests
         }
 
         [Test, Timeout(TestTimeout)]
+        public void ConnectionByIpV4Unsynced()
+        {
+            var server = ManagerStack.Server(1);
+            server.UnsyncedEvents = true;
+            var client = ManagerStack.Client(1);
+            client.UnsyncedEvents = true;
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+
+            while (server.ConnectedPeersCount != 1 || client.ConnectedPeersCount != 1)
+            {
+                Thread.Sleep(15);
+            }
+
+            Assert.AreEqual(1, server.ConnectedPeersCount);
+            Assert.AreEqual(1, client.ConnectedPeersCount);
+        }
+
+        [Test, Timeout(TestTimeout)]
         public void DeliveryTest()
         {
             var server = ManagerStack.Server(1);
