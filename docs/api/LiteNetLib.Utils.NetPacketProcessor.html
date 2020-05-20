@@ -395,7 +395,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;()
-
     where T : struct, INetSerializable</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
@@ -472,7 +471,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Func&lt;T&gt; constructor)
-
     where T : class, INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -560,7 +558,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Send&lt;T&gt;(NetManager manager, T packet, DeliveryMethod options)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -614,7 +611,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Send&lt;T&gt;(NetPeer peer, T packet, DeliveryMethod options)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -668,7 +664,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void SendNetSerializable&lt;T&gt;(NetManager manager, T packet, DeliveryMethod options)
-
     where T : INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -722,7 +717,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void SendNetSerializable&lt;T&gt;(NetPeer peer, T packet, DeliveryMethod options)
-
     where T : INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -777,7 +771,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Subscribe&lt;T&gt;(Action&lt;T&gt; onReceive, Func&lt;T&gt; packetConstructor)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -845,7 +838,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Subscribe&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt; onReceive, Func&lt;T&gt; packetConstructor)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -916,7 +908,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void SubscribeNetSerializable&lt;T&gt;(Action&lt;T&gt; onReceive)
-
     where T : INetSerializable, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -960,7 +951,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void SubscribeNetSerializable&lt;T&gt;(Action&lt;T&gt; onReceive, Func&lt;T&gt; packetConstructor)
-
     where T : INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1009,7 +999,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void SubscribeNetSerializable&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt; onReceive)
-
     where T : INetSerializable, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1057,7 +1046,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void SubscribeNetSerializable&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt; onReceive, Func&lt;T&gt; packetConstructor)
-
     where T : INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1112,7 +1100,6 @@ This metod will overwrite last received packet class on receive (less garbage)</
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void SubscribeReusable&lt;T&gt;(Action&lt;T&gt; onReceive)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1175,7 +1162,6 @@ This metod will overwrite last received packet class on receive (less garbage)</
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void SubscribeReusable&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt; onReceive)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1240,7 +1226,6 @@ This metod will overwrite last received packet class on receive (less garbage)</
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public byte[] Write&lt;T&gt;(T packet)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1299,7 +1284,6 @@ This metod will overwrite last received packet class on receive (less garbage)</
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Write&lt;T&gt;(NetDataWriter writer, T packet)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1390,7 +1374,6 @@ This metod will overwrite last received packet class on receive (less garbage)</
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public byte[] WriteNetSerializable&lt;T&gt;(T packet)
-
     where T : INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1449,7 +1432,6 @@ This metod will overwrite last received packet class on receive (less garbage)</
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void WriteNetSerializable&lt;T&gt;(NetDataWriter writer, T packet)
-
     where T : INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>

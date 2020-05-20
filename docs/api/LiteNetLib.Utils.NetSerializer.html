@@ -137,7 +137,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public T Deserialize&lt;T&gt;(NetDataReader reader)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -215,7 +214,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public bool Deserialize&lt;T&gt;(NetDataReader reader, T target)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -340,7 +338,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;()
-
     where T : struct, INetSerializable</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
@@ -420,7 +417,6 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Func&lt;T&gt; constructor)
-
     where T : class, INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -460,13 +456,12 @@
   
   <a id="LiteNetLib_Utils_NetSerializer_Serialize_" data-uid="LiteNetLib.Utils.NetSerializer.Serialize*"></a>
   <h4 id="LiteNetLib_Utils_NetSerializer_Serialize__1___0_" data-uid="LiteNetLib.Utils.NetSerializer.Serialize``1(``0)">Serialize&lt;T&gt;(T)</h4>
-  <div class="markdown level1 summary"><p>Serialize struct to byte array</p>
+  <div class="markdown level1 summary"><p>Serialize object to byte array</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public byte[] Serialize&lt;T&gt;(T obj)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -522,13 +517,12 @@
   
   <a id="LiteNetLib_Utils_NetSerializer_Serialize_" data-uid="LiteNetLib.Utils.NetSerializer.Serialize*"></a>
   <h4 id="LiteNetLib_Utils_NetSerializer_Serialize__1_LiteNetLib_Utils_NetDataWriter___0_" data-uid="LiteNetLib.Utils.NetSerializer.Serialize``1(LiteNetLib.Utils.NetDataWriter,``0)">Serialize&lt;T&gt;(NetDataWriter, T)</h4>
-  <div class="markdown level1 summary"><p>Serialize struct to NetDataWriter (fast)</p>
+  <div class="markdown level1 summary"><p>Serialize object to NetDataWriter (fast)</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Serialize&lt;T&gt;(NetDataWriter writer, T obj)
-
     where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
