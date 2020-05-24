@@ -197,7 +197,7 @@ namespace LiteNetLib
         public int DisconnectTimeout = 5000;
 
         /// <summary>
-        /// Simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)
+        /// Simulate packet loss by dropping random amount of packets. (Works only in DEBUG mode)
         /// </summary>
         public bool SimulatePacketLoss = false;
 
@@ -237,7 +237,7 @@ namespace LiteNetLib
         public bool BroadcastReceiveEnabled = false;
 
         /// <summary>
-        /// Delay betwen initial connection attempts
+        /// Delay between initial connection attempts
         /// </summary>
         public int ReconnectDelay = 500;
 

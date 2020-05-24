@@ -289,7 +289,7 @@ namespace LiteNetLib
                     NetPacket p;
                     while ((p = _receivedPackets[_remoteSequence % _windowSize]) != null)
                     {
-                        //process holded packet
+                        //process holden packet
                         _receivedPackets[_remoteSequence % _windowSize] = null;
                         Peer.AddReliablePacket(_deliveryMethod, p);
                         _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
@@ -307,7 +307,7 @@ namespace LiteNetLib
                 return true;
             }
 
-            //holded packet
+            //holden packet
             if (_ordered)
             {
                 _receivedPackets[ackIdx] = packet;

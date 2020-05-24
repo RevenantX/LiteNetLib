@@ -87,7 +87,7 @@ namespace LiteNetLib.Utils
 
         /// <summary>
         /// Send request to the NTP server calls callback (if success).
-        /// In case of error the callbacke is called with null param.
+        /// In case of error the callback is called with null param.
         /// </summary>
         public void Send()
         {

@@ -5,7 +5,7 @@ using System.Runtime.Intrinsics.X86;
 
 namespace LiteNetLib.Utils
 {
-    //Implemenatation from Crc32.NET
+    //Implementation from Crc32.NET
     public static class CRC32C
     {
 #if NETCOREAPP3_0

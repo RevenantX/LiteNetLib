@@ -222,7 +222,7 @@ namespace LiteNetLib.Utils
         /// Gets the round-trip time to the server.
         /// </summary>
         /// <value>
-        /// Time the request spent travelling to the server plus the time the reply spent travelling back.
+        /// Time the request spent traveling to the server plus the time the reply spent traveling back.
         /// This is calculated from timestamps in the packet as <c>(t1 - t0) + (t3 - t2)</c>
         /// where t0 is <see cref="NtpPacket.OriginTimestamp" />,
         /// t1 is <see cref="NtpPacket.ReceiveTimestamp" />,

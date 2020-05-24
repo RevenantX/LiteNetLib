@@ -191,7 +191,7 @@ namespace LiteNetLib.Utils
         /// Register and subscribe to packet receive event
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-        /// <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        /// <param name="packetConstructor">Method that constructs packet instead of slow Activator.CreateInstance</param>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public void Subscribe<T>(Action<T> onReceive, Func<T> packetConstructor) where T : class, new()
         {
@@ -208,7 +208,7 @@ namespace LiteNetLib.Utils
         /// Register and subscribe to packet receive event (with userData)
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-        /// <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+        /// <param name="packetConstructor">Method that constructs packet instead of slow Activator.CreateInstance</param>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         public void Subscribe<T, TUserData>(Action<T, TUserData> onReceive, Func<T> packetConstructor) where T : class, new()
         {
@@ -223,7 +223,7 @@ namespace LiteNetLib.Utils
 
         /// <summary>
         /// Register and subscribe to packet receive event
-        /// This metod will overwrite last received packet class on receive (less garbage)
+        /// This method will overwrite last received packet class on receive (less garbage)
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
@@ -240,7 +240,7 @@ namespace LiteNetLib.Utils
 
         /// <summary>
         /// Register and subscribe to packet receive event
-        /// This metod will overwrite last received packet class on receive (less garbage)
+        /// This method will overwrite last received packet class on receive (less garbage)
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>

@@ -75,7 +75,7 @@ namespace LiteNetLib
         /// Get all local ip addresses
         /// </summary>
         /// <param name="addrType">type of address (IPv4, IPv6 or both)</param>
-        /// <returns>List with all local ip adresses</returns>
+        /// <returns>List with all local ip addresses</returns>
         public static List<string> GetLocalIpList(LocalAddrType addrType)
         {
             List<string> targetList = new List<string>();

@@ -1157,6 +1157,12 @@ references:
   commentId: M:LiteNetLib.NatPunchModule.SendNatIntroduceRequest(System.Net.IPEndPoint,System.String)
   fullName: LiteNetLib.NatPunchModule.SendNatIntroduceRequest(System.Net.IPEndPoint, System.String)
   nameWithType: NatPunchModule.SendNatIntroduceRequest(IPEndPoint, String)
+- uid: LiteNetLib.NatPunchModule.SendNatIntroduceRequest(System.String,System.Int32,System.String)
+  name: SendNatIntroduceRequest(String, Int32, String)
+  href: api/LiteNetLib.NatPunchModule.html#LiteNetLib_NatPunchModule_SendNatIntroduceRequest_System_String_System_Int32_System_String_
+  commentId: M:LiteNetLib.NatPunchModule.SendNatIntroduceRequest(System.String,System.Int32,System.String)
+  fullName: LiteNetLib.NatPunchModule.SendNatIntroduceRequest(System.String, System.Int32, System.String)
+  nameWithType: NatPunchModule.SendNatIntroduceRequest(String, Int32, String)
 - uid: LiteNetLib.NatPunchModule.SendNatIntroduceRequest*
   name: SendNatIntroduceRequest
   href: api/LiteNetLib.NatPunchModule.html#LiteNetLib_NatPunchModule_SendNatIntroduceRequest_

@@ -124,6 +124,11 @@ namespace LiteNetLib
             }
         }
 
+        public void SendNatIntroduceRequest(string host, int port, string additionalInfo)
+        {
+            SendNatIntroduceRequest(NetUtils.MakeEndPoint(host, port), additionalInfo);
+        }
+
         public void SendNatIntroduceRequest(IPEndPoint masterServerEndPoint, string additionalInfo)
         {
             //prepare outgoing data

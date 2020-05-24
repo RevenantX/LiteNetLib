@@ -972,7 +972,7 @@
         </member>
         <member name="M:LiteNetLib.Utils.NetSerializer.Serialize``1(LiteNetLib.Utils.NetDataWriter,``0)">
             <summary>
-            Serialize struct to NetDataWriter (fast)
+            Serialize object to NetDataWriter (fast)
             </summary>
             <param name="writer">Serialization target NetDataWriter</param>
             <param name="obj">Object to serialize</param>
@@ -980,7 +980,7 @@
         </member>
         <member name="M:LiteNetLib.Utils.NetSerializer.Serialize``1(``0)">
             <summary>
-            Serialize struct to byte array
+            Serialize object to byte array
             </summary>
             <param name="obj">Object to serialize</param>
             <returns>byte array with serialized data</returns>
