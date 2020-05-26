@@ -26,6 +26,7 @@ namespace LibSample
             //new SerializerBenchmark().Run();
             new SpeedBench().Run();
             //new PacketProcessorExample().Run();
+            //new AesEncryptionTest().Run();
         }
     }
 }

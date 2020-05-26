@@ -1,7 +1,8 @@
-﻿using System;
+﻿using LiteNetLib.Layers;
+using System;
 using System.Security.Cryptography;
 
-namespace LiteNetLib.Layers
+namespace LibSample
 {
     /// <summary>
     /// Uses AES encryption in CBC mode. Make sure you handle your key properly.
