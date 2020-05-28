@@ -29,7 +29,7 @@ namespace LiteNetLib.Layers
 
         public void SetKey(byte[] key)
         {
-            if(_byteKey.Length != key.Length)
+            if (_byteKey == null || _byteKey.Length != key.Length)
                 _byteKey = new byte[key.Length];
             Buffer.BlockCopy(key, 0, _byteKey, 0, key.Length);
         }
