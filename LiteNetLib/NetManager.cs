@@ -892,6 +892,10 @@ namespace LiteNetLib
                     return;
             }
 
+            //empty packet
+            if (reusableBuffer[0] == (byte) PacketProperty.Empty)
+                return;
+
             //Try read packet
             NetPacket packet = NetPacketPool.GetPacket(count);
             if (!packet.FromBytes(reusableBuffer, 0, count))

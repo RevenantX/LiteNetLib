@@ -158,9 +158,9 @@ namespace LibSample
             }
         }
         private const string DATA = "The quick brown fox jumps over the lazy dog";
-        private static int MAX_LOOP_COUNT = 750;
-        private static int UNRELIABLE_MESSAGES_PER_LOOP = 1000;
-        private static int RELIABLE_MESSAGES_PER_LOOP = 350;
+        private const int MAX_LOOP_COUNT = 750;
+        private const int UNRELIABLE_MESSAGES_PER_LOOP = 1000;
+        private const int RELIABLE_MESSAGES_PER_LOOP = 350;
         private static bool CLIENT_RUNNING = true;
 
         public void Run()

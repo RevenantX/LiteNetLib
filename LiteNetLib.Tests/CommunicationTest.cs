@@ -157,7 +157,7 @@ namespace LiteNetLib.Tests
             NetManager client = ManagerStack.Client(1);
 
             var result = false;
-            DisconnectInfo disconnectInfo = default(DisconnectInfo);
+            DisconnectInfo disconnectInfo = default;
 
             ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) => 
             {

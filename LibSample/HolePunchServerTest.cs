@@ -121,23 +121,32 @@ namespace LibSample
                 Console.WriteLine("Success C2. Connecting to C1: {0}, connection created: {1}", point, peer != null);
             };
 
-            _c1 = new NetManager(netListener);
-            _c1.NatPunchEnabled = true;
+            _c1 = new NetManager(netListener)
+            {
+                IPv6Enabled = false,
+                NatPunchEnabled = true
+            };
             _c1.NatPunchModule.Init(natPunchListener1);
             _c1.Start();
 
-            _c2 = new NetManager(netListener);
-            _c2.NatPunchEnabled = true;
+            _c2 = new NetManager(netListener)
+            {
+                IPv6Enabled = false,
+                NatPunchEnabled = true
+            };
             _c2.NatPunchModule.Init(natPunchListener2);
             _c2.Start();
 
-            _puncher = new NetManager(netListener);
+            _puncher = new NetManager(netListener)
+            {
+                IPv6Enabled = false,
+                NatPunchEnabled = true
+            };
             _puncher.Start(ServerPort);
-            _puncher.NatPunchEnabled = true;
             _puncher.NatPunchModule.Init(this);
 
-            _c1.NatPunchModule.SendNatIntroduceRequest(NetUtils.MakeEndPoint("::1", ServerPort), "token1");
-            _c2.NatPunchModule.SendNatIntroduceRequest(NetUtils.MakeEndPoint("::1", ServerPort), "token1");
+            _c1.NatPunchModule.SendNatIntroduceRequest("localhost", ServerPort, "token1");
+            _c2.NatPunchModule.SendNatIntroduceRequest("localhost", ServerPort, "token1");
 
             // keep going until ESCAPE is pressed
             Console.WriteLine("Press ESC to quit");

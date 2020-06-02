@@ -192,17 +192,15 @@ namespace LiteNetLib
             writer.Put((byte)PacketProperty.NatPunchMessage);
             writer.Put(hostByte);
             writer.Put(token);
-            if (hostByte == HostByte)
-            {
-                _socket.Ttl = 2;
-                _socket.SendTo(writer.Data, 0, writer.Length, remoteExternal, ref errorCode);
-                _socket.Ttl = NetConstants.SocketTTL;
-            }
-            else
-            {
-                _socket.SendTo(writer.Data, 0, writer.Length, remoteExternal, ref errorCode);
-            }
-    
+
+            // hack for some routers
+            _socket.Ttl = 2;
+            _socket.SendTo(new []{(byte)PacketProperty.Empty}, 0, 1, remoteExternal, ref errorCode);
+
+            // actual send
+            _socket.Ttl = NetConstants.SocketTTL;
+            _socket.SendTo(writer.Data, 0, writer.Length, remoteExternal, ref errorCode);
+
             NetDebug.Write(NetLogLevel.Trace, "[NAT] external punch sent to " + remoteExternal);
         }
 
