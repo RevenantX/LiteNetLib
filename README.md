@@ -20,7 +20,7 @@ Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.1, .NET Stan
 ( Warning! Master branch can be unstable! )
 
 ### Donations are welcome and will help further development of this project.
-[![Bountysource](https://img.shields.io/badge/bountysource-donate-green.svg)](https://salt.bountysource.com/checkout/amount?team=litenetlib)
+https://www.buymeacoffee.com/revx
 
 ## Features
 
