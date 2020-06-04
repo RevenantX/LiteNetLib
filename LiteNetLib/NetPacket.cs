@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -152,15 +153,17 @@ namespace LiteNetLib
 
     internal sealed class NetConnectRequestPacket
     {
-        public const int HeaderSize = 13;
+        public const int HeaderSize = 14;
         public readonly long ConnectionTime;
         public readonly byte ConnectionNumber;
+        public readonly byte[] TargetAddress;
         public readonly NetDataReader Data;
 
-        private NetConnectRequestPacket(long connectionId, byte connectionNumber, NetDataReader data)
+        private NetConnectRequestPacket(long connectionTime, byte connectionNumber, byte[] targetAddress, NetDataReader data)
         {
-            ConnectionTime = connectionId;
+            ConnectionTime = connectionTime;
             ConnectionNumber = connectionNumber;
+            TargetAddress = targetAddress;
             Data = data;
         }
 
@@ -176,24 +179,34 @@ namespace LiteNetLib
 
             //Getting new id for peer
             long connectionId = BitConverter.ToInt64(packet.RawData, 5);
+            
+            //Get target address
+            int addrSize = packet.RawData[13];
+            if (addrSize != 16 && addrSize != 28)
+                return null;
+            byte[] addressBytes = new byte[addrSize];
+            Buffer.BlockCopy(packet.RawData, 14, addressBytes, 0, addrSize);
 
             // Read data and create request
             var reader = new NetDataReader(null, 0, 0);
-            if (packet.Size > HeaderSize)
-                reader.SetSource(packet.RawData, HeaderSize, packet.Size);
+            if (packet.Size > HeaderSize+addrSize)
+                reader.SetSource(packet.RawData, HeaderSize + addrSize, packet.Size);
 
-            return new NetConnectRequestPacket(connectionId, packet.ConnectionNumber, reader);
+            return new NetConnectRequestPacket(connectionId, packet.ConnectionNumber, addressBytes, reader);
         }
 
-        public static NetPacket Make(NetDataWriter connectData, long connectId)
+        public static NetPacket Make(NetDataWriter connectData, SocketAddress addressBytes, long connectId)
         {
             //Make initial packet
-            var packet = new NetPacket(PacketProperty.ConnectRequest, connectData.Length);
+            var packet = new NetPacket(PacketProperty.ConnectRequest, connectData.Length+addressBytes.Size);
 
             //Add data
             FastBitConverter.GetBytes(packet.RawData, 1, NetConstants.ProtocolId);
             FastBitConverter.GetBytes(packet.RawData, 5, connectId);
-            Buffer.BlockCopy(connectData.Data, 0, packet.RawData, HeaderSize, connectData.Length);
+            packet.RawData[13] = (byte)addressBytes.Size;
+            for (int i = 0; i < addressBytes.Size; i++)
+                packet.RawData[14+i] = addressBytes[i];
+            Buffer.BlockCopy(connectData.Data, 0, packet.RawData, 14+addressBytes.Size, connectData.Length);
             return packet;
         }
     }

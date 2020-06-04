@@ -5,16 +5,22 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    public enum NatAddressType
+    {
+        Internal,
+        External
+    }
+
     public interface INatPunchListener
     {
         void OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token);
-        void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, string token);
+        void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, NatAddressType type, string token);
     }
 
     public class EventBasedNatPunchListener : INatPunchListener
     {
         public delegate void OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token);
-        public delegate void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, string token);
+        public delegate void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, NatAddressType type, string token);
 
         public event OnNatIntroductionRequest NatIntroductionRequest;
         public event OnNatIntroductionSuccess NatIntroductionSuccess;
@@ -25,10 +31,10 @@ namespace LiteNetLib
                 NatIntroductionRequest(localEndPoint, remoteEndPoint, token);
         }
 
-        void INatPunchListener.OnNatIntroductionSuccess(IPEndPoint targetEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionSuccess(IPEndPoint targetEndPoint, NatAddressType type, string token)
         {
             if (NatIntroductionSuccess != null)
-                NatIntroductionSuccess(targetEndPoint, token);
+                NatIntroductionSuccess(targetEndPoint, type, token);
         }
     }
 
@@ -47,6 +53,7 @@ namespace LiteNetLib
         struct SuccessEventData
         {
             public IPEndPoint TargetEndPoint;
+            public NatAddressType Type;
             public string Token;
         }
 
@@ -66,6 +73,7 @@ namespace LiteNetLib
         class NatPunchPacket
         {
             public string Token { get; set; }
+            public bool IsExternal { get; set; }
         }
 
         private readonly NetSocket _socket;
@@ -87,8 +95,11 @@ namespace LiteNetLib
 
         internal void ProcessMessage(IPEndPoint senderEndPoint, NetPacket packet)
         {
-            _cacheReader.SetSource(packet.RawData, NetConstants.HeaderSize, packet.Size);
-            _netPacketProcessor.ReadAllPackets(_cacheReader, senderEndPoint);
+            lock (_cacheReader)
+            {
+                _cacheReader.SetSource(packet.RawData, NetConstants.HeaderSize, packet.Size);
+                _netPacketProcessor.ReadAllPackets(_cacheReader, senderEndPoint);
+            }
         }
 
         public void Init(INatPunchListener listener)
@@ -137,7 +148,10 @@ namespace LiteNetLib
                 while (_successEvents.Count > 0)
                 {
                     var evt = _successEvents.Dequeue();
-                    _natPunchListener.OnNatIntroductionSuccess(evt.TargetEndPoint, evt.Token);
+                    _natPunchListener.OnNatIntroductionSuccess(
+                        evt.TargetEndPoint, 
+                        evt.Type,
+                        evt.Token);
                 }
             }
             lock (_requestEvents)
@@ -204,6 +218,7 @@ namespace LiteNetLib
 
             // send external punch
             _socket.Ttl = NetConstants.SocketTTL;
+            punchPacket.IsExternal = true;
             Send(punchPacket, req.External);
             NetDebug.Write(NetLogLevel.Trace, "[NAT] external punch sent to " + req.External);
         }
@@ -219,7 +234,11 @@ namespace LiteNetLib
             lock (_successEvents)
             {
                 _successEvents.Enqueue(new SuccessEventData
-                    { TargetEndPoint = senderEndPoint, Token = req.Token });
+                {
+                    TargetEndPoint = senderEndPoint,
+                    Type = req.IsExternal ? NatAddressType.External : NatAddressType.Internal, 
+                    Token = req.Token
+                });
             }
         }
     }

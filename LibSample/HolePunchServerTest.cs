@@ -76,7 +76,7 @@ namespace LibSample
             }
         }
 
-        void INatPunchListener.OnNatIntroductionSuccess(IPEndPoint targetEndPoint, string token)
+        void INatPunchListener.OnNatIntroductionSuccess(IPEndPoint targetEndPoint, NatAddressType type, string token)
         {
             //Ignore we are server
         }
@@ -85,21 +85,21 @@ namespace LibSample
         {
             Console.WriteLine("=== HolePunch Test ===");
             
-            EventBasedNetListener netListener = new EventBasedNetListener();
+            EventBasedNetListener clientListener = new EventBasedNetListener();
             EventBasedNatPunchListener natPunchListener1 = new EventBasedNatPunchListener();
             EventBasedNatPunchListener natPunchListener2 = new EventBasedNatPunchListener();
 
-            netListener.PeerConnectedEvent += peer =>
+            clientListener.PeerConnectedEvent += peer =>
             {
-                Console.WriteLine("PeerConnected: " + peer.EndPoint.ToString());
+                Console.WriteLine("PeerConnected: " + peer.EndPoint);
             };
 
-            netListener.ConnectionRequestEvent += request =>
+            clientListener.ConnectionRequestEvent += request =>
             {
                 request.AcceptIfKey(ConnectionKey);
             };
 
-            netListener.PeerDisconnectedEvent += (peer, disconnectInfo) =>
+            clientListener.PeerDisconnectedEvent += (peer, disconnectInfo) =>
             {
                 Console.WriteLine("PeerDisconnected: " + disconnectInfo.Reason);
                 if (disconnectInfo.AdditionalData.AvailableBytes > 0)
@@ -108,19 +108,19 @@ namespace LibSample
                 }
             };
 
-            natPunchListener1.NatIntroductionSuccess += (point, token) =>
+            natPunchListener1.NatIntroductionSuccess += (point, addrType, token) =>
             {
                 var peer = _c1.Connect(point, ConnectionKey);
-                Console.WriteLine("Success C1. Connecting to C2: {0}, connection created: {1}", point, peer != null);
+                Console.WriteLine($"NatIntroductionSuccess C1. Connecting to C2: {point}, type: {addrType}, connection created: {peer != null}");
             };
 
-            natPunchListener2.NatIntroductionSuccess += (point, token) =>
+            natPunchListener2.NatIntroductionSuccess += (point, addrType, token) =>
             {
                 var peer = _c2.Connect(point, ConnectionKey);
-                Console.WriteLine("Success C2. Connecting to C1: {0}, connection created: {1}", point, peer != null);
+                Console.WriteLine($"NatIntroductionSuccess C2. Connecting to C1: {point}, type: {addrType}, connection created: {peer != null}");
             };
 
-            _c1 = new NetManager(netListener)
+            _c1 = new NetManager(clientListener)
             {
                 IPv6Enabled = false,
                 NatPunchEnabled = true
@@ -128,7 +128,7 @@ namespace LibSample
             _c1.NatPunchModule.Init(natPunchListener1);
             _c1.Start();
 
-            _c2 = new NetManager(netListener)
+            _c2 = new NetManager(clientListener)
             {
                 IPv6Enabled = false,
                 NatPunchEnabled = true
@@ -136,7 +136,7 @@ namespace LibSample
             _c2.NatPunchModule.Init(natPunchListener2);
             _c2.Start();
 
-            _puncher = new NetManager(netListener)
+            _puncher = new NetManager(clientListener)
             {
                 IPv6Enabled = false,
                 NatPunchEnabled = true

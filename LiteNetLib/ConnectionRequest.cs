@@ -4,12 +4,6 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    public enum ConnectionRequestType
-    {
-        Incoming,
-        PeerToPeer
-    }
-
     internal enum ConnectionRequestResult
     {
         None,
@@ -24,7 +18,6 @@ namespace LiteNetLib
         private int _used;
 
         public readonly NetDataReader Data;
-        public ConnectionRequestType Type { get; private set; }
 
         internal ConnectionRequestResult Result { get; private set; }
         internal long ConnectionTime;
@@ -48,14 +41,12 @@ namespace LiteNetLib
         internal ConnectionRequest(
             long connectionId,
             byte connectionNumber,
-            ConnectionRequestType type,
             NetDataReader netDataReader,
             IPEndPoint endPoint,
             NetManager listener)
         {
             ConnectionTime = connectionId;
             ConnectionNumber = connectionNumber;
-            Type = type;
             RemoteEndPoint = endPoint;
             Data = netDataReader;
             _listener = listener;

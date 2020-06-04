@@ -60,6 +60,26 @@ namespace LiteNetLib.Tests
         }
 
         [Test, Timeout(TestTimeout)]
+        public void P2PConnect()
+        {
+            var client1 = ManagerStack.Client(1);
+            var client2 = ManagerStack.Client(2);
+
+            client1.Connect("127.0.0.1", client2.LocalPort, DefaultAppKey);
+            client2.Connect("127.0.0.1", client1.LocalPort, DefaultAppKey);
+
+            while (client1.ConnectedPeersCount != 1 || client2.ConnectedPeersCount != 1)
+            {
+                Thread.Sleep(15);
+                client1.PollEvents();
+                client2.PollEvents();
+            }
+
+            Assert.AreEqual(1, client1.ConnectedPeersCount);
+            Assert.AreEqual(1, client2.ConnectedPeersCount);
+        }
+
+        [Test, Timeout(TestTimeout)]
         public void ConnectionByIpV4Unsynced()
         {
             var server = ManagerStack.Server(1);

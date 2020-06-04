@@ -74,7 +74,7 @@
             </summary>
             <param name="remoteEndPoint">From address (IP and Port)</param>
             <param name="reader">Message data</param>
-            <param name="messageType">Message type (simple, discovery request or responce)</param>
+            <param name="messageType">Message type (simple, discovery request or response)</param>
         </member>
         <member name="M:LiteNetLib.INetEventListener.OnNetworkLatencyUpdate(LiteNetLib.NetPeer,System.Int32)">
             <summary>
@@ -180,7 +180,7 @@
         </member>
         <member name="F:LiteNetLib.NetManager.SimulatePacketLoss">
             <summary>
-            Simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)
+            Simulate packet loss by dropping random amount of packets. (Works only in DEBUG mode)
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.SimulateLatency">
@@ -220,7 +220,7 @@
         </member>
         <member name="F:LiteNetLib.NetManager.ReconnectDelay">
             <summary>
-            Delay betwen initial connection attempts
+            Delay between initial connection attempts
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.MaxConnectAttempts">
@@ -803,7 +803,7 @@
             Get all local ip addresses
             </summary>
             <param name="addrType">type of address (IPv4, IPv6 or both)</param>
-            <returns>List with all local ip adresses</returns>
+            <returns>List with all local ip addresses</returns>
         </member>
         <member name="M:LiteNetLib.NetUtils.GetLocalIpList(System.Collections.Generic.IList{System.String},LiteNetLib.LocalAddrType)">
             <summary>
@@ -896,7 +896,7 @@
             Register and subscribe to packet receive event
             </summary>
             <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+            <param name="packetConstructor">Method that constructs packet instead of slow Activator.CreateInstance</param>
             <exception cref="T:LiteNetLib.Utils.InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         </member>
         <member name="M:LiteNetLib.Utils.NetPacketProcessor.Subscribe``2(System.Action{``0,``1},System.Func{``0})">
@@ -904,13 +904,13 @@
             Register and subscribe to packet receive event (with userData)
             </summary>
             <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
-            <param name="packetConstructor">Method that constructs packet intead of slow Activator.CreateInstance</param>
+            <param name="packetConstructor">Method that constructs packet instead of slow Activator.CreateInstance</param>
             <exception cref="T:LiteNetLib.Utils.InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
         </member>
         <member name="M:LiteNetLib.Utils.NetPacketProcessor.SubscribeReusable``1(System.Action{``0})">
             <summary>
             Register and subscribe to packet receive event
-            This metod will overwrite last received packet class on receive (less garbage)
+            This method will overwrite last received packet class on receive (less garbage)
             </summary>
             <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
             <exception cref="T:LiteNetLib.Utils.InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
@@ -918,7 +918,7 @@
         <member name="M:LiteNetLib.Utils.NetPacketProcessor.SubscribeReusable``2(System.Action{``0,``1})">
             <summary>
             Register and subscribe to packet receive event
-            This metod will overwrite last received packet class on receive (less garbage)
+            This method will overwrite last received packet class on receive (less garbage)
             </summary>
             <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
             <exception cref="T:LiteNetLib.Utils.InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
@@ -1193,7 +1193,7 @@
             Gets the round-trip time to the server.
             </summary>
             <value>
-            Time the request spent travelling to the server plus the time the reply spent travelling back.
+            Time the request spent traveling to the server plus the time the reply spent traveling back.
             This is calculated from timestamps in the packet as <c>(t1 - t0) + (t3 - t2)</c>
             where t0 is <see cref="P:LiteNetLib.Utils.NtpPacket.OriginTimestamp" />,
             t1 is <see cref="P:LiteNetLib.Utils.NtpPacket.ReceiveTimestamp" />,
@@ -1288,8 +1288,7 @@
             1. Create the object by <see cref="M:LiteNetLib.Utils.NtpRequest.Create(System.Net.IPEndPoint,System.Action{LiteNetLib.Utils.NtpPacket})"/> method. 
             </para>
             <para>
-            2. Use <see cref="M:LiteNetLib.Utils.NtpRequest.Send"/> method to send requests. 3. Call <see cref="M:LiteNetLib.Utils.NtpRequest.Close"/> to release the socket
-            AFTER you have received the response or some timeout. If you close the socket too early, you may miss the response.
+            2. Use <see cref="M:LiteNetLib.Utils.NtpRequest.Send"/> method to send requests.
             </para>
             <para>
             3. Call <see cref="M:LiteNetLib.Utils.NtpRequest.Close"/> to release the socket AFTER you have received the response or some timeout.
@@ -1336,7 +1335,7 @@
         <member name="M:LiteNetLib.Utils.NtpRequest.Send">
             <summary>
             Send request to the NTP server calls callback (if success).
-            In case of error the callbacke is called with null param.
+            In case of error the callback is called with null param.
             </summary>
         </member>
         <member name="M:LiteNetLib.Utils.NtpRequest.Close">

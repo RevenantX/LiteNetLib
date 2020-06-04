@@ -26,7 +26,8 @@ namespace LiteNetLib
         ConnectionRejected,
         InvalidProtocol,
         UnknownHost,
-        Reconnect
+        Reconnect,
+        PeerToPeerConnection
     }
 
     /// <summary>
