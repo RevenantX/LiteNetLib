@@ -10,8 +10,7 @@ namespace LiteNetLib.Utils
     /// 1. Create the object by <see cref="Create(IPEndPoint,Action&lt;NtpPacket&gt;)"/> method. 
     /// </para>
     /// <para>
-    /// 2. Use <see cref="Send"/> method to send requests. 3. Call <see cref="Close"/> to release the socket
-    /// AFTER you have received the response or some timeout. If you close the socket too early, you may miss the response.
+    /// 2. Use <see cref="Send"/> method to send requests.
     /// </para>
     /// <para>
     /// 3. Call <see cref="Close"/> to release the socket AFTER you have received the response or some timeout.
