@@ -8,13 +8,13 @@ namespace LibSample
 {
     class WaitPeer
     {
-        public IPEndPoint InternalAddr { get; private set; }
-        public IPEndPoint ExternalAddr { get; private set; }
+        public IPEndPoint InternalAddr { get; }
+        public IPEndPoint ExternalAddr { get; }
         public DateTime RefreshTime { get; private set; }
 
         public void Refresh()
         {
-            RefreshTime = DateTime.Now;
+            RefreshTime = DateTime.UtcNow;
         }
 
         public WaitPeer(IPEndPoint internalAddr, IPEndPoint externalAddr)
@@ -39,8 +39,7 @@ namespace LibSample
 
         void INatPunchListener.OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token)
         {
-            WaitPeer wpeer;
-            if (_waitingPeers.TryGetValue(token, out wpeer))
+            if (_waitingPeers.TryGetValue(token, out var wpeer))
             {
                 if (wpeer.InternalAddr.Equals(localEndPoint) &&
                     wpeer.ExternalAddr.Equals(remoteEndPoint))
@@ -168,7 +167,7 @@ namespace LibSample
                     }
                 }
                 
-                DateTime nowTime = DateTime.Now;
+                DateTime nowTime = DateTime.UtcNow;
 
                 _c1.NatPunchModule.PollEvents();
                 _c2.NatPunchModule.PollEvents();

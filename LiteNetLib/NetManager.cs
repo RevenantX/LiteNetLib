@@ -261,7 +261,6 @@ namespace LiteNetLib
         /// </summary>
         public bool EnableStatistics = false;
 
-        //modules
         /// <summary>
         /// NatPunchModule for NAT hole punching operations
         /// </summary>
@@ -966,9 +965,7 @@ namespace LiteNetLib
                     CreateEvent(NetEvent.EType.ReceiveUnconnected, remoteEndPoint: remoteEndPoint, readerSource: packet);
                     break;
 
-                case PacketProperty.NatIntroduction:
-                case PacketProperty.NatIntroductionRequest:
-                case PacketProperty.NatPunchMessage:
+                case PacketProperty.NatMessage:
                     if (NatPunchEnabled)
                         NatPunchModule.ProcessMessage(remoteEndPoint, packet);
                     break;

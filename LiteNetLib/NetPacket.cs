@@ -14,9 +14,6 @@ namespace LiteNetLib
         ConnectAccept,
         Disconnect,
         UnconnectedMessage,
-        NatIntroductionRequest,
-        NatIntroduction,
-        NatPunchMessage,
         MtuCheck,
         MtuOk,
         Broadcast,
@@ -24,7 +21,8 @@ namespace LiteNetLib
         ShutdownOk,
         PeerNotFound,
         InvalidProtocol,
-        Empty
+        NatMessage,
+        Empty,
     }
 
     internal sealed class NetPacket
@@ -121,8 +119,6 @@ namespace LiteNetLib
                     return NetConstants.HeaderSize + 8;
                 case PacketProperty.Pong:
                     return NetConstants.HeaderSize + 10;
-                case PacketProperty.Empty:
-                    return 1;
                 default:
                     return NetConstants.HeaderSize;
             }
