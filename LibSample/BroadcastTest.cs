@@ -112,8 +112,11 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener);
-            server.BroadcastReceiveEnabled = true;
+            NetManager server = new NetManager(_serverListener)
+            {
+                BroadcastReceiveEnabled = true, 
+                IPv6Enabled = IPv6Mode.DualMode
+            };
             if (!server.Start(9050))
             {
                 Console.WriteLine("Server start failed");
@@ -129,7 +132,8 @@ namespace LibSample
             {
                 UnconnectedMessagesEnabled = true, 
                 SimulateLatency = true, 
-                SimulationMaxLatency = 1500
+                SimulationMaxLatency = 1500,
+                IPv6Enabled = IPv6Mode.DualMode
             };
             _clientListener1.Client = client1;
             if (!client1.Start())
@@ -144,7 +148,8 @@ namespace LibSample
             {
                 UnconnectedMessagesEnabled = true,
                 SimulateLatency = true, 
-                SimulationMaxLatency = 1500
+                SimulationMaxLatency = 1500,
+                IPv6Enabled = IPv6Mode.DualMode
             };
 
             _clientListener2.Client = client2;

@@ -37,7 +37,12 @@ namespace LiteNetLib.Utils
 
             // Create and start socket
             _socket = new NetSocket(this);
-            _socket.Bind(IPAddress.Any, IPAddress.IPv6Any, 0, false, endPoint.AddressFamily == AddressFamily.InterNetworkV6);
+            _socket.Bind(
+                IPAddress.Any, 
+                IPAddress.IPv6Any, 
+                0, 
+                false, 
+                endPoint.AddressFamily == AddressFamily.InterNetworkV6 ? IPv6Mode.SeparateSocket : IPv6Mode.Disabled);
         }
 
         /// <summary>
