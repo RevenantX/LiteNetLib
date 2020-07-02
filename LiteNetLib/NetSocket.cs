@@ -21,7 +21,7 @@ namespace LiteNetLib
         internal IPAddress BindAddrIPv4;
         internal IPAddress BindAddrIPv6;
         internal bool Reuse;
-        internal bool IPv6;
+        internal IPv6Mode IPv6;
         internal int Port;
         internal bool Paused;
         internal NetSocket Socket;
@@ -67,7 +67,7 @@ namespace LiteNetLib
         private Thread _threadv6;
         private readonly INetSocketListener _listener;
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
-        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("FF02:0:0:0:0:0:0:1");
+        private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("ff02::1");
         internal static readonly bool IPv6Support;
 #if UNITY_IOS && !UNITY_EDITOR
         private UnitySocketFix _unitySocketFix;
@@ -83,8 +83,19 @@ namespace LiteNetLib
 
         public short Ttl
         {
-            get { return _udpSocketv4.Ttl; }
-            set { _udpSocketv4.Ttl = value; }
+            get
+            {
+                if (_udpSocketv4.AddressFamily == AddressFamily.InterNetworkV6)
+                    return (short)_udpSocketv4.GetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.HopLimit);
+                return _udpSocketv4.Ttl;
+            }
+            set
+            {
+                if (_udpSocketv4.AddressFamily == AddressFamily.InterNetworkV6)
+                    _udpSocketv4.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.HopLimit, value);
+                else
+                    _udpSocketv4.Ttl = value;
+            }
         }
 
         static NetSocket()
@@ -173,16 +184,21 @@ namespace LiteNetLib
             }
         }
 
-        public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress, bool ipv6)
+        public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress, IPv6Mode ipv6Mode)
         {
             if (IsActive())
                 return false;
+            bool dualMode = ipv6Mode == IPv6Mode.DualMode && IPv6Support;
 
-            _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port), reuseAddress))
+            _udpSocketv4 = new Socket(
+                dualMode ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork, 
+                SocketType.Dgram, 
+                ProtocolType.Udp);
+
+            if (!BindSocket(_udpSocketv4, new IPEndPoint(dualMode ? addressIPv6 : addressIPv4, port), reuseAddress, ipv6Mode))
                 return false;
 
-            LocalPort = ((IPEndPoint)_udpSocketv4.LocalEndPoint).Port;
+            LocalPort = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
 
 #if UNITY_IOS && !UNITY_EDITOR
             if (_unitySocketFix == null)
@@ -195,13 +211,15 @@ namespace LiteNetLib
                 _unitySocketFix.BindAddrIPv6 = addressIPv6;
                 _unitySocketFix.Reuse = reuseAddress;
                 _unitySocketFix.Port = LocalPort;
-                _unitySocketFix.IPv6 = ipv6;
+                _unitySocketFix.IPv6 = ipv6Mode;
             }
             else
             {
                 _unitySocketFix.Paused = false;
             }
 #endif
+            if (dualMode)
+                _udpSocketv6 = _udpSocketv4;
 
             IsRunning = true;
             _threadv4 = new Thread(ReceiveLogic)
@@ -212,27 +230,13 @@ namespace LiteNetLib
             _threadv4.Start(_udpSocketv4);
 
             //Check IPv6 support
-            if (!IPv6Support || !ipv6)
+            if (!IPv6Support || ipv6Mode != IPv6Mode.SeparateSocket)
                 return true;
 
             _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
             //Use one port for two sockets
-            if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort), reuseAddress))
+            if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort), reuseAddress, ipv6Mode))
             {
-                try
-                {
-#if !UNITY
-                    _udpSocketv6.SetSocketOption(
-                        SocketOptionLevel.IPv6,
-                        SocketOptionName.AddMembership,
-                        new IPv6MulticastOption(MulticastAddressV6));
-#endif
-                }
-                catch (Exception)
-                {
-                    // Unity3d throws exception - ignored
-                }
-
                 _threadv6 = new Thread(ReceiveLogic)
                 {
                     Name = "SocketThreadv6(" + LocalPort + ")",
@@ -244,7 +248,7 @@ namespace LiteNetLib
             return true;
         }
 
-        private bool BindSocket(Socket socket, IPEndPoint ep, bool reuseAddress)
+        private bool BindSocket(Socket socket, IPEndPoint ep, bool reuseAddress, IPv6Mode ipv6Mode)
         {
             //Setup socket
             socket.ReceiveTimeout = 500;
@@ -276,7 +280,7 @@ namespace LiteNetLib
             }
             if (socket.AddressFamily == AddressFamily.InterNetwork)
             {
-                socket.Ttl = NetConstants.SocketTTL;
+                Ttl = NetConstants.SocketTTL;
 
 #if NETSTANDARD || NETCOREAPP
                 if(!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -293,12 +297,45 @@ namespace LiteNetLib
                     NetDebug.WriteError("[B]Broadcast error: {0}", e.SocketErrorCode);
                 }
             }
+            else //IPv6 specific
+            {
+                if (ipv6Mode == IPv6Mode.DualMode)
+                {
+                    try
+                    {
+                        //Disable IPv6 only mode
+                        socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, false);
+                    }
+                    catch(Exception e)
+                    {
+                        NetDebug.WriteError("[B]Bind exception (dualmode setting): {0}", e.ToString());
+                    }
+                }
+            }
 
             //Bind
             try
             {
                 socket.Bind(ep);
                 NetDebug.Write(NetLogLevel.Trace, "[B]Successfully binded to port: {0}", ((IPEndPoint)socket.LocalEndPoint).Port);
+
+                //join multicast
+                if (socket.AddressFamily == AddressFamily.InterNetworkV6)
+                {
+                    try
+                    {
+#if !UNITY
+                        socket.SetSocketOption(
+                            SocketOptionLevel.IPv6,
+                            SocketOptionName.AddMembership,
+                            new IPv6MulticastOption(MulticastAddressV6));
+#endif
+                    }
+                    catch (Exception)
+                    {
+                        // Unity3d throws exception - ignored
+                    }
+                }
             }
             catch (SocketException bindException)
             {
@@ -306,10 +343,11 @@ namespace LiteNetLib
                 {
                     //IPv6 bind fix
                     case SocketError.AddressAlreadyInUse:
-                        if (socket.AddressFamily == AddressFamily.InterNetworkV6)
+                        if (socket.AddressFamily == AddressFamily.InterNetworkV6 && ipv6Mode != IPv6Mode.DualMode)
                         {
                             try
                             {
+                                //Set IPv6Only
                                 socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
                                 socket.Bind(ep);
                             }
@@ -417,6 +455,9 @@ namespace LiteNetLib
                 _unitySocketFix = null;
 #endif
             }
+            //cleanup dual mode
+            if (_udpSocketv4 == _udpSocketv6)
+                _udpSocketv6 = null;
 
             if (_udpSocketv4 != null)
                 _udpSocketv4.Close();

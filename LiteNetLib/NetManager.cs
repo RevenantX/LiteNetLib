@@ -10,6 +10,13 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    public enum IPv6Mode
+    {
+        Disabled,
+        SeparateSocket,
+        DualMode
+    }
+
     public sealed class NetPacketReader : NetDataReader
     {
         private NetPacket _packet;
@@ -284,7 +291,7 @@ namespace LiteNetLib
         /// <summary>
         /// IPv6 support
         /// </summary>
-        public bool IPv6Enabled = true;
+        public IPv6Mode IPv6Enabled = IPv6Mode.SeparateSocket;
 
         /// <summary>
         /// First peer. Useful for Client mode
