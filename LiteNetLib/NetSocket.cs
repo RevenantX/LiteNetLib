@@ -38,8 +38,8 @@ namespace LiteNetLib
                 return;
             if (pause)
             {
-                Socket.Close(true);
                 Paused = true;
+                Socket.Close(true);
             }
             else if (Paused)
             {
@@ -48,7 +48,6 @@ namespace LiteNetLib
                     NetDebug.WriteError("[S] Cannot restore connection \"{0}\",\"{1}\" port {2}", BindAddrIPv4, BindAddrIPv6, Port);
                     Socket.OnErrorRestore();
                 }
-                Paused = false;
             }
         }
     }
@@ -182,6 +181,9 @@ namespace LiteNetLib
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port), reuseAddress))
                 return false;
+
+            LocalPort = ((IPEndPoint)_udpSocketv4.LocalEndPoint).Port;
+
 #if UNITY_IOS && !UNITY_EDITOR
             if (_unitySocketFix == null)
             {
@@ -192,12 +194,15 @@ namespace LiteNetLib
                 _unitySocketFix.BindAddrIPv4 = addressIPv4;
                 _unitySocketFix.BindAddrIPv6 = addressIPv6;
                 _unitySocketFix.Reuse = reuseAddress;
-                _unitySocketFix.Port = port;
+                _unitySocketFix.Port = LocalPort;
                 _unitySocketFix.IPv6 = ipv6;
+            }
+            else
+            {
+                _unitySocketFix.Paused = false;
             }
 #endif
 
-            LocalPort = ((IPEndPoint)_udpSocketv4.LocalEndPoint).Port;
             IsRunning = true;
             _threadv4 = new Thread(ReceiveLogic)
             {
