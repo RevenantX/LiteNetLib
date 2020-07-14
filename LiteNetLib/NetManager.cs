@@ -169,7 +169,7 @@ namespace LiteNetLib
         private volatile int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
         private NetPeer[] _peersArray;
-        internal readonly PacketLayerBase _extraPacketLayer;
+        private readonly PacketLayerBase _extraPacketLayer;
         private int _lastPeerId;
         private readonly Queue<int> _peerIds;
         private byte _channelsCount = 1;
@@ -341,6 +341,11 @@ namespace LiteNetLib
         /// Returns connected peers count
         /// </summary>
         public int ConnectedPeersCount { get { return _connectedPeersCount; } }
+
+        public int ExtraPacketSizeForLayer
+        {
+            get { return _extraPacketLayer != null ? _extraPacketLayer.ExtraPacketSizeForLayer : 0; }
+        }
 
         private bool TryGetPeer(IPEndPoint endPoint, out NetPeer peer)
         {
