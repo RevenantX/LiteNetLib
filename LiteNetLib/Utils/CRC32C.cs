@@ -8,10 +8,6 @@ namespace LiteNetLib.Utils
     //Implementation from Crc32.NET
     public static class CRC32C
     {
-#if NETCOREAPP3_0
-        private static readonly bool _x64Available;
-        private static readonly bool _sseAvailable;
-#endif
         public const int ChecksumSize = 4;
         private const uint Poly = 0x82F63B78u;
         private static readonly uint[] Table;
@@ -19,9 +15,7 @@ namespace LiteNetLib.Utils
         static CRC32C()
         {
 #if NETCOREAPP3_0
-            _sseAvailable = Sse42.IsSupported;
-            _x64Available = Sse42.X64.IsSupported;
-            if(_sseAvailable)
+            if(Sse42.IsSupported)
                 return;
 #endif
             Table = new uint[16 * 256];
@@ -48,9 +42,9 @@ namespace LiteNetLib.Utils
         {
             uint crcLocal = uint.MaxValue;
 #if NETCOREAPP3_0
-            if(_sseAvailable)
+            if(Sse42.IsSupported)
             {
-                if (_x64Available)
+                if (Sse42.X64.IsSupported)
                 {
                     while (length >= 8)
                     {
