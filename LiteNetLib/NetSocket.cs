@@ -138,9 +138,8 @@ namespace LiteNetLib
             Socket socket = af == AddressFamily.InterNetworkV6 ? _udpSocketv6 : _udpSocketv4;
             EndPoint bufferEndPoint = new IPEndPoint(af == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
             byte[] receiveBuffer = new byte[NetConstants.MaxPacketSize];
-            byte[] socketAddress = _useNativeSocket ? new byte[32] : null;
+            byte[] socketAddress = _useNativeSocket ? new byte[NativeSocket.MaxAddrSize] : null;
             byte[] localCache = _useNativeSocket ? new byte[16] : null;
-            int socketAddressSize = 32;
             int result;
 
             while (IsActive())
@@ -152,16 +151,7 @@ namespace LiteNetLib
                         continue;
                     if (_useNativeSocket)
                     {
-                        SocketError err = NativeSocket.ReceiveFrom(
-                            socket.Handle, 
-                            receiveBuffer, 
-                            NetConstants.MaxPacketSize, 
-                            SocketFlags.None,
-                            socketAddress, 
-                            ref socketAddressSize, 
-                            out result);
-                        if (err != SocketError.Success)
-                            throw new SocketException((int)err);
+                        result = NativeSocket.ReceiveFrom(socket, receiveBuffer, receiveBuffer.Length, socketAddress);
                         var ep = new IPEndPoint(
                             NativeSocket.GetIPAddress(socketAddress, localCache), 
                             (ushort)((socketAddress[2] << 8) | socketAddress[3]));
@@ -210,7 +200,7 @@ namespace LiteNetLib
         {
             if (IsActive())
                 return false;
-            _useNativeSocket = useNativeSocket;
+            _useNativeSocket = useNativeSocket && NativeSocket.IsSupported;
             bool dualMode = ipv6Mode == IPv6Mode.DualMode && IPv6Support;
 
             _udpSocketv4 = new Socket(
@@ -441,7 +431,11 @@ namespace LiteNetLib
                 var socket = _udpSocketv4;
                 if (remoteEndPoint.AddressFamily == AddressFamily.InterNetworkV6 && IPv6Support)
                     socket = _udpSocketv6;
-                int result = socket.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint);
+
+                int result = _useNativeSocket
+                    ? NativeSocket.SendTo(socket, data, offset, size, NativeSocket.GetNativeEndPoint(remoteEndPoint)) 
+                    : socket.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint);
+                
                 NetDebug.Write(NetLogLevel.Trace, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
                 return result;
             }

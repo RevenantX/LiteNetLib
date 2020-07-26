@@ -288,6 +288,9 @@ namespace LiteNetLib
         /// </summary>
         public bool AutoRecycle;
 
+        /// <summary>
+        /// Use fast,native sockets (tested only on Windows and Linux)
+        /// </summary>
         public bool UseNativeSockets;
 
         /// <summary>
