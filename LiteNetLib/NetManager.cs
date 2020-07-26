@@ -288,6 +288,8 @@ namespace LiteNetLib
         /// </summary>
         public bool AutoRecycle;
 
+        public bool UseNativeSockets;
+
         /// <summary>
         /// IPv6 support
         /// </summary>
@@ -1218,7 +1220,7 @@ namespace LiteNetLib
         /// <param name="port">port to listen</param>
         public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port)
         {
-            if (!_socket.Bind(addressIPv4, addressIPv6, port, ReuseAddress, IPv6Enabled))
+            if (!_socket.Bind(addressIPv4, addressIPv6, port, ReuseAddress, IPv6Enabled, UseNativeSockets))
                 return false;
             _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
             _logicThread.Start();

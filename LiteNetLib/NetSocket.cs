@@ -67,6 +67,7 @@ namespace LiteNetLib
         private Thread _threadv6;
         private readonly INetSocketListener _listener;
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
+        private bool _useNativeSocket;
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("ff02::1");
         internal static readonly bool IPv6Support;
 #if UNITY_IOS && !UNITY_EDITOR
@@ -133,21 +134,47 @@ namespace LiteNetLib
 
         private void ReceiveLogic(object state)
         {
-            Socket socket = (Socket)state;
-            EndPoint bufferEndPoint = new IPEndPoint(socket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
+            AddressFamily af = (AddressFamily)state;
+            Socket socket = af == AddressFamily.InterNetworkV6 ? _udpSocketv6 : _udpSocketv4;
+            EndPoint bufferEndPoint = new IPEndPoint(af == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
             byte[] receiveBuffer = new byte[NetConstants.MaxPacketSize];
+            byte[] socketAddress = _useNativeSocket ? new byte[32] : null;
+            byte[] localCache = _useNativeSocket ? new byte[16] : null;
+            int socketAddressSize = 32;
+            int result;
 
             while (IsActive())
             {
-                int result;
-
                 //Reading data
                 try
                 {
                     if (socket.Available == 0 && !socket.Poll(ReceivePollingTime, SelectMode.SelectRead))
                         continue;
-                    result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None,
-                        ref bufferEndPoint);
+                    if (_useNativeSocket)
+                    {
+                        SocketError err = NativeSocket.ReceiveFrom(
+                            socket.Handle, 
+                            receiveBuffer, 
+                            NetConstants.MaxPacketSize, 
+                            SocketFlags.None,
+                            socketAddress, 
+                            ref socketAddressSize, 
+                            out result);
+                        if (err != SocketError.Success)
+                            throw new SocketException((int)err);
+                        var ep = new IPEndPoint(
+                            NativeSocket.GetIPAddress(socketAddress, localCache), 
+                            (ushort)((socketAddress[2] << 8) | socketAddress[3]));
+                        NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", ep.ToString(), result);
+                        _listener.OnMessageReceived(receiveBuffer, result, 0, ep);
+                    }
+                    else
+                    {
+                        result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None,
+                            ref bufferEndPoint);
+                        NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
+                        _listener.OnMessageReceived(receiveBuffer, result, 0, (IPEndPoint)bufferEndPoint);
+                    }
                 }
                 catch (SocketException ex)
                 {
@@ -171,23 +198,19 @@ namespace LiteNetLib
                             _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
                             break;
                     }
-                    continue;
                 }
                 catch (ObjectDisposedException)
                 {
                     return;
                 }
-
-                //All ok!
-                NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
-                _listener.OnMessageReceived(receiveBuffer, result, 0, (IPEndPoint)bufferEndPoint);
             }
         }
 
-        public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress, IPv6Mode ipv6Mode)
+        public bool Bind(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool reuseAddress, IPv6Mode ipv6Mode, bool useNativeSocket)
         {
             if (IsActive())
                 return false;
+            _useNativeSocket = useNativeSocket;
             bool dualMode = ipv6Mode == IPv6Mode.DualMode && IPv6Support;
 
             _udpSocketv4 = new Socket(
@@ -227,7 +250,7 @@ namespace LiteNetLib
                 Name = "SocketThreadv4(" + LocalPort + ")",
                 IsBackground = true
             };
-            _threadv4.Start(_udpSocketv4);
+            _threadv4.Start(AddressFamily.InterNetwork);
 
             //Check IPv6 support
             if (!IPv6Support || ipv6Mode != IPv6Mode.SeparateSocket)
@@ -242,7 +265,7 @@ namespace LiteNetLib
                     Name = "SocketThreadv6(" + LocalPort + ")",
                     IsBackground = true
                 };
-                _threadv6.Start(_udpSocketv6);
+                _threadv6.Start(AddressFamily.InterNetworkV6);
             }
 
             return true;

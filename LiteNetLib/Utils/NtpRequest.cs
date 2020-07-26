@@ -42,7 +42,8 @@ namespace LiteNetLib.Utils
                 IPAddress.IPv6Any, 
                 0, 
                 false, 
-                endPoint.AddressFamily == AddressFamily.InterNetworkV6 ? IPv6Mode.SeparateSocket : IPv6Mode.Disabled);
+                endPoint.AddressFamily == AddressFamily.InterNetworkV6 ? IPv6Mode.SeparateSocket : IPv6Mode.Disabled,
+                false);
         }
 
         /// <summary>
