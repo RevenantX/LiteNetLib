@@ -85,16 +85,22 @@ namespace LiteNetLib
         {
             get
             {
+#if UNITY_SWITCH
+                return 0;
+#else
                 if (_udpSocketv4.AddressFamily == AddressFamily.InterNetworkV6)
                     return (short)_udpSocketv4.GetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.HopLimit);
                 return _udpSocketv4.Ttl;
+#endif
             }
             set
             {
+#if !UNITY_SWITCH
                 if (_udpSocketv4.AddressFamily == AddressFamily.InterNetworkV6)
                     _udpSocketv4.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.HopLimit, value);
                 else
                     _udpSocketv4.Ttl = value;
+#endif
             }
         }
 
@@ -280,9 +286,8 @@ namespace LiteNetLib
             }
             if (socket.AddressFamily == AddressFamily.InterNetwork)
             {
-#if !UNITY_SWITCH                
                 Ttl = NetConstants.SocketTTL;
-#endif
+
 #if NETSTANDARD || NETCOREAPP
                 if(!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 #endif
