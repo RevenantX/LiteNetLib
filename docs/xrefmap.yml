@@ -134,37 +134,6 @@ references:
   commentId: F:LiteNetLib.ConnectionRequest.RemoteEndPoint
   fullName: LiteNetLib.ConnectionRequest.RemoteEndPoint
   nameWithType: ConnectionRequest.RemoteEndPoint
-- uid: LiteNetLib.ConnectionRequest.Type
-  name: Type
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Type
-  commentId: P:LiteNetLib.ConnectionRequest.Type
-  fullName: LiteNetLib.ConnectionRequest.Type
-  nameWithType: ConnectionRequest.Type
-- uid: LiteNetLib.ConnectionRequest.Type*
-  name: Type
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Type_
-  commentId: Overload:LiteNetLib.ConnectionRequest.Type
-  isSpec: "True"
-  fullName: LiteNetLib.ConnectionRequest.Type
-  nameWithType: ConnectionRequest.Type
-- uid: LiteNetLib.ConnectionRequestType
-  name: ConnectionRequestType
-  href: api/LiteNetLib.ConnectionRequestType.html
-  commentId: T:LiteNetLib.ConnectionRequestType
-  fullName: LiteNetLib.ConnectionRequestType
-  nameWithType: ConnectionRequestType
-- uid: LiteNetLib.ConnectionRequestType.Incoming
-  name: Incoming
-  href: api/LiteNetLib.ConnectionRequestType.html#LiteNetLib_ConnectionRequestType_Incoming
-  commentId: F:LiteNetLib.ConnectionRequestType.Incoming
-  fullName: LiteNetLib.ConnectionRequestType.Incoming
-  nameWithType: ConnectionRequestType.Incoming
-- uid: LiteNetLib.ConnectionRequestType.PeerToPeer
-  name: PeerToPeer
-  href: api/LiteNetLib.ConnectionRequestType.html#LiteNetLib_ConnectionRequestType_PeerToPeer
-  commentId: F:LiteNetLib.ConnectionRequestType.PeerToPeer
-  fullName: LiteNetLib.ConnectionRequestType.PeerToPeer
-  nameWithType: ConnectionRequestType.PeerToPeer
 - uid: LiteNetLib.ConnectionState
   name: ConnectionState
   href: api/LiteNetLib.ConnectionState.html
@@ -303,6 +272,12 @@ references:
   commentId: F:LiteNetLib.DisconnectReason.NetworkUnreachable
   fullName: LiteNetLib.DisconnectReason.NetworkUnreachable
   nameWithType: DisconnectReason.NetworkUnreachable
+- uid: LiteNetLib.DisconnectReason.PeerToPeerConnection
+  name: PeerToPeerConnection
+  href: api/LiteNetLib.DisconnectReason.html#LiteNetLib_DisconnectReason_PeerToPeerConnection
+  commentId: F:LiteNetLib.DisconnectReason.PeerToPeerConnection
+  fullName: LiteNetLib.DisconnectReason.PeerToPeerConnection
+  nameWithType: DisconnectReason.PeerToPeerConnection
 - uid: LiteNetLib.DisconnectReason.Reconnect
   name: Reconnect
   href: api/LiteNetLib.DisconnectReason.html#LiteNetLib_DisconnectReason_Reconnect
@@ -350,14 +325,14 @@ references:
   fullName: LiteNetLib.EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionRequest
   nameWithType: EventBasedNatPunchListener.INatPunchListener.OnNatIntroductionRequest
   nameWithType.vb: EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionRequest
-- uid: LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess(System.Net.IPEndPoint,System.String)
-  name: INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
-  href: api/LiteNetLib.EventBasedNatPunchListener.html#LiteNetLib_EventBasedNatPunchListener_LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_System_Net_IPEndPoint_System_String_
-  commentId: M:LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess(System.Net.IPEndPoint,System.String)
-  name.vb: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
-  fullName: LiteNetLib.EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint, System.String)
-  nameWithType: EventBasedNatPunchListener.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
-  nameWithType.vb: EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
+- uid: LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess(System.Net.IPEndPoint,LiteNetLib.NatAddressType,System.String)
+  name: INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
+  href: api/LiteNetLib.EventBasedNatPunchListener.html#LiteNetLib_EventBasedNatPunchListener_LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_System_Net_IPEndPoint_LiteNetLib_NatAddressType_System_String_
+  commentId: M:LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess(System.Net.IPEndPoint,LiteNetLib.NatAddressType,System.String)
+  name.vb: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
+  fullName: LiteNetLib.EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint, LiteNetLib.NatAddressType, System.String)
+  nameWithType: EventBasedNatPunchListener.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
+  nameWithType.vb: EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
 - uid: LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess*
   name: INatPunchListener.OnNatIntroductionSuccess
   href: api/LiteNetLib.EventBasedNatPunchListener.html#LiteNetLib_EventBasedNatPunchListener_LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_
@@ -711,12 +686,12 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.INatPunchListener.OnNatIntroductionRequest
   nameWithType: INatPunchListener.OnNatIntroductionRequest
-- uid: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint,System.String)
-  name: OnNatIntroductionSuccess(IPEndPoint, String)
-  href: api/LiteNetLib.INatPunchListener.html#LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_System_Net_IPEndPoint_System_String_
-  commentId: M:LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint,System.String)
-  fullName: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint, System.String)
-  nameWithType: INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
+- uid: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint,LiteNetLib.NatAddressType,System.String)
+  name: OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
+  href: api/LiteNetLib.INatPunchListener.html#LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_System_Net_IPEndPoint_LiteNetLib_NatAddressType_System_String_
+  commentId: M:LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint,LiteNetLib.NatAddressType,System.String)
+  fullName: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint, LiteNetLib.NatAddressType, System.String)
+  nameWithType: INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
 - uid: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess*
   name: OnNatIntroductionSuccess
   href: api/LiteNetLib.INatPunchListener.html#LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_
@@ -849,24 +824,12 @@ references:
   commentId: T:LiteNetLib.InvalidPacketException
   fullName: LiteNetLib.InvalidPacketException
   nameWithType: InvalidPacketException
-- uid: LiteNetLib.InvalidPacketException.#ctor
-  name: InvalidPacketException()
-  href: api/LiteNetLib.InvalidPacketException.html#LiteNetLib_InvalidPacketException__ctor
-  commentId: M:LiteNetLib.InvalidPacketException.#ctor
-  fullName: LiteNetLib.InvalidPacketException.InvalidPacketException()
-  nameWithType: InvalidPacketException.InvalidPacketException()
 - uid: LiteNetLib.InvalidPacketException.#ctor(System.String)
   name: InvalidPacketException(String)
   href: api/LiteNetLib.InvalidPacketException.html#LiteNetLib_InvalidPacketException__ctor_System_String_
   commentId: M:LiteNetLib.InvalidPacketException.#ctor(System.String)
   fullName: LiteNetLib.InvalidPacketException.InvalidPacketException(System.String)
   nameWithType: InvalidPacketException.InvalidPacketException(String)
-- uid: LiteNetLib.InvalidPacketException.#ctor(System.String,System.Exception)
-  name: InvalidPacketException(String, Exception)
-  href: api/LiteNetLib.InvalidPacketException.html#LiteNetLib_InvalidPacketException__ctor_System_String_System_Exception_
-  commentId: M:LiteNetLib.InvalidPacketException.#ctor(System.String,System.Exception)
-  fullName: LiteNetLib.InvalidPacketException.InvalidPacketException(System.String, System.Exception)
-  nameWithType: InvalidPacketException.InvalidPacketException(String, Exception)
 - uid: LiteNetLib.InvalidPacketException.#ctor*
   name: InvalidPacketException
   href: api/LiteNetLib.InvalidPacketException.html#LiteNetLib_InvalidPacketException__ctor_
@@ -874,6 +837,30 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.InvalidPacketException.InvalidPacketException
   nameWithType: InvalidPacketException.InvalidPacketException
+- uid: LiteNetLib.IPv6Mode
+  name: IPv6Mode
+  href: api/LiteNetLib.IPv6Mode.html
+  commentId: T:LiteNetLib.IPv6Mode
+  fullName: LiteNetLib.IPv6Mode
+  nameWithType: IPv6Mode
+- uid: LiteNetLib.IPv6Mode.Disabled
+  name: Disabled
+  href: api/LiteNetLib.IPv6Mode.html#LiteNetLib_IPv6Mode_Disabled
+  commentId: F:LiteNetLib.IPv6Mode.Disabled
+  fullName: LiteNetLib.IPv6Mode.Disabled
+  nameWithType: IPv6Mode.Disabled
+- uid: LiteNetLib.IPv6Mode.DualMode
+  name: DualMode
+  href: api/LiteNetLib.IPv6Mode.html#LiteNetLib_IPv6Mode_DualMode
+  commentId: F:LiteNetLib.IPv6Mode.DualMode
+  fullName: LiteNetLib.IPv6Mode.DualMode
+  nameWithType: IPv6Mode.DualMode
+- uid: LiteNetLib.IPv6Mode.SeparateSocket
+  name: SeparateSocket
+  href: api/LiteNetLib.IPv6Mode.html#LiteNetLib_IPv6Mode_SeparateSocket
+  commentId: F:LiteNetLib.IPv6Mode.SeparateSocket
+  fullName: LiteNetLib.IPv6Mode.SeparateSocket
+  nameWithType: IPv6Mode.SeparateSocket
 - uid: LiteNetLib.Layers
   name: LiteNetLib.Layers
   href: api/LiteNetLib.Layers.html
@@ -1100,6 +1087,24 @@ references:
   commentId: F:LiteNetLib.LocalAddrType.IPv6
   fullName: LiteNetLib.LocalAddrType.IPv6
   nameWithType: LocalAddrType.IPv6
+- uid: LiteNetLib.NatAddressType
+  name: NatAddressType
+  href: api/LiteNetLib.NatAddressType.html
+  commentId: T:LiteNetLib.NatAddressType
+  fullName: LiteNetLib.NatAddressType
+  nameWithType: NatAddressType
+- uid: LiteNetLib.NatAddressType.External
+  name: External
+  href: api/LiteNetLib.NatAddressType.html#LiteNetLib_NatAddressType_External
+  commentId: F:LiteNetLib.NatAddressType.External
+  fullName: LiteNetLib.NatAddressType.External
+  nameWithType: NatAddressType.External
+- uid: LiteNetLib.NatAddressType.Internal
+  name: Internal
+  href: api/LiteNetLib.NatAddressType.html#LiteNetLib_NatAddressType_Internal
+  commentId: F:LiteNetLib.NatAddressType.Internal
+  fullName: LiteNetLib.NatAddressType.Internal
+  nameWithType: NatAddressType.Internal
 - uid: LiteNetLib.NatPunchModule
   name: NatPunchModule
   href: api/LiteNetLib.NatPunchModule.html
@@ -1469,6 +1474,19 @@ references:
   commentId: F:LiteNetLib.NetManager.EnableStatistics
   fullName: LiteNetLib.NetManager.EnableStatistics
   nameWithType: NetManager.EnableStatistics
+- uid: LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  name: ExtraPacketSizeForLayer
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ExtraPacketSizeForLayer
+  commentId: P:LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  fullName: LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  nameWithType: NetManager.ExtraPacketSizeForLayer
+- uid: LiteNetLib.NetManager.ExtraPacketSizeForLayer*
+  name: ExtraPacketSizeForLayer
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ExtraPacketSizeForLayer_
+  commentId: Overload:LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  nameWithType: NetManager.ExtraPacketSizeForLayer
 - uid: LiteNetLib.NetManager.FirstPeer
   name: FirstPeer
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_FirstPeer
@@ -2477,24 +2495,12 @@ references:
   commentId: T:LiteNetLib.TooBigPacketException
   fullName: LiteNetLib.TooBigPacketException
   nameWithType: TooBigPacketException
-- uid: LiteNetLib.TooBigPacketException.#ctor
-  name: TooBigPacketException()
-  href: api/LiteNetLib.TooBigPacketException.html#LiteNetLib_TooBigPacketException__ctor
-  commentId: M:LiteNetLib.TooBigPacketException.#ctor
-  fullName: LiteNetLib.TooBigPacketException.TooBigPacketException()
-  nameWithType: TooBigPacketException.TooBigPacketException()
 - uid: LiteNetLib.TooBigPacketException.#ctor(System.String)
   name: TooBigPacketException(String)
   href: api/LiteNetLib.TooBigPacketException.html#LiteNetLib_TooBigPacketException__ctor_System_String_
   commentId: M:LiteNetLib.TooBigPacketException.#ctor(System.String)
   fullName: LiteNetLib.TooBigPacketException.TooBigPacketException(System.String)
   nameWithType: TooBigPacketException.TooBigPacketException(String)
-- uid: LiteNetLib.TooBigPacketException.#ctor(System.String,System.Exception)
-  name: TooBigPacketException(String, Exception)
-  href: api/LiteNetLib.TooBigPacketException.html#LiteNetLib_TooBigPacketException__ctor_System_String_System_Exception_
-  commentId: M:LiteNetLib.TooBigPacketException.#ctor(System.String,System.Exception)
-  fullName: LiteNetLib.TooBigPacketException.TooBigPacketException(System.String, System.Exception)
-  nameWithType: TooBigPacketException.TooBigPacketException(String, Exception)
 - uid: LiteNetLib.TooBigPacketException.#ctor*
   name: TooBigPacketException
   href: api/LiteNetLib.TooBigPacketException.html#LiteNetLib_TooBigPacketException__ctor_
@@ -2718,6 +2724,12 @@ references:
   commentId: M:LiteNetLib.Utils.NetDataReader.#ctor
   fullName: LiteNetLib.Utils.NetDataReader.NetDataReader()
   nameWithType: NetDataReader.NetDataReader()
+- uid: LiteNetLib.Utils.NetDataReader.#ctor(LiteNetLib.Utils.NetDataWriter)
+  name: NetDataReader(NetDataWriter)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_LiteNetLib_Utils_NetDataWriter_
+  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor(LiteNetLib.Utils.NetDataWriter)
+  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader(LiteNetLib.Utils.NetDataWriter)
+  nameWithType: NetDataReader.NetDataReader(NetDataWriter)
 - uid: LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[])
   name: NetDataReader(Byte[])
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_System_Byte___
