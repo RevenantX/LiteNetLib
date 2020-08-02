@@ -17,14 +17,23 @@ namespace LiteNetLib.Utils
 
     public class NetSerializer
     {
+        private enum CallType
+        {
+            Basic,
+            Array,
+            List
+        }
+
         private abstract class FastCall<T>
         {
-            public bool IsArray;
-            public virtual void Init(MethodInfo getMethod, MethodInfo setMethod, bool isArray) { IsArray = isArray; }
+            public CallType Type;
+            public virtual void Init(MethodInfo getMethod, MethodInfo setMethod, CallType type) { Type = type; }
             public abstract void Read(T inf, NetDataReader r);
             public abstract void Write(T inf, NetDataWriter w);
             public virtual void ReadArray(T inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: " + typeof(T) + "[]"); }
             public virtual void WriteArray(T inf, NetDataWriter w) { throw new InvalidTypeException("Unsupported type: " + typeof(T) + "[]"); }
+            public virtual void ReadList(T inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: List<" + typeof(T) + ">"); }
+            public virtual void WriteList(T inf, NetDataWriter w) { throw new InvalidTypeException("Unsupported type: List<" + typeof(T) + ">"); }
         }
 
         private abstract class FastCallSpecific<TClass, TProperty> : FastCall<TClass>
@@ -33,12 +42,16 @@ namespace LiteNetLib.Utils
             protected Action<TClass, TProperty> Setter;
             protected Func<TClass, TProperty[]> GetterArr;
             protected Action<TClass, TProperty[]> SetterArr;
+            protected Func<TClass, List<TProperty>> GetterList;
+            protected Action<TClass, List<TProperty>> SetterList;
 
             protected TProperty[] ReadArrayHelper(TClass inf, NetDataReader r)
             {
                 ushort count = r.GetUShort();
                 var arr = GetterArr(inf);
-                return arr == null || arr.Length != count ? new TProperty[count] : arr;
+                arr = arr == null || arr.Length != count ? new TProperty[count] : arr;
+                SetterArr(inf, arr);
+                return arr;
             }
 
             protected TProperty[] WriteArrayHelper(TClass inf, NetDataWriter w)
@@ -48,18 +61,49 @@ namespace LiteNetLib.Utils
                 return arr;
             }
 
-            public override void Init(MethodInfo getMethod, MethodInfo setMethod, bool isArray)
+            protected List<TProperty> ReadListHelper(TClass inf, NetDataReader r, out int len)
             {
-                base.Init(getMethod, setMethod, isArray);
-                if (IsArray)
+                len = r.GetUShort();
+                var list = GetterList(inf);
+                if (list == null)
                 {
-                    GetterArr = (Func<TClass, TProperty[]>)Delegate.CreateDelegate(typeof(Func<TClass, TProperty[]>), getMethod);
-                    SetterArr = (Action<TClass, TProperty[]>)Delegate.CreateDelegate(typeof(Action<TClass, TProperty[]>), setMethod);
+                    list = new List<TProperty>(len);
+                    SetterList(inf, list);
                 }
-                else
+                return list;
+            }
+
+            protected List<TProperty> WriteListHelper(TClass inf, NetDataWriter w, out int len)
+            {
+                var list = GetterList(inf);
+                if (list == null)
                 {
-                    Getter = (Func<TClass, TProperty>)Delegate.CreateDelegate(typeof(Func<TClass, TProperty>), getMethod);
-                    Setter = (Action<TClass, TProperty>)Delegate.CreateDelegate(typeof(Action<TClass, TProperty>), setMethod);
+                    len = 0;
+                    w.Put(0);
+                    return null;
+                }
+                len = list.Count;
+                w.Put((ushort)len);
+                return list;
+            }
+
+            public override void Init(MethodInfo getMethod, MethodInfo setMethod, CallType type)
+            {
+                base.Init(getMethod, setMethod, type);
+                switch (type)
+                {
+                    case CallType.Array:
+                        GetterArr = (Func<TClass, TProperty[]>)Delegate.CreateDelegate(typeof(Func<TClass, TProperty[]>), getMethod);
+                        SetterArr = (Action<TClass, TProperty[]>)Delegate.CreateDelegate(typeof(Action<TClass, TProperty[]>), setMethod);
+                        break;
+                    case CallType.List:
+                        GetterList = (Func<TClass, List<TProperty>>)Delegate.CreateDelegate(typeof(Func<TClass, List<TProperty>>), getMethod);
+                        SetterList = (Action<TClass, List<TProperty>>)Delegate.CreateDelegate(typeof(Action<TClass, List<TProperty>>), setMethod);
+                        break;
+                    default:
+                        Getter = (Func<TClass, TProperty>)Delegate.CreateDelegate(typeof(Func<TClass, TProperty>), getMethod);
+                        Setter = (Action<TClass, TProperty>)Delegate.CreateDelegate(typeof(Action<TClass, TProperty>), setMethod);
+                        break;
                 }
             }
         }
@@ -87,7 +131,6 @@ namespace LiteNetLib.Utils
                 var arr = ReadArrayHelper(inf, r);
                 for (int i = 0; i < arr.Length; i++)
                     ElementRead(r, out arr[i]);
-                SetterArr(inf, arr);
             }
 
             public override void WriteArray(TClass inf, NetDataWriter w)
@@ -118,7 +161,6 @@ namespace LiteNetLib.Utils
                 int len = arr.Length;
                 for (int i = 0; i < len; i++)
                     arr[i] = _reader(r);
-                SetterArr(inf, arr);
             }
 
             public override void WriteArray(TClass inf, NetDataWriter w)
@@ -146,13 +188,43 @@ namespace LiteNetLib.Utils
                 _p.Serialize(w);
             }
 
+            public override void ReadList(TClass inf, NetDataReader r)
+            {
+                int len;
+                var list = ReadListHelper(inf, r, out len);
+                int listCount = list.Count;
+                if (len > listCount)
+                {
+                    for (int i = 0; i < listCount; i++)
+                        list[i].Deserialize(r);
+                    for (int i = listCount; i < len; i++)
+                    {
+                        var itm = default(TProperty);
+                        itm.Deserialize(r);
+                        list.Add(itm);
+                    }
+                    return;
+                }
+                if(len < listCount)
+                    list.RemoveRange(len, listCount - len);
+                for (int i = 0; i < len; i++)
+                    list[i].Deserialize(r);
+            }
+
+            public override void WriteList(TClass inf, NetDataWriter w)
+            {
+                int len;
+                var list = WriteListHelper(inf, w, out len);
+                for (int i = 0; i < len; i++)
+                    list[i].Serialize(w);
+            }
+
             public override void ReadArray(TClass inf, NetDataReader r)
             {
                 var arr = ReadArrayHelper(inf, r);
                 int len = arr.Length;
                 for (int i = 0; i < len; i++)
                     arr[i].Deserialize(r);
-                SetterArr(inf, arr);
             }
 
             public override void WriteArray(TClass inf, NetDataWriter w)
@@ -183,6 +255,37 @@ namespace LiteNetLib.Utils
                     p.Serialize(w);
             }
 
+            public override void ReadList(TClass inf, NetDataReader r)
+            {
+                int len;
+                var list = ReadListHelper(inf, r, out len);
+                int listCount = list.Count;
+                if (len > listCount)
+                {
+                    for (int i = 0; i < listCount; i++)
+                        list[i].Deserialize(r);
+                    for (int i = listCount; i < len; i++)
+                    {
+                        var itm = _constructor();
+                        itm.Deserialize(r);
+                        list.Add(itm);
+                    }
+                    return;
+                }
+                if (len < listCount)
+                    list.RemoveRange(len, listCount - len);
+                for (int i = 0; i < len; i++)
+                    list[i].Deserialize(r);
+            }
+
+            public override void WriteList(TClass inf, NetDataWriter w)
+            {
+                int len;
+                var list = WriteListHelper(inf, w, out len);
+                for (int i = 0; i < len; i++)
+                    list[i].Serialize(w);
+            }
+
             public override void ReadArray(TClass inf, NetDataReader r)
             {
                 var arr = ReadArrayHelper(inf, r);
@@ -192,7 +295,6 @@ namespace LiteNetLib.Utils
                     arr[i] = _constructor();
                     arr[i].Deserialize(r);
                 }
-                SetterArr(inf, arr);
             }
 
             public override void WriteArray(TClass inf, NetDataWriter w)
@@ -351,10 +453,12 @@ namespace LiteNetLib.Utils
                 for (int i = 0; i < _membersCount; i++)
                 {
                     var s = _serializers[i];
-                    if (s.IsArray)
+                    if (s.Type == CallType.Basic)
+                        s.Write(obj, writer);
+                    else if (s.Type == CallType.Array)
                         s.WriteArray(obj, writer);
                     else
-                        s.Write(obj, writer);
+                        s.WriteList(obj, writer);
                 }
             }
 
@@ -363,10 +467,12 @@ namespace LiteNetLib.Utils
                 for (int i = 0; i < _membersCount; i++)
                 {
                     var s = _serializers[i];
-                    if (s.IsArray)
+                    if (s.Type == CallType.Basic)
+                        s.Read(obj, reader);
+                    else if(s.Type == CallType.Array)
                         s.ReadArray(obj, reader);
                     else
-                        s.Read(obj, reader);
+                        s.ReadList(obj, reader);
                 }
             }
         }
@@ -458,7 +564,16 @@ namespace LiteNetLib.Utils
             {
                 var property = props[i];
                 var propertyType = property.PropertyType;
+
                 var elementType = propertyType.IsArray ? propertyType.GetElementType() : propertyType;
+                var callType = propertyType.IsArray ? CallType.Array : CallType.Basic;
+
+                if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    elementType = propertyType.GetGenericArguments()[0];
+                    callType = CallType.List;
+                }
+
                 var getMethod = property.GetGetMethod();
                 var setMethod = property.GetSetMethod();
                 if (getMethod == null || setMethod == null)
@@ -513,7 +628,7 @@ namespace LiteNetLib.Utils
 
                 if (serialzer != null)
                 {
-                    serialzer.Init(getMethod, setMethod, propertyType.IsArray);
+                    serialzer.Init(getMethod, setMethod, callType);
                     serializers.Add(serialzer);
                 }
                 else
