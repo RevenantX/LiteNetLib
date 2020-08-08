@@ -30,10 +30,10 @@ namespace LiteNetLib.Utils
             public virtual void Init(MethodInfo getMethod, MethodInfo setMethod, CallType type) { Type = type; }
             public abstract void Read(T inf, NetDataReader r);
             public abstract void Write(T inf, NetDataWriter w);
-            public virtual void ReadArray(T inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: " + typeof(T) + "[]"); }
-            public virtual void WriteArray(T inf, NetDataWriter w) { throw new InvalidTypeException("Unsupported type: " + typeof(T) + "[]"); }
-            public virtual void ReadList(T inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: List<" + typeof(T) + ">"); }
-            public virtual void WriteList(T inf, NetDataWriter w) { throw new InvalidTypeException("Unsupported type: List<" + typeof(T) + ">"); }
+            public abstract void ReadArray(T inf, NetDataReader r);
+            public abstract void WriteArray(T inf, NetDataWriter w);
+            public abstract void ReadList(T inf, NetDataReader r);
+            public abstract void WriteList(T inf, NetDataWriter w);
         }
 
         private abstract class FastCallSpecific<TClass, TProperty> : FastCall<TClass>
@@ -44,6 +44,11 @@ namespace LiteNetLib.Utils
             protected Action<TClass, TProperty[]> SetterArr;
             protected Func<TClass, List<TProperty>> GetterList;
             protected Action<TClass, List<TProperty>> SetterList;
+
+            public override void ReadArray(TClass inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: " + typeof(TProperty) + "[]"); }
+            public override void WriteArray(TClass inf, NetDataWriter w) { throw new InvalidTypeException("Unsupported type: " + typeof(TProperty) + "[]"); }
+            public override void ReadList(TClass inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: List<" + typeof(TProperty) + ">"); }
+            public override void WriteList(TClass inf, NetDataWriter w) { throw new InvalidTypeException("Unsupported type: List<" + typeof(TProperty) + ">"); }
 
             protected TProperty[] ReadArrayHelper(TClass inf, NetDataReader r)
             {
@@ -154,6 +159,33 @@ namespace LiteNetLib.Utils
 
             public override void Read(TClass inf, NetDataReader r) { Setter(inf, _reader(r)); }
             public override void Write(TClass inf, NetDataWriter w) { _writer(w, Getter(inf)); }
+
+            public override void ReadList(TClass inf, NetDataReader r)
+            {
+                int len;
+                var list = ReadListHelper(inf, r, out len);
+                int listCount = list.Count;
+                if (len > listCount)
+                {
+                    for (int i = 0; i < listCount; i++)
+                        list[i] = _reader(r);
+                    for (int i = listCount; i < len; i++)
+                        list.Add(_reader(r));
+                    return;
+                }
+                if (len < listCount)
+                    list.RemoveRange(len, listCount - len);
+                for (int i = 0; i < len; i++)
+                    list[i] = _reader(r);
+            }
+
+            public override void WriteList(TClass inf, NetDataWriter w)
+            {
+                int len;
+                var list = WriteListHelper(inf, w, out len);
+                for (int i = 0; i < len; i++)
+                    _writer(w, list[i]);
+            }
 
             public override void ReadArray(TClass inf, NetDataReader r)
             {
@@ -427,6 +459,10 @@ namespace LiteNetLib.Utils
             }
             public override void Read(T inf, NetDataReader r) { Property.SetValue(inf, Enum.ToObject(PropertyType, r.GetByte()), null); }
             public override void Write(T inf, NetDataWriter w) { w.Put((byte)Property.GetValue(inf, null)); }
+            public override void ReadArray(T inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: Enum[]"); }
+            public override void WriteArray(T inf, NetDataWriter w) { throw new InvalidTypeException("Unsupported type: Enum[]"); }
+            public override void ReadList(T inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: List<Enum>"); }
+            public override void WriteList(T inf, NetDataWriter w) { throw new InvalidTypeException("Unsupported type: List<Enum>"); }
         }
 
         private class EnumIntSerializer<T> : EnumByteSerializer<T>

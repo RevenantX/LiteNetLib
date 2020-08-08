@@ -24,7 +24,8 @@ namespace LiteNetLib.Tests
                 TestObj = new SampleNetSerializable {Value = 5},
                 TestArray = new [] { new SampleNetSerializable { Value = 6 }, new SampleNetSerializable { Value = 15 } },
                 SampleClassArray = new[] { new SampleClass { Value = 6 }, new SampleClass { Value = 15 } },
-                SampleClassList = new List<SampleClass> { new SampleClass { Value = 1 }, new SampleClass { Value = 5 }}
+                SampleClassList = new List<SampleClass> { new SampleClass { Value = 1 }, new SampleClass { Value = 5 }},
+                VectorList = new List<SomeVector2> { new SomeVector2(-1,-2), new SomeVector2(700, 800) }
             };
 
             _packetProcessor = new NetPacketProcessor();
@@ -123,6 +124,7 @@ namespace LiteNetLib.Tests
             public SampleNetSerializable[] TestArray { get; set; }
             public SampleClass[] SampleClassArray { get; set; }
             public List<SampleClass> SampleClassList { get; set; }
+            public List<SomeVector2> VectorList { get; set; }
         }
 
         private static bool AreSame(string s1, string s2)
@@ -164,10 +166,12 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(_samplePacket.SomeByteArray, readPackage.SomeByteArray);
             Assert.AreEqual(_samplePacket.SampleClassArray, readPackage.SampleClassArray);
             CollectionAssert.AreEqual(_samplePacket.SampleClassList, readPackage.SampleClassList);
+            CollectionAssert.AreEqual(_samplePacket.VectorList, readPackage.VectorList);
 
             //remove test
             _samplePacket.SampleClassList.RemoveAt(0);
             _samplePacket.SampleClassArray = new []{new SampleClass {Value = 1}};
+            _samplePacket.VectorList.RemoveAt(0);
 
             writer.Reset();
             _packetProcessor.Write(writer, _samplePacket);
@@ -181,6 +185,7 @@ namespace LiteNetLib.Tests
             _samplePacket.SampleClassList.Add(new SampleClass { Value = 152 });
             _samplePacket.SampleClassList.Add(new SampleClass { Value = 154 });
             _samplePacket.SampleClassArray = new[] { new SampleClass { Value = 1 }, new SampleClass { Value = 2 }, new SampleClass { Value = 3 } };
+            _samplePacket.VectorList.Add(new SomeVector2(500,600));
 
             writer.Reset();
             _packetProcessor.Write(writer, _samplePacket);
