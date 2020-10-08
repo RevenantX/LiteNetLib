@@ -23,12 +23,47 @@ namespace LiteNetLib
         PeerNotFound,
         InvalidProtocol,
         NatMessage,
-        Empty,
+        Empty
     }
 
     internal sealed class NetPacket
     {
         private static readonly int LastProperty = Enum.GetValues(typeof(PacketProperty)).Length;
+        private static readonly int[] HeaderSizes;
+
+        static NetPacket()
+        {
+            HeaderSizes = new int[LastProperty+1];
+            for (int i = 0; i < HeaderSizes.Length; i++)
+            {
+                switch ((PacketProperty)i)
+                {
+                    case PacketProperty.Channeled:
+                    case PacketProperty.Ack:
+                        HeaderSizes[i] = NetConstants.ChanneledHeaderSize;
+                        break;
+                    case PacketProperty.Ping:
+                        HeaderSizes[i] = NetConstants.HeaderSize + 2;
+                        break;
+                    case PacketProperty.ConnectRequest:
+                        HeaderSizes[i] = NetConnectRequestPacket.HeaderSize;
+                        break;
+                    case PacketProperty.ConnectAccept:
+                        HeaderSizes[i] = NetConnectAcceptPacket.Size;
+                        break;
+                    case PacketProperty.Disconnect:
+                        HeaderSizes[i] = NetConstants.HeaderSize + 8;
+                        break;
+                    case PacketProperty.Pong:
+                        HeaderSizes[i] = NetConstants.HeaderSize + 10;
+                        break;
+                    default:
+                        HeaderSizes[i] = NetConstants.HeaderSize;
+                        break;
+                }
+            }
+        }
+
         //Header
         public PacketProperty Property
         {
@@ -105,29 +140,12 @@ namespace LiteNetLib
 
         public static int GetHeaderSize(PacketProperty property)
         {
-            switch (property)
-            {
-                case PacketProperty.Channeled:
-                case PacketProperty.Ack:
-                    return NetConstants.ChanneledHeaderSize;
-                case PacketProperty.Ping:
-                    return NetConstants.HeaderSize + 2;
-                case PacketProperty.ConnectRequest:
-                    return NetConnectRequestPacket.HeaderSize;
-                case PacketProperty.ConnectAccept:
-                    return NetConnectAcceptPacket.Size;
-                case PacketProperty.Disconnect:
-                    return NetConstants.HeaderSize + 8;
-                case PacketProperty.Pong:
-                    return NetConstants.HeaderSize + 10;
-                default:
-                    return NetConstants.HeaderSize;
-            }
+            return HeaderSizes[(int)property];
         }
 
         public int GetHeaderSize()
         {
-            return GetHeaderSize(Property);
+            return HeaderSizes[RawData[0] & 0x1F];
         }
 
         //Packet constructor from byte array

@@ -205,12 +205,17 @@
         </member>
         <member name="F:LiteNetLib.NetManager.UnsyncedEvents">
             <summary>
-            Experimental feature. Events automatically will be called without PollEvents method from another thread
+            Events automatically will be called without PollEvents method from another thread
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.NetManager.UnsyncedReceiveEvent">
+            <summary>
+            If true - receive event will be called from "receive" thread immediately otherwise on PollEvents call
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.UnsyncedDeliveryEvent">
             <summary>
-            If true - delivery event will be called from "receive" thread otherwise on PollEvents call
+            If true - delivery event will be called from "receive" thread immediately otherwise on PollEvents call
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.BroadcastReceiveEnabled">

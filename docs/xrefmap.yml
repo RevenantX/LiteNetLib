@@ -2040,6 +2040,12 @@ references:
   commentId: F:LiteNetLib.NetManager.UnsyncedEvents
   fullName: LiteNetLib.NetManager.UnsyncedEvents
   nameWithType: NetManager.UnsyncedEvents
+- uid: LiteNetLib.NetManager.UnsyncedReceiveEvent
+  name: UnsyncedReceiveEvent
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_UnsyncedReceiveEvent
+  commentId: F:LiteNetLib.NetManager.UnsyncedReceiveEvent
+  fullName: LiteNetLib.NetManager.UnsyncedReceiveEvent
+  nameWithType: NetManager.UnsyncedReceiveEvent
 - uid: LiteNetLib.NetManager.UpdateTime
   name: UpdateTime
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_UpdateTime

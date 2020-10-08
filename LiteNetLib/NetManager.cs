@@ -29,12 +29,12 @@ namespace LiteNetLib
             _evt = evt;
         }
 
-        internal void SetSource(NetPacket packet)
+        internal void SetSource(NetPacket packet, int headerSize)
         {
             if (packet == null)
                 return;
             _packet = packet;
-            SetSource(packet.RawData, packet.GetHeaderSize(), packet.Size);
+            SetSource(packet.RawData, headerSize, packet.Size);
         }
 
         internal void RecycleInternal()
@@ -229,12 +229,17 @@ namespace LiteNetLib
         public int SimulationMaxLatency = 100;
 
         /// <summary>
-        /// Experimental feature. Events automatically will be called without PollEvents method from another thread
+        /// Events automatically will be called without PollEvents method from another thread
         /// </summary>
         public bool UnsyncedEvents = false;
 
         /// <summary>
-        /// If true - delivery event will be called from "receive" thread otherwise on PollEvents call
+        /// If true - receive event will be called from "receive" thread immediately otherwise on PollEvents call
+        /// </summary>
+        public bool UnsyncedReceiveEvent = false;
+
+        /// <summary>
+        /// If true - delivery event will be called from "receive" thread immediately otherwise on PollEvents call
         /// </summary>
         public bool UnsyncedDeliveryEvent = false;
 
@@ -520,7 +525,7 @@ namespace LiteNetLib
             if (shutdownResult == ShutdownResult.None)
                 return;
             if(shutdownResult == ShutdownResult.WasConnected)
-                _connectedPeersCount--;
+                Interlocked.Decrement(ref _connectedPeersCount);
             CreateEvent(
                 NetEvent.EType.Disconnect,
                 peer,
@@ -545,7 +550,7 @@ namespace LiteNetLib
             bool unsyncEvent = UnsyncedEvents;
             
             if (type == NetEvent.EType.Connect)
-                _connectedPeersCount++;
+                Interlocked.Increment(ref _connectedPeersCount);
             else if (type == NetEvent.EType.MessageDelivered)
                 unsyncEvent = UnsyncedDeliveryEvent;
 
@@ -554,7 +559,7 @@ namespace LiteNetLib
                 evt = _netEventsPool.Count > 0 ? _netEventsPool.Pop() : new NetEvent(this);
             }
             evt.Type = type;
-            evt.DataReader.SetSource(readerSource);
+            evt.DataReader.SetSource(readerSource, readerSource == null ? 0 : readerSource.GetHeaderSize());
             evt.Peer = peer;
             evt.RemoteEndPoint = remoteEndPoint;
             evt.Latency = latency;
@@ -1018,7 +1023,7 @@ namespace LiteNetLib
             }
         }
 
-        internal void CreateReceiveEvent(NetPacket packet, DeliveryMethod method, NetPeer fromPeer)
+        internal void CreateReceiveEvent(NetPacket packet, DeliveryMethod method, int headerSize, NetPeer fromPeer)
         {
             NetEvent evt;
             lock (_netEventsPool)
@@ -1026,10 +1031,10 @@ namespace LiteNetLib
                 evt = _netEventsPool.Count > 0 ? _netEventsPool.Pop() : new NetEvent(this);
             }
             evt.Type = NetEvent.EType.Receive;
-            evt.DataReader.SetSource(packet);
+            evt.DataReader.SetSource(packet, headerSize);
             evt.Peer = fromPeer;
             evt.DeliveryMethod = method;
-            if (UnsyncedEvents)
+            if (UnsyncedEvents || UnsyncedReceiveEvent)
             {
                 ProcessEvent(evt);
             }

@@ -196,8 +196,8 @@ namespace LibSample
 
             for (int i = 0; i < MAX_LOOP_COUNT; i++)
             {
-                //for (int ui = 0; ui < UNRELIABLE_MESSAGES_PER_LOOP; ui++)
-                //    c.SendUnreliable(DATA);
+                for (int ui = 0; ui < UNRELIABLE_MESSAGES_PER_LOOP; ui++)
+                    c.SendUnreliable(DATA);
 
                 for (int ri = 0; ri < RELIABLE_MESSAGES_PER_LOOP; ri++)
                     c.SendReliable(DATA);

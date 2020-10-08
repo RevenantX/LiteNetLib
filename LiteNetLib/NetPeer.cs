@@ -713,10 +713,8 @@ namespace LiteNetLib
                 if (incomingFragments.ReceivedCount != fragments.Length)
                     return;
 
-                //unreliable to save header space
-                NetPacket resultingPacket = _packetPool.GetWithProperty(
-                    PacketProperty.Unreliable, 
-                    incomingFragments.TotalSize);
+                //just simple packet
+                NetPacket resultingPacket = _packetPool.GetPacket(incomingFragments.TotalSize);
 
                 int firstFragmentSize = fragments[0].Size - NetConstants.FragmentedHeaderTotalSize;
                 for (int i = 0; i < incomingFragments.ReceivedCount; i++)
@@ -727,7 +725,7 @@ namespace LiteNetLib
                         fragment.RawData,
                         NetConstants.FragmentedHeaderTotalSize,
                         resultingPacket.RawData,
-                        NetConstants.HeaderSize + firstFragmentSize * i,
+                        firstFragmentSize * i,
                         fragment.Size - NetConstants.FragmentedHeaderTotalSize);
 
                     //Free memory
@@ -736,14 +734,14 @@ namespace LiteNetLib
                 Array.Clear(fragments, 0, incomingFragments.ReceivedCount);
 
                 //Send to process
-                NetManager.CreateReceiveEvent(resultingPacket, method, this);
+                NetManager.CreateReceiveEvent(resultingPacket, method, 0, this);
 
                 //Clear memory
                 _holdedFragments.Remove(packetFragId);
             }
             else //Just simple packet
             {
-                NetManager.CreateReceiveEvent(p, method, this);
+                NetManager.CreateReceiveEvent(p, method, NetConstants.ChanneledHeaderSize, this);
             }
         }
 
@@ -953,7 +951,7 @@ namespace LiteNetLib
 
                 //Simple packet without acks
                 case PacketProperty.Unreliable:
-                    NetManager.CreateReceiveEvent(packet, DeliveryMethod.Unreliable, this);
+                    NetManager.CreateReceiveEvent(packet, DeliveryMethod.Unreliable, NetConstants.HeaderSize, this);
                     return;
 
                 case PacketProperty.MtuCheck:
