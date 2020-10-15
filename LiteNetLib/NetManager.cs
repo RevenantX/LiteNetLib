@@ -56,6 +56,8 @@ namespace LiteNetLib
 
     internal sealed class NetEvent
     {
+        public NetEvent Next;
+
         public enum EType
         {
             Connect,
@@ -158,7 +160,7 @@ namespace LiteNetLib
         private Thread _logicThread;
 
         private readonly Queue<NetEvent> _netEventsQueue;
-        private readonly Stack<NetEvent> _netEventsPool;
+        private NetEvent _netEventPoolHead;
         private readonly INetEventListener _netEventListener;
         private readonly IDeliveryEventListener _deliveryEventListener;
 
@@ -417,7 +419,6 @@ namespace LiteNetLib
             _netEventListener = listener;
             _deliveryEventListener = listener as IDeliveryEventListener;
             _netEventsQueue = new Queue<NetEvent>();
-            _netEventsPool = new Stack<NetEvent>();
             NetPacketPool = new NetPacketPool();
             NatPunchModule = new NatPunchModule(_socket);
             Statistics = new NetStatistics();
@@ -554,10 +555,16 @@ namespace LiteNetLib
             else if (type == NetEvent.EType.MessageDelivered)
                 unsyncEvent = UnsyncedDeliveryEvent;
 
-            lock (_netEventsPool)
+            do
             {
-                evt = _netEventsPool.Count > 0 ? _netEventsPool.Pop() : new NetEvent(this);
-            }
+                evt = _netEventPoolHead;
+                if (evt == null)
+                {
+                    evt = new NetEvent(this);
+                    break;
+                }
+            } while (evt != Interlocked.CompareExchange(ref _netEventPoolHead, evt.Next, evt));
+
             evt.Type = type;
             evt.DataReader.SetSource(readerSource, readerSource == null ? 0 : readerSource.GetHeaderSize());
             evt.Peer = peer;
@@ -633,8 +640,10 @@ namespace LiteNetLib
             evt.ErrorCode = 0;
             evt.RemoteEndPoint = null;
             evt.ConnectionRequest = null;
-            lock (_netEventsPool)
-                _netEventsPool.Push(evt);
+            do
+            {
+                evt.Next = _netEventPoolHead;
+            } while (evt.Next != Interlocked.CompareExchange(ref _netEventPoolHead, evt, evt.Next));
         }
 
         //Update function
@@ -1026,10 +1035,15 @@ namespace LiteNetLib
         internal void CreateReceiveEvent(NetPacket packet, DeliveryMethod method, int headerSize, NetPeer fromPeer)
         {
             NetEvent evt;
-            lock (_netEventsPool)
+            do
             {
-                evt = _netEventsPool.Count > 0 ? _netEventsPool.Pop() : new NetEvent(this);
-            }
+                evt = _netEventPoolHead;
+                if (evt == null)
+                {
+                    evt = new NetEvent(this);
+                    break;
+                }
+            } while (evt != Interlocked.CompareExchange(ref _netEventPoolHead, evt.Next, evt));
             evt.Type = NetEvent.EType.Receive;
             evt.DataReader.SetSource(packet, headerSize);
             evt.Peer = fromPeer;
