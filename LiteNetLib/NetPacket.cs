@@ -124,6 +124,9 @@ namespace LiteNetLib
         //Delivery
         public object UserData;
 
+        //Pool node
+        public NetPacket Next;
+
         public NetPacket(int size)
         {
             RawData = new byte[size];
