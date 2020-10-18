@@ -25,7 +25,7 @@ namespace LibSample
         }
     }
 
-    class HolePunchServerTest : INatPunchListener
+    class HolePunchServerTest : IExample, INatPunchListener
     {
         private const int ServerPort = 50010;
         private const string ConnectionKey = "test_key";

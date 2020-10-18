@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LibSample
 {
-    class AesEncryptionTest
+    class AesEncryptionTest : IExample
     {
         public void Run() => AesLayerEncryptDecrypt();
 
