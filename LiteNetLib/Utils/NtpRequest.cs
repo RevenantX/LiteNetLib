@@ -134,7 +134,7 @@ namespace LiteNetLib.Utils
                 _onRequestComplete(null);
             }
         }
-        
+
         /// <summary>
         /// Close socket.
         /// </summary>
