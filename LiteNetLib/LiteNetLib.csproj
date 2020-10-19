@@ -5,12 +5,14 @@
     <RootNamespace>LiteNetLib</RootNamespace>
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netcoreapp2.1;netcoreapp3.0;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net35;netstandard2.0;netcoreapp2.1;netcoreapp3.0</TargetFrameworks>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net35'">
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' != 'netcoreapp3.0'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net35'">
     <LangVersion>4</LangVersion>
   </PropertyGroup>
 

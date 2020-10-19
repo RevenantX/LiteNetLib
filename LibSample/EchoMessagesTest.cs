@@ -7,7 +7,7 @@ using LiteNetLib.Utils;
 
 namespace LibSample
 {
-    class EchoMessagesTest
+    class EchoMessagesTest : IExample
     {
         private static int _messagesReceivedCount = 0;
 

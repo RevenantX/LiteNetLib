@@ -32,7 +32,7 @@ namespace LibSample
         public List<CustomStruct> SomeList { get; set; }
     }
 
-    class PacketProcessorExample
+    class PacketProcessorExample : IExample
     {
         private readonly NetPacketProcessor _netPacketProcessor = new NetPacketProcessor();
         private NetManager _client;

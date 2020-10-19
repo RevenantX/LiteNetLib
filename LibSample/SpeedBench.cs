@@ -8,9 +8,9 @@ using LiteNetLib.Utils;
 
 namespace LibSample
 {
-    internal class SpeedBench
+    internal class SpeedBench : IExample
     {
-        public class Server : INetEventListener
+        public class Server : INetEventListener, IDisposable
         {
             public int ReliableReceived;
             public int UnreliableReceived;
@@ -72,10 +72,16 @@ namespace LibSample
 
             void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
             {
+                
+            }
+
+            public void Dispose()
+            {
+                _server.Stop();
             }
         }
 
-        public class Client : INetEventListener
+        public class Client : INetEventListener, IDisposable
         {
             public int ReliableSent;
             public int UnreliableSent;
@@ -156,6 +162,11 @@ namespace LibSample
             void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
             {
             }
+
+            public void Dispose()
+            {
+                _client.Stop();
+            }
         }
         private const string DATA = "The quick brown fox jumps over the lazy dog";
         private const int MAX_LOOP_COUNT = 750;
@@ -171,46 +182,51 @@ namespace LibSample
             Thread clientThread = new Thread(StartClient);
             clientThread.Start();
             Console.WriteLine("Processing...");
-            Console.ReadKey();
+            serverThread.Join();
+            clientThread.Join();
+            Console.WriteLine("Test is end.");
         }
 
         private static void StartServer()
         {
-            Server s = new Server();
-
-            while (CLIENT_RUNNING)
+            using (Server s = new Server())
             {
-                s.PollEvents();
-                Thread.Sleep(1);
-            }
+                while (CLIENT_RUNNING)
+                {
+                    s.PollEvents();
+                    Thread.Sleep(1);
+                }
 
-            Thread.Sleep(10000);
-            s.PollEvents();
-            Console.WriteLine("SERVER RECEIVED -> Reliable: " + s.ReliableReceived + ", Unreliable: " + s.UnreliableReceived);
+                Thread.Sleep(10000);
+                s.PollEvents();
+                Console.WriteLine("SERVER RECEIVED -> Reliable: " + s.ReliableReceived + ", Unreliable: " + s.UnreliableReceived);
+            }
         }
 
         private static void StartClient()
         {
-            Client c = new Client();
-            c.Connect();
-
-            for (int i = 0; i < MAX_LOOP_COUNT; i++)
+            using (Client c = new Client())
             {
-                for (int ui = 0; ui < UNRELIABLE_MESSAGES_PER_LOOP; ui++)
-                    c.SendUnreliable(DATA);
+                c.Connect();
 
-                for (int ri = 0; ri < RELIABLE_MESSAGES_PER_LOOP; ri++)
-                    c.SendReliable(DATA);
+                for (int i = 0; i < MAX_LOOP_COUNT; i++)
+                {
+                    for (int ui = 0; ui < UNRELIABLE_MESSAGES_PER_LOOP; ui++)
+                        c.SendUnreliable(DATA);
+
+                    for (int ri = 0; ri < RELIABLE_MESSAGES_PER_LOOP; ri++)
+                        c.SendReliable(DATA);
+                }
+
+                int dataSize = MAX_LOOP_COUNT * Encoding.UTF8.GetByteCount(DATA) * (UNRELIABLE_MESSAGES_PER_LOOP + RELIABLE_MESSAGES_PER_LOOP);
+                Console.WriteLine("DataSize: {0}b, {1}kb, {2}mb", dataSize, dataSize / 1024, dataSize / 1024 / 1024);
+
+                Thread.Sleep(10000);
+                CLIENT_RUNNING = false;
+
+                Console.WriteLine("CLIENT SENT -> Reliable: " + c.ReliableSent + ", Unreliable: " + c.UnreliableSent);
+                Console.WriteLine("CLIENT STATS:\n" + c.Stats);
             }
-
-            int dataSize = MAX_LOOP_COUNT * Encoding.UTF8.GetByteCount(DATA) * (UNRELIABLE_MESSAGES_PER_LOOP + RELIABLE_MESSAGES_PER_LOOP);
-            Console.WriteLine("DataSize: {0}b, {1}kb, {2}mb", dataSize, dataSize/1024, dataSize/1024/1024);
-
-            Thread.Sleep(10000);
-            CLIENT_RUNNING = false;
-
-            Console.WriteLine("CLIENT SENT -> Reliable: " + c.ReliableSent + ", Unreliable: " + c.UnreliableSent);
-            Console.WriteLine("CLIENT STATS:\n" + c.Stats);
         }
     }
 }

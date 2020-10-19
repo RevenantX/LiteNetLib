@@ -7,7 +7,7 @@ using LiteNetLib.Utils;
 
 namespace LibSample
 {
-    class BroadcastTest
+    class BroadcastTest : IExample
     {
         private class ClientListener : INetEventListener
         {

@@ -2,6 +2,10 @@
 using System.Net;
 using System.Net.Sockets;
 
+#if NETSTANDARD || NETCOREAPP
+using System.Threading.Tasks;
+#endif
+
 namespace LiteNetLib.Utils
 {
     /// <summary>
@@ -88,6 +92,31 @@ namespace LiteNetLib.Utils
             IPEndPoint endPoint = NetUtils.MakeEndPoint(ntpServerAddress, DefaultPort);
             return Create(endPoint, onRequestComplete);
         }
+
+#if NETSTANDARD || NETCOREAPP
+        /// <summary>
+        /// Requests asynchronously NTP server for time offset
+        /// </summary>
+        /// <param name="ntpServerAddress">NTP Server address.</param>
+        /// <returns>Scheduled task</returns>
+        public static async Task<NtpPacket> RequestAsync(string ntpServerAddress)
+        {
+            var t = new TaskCompletionSource<NtpPacket>();
+
+            await Task.Run(() =>
+            {
+                NtpRequest request = null;
+                request = Create(ntpServerAddress, (ntpPacket) =>
+                {
+                    request.Close();
+                    t.SetResult(ntpPacket);
+                });
+                request.Send();
+            });
+
+            return await t.Task;
+        }
+#endif
 
         /// <summary>
         /// Send request to the NTP server calls callback (if success).
