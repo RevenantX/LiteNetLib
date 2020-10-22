@@ -17,6 +17,11 @@ namespace LibSample
 
             readonly NetManager _server;
 
+            public NetStatistics Stats
+            {
+                get { return _server.Statistics; }
+            }
+
             public Server()
             {
                 _server = new NetManager(this);
@@ -24,6 +29,7 @@ namespace LibSample
                 _server.UpdateTime = 1;
                 _server.SimulatePacketLoss = false;
                 _server.SimulationPacketLossChance = 20;
+                _server.EnableStatistics = true;
                 _server.Start(9050);
             }
 
@@ -104,6 +110,7 @@ namespace LibSample
                 _client.AutoRecycle = true;
                 _client.SimulatePacketLoss = false;
                 _client.SimulationPacketLossChance = 20;
+                _client.EnableStatistics = true;
                 _client.Start();
             }
 
@@ -200,6 +207,7 @@ namespace LibSample
                 Thread.Sleep(10000);
                 s.PollEvents();
                 Console.WriteLine("SERVER RECEIVED -> Reliable: " + s.ReliableReceived + ", Unreliable: " + s.UnreliableReceived);
+                Console.WriteLine("SERVER STATS:\n" + s.Stats);
             }
         }
 
