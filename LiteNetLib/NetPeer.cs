@@ -989,8 +989,8 @@ namespace LiteNetLib
 
             if (NetManager.EnableStatistics)
             {
-                Statistics.PacketsSent++;
-                Statistics.BytesSent += (ulong)bytesSent;
+                Statistics.IncrementPacketsSent();
+                Statistics.AddBytesSent(bytesSent);
             }
 
             _mergePos = 0;
@@ -1009,8 +1009,8 @@ namespace LiteNetLib
 
                 if (NetManager.EnableStatistics)
                 {
-                    Statistics.PacketsSent++;
-                    Statistics.BytesSent += (ulong)bytesSent;
+                    Statistics.IncrementPacketsSent();
+                    Statistics.AddBytesSent(bytesSent);
                 }
 
                 return;

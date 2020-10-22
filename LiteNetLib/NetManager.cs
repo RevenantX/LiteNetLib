@@ -497,8 +497,8 @@ namespace LiteNetLib
 
             if (EnableStatistics)
             {
-                Statistics.PacketsSent++;
-                Statistics.BytesSent += (uint)length;
+                Statistics.IncrementPacketsSent();
+                Statistics.AddBytesSent(length);
             }
 
             return result;
@@ -675,8 +675,6 @@ namespace LiteNetLib
                 }
 #endif
 
-                ulong totalPacketLoss = 0;
-
                 int elapsed = (int)stopwatch.ElapsedMilliseconds;
                 elapsed = elapsed <= 0 ? 1 : elapsed;
                 stopwatch.Reset();
@@ -691,11 +689,6 @@ namespace LiteNetLib
                     else
                     {
                         netPeer.Update(elapsed);
-
-                        if (EnableStatistics)
-                        {
-                            totalPacketLoss += netPeer.Statistics.PacketLoss;
-                        }
                     }
                 }
                 if (peersToRemove.Count > 0)
@@ -705,11 +698,6 @@ namespace LiteNetLib
                         RemovePeerInternal(peersToRemove[i]);
                     _peersLock.ExitWriteLock();
                     peersToRemove.Clear();
-                }
-
-                if (EnableStatistics)
-                {
-                    Statistics.PacketLoss = totalPacketLoss;
                 }
 
                 int sleepTime = UpdateTime - (int)stopwatch.ElapsedMilliseconds;
@@ -897,8 +885,8 @@ namespace LiteNetLib
         {
             if (EnableStatistics)
             {
-                Statistics.PacketsReceived++;
-                Statistics.BytesReceived += (uint)count;
+                Statistics.IncrementPacketsReceived();
+                Statistics.AddBytesReceived(count);
             }
 
             if (_extraPacketLayer != null)
