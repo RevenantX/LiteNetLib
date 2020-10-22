@@ -20,7 +20,7 @@ namespace LiteNetLib.Layers
             }
 
             int checksumPoint = length - CRC32C.ChecksumSize;
-            if (CRC32C.Compute(data, 0, checksumPoint) != BitConverter.ToUInt32(data, checksumPoint))
+            if (CRC32C.Compute(data, offset, checksumPoint) != BitConverter.ToUInt32(data, checksumPoint))
             {
                 NetDebug.Write("[NM] DataReceived checksum: bad!");
                 return;
