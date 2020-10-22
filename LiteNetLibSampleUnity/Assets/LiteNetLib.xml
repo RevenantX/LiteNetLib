@@ -1342,13 +1342,6 @@
             <param name="ntpServerAddress">NTP Server address.</param>
             <param name="onRequestComplete">callback (called from other thread!)</param>
         </member>
-        <member name="M:LiteNetLib.Utils.NtpRequest.RequestAsync(System.String)">
-            <summary>
-            Requests asynchronously NTP server for time offset
-            </summary>
-            <param name="ntpServerAddress">NTP Server address.</param>
-            <returns>Scheduled task</returns>
-        </member>
         <member name="M:LiteNetLib.Utils.NtpRequest.Send">
             <summary>
             Send request to the NTP server calls callback (if success).
