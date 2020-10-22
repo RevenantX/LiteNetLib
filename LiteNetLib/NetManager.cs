@@ -169,7 +169,7 @@ namespace LiteNetLib
         private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict;
         private readonly ReaderWriterLockSlim _peersLock;
         private volatile NetPeer _headPeer;
-        private volatile int _connectedPeersCount;
+        private int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
         private NetPeer[] _peersArray;
         private readonly PacketLayerBase _extraPacketLayer;
@@ -528,6 +528,7 @@ namespace LiteNetLib
                 return;
             if(shutdownResult == ShutdownResult.WasConnected)
                 Interlocked.Decrement(ref _connectedPeersCount);
+            Thread.MemoryBarrier();
             CreateEvent(
                 NetEvent.EType.Disconnect,
                 peer,
