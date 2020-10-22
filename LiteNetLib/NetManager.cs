@@ -466,7 +466,7 @@ namespace LiteNetLib
                 var expandedPacket = NetPacketPool.GetPacket(length + _extraPacketLayer.ExtraPacketSizeForLayer);
                 Buffer.BlockCopy(message, start, expandedPacket.RawData, 0, length);
                 int newStart = 0;
-                _extraPacketLayer.ProcessOutBoundPacket(ref expandedPacket.RawData, ref newStart, ref length);
+                _extraPacketLayer.ProcessOutBoundPacket(remoteEndPoint, ref expandedPacket.RawData, ref newStart, ref length);
                 result = _socket.SendTo(expandedPacket.RawData, newStart, length, remoteEndPoint, ref errorCode);
                 NetPacketPool.Recycle(expandedPacket);
             }
@@ -901,20 +901,21 @@ namespace LiteNetLib
                 Statistics.BytesReceived += (uint)count;
             }
 
+            int start = 0;
             if (_extraPacketLayer != null)
             {
-                _extraPacketLayer.ProcessInboundPacket(ref reusableBuffer, ref count);
+                _extraPacketLayer.ProcessInboundPacket(remoteEndPoint, ref reusableBuffer, ref start, ref count);
                 if (count == 0)
                     return;
             }
 
             //empty packet
-            if (reusableBuffer[0] == (byte) PacketProperty.Empty)
+            if (reusableBuffer[start] == (byte) PacketProperty.Empty)
                 return;
 
             //Try read packet
             NetPacket packet = NetPacketPool.GetPacket(count);
-            if (!packet.FromBytes(reusableBuffer, 0, count))
+            if (!packet.FromBytes(reusableBuffer, start, count))
             {
                 NetPacketPool.Recycle(packet);
                 NetDebug.WriteError("[NM] DataReceived: bad!");
@@ -1324,7 +1325,7 @@ namespace LiteNetLib
                 Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
                 var checksumComputeStart = 0;
                 int preCrcLength = length + headerSize;
-                _extraPacketLayer.ProcessOutBoundPacket(ref packet.RawData, ref checksumComputeStart, ref preCrcLength);
+                _extraPacketLayer.ProcessOutBoundPacket(null, ref packet.RawData, ref checksumComputeStart, ref preCrcLength);
             }
             else
             {

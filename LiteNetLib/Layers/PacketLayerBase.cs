@@ -1,4 +1,6 @@
-﻿namespace LiteNetLib.Layers
+﻿using System.Net;
+
+namespace LiteNetLib.Layers
 {
     public abstract class PacketLayerBase
     {
@@ -9,7 +11,7 @@
             ExtraPacketSizeForLayer = extraPacketSizeForLayer;
         }
 
-        public abstract void ProcessInboundPacket(ref byte[] data, ref int length);
-        public abstract void ProcessOutBoundPacket(ref byte[] data, ref int offset, ref int length);
+        public abstract void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length);
+        public abstract void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length);
     }
 }
