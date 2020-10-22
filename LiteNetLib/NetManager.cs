@@ -158,6 +158,7 @@ namespace LiteNetLib
 
         private readonly NetSocket _socket;
         private Thread _logicThread;
+        private readonly AutoResetEvent _updateTriggerEvent = new AutoResetEvent(true);
 
         private readonly Queue<NetEvent> _netEventsQueue;
         private NetEvent _netEventPoolHead;
@@ -702,7 +703,7 @@ namespace LiteNetLib
 
                 int sleepTime = UpdateTime - (int)stopwatch.ElapsedMilliseconds;
                 if (sleepTime > 0)
-                    Thread.Sleep(sleepTime);
+                    _updateTriggerEvent.WaitOne(sleepTime);
             }
             stopwatch.Stop();
         }
@@ -1326,7 +1327,15 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Flush all queued packets of all peers
+        /// Triggers update and send logic immediately (works asynchronously)
+        /// </summary>
+        public void TriggerUpdate()
+        {
+            _updateTriggerEvent.Set();
+        }
+
+        /// <summary>
+        /// Flush all queued packets of all peers (calls send synchronously)
         /// </summary>
         public void Flush()
         {
@@ -1466,6 +1475,7 @@ namespace LiteNetLib
 
             //Stop
             _socket.Close(false);
+            _updateTriggerEvent.Set();
             _logicThread.Join();
             _logicThread = null;
 

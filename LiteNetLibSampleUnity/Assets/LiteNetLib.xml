@@ -464,9 +464,14 @@
             <param name="remoteEndPoint">Packet destination</param>
             <returns>Operation result</returns>
         </member>
+        <member name="M:LiteNetLib.NetManager.TriggerUpdate">
+            <summary>
+            Triggers update and send logic immediately (works asynchronously)
+            </summary>
+        </member>
         <member name="M:LiteNetLib.NetManager.Flush">
             <summary>
-            Flush all queued packets of all peers
+            Flush all queued packets of all peers (calls send synchronously)
             </summary>
         </member>
         <member name="M:LiteNetLib.NetManager.PollEvents">
@@ -1336,6 +1341,13 @@
             </summary>
             <param name="ntpServerAddress">NTP Server address.</param>
             <param name="onRequestComplete">callback (called from other thread!)</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NtpRequest.RequestAsync(System.String)">
+            <summary>
+            Requests asynchronously NTP server for time offset
+            </summary>
+            <param name="ntpServerAddress">NTP Server address.</param>
+            <returns>Scheduled task</returns>
         </member>
         <member name="M:LiteNetLib.Utils.NtpRequest.Send">
             <summary>

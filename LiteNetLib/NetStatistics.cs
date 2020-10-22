@@ -2,14 +2,13 @@
 
 namespace LiteNetLib
 {
-    public sealed class NetStatistics {
-
+    public sealed class NetStatistics 
+    {
         private long _packetsSent;
         private long _packetsReceived;
         private long _bytesSent;
         private long _bytesReceived;
         private long _packetLoss;
-
 
         public long PacketsSent 
         {
