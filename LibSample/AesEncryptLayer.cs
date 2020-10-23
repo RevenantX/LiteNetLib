@@ -2,6 +2,7 @@
 using System;
 using System.Net;
 using System.Security.Cryptography;
+using LiteNetLib;
 
 namespace LibSample
 {
@@ -12,7 +13,7 @@ namespace LibSample
     /// Speed varies greatly depending on hardware encryption support. 
     /// Why encrypt: http://ithare.com/udp-for-games-security-encryption-and-ddos-protection/
     /// </summary>
-    public class AesEncryptLayer : IPacketLayer
+    public struct AesEncryptLayer : IPacketLayer
     {
         public const int KeySize = 256;
         public const int BlockSize = 128;
@@ -21,20 +22,24 @@ namespace LibSample
         public const int ExtraHeaderSize = BlockSizeInBytes * 2; 
         
         private readonly AesCryptoServiceProvider _aes;
+
         private ICryptoTransform _encryptor;
-        private byte[] cipherBuffer = new byte[1500]; //Max possible UDP packet size
         private ICryptoTransform _decryptor;
-        private byte[] ivBuffer = new byte[BlockSizeInBytes];
+
+        private readonly byte[] _cipherBuffer; 
+        private readonly byte[] _ivBuffer;
 
         /// <summary>
         /// Should be safe against eavesdropping, but is vulnerable to tampering
         /// Needs a HMAC on top of the encrypted content to be fully safe
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="initializationVector"></param>
-        public AesEncryptLayer(byte[] key) : base()
+        public AesEncryptLayer(byte[] key)
         {
             if (key.Length != KeySizeInBytes) throw new NotSupportedException("EncryptLayer only supports keysize " + KeySize);
+
+            _cipherBuffer= new byte[NetConstants.MaxPacketSize];//Max possible UDP packet size
+            _ivBuffer = new byte[BlockSizeInBytes];
 
             //Switch this with AesGCM for better performance, requires .NET Core 3.0 or Standard 2.1
             _aes = new AesCryptoServiceProvider();
@@ -59,9 +64,9 @@ namespace LibSample
         public void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
         {
             //Can't copy directly to _aes.IV. It won't work for some reason.
-            Buffer.BlockCopy(data, offset, ivBuffer, 0, ivBuffer.Length);
+            Buffer.BlockCopy(data, offset, _ivBuffer, 0, _ivBuffer.Length);
             //_aes.IV = ivBuffer;
-            _decryptor = _aes.CreateDecryptor(_aes.Key, ivBuffer);
+            _decryptor = _aes.CreateDecryptor(_aes.Key, _ivBuffer);
             offset += BlockSizeInBytes;
 
             //int currentRead = ivBuffer.Length;
@@ -85,15 +90,15 @@ namespace LibSample
             }
 
             //Copy IV in plaintext to output, this is standard practice
-            _aes.IV.CopyTo(cipherBuffer, 0);
+            _aes.IV.CopyTo(_cipherBuffer, 0);
 
             int currentRead = offset;
             int currentWrite = _aes.IV.Length;
             byte[] lastBytes = _encryptor.TransformFinalBlock(data, currentRead, length - offset);
-            lastBytes.CopyTo(cipherBuffer, currentWrite);
+            lastBytes.CopyTo(_cipherBuffer, currentWrite);
             //TransformBlocks(_encryptor, data, length, ref currentRead, ref currentWrite);
 
-            data = cipherBuffer;
+            data = _cipherBuffer;
             offset = 0;
             length = lastBytes.Length + BlockSizeInBytes;
         }
@@ -107,14 +112,14 @@ namespace LibSample
             {
                 while (inputLength - currentRead > BlockSizeInBytes)
                 {
-                    int encryptedCount = transform.TransformBlock(input, currentRead, BlockSizeInBytes, cipherBuffer, currentWrite);
+                    int encryptedCount = transform.TransformBlock(input, currentRead, BlockSizeInBytes, _cipherBuffer, currentWrite);
                     currentRead += encryptedCount;
                     currentWrite += encryptedCount;
                 }
             }
 
             byte[] lastBytes = transform.TransformFinalBlock(input, currentRead, inputLength - currentRead);
-            lastBytes.CopyTo(cipherBuffer, currentWrite);
+            lastBytes.CopyTo(_cipherBuffer, currentWrite);
             currentWrite += lastBytes.Length;
         }
     }

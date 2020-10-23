@@ -52,7 +52,7 @@
         internal const int ProtocolId = 11;
         internal const int MaxUdpHeaderSize = 68;
 
-        internal static readonly int[] PossibleMtu =
+        public static readonly int[] PossibleMtu =
         {
             576  - MaxUdpHeaderSize, //minimal
             1232 - MaxUdpHeaderSize,
@@ -62,7 +62,7 @@
             1500 - MaxUdpHeaderSize  //Ethernet II (RFC 1191)
         };
 
-        internal static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
+        public static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
 
         //peer specific
         public const byte MaxConnectionNumber = 4;
