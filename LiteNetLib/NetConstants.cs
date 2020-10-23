@@ -1,4 +1,7 @@
-﻿namespace LiteNetLib
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+namespace LiteNetLib
 {
     /// <summary>
     /// Sending method type
@@ -52,8 +55,7 @@
         internal const int ProtocolId = 11;
         internal const int MaxUdpHeaderSize = 68;
 
-        public static readonly int[] PossibleMtu =
-        {
+        internal static readonly int[] PossibleMtu = {
             576  - MaxUdpHeaderSize, //minimal
             1232 - MaxUdpHeaderSize,
             1460 - MaxUdpHeaderSize, //google cloud
@@ -61,6 +63,9 @@
             1492 - MaxUdpHeaderSize, //Ethernet with LLC and SNAP, PPPoE (RFC 1042)
             1500 - MaxUdpHeaderSize  //Ethernet II (RFC 1191)
         };
+        
+        //Immutable MTU collection for public use
+        public static ReadOnlyCollection<int> AllPossibleMtu = new ReadOnlyCollection<int>(PossibleMtu);
 
         public static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
 
