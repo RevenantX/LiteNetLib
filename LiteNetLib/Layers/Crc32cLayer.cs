@@ -4,7 +4,7 @@ using System.Net;
 
 namespace LiteNetLib.Layers
 {
-    public sealed class Crc32cLayer : IPacketLayer
+    public struct Crc32cLayer : IPacketLayer
     {
         public int ExtraPacketSize
         {
