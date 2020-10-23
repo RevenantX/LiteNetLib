@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "E:/Projects/LiteNetLib/docfx_project",
+  "source_base_path": "e:/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -297,7 +297,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetManager.html",
-          "hash": "5bD0wW67IAJ5+69NwpwAzA=="
+          "hash": "Nj5x0x4JEOM1l+I+62Ep4A=="
         }
       },
       "is_incremental": false,
@@ -321,7 +321,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetPeer.html",
-          "hash": "9Rodbl8sGo58TNGY1vECGQ=="
+          "hash": "V7Cvn+3kcf5c+f7/Z3GxSg=="
         }
       },
       "is_incremental": false,

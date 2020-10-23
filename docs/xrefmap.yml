@@ -1500,19 +1500,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.FirstPeer
   nameWithType: NetManager.FirstPeer
-- uid: LiteNetLib.NetManager.Flush
-  name: Flush()
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Flush
-  commentId: M:LiteNetLib.NetManager.Flush
-  fullName: LiteNetLib.NetManager.Flush()
-  nameWithType: NetManager.Flush()
-- uid: LiteNetLib.NetManager.Flush*
-  name: Flush
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Flush_
-  commentId: Overload:LiteNetLib.NetManager.Flush
-  isSpec: "True"
-  fullName: LiteNetLib.NetManager.Flush
-  nameWithType: NetManager.Flush
 - uid: LiteNetLib.NetManager.GetEnumerator
   name: GetEnumerator()
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetEnumerator
@@ -2146,19 +2133,6 @@ references:
   commentId: F:LiteNetLib.NetPeer.EndPoint
   fullName: LiteNetLib.NetPeer.EndPoint
   nameWithType: NetPeer.EndPoint
-- uid: LiteNetLib.NetPeer.Flush
-  name: Flush()
-  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Flush
-  commentId: M:LiteNetLib.NetPeer.Flush
-  fullName: LiteNetLib.NetPeer.Flush()
-  nameWithType: NetPeer.Flush()
-- uid: LiteNetLib.NetPeer.Flush*
-  name: Flush
-  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Flush_
-  commentId: Overload:LiteNetLib.NetPeer.Flush
-  isSpec: "True"
-  fullName: LiteNetLib.NetPeer.Flush
-  nameWithType: NetPeer.Flush
 - uid: LiteNetLib.NetPeer.GetMaxSinglePacketSize(LiteNetLib.DeliveryMethod)
   name: GetMaxSinglePacketSize(DeliveryMethod)
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_GetMaxSinglePacketSize_LiteNetLib_DeliveryMethod_

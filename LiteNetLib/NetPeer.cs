@@ -63,7 +63,6 @@ namespace LiteNetLib
 
         //Common            
         private readonly NetPacketPool _packetPool;
-        private readonly object _flushLock = new object();
         private readonly object _sendLock = new object();
         private readonly object _shutdownLock = new object();
 
@@ -1025,36 +1024,6 @@ namespace LiteNetLib
             //DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2) + ", count: " + _mergeCount);
         }
 
-        /// <summary>
-        /// Flush all queued packets
-        /// </summary>
-        public void Flush()
-        {
-            if (_connectionState != ConnectionState.Connected)
-                return;
-            lock (_flushLock)
-            {
-                BaseChannel currentChannel = _headChannel;
-                while (currentChannel != null)
-                {
-                    currentChannel.SendNextPackets();
-                    currentChannel = currentChannel.Next;
-                }
-
-                lock (_unreliableChannel)
-                {
-                    while (_unreliableChannel.Count > 0)
-                    {
-                        NetPacket packet = _unreliableChannel.Dequeue();
-                        SendUserData(packet);
-                        NetManager.NetPacketPool.Recycle(packet);
-                    }
-                }
-
-                SendMerged();
-            }
-        }
-
         internal void Update(int deltaTime)
         {
             Interlocked.Add(ref _timeSinceLastPacket, deltaTime);
@@ -1138,7 +1107,24 @@ namespace LiteNetLib
             UpdateMtuLogic(deltaTime);
 
             //Pending send
-            Flush();
+            BaseChannel currentChannel = _headChannel;
+            while (currentChannel != null)
+            {
+                currentChannel.SendNextPackets();
+                currentChannel = currentChannel.Next;
+            }
+
+            lock (_unreliableChannel)
+            {
+                while (_unreliableChannel.Count > 0)
+                {
+                    NetPacket packet = _unreliableChannel.Dequeue();
+                    SendUserData(packet);
+                    NetManager.NetPacketPool.Recycle(packet);
+                }
+            }
+
+            SendMerged();
         }
 
         //For reliable channel

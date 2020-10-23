@@ -1336,15 +1336,6 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Flush all queued packets of all peers (calls send synchronously)
-        /// </summary>
-        public void Flush()
-        {
-            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
-                netPeer.Flush();
-        }
-
-        /// <summary>
         /// Receive all pending events. Call this in game update code
         /// </summary>
         public void PollEvents()
