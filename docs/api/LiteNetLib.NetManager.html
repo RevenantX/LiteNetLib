@@ -1378,7 +1378,7 @@
   
   <a id="LiteNetLib_NetManager_Flush_" data-uid="LiteNetLib.NetManager.Flush*"></a>
   <h4 id="LiteNetLib_NetManager_Flush" data-uid="LiteNetLib.NetManager.Flush">Flush()</h4>
-  <div class="markdown level1 summary"><p>Flush all queued packets of all peers</p>
+  <div class="markdown level1 summary"><p>Flush all queued packets of all peers (calls send synchronously)</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -2624,6 +2624,17 @@
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="LiteNetLib_NetManager_TriggerUpdate_" data-uid="LiteNetLib.NetManager.TriggerUpdate*"></a>
+  <h4 id="LiteNetLib_NetManager_TriggerUpdate" data-uid="LiteNetLib.NetManager.TriggerUpdate">TriggerUpdate()</h4>
+  <div class="markdown level1 summary"><p>Triggers update and send logic immediately (works asynchronously)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void TriggerUpdate()</code></pre>
+  </div>
   <h3 id="eii">Explicit Interface Implementations
   </h3>
   

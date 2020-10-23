@@ -464,9 +464,14 @@
             <param name="remoteEndPoint">Packet destination</param>
             <returns>Operation result</returns>
         </member>
+        <member name="M:LiteNetLib.NetManager.TriggerUpdate">
+            <summary>
+            Triggers update and send logic immediately (works asynchronously)
+            </summary>
+        </member>
         <member name="M:LiteNetLib.NetManager.Flush">
             <summary>
-            Flush all queued packets of all peers
+            Flush all queued packets of all peers (calls send synchronously)
             </summary>
         </member>
         <member name="M:LiteNetLib.NetManager.PollEvents">

@@ -83,7 +83,12 @@ namespace LiteNetLib
             bool packetProcessed = false;
             if (packet.Sequence < NetConstants.MaxSequence && relative > 0)
             {
-                Peer.Statistics.PacketLoss += (ulong)(relative - 1);
+                if (Peer.NetManager.EnableStatistics) 
+                {
+                    Peer.Statistics.AddPacketLoss(relative - 1);
+                    Peer.NetManager.Statistics.AddPacketLoss(relative - 1);
+                }
+
                 _remoteSequence = packet.Sequence;
                 Peer.NetManager.CreateReceiveEvent(
                     packet, 
