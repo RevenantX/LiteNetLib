@@ -217,7 +217,7 @@ namespace LiteNetLib
             _socket.SendTo(new[] { (byte)PacketProperty.Empty }, 0, 1, req.External, ref errorCode);
 
             // send external punch
-            _socket.Ttl = NetConstants.SocketTTL;
+            _socket.Ttl = NetConstants.SocketTtl;
             punchPacket.IsExternal = true;
             Send(punchPacket, req.External);
             NetDebug.Write(NetLogLevel.Trace, "[NAT] external punch sent to " + req.External);

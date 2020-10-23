@@ -42,7 +42,7 @@ namespace LiteNetLib
         //can be tuned
         public const int DefaultWindowSize = 64;
         public const int SocketBufferSize = 1024 * 1024; //1mb
-        public const int SocketTTL = 255;
+        public const int SocketTtl = 255;
 
         public const int HeaderSize = 1;
         public const int ChanneledHeaderSize = 4;

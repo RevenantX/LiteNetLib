@@ -286,7 +286,7 @@ namespace LiteNetLib
             }
             if (socket.AddressFamily == AddressFamily.InterNetwork)
             {
-                Ttl = NetConstants.SocketTTL;
+                Ttl = NetConstants.SocketTtl;
 
 #if NETSTANDARD || NETCOREAPP
                 if(!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
