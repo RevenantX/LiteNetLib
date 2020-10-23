@@ -107,7 +107,7 @@ namespace LiteNetLib
         }
         private ushort _fragmentId;
         private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
-        private readonly Dictionary<ushort, ushort> _deliveredFramgnets;
+        private readonly Dictionary<ushort, ushort> _deliveredFragments;
 
         //Merging
         private readonly NetPacket _mergeData;
@@ -215,7 +215,7 @@ namespace LiteNetLib
             _unreliableChannel = new Queue<NetPacket>(64);
             _headChannel = null;
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
-            _deliveredFramgnets = new Dictionary<ushort, ushort>();
+            _deliveredFragments = new Dictionary<ushort, ushort>();
 
             _channels = new BaseChannel[netManager.ChannelsCount * 4];
         }
@@ -1149,16 +1149,16 @@ namespace LiteNetLib
                 if (packet.IsFragmented)
                 {
                     ushort fragCount;
-                    _deliveredFramgnets.TryGetValue(packet.FragmentId, out fragCount);
+                    _deliveredFragments.TryGetValue(packet.FragmentId, out fragCount);
                     fragCount++;
                     if (fragCount == packet.FragmentsTotal)
                     {
                         NetManager.MessageDelivered(this, packet.UserData);
-                        _deliveredFramgnets.Remove(packet.FragmentId);
+                        _deliveredFragments.Remove(packet.FragmentId);
                     }
                     else
                     {
-                        _deliveredFramgnets[packet.FragmentId] = fragCount;
+                        _deliveredFragments[packet.FragmentId] = fragCount;
                     }
                 }
                 else
