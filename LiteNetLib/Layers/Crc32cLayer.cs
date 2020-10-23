@@ -4,14 +4,17 @@ using System.Net;
 
 namespace LiteNetLib.Layers
 {
-    public sealed class Crc32cLayer : PacketLayerBase
+    public sealed class Crc32cLayer : IPacketLayer
     {
-        public Crc32cLayer() : base(CRC32C.ChecksumSize)
+        public int ExtraPacketSize
         {
-
+            get
+            {
+                return CRC32C.ChecksumSize;
+            }
         }
 
-        public override void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
         {
             if (length < NetConstants.HeaderSize + CRC32C.ChecksumSize)
             {
@@ -28,7 +31,7 @@ namespace LiteNetLib.Layers
             length -= CRC32C.ChecksumSize;
         }
 
-        public override void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
         {
             FastBitConverter.GetBytes(data, length, CRC32C.Compute(data, offset, length));
             length += CRC32C.ChecksumSize;

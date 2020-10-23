@@ -220,11 +220,11 @@ namespace LiteNetLib
             _channels = new BaseChannel[netManager.ChannelsCount * 4];
         }
 
-        private void SetMtu(int mtuIdx)
+        protected virtual void SetMtu(int mtuIdx)
         {
-            _mtu = NetConstants.PossibleMtu[mtuIdx] - NetManager.ExtraPacketSizeForLayer;
+            _mtu = NetConstants.PossibleMtu[mtuIdx] - NetManager.ExtraPacketSize;
         }
-
+        
         /// <summary>
         /// Returns packets count in queue for reliable channel
         /// </summary>

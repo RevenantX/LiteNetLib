@@ -101,7 +101,7 @@ namespace LiteNetLib.Tests.TestUtility
                 {
                     request.AcceptIfKey(_appKey);
                 };
-                NetManager netManager = new NetManager(listener, new Crc32cLayer());
+                NetManager netManager = new NetManager<Crc32cLayer>(listener, new Crc32cLayer());
                 if (isClient)
                 {
                     if (!netManager.Start())

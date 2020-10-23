@@ -12,13 +12,14 @@ namespace LibSample
     /// Speed varies greatly depending on hardware encryption support. 
     /// Why encrypt: http://ithare.com/udp-for-games-security-encryption-and-ddos-protection/
     /// </summary>
-    public class AesEncryptLayer : PacketLayerBase
+    public class AesEncryptLayer : IPacketLayer
     {
         public const int KeySize = 256;
         public const int BlockSize = 128;
         public const int KeySizeInBytes = KeySize / 8;
         public const int BlockSizeInBytes = BlockSize / 8;
-
+        public const int ExtraHeaderSize = BlockSizeInBytes * 2; 
+        
         private readonly AesCryptoServiceProvider _aes;
         private ICryptoTransform _encryptor;
         private byte[] cipherBuffer = new byte[1500]; //Max possible UDP packet size
@@ -31,7 +32,7 @@ namespace LibSample
         /// </summary>
         /// <param name="key"></param>
         /// <param name="initializationVector"></param>
-        public AesEncryptLayer(byte[] key) : base(BlockSizeInBytes * 2)
+        public AesEncryptLayer(byte[] key) : base()
         {
             if (key.Length != KeySizeInBytes) throw new NotSupportedException("EncryptLayer only supports keysize " + KeySize);
 
@@ -47,7 +48,15 @@ namespace LibSample
             _decryptor = _aes.CreateDecryptor();
         }
 
-        public override void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public int ExtraPacketSize
+        {
+            get
+            {
+                return ExtraHeaderSize;
+            }
+        }
+
+        public void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
         {
             //Can't copy directly to _aes.IV. It won't work for some reason.
             Buffer.BlockCopy(data, offset, ivBuffer, 0, ivBuffer.Length);
@@ -66,7 +75,7 @@ namespace LibSample
             length = lastBytes.Length;
         }
 
-        public override void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
         {
             //Some Unity platforms may need these (and will be slower + generate garbage)
             if (!_encryptor.CanReuseTransform)

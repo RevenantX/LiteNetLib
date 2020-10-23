@@ -24,7 +24,7 @@ namespace LibSample
             outboudLayer.ProcessOutBoundPacket(null, ref outbound, ref start, ref length);
 
             int minLenth = lengthOfPacket + AesEncryptLayer.BlockSizeInBytes;
-            int maxLength = lengthOfPacket + outboudLayer.ExtraPacketSizeForLayer;
+            int maxLength = lengthOfPacket + outboudLayer.ExtraPacketSize;
             if (length < minLenth || length > maxLength)
             {
                 throw new Exception("Packet length out of bounds");

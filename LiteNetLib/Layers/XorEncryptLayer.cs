@@ -4,21 +4,16 @@ using System.Text;
 
 namespace LiteNetLib.Layers
 {
-    public class XorEncryptLayer : PacketLayerBase
+    public class XorEncryptLayer : IPacketLayer
     {
         private byte[] _byteKey;
 
-        public XorEncryptLayer() : base(0)
-        {
-
-        }
-
-        public XorEncryptLayer(byte[] key) : this()
+        public XorEncryptLayer(byte[] key)
         {
             SetKey(key);
         }
 
-        public XorEncryptLayer(string key) : this()
+        public XorEncryptLayer(string key)
         {
             SetKey(key);
         }
@@ -35,7 +30,15 @@ namespace LiteNetLib.Layers
             Buffer.BlockCopy(key, 0, _byteKey, 0, key.Length);
         }
 
-        public override void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public int ExtraPacketSize
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
         {
             if (_byteKey == null)
                 return;
@@ -46,7 +49,7 @@ namespace LiteNetLib.Layers
             }
         }
 
-        public override void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
         {
             if (_byteKey == null)
                 return;

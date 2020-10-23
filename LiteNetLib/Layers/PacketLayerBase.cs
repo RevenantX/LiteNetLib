@@ -2,16 +2,11 @@
 
 namespace LiteNetLib.Layers
 {
-    public abstract class PacketLayerBase
+    public interface IPacketLayer
     {
-        public readonly int ExtraPacketSizeForLayer;
+        int ExtraPacketSize { get; }
 
-        protected PacketLayerBase(int extraPacketSizeForLayer)
-        {
-            ExtraPacketSizeForLayer = extraPacketSizeForLayer;
-        }
-
-        public abstract void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length);
-        public abstract void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length);
+        void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length);
+        void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length);
     }
 }

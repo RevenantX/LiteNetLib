@@ -422,8 +422,33 @@ namespace LiteNetLib.Tests
         {
             EventBasedNetListener srvListener = new EventBasedNetListener();
             EventBasedNetListener cliListener = new EventBasedNetListener();
-            NetManager srv = new NetManager(srvListener, new XorEncryptLayer("secret_key"));
-            NetManager cli = new NetManager(cliListener, new XorEncryptLayer("secret_key"));
+            NetManager srv = new NetManager<XorEncryptLayer>(srvListener, new XorEncryptLayer("secret_key"));
+            NetManager cli = new NetManager<XorEncryptLayer>(cliListener, new XorEncryptLayer("secret_key"));
+            srv.Start(DefaultPort + 1);
+            cli.Start();
+
+            srvListener.ConnectionRequestEvent += request => { request.AcceptIfKey(DefaultAppKey); };
+            cli.Connect("127.0.0.1", DefaultPort + 1, DefaultAppKey);
+
+            while (srv.ConnectedPeersCount != 1)
+            {
+                Thread.Sleep(15);
+                srv.PollEvents();
+            }
+            Thread.Sleep(200);
+            Assert.AreEqual(1, srv.ConnectedPeersCount);
+            Assert.AreEqual(1, cli.ConnectedPeersCount);
+            cli.Stop();
+            srv.Stop();
+        }
+        
+        [Test, Timeout(5000)]
+        public void LayerUnifiers()
+        {
+            EventBasedNetListener srvListener = new EventBasedNetListener();
+            EventBasedNetListener cliListener = new EventBasedNetListener();
+            NetManager srv = new NetManager<LayerUnifier<XorEncryptLayer, Crc32cLayer>>(srvListener, LayerUnifier.Make(new XorEncryptLayer("secret_key"), new Crc32cLayer()));
+            NetManager cli = new NetManager<LayerUnifier<XorEncryptLayer, Crc32cLayer>>(cliListener, LayerUnifier.Make(new XorEncryptLayer("secret_key"), new Crc32cLayer()));
             srv.Start(DefaultPort + 1);
             cli.Start();
 
@@ -448,7 +473,7 @@ namespace LiteNetLib.Tests
             NetManager server = ManagerStack.Server(1);
 
             EventBasedNetListener listener = new EventBasedNetListener();
-            NetManager client = new NetManager(listener, new Crc32cLayer());
+            NetManager client = new NetManager<Crc32cLayer>(listener, new Crc32cLayer());
             Assert.True(client.Start(9049));
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             while (server.ConnectedPeersCount != 1)

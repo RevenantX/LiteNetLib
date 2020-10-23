@@ -1,0 +1,112 @@
+﻿<#@ template hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core"#>
+<#@ import namespace="System.Linq"#>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+    int totalArgumentCount = 8;
+#>
+using System.Net;
+
+namespace LiteNetLib.Layers
+{
+    public static class LayerUnifier
+    {
+<#
+    for (int i = 2; i < totalArgumentCount; i++)
+    {
+        int[] range = Enumerable.Range(1, i).ToArray();
+        string[] genericNames = range.Select(n => string.Concat("TLayer", n.ToString())).ToArray();
+        string[] parameterNames = range.Select(n => string.Concat("layer", n.ToString())).ToArray();
+        
+        string[] arguments = range.Select(n => string.Format("TLayer{0} layer{0}", n)).ToArray();
+        string parameters = string.Join(", ", arguments);
+        string genericArgs = string.Join(", ", genericNames);
+#>
+        public static LayerUnifier<<#= genericArgs #>> Make<<#= genericArgs #>>(<#= parameters#>)
+<#
+        for (int j = 1; j <= i; j++)
+        {
+#>
+            where TLayer<#= j.ToString() #> : IPacketLayer
+<#
+        }
+#>
+        {
+            return new LayerUnifier<<#= genericArgs #>>(<#= string.Join(", ", parameterNames) #>);
+        }
+<#
+    }
+#>
+    }
+
+<#
+    for (int i = 2; i < totalArgumentCount; i++)
+    {
+        IEnumerable<int> range = Enumerable.Range(1, i).ToArray();
+        IEnumerable<string> genericNames = range.Select(n => string.Concat("TLayer", n.ToString()));
+        IEnumerable<string> arguments = range.Select(n => string.Format("TLayer{0} layer{0}", n));
+#>
+    public struct LayerUnifier<<#=string.Join(", ", genericNames) #>> : IPacketLayer
+<#
+        for (int j = 1; j <= i; j++)
+        {
+#>
+        where TLayer<#=j.ToString() #> : IPacketLayer
+<#
+        }
+#>
+    {
+<#
+        for (int j = 1; j <= i; j++)
+        {
+#>
+        private readonly TLayer<#=j.ToString() #> _layer<#=j.ToString() #>;
+<#
+        }
+#>
+        public int ExtraPacketSize { get; }
+
+        public LayerUnifier(<#= string.Join(", ", arguments) #>)
+        {
+            ExtraPacketSize = 0;
+<#
+        for (int j = 1; j <= i; j++)
+        {
+#>
+            _layer<#=j.ToString() #> = layer<#=j.ToString() #>;           
+            ExtraPacketSize += layer<#=j.ToString() #>.ExtraPacketSize;
+<#
+        }
+#>
+        }
+        
+        public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        {
+<#
+        for (int j = 1; j <= i; j++)
+        {
+#>
+            _layer<#=j.ToString() #>.ProcessOutBoundPacket(endPoint, ref data, ref offset, ref length);
+<#
+        }
+#>
+        }
+
+        public void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        {
+<#
+        for (int j = i; j > 0; j--)
+        {
+#>
+            _layer<#=j.ToString() #>.ProcessInboundPacket(endPoint,ref data, ref offset, ref length);
+<#
+        }
+#>
+        }
+    }
+  
+<#
+    }
+#>
+}

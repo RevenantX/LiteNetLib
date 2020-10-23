@@ -88,6 +88,66 @@ namespace LiteNetLib
         }
     }
 
+    public class NetManager<TExtraLayer> : NetManager
+        where TExtraLayer : IPacketLayer
+    {
+        private readonly TExtraLayer _extraPacketLayer;
+        /// <summary>
+        /// NetManager constructor
+        /// </summary>
+        /// <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
+        /// <param name="extraPacketLayer">Extra processing of packages, like CRC checksum or encryption. All connected NetManagers must have same layer.</param>
+        public NetManager(INetEventListener listener, TExtraLayer extraPacketLayer) : base(listener)
+        {
+            _extraPacketLayer = extraPacketLayer;
+        }
+
+        public override int ExtraPacketSize
+        {
+            get
+            {
+                return _extraPacketLayer.ExtraPacketSize;
+            }
+        }
+
+        /// <summary>
+        /// Decorated method for sending message
+        /// </summary>
+        protected override int SendMessage(
+            byte[] message,
+            int start,
+            ref int length,
+            IPEndPoint remoteEndPoint,
+            ref SocketError errorCode)
+        {
+            NetPacket expandedPacket = NetPacketPool.GetPacket(length + _extraPacketLayer.ExtraPacketSize);
+            Buffer.BlockCopy(message, start, expandedPacket.RawData, 0, length);
+            var newStart = 0;
+            _extraPacketLayer.ProcessOutBoundPacket(remoteEndPoint, ref expandedPacket.RawData, ref newStart, ref length);
+            int result = base.SendMessage(expandedPacket.RawData, newStart, ref length, remoteEndPoint, ref errorCode);
+            NetPacketPool.Recycle(expandedPacket);
+            return result;
+        }
+
+        protected override NetPacket MakeBroadcastPacket(byte[] data, int start, int length)
+        {
+            int headerSize = NetPacket.GetHeaderSize(PacketProperty.Broadcast);
+            NetPacket packet = NetPacketPool.GetPacket(headerSize + length + _extraPacketLayer.ExtraPacketSize);
+            packet.Property = PacketProperty.Broadcast;
+            Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
+            var checksumComputeStart = 0;
+            int preCrcLength = length + headerSize;
+            _extraPacketLayer.ProcessOutBoundPacket(null, ref packet.RawData, ref checksumComputeStart, ref preCrcLength);
+            return packet;
+        }
+
+        protected override bool PreHandlePacket(IPEndPoint remoteEndPoint, ref byte[] reusableBuffer, ref int start, ref int count)
+        {
+            _extraPacketLayer.ProcessInboundPacket(remoteEndPoint, ref reusableBuffer, ref start, ref count);
+            return base.PreHandlePacket(remoteEndPoint, ref reusableBuffer, ref start, ref count);
+        }
+    }
+    
     /// <summary>
     /// Main class for all network operations. Can be used as client and/or server.
     /// </summary>
@@ -172,7 +232,6 @@ namespace LiteNetLib
         private int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache;
         private NetPeer[] _peersArray;
-        private readonly PacketLayerBase _extraPacketLayer;
         private int _lastPeerId;
         private readonly Queue<int> _peerIds;
         private byte _channelsCount = 1;
@@ -350,9 +409,9 @@ namespace LiteNetLib
         /// </summary>
         public int ConnectedPeersCount { get { return _connectedPeersCount; } }
 
-        public int ExtraPacketSizeForLayer
+        public virtual int ExtraPacketSize
         {
-            get { return _extraPacketLayer != null ? _extraPacketLayer.ExtraPacketSizeForLayer : 0; }
+            get { return 0; }
         }
 
         private bool TryGetPeer(IPEndPoint endPoint, out NetPeer peer)
@@ -413,8 +472,7 @@ namespace LiteNetLib
         /// NetManager constructor
         /// </summary>
         /// <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
-        /// <param name="extraPacketLayer">Extra processing of packages, like CRC checksum or encryption. All connected NetManagers must have same layer.</param>
-        public NetManager(INetEventListener listener, PacketLayerBase extraPacketLayer = null)
+        public NetManager(INetEventListener listener)
         {
             _socket = new NetSocket(this);
             _netEventListener = listener;
@@ -429,7 +487,6 @@ namespace LiteNetLib
             _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _peerIds = new Queue<int>();
             _peersArray = new NetPeer[32];
-            _extraPacketLayer = extraPacketLayer;
         }
 
         internal void ConnectionLatencyUpdated(NetPeer fromPeer, int latency)
@@ -461,20 +518,7 @@ namespace LiteNetLib
                 return 0;
 
             SocketError errorCode = 0;
-            int result;
-            if (_extraPacketLayer != null)
-            {
-                var expandedPacket = NetPacketPool.GetPacket(length + _extraPacketLayer.ExtraPacketSizeForLayer);
-                Buffer.BlockCopy(message, start, expandedPacket.RawData, 0, length);
-                int newStart = 0;
-                _extraPacketLayer.ProcessOutBoundPacket(remoteEndPoint, ref expandedPacket.RawData, ref newStart, ref length);
-                result = _socket.SendTo(expandedPacket.RawData, newStart, length, remoteEndPoint, ref errorCode);
-                NetPacketPool.Recycle(expandedPacket);
-            }
-            else
-            {
-                result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode);
-            }
+            int result = SendMessage(message, start, ref length, remoteEndPoint, ref errorCode);
 
             NetPeer fromPeer;
             switch (errorCode)
@@ -503,6 +547,16 @@ namespace LiteNetLib
             }
 
             return result;
+        }
+
+        protected virtual int SendMessage(
+            byte[] message,
+            int start,
+            ref int length,
+            IPEndPoint remoteEndPoint,
+            ref SocketError errorCode)
+        {
+            return _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode);
         }
 
         internal void DisconnectPeerForce(NetPeer peer,
@@ -883,6 +937,11 @@ namespace LiteNetLib
             CreateEvent(NetEvent.EType.ConnectionRequest, connectionRequest: req);
         }
 
+        protected virtual bool PreHandlePacket(IPEndPoint remoteEndPoint, ref byte[] reusableBuffer, ref int start, ref int count)
+        {
+            return count != 0;
+        }
+        
         private void DataReceived(byte[] reusableBuffer, int count, IPEndPoint remoteEndPoint)
         {
             if (EnableStatistics)
@@ -891,18 +950,13 @@ namespace LiteNetLib
                 Statistics.AddBytesReceived(count);
             }
 
-            int start = 0;
-            if (_extraPacketLayer != null)
+            var start = 0;
+            //If packet invalid or empty
+            if (!PreHandlePacket(remoteEndPoint, ref reusableBuffer, ref start, ref count) || reusableBuffer[start] == (byte) PacketProperty.Empty)
             {
-                _extraPacketLayer.ProcessInboundPacket(remoteEndPoint, ref reusableBuffer, ref start, ref count);
-                if (count == 0)
-                    return;
-            }
-
-            //empty packet
-            if (reusableBuffer[start] == (byte) PacketProperty.Empty)
                 return;
-
+            }
+            
             //Try read packet
             NetPacket packet = NetPacketPool.GetPacket(count);
             if (!packet.FromBytes(reusableBuffer, start, count))
@@ -1022,6 +1076,8 @@ namespace LiteNetLib
                     break;
             }
         }
+
+        
 
         internal void CreateReceiveEvent(NetPacket packet, DeliveryMethod method, int headerSize, NetPeer fromPeer)
         {
@@ -1306,25 +1362,18 @@ namespace LiteNetLib
 
         public bool SendBroadcast(byte[] data, int start, int length, int port)
         {
-            NetPacket packet;
-            if (_extraPacketLayer != null)
-            {
-                var headerSize = NetPacket.GetHeaderSize(PacketProperty.Broadcast);
-                packet = NetPacketPool.GetPacket(headerSize + length + _extraPacketLayer.ExtraPacketSizeForLayer);
-                packet.Property = PacketProperty.Broadcast;
-                Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
-                var checksumComputeStart = 0;
-                int preCrcLength = length + headerSize;
-                _extraPacketLayer.ProcessOutBoundPacket(null, ref packet.RawData, ref checksumComputeStart, ref preCrcLength);
-            }
-            else
-            {
-                packet = NetPacketPool.GetWithData(PacketProperty.Broadcast, data, start, length);
-            }
+            NetPacket packet = MakeBroadcastPacket(data, start, length);
 
             bool result = _socket.SendBroadcast(packet.RawData, 0, packet.Size, port);
             NetPacketPool.Recycle(packet);
             return result;
+        }
+
+        protected virtual NetPacket MakeBroadcastPacket(byte[] data, int start, int length)
+        {
+            NetPacket packet = NetPacketPool.GetWithData(PacketProperty.Broadcast, data, start, length);
+
+            return packet;
         }
 
         /// <summary>

@@ -4,7 +4,7 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    internal enum PacketProperty : byte
+    public enum PacketProperty : byte
     {
         Unreliable,
         Channeled,
@@ -26,7 +26,7 @@ namespace LiteNetLib
         Empty
     }
 
-    internal sealed class NetPacket
+    public sealed class NetPacket
     {
         private static readonly int LastProperty = Enum.GetValues(typeof(PacketProperty)).Length;
         private static readonly int[] HeaderSizes;
