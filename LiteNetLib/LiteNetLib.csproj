@@ -34,4 +34,23 @@
     <Copy SourceFiles="@(LibraryRelease)" DestinationFolder="..\LiteNetLibSampleUnity\Assets" />
   </Target>
 
+  <ItemGroup>
+    <None Update="Layers\LayerUnifier.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>LayerUnifier.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Layers\LayerUnifier.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LayerUnifier.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

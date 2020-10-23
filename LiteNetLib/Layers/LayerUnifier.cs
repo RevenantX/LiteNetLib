@@ -63,15 +63,20 @@ namespace LiteNetLib.Layers
     {
         private readonly TLayer1 _layer1;
         private readonly TLayer2 _layer2;
-        public int ExtraPacketSize { get; }
+        private readonly int _extraSize;
+
+        public int ExtraPacketSize
+        {
+            get { return _extraSize; }
+        }
 
         public LayerUnifier(TLayer1 layer1, TLayer2 layer2)
         {
-            ExtraPacketSize = 0;
+            _extraSize = 0;
             _layer1 = layer1;           
-            ExtraPacketSize += layer1.ExtraPacketSize;
+            _extraSize += layer1.ExtraPacketSize;
             _layer2 = layer2;           
-            ExtraPacketSize += layer2.ExtraPacketSize;
+            _extraSize += layer2.ExtraPacketSize;
         }
         
         public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
@@ -95,17 +100,22 @@ namespace LiteNetLib.Layers
         private readonly TLayer1 _layer1;
         private readonly TLayer2 _layer2;
         private readonly TLayer3 _layer3;
-        public int ExtraPacketSize { get; }
+        private readonly int _extraSize;
+
+        public int ExtraPacketSize
+        {
+            get { return _extraSize; }
+        }
 
         public LayerUnifier(TLayer1 layer1, TLayer2 layer2, TLayer3 layer3)
         {
-            ExtraPacketSize = 0;
+            _extraSize = 0;
             _layer1 = layer1;           
-            ExtraPacketSize += layer1.ExtraPacketSize;
+            _extraSize += layer1.ExtraPacketSize;
             _layer2 = layer2;           
-            ExtraPacketSize += layer2.ExtraPacketSize;
+            _extraSize += layer2.ExtraPacketSize;
             _layer3 = layer3;           
-            ExtraPacketSize += layer3.ExtraPacketSize;
+            _extraSize += layer3.ExtraPacketSize;
         }
         
         public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
@@ -133,19 +143,24 @@ namespace LiteNetLib.Layers
         private readonly TLayer2 _layer2;
         private readonly TLayer3 _layer3;
         private readonly TLayer4 _layer4;
-        public int ExtraPacketSize { get; }
+        private readonly int _extraSize;
+
+        public int ExtraPacketSize
+        {
+            get { return _extraSize; }
+        }
 
         public LayerUnifier(TLayer1 layer1, TLayer2 layer2, TLayer3 layer3, TLayer4 layer4)
         {
-            ExtraPacketSize = 0;
+            _extraSize = 0;
             _layer1 = layer1;           
-            ExtraPacketSize += layer1.ExtraPacketSize;
+            _extraSize += layer1.ExtraPacketSize;
             _layer2 = layer2;           
-            ExtraPacketSize += layer2.ExtraPacketSize;
+            _extraSize += layer2.ExtraPacketSize;
             _layer3 = layer3;           
-            ExtraPacketSize += layer3.ExtraPacketSize;
+            _extraSize += layer3.ExtraPacketSize;
             _layer4 = layer4;           
-            ExtraPacketSize += layer4.ExtraPacketSize;
+            _extraSize += layer4.ExtraPacketSize;
         }
         
         public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
@@ -177,21 +192,26 @@ namespace LiteNetLib.Layers
         private readonly TLayer3 _layer3;
         private readonly TLayer4 _layer4;
         private readonly TLayer5 _layer5;
-        public int ExtraPacketSize { get; }
+        private readonly int _extraSize;
+
+        public int ExtraPacketSize
+        {
+            get { return _extraSize; }
+        }
 
         public LayerUnifier(TLayer1 layer1, TLayer2 layer2, TLayer3 layer3, TLayer4 layer4, TLayer5 layer5)
         {
-            ExtraPacketSize = 0;
+            _extraSize = 0;
             _layer1 = layer1;           
-            ExtraPacketSize += layer1.ExtraPacketSize;
+            _extraSize += layer1.ExtraPacketSize;
             _layer2 = layer2;           
-            ExtraPacketSize += layer2.ExtraPacketSize;
+            _extraSize += layer2.ExtraPacketSize;
             _layer3 = layer3;           
-            ExtraPacketSize += layer3.ExtraPacketSize;
+            _extraSize += layer3.ExtraPacketSize;
             _layer4 = layer4;           
-            ExtraPacketSize += layer4.ExtraPacketSize;
+            _extraSize += layer4.ExtraPacketSize;
             _layer5 = layer5;           
-            ExtraPacketSize += layer5.ExtraPacketSize;
+            _extraSize += layer5.ExtraPacketSize;
         }
         
         public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
@@ -227,23 +247,28 @@ namespace LiteNetLib.Layers
         private readonly TLayer4 _layer4;
         private readonly TLayer5 _layer5;
         private readonly TLayer6 _layer6;
-        public int ExtraPacketSize { get; }
+        private readonly int _extraSize;
+
+        public int ExtraPacketSize
+        {
+            get { return _extraSize; }
+        }
 
         public LayerUnifier(TLayer1 layer1, TLayer2 layer2, TLayer3 layer3, TLayer4 layer4, TLayer5 layer5, TLayer6 layer6)
         {
-            ExtraPacketSize = 0;
+            _extraSize = 0;
             _layer1 = layer1;           
-            ExtraPacketSize += layer1.ExtraPacketSize;
+            _extraSize += layer1.ExtraPacketSize;
             _layer2 = layer2;           
-            ExtraPacketSize += layer2.ExtraPacketSize;
+            _extraSize += layer2.ExtraPacketSize;
             _layer3 = layer3;           
-            ExtraPacketSize += layer3.ExtraPacketSize;
+            _extraSize += layer3.ExtraPacketSize;
             _layer4 = layer4;           
-            ExtraPacketSize += layer4.ExtraPacketSize;
+            _extraSize += layer4.ExtraPacketSize;
             _layer5 = layer5;           
-            ExtraPacketSize += layer5.ExtraPacketSize;
+            _extraSize += layer5.ExtraPacketSize;
             _layer6 = layer6;           
-            ExtraPacketSize += layer6.ExtraPacketSize;
+            _extraSize += layer6.ExtraPacketSize;
         }
         
         public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
@@ -283,25 +308,30 @@ namespace LiteNetLib.Layers
         private readonly TLayer5 _layer5;
         private readonly TLayer6 _layer6;
         private readonly TLayer7 _layer7;
-        public int ExtraPacketSize { get; }
+        private readonly int _extraSize;
+
+        public int ExtraPacketSize
+        {
+            get { return _extraSize; }
+        }
 
         public LayerUnifier(TLayer1 layer1, TLayer2 layer2, TLayer3 layer3, TLayer4 layer4, TLayer5 layer5, TLayer6 layer6, TLayer7 layer7)
         {
-            ExtraPacketSize = 0;
+            _extraSize = 0;
             _layer1 = layer1;           
-            ExtraPacketSize += layer1.ExtraPacketSize;
+            _extraSize += layer1.ExtraPacketSize;
             _layer2 = layer2;           
-            ExtraPacketSize += layer2.ExtraPacketSize;
+            _extraSize += layer2.ExtraPacketSize;
             _layer3 = layer3;           
-            ExtraPacketSize += layer3.ExtraPacketSize;
+            _extraSize += layer3.ExtraPacketSize;
             _layer4 = layer4;           
-            ExtraPacketSize += layer4.ExtraPacketSize;
+            _extraSize += layer4.ExtraPacketSize;
             _layer5 = layer5;           
-            ExtraPacketSize += layer5.ExtraPacketSize;
+            _extraSize += layer5.ExtraPacketSize;
             _layer6 = layer6;           
-            ExtraPacketSize += layer6.ExtraPacketSize;
+            _extraSize += layer6.ExtraPacketSize;
             _layer7 = layer7;           
-            ExtraPacketSize += layer7.ExtraPacketSize;
+            _extraSize += layer7.ExtraPacketSize;
         }
         
         public void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)

@@ -1,6 +1,5 @@
-﻿<#@ template hostspecific="false" language="C#" #>
-<#@ output extension=".cs" #>
-<#@ assembly name="System.Core"#>
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
 <#@ import namespace="System.Linq"#>
 <#@ import namespace="System.Collections.Generic" #>
 <#
@@ -65,17 +64,22 @@ namespace LiteNetLib.Layers
 <#
         }
 #>
-        public int ExtraPacketSize { get; }
+        private readonly int _extraSize;
+
+        public int ExtraPacketSize
+        {
+            get { return _extraSize; }
+        }
 
         public LayerUnifier(<#= string.Join(", ", arguments) #>)
         {
-            ExtraPacketSize = 0;
+            _extraSize = 0;
 <#
         for (int j = 1; j <= i; j++)
         {
 #>
             _layer<#=j.ToString() #> = layer<#=j.ToString() #>;           
-            ExtraPacketSize += layer<#=j.ToString() #>.ExtraPacketSize;
+            _extraSize += layer<#=j.ToString() #>.ExtraPacketSize;
 <#
         }
 #>
