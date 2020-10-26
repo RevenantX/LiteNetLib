@@ -30,6 +30,7 @@ namespace LibSample
                 _server.SimulatePacketLoss = false;
                 _server.SimulationPacketLossChance = 20;
                 _server.EnableStatistics = true;
+                _server.UseNativeSockets = true;
                 _server.Start(9050);
             }
 

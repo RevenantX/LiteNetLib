@@ -268,6 +268,11 @@
             Automatically recycle NetPacketReader after OnReceive event
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.UseNativeSockets">
+            <summary>
+            Use fast,native sockets (tested only on Windows and Linux)
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.IPv6Enabled">
             <summary>
             IPv6 support
@@ -467,11 +472,6 @@
         <member name="M:LiteNetLib.NetManager.TriggerUpdate">
             <summary>
             Triggers update and send logic immediately (works asynchronously)
-            </summary>
-        </member>
-        <member name="M:LiteNetLib.NetManager.Flush">
-            <summary>
-            Flush all queued packets of all peers (calls send synchronously)
             </summary>
         </member>
         <member name="M:LiteNetLib.NetManager.PollEvents">
@@ -792,11 +792,6 @@
                 MTU - headerSize bytes for Unreliable<para/>
                 Fragment count exceeded ushort.MaxValue<para/>
             </exception>
-        </member>
-        <member name="M:LiteNetLib.NetPeer.Flush">
-            <summary>
-            Flush all queued packets
-            </summary>
         </member>
         <member name="T:LiteNetLib.LocalAddrType">
             <summary>
