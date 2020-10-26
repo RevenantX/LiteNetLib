@@ -1,5 +1,6 @@
 ﻿#if NETCOREAPP3_0
 using System;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 #endif
 
@@ -42,23 +43,37 @@ namespace LiteNetLib.Utils
         {
             uint crcLocal = uint.MaxValue;
 #if NETCOREAPP3_0
-            if(Sse42.IsSupported)
+            if (Sse42.IsSupported)
             {
-                if (Sse42.X64.IsSupported)
+                var data = new ReadOnlySpan<byte>(input, offset, length);
+                int processed = 0;
+                if (Sse42.X64.IsSupported && data.Length > sizeof(ulong))
                 {
-                    while (length >= 8)
+                    processed = data.Length / sizeof(ulong) * sizeof(ulong);
+                    var ulongs = MemoryMarshal.Cast<byte, ulong>(data.Slice(0, processed));
+                    ulong crclong = crcLocal;
+                    for (int i = 0; i < ulongs.Length; i++)
                     {
-                        crcLocal = (uint)Sse42.X64.Crc32(crcLocal, BitConverter.ToUInt64(input, offset));
-                        offset += 8;
-                        length -= 8;
+                        crclong = Sse42.X64.Crc32(crclong, ulongs[i]);
+                    }
+
+                    crcLocal = (uint)crclong;
+                }
+                else if (data.Length > sizeof(uint))
+                {
+                    processed = data.Length / sizeof(uint) * sizeof(uint);
+                    var uints = MemoryMarshal.Cast<byte, uint>(data.Slice(0, processed));
+                    for (int i = 0; i < uints.Length; i++)
+                    {
+                        crcLocal = Sse42.Crc32(crcLocal, uints[i]);
                     }
                 }
-                while (length > 0)
+
+                for (int i = processed; i < data.Length; i++)
                 {
-                    crcLocal = Sse42.Crc32(crcLocal, input[offset]);
-                    offset++;
-                    length--;
+                    crcLocal = Sse42.Crc32(crcLocal, data[i]);
                 }
+
                 return crcLocal ^ uint.MaxValue;
             }
 #endif

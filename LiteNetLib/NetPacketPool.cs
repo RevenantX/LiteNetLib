@@ -5,8 +5,7 @@ namespace LiteNetLib
 {
     internal sealed class NetPacketPool
     {
-        private readonly NetPacket[] _pool = new NetPacket[NetConstants.PacketPoolSize];
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private NetPacket _head;
         private int _count;
 
         public NetPacket GetWithData(PacketProperty property, byte[] data, int start, int length)
@@ -35,52 +34,41 @@ namespace LiteNetLib
 
         public NetPacket GetPacket(int size)
         {
-            if (size <= NetConstants.MaxPacketSize)
+            if (size > NetConstants.MaxPacketSize) 
+                return new NetPacket(size);
+
+            NetPacket packet;
+            do
             {
-                NetPacket packet = null;
-                _lock.EnterUpgradeableReadLock();
-                if (_count > 0)
-                {
-                    _lock.EnterWriteLock();
-                    _count--;
-                    packet = _pool[_count];
-                    _pool[_count] = null;
-                    _lock.ExitWriteLock();
-                }
-                _lock.ExitUpgradeableReadLock();
-                if (packet != null)
-                {
-                    packet.Size = size;
-                    if (packet.RawData.Length < size)
-                        packet.RawData = new byte[size];
-                    return packet;
-                }
-            }
-            return new NetPacket(size);
+                packet = _head;
+                if (packet == null)
+                    return new NetPacket(size);
+            } while (packet != Interlocked.CompareExchange(ref _head, packet.Next, packet));
+
+            _count--;
+            packet.Size = size;
+            if (packet.RawData.Length < size)
+                packet.RawData = new byte[size];
+            return packet;
         }
 
         public void Recycle(NetPacket packet)
         {
-            if (packet.RawData.Length > NetConstants.MaxPacketSize)
+            if (packet.RawData.Length > NetConstants.MaxPacketSize || _count >= NetConstants.PacketPoolSize)
             {
                 //Don't pool big packets. Save memory
                 return;
             }
 
+            _count++;
+
             //Clean fragmented flag
             packet.RawData[0] = 0;
 
-            _lock.EnterUpgradeableReadLock();
-            if (_count == NetConstants.PacketPoolSize)
+            do
             {
-                _lock.ExitUpgradeableReadLock();
-                return;
-            }
-            _lock.EnterWriteLock();
-            _pool[_count] = packet;
-            _count++;
-            _lock.ExitWriteLock();
-            _lock.ExitUpgradeableReadLock();
+                packet.Next = _head;
+            } while (packet.Next != Interlocked.CompareExchange(ref _head, packet, packet.Next));
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LibSample
 {
-    class AesEncryptionTest
+    class AesEncryptionTest : IExample
     {
         public void Run() => AesLayerEncryptDecrypt();
 
@@ -21,7 +21,7 @@ namespace LibSample
             int lengthOfPacket = outbound.Length;
             int start = 0;
             int length = outbound.Length;
-            outboudLayer.ProcessOutBoundPacket(ref outbound, ref start, ref length);
+            outboudLayer.ProcessOutBoundPacket(null, ref outbound, ref start, ref length);
 
             int minLenth = lengthOfPacket + AesEncryptLayer.BlockSizeInBytes;
             int maxLength = lengthOfPacket + outboudLayer.ExtraPacketSizeForLayer;
@@ -34,7 +34,7 @@ namespace LibSample
             //Copy array so we dont read and write to same array
             byte[] inboundData = new byte[outbound.Length];
             outbound.CopyTo(inboundData, 0);
-            inboundLayer.ProcessInboundPacket(ref inboundData, ref length);
+            inboundLayer.ProcessInboundPacket(null, ref inboundData, ref start, ref length);
 
             Console.WriteLine(Encoding.ASCII.GetString(inboundData, 0, length));
             byte[] expectedPlaintext = Encoding.ASCII.GetBytes(testData);

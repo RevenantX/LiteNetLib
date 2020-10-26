@@ -134,37 +134,6 @@ references:
   commentId: F:LiteNetLib.ConnectionRequest.RemoteEndPoint
   fullName: LiteNetLib.ConnectionRequest.RemoteEndPoint
   nameWithType: ConnectionRequest.RemoteEndPoint
-- uid: LiteNetLib.ConnectionRequest.Type
-  name: Type
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Type
-  commentId: P:LiteNetLib.ConnectionRequest.Type
-  fullName: LiteNetLib.ConnectionRequest.Type
-  nameWithType: ConnectionRequest.Type
-- uid: LiteNetLib.ConnectionRequest.Type*
-  name: Type
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Type_
-  commentId: Overload:LiteNetLib.ConnectionRequest.Type
-  isSpec: "True"
-  fullName: LiteNetLib.ConnectionRequest.Type
-  nameWithType: ConnectionRequest.Type
-- uid: LiteNetLib.ConnectionRequestType
-  name: ConnectionRequestType
-  href: api/LiteNetLib.ConnectionRequestType.html
-  commentId: T:LiteNetLib.ConnectionRequestType
-  fullName: LiteNetLib.ConnectionRequestType
-  nameWithType: ConnectionRequestType
-- uid: LiteNetLib.ConnectionRequestType.Incoming
-  name: Incoming
-  href: api/LiteNetLib.ConnectionRequestType.html#LiteNetLib_ConnectionRequestType_Incoming
-  commentId: F:LiteNetLib.ConnectionRequestType.Incoming
-  fullName: LiteNetLib.ConnectionRequestType.Incoming
-  nameWithType: ConnectionRequestType.Incoming
-- uid: LiteNetLib.ConnectionRequestType.PeerToPeer
-  name: PeerToPeer
-  href: api/LiteNetLib.ConnectionRequestType.html#LiteNetLib_ConnectionRequestType_PeerToPeer
-  commentId: F:LiteNetLib.ConnectionRequestType.PeerToPeer
-  fullName: LiteNetLib.ConnectionRequestType.PeerToPeer
-  nameWithType: ConnectionRequestType.PeerToPeer
 - uid: LiteNetLib.ConnectionState
   name: ConnectionState
   href: api/LiteNetLib.ConnectionState.html
@@ -303,6 +272,12 @@ references:
   commentId: F:LiteNetLib.DisconnectReason.NetworkUnreachable
   fullName: LiteNetLib.DisconnectReason.NetworkUnreachable
   nameWithType: DisconnectReason.NetworkUnreachable
+- uid: LiteNetLib.DisconnectReason.PeerToPeerConnection
+  name: PeerToPeerConnection
+  href: api/LiteNetLib.DisconnectReason.html#LiteNetLib_DisconnectReason_PeerToPeerConnection
+  commentId: F:LiteNetLib.DisconnectReason.PeerToPeerConnection
+  fullName: LiteNetLib.DisconnectReason.PeerToPeerConnection
+  nameWithType: DisconnectReason.PeerToPeerConnection
 - uid: LiteNetLib.DisconnectReason.Reconnect
   name: Reconnect
   href: api/LiteNetLib.DisconnectReason.html#LiteNetLib_DisconnectReason_Reconnect
@@ -350,14 +325,14 @@ references:
   fullName: LiteNetLib.EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionRequest
   nameWithType: EventBasedNatPunchListener.INatPunchListener.OnNatIntroductionRequest
   nameWithType.vb: EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionRequest
-- uid: LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess(System.Net.IPEndPoint,System.String)
-  name: INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
-  href: api/LiteNetLib.EventBasedNatPunchListener.html#LiteNetLib_EventBasedNatPunchListener_LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_System_Net_IPEndPoint_System_String_
-  commentId: M:LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess(System.Net.IPEndPoint,System.String)
-  name.vb: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
-  fullName: LiteNetLib.EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint, System.String)
-  nameWithType: EventBasedNatPunchListener.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
-  nameWithType.vb: EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
+- uid: LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess(System.Net.IPEndPoint,LiteNetLib.NatAddressType,System.String)
+  name: INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
+  href: api/LiteNetLib.EventBasedNatPunchListener.html#LiteNetLib_EventBasedNatPunchListener_LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_System_Net_IPEndPoint_LiteNetLib_NatAddressType_System_String_
+  commentId: M:LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess(System.Net.IPEndPoint,LiteNetLib.NatAddressType,System.String)
+  name.vb: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
+  fullName: LiteNetLib.EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint, LiteNetLib.NatAddressType, System.String)
+  nameWithType: EventBasedNatPunchListener.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
+  nameWithType.vb: EventBasedNatPunchListener.LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
 - uid: LiteNetLib.EventBasedNatPunchListener.LiteNetLib#INatPunchListener#OnNatIntroductionSuccess*
   name: INatPunchListener.OnNatIntroductionSuccess
   href: api/LiteNetLib.EventBasedNatPunchListener.html#LiteNetLib_EventBasedNatPunchListener_LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_
@@ -711,12 +686,12 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.INatPunchListener.OnNatIntroductionRequest
   nameWithType: INatPunchListener.OnNatIntroductionRequest
-- uid: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint,System.String)
-  name: OnNatIntroductionSuccess(IPEndPoint, String)
-  href: api/LiteNetLib.INatPunchListener.html#LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_System_Net_IPEndPoint_System_String_
-  commentId: M:LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint,System.String)
-  fullName: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint, System.String)
-  nameWithType: INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, String)
+- uid: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint,LiteNetLib.NatAddressType,System.String)
+  name: OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
+  href: api/LiteNetLib.INatPunchListener.html#LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_System_Net_IPEndPoint_LiteNetLib_NatAddressType_System_String_
+  commentId: M:LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint,LiteNetLib.NatAddressType,System.String)
+  fullName: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint, LiteNetLib.NatAddressType, System.String)
+  nameWithType: INatPunchListener.OnNatIntroductionSuccess(IPEndPoint, NatAddressType, String)
 - uid: LiteNetLib.INatPunchListener.OnNatIntroductionSuccess*
   name: OnNatIntroductionSuccess
   href: api/LiteNetLib.INatPunchListener.html#LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_
@@ -849,24 +824,12 @@ references:
   commentId: T:LiteNetLib.InvalidPacketException
   fullName: LiteNetLib.InvalidPacketException
   nameWithType: InvalidPacketException
-- uid: LiteNetLib.InvalidPacketException.#ctor
-  name: InvalidPacketException()
-  href: api/LiteNetLib.InvalidPacketException.html#LiteNetLib_InvalidPacketException__ctor
-  commentId: M:LiteNetLib.InvalidPacketException.#ctor
-  fullName: LiteNetLib.InvalidPacketException.InvalidPacketException()
-  nameWithType: InvalidPacketException.InvalidPacketException()
 - uid: LiteNetLib.InvalidPacketException.#ctor(System.String)
   name: InvalidPacketException(String)
   href: api/LiteNetLib.InvalidPacketException.html#LiteNetLib_InvalidPacketException__ctor_System_String_
   commentId: M:LiteNetLib.InvalidPacketException.#ctor(System.String)
   fullName: LiteNetLib.InvalidPacketException.InvalidPacketException(System.String)
   nameWithType: InvalidPacketException.InvalidPacketException(String)
-- uid: LiteNetLib.InvalidPacketException.#ctor(System.String,System.Exception)
-  name: InvalidPacketException(String, Exception)
-  href: api/LiteNetLib.InvalidPacketException.html#LiteNetLib_InvalidPacketException__ctor_System_String_System_Exception_
-  commentId: M:LiteNetLib.InvalidPacketException.#ctor(System.String,System.Exception)
-  fullName: LiteNetLib.InvalidPacketException.InvalidPacketException(System.String, System.Exception)
-  nameWithType: InvalidPacketException.InvalidPacketException(String, Exception)
 - uid: LiteNetLib.InvalidPacketException.#ctor*
   name: InvalidPacketException
   href: api/LiteNetLib.InvalidPacketException.html#LiteNetLib_InvalidPacketException__ctor_
@@ -874,6 +837,30 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.InvalidPacketException.InvalidPacketException
   nameWithType: InvalidPacketException.InvalidPacketException
+- uid: LiteNetLib.IPv6Mode
+  name: IPv6Mode
+  href: api/LiteNetLib.IPv6Mode.html
+  commentId: T:LiteNetLib.IPv6Mode
+  fullName: LiteNetLib.IPv6Mode
+  nameWithType: IPv6Mode
+- uid: LiteNetLib.IPv6Mode.Disabled
+  name: Disabled
+  href: api/LiteNetLib.IPv6Mode.html#LiteNetLib_IPv6Mode_Disabled
+  commentId: F:LiteNetLib.IPv6Mode.Disabled
+  fullName: LiteNetLib.IPv6Mode.Disabled
+  nameWithType: IPv6Mode.Disabled
+- uid: LiteNetLib.IPv6Mode.DualMode
+  name: DualMode
+  href: api/LiteNetLib.IPv6Mode.html#LiteNetLib_IPv6Mode_DualMode
+  commentId: F:LiteNetLib.IPv6Mode.DualMode
+  fullName: LiteNetLib.IPv6Mode.DualMode
+  nameWithType: IPv6Mode.DualMode
+- uid: LiteNetLib.IPv6Mode.SeparateSocket
+  name: SeparateSocket
+  href: api/LiteNetLib.IPv6Mode.html#LiteNetLib_IPv6Mode_SeparateSocket
+  commentId: F:LiteNetLib.IPv6Mode.SeparateSocket
+  fullName: LiteNetLib.IPv6Mode.SeparateSocket
+  nameWithType: IPv6Mode.SeparateSocket
 - uid: LiteNetLib.Layers
   name: LiteNetLib.Layers
   href: api/LiteNetLib.Layers.html
@@ -899,15 +886,15 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Layers.Crc32cLayer.Crc32cLayer
   nameWithType: Crc32cLayer.Crc32cLayer
-- uid: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Byte[]@,System.Int32@)
-  name: ProcessInboundPacket(ref Byte[], ref Int32)
-  href: api/LiteNetLib.Layers.Crc32cLayer.html#LiteNetLib_Layers_Crc32cLayer_ProcessInboundPacket_System_Byte____System_Int32__
-  commentId: M:LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Byte[]@,System.Int32@)
-  name.vb: ProcessInboundPacket(ByRef Byte(), ByRef Int32)
-  fullName: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(ref System.Byte[], ref System.Int32)
-  fullName.vb: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(ByRef System.Byte(), ByRef System.Int32)
-  nameWithType: Crc32cLayer.ProcessInboundPacket(ref Byte[], ref Int32)
-  nameWithType.vb: Crc32cLayer.ProcessInboundPacket(ByRef Byte(), ByRef Int32)
+- uid: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name: ProcessInboundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  href: api/LiteNetLib.Layers.Crc32cLayer.html#LiteNetLib_Layers_Crc32cLayer_ProcessInboundPacket_System_Net_IPEndPoint_System_Byte____System_Int32__System_Int32__
+  commentId: M:LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name.vb: ProcessInboundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
+  fullName: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint, ref System.Byte[], ref System.Int32, ref System.Int32)
+  fullName.vb: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint, ByRef System.Byte(), ByRef System.Int32, ByRef System.Int32)
+  nameWithType: Crc32cLayer.ProcessInboundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  nameWithType.vb: Crc32cLayer.ProcessInboundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
 - uid: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket*
   name: ProcessInboundPacket
   href: api/LiteNetLib.Layers.Crc32cLayer.html#LiteNetLib_Layers_Crc32cLayer_ProcessInboundPacket_
@@ -915,15 +902,15 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket
   nameWithType: Crc32cLayer.ProcessInboundPacket
-- uid: LiteNetLib.Layers.Crc32cLayer.ProcessOutBoundPacket(System.Byte[]@,System.Int32@,System.Int32@)
-  name: ProcessOutBoundPacket(ref Byte[], ref Int32, ref Int32)
-  href: api/LiteNetLib.Layers.Crc32cLayer.html#LiteNetLib_Layers_Crc32cLayer_ProcessOutBoundPacket_System_Byte____System_Int32__System_Int32__
-  commentId: M:LiteNetLib.Layers.Crc32cLayer.ProcessOutBoundPacket(System.Byte[]@,System.Int32@,System.Int32@)
-  name.vb: ProcessOutBoundPacket(ByRef Byte(), ByRef Int32, ByRef Int32)
-  fullName: LiteNetLib.Layers.Crc32cLayer.ProcessOutBoundPacket(ref System.Byte[], ref System.Int32, ref System.Int32)
-  fullName.vb: LiteNetLib.Layers.Crc32cLayer.ProcessOutBoundPacket(ByRef System.Byte(), ByRef System.Int32, ByRef System.Int32)
-  nameWithType: Crc32cLayer.ProcessOutBoundPacket(ref Byte[], ref Int32, ref Int32)
-  nameWithType.vb: Crc32cLayer.ProcessOutBoundPacket(ByRef Byte(), ByRef Int32, ByRef Int32)
+- uid: LiteNetLib.Layers.Crc32cLayer.ProcessOutBoundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name: ProcessOutBoundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  href: api/LiteNetLib.Layers.Crc32cLayer.html#LiteNetLib_Layers_Crc32cLayer_ProcessOutBoundPacket_System_Net_IPEndPoint_System_Byte____System_Int32__System_Int32__
+  commentId: M:LiteNetLib.Layers.Crc32cLayer.ProcessOutBoundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name.vb: ProcessOutBoundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
+  fullName: LiteNetLib.Layers.Crc32cLayer.ProcessOutBoundPacket(System.Net.IPEndPoint, ref System.Byte[], ref System.Int32, ref System.Int32)
+  fullName.vb: LiteNetLib.Layers.Crc32cLayer.ProcessOutBoundPacket(System.Net.IPEndPoint, ByRef System.Byte(), ByRef System.Int32, ByRef System.Int32)
+  nameWithType: Crc32cLayer.ProcessOutBoundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  nameWithType.vb: Crc32cLayer.ProcessOutBoundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
 - uid: LiteNetLib.Layers.Crc32cLayer.ProcessOutBoundPacket*
   name: ProcessOutBoundPacket
   href: api/LiteNetLib.Layers.Crc32cLayer.html#LiteNetLib_Layers_Crc32cLayer_ProcessOutBoundPacket_
@@ -956,15 +943,15 @@ references:
   commentId: F:LiteNetLib.Layers.PacketLayerBase.ExtraPacketSizeForLayer
   fullName: LiteNetLib.Layers.PacketLayerBase.ExtraPacketSizeForLayer
   nameWithType: PacketLayerBase.ExtraPacketSizeForLayer
-- uid: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Byte[]@,System.Int32@)
-  name: ProcessInboundPacket(ref Byte[], ref Int32)
-  href: api/LiteNetLib.Layers.PacketLayerBase.html#LiteNetLib_Layers_PacketLayerBase_ProcessInboundPacket_System_Byte____System_Int32__
-  commentId: M:LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Byte[]@,System.Int32@)
-  name.vb: ProcessInboundPacket(ByRef Byte(), ByRef Int32)
-  fullName: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(ref System.Byte[], ref System.Int32)
-  fullName.vb: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(ByRef System.Byte(), ByRef System.Int32)
-  nameWithType: PacketLayerBase.ProcessInboundPacket(ref Byte[], ref Int32)
-  nameWithType.vb: PacketLayerBase.ProcessInboundPacket(ByRef Byte(), ByRef Int32)
+- uid: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name: ProcessInboundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  href: api/LiteNetLib.Layers.PacketLayerBase.html#LiteNetLib_Layers_PacketLayerBase_ProcessInboundPacket_System_Net_IPEndPoint_System_Byte____System_Int32__System_Int32__
+  commentId: M:LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name.vb: ProcessInboundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
+  fullName: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint, ref System.Byte[], ref System.Int32, ref System.Int32)
+  fullName.vb: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint, ByRef System.Byte(), ByRef System.Int32, ByRef System.Int32)
+  nameWithType: PacketLayerBase.ProcessInboundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  nameWithType.vb: PacketLayerBase.ProcessInboundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
 - uid: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket*
   name: ProcessInboundPacket
   href: api/LiteNetLib.Layers.PacketLayerBase.html#LiteNetLib_Layers_PacketLayerBase_ProcessInboundPacket_
@@ -972,15 +959,15 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket
   nameWithType: PacketLayerBase.ProcessInboundPacket
-- uid: LiteNetLib.Layers.PacketLayerBase.ProcessOutBoundPacket(System.Byte[]@,System.Int32@,System.Int32@)
-  name: ProcessOutBoundPacket(ref Byte[], ref Int32, ref Int32)
-  href: api/LiteNetLib.Layers.PacketLayerBase.html#LiteNetLib_Layers_PacketLayerBase_ProcessOutBoundPacket_System_Byte____System_Int32__System_Int32__
-  commentId: M:LiteNetLib.Layers.PacketLayerBase.ProcessOutBoundPacket(System.Byte[]@,System.Int32@,System.Int32@)
-  name.vb: ProcessOutBoundPacket(ByRef Byte(), ByRef Int32, ByRef Int32)
-  fullName: LiteNetLib.Layers.PacketLayerBase.ProcessOutBoundPacket(ref System.Byte[], ref System.Int32, ref System.Int32)
-  fullName.vb: LiteNetLib.Layers.PacketLayerBase.ProcessOutBoundPacket(ByRef System.Byte(), ByRef System.Int32, ByRef System.Int32)
-  nameWithType: PacketLayerBase.ProcessOutBoundPacket(ref Byte[], ref Int32, ref Int32)
-  nameWithType.vb: PacketLayerBase.ProcessOutBoundPacket(ByRef Byte(), ByRef Int32, ByRef Int32)
+- uid: LiteNetLib.Layers.PacketLayerBase.ProcessOutBoundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name: ProcessOutBoundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  href: api/LiteNetLib.Layers.PacketLayerBase.html#LiteNetLib_Layers_PacketLayerBase_ProcessOutBoundPacket_System_Net_IPEndPoint_System_Byte____System_Int32__System_Int32__
+  commentId: M:LiteNetLib.Layers.PacketLayerBase.ProcessOutBoundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name.vb: ProcessOutBoundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
+  fullName: LiteNetLib.Layers.PacketLayerBase.ProcessOutBoundPacket(System.Net.IPEndPoint, ref System.Byte[], ref System.Int32, ref System.Int32)
+  fullName.vb: LiteNetLib.Layers.PacketLayerBase.ProcessOutBoundPacket(System.Net.IPEndPoint, ByRef System.Byte(), ByRef System.Int32, ByRef System.Int32)
+  nameWithType: PacketLayerBase.ProcessOutBoundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  nameWithType.vb: PacketLayerBase.ProcessOutBoundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
 - uid: LiteNetLib.Layers.PacketLayerBase.ProcessOutBoundPacket*
   name: ProcessOutBoundPacket
   href: api/LiteNetLib.Layers.PacketLayerBase.html#LiteNetLib_Layers_PacketLayerBase_ProcessOutBoundPacket_
@@ -1022,15 +1009,15 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Layers.XorEncryptLayer.XorEncryptLayer
   nameWithType: XorEncryptLayer.XorEncryptLayer
-- uid: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Byte[]@,System.Int32@)
-  name: ProcessInboundPacket(ref Byte[], ref Int32)
-  href: api/LiteNetLib.Layers.XorEncryptLayer.html#LiteNetLib_Layers_XorEncryptLayer_ProcessInboundPacket_System_Byte____System_Int32__
-  commentId: M:LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Byte[]@,System.Int32@)
-  name.vb: ProcessInboundPacket(ByRef Byte(), ByRef Int32)
-  fullName: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(ref System.Byte[], ref System.Int32)
-  fullName.vb: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(ByRef System.Byte(), ByRef System.Int32)
-  nameWithType: XorEncryptLayer.ProcessInboundPacket(ref Byte[], ref Int32)
-  nameWithType.vb: XorEncryptLayer.ProcessInboundPacket(ByRef Byte(), ByRef Int32)
+- uid: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name: ProcessInboundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  href: api/LiteNetLib.Layers.XorEncryptLayer.html#LiteNetLib_Layers_XorEncryptLayer_ProcessInboundPacket_System_Net_IPEndPoint_System_Byte____System_Int32__System_Int32__
+  commentId: M:LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name.vb: ProcessInboundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
+  fullName: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint, ref System.Byte[], ref System.Int32, ref System.Int32)
+  fullName.vb: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint, ByRef System.Byte(), ByRef System.Int32, ByRef System.Int32)
+  nameWithType: XorEncryptLayer.ProcessInboundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  nameWithType.vb: XorEncryptLayer.ProcessInboundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
 - uid: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket*
   name: ProcessInboundPacket
   href: api/LiteNetLib.Layers.XorEncryptLayer.html#LiteNetLib_Layers_XorEncryptLayer_ProcessInboundPacket_
@@ -1038,15 +1025,15 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket
   nameWithType: XorEncryptLayer.ProcessInboundPacket
-- uid: LiteNetLib.Layers.XorEncryptLayer.ProcessOutBoundPacket(System.Byte[]@,System.Int32@,System.Int32@)
-  name: ProcessOutBoundPacket(ref Byte[], ref Int32, ref Int32)
-  href: api/LiteNetLib.Layers.XorEncryptLayer.html#LiteNetLib_Layers_XorEncryptLayer_ProcessOutBoundPacket_System_Byte____System_Int32__System_Int32__
-  commentId: M:LiteNetLib.Layers.XorEncryptLayer.ProcessOutBoundPacket(System.Byte[]@,System.Int32@,System.Int32@)
-  name.vb: ProcessOutBoundPacket(ByRef Byte(), ByRef Int32, ByRef Int32)
-  fullName: LiteNetLib.Layers.XorEncryptLayer.ProcessOutBoundPacket(ref System.Byte[], ref System.Int32, ref System.Int32)
-  fullName.vb: LiteNetLib.Layers.XorEncryptLayer.ProcessOutBoundPacket(ByRef System.Byte(), ByRef System.Int32, ByRef System.Int32)
-  nameWithType: XorEncryptLayer.ProcessOutBoundPacket(ref Byte[], ref Int32, ref Int32)
-  nameWithType.vb: XorEncryptLayer.ProcessOutBoundPacket(ByRef Byte(), ByRef Int32, ByRef Int32)
+- uid: LiteNetLib.Layers.XorEncryptLayer.ProcessOutBoundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name: ProcessOutBoundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  href: api/LiteNetLib.Layers.XorEncryptLayer.html#LiteNetLib_Layers_XorEncryptLayer_ProcessOutBoundPacket_System_Net_IPEndPoint_System_Byte____System_Int32__System_Int32__
+  commentId: M:LiteNetLib.Layers.XorEncryptLayer.ProcessOutBoundPacket(System.Net.IPEndPoint,System.Byte[]@,System.Int32@,System.Int32@)
+  name.vb: ProcessOutBoundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
+  fullName: LiteNetLib.Layers.XorEncryptLayer.ProcessOutBoundPacket(System.Net.IPEndPoint, ref System.Byte[], ref System.Int32, ref System.Int32)
+  fullName.vb: LiteNetLib.Layers.XorEncryptLayer.ProcessOutBoundPacket(System.Net.IPEndPoint, ByRef System.Byte(), ByRef System.Int32, ByRef System.Int32)
+  nameWithType: XorEncryptLayer.ProcessOutBoundPacket(IPEndPoint, ref Byte[], ref Int32, ref Int32)
+  nameWithType.vb: XorEncryptLayer.ProcessOutBoundPacket(IPEndPoint, ByRef Byte(), ByRef Int32, ByRef Int32)
 - uid: LiteNetLib.Layers.XorEncryptLayer.ProcessOutBoundPacket*
   name: ProcessOutBoundPacket
   href: api/LiteNetLib.Layers.XorEncryptLayer.html#LiteNetLib_Layers_XorEncryptLayer_ProcessOutBoundPacket_
@@ -1100,6 +1087,24 @@ references:
   commentId: F:LiteNetLib.LocalAddrType.IPv6
   fullName: LiteNetLib.LocalAddrType.IPv6
   nameWithType: LocalAddrType.IPv6
+- uid: LiteNetLib.NatAddressType
+  name: NatAddressType
+  href: api/LiteNetLib.NatAddressType.html
+  commentId: T:LiteNetLib.NatAddressType
+  fullName: LiteNetLib.NatAddressType
+  nameWithType: NatAddressType
+- uid: LiteNetLib.NatAddressType.External
+  name: External
+  href: api/LiteNetLib.NatAddressType.html#LiteNetLib_NatAddressType_External
+  commentId: F:LiteNetLib.NatAddressType.External
+  fullName: LiteNetLib.NatAddressType.External
+  nameWithType: NatAddressType.External
+- uid: LiteNetLib.NatAddressType.Internal
+  name: Internal
+  href: api/LiteNetLib.NatAddressType.html#LiteNetLib_NatAddressType_Internal
+  commentId: F:LiteNetLib.NatAddressType.Internal
+  fullName: LiteNetLib.NatAddressType.Internal
+  nameWithType: NatAddressType.Internal
 - uid: LiteNetLib.NatPunchModule
   name: NatPunchModule
   href: api/LiteNetLib.NatPunchModule.html
@@ -1469,6 +1474,19 @@ references:
   commentId: F:LiteNetLib.NetManager.EnableStatistics
   fullName: LiteNetLib.NetManager.EnableStatistics
   nameWithType: NetManager.EnableStatistics
+- uid: LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  name: ExtraPacketSizeForLayer
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ExtraPacketSizeForLayer
+  commentId: P:LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  fullName: LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  nameWithType: NetManager.ExtraPacketSizeForLayer
+- uid: LiteNetLib.NetManager.ExtraPacketSizeForLayer*
+  name: ExtraPacketSizeForLayer
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ExtraPacketSizeForLayer_
+  commentId: Overload:LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.ExtraPacketSizeForLayer
+  nameWithType: NetManager.ExtraPacketSizeForLayer
 - uid: LiteNetLib.NetManager.FirstPeer
   name: FirstPeer
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_FirstPeer
@@ -1482,19 +1500,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.FirstPeer
   nameWithType: NetManager.FirstPeer
-- uid: LiteNetLib.NetManager.Flush
-  name: Flush()
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Flush
-  commentId: M:LiteNetLib.NetManager.Flush
-  fullName: LiteNetLib.NetManager.Flush()
-  nameWithType: NetManager.Flush()
-- uid: LiteNetLib.NetManager.Flush*
-  name: Flush
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Flush_
-  commentId: Overload:LiteNetLib.NetManager.Flush
-  isSpec: "True"
-  fullName: LiteNetLib.NetManager.Flush
-  nameWithType: NetManager.Flush
 - uid: LiteNetLib.NetManager.GetEnumerator
   name: GetEnumerator()
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetEnumerator
@@ -2004,6 +2009,19 @@ references:
   fullName: LiteNetLib.NetManager.System.Collections.IEnumerable.GetEnumerator
   nameWithType: NetManager.IEnumerable.GetEnumerator
   nameWithType.vb: NetManager.System.Collections.IEnumerable.GetEnumerator
+- uid: LiteNetLib.NetManager.TriggerUpdate
+  name: TriggerUpdate()
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_TriggerUpdate
+  commentId: M:LiteNetLib.NetManager.TriggerUpdate
+  fullName: LiteNetLib.NetManager.TriggerUpdate()
+  nameWithType: NetManager.TriggerUpdate()
+- uid: LiteNetLib.NetManager.TriggerUpdate*
+  name: TriggerUpdate
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_TriggerUpdate_
+  commentId: Overload:LiteNetLib.NetManager.TriggerUpdate
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.TriggerUpdate
+  nameWithType: NetManager.TriggerUpdate
 - uid: LiteNetLib.NetManager.UnconnectedMessagesEnabled
   name: UnconnectedMessagesEnabled
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_UnconnectedMessagesEnabled
@@ -2022,6 +2040,12 @@ references:
   commentId: F:LiteNetLib.NetManager.UnsyncedEvents
   fullName: LiteNetLib.NetManager.UnsyncedEvents
   nameWithType: NetManager.UnsyncedEvents
+- uid: LiteNetLib.NetManager.UnsyncedReceiveEvent
+  name: UnsyncedReceiveEvent
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_UnsyncedReceiveEvent
+  commentId: F:LiteNetLib.NetManager.UnsyncedReceiveEvent
+  fullName: LiteNetLib.NetManager.UnsyncedReceiveEvent
+  nameWithType: NetManager.UnsyncedReceiveEvent
 - uid: LiteNetLib.NetManager.UpdateTime
   name: UpdateTime
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_UpdateTime
@@ -2109,19 +2133,6 @@ references:
   commentId: F:LiteNetLib.NetPeer.EndPoint
   fullName: LiteNetLib.NetPeer.EndPoint
   nameWithType: NetPeer.EndPoint
-- uid: LiteNetLib.NetPeer.Flush
-  name: Flush()
-  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Flush
-  commentId: M:LiteNetLib.NetPeer.Flush
-  fullName: LiteNetLib.NetPeer.Flush()
-  nameWithType: NetPeer.Flush()
-- uid: LiteNetLib.NetPeer.Flush*
-  name: Flush
-  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Flush_
-  commentId: Overload:LiteNetLib.NetPeer.Flush
-  isSpec: "True"
-  fullName: LiteNetLib.NetPeer.Flush
-  nameWithType: NetPeer.Flush
 - uid: LiteNetLib.NetPeer.GetMaxSinglePacketSize(LiteNetLib.DeliveryMethod)
   name: GetMaxSinglePacketSize(DeliveryMethod)
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_GetMaxSinglePacketSize_LiteNetLib_DeliveryMethod_
@@ -2329,22 +2340,121 @@ references:
   commentId: T:LiteNetLib.NetStatistics
   fullName: LiteNetLib.NetStatistics
   nameWithType: NetStatistics
+- uid: LiteNetLib.NetStatistics.AddBytesReceived(System.Int64)
+  name: AddBytesReceived(Int64)
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_AddBytesReceived_System_Int64_
+  commentId: M:LiteNetLib.NetStatistics.AddBytesReceived(System.Int64)
+  fullName: LiteNetLib.NetStatistics.AddBytesReceived(System.Int64)
+  nameWithType: NetStatistics.AddBytesReceived(Int64)
+- uid: LiteNetLib.NetStatistics.AddBytesReceived*
+  name: AddBytesReceived
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_AddBytesReceived_
+  commentId: Overload:LiteNetLib.NetStatistics.AddBytesReceived
+  isSpec: "True"
+  fullName: LiteNetLib.NetStatistics.AddBytesReceived
+  nameWithType: NetStatistics.AddBytesReceived
+- uid: LiteNetLib.NetStatistics.AddBytesSent(System.Int64)
+  name: AddBytesSent(Int64)
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_AddBytesSent_System_Int64_
+  commentId: M:LiteNetLib.NetStatistics.AddBytesSent(System.Int64)
+  fullName: LiteNetLib.NetStatistics.AddBytesSent(System.Int64)
+  nameWithType: NetStatistics.AddBytesSent(Int64)
+- uid: LiteNetLib.NetStatistics.AddBytesSent*
+  name: AddBytesSent
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_AddBytesSent_
+  commentId: Overload:LiteNetLib.NetStatistics.AddBytesSent
+  isSpec: "True"
+  fullName: LiteNetLib.NetStatistics.AddBytesSent
+  nameWithType: NetStatistics.AddBytesSent
+- uid: LiteNetLib.NetStatistics.AddPacketLoss(System.Int64)
+  name: AddPacketLoss(Int64)
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_AddPacketLoss_System_Int64_
+  commentId: M:LiteNetLib.NetStatistics.AddPacketLoss(System.Int64)
+  fullName: LiteNetLib.NetStatistics.AddPacketLoss(System.Int64)
+  nameWithType: NetStatistics.AddPacketLoss(Int64)
+- uid: LiteNetLib.NetStatistics.AddPacketLoss*
+  name: AddPacketLoss
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_AddPacketLoss_
+  commentId: Overload:LiteNetLib.NetStatistics.AddPacketLoss
+  isSpec: "True"
+  fullName: LiteNetLib.NetStatistics.AddPacketLoss
+  nameWithType: NetStatistics.AddPacketLoss
 - uid: LiteNetLib.NetStatistics.BytesReceived
   name: BytesReceived
   href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_BytesReceived
-  commentId: F:LiteNetLib.NetStatistics.BytesReceived
+  commentId: P:LiteNetLib.NetStatistics.BytesReceived
+  fullName: LiteNetLib.NetStatistics.BytesReceived
+  nameWithType: NetStatistics.BytesReceived
+- uid: LiteNetLib.NetStatistics.BytesReceived*
+  name: BytesReceived
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_BytesReceived_
+  commentId: Overload:LiteNetLib.NetStatistics.BytesReceived
+  isSpec: "True"
   fullName: LiteNetLib.NetStatistics.BytesReceived
   nameWithType: NetStatistics.BytesReceived
 - uid: LiteNetLib.NetStatistics.BytesSent
   name: BytesSent
   href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_BytesSent
-  commentId: F:LiteNetLib.NetStatistics.BytesSent
+  commentId: P:LiteNetLib.NetStatistics.BytesSent
   fullName: LiteNetLib.NetStatistics.BytesSent
   nameWithType: NetStatistics.BytesSent
+- uid: LiteNetLib.NetStatistics.BytesSent*
+  name: BytesSent
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_BytesSent_
+  commentId: Overload:LiteNetLib.NetStatistics.BytesSent
+  isSpec: "True"
+  fullName: LiteNetLib.NetStatistics.BytesSent
+  nameWithType: NetStatistics.BytesSent
+- uid: LiteNetLib.NetStatistics.IncrementPacketLoss
+  name: IncrementPacketLoss()
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_IncrementPacketLoss
+  commentId: M:LiteNetLib.NetStatistics.IncrementPacketLoss
+  fullName: LiteNetLib.NetStatistics.IncrementPacketLoss()
+  nameWithType: NetStatistics.IncrementPacketLoss()
+- uid: LiteNetLib.NetStatistics.IncrementPacketLoss*
+  name: IncrementPacketLoss
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_IncrementPacketLoss_
+  commentId: Overload:LiteNetLib.NetStatistics.IncrementPacketLoss
+  isSpec: "True"
+  fullName: LiteNetLib.NetStatistics.IncrementPacketLoss
+  nameWithType: NetStatistics.IncrementPacketLoss
+- uid: LiteNetLib.NetStatistics.IncrementPacketsReceived
+  name: IncrementPacketsReceived()
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_IncrementPacketsReceived
+  commentId: M:LiteNetLib.NetStatistics.IncrementPacketsReceived
+  fullName: LiteNetLib.NetStatistics.IncrementPacketsReceived()
+  nameWithType: NetStatistics.IncrementPacketsReceived()
+- uid: LiteNetLib.NetStatistics.IncrementPacketsReceived*
+  name: IncrementPacketsReceived
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_IncrementPacketsReceived_
+  commentId: Overload:LiteNetLib.NetStatistics.IncrementPacketsReceived
+  isSpec: "True"
+  fullName: LiteNetLib.NetStatistics.IncrementPacketsReceived
+  nameWithType: NetStatistics.IncrementPacketsReceived
+- uid: LiteNetLib.NetStatistics.IncrementPacketsSent
+  name: IncrementPacketsSent()
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_IncrementPacketsSent
+  commentId: M:LiteNetLib.NetStatistics.IncrementPacketsSent
+  fullName: LiteNetLib.NetStatistics.IncrementPacketsSent()
+  nameWithType: NetStatistics.IncrementPacketsSent()
+- uid: LiteNetLib.NetStatistics.IncrementPacketsSent*
+  name: IncrementPacketsSent
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_IncrementPacketsSent_
+  commentId: Overload:LiteNetLib.NetStatistics.IncrementPacketsSent
+  isSpec: "True"
+  fullName: LiteNetLib.NetStatistics.IncrementPacketsSent
+  nameWithType: NetStatistics.IncrementPacketsSent
 - uid: LiteNetLib.NetStatistics.PacketLoss
   name: PacketLoss
   href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_PacketLoss
-  commentId: F:LiteNetLib.NetStatistics.PacketLoss
+  commentId: P:LiteNetLib.NetStatistics.PacketLoss
+  fullName: LiteNetLib.NetStatistics.PacketLoss
+  nameWithType: NetStatistics.PacketLoss
+- uid: LiteNetLib.NetStatistics.PacketLoss*
+  name: PacketLoss
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_PacketLoss_
+  commentId: Overload:LiteNetLib.NetStatistics.PacketLoss
+  isSpec: "True"
   fullName: LiteNetLib.NetStatistics.PacketLoss
   nameWithType: NetStatistics.PacketLoss
 - uid: LiteNetLib.NetStatistics.PacketLossPercent
@@ -2363,13 +2473,27 @@ references:
 - uid: LiteNetLib.NetStatistics.PacketsReceived
   name: PacketsReceived
   href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_PacketsReceived
-  commentId: F:LiteNetLib.NetStatistics.PacketsReceived
+  commentId: P:LiteNetLib.NetStatistics.PacketsReceived
+  fullName: LiteNetLib.NetStatistics.PacketsReceived
+  nameWithType: NetStatistics.PacketsReceived
+- uid: LiteNetLib.NetStatistics.PacketsReceived*
+  name: PacketsReceived
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_PacketsReceived_
+  commentId: Overload:LiteNetLib.NetStatistics.PacketsReceived
+  isSpec: "True"
   fullName: LiteNetLib.NetStatistics.PacketsReceived
   nameWithType: NetStatistics.PacketsReceived
 - uid: LiteNetLib.NetStatistics.PacketsSent
   name: PacketsSent
   href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_PacketsSent
-  commentId: F:LiteNetLib.NetStatistics.PacketsSent
+  commentId: P:LiteNetLib.NetStatistics.PacketsSent
+  fullName: LiteNetLib.NetStatistics.PacketsSent
+  nameWithType: NetStatistics.PacketsSent
+- uid: LiteNetLib.NetStatistics.PacketsSent*
+  name: PacketsSent
+  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_PacketsSent_
+  commentId: Overload:LiteNetLib.NetStatistics.PacketsSent
+  isSpec: "True"
   fullName: LiteNetLib.NetStatistics.PacketsSent
   nameWithType: NetStatistics.PacketsSent
 - uid: LiteNetLib.NetStatistics.Reset
@@ -2385,12 +2509,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetStatistics.Reset
   nameWithType: NetStatistics.Reset
-- uid: LiteNetLib.NetStatistics.SequencedPacketLoss
-  name: SequencedPacketLoss
-  href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_SequencedPacketLoss
-  commentId: F:LiteNetLib.NetStatistics.SequencedPacketLoss
-  fullName: LiteNetLib.NetStatistics.SequencedPacketLoss
-  nameWithType: NetStatistics.SequencedPacketLoss
 - uid: LiteNetLib.NetStatistics.ToString
   name: ToString()
   href: api/LiteNetLib.NetStatistics.html#LiteNetLib_NetStatistics_ToString
@@ -2477,24 +2595,12 @@ references:
   commentId: T:LiteNetLib.TooBigPacketException
   fullName: LiteNetLib.TooBigPacketException
   nameWithType: TooBigPacketException
-- uid: LiteNetLib.TooBigPacketException.#ctor
-  name: TooBigPacketException()
-  href: api/LiteNetLib.TooBigPacketException.html#LiteNetLib_TooBigPacketException__ctor
-  commentId: M:LiteNetLib.TooBigPacketException.#ctor
-  fullName: LiteNetLib.TooBigPacketException.TooBigPacketException()
-  nameWithType: TooBigPacketException.TooBigPacketException()
 - uid: LiteNetLib.TooBigPacketException.#ctor(System.String)
   name: TooBigPacketException(String)
   href: api/LiteNetLib.TooBigPacketException.html#LiteNetLib_TooBigPacketException__ctor_System_String_
   commentId: M:LiteNetLib.TooBigPacketException.#ctor(System.String)
   fullName: LiteNetLib.TooBigPacketException.TooBigPacketException(System.String)
   nameWithType: TooBigPacketException.TooBigPacketException(String)
-- uid: LiteNetLib.TooBigPacketException.#ctor(System.String,System.Exception)
-  name: TooBigPacketException(String, Exception)
-  href: api/LiteNetLib.TooBigPacketException.html#LiteNetLib_TooBigPacketException__ctor_System_String_System_Exception_
-  commentId: M:LiteNetLib.TooBigPacketException.#ctor(System.String,System.Exception)
-  fullName: LiteNetLib.TooBigPacketException.TooBigPacketException(System.String, System.Exception)
-  nameWithType: TooBigPacketException.TooBigPacketException(String, Exception)
 - uid: LiteNetLib.TooBigPacketException.#ctor*
   name: TooBigPacketException
   href: api/LiteNetLib.TooBigPacketException.html#LiteNetLib_TooBigPacketException__ctor_
@@ -2718,6 +2824,12 @@ references:
   commentId: M:LiteNetLib.Utils.NetDataReader.#ctor
   fullName: LiteNetLib.Utils.NetDataReader.NetDataReader()
   nameWithType: NetDataReader.NetDataReader()
+- uid: LiteNetLib.Utils.NetDataReader.#ctor(LiteNetLib.Utils.NetDataWriter)
+  name: NetDataReader(NetDataWriter)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_LiteNetLib_Utils_NetDataWriter_
+  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor(LiteNetLib.Utils.NetDataWriter)
+  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader(LiteNetLib.Utils.NetDataWriter)
+  nameWithType: NetDataReader.NetDataReader(NetDataWriter)
 - uid: LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[])
   name: NetDataReader(Byte[])
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_System_Byte___

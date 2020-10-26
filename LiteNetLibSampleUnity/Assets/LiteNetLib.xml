@@ -205,12 +205,17 @@
         </member>
         <member name="F:LiteNetLib.NetManager.UnsyncedEvents">
             <summary>
-            Experimental feature. Events automatically will be called without PollEvents method from another thread
+            Events automatically will be called without PollEvents method from another thread
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.NetManager.UnsyncedReceiveEvent">
+            <summary>
+            If true - receive event will be called from "receive" thread immediately otherwise on PollEvents call
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.UnsyncedDeliveryEvent">
             <summary>
-            If true - delivery event will be called from "receive" thread otherwise on PollEvents call
+            If true - delivery event will be called from "receive" thread immediately otherwise on PollEvents call
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.BroadcastReceiveEnabled">
@@ -459,9 +464,14 @@
             <param name="remoteEndPoint">Packet destination</param>
             <returns>Operation result</returns>
         </member>
+        <member name="M:LiteNetLib.NetManager.TriggerUpdate">
+            <summary>
+            Triggers update and send logic immediately (works asynchronously)
+            </summary>
+        </member>
         <member name="M:LiteNetLib.NetManager.Flush">
             <summary>
-            Flush all queued packets of all peers
+            Flush all queued packets of all peers (calls send synchronously)
             </summary>
         </member>
         <member name="M:LiteNetLib.NetManager.PollEvents">
@@ -476,7 +486,7 @@
             <param name="address">Server IP or hostname</param>
             <param name="port">Server Port</param>
             <param name="key">Connection key</param>
-            <returns>New NetPeer if new connection, Old NetPeer if already connected</returns>
+            <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
             <exception cref="T:System.InvalidOperationException">Manager is not running. Call <see cref="M:LiteNetLib.NetManager.Start"/></exception>
         </member>
         <member name="M:LiteNetLib.NetManager.Connect(System.String,System.Int32,LiteNetLib.Utils.NetDataWriter)">
@@ -486,7 +496,7 @@
             <param name="address">Server IP or hostname</param>
             <param name="port">Server Port</param>
             <param name="connectionData">Additional data for remote peer</param>
-            <returns>New NetPeer if new connection, Old NetPeer if already connected</returns>
+            <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
             <exception cref="T:System.InvalidOperationException">Manager is not running. Call <see cref="M:LiteNetLib.NetManager.Start"/></exception>
         </member>
         <member name="M:LiteNetLib.NetManager.Connect(System.Net.IPEndPoint,System.String)">
@@ -495,7 +505,7 @@
             </summary>
             <param name="target">Server end point (ip and port)</param>
             <param name="key">Connection key</param>
-            <returns>New NetPeer if new connection, Old NetPeer if already connected</returns>
+            <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
             <exception cref="T:System.InvalidOperationException">Manager is not running. Call <see cref="M:LiteNetLib.NetManager.Start"/></exception>
         </member>
         <member name="M:LiteNetLib.NetManager.Connect(System.Net.IPEndPoint,LiteNetLib.Utils.NetDataWriter)">

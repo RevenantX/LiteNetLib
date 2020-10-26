@@ -7,7 +7,7 @@ using System.Text;
 
 namespace LibSample
 {
-    class SerializerBenchmark
+    class SerializerBenchmark : IExample
     {
         const int LoopLength = 100000;
 
