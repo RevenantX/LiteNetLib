@@ -469,11 +469,6 @@
             Triggers update and send logic immediately (works asynchronously)
             </summary>
         </member>
-        <member name="M:LiteNetLib.NetManager.Flush">
-            <summary>
-            Flush all queued packets of all peers (calls send synchronously)
-            </summary>
-        </member>
         <member name="M:LiteNetLib.NetManager.PollEvents">
             <summary>
             Receive all pending events. Call this in game update code
@@ -792,11 +787,6 @@
                 MTU - headerSize bytes for Unreliable<para/>
                 Fragment count exceeded ushort.MaxValue<para/>
             </exception>
-        </member>
-        <member name="M:LiteNetLib.NetPeer.Flush">
-            <summary>
-            Flush all queued packets
-            </summary>
         </member>
         <member name="T:LiteNetLib.LocalAddrType">
             <summary>
@@ -1341,6 +1331,13 @@
             </summary>
             <param name="ntpServerAddress">NTP Server address.</param>
             <param name="onRequestComplete">callback (called from other thread!)</param>
+        </member>
+        <member name="M:LiteNetLib.Utils.NtpRequest.RequestAsync(System.String)">
+            <summary>
+            Requests asynchronously NTP server for time offset
+            </summary>
+            <param name="ntpServerAddress">NTP Server address.</param>
+            <returns>Scheduled task</returns>
         </member>
         <member name="M:LiteNetLib.Utils.NtpRequest.Send">
             <summary>

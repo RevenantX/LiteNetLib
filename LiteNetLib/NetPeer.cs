@@ -63,7 +63,6 @@ namespace LiteNetLib
 
         //Common            
         private readonly NetPacketPool _packetPool;
-        private readonly object _sendLock = new object();
         private readonly object _shutdownLock = new object();
 
         internal volatile NetPeer NextPeer;
@@ -104,7 +103,7 @@ namespace LiteNetLib
             public int TotalSize;
             public byte ChannelId;
         }
-        private ushort _fragmentId;
+        private int _fragmentId;
         private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
         private readonly Dictionary<ushort, ushort> _deliveredFragments;
 
@@ -539,12 +538,7 @@ namespace LiteNetLib
                 if (totalPackets > ushort.MaxValue)
                     throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + ushort.MaxValue);
 
-                ushort currentFramentId;
-                lock (_sendLock)
-                {
-                    currentFramentId = _fragmentId;
-                    _fragmentId++;
-                }
+                ushort currentFragmentId = (ushort)Interlocked.Increment(ref _fragmentId);
 
                 for(ushort partIdx = 0; partIdx < totalPackets; partIdx++)
                 {
@@ -553,7 +547,7 @@ namespace LiteNetLib
                     NetPacket p = _packetPool.GetPacket(headerSize + sendLength + NetConstants.FragmentHeaderSize);
                     p.Property = property;
                     p.UserData = userData;
-                    p.FragmentId = currentFramentId;
+                    p.FragmentId = currentFragmentId;
                     p.FragmentPart = partIdx;
                     p.FragmentsTotal = (ushort)totalPackets;
                     p.MarkFragmented();
