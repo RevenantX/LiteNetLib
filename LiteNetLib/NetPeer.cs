@@ -257,9 +257,18 @@ namespace LiteNetLib
                     newChannel = new SequencedChannel(this, true, idx);
                     break;
             }
-            _channels[idx] = newChannel;
-            newChannel.Next = _headChannel;
-            _headChannel = newChannel;
+            BaseChannel prevChannel = Interlocked.CompareExchange(ref _channels[idx], newChannel, null);
+            if (prevChannel != null)
+                return prevChannel;
+
+            BaseChannel headChannel;
+            do
+            {
+                headChannel = _headChannel;
+                newChannel.Next = headChannel;
+            }
+            while (Interlocked.CompareExchange(ref _headChannel, newChannel, headChannel) != headChannel);
+
             return newChannel;
         }
 
