@@ -7,6 +7,12 @@
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net35;netstandard2.0;netcoreapp2.1;netcoreapp3.0</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <OutputType>Library</OutputType>
+    
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+    
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants Condition="'$(AllowUnsafeBlocks)'=='true'">$(DefineConstants);LITENETLIB_UNSAFE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' != 'net35'">
@@ -16,15 +22,12 @@
     <LangVersion>4</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <NoWarn>1701;1702;1705;1591</NoWarn>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DocumentationFile>bin\Release\net35\LiteNetLib.xml</DocumentationFile>
-    <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
 
   <Target Name="UpdateUnityDLLS" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(TargetFramework)' == 'net35' and '$(Configuration)' == 'Release' ">

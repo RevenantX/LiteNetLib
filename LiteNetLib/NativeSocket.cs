@@ -3,85 +3,141 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    [StructLayout(LayoutKind.Sequential)]
     internal struct TimeValue
     {
         public int Seconds;
         public int Microseconds;
     }
 
-    internal static class WinSock
+    internal static
+#if LITENETLIB_UNSAFE
+        unsafe
+#endif
+        class WinSock
     {
         private const string LibName = "ws2_32.dll";
         
         [DllImport(LibName, SetLastError = true)]
         public static extern int recvfrom(
             IntPtr socketHandle,
+#if LITENETLIB_UNSAFE
+            byte* pinnedBuffer,
+#else
             [In, Out] byte[] pinnedBuffer,
+#endif
             [In] int len,
             [In] SocketFlags socketFlags,
+#if LITENETLIB_UNSAFE
+            byte* socketAddress,
+#else
             [Out] byte[] socketAddress,
+#endif
             [In, Out] ref int socketAddressSize);
         
         [DllImport(LibName, SetLastError = true)]
         internal static extern int sendto(
             IntPtr socketHandle,
+#if LITENETLIB_UNSAFE
+            byte* pinnedBuffer,
+#else
             [In] byte[] pinnedBuffer,
+#endif
             [In] int len,
             [In] SocketFlags socketFlags,
+#if LITENETLIB_UNSAFE
+            byte* socketAddress,
+#else
             [In] byte[] socketAddress,
+#endif
             [In] int socketAddressSize);
 
         [DllImport(LibName, SetLastError = true)]
         internal static extern int select(
             [In] int ignoredParameter,
+#if LITENETLIB_UNSAFE
+            IntPtr* readfds,
+            IntPtr* writefds,
+            IntPtr* exceptfds,
+#else
             [In, Out] IntPtr[] readfds,
             [In, Out] IntPtr[] writefds,
             [In, Out] IntPtr[] exceptfds,
+#endif
             [In] ref TimeValue timeout);
     }
 
-    internal static class UnixSock
+    internal static
+#if LITENETLIB_UNSAFE
+        unsafe
+#endif
+        class UnixSock
     {
         private const string LibName = "libc";
         
         [DllImport(LibName)]
         public static extern int recvfrom(
             IntPtr socketHandle,
+#if LITENETLIB_UNSAFE
+            byte* pinnedBuffer,
+#else
             [In, Out] byte[] pinnedBuffer,
+#endif
             [In] int len,
             [In] SocketFlags socketFlags,
+#if LITENETLIB_UNSAFE
+            byte* socketAddress,
+#else
             [Out] byte[] socketAddress,
+#endif
             [In, Out] ref int socketAddressSize);
         
         [DllImport(LibName)]
         internal static extern int sendto(
             IntPtr socketHandle,
+#if LITENETLIB_UNSAFE
+            byte* pinnedBuffer,
+#else
             [In] byte[] pinnedBuffer,
+#endif
             [In] int len,
             [In] SocketFlags socketFlags,
+#if LITENETLIB_UNSAFE
+            byte* socketAddress,
+#else
             [In] byte[] socketAddress,
+#endif
             [In] int socketAddressSize);
 
         [DllImport(LibName, SetLastError = true)]
         internal static extern int select(
             [In] int ignoredParameter,
+#if LITENETLIB_UNSAFE
+            IntPtr* readfds,
+            IntPtr* writefds,
+            IntPtr* exceptfds,
+#else
             [In, Out] IntPtr[] readfds,
             [In, Out] IntPtr[] writefds,
             [In, Out] IntPtr[] exceptfds,
+#endif
             [In] ref TimeValue timeout);
     }
+
     internal static class NativeSocket
     {
         public static readonly bool IsSupported;
         private static readonly bool UnixMode;
 
+#if !LITENETLIB_UNSAFE
         [ThreadStatic] private static byte[] SendToBuffer;
-        [ThreadStatic] private static byte[] EndPointBuffer;
         [ThreadStatic] private static IntPtr[] PollHandle;
+#endif
+
+        [ThreadStatic] private static byte[] EndPointBuffer;
         [ThreadStatic] private static byte[] AddrBuffer;
 
         public const int MaxAddrSize = 28;
@@ -180,7 +236,11 @@ namespace LiteNetLib
             { UnixSocketError.ETIMEDOUT, SocketError.TimedOut },
         };
 
-        static NativeSocket()
+        static
+#if LITENETLIB_UNSAFE
+            unsafe
+#endif
+            NativeSocket()
         {
             int temp = 0;
             IntPtr p = IntPtr.Zero;
@@ -273,39 +333,91 @@ namespace LiteNetLib
             return (SocketError)error;
         }
 
-        public static bool Poll(IntPtr socketHandle, int microSeconds)
+        public static
+#if LITENETLIB_UNSAFE
+            unsafe
+#endif
+            bool Poll(IntPtr socketHandle, int microSeconds)
         {
-            if (PollHandle == null)
-                PollHandle = new IntPtr[2];
-            PollHandle[0] = (IntPtr)1;
-            PollHandle[1] = socketHandle;
-
             TimeValue timeValue = new TimeValue
             {
                 Seconds = (int) (microSeconds / 1000000L), 
                 Microseconds = (int) (microSeconds % 1000000L)
             };
+#if LITENETLIB_UNSAFE
+#if !NET35
+            IntPtr* pollHandle = stackalloc IntPtr[2] {(IntPtr)1, socketHandle};
+#else
+            IntPtr* pollHandle = stackalloc IntPtr[2];
+            pollHandle[0] = (IntPtr)1;
+            pollHandle[1] = socketHandle;
+#endif
+            int num = UnixMode
+                ? UnixSock.select(0, pollHandle, null, null, ref timeValue)
+                : WinSock.select(0, pollHandle, null, null, ref timeValue);
+            if (num == -1)
+                throw new SocketException((int)GetSocketError());
+            return (int)pollHandle[0] != 0 && pollHandle[1] == socketHandle;
+#else
+            if (PollHandle == null)
+                PollHandle = new IntPtr[2];
+            PollHandle[0] = (IntPtr)1;
+            PollHandle[1] = socketHandle;
             int num = UnixMode 
                 ? UnixSock.select(0, PollHandle, null, null, ref timeValue)
                 : WinSock.select(0, PollHandle, null, null, ref timeValue);
             if (num == -1)
                 throw new SocketException((int)GetSocketError());
             return (int)PollHandle[0] != 0 && PollHandle[1] == socketHandle;
+#endif
         }
 
-        public static int ReceiveFrom(IntPtr socketHandle, byte[] buffer, int size, byte[] socketAddress)
+        public static
+#if LITENETLIB_UNSAFE
+            unsafe
+#endif
+            int ReceiveFrom(IntPtr socketHandle, byte[] buffer, int size, byte[] socketAddress)
         {
+            int bytesReceived;
             int addressLength = socketAddress.Length;
-            int bytesReceived = UnixMode
+#if LITENETLIB_UNSAFE
+            fixed (byte* data = buffer)
+            {
+                fixed (byte* addr = socketAddress)
+                {
+                    bytesReceived = UnixMode
+                        ? UnixSock.recvfrom(socketHandle, data, size, 0, addr, ref addressLength)
+                        : WinSock.recvfrom(socketHandle, data, size, 0, addr, ref addressLength);
+                }
+            }
+#else
+            bytesReceived = UnixMode
                 ? UnixSock.recvfrom(socketHandle, buffer, size, 0, socketAddress, ref addressLength)
                 : WinSock.recvfrom(socketHandle, buffer, size, 0, socketAddress, ref addressLength);
+#endif
             if (bytesReceived == -1)
                 throw new SocketException((int)GetSocketError());
             return bytesReceived;
         }
 
-        public static int SendTo(Socket s, byte[] buffer, int start, int size, byte[] socketAddress)
+        public static
+#if LITENETLIB_UNSAFE
+            unsafe
+#endif
+            int SendTo(Socket s, byte[] buffer, int start, int size, byte[] socketAddress)
         {
+            int bytesSent;
+#if LITENETLIB_UNSAFE
+            fixed (byte* data = &buffer[start])
+            {
+                fixed (byte* addr = socketAddress)
+                {
+                    bytesSent = UnixMode
+                        ? UnixSock.sendto(s.Handle, data, size, 0, addr, socketAddress.Length)
+                        : WinSock.sendto(s.Handle, data, size, 0, addr, socketAddress.Length);
+                }
+            }
+#else
             if (start > 0)
             {
                 if (SendToBuffer == null)
@@ -313,9 +425,10 @@ namespace LiteNetLib
                 Buffer.BlockCopy(buffer, start, SendToBuffer, 0, size);
                 buffer = SendToBuffer;
             }
-            int bytesSent = UnixMode
+            bytesSent = UnixMode
                 ? UnixSock.sendto(s.Handle, buffer, size, 0, socketAddress, socketAddress.Length)
                 : WinSock.sendto(s.Handle, buffer, size, 0, socketAddress, socketAddress.Length);
+#endif
             if (bytesSent == -1)
                 throw new SocketException((int)GetSocketError());
             return bytesSent;
