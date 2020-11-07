@@ -6,129 +6,129 @@ using System.Runtime.InteropServices;
 
 namespace LiteNetLib
 {
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct TimeValue
+    internal static class NativeSocket
     {
-        public int Seconds;
-        public int Microseconds;
-    }
+        [StructLayout(LayoutKind.Sequential)]
+        private struct TimeValue
+        {
+            public int Seconds;
+            public int Microseconds;
+        }
 
-    internal static
+        private static
 #if LITENETLIB_UNSAFE
         unsafe
 #endif
         class WinSock
-    {
-        private const string LibName = "ws2_32.dll";
-        
-        [DllImport(LibName, SetLastError = true)]
-        public static extern int recvfrom(
-            IntPtr socketHandle,
-#if LITENETLIB_UNSAFE
-            byte* pinnedBuffer,
-#else
-            [In, Out] byte[] pinnedBuffer,
-#endif
-            [In] int len,
-            [In] SocketFlags socketFlags,
-#if LITENETLIB_UNSAFE
-            byte* socketAddress,
-#else
-            [Out] byte[] socketAddress,
-#endif
-            [In, Out] ref int socketAddressSize);
-        
-        [DllImport(LibName, SetLastError = true)]
-        internal static extern int sendto(
-            IntPtr socketHandle,
-#if LITENETLIB_UNSAFE
-            byte* pinnedBuffer,
-#else
-            [In] byte[] pinnedBuffer,
-#endif
-            [In] int len,
-            [In] SocketFlags socketFlags,
-#if LITENETLIB_UNSAFE
-            byte* socketAddress,
-#else
-            [In] byte[] socketAddress,
-#endif
-            [In] int socketAddressSize);
+        {
+            private const string LibName = "ws2_32.dll";
 
-        [DllImport(LibName, SetLastError = true)]
-        internal static extern int select(
-            [In] int ignoredParameter,
+            [DllImport(LibName, SetLastError = true)]
+            public static extern int recvfrom(
+                IntPtr socketHandle,
 #if LITENETLIB_UNSAFE
-            IntPtr* readfds,
-            IntPtr* writefds,
-            IntPtr* exceptfds,
+                byte* pinnedBuffer,
 #else
-            [In, Out] IntPtr[] readfds,
-            [In, Out] IntPtr[] writefds,
-            [In, Out] IntPtr[] exceptfds,
+                [In, Out] byte[] pinnedBuffer,
 #endif
-            [In] ref TimeValue timeout);
-    }
+                [In] int len,
+                [In] SocketFlags socketFlags,
+#if LITENETLIB_UNSAFE
+                SockAddr* socketAddress,
+#else
+                [Out] byte[] socketAddress,
+#endif
+                [In, Out] ref int socketAddressSize);
 
-    internal static
+            [DllImport(LibName, SetLastError = true)]
+            internal static extern int sendto(
+                IntPtr socketHandle,
+#if LITENETLIB_UNSAFE
+                byte* pinnedBuffer,
+#else
+                [In] byte[] pinnedBuffer,
+#endif
+                [In] int len,
+                [In] SocketFlags socketFlags,
+#if LITENETLIB_UNSAFE
+                SockAddr* socketAddress,
+#else
+                [In] byte[] socketAddress,
+#endif
+                [In] int socketAddressSize);
+
+            [DllImport(LibName, SetLastError = true)]
+            internal static extern int select(
+                [In] int ignoredParameter,
+#if LITENETLIB_UNSAFE
+                IntPtr* readfds,
+                IntPtr* writefds,
+                IntPtr* exceptfds,
+#else
+                [In, Out] IntPtr[] readfds,
+                [In, Out] IntPtr[] writefds,
+                [In, Out] IntPtr[] exceptfds,
+#endif
+                [In] ref TimeValue timeout);
+        }
+
+        private static
 #if LITENETLIB_UNSAFE
         unsafe
 #endif
         class UnixSock
-    {
-        private const string LibName = "libc";
-        
-        [DllImport(LibName)]
-        public static extern int recvfrom(
-            IntPtr socketHandle,
-#if LITENETLIB_UNSAFE
-            byte* pinnedBuffer,
-#else
-            [In, Out] byte[] pinnedBuffer,
-#endif
-            [In] int len,
-            [In] SocketFlags socketFlags,
-#if LITENETLIB_UNSAFE
-            byte* socketAddress,
-#else
-            [Out] byte[] socketAddress,
-#endif
-            [In, Out] ref int socketAddressSize);
-        
-        [DllImport(LibName)]
-        internal static extern int sendto(
-            IntPtr socketHandle,
-#if LITENETLIB_UNSAFE
-            byte* pinnedBuffer,
-#else
-            [In] byte[] pinnedBuffer,
-#endif
-            [In] int len,
-            [In] SocketFlags socketFlags,
-#if LITENETLIB_UNSAFE
-            byte* socketAddress,
-#else
-            [In] byte[] socketAddress,
-#endif
-            [In] int socketAddressSize);
+        {
+            private const string LibName = "libc";
 
-        [DllImport(LibName, SetLastError = true)]
-        internal static extern int select(
-            [In] int ignoredParameter,
+            [DllImport(LibName)]
+            public static extern int recvfrom(
+                IntPtr socketHandle,
 #if LITENETLIB_UNSAFE
-            IntPtr* readfds,
-            IntPtr* writefds,
-            IntPtr* exceptfds,
+                byte* pinnedBuffer,
 #else
-            [In, Out] IntPtr[] readfds,
-            [In, Out] IntPtr[] writefds,
-            [In, Out] IntPtr[] exceptfds,
+                [In, Out] byte[] pinnedBuffer,
 #endif
-            [In] ref TimeValue timeout);
-    }
+                [In] int len,
+                [In] SocketFlags socketFlags,
+#if LITENETLIB_UNSAFE
+                SockAddr* socketAddress,
+#else
+                [Out] byte[] socketAddress,
+#endif
+                [In, Out] ref int socketAddressSize);
 
-    internal static class NativeSocket
-    {
+            [DllImport(LibName)]
+            internal static extern int sendto(
+                IntPtr socketHandle,
+#if LITENETLIB_UNSAFE
+                byte* pinnedBuffer,
+#else
+                [In] byte[] pinnedBuffer,
+#endif
+                [In] int len,
+                [In] SocketFlags socketFlags,
+#if LITENETLIB_UNSAFE
+                SockAddr* socketAddress,
+#else
+                [In] byte[] socketAddress,
+#endif
+                [In] int socketAddressSize);
+
+            [DllImport(LibName, SetLastError = true)]
+            internal static extern int select(
+                [In] int ignoredParameter,
+#if LITENETLIB_UNSAFE
+                IntPtr* readfds,
+                IntPtr* writefds,
+                IntPtr* exceptfds,
+#else
+                [In, Out] IntPtr[] readfds,
+                [In, Out] IntPtr[] writefds,
+                [In, Out] IntPtr[] exceptfds,
+#endif
+                [In] ref TimeValue timeout);
+        }
+
         public static readonly bool IsSupported;
         private static readonly bool UnixMode;
 
@@ -145,6 +145,12 @@ namespace LiteNetLib
         public const int MaxAddrSize = 28;
         private const int AF_INET = 2;
         private const int AF_INET6 = 10;
+
+        [StructLayout(LayoutKind.Sequential, Size = MaxAddrSize)]
+        private struct SockAddr
+        {
+            
+        }
 
         internal enum UnixSocketError
         {
@@ -415,8 +421,9 @@ namespace LiteNetLib
 #if LITENETLIB_UNSAFE
             fixed (byte* data = buffer)
             {
-                fixed (byte* addr = socketAddress)
+                fixed (byte* addrBuffer = socketAddress)
                 {
+                    SockAddr* addr = (SockAddr*)addrBuffer;
                     bytesReceived = UnixMode
                         ? UnixSock.recvfrom(socketHandle, data, size, 0, addr, ref addressLength)
                         : WinSock.recvfrom(socketHandle, data, size, 0, addr, ref addressLength);
@@ -440,13 +447,14 @@ namespace LiteNetLib
         {
             int bytesSent;
 #if LITENETLIB_UNSAFE
-            byte* addr = stackalloc byte[MaxAddrSize];
-            GetNativeEndPoint(endpoint, addr);
+            // use a fixed size struct cause stackalloc isn't guaranteed to be zero initialized
+            SockAddr addr = new SockAddr();
+            GetNativeEndPoint(endpoint, (byte*)&addr);
             fixed (byte* data = &buffer[start])
             {
                 bytesSent = UnixMode
-                    ? UnixSock.sendto(s.Handle, data, size, 0, addr, MaxAddrSize)
-                    : WinSock.sendto(s.Handle, data, size, 0, addr, MaxAddrSize);
+                    ? UnixSock.sendto(s.Handle, data, size, 0, &addr, MaxAddrSize)
+                    : WinSock.sendto(s.Handle, data, size, 0, &addr, MaxAddrSize);
             }
 #else
             if (start > 0)
