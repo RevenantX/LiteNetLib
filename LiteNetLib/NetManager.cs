@@ -1347,7 +1347,9 @@ namespace LiteNetLib
         {
             if (UnsyncedEvents)
                 return;
-            int eventsCount = _netEventsQueue.Count;
+            int eventsCount;
+            lock (_netEventsQueue)
+                eventsCount = _netEventsQueue.Count;
             for(int i = 0; i < eventsCount; i++)
             {
                 NetEvent evt;
