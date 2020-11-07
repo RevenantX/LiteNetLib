@@ -1417,8 +1417,11 @@ namespace LiteNetLib
             NetPeer peer;
             byte connectionNumber = 0;
 
-            if (_requestsDict.ContainsKey(target))
-                return null;
+            lock(_requestsDict)
+            {
+                if (_requestsDict.ContainsKey(target))
+                    return null;
+            }
 
             _peersLock.EnterUpgradeableReadLock();
             if (_peersDict.TryGetValue(target, out peer))
