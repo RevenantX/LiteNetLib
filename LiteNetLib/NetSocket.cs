@@ -460,7 +460,7 @@ namespace LiteNetLib
                     socket = _udpSocketv6;
 
                 int result = _useNativeSocket
-                    ? NativeSocket.SendTo(socket, data, offset, size, NativeSocket.GetNativeEndPoint(remoteEndPoint)) 
+                    ? NativeSocket.SendTo(socket, data, offset, size, remoteEndPoint)
                     : socket.SendTo(data, offset, size, SocketFlags.None, remoteEndPoint);
                 
                 NetDebug.Write(NetLogLevel.Trace, "[S]Send packet to {0}, result: {1}", remoteEndPoint, result);

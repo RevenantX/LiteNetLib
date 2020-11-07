@@ -135,10 +135,12 @@ namespace LiteNetLib
 #if !LITENETLIB_UNSAFE
         [ThreadStatic] private static byte[] SendToBuffer;
         [ThreadStatic] private static IntPtr[] PollHandle;
+        [ThreadStatic] private static byte[] EndPointBuffer;
 #endif
 
-        [ThreadStatic] private static byte[] EndPointBuffer;
+#if !(NETCOREAPP || NETSTANDARD2_1)
         [ThreadStatic] private static byte[] AddrBuffer;
+#endif
 
         public const int MaxAddrSize = 28;
         private const int AF_INET = 2;
@@ -274,6 +276,14 @@ namespace LiteNetLib
             short family = BitConverter.ToInt16(saddr, 0);
             if ((UnixMode && family == AF_INET6) || (!UnixMode && (AddressFamily)family == AddressFamily.InterNetworkV6))
             {
+#if (NETCOREAPP || NETSTANDARD2_1)
+                uint scope = unchecked((uint)(
+                    (saddr[27] << 24) +
+                    (saddr[26] << 16) +
+                    (saddr[25] << 8) +
+                    (saddr[24])));
+                return new IPAddress(new ReadOnlySpan<byte>(saddr, 8, 16), scope);
+#else
                 if(AddrBuffer == null)
                     AddrBuffer = new byte[16];
 
@@ -284,6 +294,7 @@ namespace LiteNetLib
                     (saddr[25] << 8) +
                     (saddr[24])));
                 return new IPAddress(AddrBuffer, scope);
+#endif
             }
             long ipv4Addr = unchecked((uint)((saddr[4] & 0x000000FF) |
                                              (saddr[5] << 8 & 0x0000FF00) |
@@ -292,34 +303,55 @@ namespace LiteNetLib
             return new IPAddress(ipv4Addr & 0x0FFFFFFFF);
         }
 
-        public static byte[] GetNativeEndPoint(IPEndPoint endPoint)
+#if LITENETLIB_UNSAFE
+        private static unsafe void GetNativeEndPoint(IPEndPoint endPoint, byte* buffer)
+#else
+        private static byte[] GetNativeEndPoint(IPEndPoint endPoint)
+#endif
         {
+#if !LITENETLIB_UNSAFE
             if (EndPointBuffer == null)
                 EndPointBuffer = new byte[MaxAddrSize];
+            byte[] buffer = EndPointBuffer;
+#endif
             bool ipv4 = endPoint.AddressFamily == AddressFamily.InterNetwork;
             short addressFamily = UnixMode ? (short)(ipv4 ? AF_INET : AF_INET6) : (short)endPoint.AddressFamily;
-            EndPointBuffer[0] = (byte)(addressFamily);
-            EndPointBuffer[1] = (byte)(addressFamily >> 8);
-            EndPointBuffer[2] = (byte)(endPoint.Port >> 8);
-            EndPointBuffer[3] = (byte)(endPoint.Port);
+            buffer[0] = (byte)(addressFamily);
+            buffer[1] = (byte)(addressFamily >> 8);
+            buffer[2] = (byte)(endPoint.Port >> 8);
+            buffer[3] = (byte)(endPoint.Port);
 
             if (ipv4)
             {
 #pragma warning disable 618
                 long addr = endPoint.Address.Address;
 #pragma warning restore 618
-                EndPointBuffer[4] = (byte)(addr);
-                EndPointBuffer[5] = (byte)(addr >> 8);
-                EndPointBuffer[6] = (byte)(addr >> 16);
-                EndPointBuffer[7] = (byte)(addr >> 24);
+                buffer[4] = (byte)(addr);
+                buffer[5] = (byte)(addr >> 8);
+                buffer[6] = (byte)(addr >> 16);
+                buffer[7] = (byte)(addr >> 24);
             }
             else
             {
+#if (NETCOREAPP || NETSTANDARD2_1)
+#if LITENETLIB_UNSAFE
+                endPoint.Address.TryWriteBytes(new Span<byte>(buffer + 8, 16), out _);
+#else
+                endPoint.Address.TryWriteBytes(new Span<byte>(buffer, 8, 16), out _);
+#endif
+#else
                 byte[] addrBytes = endPoint.Address.GetAddressBytes();
-                Buffer.BlockCopy(addrBytes, 0, EndPointBuffer, 8, 16);
+#if LITENETLIB_UNSAFE
+                Marshal.Copy(addrBytes, 0, new IntPtr(buffer + 8), 16);
+#else
+                Buffer.BlockCopy(addrBytes, 0, buffer, 8, 16);
+#endif
+#endif
             }
 
-            return EndPointBuffer;
+#if !LITENETLIB_UNSAFE
+            return buffer;
+#endif
         }
 
         private static SocketError GetSocketError()
@@ -404,18 +436,17 @@ namespace LiteNetLib
 #if LITENETLIB_UNSAFE
             unsafe
 #endif
-            int SendTo(Socket s, byte[] buffer, int start, int size, byte[] socketAddress)
+            int SendTo(Socket s, byte[] buffer, int start, int size, IPEndPoint endpoint)
         {
             int bytesSent;
 #if LITENETLIB_UNSAFE
+            byte* addr = stackalloc byte[MaxAddrSize];
+            GetNativeEndPoint(endpoint, addr);
             fixed (byte* data = &buffer[start])
             {
-                fixed (byte* addr = socketAddress)
-                {
-                    bytesSent = UnixMode
-                        ? UnixSock.sendto(s.Handle, data, size, 0, addr, socketAddress.Length)
-                        : WinSock.sendto(s.Handle, data, size, 0, addr, socketAddress.Length);
-                }
+                bytesSent = UnixMode
+                    ? UnixSock.sendto(s.Handle, data, size, 0, addr, MaxAddrSize)
+                    : WinSock.sendto(s.Handle, data, size, 0, addr, MaxAddrSize);
             }
 #else
             if (start > 0)
@@ -425,6 +456,8 @@ namespace LiteNetLib
                 Buffer.BlockCopy(buffer, start, SendToBuffer, 0, size);
                 buffer = SendToBuffer;
             }
+
+            byte[] socketAddress = GetNativeEndPoint(endpoint);
             bytesSent = UnixMode
                 ? UnixSock.sendto(s.Handle, buffer, size, 0, socketAddress, socketAddress.Length)
                 : WinSock.sendto(s.Handle, buffer, size, 0, socketAddress, socketAddress.Length);
