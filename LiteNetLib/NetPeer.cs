@@ -878,12 +878,19 @@ namespace LiteNetLib
         internal void ProcessPacket(NetPacket packet)
         {
             //not initialized
-            if (_connectionState == ConnectionState.Outgoing)
+            if (_connectionState == ConnectionState.Outgoing || _connectionState == ConnectionState.Disconnected)
             {
                 _packetPool.Recycle(packet);
                 return;
             }
-            if (packet.ConnectionNumber != _connectNum && packet.Property != PacketProperty.ShutdownOk) //without connectionNum
+            if (packet.Property == PacketProperty.ShutdownOk)
+            {
+                if (_connectionState == ConnectionState.ShutdownRequested)
+                    _connectionState = ConnectionState.Disconnected;
+                _packetPool.Recycle(packet);
+                return;
+            }
+            if (packet.ConnectionNumber != _connectNum)
             {
                 NetDebug.Write(NetLogLevel.Trace, "[RR]Old packet");
                 _packetPool.Recycle(packet);
@@ -961,12 +968,6 @@ namespace LiteNetLib
                     ProcessMtuPacket(packet);
                     break;
 
-                case PacketProperty.ShutdownOk:
-                    if(_connectionState == ConnectionState.ShutdownRequested)
-                        _connectionState = ConnectionState.Disconnected;
-                    _packetPool.Recycle(packet);
-                    break;            
-                
                 default:
                     NetDebug.WriteError("Error! Unexpected packet type: " + packet.Property);
                     break;
