@@ -165,18 +165,15 @@ namespace LiteNetLib.Utils
                 int len;
                 var list = ReadListHelper(inf, r, out len);
                 int listCount = list.Count;
-                if (len > listCount)
+                for (int i = 0; i < len; i++)
                 {
-                    for (int i = 0; i < listCount; i++)
+                    if (i < listCount)
                         list[i] = _reader(r);
-                    for (int i = listCount; i < len; i++)
+                    else
                         list.Add(_reader(r));
-                    return;
                 }
                 if (len < listCount)
                     list.RemoveRange(len, listCount - len);
-                for (int i = 0; i < len; i++)
-                    list[i] = _reader(r);
             }
 
             public override void WriteList(TClass inf, NetDataWriter w)
@@ -225,22 +222,17 @@ namespace LiteNetLib.Utils
                 int len;
                 var list = ReadListHelper(inf, r, out len);
                 int listCount = list.Count;
-                if (len > listCount)
-                {
-                    for (int i = 0; i < listCount; i++)
-                        list[i].Deserialize(r);
-                    for (int i = listCount; i < len; i++)
-                    {
-                        var itm = default(TProperty);
-                        itm.Deserialize(r);
-                        list.Add(itm);
-                    }
-                    return;
-                }
-                if(len < listCount)
-                    list.RemoveRange(len, listCount - len);
                 for (int i = 0; i < len; i++)
-                    list[i].Deserialize(r);
+                {
+                    var itm = default(TProperty);
+                    itm.Deserialize(r);
+                    if(i < listCount)
+                        list[i] = itm;
+                    else
+                        list.Add(itm);
+                }
+                if (len < listCount)
+                    list.RemoveRange(len, listCount - len);
             }
 
             public override void WriteList(TClass inf, NetDataWriter w)
@@ -292,22 +284,21 @@ namespace LiteNetLib.Utils
                 int len;
                 var list = ReadListHelper(inf, r, out len);
                 int listCount = list.Count;
-                if (len > listCount)
+                for (int i = 0; i < len; i++)
                 {
-                    for (int i = 0; i < listCount; i++)
+                    if (i < listCount)
+                    {
                         list[i].Deserialize(r);
-                    for (int i = listCount; i < len; i++)
+                    }
+                    else
                     {
                         var itm = _constructor();
                         itm.Deserialize(r);
                         list.Add(itm);
                     }
-                    return;
                 }
                 if (len < listCount)
                     list.RemoveRange(len, listCount - len);
-                for (int i = 0; i < len; i++)
-                    list[i].Deserialize(r);
             }
 
             public override void WriteList(TClass inf, NetDataWriter w)
