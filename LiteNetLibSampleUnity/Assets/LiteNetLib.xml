@@ -307,6 +307,18 @@
             <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
             <param name="extraPacketLayer">Extra processing of packages, like CRC checksum or encryption. All connected NetManagers must have same layer.</param>
         </member>
+        <member name="M:LiteNetLib.NetManager.ManualUpdate(System.Int32)">
+            <summary>
+            Update and send logic. Use this only when NetManager started in manual mode
+            </summary>
+            <param name="elapsedMilliseconds">elapsed milliseconds since last update call</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.ManualReceive">
+            <summary>
+            Receive logic. It will call Receive events immediately without need to use PollEvents or UnsyncedEvents
+            Use this only when NetManager started in manual mode
+            </summary>
+        </member>
         <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">
             <summary>
             Send data to all connected peers (channel - 0)
@@ -435,6 +447,37 @@
         <member name="M:LiteNetLib.NetManager.Start(System.Int32)">
             <summary>
             Start logic thread and listening on selected port
+            </summary>
+            <param name="port">port to listen</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.StartInManualMode(System.Net.IPAddress,System.Net.IPAddress,System.Int32)">
+            <summary>
+            Start in manual mode and listening on selected port
+            In this mode you should use ManualReceive (without PollEvents) for receive packets
+            and ManualUpdate(...) for update and send packets
+            This mode useful mostly for single-threaded servers
+            </summary>
+            <param name="addressIPv4">bind to specific ipv4 address</param>
+            <param name="addressIPv6">bind to specific ipv6 address</param>
+            <param name="port">port to listen</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.StartInManualMode(System.String,System.String,System.Int32)">
+            <summary>
+            Start in manual mode and listening on selected port
+            In this mode you should use ManualReceive (without PollEvents) for receive packets
+            and ManualUpdate(...) for update and send packets
+            This mode useful mostly for single-threaded servers
+            </summary>
+            <param name="addressIPv4">bind to specific ipv4 address</param>
+            <param name="addressIPv6">bind to specific ipv6 address</param>
+            <param name="port">port to listen</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.StartInManualMode(System.Int32)">
+            <summary>
+            Start in manual mode and listening on selected port
+            In this mode you should use ManualReceive (without PollEvents) for receive packets
+            and ManualUpdate(...) for update and send packets
+            This mode useful mostly for single-threaded servers
             </summary>
             <param name="port">port to listen</param>
         </member>

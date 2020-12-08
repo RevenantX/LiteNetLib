@@ -158,6 +158,7 @@ namespace LiteNetLib
 
         private readonly NetSocket _socket;
         private Thread _logicThread;
+        private bool _manualMode;
         private readonly AutoResetEvent _updateTriggerEvent = new AutoResetEvent(true);
 
         private readonly Queue<NetEvent> _netEventsQueue;
@@ -578,7 +579,7 @@ namespace LiteNetLib
             evt.DeliveryMethod = deliveryMethod;
             evt.UserData = userData;
 
-            if (unsyncEvent)
+            if (unsyncEvent || _manualMode)
             {
                 ProcessEvent(evt);
             }
@@ -708,7 +709,38 @@ namespace LiteNetLib
             }
             stopwatch.Stop();
         }
-        
+
+        /// <summary>
+        /// Update and send logic. Use this only when NetManager started in manual mode
+        /// </summary>
+        /// <param name="elapsedMilliseconds">elapsed milliseconds since last update call</param>
+        public void ManualUpdate(int elapsedMilliseconds)
+        {
+            if (!_manualMode)
+                return;
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+            {
+                if (netPeer.ConnectionState == ConnectionState.Disconnected && netPeer.TimeSinceLastPacket > DisconnectTimeout)
+                {
+                    RemovePeerInternal(netPeer);
+                }
+                else
+                {
+                    netPeer.Update(elapsedMilliseconds);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Receive logic. It will call Receive events immediately without need to use PollEvents or UnsyncedEvents
+        /// Use this only when NetManager started in manual mode
+        /// </summary>
+        public void ManualReceive()
+        {
+            if(_manualMode)
+                _socket.ManualReceive();
+        }
+
         void INetSocketListener.OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint)
         {
             if (errorCode != 0)
@@ -1039,7 +1071,7 @@ namespace LiteNetLib
             evt.DataReader.SetSource(packet, headerSize);
             evt.Peer = fromPeer;
             evt.DeliveryMethod = method;
-            if (UnsyncedEvents || UnsyncedReceiveEvent)
+            if (UnsyncedEvents || UnsyncedReceiveEvent || _manualMode)
             {
                 ProcessEvent(evt);
             }
@@ -1228,7 +1260,8 @@ namespace LiteNetLib
         /// <param name="port">port to listen</param>
         public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port)
         {
-            if (!_socket.Bind(addressIPv4, addressIPv6, port, ReuseAddress, IPv6Enabled))
+            _manualMode = false;
+            if (!_socket.Bind(addressIPv4, addressIPv6, port, ReuseAddress, IPv6Enabled, false))
                 return false;
             _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
             _logicThread.Start();
@@ -1255,6 +1288,51 @@ namespace LiteNetLib
         public bool Start(int port)
         {
             return Start(IPAddress.Any, IPAddress.IPv6Any, port);
+        }
+
+        /// <summary>
+        /// Start in manual mode and listening on selected port
+        /// In this mode you should use ManualReceive (without PollEvents) for receive packets
+        /// and ManualUpdate(...) for update and send packets
+        /// This mode useful mostly for single-threaded servers
+        /// </summary>
+        /// <param name="addressIPv4">bind to specific ipv4 address</param>
+        /// <param name="addressIPv6">bind to specific ipv6 address</param>
+        /// <param name="port">port to listen</param>
+        public bool StartInManualMode(IPAddress addressIPv4, IPAddress addressIPv6, int port)
+        {
+            _manualMode = true;
+            if (!_socket.Bind(addressIPv4, addressIPv6, port, ReuseAddress, IPv6Enabled, true))
+                return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Start in manual mode and listening on selected port
+        /// In this mode you should use ManualReceive (without PollEvents) for receive packets
+        /// and ManualUpdate(...) for update and send packets
+        /// This mode useful mostly for single-threaded servers
+        /// </summary>
+        /// <param name="addressIPv4">bind to specific ipv4 address</param>
+        /// <param name="addressIPv6">bind to specific ipv6 address</param>
+        /// <param name="port">port to listen</param>
+        public bool StartInManualMode(string addressIPv4, string addressIPv6, int port)
+        {
+            IPAddress ipv4 = NetUtils.ResolveAddress(addressIPv4);
+            IPAddress ipv6 = NetUtils.ResolveAddress(addressIPv6);
+            return StartInManualMode(ipv4, ipv6, port);
+        }
+
+        /// <summary>
+        /// Start in manual mode and listening on selected port
+        /// In this mode you should use ManualReceive (without PollEvents) for receive packets
+        /// and ManualUpdate(...) for update and send packets
+        /// This mode useful mostly for single-threaded servers
+        /// </summary>
+        /// <param name="port">port to listen</param>
+        public bool StartInManualMode(int port)
+        {
+            return StartInManualMode(IPAddress.Any, IPAddress.IPv6Any, port);
         }
 
         /// <summary>
@@ -1473,8 +1551,11 @@ namespace LiteNetLib
             //Stop
             _socket.Close(false);
             _updateTriggerEvent.Set();
-            _logicThread.Join();
-            _logicThread = null;
+            if (!_manualMode)
+            {
+                _logicThread.Join();
+                _logicThread = null;
+            }
 
             //clear peers
             _peersLock.EnterWriteLock();

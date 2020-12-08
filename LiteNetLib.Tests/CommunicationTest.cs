@@ -658,6 +658,31 @@ namespace LiteNetLib.Tests
             Assert.AreNotSame(ManagerStack.Server(1), ManagerStack.Client(2));
         }
 
+        [Test, Timeout(TestTimeout)]
+        public void ManualMode()
+        {
+            var serverListener = new EventBasedNetListener();
+            var server = new NetManager(serverListener);
+
+            serverListener.ConnectionRequestEvent += request => request.AcceptIfKey(DefaultAppKey);
+
+            var client = ManagerStack.Client(1);
+            Assert.IsTrue(server.StartInManualMode(DefaultPort));
+
+            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+
+            while (server.ConnectedPeersCount != 1 || client.ConnectedPeersCount != 1)
+            {
+                Thread.Sleep(15);
+                server.ManualReceive();
+                server.ManualUpdate(15);
+            }
+
+            Assert.AreEqual(1, server.ConnectedPeersCount);
+            Assert.AreEqual(1, client.ConnectedPeersCount);
+            server.Stop();
+        }
+
         [Test]
         public void SendRawDataToAll()
         {
