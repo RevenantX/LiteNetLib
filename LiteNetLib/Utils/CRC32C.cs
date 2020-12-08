@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP3_0
+﻿#if NETCOREAPP3_1
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
@@ -15,7 +15,7 @@ namespace LiteNetLib.Utils
 
         static CRC32C()
         {
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
             if(Sse42.IsSupported)
                 return;
 #endif

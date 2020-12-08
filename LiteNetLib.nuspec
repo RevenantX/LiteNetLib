@@ -3,17 +3,17 @@
   <metadata>
     <id>LiteNetLib</id>
     <title>LiteNetLib</title>
-    <version>0.9.3.2</version>
+    <version>0.9.4</version>
     <authors>Ruslan Pyrch</authors>
     <owners>RevenantX</owners>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/RevenantX/LiteNetLib</projectUrl>
-    <repository type="git" url="https://github.com/RevenantX/LiteNetLib" branch="master" commit="f01cca3eb9bc3c135787ea2ec2443b45c35d4d2e"/>
+    <repository type="git" url="https://github.com/RevenantX/LiteNetLib" branch="master" commit="f50e75165fbae8f1e18f017fd70c7f855b774399"/>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Lite reliable UDP library for .NET, Mono, and .NET Core.</description>
     <copyright>Copyright 2020 Ruslan Pyrch</copyright>
     <tags>udp reliable-udp network</tags>
-    <releaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/v0.9.3.2</releaseNotes>
+    <releaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/v0.9.4</releaseNotes>
     <dependencies>
 	  <group targetFramework="net35">
 	  </group>
