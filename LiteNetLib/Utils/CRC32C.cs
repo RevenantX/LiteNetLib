@@ -42,7 +42,7 @@ namespace LiteNetLib.Utils
         public static uint Compute(byte[] input, int offset, int length)
         {
             uint crcLocal = uint.MaxValue;
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
             if (Sse42.IsSupported)
             {
                 var data = new ReadOnlySpan<byte>(input, offset, length);
