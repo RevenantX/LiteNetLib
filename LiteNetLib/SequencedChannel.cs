@@ -101,8 +101,13 @@ namespace LiteNetLib
                     Peer);
                 packetProcessed = true;
             }
-            _mustSendAck = true;
-            AddToPeerChannelSendQueue();
+
+            if (this._reliable)
+            {
+                _mustSendAck = true;
+                AddToPeerChannelSendQueue();
+            }
+
             return packetProcessed;
         }
     }

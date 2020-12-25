@@ -278,7 +278,7 @@ namespace LiteNetLib
                 //Final stage - process valid packet
                 //trigger acks send
                 _mustSendAcks = true;
-                AddToPeerChannelSendQueue();
+                
                 ackIdx = seq % _windowSize;
                 ackByte = NetConstants.ChanneledHeaderSize + ackIdx / BitsInByte;
                 ackBit = ackIdx % BitsInByte;
@@ -291,6 +291,9 @@ namespace LiteNetLib
                 //save ack
                 _outgoingAcks.RawData[ackByte] |= (byte) (1 << ackBit);
             }
+
+            // Please note: this method is invoked outside the lock to prevent a deadlock.
+            AddToPeerChannelSendQueue();
 
             //detailed check
             if (seq == _remoteSequence)
