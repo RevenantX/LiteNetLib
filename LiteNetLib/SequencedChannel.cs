@@ -21,6 +21,10 @@ namespace LiteNetLib
                 _ackPacket = new NetPacket(PacketProperty.Ack, 0) {ChannelId = id};
         }
 
+        public override bool HasPacketsToSend => !ReferenceEquals(_lastPacket, null)
+                                                 || _mustSendAck
+                                                 || OutgoingQueue.Count > 0;
+
         public override void SendNextPackets()
         {
             if (_reliable && OutgoingQueue.Count == 0)
@@ -98,6 +102,7 @@ namespace LiteNetLib
                 packetProcessed = true;
             }
             _mustSendAck = true;
+            AddToPeerChannelSendQueue();
             return packetProcessed;
         }
     }

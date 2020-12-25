@@ -10,6 +10,8 @@ namespace LiteNetLib
             private long _timeStamp;
             private bool _isSent;
 
+            public bool HasPacket => !ReferenceEquals(_packet, null);
+
             public override string ToString()
             {
                 return _packet == null ? "Empty" : _packet.Sequence.ToString();
@@ -67,6 +69,8 @@ namespace LiteNetLib
         private readonly int _windowSize;
         private const int BitsInByte = 8;
         private readonly byte _id;
+
+        private bool _hasPendingPackets;
 
         public ReliableChannel(NetPeer peer, bool ordered, byte id) : base(peer)
         {
@@ -162,6 +166,10 @@ namespace LiteNetLib
             }
         }
 
+        public override bool HasPacketsToSend => _hasPendingPackets
+                                                 || _mustSendAcks
+                                                 || OutgoingQueue.Count > 0;
+
         public override void SendNextPackets()
         {
             if (_mustSendAcks)
@@ -191,9 +199,18 @@ namespace LiteNetLib
                         _localSeqence = (_localSeqence + 1) % NetConstants.MaxSequence;
                     }
                 }
+
                 //send
+                _hasPendingPackets = false;
                 for (int pendingSeq = _localWindowStart; pendingSeq != _localSeqence; pendingSeq = (pendingSeq + 1) % NetConstants.MaxSequence)
-                    _pendingPackets[pendingSeq % _windowSize].TrySend(currentTime, Peer);
+                {
+                    var pendingPacket = _pendingPackets[pendingSeq % _windowSize];
+                    pendingPacket.TrySend(currentTime, Peer);
+                    if (pendingPacket.HasPacket)
+                    {
+                        _hasPendingPackets = true;
+                    }
+                }
             }
         }
 
@@ -261,6 +278,7 @@ namespace LiteNetLib
                 //Final stage - process valid packet
                 //trigger acks send
                 _mustSendAcks = true;
+                AddToPeerChannelSendQueue();
                 ackIdx = seq % _windowSize;
                 ackByte = NetConstants.ChanneledHeaderSize + ackIdx / BitsInByte;
                 ackBit = ackIdx % BitsInByte;
