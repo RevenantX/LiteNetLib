@@ -23,10 +23,15 @@ namespace LiteNetLib
                 _isSent = false;
             }
 
-            public void TrySend(long currentTime, NetPeer peer)
+            public void TrySend(long currentTime, NetPeer peer, out bool hasPacket)
             {
                 if (_packet == null)
+                {
+                    hasPacket = false;
                     return;
+                }
+
+                hasPacket = true;
                 if (_isSent) //check send time
                 {
                     double resendDelay = peer.ResendDelay * TimeSpan.TicksPerMillisecond;
@@ -204,9 +209,9 @@ namespace LiteNetLib
                 _hasPendingPackets = false;
                 for (int pendingSeq = _localWindowStart; pendingSeq != _localSeqence; pendingSeq = (pendingSeq + 1) % NetConstants.MaxSequence)
                 {
-                    var pendingPacket = _pendingPackets[pendingSeq % _windowSize];
-                    pendingPacket.TrySend(currentTime, Peer);
-                    if (pendingPacket.HasPacket)
+                    // Please note: TrySend is invoked on a mutable struct, it's important to not extract it into a variable here
+                    _pendingPackets[pendingSeq % _windowSize].TrySend(currentTime, Peer, out bool hasPacket);
+                    if (hasPacket)
                     {
                         _hasPendingPackets = true;
                     }
