@@ -10,7 +10,10 @@ namespace LiteNetLib
             private long _timeStamp;
             private bool _isSent;
 
-            public bool HasPacket => !ReferenceEquals(_packet, null);
+            public bool HasPacket
+            {
+                get { return !ReferenceEquals(this._packet, null); }
+            }
 
             public override string ToString()
             {
@@ -171,9 +174,15 @@ namespace LiteNetLib
             }
         }
 
-        public override bool HasPacketsToSend => _hasPendingPackets
-                                                 || _mustSendAcks
-                                                 || OutgoingQueue.Count > 0;
+        public override bool HasPacketsToSend
+        {
+            get
+            {
+                return this._hasPendingPackets
+                       || this._mustSendAcks
+                       || this.OutgoingQueue.Count > 0;
+            }
+        }
 
         public override void SendNextPackets()
         {
@@ -210,7 +219,8 @@ namespace LiteNetLib
                 for (int pendingSeq = _localWindowStart; pendingSeq != _localSeqence; pendingSeq = (pendingSeq + 1) % NetConstants.MaxSequence)
                 {
                     // Please note: TrySend is invoked on a mutable struct, it's important to not extract it into a variable here
-                    _pendingPackets[pendingSeq % _windowSize].TrySend(currentTime, Peer, out bool hasPacket);
+                    bool hasPacket;
+                    _pendingPackets[pendingSeq % _windowSize].TrySend(currentTime, Peer, out hasPacket);
                     if (hasPacket)
                     {
                         _hasPendingPackets = true;

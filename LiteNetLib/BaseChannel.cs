@@ -2,8 +2,6 @@
 
 namespace LiteNetLib
 {
-    using System.Runtime.CompilerServices;
-
     internal abstract class BaseChannel
     {
         protected readonly NetPeer Peer;
@@ -22,7 +20,14 @@ namespace LiteNetLib
 
         public abstract bool HasPacketsToSend { get; }
 
-        public object OutgoingQueueSyncRoot => OutgoingQueue;
+        /// <summary>
+        /// The lock object is required when iterating over the channels in the send queue
+        /// and when marking the channel as added to the send queue.
+        /// </summary>
+        public object OutgoingQueueSyncRoot
+        {
+            get { return this.OutgoingQueue; }
+        }
 
         public bool IsAddedToPeerChannelSendQueue;
 
@@ -43,7 +48,6 @@ namespace LiteNetLib
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AddToPeerChannelSendQueueNoLock()
         {
             if (IsAddedToPeerChannelSendQueue)

@@ -21,9 +21,15 @@ namespace LiteNetLib
                 _ackPacket = new NetPacket(PacketProperty.Ack, 0) {ChannelId = id};
         }
 
-        public override bool HasPacketsToSend => !ReferenceEquals(_lastPacket, null)
-                                                 || _mustSendAck
-                                                 || OutgoingQueue.Count > 0;
+        public override bool HasPacketsToSend
+        {
+            get
+            {
+                return !ReferenceEquals(this._lastPacket, null)
+                       || this._mustSendAck
+                       || this.OutgoingQueue.Count > 0;
+            }
+        }
 
         public override void SendNextPackets()
         {
