@@ -205,6 +205,8 @@ namespace LiteNetLib
 
             if (netManager.mtuOverride > 0)
                 OverrideMTU(netManager.mtuOverride);
+            else if (netManager.mtuInitialRaise)
+                SetMtu(1);
             else
                 SetMtu(0);
 
@@ -227,13 +229,9 @@ namespace LiteNetLib
             _mtu = NetConstants.PossibleMtu[mtuIdx] - NetManager.ExtraPacketSizeForLayer;
         }
 
-        /// <summary>
-        /// Overrides MTU with specificed value
-        /// </summary>
-        /// <param name="value">value of overriden mtu</param>
-        public void OverrideMTU(int value)
+        private void OverrideMTU(int mtuValue)
         {
-            _mtu = value;
+            _mtu = mtuValue;
             _finishMtu = true;
         }
 
