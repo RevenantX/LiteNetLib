@@ -178,6 +178,8 @@ namespace LiteNetLib
         private readonly Queue<int> _peerIds;
         private byte _channelsCount = 1;
 
+        internal int mtuOverride = 0;
+
         internal readonly NetPacketPool NetPacketPool;
 
         //config section
@@ -1080,6 +1082,15 @@ namespace LiteNetLib
                 lock (_netEventsQueue)
                     _netEventsQueue.Enqueue(evt);
             }
+        }
+
+        /// <summary>
+        /// Override MTU for all new peers registered in this NetManager
+        /// </summary>
+        /// <param name="value">value to use for all new peers</param>
+        public void OverrideMTU(int value)
+        {
+            mtuOverride = value;
         }
 
         /// <summary>

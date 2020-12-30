@@ -202,7 +202,11 @@ namespace LiteNetLib
             Statistics = new NetStatistics();
             _packetPool = netManager.NetPacketPool;
             NetManager = netManager;
-            SetMtu(0);
+
+            if (netManager.mtuOverride > 0)
+                OverrideMTU(netManager.mtuOverride);
+            else
+                SetMtu(0);
 
             EndPoint = remoteEndPoint;
             _connectionState = ConnectionState.Connected;
@@ -221,6 +225,16 @@ namespace LiteNetLib
         private void SetMtu(int mtuIdx)
         {
             _mtu = NetConstants.PossibleMtu[mtuIdx] - NetManager.ExtraPacketSizeForLayer;
+        }
+
+        /// <summary>
+        /// Overrides MTU with specificed value
+        /// </summary>
+        /// <param name="value">value of overriden mtu</param>
+        public void OverrideMTU(int value)
+        {
+            _mtu = value;
+            _finishMtu = true;
         }
 
         /// <summary>
