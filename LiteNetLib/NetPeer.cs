@@ -203,12 +203,12 @@ namespace LiteNetLib
             _packetPool = netManager.NetPacketPool;
             NetManager = netManager;
 
-            if (netManager.mtuOverride > 0)
-                OverrideMTU(netManager.mtuOverride);
-            else if (netManager.mtuInitialRaise)
-                SetMtu(1);
-            else
+            if (netManager.MtuOverride > 0)
+                OverrideMtu(netManager.MtuOverride);
+            else if (netManager.UseSafeMtu)
                 SetMtu(0);
+            else
+                SetMtu(1);
 
             EndPoint = remoteEndPoint;
             _connectionState = ConnectionState.Connected;
@@ -229,7 +229,7 @@ namespace LiteNetLib
             _mtu = NetConstants.PossibleMtu[mtuIdx] - NetManager.ExtraPacketSizeForLayer;
         }
 
-        private void OverrideMTU(int mtuValue)
+        private void OverrideMtu(int mtuValue)
         {
             _mtu = mtuValue;
             _finishMtu = true;

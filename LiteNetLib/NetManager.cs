@@ -178,9 +178,6 @@ namespace LiteNetLib
         private readonly Queue<int> _peerIds;
         private byte _channelsCount = 1;
 
-        internal int mtuOverride = 0;
-        internal bool mtuInitialRaise = false;
-
         internal readonly NetPacketPool NetPacketPool;
 
         //config section
@@ -304,6 +301,16 @@ namespace LiteNetLib
         /// IPv6 support
         /// </summary>
         public IPv6Mode IPv6Enabled = IPv6Mode.SeparateSocket;
+
+        /// <summary>
+        /// Override MTU for all new peers registered in this NetManager, will ignores MTU Discovery!
+        /// </summary>
+        public int MtuOverride = 0;
+
+        /// <summary>
+        /// Sets initial MTU to lowest possible value according to RFC1191 (576 bytes)
+        /// </summary>
+        public bool UseSafeMtu = false;
 
         /// <summary>
         /// First peer. Useful for Client mode
@@ -1083,23 +1090,6 @@ namespace LiteNetLib
                 lock (_netEventsQueue)
                     _netEventsQueue.Enqueue(evt);
             }
-        }
-
-        /// <summary>
-        /// Override MTU for all new peers registered in this NetManager, will ignores MTU Discovery!
-        /// </summary>
-        /// <param name="value">value to use for all new peers</param>
-        public void OverrideMTU(int value)
-        {
-            mtuOverride = value;
-        }
-
-        /// <summary>
-        /// Raises Initial MTU of new peers to 1,164 bytes instead of 508 bytes
-        /// </summary>
-        public void RaiseInitialMTU()
-        {
-            mtuInitialRaise = true;
         }
 
         /// <summary>
