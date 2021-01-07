@@ -27,6 +27,7 @@
 
         /// <summary>
         /// Reliable only last packet. Packets can be dropped (except the last one), won't be duplicated, will arrive in order.
+        /// Cannot be fragmented
         /// </summary>
         ReliableSequenced = 3
     }
