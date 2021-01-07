@@ -226,6 +226,7 @@ namespace LiteNetLib
 
         private void SetMtu(int mtuIdx)
         {
+            _mtuIdx = mtuIdx;
             _mtu = NetConstants.PossibleMtu[mtuIdx] - NetManager.ExtraPacketSizeForLayer;
         }
 
@@ -789,8 +790,7 @@ namespace LiteNetLib
 
                 lock (_mtuMutex)
                 {
-                    _mtuIdx++;
-                    SetMtu(_mtuIdx);
+                    SetMtu(_mtuIdx+1);
                 }
                 //if maxed - finish.
                 if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
