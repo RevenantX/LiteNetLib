@@ -157,9 +157,13 @@ namespace LiteNetLib
             //Reading property
             byte property = (byte)(data[start] & 0x1F);
             bool fragmented = (data[start] & 0x80) != 0;
+
+            if (property > LastProperty)
+                return false;
+
             int headerSize = HeaderSizes[property];
 
-            if (property > LastProperty || packetSize < headerSize ||
+            if (packetSize < headerSize ||
                (fragmented && packetSize < headerSize + NetConstants.FragmentHeaderSize) ||
                data.Length < start + packetSize)
             {

@@ -53,11 +53,6 @@ namespace LiteNetLib
     }
 #endif
 
-    internal interface INetSocketListener
-    {
-        void OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint);
-    }
-
     internal sealed class NetSocket
     {
         public const int ReceivePollingTime = 500000; //0.5 second
@@ -71,7 +66,7 @@ namespace LiteNetLib
         private IPEndPoint _bufferEndPointv4;
         private IPEndPoint _bufferEndPointv6;
 
-        private readonly INetSocketListener _listener;
+        private readonly NetManager _listener;
 
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("ff02::1");
@@ -129,7 +124,7 @@ namespace LiteNetLib
 #endif
         }
 
-        public NetSocket(INetSocketListener listener)
+        public NetSocket(NetManager listener)
         {
             _listener = listener;
         }

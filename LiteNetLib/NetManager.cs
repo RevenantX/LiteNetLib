@@ -91,7 +91,7 @@ namespace LiteNetLib
     /// <summary>
     /// Main class for all network operations. Can be used as client and/or server.
     /// </summary>
-    public class NetManager : INetSocketListener, IEnumerable<NetPeer>
+    public class NetManager : IEnumerable<NetPeer>
     {
         private class IPEndPointComparer : IEqualityComparer<IPEndPoint>
         {
@@ -165,9 +165,11 @@ namespace LiteNetLib
         private NetEvent _netEventPoolHead;
         private readonly INetEventListener _netEventListener;
         private readonly IDeliveryEventListener _deliveryEventListener;
+        private readonly INtpEventListener _ntpEventListener;
 
         private readonly Dictionary<IPEndPoint, NetPeer> _peersDict;
         private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict;
+        private readonly Dictionary<IPEndPoint, NtpRequest> _ntpRequests;
         private readonly ReaderWriterLockSlim _peersLock;
         private volatile NetPeer _headPeer;
         private volatile int _connectedPeersCount;
@@ -430,6 +432,7 @@ namespace LiteNetLib
             _socket = new NetSocket(this);
             _netEventListener = listener;
             _deliveryEventListener = listener as IDeliveryEventListener;
+            _ntpEventListener = listener as INtpEventListener;
             _netEventsQueue = new Queue<NetEvent>();
             NetPacketPool = new NetPacketPool();
             NatPunchModule = new NatPunchModule(_socket);
@@ -437,6 +440,7 @@ namespace LiteNetLib
             _connectedPeerListCache = new List<NetPeer>();
             _peersDict = new Dictionary<IPEndPoint, NetPeer>(new IPEndPointComparer());
             _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>(new IPEndPointComparer());
+            _ntpRequests = new Dictionary<IPEndPoint, NtpRequest>(new IPEndPointComparer());
             _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
             _peerIds = new Queue<int>();
             _peersArray = new NetPeer[32];
@@ -712,12 +716,36 @@ namespace LiteNetLib
                     _peersLock.ExitWriteLock();
                     peersToRemove.Clear();
                 }
+                ProcessNtpRequests(elapsed);
 
                 int sleepTime = UpdateTime - (int)stopwatch.ElapsedMilliseconds;
                 if (sleepTime > 0)
                     _updateTriggerEvent.WaitOne(sleepTime);
             }
             stopwatch.Stop();
+        }
+
+        private void ProcessNtpRequests(int elapsedMilliseconds)
+        {
+            List<IPEndPoint> requestsToRemove = null;
+            foreach (var ntpRequest in _ntpRequests)
+            {
+                ntpRequest.Value.Send(_socket, elapsedMilliseconds);
+                if(ntpRequest.Value.NeedToKill)
+                {
+                    if (requestsToRemove == null)
+                        requestsToRemove = new List<IPEndPoint>();
+                    requestsToRemove.Add(ntpRequest.Key);
+                }
+            }
+
+            if (requestsToRemove != null)
+            {
+                foreach (var ipEndPoint in requestsToRemove)
+                {
+                    _ntpRequests.Remove(ipEndPoint);
+                }
+            }
         }
 
         /// <summary>
@@ -739,6 +767,7 @@ namespace LiteNetLib
                     netPeer.Update(elapsedMilliseconds);
                 }
             }
+            ProcessNtpRequests(elapsedMilliseconds);
         }
 
         /// <summary>
@@ -751,7 +780,7 @@ namespace LiteNetLib
                 _socket.ManualReceive();
         }
 
-        void INetSocketListener.OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint)
+        internal void OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint)
         {
             if (errorCode != 0)
             {
@@ -931,6 +960,40 @@ namespace LiteNetLib
             {
                 Statistics.IncrementPacketsReceived();
                 Statistics.AddBytesReceived(count);
+            }
+
+            if (_ntpRequests.Count > 0)
+            {
+                NtpRequest request;
+                if (_ntpRequests.TryGetValue(remoteEndPoint, out request))
+                {
+                    if (count < 48)
+                    {
+                        NetDebug.Write(NetLogLevel.Trace, "NTP response too short: {}", count);
+                        return;
+                    }
+
+                    byte[] copiedData = new byte[count];
+                    Buffer.BlockCopy(reusableBuffer, 0, copiedData, 0, count);
+                    NtpPacket ntpPacket = NtpPacket.FromServerResponse(copiedData, DateTime.UtcNow);
+                    try
+                    {
+                        ntpPacket.ValidateReply();
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        NetDebug.Write(NetLogLevel.Trace, "NTP response error: {}", ex.Message);
+                        ntpPacket = null;
+                    }
+
+                    if (ntpPacket != null)
+                    {
+                        _ntpRequests.Remove(remoteEndPoint);
+                        if(_ntpEventListener != null)
+                            _ntpEventListener.OnNtpResponse(ntpPacket);
+                    }
+                    return;
+                }
             }
 
             int start = 0;
@@ -1708,6 +1771,36 @@ namespace LiteNetLib
                 start, 
                 count,
                 null);
+        }
+
+        /// <summary>
+        /// Create the requests for NTP server
+        /// </summary>
+        /// <param name="endPoint">NTP Server address.</param>
+        public void CreateNtpRequest(IPEndPoint endPoint)
+        {
+            _ntpRequests.Add(endPoint, new NtpRequest(endPoint));
+        }
+
+        /// <summary>
+        /// Create the requests for NTP server
+        /// </summary>
+        /// <param name="ntpServerAddress">NTP Server address.</param>
+        /// <param name="port">port</param>
+        public void CreateNtpRequest(string ntpServerAddress, int port)
+        {
+            IPEndPoint endPoint = NetUtils.MakeEndPoint(ntpServerAddress, port);
+            _ntpRequests.Add(endPoint, new NtpRequest(endPoint));
+        }
+
+        /// <summary>
+        /// Create the requests for NTP server (default port)
+        /// </summary>
+        /// <param name="ntpServerAddress">NTP Server address.</param>
+        public void CreateNtpRequest(string ntpServerAddress)
+        {
+            IPEndPoint endPoint = NetUtils.MakeEndPoint(ntpServerAddress, NtpRequest.DefaultPort);
+            _ntpRequests.Add(endPoint, new NtpRequest(endPoint));
         }
 
         public NetPeerEnumerator GetEnumerator()

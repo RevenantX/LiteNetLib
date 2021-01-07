@@ -7,7 +7,7 @@ namespace LiteNetLib
     {
         protected readonly NetPeer Peer;
         protected readonly Queue<NetPacket> OutgoingQueue;
-        protected volatile int IsAddedToPeerChannelSendQueue;
+        private int _isAddedToPeerChannelSendQueue;
 
         public int PacketsInQueue
         {
@@ -31,7 +31,7 @@ namespace LiteNetLib
 
         protected void AddToPeerChannelSendQueue()
         {
-            if (Interlocked.CompareExchange(ref IsAddedToPeerChannelSendQueue, 1, 0) == 0)
+            if (Interlocked.CompareExchange(ref _isAddedToPeerChannelSendQueue, 1, 0) == 0)
             {
                 Peer.AddToReliableChannelSendQueue(this);
             }
@@ -41,7 +41,7 @@ namespace LiteNetLib
         {
             bool hasPacketsToSend = SendNextPackets();
             if (!hasPacketsToSend)
-                IsAddedToPeerChannelSendQueue = 0;
+                Interlocked.Exchange(ref _isAddedToPeerChannelSendQueue, 0);
 
             return hasPacketsToSend;
         }
