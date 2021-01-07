@@ -1131,19 +1131,10 @@ namespace LiteNetLib
                     while (count-- > 0)
                     {
                         BaseChannel channel = _channelSendQueue.Dequeue();
-                        lock (channel.OutgoingQueueSyncRoot)
+                        if (channel.SendAndCheckQueue())
                         {
-                            channel.SendNextPackets();
-
-                            if (channel.HasPacketsToSend)
-                            {
-                                // still has something to send, re-add it to the send queue
-                                _channelSendQueue.Enqueue(channel);
-                            }
-                            else
-                            {
-                                channel.IsAddedToPeerChannelSendQueue = false;
-                            }
+                            // still has something to send, re-add it to the send queue
+                            _channelSendQueue.Enqueue(channel);
                         }
                     }
                 }

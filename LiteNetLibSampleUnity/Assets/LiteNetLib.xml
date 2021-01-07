@@ -319,6 +319,17 @@
             Use this only when NetManager started in manual mode
             </summary>
         </member>
+        <member name="M:LiteNetLib.NetManager.OverrideMTU(System.Int32)">
+            <summary>
+            Override MTU for all new peers registered in this NetManager, will ignores MTU Discovery!
+            </summary>
+            <param name="value">value to use for all new peers</param>
+        </member>
+        <member name="M:LiteNetLib.NetManager.RaiseInitialMTU">
+            <summary>
+            Raises Initial MTU of new peers to 1,164 bytes instead of 508 bytes
+            </summary>
+        </member>
         <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">
             <summary>
             Send data to all connected peers (channel - 0)

@@ -10,11 +10,6 @@ namespace LiteNetLib
             private long _timeStamp;
             private bool _isSent;
 
-            public bool HasPacket
-            {
-                get { return !ReferenceEquals(this._packet, null); }
-            }
-
             public override string ToString()
             {
                 return _packet == null ? "Empty" : _packet.Sequence.ToString();
@@ -174,17 +169,7 @@ namespace LiteNetLib
             }
         }
 
-        public override bool HasPacketsToSend
-        {
-            get
-            {
-                return this._hasPendingPackets
-                       || this._mustSendAcks
-                       || this.OutgoingQueue.Count > 0;
-            }
-        }
-
-        public override void SendNextPackets()
+        protected override bool SendNextPackets()
         {
             if (_mustSendAcks)
             {
@@ -227,6 +212,8 @@ namespace LiteNetLib
                     }
                 }
             }
+
+            return _hasPendingPackets || _mustSendAcks || OutgoingQueue.Count > 0;
         }
 
         //Process incoming packet
