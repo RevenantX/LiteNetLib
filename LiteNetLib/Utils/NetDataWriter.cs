@@ -105,6 +105,18 @@ namespace LiteNetLib.Utils
             get { return _position; }
         }
 
+        /// <summary>
+        /// Sets position of NetDataWriter to rewrite previous values
+        /// </summary>
+        /// <param name="position">new byte position</param>
+        /// <returns>previous position of data writer</returns>
+        public int SetPosition(int position)
+        {
+            int prevPosition = _position;
+            _position = position;
+            return prevPosition;
+        }
+
         public void Put(float value)
         {
             if (_autoResize)
