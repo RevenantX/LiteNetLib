@@ -15,6 +15,7 @@ namespace LiteNetLib.Tests
         [SetUp]
         public void Setup()
         {
+            NetDebug.Logger = null;
             _crc32Layer = new Crc32cLayer();
             _dummyEndpoint = new IPEndPoint(IPAddress.Loopback, 23456);
         }
@@ -53,6 +54,7 @@ namespace LiteNetLib.Tests
 
             int offset = 0;
             int length = packet.Length;
+
             _crc32Layer.ProcessInboundPacket(_dummyEndpoint, ref packet, ref offset, ref length);
 
             Assert.AreEqual(0, length);
