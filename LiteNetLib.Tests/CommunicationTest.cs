@@ -662,7 +662,7 @@ namespace LiteNetLib.Tests
         public void ManualMode()
         {
             var serverListener = new EventBasedNetListener();
-            var server = new NetManager(serverListener);
+            var server = new NetManager(serverListener, new Crc32cLayer());
 
             serverListener.ConnectionRequestEvent += request => request.AcceptIfKey(DefaultAppKey);
 
