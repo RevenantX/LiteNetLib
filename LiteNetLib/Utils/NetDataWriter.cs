@@ -43,7 +43,7 @@ namespace LiteNetLib.Utils
                 netDataWriter.Put(bytes);
                 return netDataWriter;
             }
-            return new NetDataWriter(true, 0) {_data = bytes};
+            new NetDataWriter(true, 0) {_data = bytes, _position = bytes.Length};
         }
 
         /// <summary>
