@@ -672,26 +672,7 @@ namespace LiteNetLib
 
             while (_socket.IsRunning)
             {
-#if DEBUG
-                if (SimulateLatency)
-                {
-                    var time = DateTime.UtcNow;
-                    lock (_pingSimulationList)
-                    {
-                        for (int i = 0; i < _pingSimulationList.Count; i++)
-                        {
-                            var incomingData = _pingSimulationList[i];
-                            if (incomingData.TimeWhenGet <= time)
-                            {
-                                DataReceived(incomingData.Data, incomingData.Data.Length, incomingData.EndPoint);
-                                _pingSimulationList.RemoveAt(i);
-                                i--;
-                            }
-                        }
-                    }
-                }
-#endif
-
+                ProcessDelayedPackets();
                 int elapsed = (int)stopwatch.ElapsedMilliseconds;
                 elapsed = elapsed <= 0 ? 1 : elapsed;
                 stopwatch.Reset();
@@ -725,6 +706,30 @@ namespace LiteNetLib
             stopwatch.Stop();
         }
 
+        [Conditional("DEBUG")]
+        private void ProcessDelayedPackets()
+        {
+#if DEBUG
+            if (SimulateLatency)
+            {
+                var time = DateTime.UtcNow;
+                lock (_pingSimulationList)
+                {
+                    for (int i = 0; i < _pingSimulationList.Count; i++)
+                    {
+                        var incomingData = _pingSimulationList[i];
+                        if (incomingData.TimeWhenGet <= time)
+                        {
+                            DataReceived(incomingData.Data, incomingData.Data.Length, incomingData.EndPoint);
+                            _pingSimulationList.RemoveAt(i);
+                            i--;
+                        }
+                    }
+                }
+            }
+#endif
+        }
+
         private void ProcessNtpRequests(int elapsedMilliseconds)
         {
             List<IPEndPoint> requestsToRemove = null;
@@ -756,6 +761,7 @@ namespace LiteNetLib
         {
             if (!_manualMode)
                 return;
+
             for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
             {
                 if (netPeer.ConnectionState == ConnectionState.Disconnected && netPeer.TimeSinceLastPacket > DisconnectTimeout)
@@ -776,8 +782,11 @@ namespace LiteNetLib
         /// </summary>
         public void ManualReceive()
         {
-            if(_manualMode)
-                _socket.ManualReceive();
+            if(!_manualMode)
+                return;
+                
+            _socket.ManualReceive();
+            ProcessDelayedPackets();
         }
 
         internal void OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint)
