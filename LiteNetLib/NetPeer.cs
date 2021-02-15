@@ -920,7 +920,10 @@ namespace LiteNetLib
                         ushort size = BitConverter.ToUInt16(packet.RawData, pos);
                         pos += 2;
                         NetPacket mergedPacket = _packetPool.GetPacket(size);
-                        if (!mergedPacket.FromBytes(packet.RawData, pos, size))
+                        Buffer.BlockCopy(packet.RawData, pos, mergedPacket.RawData, 0, size);
+                        mergedPacket.Size = size;
+
+                        if (!mergedPacket.Verify() || packet.RawData.Length < pos + size)
                         {
                             _packetPool.Recycle(packet);
                             break;

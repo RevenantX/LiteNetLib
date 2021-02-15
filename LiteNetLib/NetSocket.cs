@@ -158,7 +158,7 @@ namespace LiteNetLib
                 default:
                     NetDebug.WriteError("[R]Error code: {0} - {1}", (int)ex.SocketErrorCode,
                         ex.ToString());
-                    _listener.OnMessageReceived(null, 0, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
+                    _listener.OnMessageReceived(null, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
                     break;
             }
             return false;
@@ -182,11 +182,12 @@ namespace LiteNetLib
                     return false;
                 while (available > 0)
                 {
-                    result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None,
+                    var packet = _listener.NetPacketPool.GetPacket(NetConstants.MaxPacketSize);
+                    packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
                         ref bufferEndPoint);
                     NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
-                    _listener.OnMessageReceived(receiveBuffer, result, 0, (IPEndPoint)bufferEndPoint);
-                    available -= result;
+                    _listener.OnMessageReceived(packet, 0, (IPEndPoint)bufferEndPoint);
+                    available -= packet.Size;
                 }
             }
             catch (SocketException ex)
@@ -204,18 +205,19 @@ namespace LiteNetLib
         {
             Socket socket = (Socket)state;
             EndPoint bufferEndPoint = new IPEndPoint(socket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
-            byte[] receiveBuffer = new byte[NetConstants.MaxPacketSize];
 
             while (IsActive())
             {
                 int result;
+                NetPacket packet;
 
                 //Reading data
                 try
                 {
                     if (socket.Available == 0 && !socket.Poll(ReceivePollingTime, SelectMode.SelectRead))
                         continue;
-                    result = socket.ReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None,
+                    packet = _listener.NetPacketPool.GetPacket(NetConstants.MaxPacketSize);
+                    packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
                         ref bufferEndPoint);
                 }
                 catch (SocketException ex)
@@ -231,7 +233,7 @@ namespace LiteNetLib
 
                 //All ok!
                 NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
-                _listener.OnMessageReceived(receiveBuffer, result, 0, (IPEndPoint)bufferEndPoint);
+                _listener.OnMessageReceived(packet, 0, (IPEndPoint)bufferEndPoint);
             }
         }
 

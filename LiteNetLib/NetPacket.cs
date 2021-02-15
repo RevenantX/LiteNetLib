@@ -151,28 +151,14 @@ namespace LiteNetLib
             return HeaderSizes[RawData[0] & 0x1F];
         }
 
-        //Packet constructor from byte array
-        public bool FromBytes(byte[] data, int start, int packetSize)
+        public bool Verify()
         {
-            //Reading property
-            byte property = (byte)(data[start] & 0x1F);
-            bool fragmented = (data[start] & 0x80) != 0;
-
+            byte property = (byte)(RawData[0] & 0x1F);
             if (property > LastProperty)
                 return false;
-
             int headerSize = HeaderSizes[property];
-
-            if (packetSize < headerSize ||
-               (fragmented && packetSize < headerSize + NetConstants.FragmentHeaderSize) ||
-               data.Length < start + packetSize)
-            {
-                return false;
-            }
-
-            Buffer.BlockCopy(data, start, RawData, 0, packetSize);
-            Size = (ushort)packetSize;
-            return true;
+            bool fragmented = (RawData[0] & 0x80) != 0;
+            return Size >= headerSize && (!fragmented || Size >= headerSize + NetConstants.FragmentHeaderSize);
         }
     }
 

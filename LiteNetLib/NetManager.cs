@@ -147,7 +147,7 @@ namespace LiteNetLib
 #if DEBUG
         private struct IncomingData
         {
-            public byte[] Data;
+            public NetPacket Data;
             public IPEndPoint EndPoint;
             public DateTime TimeWhenGet;
         }
@@ -720,7 +720,7 @@ namespace LiteNetLib
                         var incomingData = _pingSimulationList[i];
                         if (incomingData.TimeWhenGet <= time)
                         {
-                            DataReceived(incomingData.Data, incomingData.Data.Length, incomingData.EndPoint);
+                            DataReceived(incomingData.Data, incomingData.EndPoint);
                             _pingSimulationList.RemoveAt(i);
                             i--;
                         }
@@ -789,7 +789,7 @@ namespace LiteNetLib
             ProcessDelayedPackets();
         }
 
-        internal void OnMessageReceived(byte[] data, int length, SocketError errorCode, IPEndPoint remoteEndPoint)
+        internal void OnMessageReceived(NetPacket packet, SocketError errorCode, IPEndPoint remoteEndPoint)
         {
             if (errorCode != 0)
             {
@@ -808,14 +808,11 @@ namespace LiteNetLib
                 int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
                 if (latency > MinLatencyThreshold)
                 {
-                    byte[] holdedData = new byte[length];
-                    Buffer.BlockCopy(data, 0, holdedData, 0, length);
-
                     lock (_pingSimulationList)
                     {
                         _pingSimulationList.Add(new IncomingData
                         {
-                            Data = holdedData,
+                            Data = packet,
                             EndPoint = remoteEndPoint,
                             TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
                         });
@@ -828,7 +825,7 @@ namespace LiteNetLib
             try
             {
                 //ProcessEvents
-                DataReceived(data, length, remoteEndPoint);
+                DataReceived(packet, remoteEndPoint);
             }
             catch(Exception e)
             {
@@ -963,12 +960,12 @@ namespace LiteNetLib
             CreateEvent(NetEvent.EType.ConnectionRequest, connectionRequest: req);
         }
 
-        private void DataReceived(byte[] reusableBuffer, int count, IPEndPoint remoteEndPoint)
+        private void DataReceived(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             if (EnableStatistics)
             {
                 Statistics.IncrementPacketsReceived();
-                Statistics.AddBytesReceived(count);
+                Statistics.AddBytesReceived(packet.Size);
             }
 
             if (_ntpRequests.Count > 0)
@@ -976,14 +973,14 @@ namespace LiteNetLib
                 NtpRequest request;
                 if (_ntpRequests.TryGetValue(remoteEndPoint, out request))
                 {
-                    if (count < 48)
+                    if (packet.Size < 48)
                     {
-                        NetDebug.Write(NetLogLevel.Trace, "NTP response too short: {}", count);
+                        NetDebug.Write(NetLogLevel.Trace, "NTP response too short: {}", packet.Size);
                         return;
                     }
 
-                    byte[] copiedData = new byte[count];
-                    Buffer.BlockCopy(reusableBuffer, 0, copiedData, 0, count);
+                    byte[] copiedData = new byte[packet.Size];
+                    Buffer.BlockCopy(packet.RawData, 0, copiedData, 0, packet.Size);
                     NtpPacket ntpPacket = NtpPacket.FromServerResponse(copiedData, DateTime.UtcNow);
                     try
                     {
@@ -1005,24 +1002,18 @@ namespace LiteNetLib
                 }
             }
 
-            int start = 0;
             if (_extraPacketLayer != null)
             {
-                _extraPacketLayer.ProcessInboundPacket(remoteEndPoint, ref reusableBuffer, ref start, ref count);
-                if (count == 0)
+                int start = 0;
+                _extraPacketLayer.ProcessInboundPacket(remoteEndPoint, ref packet.RawData, ref start, ref packet.Size);
+                if (packet.Size == 0)
                     return;
             }
 
-            //empty packet
-            if (reusableBuffer[start] == (byte) PacketProperty.Empty)
-                return;
-
-            //Try read packet
-            NetPacket packet = NetPacketPool.GetPacket(count);
-            if (!packet.FromBytes(reusableBuffer, start, count))
+            if (!packet.Verify())
             {
-                NetPacketPool.Recycle(packet);
                 NetDebug.WriteError("[NM] DataReceived: bad!");
+                NetPacketPool.Recycle(packet);
                 return;
             }
 
