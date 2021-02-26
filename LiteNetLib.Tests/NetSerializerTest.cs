@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using LiteNetLib.Utils;
 
 using NUnit.Framework;
@@ -25,7 +26,8 @@ namespace LiteNetLib.Tests
                 TestArray = new [] { new SampleNetSerializable { Value = 6 }, new SampleNetSerializable { Value = 15 } },
                 SampleClassArray = new[] { new SampleClass { Value = 6 }, new SampleClass { Value = 15 } },
                 SampleClassList = new List<SampleClass> { new SampleClass { Value = 1 }, new SampleClass { Value = 5 }},
-                VectorList = new List<SomeVector2> { new SomeVector2(-1,-2), new SomeVector2(700, 800) }
+                VectorList = new List<SomeVector2> { new SomeVector2(-1,-2), new SomeVector2(700, 800) },
+                IgnoreMe = 1337
             };
 
             _packetProcessor = new NetPacketProcessor();
@@ -125,6 +127,8 @@ namespace LiteNetLib.Tests
             public SampleClass[] SampleClassArray { get; set; }
             public List<SampleClass> SampleClassList { get; set; }
             public List<SomeVector2> VectorList { get; set; }
+            [IgnoreDataMember]
+            public int IgnoreMe { get; set; }
         }
 
         private static bool AreSame(string s1, string s2)
@@ -165,6 +169,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(_samplePacket.TestArray, readPackage.TestArray);
             Assert.AreEqual(_samplePacket.SomeByteArray, readPackage.SomeByteArray);
             Assert.AreEqual(_samplePacket.SampleClassArray, readPackage.SampleClassArray);
+            Assert.AreEqual(0, readPackage.IgnoreMe); // expect 0 because it should be ignored
             CollectionAssert.AreEqual(_samplePacket.SampleClassList, readPackage.SampleClassList);
             CollectionAssert.AreEqual(_samplePacket.VectorList, readPackage.VectorList);
 
