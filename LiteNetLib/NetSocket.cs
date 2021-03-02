@@ -25,6 +25,7 @@ namespace LiteNetLib
         internal int Port;
         internal bool Paused;
         internal NetSocket Socket;
+        internal bool ManualMode;
 
         private void Update()
         {
@@ -43,7 +44,7 @@ namespace LiteNetLib
             }
             else if (Paused)
             {
-                if (!Socket.Bind(BindAddrIPv4, BindAddrIPv6, Port, Reuse, IPv6))
+                if (!Socket.Bind(BindAddrIPv4, BindAddrIPv6, Port, Reuse, IPv6, ManualMode))
                 {
                     NetDebug.WriteError("[S] Cannot restore connection \"{0}\",\"{1}\" port {2}", BindAddrIPv4, BindAddrIPv6, Port);
                     Socket.OnErrorRestore();
@@ -265,6 +266,7 @@ namespace LiteNetLib
                 _unitySocketFix.Reuse = reuseAddress;
                 _unitySocketFix.Port = LocalPort;
                 _unitySocketFix.IPv6 = ipv6Mode;
+                _unitySocketFix.ManualMode = manualMode;
             }
             else
             {
