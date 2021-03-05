@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP3_1
+﻿#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
@@ -15,7 +15,7 @@ namespace LiteNetLib.Utils
 
         static CRC32C()
         {
-#if NETCOREAPP3_1
+#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1
             if(Sse42.IsSupported)
                 return;
 #endif
@@ -42,7 +42,7 @@ namespace LiteNetLib.Utils
         public static uint Compute(byte[] input, int offset, int length)
         {
             uint crcLocal = uint.MaxValue;
-#if NETCOREAPP3_1
+#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1
             if (Sse42.IsSupported)
             {
                 var data = new ReadOnlySpan<byte>(input, offset, length);
