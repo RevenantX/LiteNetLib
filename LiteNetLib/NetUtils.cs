@@ -46,7 +46,7 @@ namespace LiteNetLib
             return ipAddress;
         }
 
-        private static IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily)
+        public static IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily)
         {
             IPAddress[] addresses = ResolveAddresses(hostStr);
             foreach (IPAddress ip in addresses)
@@ -59,7 +59,7 @@ namespace LiteNetLib
             return null;
         }
 
-        private static IPAddress[] ResolveAddresses(string hostStr)
+        public static IPAddress[] ResolveAddresses(string hostStr)
         {
 #if NETSTANDARD || NETCOREAPP
             var hostTask = Dns.GetHostEntryAsync(hostStr);
