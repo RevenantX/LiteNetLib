@@ -67,26 +67,23 @@ namespace LiteNetLib
         //Header
         public PacketProperty Property
         {
-            get { return (PacketProperty)(RawData[0] & 0x1F); }
-            set { RawData[0] = (byte)((RawData[0] & 0xE0) | (byte)value); }
+            get => (PacketProperty)(RawData[0] & 0x1F);
+            set => RawData[0] = (byte)((RawData[0] & 0xE0) | (byte)value);
         }
 
         public byte ConnectionNumber
         {
-            get { return (byte)((RawData[0] & 0x60) >> 5); }
-            set { RawData[0] = (byte) ((RawData[0] & 0x9F) | (value << 5)); }
+            get => (byte)((RawData[0] & 0x60) >> 5);
+            set => RawData[0] = (byte) ((RawData[0] & 0x9F) | (value << 5));
         }
 
         public ushort Sequence
         {
-            get { return BitConverter.ToUInt16(RawData, 1); }
-            set { FastBitConverter.GetBytes(RawData, 1, value); }
+            get => BitConverter.ToUInt16(RawData, 1);
+            set => FastBitConverter.GetBytes(RawData, 1, value);
         }
 
-        public bool IsFragmented
-        {
-            get { return (RawData[0] & 0x80) != 0; }
-        }
+        public bool IsFragmented => (RawData[0] & 0x80) != 0;
 
         public void MarkFragmented()
         {
@@ -95,26 +92,26 @@ namespace LiteNetLib
 
         public byte ChannelId
         {
-            get { return RawData[3]; }
-            set { RawData[3] = value; }
+            get => RawData[3];
+            set => RawData[3] = value;
         }
 
         public ushort FragmentId
         {
-            get { return BitConverter.ToUInt16(RawData, 4); }
-            set { FastBitConverter.GetBytes(RawData, 4, value); }
+            get => BitConverter.ToUInt16(RawData, 4);
+            set => FastBitConverter.GetBytes(RawData, 4, value);
         }
 
         public ushort FragmentPart
         {
-            get { return BitConverter.ToUInt16(RawData, 6); }
-            set { FastBitConverter.GetBytes(RawData, 6, value); }
+            get => BitConverter.ToUInt16(RawData, 6);
+            set => FastBitConverter.GetBytes(RawData, 6, value);
         }
 
         public ushort FragmentsTotal
         {
-            get { return BitConverter.ToUInt16(RawData, 8); }
-            set { FastBitConverter.GetBytes(RawData, 8, value); }
+            get => BitConverter.ToUInt16(RawData, 8);
+            set => FastBitConverter.GetBytes(RawData, 8, value);
         }
 
         //Data

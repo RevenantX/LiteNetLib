@@ -2,6 +2,7 @@
 #define STATS_ENABLED
 #endif
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
@@ -70,7 +71,7 @@ namespace LiteNetLib
 
         internal byte ConnectionNum
         {
-            get { return _connectNum; }
+            get => _connectNum;
             private set
             {
                 _connectNum = value;
@@ -81,8 +82,8 @@ namespace LiteNetLib
         }
  
         //Channels
-        private readonly Queue<NetPacket> _unreliableChannel;
-        private readonly Queue<BaseChannel> _channelSendQueue;
+        private readonly ConcurrentQueue<NetPacket> _unreliableChannel;
+        private readonly ConcurrentQueue<BaseChannel> _channelSendQueue;
         private readonly BaseChannel[] _channels;
 
         //MTU
@@ -139,12 +140,12 @@ namespace LiteNetLib
         /// <summary>
         /// Current connection state
         /// </summary>
-        public ConnectionState ConnectionState { get { return _connectionState; } }
+        public ConnectionState ConnectionState => _connectionState;
 
         /// <summary>
         /// Connection time for internal purposes
         /// </summary>
-        internal long ConnectTime { get { return _connectTime; } }
+        internal long ConnectTime => _connectTime;
 
         /// <summary>
         /// Peer id can be used as key in your dictionary of peers
@@ -154,36 +155,30 @@ namespace LiteNetLib
         /// <summary>
         /// Current ping in milliseconds
         /// </summary>
-        public int Ping { get { return _avgRtt/2; } }
+        public int Ping => _avgRtt/2;
 
         /// <summary>
         /// Current MTU - Maximum Transfer Unit ( maximum udp packet size without fragmentation )
         /// </summary>
-        public int Mtu { get { return _mtu; } }
+        public int Mtu => _mtu;
 
         /// <summary>
         /// Delta with remote time in ticks (not accurate)
         /// positive - remote time > our time
         /// </summary>
-        public long RemoteTimeDelta
-        {
-            get { return _remoteDelta; }
-        }
+        public long RemoteTimeDelta => _remoteDelta;
 
         /// <summary>
         /// Remote UTC time (not accurate)
         /// </summary>
-        public DateTime RemoteUtcTime
-        {
-            get { return new DateTime(DateTime.UtcNow.Ticks + _remoteDelta); }
-        }
+        public DateTime RemoteUtcTime => new DateTime(DateTime.UtcNow.Ticks + _remoteDelta);
 
         /// <summary>
         /// Time since last packet received (including internal library packets)
         /// </summary>
-        public int TimeSinceLastPacket { get { return _timeSinceLastPacket; } }
+        public int TimeSinceLastPacket => _timeSinceLastPacket;
 
-        internal double ResendDelay { get { return _resendDelay; } }
+        internal double ResendDelay => _resendDelay;
 
         /// <summary>
         /// Application defined object containing data about the connection
@@ -216,12 +211,12 @@ namespace LiteNetLib
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
             _pingPacket = new NetPacket(PacketProperty.Ping, 0) {Sequence = 1};
            
-            _unreliableChannel = new Queue<NetPacket>(64);
+            _unreliableChannel = new ConcurrentQueue<NetPacket>();
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
             _deliveredFragments = new Dictionary<ushort, ushort>();
 
             _channels = new BaseChannel[netManager.ChannelsCount * 4];
-            _channelSendQueue = new Queue<BaseChannel>(netManager.ChannelsCount * 4);
+            _channelSendQueue = new ConcurrentQueue<BaseChannel>();
         }
 
         private void SetMtu(int mtuIdx)
@@ -582,8 +577,7 @@ namespace LiteNetLib
 
             if (channel == null) //unreliable
             {
-                lock(_unreliableChannel)
-                    _unreliableChannel.Enqueue(packet);
+                _unreliableChannel.Enqueue(packet);
             }
             else
             {
@@ -627,10 +621,7 @@ namespace LiteNetLib
 
         internal void AddToReliableChannelSendQueue(BaseChannel channel)
         {
-            lock (_channelSendQueue)
-            {
-                _channelSendQueue.Enqueue(channel);
-            }
+            _channelSendQueue.Enqueue(channel);
         }
 
         internal ShutdownResult Shutdown(byte[] data, int start, int length, bool force)
@@ -692,8 +683,7 @@ namespace LiteNetLib
                 NetDebug.Write("Fragment. Id: {0}, Part: {1}, Total: {2}", p.FragmentId, p.FragmentPart, p.FragmentsTotal);
                 //Get needed array from dictionary
                 ushort packetFragId = p.FragmentId;
-                IncomingFragments incomingFragments;
-                if (!_holdedFragments.TryGetValue(packetFragId, out incomingFragments))
+                if (!_holdedFragments.TryGetValue(packetFragId, out var incomingFragments))
                 {
                     incomingFragments = new IncomingFragments
                     {
@@ -1126,34 +1116,22 @@ namespace LiteNetLib
             UpdateMtuLogic(deltaTime);
 
             //Pending send
-            if (_channelSendQueue.Count > 0)
+            int count = _channelSendQueue.Count;
+            while (count-- > 0)
             {
-                lock (_channelSendQueue)
+                if (!_channelSendQueue.TryDequeue(out var channel))
+                    break;
+                if (channel.SendAndCheckQueue())
                 {
-                    var count = _channelSendQueue.Count;
-                    while (count-- > 0)
-                    {
-                        BaseChannel channel = _channelSendQueue.Dequeue();
-                        if (channel.SendAndCheckQueue())
-                        {
-                            // still has something to send, re-add it to the send queue
-                            _channelSendQueue.Enqueue(channel);
-                        }
-                    }
+                    // still has something to send, re-add it to the send queue
+                    _channelSendQueue.Enqueue(channel);
                 }
             }
 
-            if (_unreliableChannel.Count > 0)
+            while (_unreliableChannel.TryDequeue(out var packet))
             {
-                lock (_unreliableChannel)
-                {
-                    while (_unreliableChannel.Count > 0)
-                    {
-                        NetPacket packet = _unreliableChannel.Dequeue();
-                        SendUserData(packet);
-                        NetManager.NetPacketPool.Recycle(packet);
-                    }
-                }
+                SendUserData(packet);
+                NetManager.NetPacketPool.Recycle(packet);
             }
 
             SendMerged();
@@ -1166,8 +1144,7 @@ namespace LiteNetLib
             {
                 if (packet.IsFragmented)
                 {
-                    ushort fragCount;
-                    _deliveredFragments.TryGetValue(packet.FragmentId, out fragCount);
+                    _deliveredFragments.TryGetValue(packet.FragmentId, out ushort fragCount);
                     fragCount++;
                     if (fragCount == packet.FragmentsTotal)
                     {

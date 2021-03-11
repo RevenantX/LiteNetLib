@@ -17,10 +17,7 @@ namespace LiteNetLib.Utils
             _ntpEndPoint = endPoint;
         }
 
-        public bool NeedToKill
-        {
-            get { return _killTime >= KillTimer; }
-        }
+        public bool NeedToKill => _killTime >= KillTimer;
 
         public bool Send(NetSocket socket, int time)
         {

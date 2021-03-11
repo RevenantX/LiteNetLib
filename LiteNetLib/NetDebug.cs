@@ -47,7 +47,7 @@ namespace LiteNetLib
             {
                 if (Logger == null)
                 {
-#if UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER
                     UnityEngine.Debug.Log(string.Format(str, args));
 #else
                     Console.WriteLine(str, args);

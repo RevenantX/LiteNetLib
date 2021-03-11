@@ -114,8 +114,8 @@ namespace LibSample
 
             NetManager server = new NetManager(_serverListener)
             {
-                BroadcastReceiveEnabled = true, 
-                IPv6Enabled = IPv6Mode.DualMode
+                BroadcastReceiveEnabled = true,
+                IPv6Mode = IPv6Mode.DualMode
             };
             if (!server.Start(9050))
             {
@@ -133,7 +133,7 @@ namespace LibSample
                 UnconnectedMessagesEnabled = true, 
                 SimulateLatency = true, 
                 SimulationMaxLatency = 1500,
-                IPv6Enabled = IPv6Mode.DualMode
+                IPv6Mode = IPv6Mode.DualMode
             };
             _clientListener1.Client = client1;
             if (!client1.Start())
@@ -149,7 +149,7 @@ namespace LibSample
                 UnconnectedMessagesEnabled = true,
                 SimulateLatency = true, 
                 SimulationMaxLatency = 1500,
-                IPv6Enabled = IPv6Mode.DualMode
+                IPv6Mode = IPv6Mode.DualMode
             };
 
             _clientListener2.Client = client2;

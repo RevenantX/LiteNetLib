@@ -39,25 +39,21 @@ namespace LiteNetLib
             }
             else
             {
-                lock (OutgoingQueue)
+                while (OutgoingQueue.TryDequeue(out var packet))
                 {
-                    while (OutgoingQueue.Count > 0)
-                    {
-                        NetPacket packet = OutgoingQueue.Dequeue();
-                        _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
-                        packet.Sequence = (ushort)_localSequence;
-                        packet.ChannelId = _id;
-                        Peer.SendUserData(packet);
+                    _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
+                    packet.Sequence = (ushort)_localSequence;
+                    packet.ChannelId = _id;
+                    Peer.SendUserData(packet);
 
-                        if (_reliable && OutgoingQueue.Count == 0)
-                        {
-                            _lastPacketSendTime = DateTime.UtcNow.Ticks;
-                            _lastPacket = packet;
-                        }
-                        else
-                        {
-                            Peer.NetManager.NetPacketPool.Recycle(packet);
-                        }
+                    if (_reliable && OutgoingQueue.Count == 0)
+                    {
+                        _lastPacketSendTime = DateTime.UtcNow.Ticks;
+                        _lastPacket = packet;
+                    }
+                    else
+                    {
+                        Peer.NetManager.NetPacketPool.Recycle(packet);
                     }
                 }
             }

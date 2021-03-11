@@ -1,4 +1,4 @@
-#if UNITY_5_3_OR_NEWER
+#if UNITY_2018_3_OR_NEWER
 #define UNITY
 #if UNITY_IOS && !UNITY_EDITOR
 using UnityEngine;
@@ -62,8 +62,6 @@ namespace LiteNetLib
         private Socket _udpSocketv6;
         private Thread _threadv4;
         private Thread _threadv6;
-        private byte[] _receiveBufferv4;
-        private byte[] _receiveBufferv6;
         private IPEndPoint _bufferEndPointv4;
         private IPEndPoint _bufferEndPointv6;
 
@@ -109,17 +107,11 @@ namespace LiteNetLib
 
         static NetSocket()
         {
-#if DISABLE_IPV6 || (!UNITY_EDITOR && ENABLE_IL2CPP && !UNITY_2018_3_OR_NEWER)
+#if DISABLE_IPV6
             IPv6Support = false;
-#elif !UNITY_2019_1_OR_NEWER && !UNITY_2018_4_OR_NEWER && (!UNITY_EDITOR && ENABLE_IL2CPP && UNITY_2018_3_OR_NEWER)
+#elif !UNITY_2019_1_OR_NEWER && !UNITY_2018_4_OR_NEWER && (!UNITY_EDITOR && ENABLE_IL2CPP)
             string version = UnityEngine.Application.unityVersion;
             IPv6Support = Socket.OSSupportsIPv6 && int.Parse(version.Remove(version.IndexOf('f')).Split('.')[2]) >= 6;
-#elif UNITY_2018_2_OR_NEWER
-            IPv6Support = Socket.OSSupportsIPv6;
-#elif UNITY
-#pragma warning disable 618
-            IPv6Support = Socket.SupportsIPv6;
-#pragma warning restore 618
 #else
             IPv6Support = Socket.OSSupportsIPv6;
 #endif
@@ -167,12 +159,12 @@ namespace LiteNetLib
 
         public void ManualReceive()
         {
-            ManualReceive(_udpSocketv4, _bufferEndPointv4, _receiveBufferv4);
+            ManualReceive(_udpSocketv4, _bufferEndPointv4);
             if (_udpSocketv6 != null && _udpSocketv6 != _udpSocketv4)
-                ManualReceive(_udpSocketv6, _bufferEndPointv6, _receiveBufferv6);
+                ManualReceive(_udpSocketv6, _bufferEndPointv6);
         }
 
-        private bool ManualReceive(Socket socket, EndPoint bufferEndPoint, byte[] receiveBuffer)
+        private bool ManualReceive(Socket socket, EndPoint bufferEndPoint)
         {
             int result;
             //Reading data
@@ -288,7 +280,6 @@ namespace LiteNetLib
             }
             else
             {
-                _receiveBufferv4 = new byte[NetConstants.MaxPacketSize];
                 _bufferEndPointv4 = new IPEndPoint(IPAddress.Any, 0);
             }
 
@@ -302,7 +293,6 @@ namespace LiteNetLib
             {
                 if (manualMode)
                 {
-                    _receiveBufferv6 = new byte[NetConstants.MaxPacketSize];
                     _bufferEndPointv6 = new IPEndPoint(IPAddress.IPv6Any, 0);
                 }
                 else
@@ -423,16 +413,10 @@ namespace LiteNetLib
                                 socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
                                 socket.Bind(ep);
                             }
-#if UNITY_2018_3_OR_NEWER
                             catch (SocketException ex)
                             {
-
                                 //because its fixed in 2018_3
                                 NetDebug.WriteError("[B]Bind exception: {0}, errorCode: {1}", ex.ToString(), ex.SocketErrorCode);
-#else
-                            catch(SocketException)
-                            {
-#endif
                                 return false;
                             }
                             return true;
@@ -531,10 +515,8 @@ namespace LiteNetLib
             if (_udpSocketv4 == _udpSocketv6)
                 _udpSocketv6 = null;
 
-            if (_udpSocketv4 != null)
-                _udpSocketv4.Close();
-            if (_udpSocketv6 != null)
-                _udpSocketv6.Close();
+            _udpSocketv4?.Close();
+            _udpSocketv6?.Close();
             _udpSocketv4 = null;
             _udpSocketv6 = null;
 

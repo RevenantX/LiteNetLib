@@ -11,10 +11,9 @@ namespace LiteNetLib.Utils
         private const int InitialSize = 64;
         private readonly bool _autoResize;
 
-        public int Capacity
-        {
-            get { return _data.Length; }
-        }
+        public int Capacity => _data.Length;
+        public byte[] Data => _data;
+        public int Length => _position;
 
         public NetDataWriter() : this(true, InitialSize)
         {
@@ -93,16 +92,6 @@ namespace LiteNetLib.Utils
             byte[] resultData = new byte[_position];
             Buffer.BlockCopy(_data, 0, resultData, 0, _position);
             return resultData;
-        }
-
-        public byte[] Data
-        {
-            get { return _data; }
-        }
-
-        public int Length
-        {
-            get { return _position; }
         }
 
         /// <summary>

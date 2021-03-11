@@ -1,6 +1,6 @@
-# LiteNetLib 0.9 indev
+# LiteNetLib 1.0 indev
 
-Lite reliable UDP library for .NET Framework 3.5, Mono, .NET Core 2.1, .NET Standard 2.0.
+Lite reliable UDP library for .NET Framework 4.6, Mono, .NET Core 2.1, .NET Standard 2.0.
 
 **Discord chat**: [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
@@ -50,13 +50,14 @@ https://www.buymeacoffee.com/revx
 * Multicasting (for discovering hosts in local network)
 * Unity support
 * Supported platforms:
-  * Windows/Mac/Linux (.NET Framework, Mono, .NET Core)
-  * Android (Unity)
-  * iOS (Unity)
-  * UWP Windows 10 including phones
+  * Windows/Mac/Linux (.NET Framework, Mono, .NET Core, .NET Standard)
   * Lumin OS (Magic Leap)
+  * Monogame
+  * Godot
+  * Unity 2018.3 (Desktop platforms, Android, iOS, Switch)
 
 ## Unity notes!!!
+* Minimal supported Unity is 2018.3. For older Unity versions use 0.9.x library versions
 * Always use library sources instead of precompiled DLL files ( because there are platform specific #ifdefs and workarounds for unity bugs )
 
 ## Usage samples

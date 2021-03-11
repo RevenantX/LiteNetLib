@@ -183,20 +183,19 @@ namespace LiteNetLib
             lock (_pendingPackets)
             {
                 //get packets from queue
-                lock (OutgoingQueue)
+                while (!OutgoingQueue.IsEmpty)
                 {
-                    while (OutgoingQueue.Count > 0)
-                    {
-                        int relate = NetUtils.RelativeSequenceNumber(_localSeqence, _localWindowStart);
-                        if (relate >= _windowSize)
-                            break;
+                    int relate = NetUtils.RelativeSequenceNumber(_localSeqence, _localWindowStart);
+                    if (relate >= _windowSize)
+                        break;
 
-                        var netPacket = OutgoingQueue.Dequeue();
-                        netPacket.Sequence = (ushort) _localSeqence;
-                        netPacket.ChannelId = _id;
-                        _pendingPackets[_localSeqence % _windowSize].Init(netPacket);
-                        _localSeqence = (_localSeqence + 1) % NetConstants.MaxSequence;
-                    }
+                    if (!OutgoingQueue.TryDequeue(out var netPacket))
+                        break;
+
+                    netPacket.Sequence = (ushort) _localSeqence;
+                    netPacket.ChannelId = _id;
+                    _pendingPackets[_localSeqence % _windowSize].Init(netPacket);
+                    _localSeqence = (_localSeqence + 1) % NetConstants.MaxSequence;
                 }
 
                 //send

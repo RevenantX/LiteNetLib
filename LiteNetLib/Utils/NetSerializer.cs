@@ -121,8 +121,7 @@ namespace LiteNetLib.Utils
 
             public override void Read(TClass inf, NetDataReader r)
             {
-                TProperty elem;
-                ElementRead(r, out elem);
+                ElementRead(r, out var elem);
                 Setter(inf, elem);
             }
 
@@ -163,8 +162,7 @@ namespace LiteNetLib.Utils
 
             public override void ReadList(TClass inf, NetDataReader r)
             {
-                int len;
-                var list = ReadListHelper(inf, r, out len);
+                var list = ReadListHelper(inf, r, out int len);
                 int listCount = list.Count;
                 for (int i = 0; i < len; i++)
                 {
@@ -179,8 +177,7 @@ namespace LiteNetLib.Utils
 
             public override void WriteList(TClass inf, NetDataWriter w)
             {
-                int len;
-                var list = WriteListHelper(inf, w, out len);
+                var list = WriteListHelper(inf, w, out int len);
                 for (int i = 0; i < len; i++)
                     _writer(w, list[i]);
             }
@@ -220,8 +217,7 @@ namespace LiteNetLib.Utils
 
             public override void ReadList(TClass inf, NetDataReader r)
             {
-                int len;
-                var list = ReadListHelper(inf, r, out len);
+                var list = ReadListHelper(inf, r, out int len);
                 int listCount = list.Count;
                 for (int i = 0; i < len; i++)
                 {
@@ -238,8 +234,7 @@ namespace LiteNetLib.Utils
 
             public override void WriteList(TClass inf, NetDataWriter w)
             {
-                int len;
-                var list = WriteListHelper(inf, w, out len);
+                var list = WriteListHelper(inf, w, out int len);
                 for (int i = 0; i < len; i++)
                     list[i].Serialize(w);
             }
@@ -276,14 +271,12 @@ namespace LiteNetLib.Utils
             public override void Write(TClass inf, NetDataWriter w)
             {
                 var p = Getter(inf);
-                if(p != null)
-                    p.Serialize(w);
+                p?.Serialize(w);
             }
 
             public override void ReadList(TClass inf, NetDataReader r)
             {
-                int len;
-                var list = ReadListHelper(inf, r, out len);
+                var list = ReadListHelper(inf, r, out int len);
                 int listCount = list.Count;
                 for (int i = 0; i < len; i++)
                 {
@@ -304,8 +297,7 @@ namespace LiteNetLib.Utils
 
             public override void WriteList(TClass inf, NetDataWriter w)
             {
-                int len;
-                var list = WriteListHelper(inf, w, out len);
+                var list = WriteListHelper(inf, w, out int len);
                 for (int i = 0; i < len; i++)
                     list[i].Serialize(w);
             }
@@ -651,8 +643,7 @@ namespace LiteNetLib.Utils
                     serialzer = new IPEndPointSerializer<T>();
                 else
                 {
-                    CustomType customType;
-                    _registeredTypes.TryGetValue(elementType, out customType);
+                    _registeredTypes.TryGetValue(elementType, out var customType);
                     if (customType != null)
                         serialzer = customType.Get<T>();
                 }
