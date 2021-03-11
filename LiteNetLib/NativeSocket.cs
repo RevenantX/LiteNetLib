@@ -326,10 +326,7 @@ namespace LiteNetLib
         {
             int error = Marshal.GetLastWin32Error();
             if (UnixMode)
-            {
-                SocketError err;
-                return NativeErrorToSocketError.TryGetValue((UnixSocketError)error, out err) ? err : SocketError.SocketError;
-            }
+                return NativeErrorToSocketError.TryGetValue((UnixSocketError)error, out var err) ? err : SocketError.SocketError;
             return (SocketError)error;
         }
 
@@ -345,13 +342,7 @@ namespace LiteNetLib
                 Microseconds = (int) (microSeconds % 1000000L)
             };
 #if LITENETLIB_UNSAFE
-#if !NET35
             IntPtr* pollHandle = stackalloc IntPtr[2] {(IntPtr)1, socketHandle};
-#else
-            IntPtr* pollHandle = stackalloc IntPtr[2];
-            pollHandle[0] = (IntPtr)1;
-            pollHandle[1] = socketHandle;
-#endif
             int num = UnixMode
                 ? UnixSock.select(0, pollHandle, null, null, ref timeValue)
                 : WinSock.select(0, pollHandle, null, null, ref timeValue);
