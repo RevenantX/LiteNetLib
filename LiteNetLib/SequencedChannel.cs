@@ -21,42 +21,39 @@ namespace LiteNetLib
                 _ackPacket = new NetPacket(PacketProperty.Ack, 0) {ChannelId = id};
         }
 
-        public override void SendNextPackets()
+        protected override bool SendNextPackets()
         {
             if (_reliable && OutgoingQueue.Count == 0)
             {
                 long currentTime = DateTime.UtcNow.Ticks;
                 long packetHoldTime = currentTime - _lastPacketSendTime;
-                if (packetHoldTime < Peer.ResendDelay * TimeSpan.TicksPerMillisecond)
-                    return;
-                var packet = _lastPacket;
-                if (packet != null)
+                if (packetHoldTime >= Peer.ResendDelay * TimeSpan.TicksPerMillisecond)
                 {
-                    _lastPacketSendTime = currentTime;
-                    Peer.SendUserData(packet);
+                    var packet = _lastPacket;
+                    if (packet != null)
+                    {
+                        _lastPacketSendTime = currentTime;
+                        Peer.SendUserData(packet);
+                    }
                 }
             }
             else
             {
-                lock (OutgoingQueue)
+                while (OutgoingQueue.TryDequeue(out var packet))
                 {
-                    while (OutgoingQueue.Count > 0)
-                    {
-                        NetPacket packet = OutgoingQueue.Dequeue();
-                        _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
-                        packet.Sequence = (ushort)_localSequence;
-                        packet.ChannelId = _id;
-                        Peer.SendUserData(packet);
+                    _localSequence = (_localSequence + 1) % NetConstants.MaxSequence;
+                    packet.Sequence = (ushort)_localSequence;
+                    packet.ChannelId = _id;
+                    Peer.SendUserData(packet);
 
-                        if (_reliable && OutgoingQueue.Count == 0)
-                        {
-                            _lastPacketSendTime = DateTime.UtcNow.Ticks;
-                            _lastPacket = packet;
-                        }
-                        else
-                        {
-                            Peer.NetManager.NetPacketPool.Recycle(packet);
-                        }
+                    if (_reliable && OutgoingQueue.Count == 0)
+                    {
+                        _lastPacketSendTime = DateTime.UtcNow.Ticks;
+                        _lastPacket = packet;
+                    }
+                    else
+                    {
+                        Peer.NetManager.NetPacketPool.Recycle(packet);
                     }
                 }
             }
@@ -67,6 +64,8 @@ namespace LiteNetLib
                 _ackPacket.Sequence = _remoteSequence;
                 Peer.SendUserData(_ackPacket);
             }
+
+            return _lastPacket != null;
         }
 
         public override bool ProcessPacket(NetPacket packet)
@@ -97,7 +96,13 @@ namespace LiteNetLib
                     Peer);
                 packetProcessed = true;
             }
-            _mustSendAck = true;
+
+            if (_reliable)
+            {
+                _mustSendAck = true;
+                AddToPeerChannelSendQueue();
+            }
+
             return packetProcessed;
         }
     }

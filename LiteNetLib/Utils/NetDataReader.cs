@@ -11,46 +11,15 @@ namespace LiteNetLib.Utils
         protected int _dataSize;
         private int _offset;
 
-        public byte[] RawData
-        {
-            get { return _data; }
-        }
+        public byte[] RawData => _data;
+        public int RawDataSize => _dataSize;
+        public int UserDataOffset => _offset;
+        public int UserDataSize => _dataSize - _offset;
+        public bool IsNull => _data == null;
+        public int Position => _position;
+        public bool EndOfData => _position == _dataSize;
+        public int AvailableBytes => _dataSize - _position;
 
-        public int RawDataSize
-        {
-            get { return _dataSize; }
-        }
-
-        public int UserDataOffset
-        {
-            get { return _offset; }
-        }
-
-        public int UserDataSize
-        {
-            get { return _dataSize - _offset; }
-        }
-
-        public bool IsNull
-        {
-            get { return _data == null; }
-        }
-
-        public int Position
-        {
-            get { return _position; }
-        }
-
-        public bool EndOfData
-        {
-            get { return _position == _dataSize; }
-        }
-
-        public int AvailableBytes
-        {
-            get { return _dataSize - _position; }
-        }
-        
         public void SkipBytes(int count) 
         {
             _position += count;

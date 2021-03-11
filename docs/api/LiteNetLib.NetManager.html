@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class NetManager
    ">
-    <meta name="generator" content="docfx 2.53.1.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -266,6 +266,31 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public int MaxConnectAttempts</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="LiteNetLib_NetManager_MtuOverride" data-uid="LiteNetLib.NetManager.MtuOverride">MtuOverride</h4>
+  <div class="markdown level1 summary"><p>Override MTU for all new peers registered in this NetManager, will ignores MTU Discovery!</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MtuOverride</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -678,6 +703,31 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="LiteNetLib_NetManager_UseSafeMtu" data-uid="LiteNetLib.NetManager.UseSafeMtu">UseSafeMtu</h4>
+  <div class="markdown level1 summary"><p>Sets initial MTU to lowest possible value according to RFC1191 (576 bytes)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool UseSafeMtu</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -1520,6 +1570,47 @@
         <td><a class="xref" href="LiteNetLib.ConnectionState.html">ConnectionState</a></td>
         <td><span class="parametername">peerState</span></td>
         <td><p>State of peers</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_NetManager_ManualReceive_" data-uid="LiteNetLib.NetManager.ManualReceive*"></a>
+  <h4 id="LiteNetLib_NetManager_ManualReceive" data-uid="LiteNetLib.NetManager.ManualReceive">ManualReceive()</h4>
+  <div class="markdown level1 summary"><p>Receive logic. It will call Receive events immediately without need to use PollEvents or UnsyncedEvents
+Use this only when NetManager started in manual mode</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ManualReceive()</code></pre>
+  </div>
+  
+  
+  <a id="LiteNetLib_NetManager_ManualUpdate_" data-uid="LiteNetLib.NetManager.ManualUpdate*"></a>
+  <h4 id="LiteNetLib_NetManager_ManualUpdate_System_Int32_" data-uid="LiteNetLib.NetManager.ManualUpdate(System.Int32)">ManualUpdate(Int32)</h4>
+  <div class="markdown level1 summary"><p>Update and send logic. Use this only when NetManager started in manual mode</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ManualUpdate(int elapsedMilliseconds)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">elapsedMilliseconds</span></td>
+        <td><p>elapsed milliseconds since last update call</p>
 </td>
       </tr>
     </tbody>
@@ -2575,6 +2666,171 @@
   </table>
   
   
+  <a id="LiteNetLib_NetManager_StartInManualMode_" data-uid="LiteNetLib.NetManager.StartInManualMode*"></a>
+  <h4 id="LiteNetLib_NetManager_StartInManualMode_System_Int32_" data-uid="LiteNetLib.NetManager.StartInManualMode(System.Int32)">StartInManualMode(Int32)</h4>
+  <div class="markdown level1 summary"><p>Start in manual mode and listening on selected port
+In this mode you should use ManualReceive (without PollEvents) for receive packets
+and ManualUpdate(...) for update and send packets
+This mode useful mostly for single-threaded servers</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool StartInManualMode(int port)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">port</span></td>
+        <td><p>port to listen</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_NetManager_StartInManualMode_" data-uid="LiteNetLib.NetManager.StartInManualMode*"></a>
+  <h4 id="LiteNetLib_NetManager_StartInManualMode_System_Net_IPAddress_System_Net_IPAddress_System_Int32_" data-uid="LiteNetLib.NetManager.StartInManualMode(System.Net.IPAddress,System.Net.IPAddress,System.Int32)">StartInManualMode(IPAddress, IPAddress, Int32)</h4>
+  <div class="markdown level1 summary"><p>Start in manual mode and listening on selected port
+In this mode you should use ManualReceive (without PollEvents) for receive packets
+and ManualUpdate(...) for update and send packets
+This mode useful mostly for single-threaded servers</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool StartInManualMode(IPAddress addressIPv4, IPAddress addressIPv6, int port)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.IPAddress</span></td>
+        <td><span class="parametername">addressIPv4</span></td>
+        <td><p>bind to specific ipv4 address</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.IPAddress</span></td>
+        <td><span class="parametername">addressIPv6</span></td>
+        <td><p>bind to specific ipv6 address</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">port</span></td>
+        <td><p>port to listen</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_NetManager_StartInManualMode_" data-uid="LiteNetLib.NetManager.StartInManualMode*"></a>
+  <h4 id="LiteNetLib_NetManager_StartInManualMode_System_String_System_String_System_Int32_" data-uid="LiteNetLib.NetManager.StartInManualMode(System.String,System.String,System.Int32)">StartInManualMode(String, String, Int32)</h4>
+  <div class="markdown level1 summary"><p>Start in manual mode and listening on selected port
+In this mode you should use ManualReceive (without PollEvents) for receive packets
+and ManualUpdate(...) for update and send packets
+This mode useful mostly for single-threaded servers</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool StartInManualMode(string addressIPv4, string addressIPv6, int port)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">addressIPv4</span></td>
+        <td><p>bind to specific ipv4 address</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">addressIPv6</span></td>
+        <td><p>bind to specific ipv6 address</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">port</span></td>
+        <td><p>port to listen</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="LiteNetLib_NetManager_Stop_" data-uid="LiteNetLib.NetManager.Stop*"></a>
   <h4 id="LiteNetLib_NetManager_Stop" data-uid="LiteNetLib.NetManager.Stop">Stop()</h4>
   <div class="markdown level1 summary"><p>Force closes connection and stop all threads.</p>
@@ -2693,7 +2949,8 @@
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In This Article</h5>
+                <div></div>
               </nav>
             </div>
           </div>

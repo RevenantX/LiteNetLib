@@ -47,8 +47,7 @@ namespace LiteNetLib.Utils
         protected virtual SubscribeDelegate GetCallbackFromData(NetDataReader reader)
         {
             var hash = reader.GetULong();
-            SubscribeDelegate action;
-            if (!_callbacks.TryGetValue(hash, out action))
+            if (!_callbacks.TryGetValue(hash, out var action))
             {
                 throw new ParseException("Undefined packet in NetDataReader");
             }
