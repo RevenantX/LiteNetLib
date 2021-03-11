@@ -4,7 +4,7 @@ Lite reliable UDP library for .NET Framework 4.6, Mono, .NET Core 2.1, .NET Stan
 
 **Discord chat**: [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
-[OLD BRANCH (and examples) for 0.8.x](https://github.com/RevenantX/LiteNetLib/tree/0.8)
+[OLD BRANCH (and examples) for 0.9.x](https://github.com/RevenantX/LiteNetLib/tree/0.9)
 
 [Little Game Example on Unity](https://github.com/RevenantX/NetGameExample)
 
@@ -57,7 +57,7 @@ https://www.buymeacoffee.com/revx
   * Unity 2018.3 (Desktop platforms, Android, iOS, Switch)
 
 ## Unity notes!!!
-* Minimal supported Unity is 2018.3. For older Unity versions use 0.9.x library versions
+* Minimal supported Unity is 2018.3. For older Unity versions use [0.9.x library](https://github.com/RevenantX/LiteNetLib/tree/0.9) versions
 * Always use library sources instead of precompiled DLL files ( because there are platform specific #ifdefs and workarounds for unity bugs )
 
 ## Usage samples
