@@ -11,10 +11,9 @@ namespace LiteNetLib.Utils
         private const int InitialSize = 64;
         private readonly bool _autoResize;
 
-        public int Capacity
-        {
-            get { return _data.Length; }
-        }
+        public int Capacity => _data.Length;
+        public byte[] Data => _data;
+        public int Length => _position;
 
         public NetDataWriter() : this(true, InitialSize)
         {
@@ -43,7 +42,7 @@ namespace LiteNetLib.Utils
                 netDataWriter.Put(bytes);
                 return netDataWriter;
             }
-            return new NetDataWriter(true, 0) {_data = bytes};
+            return new NetDataWriter(true, 0) {_data = bytes, _position = bytes.Length};
         }
 
         /// <summary>
@@ -95,14 +94,16 @@ namespace LiteNetLib.Utils
             return resultData;
         }
 
-        public byte[] Data
+        /// <summary>
+        /// Sets position of NetDataWriter to rewrite previous values
+        /// </summary>
+        /// <param name="position">new byte position</param>
+        /// <returns>previous position of data writer</returns>
+        public int SetPosition(int position)
         {
-            get { return _data; }
-        }
-
-        public int Length
-        {
-            get { return _position; }
+            int prevPosition = _position;
+            _position = position;
+            return prevPosition;
         }
 
         public void Put(float value)

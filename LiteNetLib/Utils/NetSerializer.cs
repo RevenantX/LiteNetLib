@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Collections.Generic;
 using System.Net;
+using System.Runtime.Serialization;
 
 namespace LiteNetLib.Utils
 {
@@ -120,8 +121,7 @@ namespace LiteNetLib.Utils
 
             public override void Read(TClass inf, NetDataReader r)
             {
-                TProperty elem;
-                ElementRead(r, out elem);
+                ElementRead(r, out var elem);
                 Setter(inf, elem);
             }
 
@@ -162,27 +162,22 @@ namespace LiteNetLib.Utils
 
             public override void ReadList(TClass inf, NetDataReader r)
             {
-                int len;
-                var list = ReadListHelper(inf, r, out len);
+                var list = ReadListHelper(inf, r, out int len);
                 int listCount = list.Count;
-                if (len > listCount)
+                for (int i = 0; i < len; i++)
                 {
-                    for (int i = 0; i < listCount; i++)
+                    if (i < listCount)
                         list[i] = _reader(r);
-                    for (int i = listCount; i < len; i++)
+                    else
                         list.Add(_reader(r));
-                    return;
                 }
                 if (len < listCount)
                     list.RemoveRange(len, listCount - len);
-                for (int i = 0; i < len; i++)
-                    list[i] = _reader(r);
             }
 
             public override void WriteList(TClass inf, NetDataWriter w)
             {
-                int len;
-                var list = WriteListHelper(inf, w, out len);
+                var list = WriteListHelper(inf, w, out int len);
                 for (int i = 0; i < len; i++)
                     _writer(w, list[i]);
             }
@@ -222,31 +217,24 @@ namespace LiteNetLib.Utils
 
             public override void ReadList(TClass inf, NetDataReader r)
             {
-                int len;
-                var list = ReadListHelper(inf, r, out len);
+                var list = ReadListHelper(inf, r, out int len);
                 int listCount = list.Count;
-                if (len > listCount)
-                {
-                    for (int i = 0; i < listCount; i++)
-                        list[i].Deserialize(r);
-                    for (int i = listCount; i < len; i++)
-                    {
-                        var itm = default(TProperty);
-                        itm.Deserialize(r);
-                        list.Add(itm);
-                    }
-                    return;
-                }
-                if(len < listCount)
-                    list.RemoveRange(len, listCount - len);
                 for (int i = 0; i < len; i++)
-                    list[i].Deserialize(r);
+                {
+                    var itm = default(TProperty);
+                    itm.Deserialize(r);
+                    if(i < listCount)
+                        list[i] = itm;
+                    else
+                        list.Add(itm);
+                }
+                if (len < listCount)
+                    list.RemoveRange(len, listCount - len);
             }
 
             public override void WriteList(TClass inf, NetDataWriter w)
             {
-                int len;
-                var list = WriteListHelper(inf, w, out len);
+                var list = WriteListHelper(inf, w, out int len);
                 for (int i = 0; i < len; i++)
                     list[i].Serialize(w);
             }
@@ -283,37 +271,33 @@ namespace LiteNetLib.Utils
             public override void Write(TClass inf, NetDataWriter w)
             {
                 var p = Getter(inf);
-                if(p != null)
-                    p.Serialize(w);
+                p?.Serialize(w);
             }
 
             public override void ReadList(TClass inf, NetDataReader r)
             {
-                int len;
-                var list = ReadListHelper(inf, r, out len);
+                var list = ReadListHelper(inf, r, out int len);
                 int listCount = list.Count;
-                if (len > listCount)
+                for (int i = 0; i < len; i++)
                 {
-                    for (int i = 0; i < listCount; i++)
+                    if (i < listCount)
+                    {
                         list[i].Deserialize(r);
-                    for (int i = listCount; i < len; i++)
+                    }
+                    else
                     {
                         var itm = _constructor();
                         itm.Deserialize(r);
                         list.Add(itm);
                     }
-                    return;
                 }
                 if (len < listCount)
                     list.RemoveRange(len, listCount - len);
-                for (int i = 0; i < len; i++)
-                    list[i].Deserialize(r);
             }
 
             public override void WriteList(TClass inf, NetDataWriter w)
             {
-                int len;
-                var list = WriteListHelper(inf, w, out len);
+                var list = WriteListHelper(inf, w, out int len);
                 for (int i = 0; i < len; i++)
                     list[i].Serialize(w);
             }
@@ -609,6 +593,9 @@ namespace LiteNetLib.Utils
                     elementType = propertyType.GetGenericArguments()[0];
                     callType = CallType.List;
                 }
+                
+                if (Attribute.IsDefined(property, typeof(IgnoreDataMemberAttribute)))
+                    continue;
 
                 var getMethod = property.GetGetMethod();
                 var setMethod = property.GetSetMethod();
@@ -656,8 +643,7 @@ namespace LiteNetLib.Utils
                     serialzer = new IPEndPointSerializer<T>();
                 else
                 {
-                    CustomType customType;
-                    _registeredTypes.TryGetValue(elementType, out customType);
+                    _registeredTypes.TryGetValue(elementType, out var customType);
                     if (customType != null)
                         serialzer = customType.Get<T>();
                 }

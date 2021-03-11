@@ -1587,12 +1587,44 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.LocalPort
   nameWithType: NetManager.LocalPort
+- uid: LiteNetLib.NetManager.ManualReceive
+  name: ManualReceive()
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ManualReceive
+  commentId: M:LiteNetLib.NetManager.ManualReceive
+  fullName: LiteNetLib.NetManager.ManualReceive()
+  nameWithType: NetManager.ManualReceive()
+- uid: LiteNetLib.NetManager.ManualReceive*
+  name: ManualReceive
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ManualReceive_
+  commentId: Overload:LiteNetLib.NetManager.ManualReceive
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.ManualReceive
+  nameWithType: NetManager.ManualReceive
+- uid: LiteNetLib.NetManager.ManualUpdate(System.Int32)
+  name: ManualUpdate(Int32)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ManualUpdate_System_Int32_
+  commentId: M:LiteNetLib.NetManager.ManualUpdate(System.Int32)
+  fullName: LiteNetLib.NetManager.ManualUpdate(System.Int32)
+  nameWithType: NetManager.ManualUpdate(Int32)
+- uid: LiteNetLib.NetManager.ManualUpdate*
+  name: ManualUpdate
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ManualUpdate_
+  commentId: Overload:LiteNetLib.NetManager.ManualUpdate
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.ManualUpdate
+  nameWithType: NetManager.ManualUpdate
 - uid: LiteNetLib.NetManager.MaxConnectAttempts
   name: MaxConnectAttempts
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_MaxConnectAttempts
   commentId: F:LiteNetLib.NetManager.MaxConnectAttempts
   fullName: LiteNetLib.NetManager.MaxConnectAttempts
   nameWithType: NetManager.MaxConnectAttempts
+- uid: LiteNetLib.NetManager.MtuOverride
+  name: MtuOverride
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_MtuOverride
+  commentId: F:LiteNetLib.NetManager.MtuOverride
+  fullName: LiteNetLib.NetManager.MtuOverride
+  nameWithType: NetManager.MtuOverride
 - uid: LiteNetLib.NetManager.NatPunchEnabled
   name: NatPunchEnabled
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_NatPunchEnabled
@@ -1950,6 +1982,31 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.Start
   nameWithType: NetManager.Start
+- uid: LiteNetLib.NetManager.StartInManualMode(System.Int32)
+  name: StartInManualMode(Int32)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_StartInManualMode_System_Int32_
+  commentId: M:LiteNetLib.NetManager.StartInManualMode(System.Int32)
+  fullName: LiteNetLib.NetManager.StartInManualMode(System.Int32)
+  nameWithType: NetManager.StartInManualMode(Int32)
+- uid: LiteNetLib.NetManager.StartInManualMode(System.Net.IPAddress,System.Net.IPAddress,System.Int32)
+  name: StartInManualMode(IPAddress, IPAddress, Int32)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_StartInManualMode_System_Net_IPAddress_System_Net_IPAddress_System_Int32_
+  commentId: M:LiteNetLib.NetManager.StartInManualMode(System.Net.IPAddress,System.Net.IPAddress,System.Int32)
+  fullName: LiteNetLib.NetManager.StartInManualMode(System.Net.IPAddress, System.Net.IPAddress, System.Int32)
+  nameWithType: NetManager.StartInManualMode(IPAddress, IPAddress, Int32)
+- uid: LiteNetLib.NetManager.StartInManualMode(System.String,System.String,System.Int32)
+  name: StartInManualMode(String, String, Int32)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_StartInManualMode_System_String_System_String_System_Int32_
+  commentId: M:LiteNetLib.NetManager.StartInManualMode(System.String,System.String,System.Int32)
+  fullName: LiteNetLib.NetManager.StartInManualMode(System.String, System.String, System.Int32)
+  nameWithType: NetManager.StartInManualMode(String, String, Int32)
+- uid: LiteNetLib.NetManager.StartInManualMode*
+  name: StartInManualMode
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_StartInManualMode_
+  commentId: Overload:LiteNetLib.NetManager.StartInManualMode
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.StartInManualMode
+  nameWithType: NetManager.StartInManualMode
 - uid: LiteNetLib.NetManager.Statistics
   name: Statistics
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Statistics
@@ -2052,6 +2109,12 @@ references:
   commentId: F:LiteNetLib.NetManager.UpdateTime
   fullName: LiteNetLib.NetManager.UpdateTime
   nameWithType: NetManager.UpdateTime
+- uid: LiteNetLib.NetManager.UseSafeMtu
+  name: UseSafeMtu
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_UseSafeMtu
+  commentId: F:LiteNetLib.NetManager.UseSafeMtu
+  fullName: LiteNetLib.NetManager.UseSafeMtu
+  nameWithType: NetManager.UseSafeMtu
 - uid: LiteNetLib.NetPacketReader
   name: NetPacketReader
   href: api/LiteNetLib.NetPacketReader.html

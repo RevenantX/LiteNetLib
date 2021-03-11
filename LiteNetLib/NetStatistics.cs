@@ -10,29 +10,12 @@ namespace LiteNetLib
         private long _bytesReceived;
         private long _packetLoss;
 
-        public long PacketsSent 
-        {
-            get { return Interlocked.Read(ref _packetsSent); }
-        }
+        public long PacketsSent => Interlocked.Read(ref _packetsSent);
+        public long PacketsReceived => Interlocked.Read(ref _packetsReceived);
+        public long BytesSent => Interlocked.Read(ref _bytesSent);
+        public long BytesReceived => Interlocked.Read(ref _bytesReceived);
+        public long PacketLoss => Interlocked.Read(ref _packetLoss);
 
-        public long PacketsReceived 
-        {
-            get { return Interlocked.Read(ref _packetsReceived); }
-        }
-
-        public long BytesSent 
-        { 
-            get { return Interlocked.Read(ref _bytesSent); }
-        }
-        public long BytesReceived 
-        { 
-            get { return Interlocked.Read(ref _bytesReceived); }
-        }
-        public long PacketLoss 
-        { 
-            get { return Interlocked.Read(ref _packetLoss); }
-        }
-        
         public long PacketLossPercent
         {
             get 

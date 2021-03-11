@@ -38,7 +38,7 @@ namespace LiteNetLib.Utils
         /// This is the only real property. All other properties except
         /// <see cref="NtpPacket.DestinationTimestamp" /> read from or write to this byte array.
         /// </remarks>
-        public byte[] Bytes { get; private set; }
+        public byte[] Bytes { get; }
 
         /// <summary>
         /// Gets the leap second indicator.
@@ -51,10 +51,7 @@ namespace LiteNetLib.Utils
         /// <remarks>
         /// Only servers fill in this property. Clients can consult this property for possible leap second warning.
         /// </remarks>
-        public NtpLeapIndicator LeapIndicator
-        {
-            get { return (NtpLeapIndicator)((Bytes[0] & 0xC0) >> 6); }
-        }
+        public NtpLeapIndicator LeapIndicator => (NtpLeapIndicator)((Bytes[0] & 0xC0) >> 6);
 
         /// <summary>
         /// Gets or sets protocol version number.
@@ -68,8 +65,8 @@ namespace LiteNetLib.Utils
         /// </remarks>
         public int VersionNumber
         {
-            get { return (Bytes[0] & 0x38) >> 3; }
-            private set { Bytes[0] = (byte)((Bytes[0] & ~0x38) | value << 3); }
+            get => (Bytes[0] & 0x38) >> 3;
+            private set => Bytes[0] = (byte)((Bytes[0] & ~0x38) | value << 3);
         }
 
         /// <summary>
@@ -81,8 +78,8 @@ namespace LiteNetLib.Utils
         /// </value>
         public NtpMode Mode
         {
-            get { return (NtpMode)(Bytes[0] & 0x07); }
-            private set { Bytes[0] = (byte)((Bytes[0] & ~0x07) | (int)value); }
+            get => (NtpMode)(Bytes[0] & 0x07);
+            private set => Bytes[0] = (byte)((Bytes[0] & ~0x07) | (int)value);
         }
 
         /// <summary>
@@ -99,7 +96,7 @@ namespace LiteNetLib.Utils
         /// with kiss code stored in <see cref="NtpPacket.ReferenceId" />.
         /// </para>
         /// </value>
-        public int Stratum { get { return Bytes[1]; } }
+        public int Stratum => Bytes[1];
 
         /// <summary>
         /// Gets server's preferred polling interval.
@@ -107,7 +104,7 @@ namespace LiteNetLib.Utils
         /// <value>
         /// Polling interval in log2 seconds, e.g. 4 stands for 16s and 17 means 131,072s.
         /// </value>
-        public int Poll { get { return Bytes[2]; } }
+        public int Poll => Bytes[2];
 
         /// <summary>
         /// Gets the precision of server clock.
@@ -115,7 +112,7 @@ namespace LiteNetLib.Utils
         /// <value>
         /// Clock precision in log2 seconds, e.g. -20 for microsecond precision.
         /// </value>
-        public int Precision { get { return (sbyte)Bytes[3]; } }
+        public int Precision => (sbyte)Bytes[3];
 
         /// <summary>
         /// Gets the total round-trip delay from the server to the reference clock.
@@ -123,7 +120,7 @@ namespace LiteNetLib.Utils
         /// <value>
         /// Round-trip delay to the reference clock. Normally a positive value smaller than one second.
         /// </value>
-        public TimeSpan RootDelay { get { return GetTimeSpan32(4); } }
+        public TimeSpan RootDelay => GetTimeSpan32(4);
 
         /// <summary>
         /// Gets the estimated error in time reported by the server.
@@ -131,7 +128,7 @@ namespace LiteNetLib.Utils
         /// <value>
         /// Estimated error in time reported by the server. Normally a positive value smaller than one second.
         /// </value>
-        public TimeSpan RootDispersion { get { return GetTimeSpan32(8); } }
+        public TimeSpan RootDispersion => GetTimeSpan32(8);
 
         /// <summary>
         /// Gets the ID of the time source used by the server or Kiss-o'-Death code sent by the server.
@@ -153,7 +150,7 @@ namespace LiteNetLib.Utils
         /// this property contains so called kiss code that instructs the client to stop querying the server.
         /// </para>
         /// </value>
-        public uint ReferenceId { get { return GetUInt32BE(12); } }
+        public uint ReferenceId => GetUInt32BE(12);
 
         /// <summary>
         /// Gets or sets the time when the server clock was last set or corrected.
@@ -165,7 +162,7 @@ namespace LiteNetLib.Utils
         /// This Property is usually set only by servers. It usually lags server's current time by several minutes,
         /// so don't use this property for time synchronization.
         /// </remarks>
-        public DateTime? ReferenceTimestamp { get { return GetDateTime64(16); } }
+        public DateTime? ReferenceTimestamp => GetDateTime64(16);
 
         /// <summary>
         /// Gets or sets the time when the client sent its request.
@@ -178,7 +175,7 @@ namespace LiteNetLib.Utils
         /// </value>
         /// <seealso cref="NtpPacket.CorrectionOffset" />
         /// <seealso cref="NtpPacket.RoundTripTime" />
-        public DateTime? OriginTimestamp { get { return GetDateTime64(24); } }
+        public DateTime? OriginTimestamp => GetDateTime64(24);
 
         /// <summary>
         /// Gets or sets the time when the request was received by the server.
@@ -189,7 +186,7 @@ namespace LiteNetLib.Utils
         /// </value>
         /// <seealso cref="NtpPacket.CorrectionOffset" />
         /// <seealso cref="NtpPacket.RoundTripTime" />
-        public DateTime? ReceiveTimestamp { get { return GetDateTime64(32); } }
+        public DateTime? ReceiveTimestamp => GetDateTime64(32);
 
         /// <summary>
         /// Gets or sets the time when the packet was sent.
