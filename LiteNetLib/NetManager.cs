@@ -406,8 +406,7 @@ namespace LiteNetLib
             peer.PrevPeer = null;
 
             _peersArray[peer.Id] = null;
-            lock (_peerIds)
-                _peerIds.Enqueue(peer.Id);
+            _peerIds.Enqueue(peer.Id);
         }
 
         /// <summary>
