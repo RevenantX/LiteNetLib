@@ -314,6 +314,12 @@ namespace LiteNetLib
         public NetPeer FirstPeer => _headPeer;
 
         /// <summary>
+        /// Experimental feature mostly for servers. Only for Windows/Linux
+        /// use direct socket calls for send/receive to drastically increase speed and reduce GC pressure
+        /// </summary>
+        public bool UseNativeSockets = true;
+
+        /// <summary>
         /// QoS channel count per message type (value must be between 1 and 64 channels)
         /// </summary>
         public byte ChannelsCount
