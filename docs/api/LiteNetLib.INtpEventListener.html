@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Namespace LiteNetLib.Utils
+    <title>Interface INtpEventListener
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Namespace LiteNetLib.Utils
+    <meta name="title" content="Interface INtpEventListener
    ">
     <meta name="generator" content="docfx 2.56.6.0">
     
@@ -68,46 +68,49 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="LiteNetLib.Utils">
+            <article class="content wrap" id="_content" data-uid="LiteNetLib.INtpEventListener">
   
-  <h1 id="LiteNetLib_Utils" data-uid="LiteNetLib.Utils" class="text-break">Namespace LiteNetLib.Utils
+  
+  <h1 id="LiteNetLib_INtpEventListener" data-uid="LiteNetLib.INtpEventListener" class="text-break">Interface INtpEventListener
   </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
-  <div class="markdown level0 remarks"></div>
-    <h3 id="classes">Classes
+  <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
+  <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
+  <h5 id="LiteNetLib_INtpEventListener_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface INtpEventListener</code></pre>
+  </div>
+  <h3 id="methods">Methods
   </h3>
-      <h4><a class="xref" href="LiteNetLib.Utils.CRC32C.html">CRC32C</a></h4>
-      <section></section>
-      <h4><a class="xref" href="LiteNetLib.Utils.FastBitConverter.html">FastBitConverter</a></h4>
-      <section></section>
-      <h4><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></h4>
-      <section></section>
-      <h4><a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a></h4>
-      <section></section>
-      <h4><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></h4>
-      <section></section>
-      <h4><a class="xref" href="LiteNetLib.Utils.NetPacketProcessor.html">NetPacketProcessor</a></h4>
-      <section></section>
-      <h4><a class="xref" href="LiteNetLib.Utils.NetSerializer.html">NetSerializer</a></h4>
-      <section></section>
-      <h4><a class="xref" href="LiteNetLib.Utils.NtpPacket.html">NtpPacket</a></h4>
-      <section><p>Represents RFC4330 SNTP packet used for communication to and from a network time server.</p>
-</section>
-      <h4><a class="xref" href="LiteNetLib.Utils.ParseException.html">ParseException</a></h4>
-      <section></section>
-    <h3 id="interfaces">Interfaces
-  </h3>
-      <h4><a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a></h4>
-      <section></section>
-    <h3 id="enums">Enums
-  </h3>
-      <h4><a class="xref" href="LiteNetLib.Utils.NtpLeapIndicator.html">NtpLeapIndicator</a></h4>
-      <section><p>Represents leap second warning from the server that instructs the client to add or remove leap second.</p>
-</section>
-      <h4><a class="xref" href="LiteNetLib.Utils.NtpMode.html">NtpMode</a></h4>
-      <section><p>Describes SNTP packet mode, i.e. client or server.</p>
-</section>
+  
+  
+  <a id="LiteNetLib_INtpEventListener_OnNtpResponse_" data-uid="LiteNetLib.INtpEventListener.OnNtpResponse*"></a>
+  <h4 id="LiteNetLib_INtpEventListener_OnNtpResponse_LiteNetLib_Utils_NtpPacket_" data-uid="LiteNetLib.INtpEventListener.OnNtpResponse(LiteNetLib.Utils.NtpPacket)">OnNtpResponse(NtpPacket)</h4>
+  <div class="markdown level1 summary"><p>Ntp response</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void OnNtpResponse(NtpPacket packet)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NtpPacket.html">NtpPacket</a></td>
+        <td><span class="parametername">packet</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
           

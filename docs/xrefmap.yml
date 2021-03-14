@@ -438,6 +438,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.EventBasedNetListener.ClearNetworkReceiveUnconnectedEvent
   nameWithType: EventBasedNetListener.ClearNetworkReceiveUnconnectedEvent
+- uid: LiteNetLib.EventBasedNetListener.ClearNtpResponseEvent
+  name: ClearNtpResponseEvent()
+  href: api/LiteNetLib.EventBasedNetListener.html#LiteNetLib_EventBasedNetListener_ClearNtpResponseEvent
+  commentId: M:LiteNetLib.EventBasedNetListener.ClearNtpResponseEvent
+  fullName: LiteNetLib.EventBasedNetListener.ClearNtpResponseEvent()
+  nameWithType: EventBasedNetListener.ClearNtpResponseEvent()
+- uid: LiteNetLib.EventBasedNetListener.ClearNtpResponseEvent*
+  name: ClearNtpResponseEvent
+  href: api/LiteNetLib.EventBasedNetListener.html#LiteNetLib_EventBasedNetListener_ClearNtpResponseEvent_
+  commentId: Overload:LiteNetLib.EventBasedNetListener.ClearNtpResponseEvent
+  isSpec: "True"
+  fullName: LiteNetLib.EventBasedNetListener.ClearNtpResponseEvent
+  nameWithType: EventBasedNetListener.ClearNtpResponseEvent
 - uid: LiteNetLib.EventBasedNetListener.ClearPeerConnectedEvent
   name: ClearPeerConnectedEvent()
   href: api/LiteNetLib.EventBasedNetListener.html#LiteNetLib_EventBasedNetListener_ClearPeerConnectedEvent
@@ -612,6 +625,23 @@ references:
   fullName: LiteNetLib.EventBasedNetListener.LiteNetLib.INetEventListener.OnPeerDisconnected
   nameWithType: EventBasedNetListener.INetEventListener.OnPeerDisconnected
   nameWithType.vb: EventBasedNetListener.LiteNetLib.INetEventListener.OnPeerDisconnected
+- uid: LiteNetLib.EventBasedNetListener.LiteNetLib#INtpEventListener#OnNtpResponse(LiteNetLib.Utils.NtpPacket)
+  name: INtpEventListener.OnNtpResponse(NtpPacket)
+  href: api/LiteNetLib.EventBasedNetListener.html#LiteNetLib_EventBasedNetListener_LiteNetLib_INtpEventListener_OnNtpResponse_LiteNetLib_Utils_NtpPacket_
+  commentId: M:LiteNetLib.EventBasedNetListener.LiteNetLib#INtpEventListener#OnNtpResponse(LiteNetLib.Utils.NtpPacket)
+  name.vb: LiteNetLib.INtpEventListener.OnNtpResponse(NtpPacket)
+  fullName: LiteNetLib.EventBasedNetListener.LiteNetLib.INtpEventListener.OnNtpResponse(LiteNetLib.Utils.NtpPacket)
+  nameWithType: EventBasedNetListener.INtpEventListener.OnNtpResponse(NtpPacket)
+  nameWithType.vb: EventBasedNetListener.LiteNetLib.INtpEventListener.OnNtpResponse(NtpPacket)
+- uid: LiteNetLib.EventBasedNetListener.LiteNetLib#INtpEventListener#OnNtpResponse*
+  name: INtpEventListener.OnNtpResponse
+  href: api/LiteNetLib.EventBasedNetListener.html#LiteNetLib_EventBasedNetListener_LiteNetLib_INtpEventListener_OnNtpResponse_
+  commentId: Overload:LiteNetLib.EventBasedNetListener.LiteNetLib#INtpEventListener#OnNtpResponse
+  isSpec: "True"
+  name.vb: LiteNetLib.INtpEventListener.OnNtpResponse
+  fullName: LiteNetLib.EventBasedNetListener.LiteNetLib.INtpEventListener.OnNtpResponse
+  nameWithType: EventBasedNetListener.INtpEventListener.OnNtpResponse
+  nameWithType.vb: EventBasedNetListener.LiteNetLib.INtpEventListener.OnNtpResponse
 - uid: LiteNetLib.EventBasedNetListener.NetworkErrorEvent
   name: NetworkErrorEvent
   href: api/LiteNetLib.EventBasedNetListener.html#LiteNetLib_EventBasedNetListener_NetworkErrorEvent
@@ -636,6 +666,12 @@ references:
   commentId: E:LiteNetLib.EventBasedNetListener.NetworkReceiveUnconnectedEvent
   fullName: LiteNetLib.EventBasedNetListener.NetworkReceiveUnconnectedEvent
   nameWithType: EventBasedNetListener.NetworkReceiveUnconnectedEvent
+- uid: LiteNetLib.EventBasedNetListener.NtpResponseEvent
+  name: NtpResponseEvent
+  href: api/LiteNetLib.EventBasedNetListener.html#LiteNetLib_EventBasedNetListener_NtpResponseEvent
+  commentId: E:LiteNetLib.EventBasedNetListener.NtpResponseEvent
+  fullName: LiteNetLib.EventBasedNetListener.NtpResponseEvent
+  nameWithType: EventBasedNetListener.NtpResponseEvent
 - uid: LiteNetLib.EventBasedNetListener.PeerConnectedEvent
   name: PeerConnectedEvent
   href: api/LiteNetLib.EventBasedNetListener.html#LiteNetLib_EventBasedNetListener_PeerConnectedEvent
@@ -818,6 +854,25 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.INetLogger.WriteNet
   nameWithType: INetLogger.WriteNet
+- uid: LiteNetLib.INtpEventListener
+  name: INtpEventListener
+  href: api/LiteNetLib.INtpEventListener.html
+  commentId: T:LiteNetLib.INtpEventListener
+  fullName: LiteNetLib.INtpEventListener
+  nameWithType: INtpEventListener
+- uid: LiteNetLib.INtpEventListener.OnNtpResponse(LiteNetLib.Utils.NtpPacket)
+  name: OnNtpResponse(NtpPacket)
+  href: api/LiteNetLib.INtpEventListener.html#LiteNetLib_INtpEventListener_OnNtpResponse_LiteNetLib_Utils_NtpPacket_
+  commentId: M:LiteNetLib.INtpEventListener.OnNtpResponse(LiteNetLib.Utils.NtpPacket)
+  fullName: LiteNetLib.INtpEventListener.OnNtpResponse(LiteNetLib.Utils.NtpPacket)
+  nameWithType: INtpEventListener.OnNtpResponse(NtpPacket)
+- uid: LiteNetLib.INtpEventListener.OnNtpResponse*
+  name: OnNtpResponse
+  href: api/LiteNetLib.INtpEventListener.html#LiteNetLib_INtpEventListener_OnNtpResponse_
+  commentId: Overload:LiteNetLib.INtpEventListener.OnNtpResponse
+  isSpec: "True"
+  fullName: LiteNetLib.INtpEventListener.OnNtpResponse
+  nameWithType: INtpEventListener.OnNtpResponse
 - uid: LiteNetLib.InvalidPacketException
   name: InvalidPacketException
   href: api/LiteNetLib.InvalidPacketException.html
@@ -1390,6 +1445,31 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.ConnectedPeersCount
   nameWithType: NetManager.ConnectedPeersCount
+- uid: LiteNetLib.NetManager.CreateNtpRequest(System.Net.IPEndPoint)
+  name: CreateNtpRequest(IPEndPoint)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateNtpRequest_System_Net_IPEndPoint_
+  commentId: M:LiteNetLib.NetManager.CreateNtpRequest(System.Net.IPEndPoint)
+  fullName: LiteNetLib.NetManager.CreateNtpRequest(System.Net.IPEndPoint)
+  nameWithType: NetManager.CreateNtpRequest(IPEndPoint)
+- uid: LiteNetLib.NetManager.CreateNtpRequest(System.String)
+  name: CreateNtpRequest(String)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateNtpRequest_System_String_
+  commentId: M:LiteNetLib.NetManager.CreateNtpRequest(System.String)
+  fullName: LiteNetLib.NetManager.CreateNtpRequest(System.String)
+  nameWithType: NetManager.CreateNtpRequest(String)
+- uid: LiteNetLib.NetManager.CreateNtpRequest(System.String,System.Int32)
+  name: CreateNtpRequest(String, Int32)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateNtpRequest_System_String_System_Int32_
+  commentId: M:LiteNetLib.NetManager.CreateNtpRequest(System.String,System.Int32)
+  fullName: LiteNetLib.NetManager.CreateNtpRequest(System.String, System.Int32)
+  nameWithType: NetManager.CreateNtpRequest(String, Int32)
+- uid: LiteNetLib.NetManager.CreateNtpRequest*
+  name: CreateNtpRequest
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateNtpRequest_
+  commentId: Overload:LiteNetLib.NetManager.CreateNtpRequest
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.CreateNtpRequest
+  nameWithType: NetManager.CreateNtpRequest
 - uid: LiteNetLib.NetManager.DisconnectAll
   name: DisconnectAll()
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DisconnectAll
@@ -1555,12 +1635,12 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.GetPeersNonAlloc
   nameWithType: NetManager.GetPeersNonAlloc
-- uid: LiteNetLib.NetManager.IPv6Enabled
-  name: IPv6Enabled
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_IPv6Enabled
-  commentId: F:LiteNetLib.NetManager.IPv6Enabled
-  fullName: LiteNetLib.NetManager.IPv6Enabled
-  nameWithType: NetManager.IPv6Enabled
+- uid: LiteNetLib.NetManager.IPv6Mode
+  name: IPv6Mode
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_IPv6Mode
+  commentId: F:LiteNetLib.NetManager.IPv6Mode
+  fullName: LiteNetLib.NetManager.IPv6Mode
+  nameWithType: NetManager.IPv6Mode
 - uid: LiteNetLib.NetManager.IsRunning
   name: IsRunning
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_IsRunning
@@ -2645,6 +2725,12 @@ references:
   commentId: M:LiteNetLib.NetUtils.ResolveAddress(System.String)
   fullName: LiteNetLib.NetUtils.ResolveAddress(System.String)
   nameWithType: NetUtils.ResolveAddress(String)
+- uid: LiteNetLib.NetUtils.ResolveAddress(System.String,System.Net.Sockets.AddressFamily)
+  name: ResolveAddress(String, AddressFamily)
+  href: api/LiteNetLib.NetUtils.html#LiteNetLib_NetUtils_ResolveAddress_System_String_System_Net_Sockets_AddressFamily_
+  commentId: M:LiteNetLib.NetUtils.ResolveAddress(System.String,System.Net.Sockets.AddressFamily)
+  fullName: LiteNetLib.NetUtils.ResolveAddress(System.String, System.Net.Sockets.AddressFamily)
+  nameWithType: NetUtils.ResolveAddress(String, AddressFamily)
 - uid: LiteNetLib.NetUtils.ResolveAddress*
   name: ResolveAddress
   href: api/LiteNetLib.NetUtils.html#LiteNetLib_NetUtils_ResolveAddress_
@@ -2652,6 +2738,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetUtils.ResolveAddress
   nameWithType: NetUtils.ResolveAddress
+- uid: LiteNetLib.NetUtils.ResolveAddresses(System.String)
+  name: ResolveAddresses(String)
+  href: api/LiteNetLib.NetUtils.html#LiteNetLib_NetUtils_ResolveAddresses_System_String_
+  commentId: M:LiteNetLib.NetUtils.ResolveAddresses(System.String)
+  fullName: LiteNetLib.NetUtils.ResolveAddresses(System.String)
+  nameWithType: NetUtils.ResolveAddresses(String)
+- uid: LiteNetLib.NetUtils.ResolveAddresses*
+  name: ResolveAddresses
+  href: api/LiteNetLib.NetUtils.html#LiteNetLib_NetUtils_ResolveAddresses_
+  commentId: Overload:LiteNetLib.NetUtils.ResolveAddresses
+  isSpec: "True"
+  fullName: LiteNetLib.NetUtils.ResolveAddresses
+  nameWithType: NetUtils.ResolveAddresses
 - uid: LiteNetLib.TooBigPacketException
   name: TooBigPacketException
   href: api/LiteNetLib.TooBigPacketException.html
@@ -4392,6 +4491,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataWriter.ResizeIfNeed
   nameWithType: NetDataWriter.ResizeIfNeed
+- uid: LiteNetLib.Utils.NetDataWriter.SetPosition(System.Int32)
+  name: SetPosition(Int32)
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_SetPosition_System_Int32_
+  commentId: M:LiteNetLib.Utils.NetDataWriter.SetPosition(System.Int32)
+  fullName: LiteNetLib.Utils.NetDataWriter.SetPosition(System.Int32)
+  nameWithType: NetDataWriter.SetPosition(Int32)
+- uid: LiteNetLib.Utils.NetDataWriter.SetPosition*
+  name: SetPosition
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_SetPosition_
+  commentId: Overload:LiteNetLib.Utils.NetDataWriter.SetPosition
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataWriter.SetPosition
+  nameWithType: NetDataWriter.SetPosition
 - uid: LiteNetLib.Utils.NetPacketProcessor
   name: NetPacketProcessor
   href: api/LiteNetLib.Utils.NetPacketProcessor.html
@@ -5172,87 +5284,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NtpPacket.VersionNumber
   nameWithType: NtpPacket.VersionNumber
-- uid: LiteNetLib.Utils.NtpRequest
-  name: NtpRequest
-  href: api/LiteNetLib.Utils.NtpRequest.html
-  commentId: T:LiteNetLib.Utils.NtpRequest
-  fullName: LiteNetLib.Utils.NtpRequest
-  nameWithType: NtpRequest
-- uid: LiteNetLib.Utils.NtpRequest.Close
-  name: Close()
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Close
-  commentId: M:LiteNetLib.Utils.NtpRequest.Close
-  fullName: LiteNetLib.Utils.NtpRequest.Close()
-  nameWithType: NtpRequest.Close()
-- uid: LiteNetLib.Utils.NtpRequest.Close*
-  name: Close
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Close_
-  commentId: Overload:LiteNetLib.Utils.NtpRequest.Close
-  isSpec: "True"
-  fullName: LiteNetLib.Utils.NtpRequest.Close
-  nameWithType: NtpRequest.Close
-- uid: LiteNetLib.Utils.NtpRequest.Create(System.Net.IPAddress,System.Action{LiteNetLib.Utils.NtpPacket})
-  name: Create(IPAddress, Action<NtpPacket>)
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Create_System_Net_IPAddress_System_Action_LiteNetLib_Utils_NtpPacket__
-  commentId: M:LiteNetLib.Utils.NtpRequest.Create(System.Net.IPAddress,System.Action{LiteNetLib.Utils.NtpPacket})
-  name.vb: Create(IPAddress, Action(Of NtpPacket))
-  fullName: LiteNetLib.Utils.NtpRequest.Create(System.Net.IPAddress, System.Action<LiteNetLib.Utils.NtpPacket>)
-  fullName.vb: LiteNetLib.Utils.NtpRequest.Create(System.Net.IPAddress, System.Action(Of LiteNetLib.Utils.NtpPacket))
-  nameWithType: NtpRequest.Create(IPAddress, Action<NtpPacket>)
-  nameWithType.vb: NtpRequest.Create(IPAddress, Action(Of NtpPacket))
-- uid: LiteNetLib.Utils.NtpRequest.Create(System.Net.IPEndPoint,System.Action{LiteNetLib.Utils.NtpPacket})
-  name: Create(IPEndPoint, Action<NtpPacket>)
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Create_System_Net_IPEndPoint_System_Action_LiteNetLib_Utils_NtpPacket__
-  commentId: M:LiteNetLib.Utils.NtpRequest.Create(System.Net.IPEndPoint,System.Action{LiteNetLib.Utils.NtpPacket})
-  name.vb: Create(IPEndPoint, Action(Of NtpPacket))
-  fullName: LiteNetLib.Utils.NtpRequest.Create(System.Net.IPEndPoint, System.Action<LiteNetLib.Utils.NtpPacket>)
-  fullName.vb: LiteNetLib.Utils.NtpRequest.Create(System.Net.IPEndPoint, System.Action(Of LiteNetLib.Utils.NtpPacket))
-  nameWithType: NtpRequest.Create(IPEndPoint, Action<NtpPacket>)
-  nameWithType.vb: NtpRequest.Create(IPEndPoint, Action(Of NtpPacket))
-- uid: LiteNetLib.Utils.NtpRequest.Create(System.String,System.Action{LiteNetLib.Utils.NtpPacket})
-  name: Create(String, Action<NtpPacket>)
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Create_System_String_System_Action_LiteNetLib_Utils_NtpPacket__
-  commentId: M:LiteNetLib.Utils.NtpRequest.Create(System.String,System.Action{LiteNetLib.Utils.NtpPacket})
-  name.vb: Create(String, Action(Of NtpPacket))
-  fullName: LiteNetLib.Utils.NtpRequest.Create(System.String, System.Action<LiteNetLib.Utils.NtpPacket>)
-  fullName.vb: LiteNetLib.Utils.NtpRequest.Create(System.String, System.Action(Of LiteNetLib.Utils.NtpPacket))
-  nameWithType: NtpRequest.Create(String, Action<NtpPacket>)
-  nameWithType.vb: NtpRequest.Create(String, Action(Of NtpPacket))
-- uid: LiteNetLib.Utils.NtpRequest.Create(System.String,System.Int32,System.Action{LiteNetLib.Utils.NtpPacket})
-  name: Create(String, Int32, Action<NtpPacket>)
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Create_System_String_System_Int32_System_Action_LiteNetLib_Utils_NtpPacket__
-  commentId: M:LiteNetLib.Utils.NtpRequest.Create(System.String,System.Int32,System.Action{LiteNetLib.Utils.NtpPacket})
-  name.vb: Create(String, Int32, Action(Of NtpPacket))
-  fullName: LiteNetLib.Utils.NtpRequest.Create(System.String, System.Int32, System.Action<LiteNetLib.Utils.NtpPacket>)
-  fullName.vb: LiteNetLib.Utils.NtpRequest.Create(System.String, System.Int32, System.Action(Of LiteNetLib.Utils.NtpPacket))
-  nameWithType: NtpRequest.Create(String, Int32, Action<NtpPacket>)
-  nameWithType.vb: NtpRequest.Create(String, Int32, Action(Of NtpPacket))
-- uid: LiteNetLib.Utils.NtpRequest.Create*
-  name: Create
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Create_
-  commentId: Overload:LiteNetLib.Utils.NtpRequest.Create
-  isSpec: "True"
-  fullName: LiteNetLib.Utils.NtpRequest.Create
-  nameWithType: NtpRequest.Create
-- uid: LiteNetLib.Utils.NtpRequest.DefaultPort
-  name: DefaultPort
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_DefaultPort
-  commentId: F:LiteNetLib.Utils.NtpRequest.DefaultPort
-  fullName: LiteNetLib.Utils.NtpRequest.DefaultPort
-  nameWithType: NtpRequest.DefaultPort
-- uid: LiteNetLib.Utils.NtpRequest.Send
-  name: Send()
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Send
-  commentId: M:LiteNetLib.Utils.NtpRequest.Send
-  fullName: LiteNetLib.Utils.NtpRequest.Send()
-  nameWithType: NtpRequest.Send()
-- uid: LiteNetLib.Utils.NtpRequest.Send*
-  name: Send
-  href: api/LiteNetLib.Utils.NtpRequest.html#LiteNetLib_Utils_NtpRequest_Send_
-  commentId: Overload:LiteNetLib.Utils.NtpRequest.Send
-  isSpec: "True"
-  fullName: LiteNetLib.Utils.NtpRequest.Send
-  nameWithType: NtpRequest.Send
 - uid: LiteNetLib.Utils.ParseException
   name: ParseException
   href: api/LiteNetLib.Utils.ParseException.html
