@@ -158,7 +158,8 @@ namespace LiteNetLib
 
         public void ManualReceive()
         {
-            ManualReceive(_udpSocketv4, _bufferEndPointv4);
+            if (_udpSocketv4 != null)
+                ManualReceive(_udpSocketv4, _bufferEndPointv4);
             if (_udpSocketv6 != null && _udpSocketv6 != _udpSocketv4)
                 ManualReceive(_udpSocketv6, _bufferEndPointv6);
         }
@@ -253,7 +254,7 @@ namespace LiteNetLib
                 }
 
                 //All ok!
-                //NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", nativeEndPoint.ToString(), packet.Size);
+                //NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", endPoint.ToString(), packet.Size);
                 _listener.OnMessageReceived(packet, 0, endPoint);
             }
         }
