@@ -1463,7 +1463,7 @@ namespace LiteNetLib
                 packet = NetPacketPool.GetWithData(PacketProperty.Broadcast, data, start, length);
             }
 
-            bool result = _socket.SendBroadcast(packet.RawData, 0, packet.Size, port);
+            bool result = _socket.SendBroadcast(packet.RawData, packet.Size, port);
             NetPacketPool.Recycle(packet);
             return result;
         }
