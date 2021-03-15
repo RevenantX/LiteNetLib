@@ -189,6 +189,8 @@ namespace LiteNetLib
 
         /// <summary>
         /// Library logic update and send period in milliseconds
+        /// Lowest values in Windows doesn't change much because of Thread.Sleep precision
+        /// To more frequent sends (or sends tied to your game logic) use <see cref="TriggerUpdate"/>
         /// </summary>
         public int UpdateTime = 15;
 

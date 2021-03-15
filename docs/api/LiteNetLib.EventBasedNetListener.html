@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class EventBasedNetListener
    ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.56.7.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -84,12 +84,13 @@
     <h5>Implements</h5>
     <div><a class="xref" href="LiteNetLib.INetEventListener.html">INetEventListener</a></div>
     <div><a class="xref" href="LiteNetLib.IDeliveryEventListener.html">IDeliveryEventListener</a></div>
+    <div><a class="xref" href="LiteNetLib.INtpEventListener.html">INtpEventListener</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
   <h5 id="LiteNetLib_EventBasedNetListener_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class EventBasedNetListener : INetEventListener, IDeliveryEventListener</code></pre>
+    <pre><code class="lang-csharp hljs">public class EventBasedNetListener : INetEventListener, IDeliveryEventListener, INtpEventListener</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
@@ -152,6 +153,16 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void ClearNetworkReceiveUnconnectedEvent()</code></pre>
+  </div>
+  
+  
+  <a id="LiteNetLib_EventBasedNetListener_ClearNtpResponseEvent_" data-uid="LiteNetLib.EventBasedNetListener.ClearNtpResponseEvent*"></a>
+  <h4 id="LiteNetLib_EventBasedNetListener_ClearNtpResponseEvent" data-uid="LiteNetLib.EventBasedNetListener.ClearNtpResponseEvent">ClearNtpResponseEvent()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ClearNtpResponseEvent()</code></pre>
   </div>
   
   
@@ -315,6 +326,30 @@
     <tbody>
       <tr>
         <td><span class="xref">LiteNetLib.EventBasedNetListener.OnNetworkReceiveUnconnected</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="LiteNetLib_EventBasedNetListener_NtpResponseEvent" data-uid="LiteNetLib.EventBasedNetListener.NtpResponseEvent">NtpResponseEvent</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnNtpResponseEvent NtpResponseEvent</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnNtpResponseEvent</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -625,12 +660,42 @@
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_INtpEventListener_OnNtpResponse_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INtpEventListener#OnNtpResponse*"></a>
+  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_INtpEventListener_OnNtpResponse_LiteNetLib_Utils_NtpPacket_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INtpEventListener#OnNtpResponse(LiteNetLib.Utils.NtpPacket)">INtpEventListener.OnNtpResponse(NtpPacket)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void INtpEventListener.OnNtpResponse(NtpPacket packet)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NtpPacket.html">NtpPacket</a></td>
+        <td><span class="parametername">packet</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="LiteNetLib.INetEventListener.html">INetEventListener</a>
   </div>
   <div>
       <a class="xref" href="LiteNetLib.IDeliveryEventListener.html">IDeliveryEventListener</a>
+  </div>
+  <div>
+      <a class="xref" href="LiteNetLib.INtpEventListener.html">INtpEventListener</a>
   </div>
 </article>
           </div>
