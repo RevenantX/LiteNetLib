@@ -4796,15 +4796,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetPacketProcessor.Write
   nameWithType: NetPacketProcessor.Write
-- uid: LiteNetLib.Utils.NetPacketProcessor.Write``1(``0)
-  name: Write<T>(T)
-  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_Write__1___0_
-  commentId: M:LiteNetLib.Utils.NetPacketProcessor.Write``1(``0)
-  name.vb: Write(Of T)(T)
-  fullName: LiteNetLib.Utils.NetPacketProcessor.Write<T>(T)
-  fullName.vb: LiteNetLib.Utils.NetPacketProcessor.Write(Of T)(T)
-  nameWithType: NetPacketProcessor.Write<T>(T)
-  nameWithType.vb: NetPacketProcessor.Write(Of T)(T)
 - uid: LiteNetLib.Utils.NetPacketProcessor.Write``1(LiteNetLib.Utils.NetDataWriter,``0)
   name: Write<T>(NetDataWriter, T)
   href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_Write__1_LiteNetLib_Utils_NetDataWriter___0_
@@ -4837,15 +4828,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetPacketProcessor.WriteNetSerializable
   nameWithType: NetPacketProcessor.WriteNetSerializable
-- uid: LiteNetLib.Utils.NetPacketProcessor.WriteNetSerializable``1(``0)
-  name: WriteNetSerializable<T>(T)
-  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_WriteNetSerializable__1___0_
-  commentId: M:LiteNetLib.Utils.NetPacketProcessor.WriteNetSerializable``1(``0)
-  name.vb: WriteNetSerializable(Of T)(T)
-  fullName: LiteNetLib.Utils.NetPacketProcessor.WriteNetSerializable<T>(T)
-  fullName.vb: LiteNetLib.Utils.NetPacketProcessor.WriteNetSerializable(Of T)(T)
-  nameWithType: NetPacketProcessor.WriteNetSerializable<T>(T)
-  nameWithType.vb: NetPacketProcessor.WriteNetSerializable(Of T)(T)
 - uid: LiteNetLib.Utils.NetPacketProcessor.WriteNetSerializable``1(LiteNetLib.Utils.NetDataWriter,``0)
   name: WriteNetSerializable<T>(NetDataWriter, T)
   href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_WriteNetSerializable__1_LiteNetLib_Utils_NetDataWriter___0_

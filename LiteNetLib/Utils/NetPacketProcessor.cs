@@ -46,7 +46,7 @@ namespace LiteNetLib.Utils
 
         protected virtual SubscribeDelegate GetCallbackFromData(NetDataReader reader)
         {
-            var hash = reader.GetULong();
+            ulong hash = reader.GetULong();
             if (!_callbacks.TryGetValue(hash, out var action))
             {
                 throw new ParseException("Undefined packet in NetDataReader");
@@ -157,22 +157,6 @@ namespace LiteNetLib.Utils
         {
             WriteHash<T>(writer);
             packet.Serialize(writer);
-        }
-
-        public byte[] Write<T>(T packet) where T : class, new()
-        {
-            _netDataWriter.Reset();
-            WriteHash<T>(_netDataWriter);
-            _netSerializer.Serialize(_netDataWriter, packet);
-            return _netDataWriter.CopyData();
-        }
-
-        public byte[] WriteNetSerializable<T>(T packet) where T : INetSerializable
-        {
-            _netDataWriter.Reset();
-            WriteHash<T>(_netDataWriter);
-            packet.Serialize(_netDataWriter);
-            return _netDataWriter.CopyData();
         }
 
         /// <summary>
