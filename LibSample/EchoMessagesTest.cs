@@ -164,10 +164,7 @@ namespace LibSample
             //Server
             _serverListener = new ServerListener();
 
-            NetManager server = new NetManager(_serverListener)
-            {
-                UseNativeSockets = true
-            };
+            NetManager server = new NetManager(_serverListener);
 
             if (!server.Start(Port))
             {

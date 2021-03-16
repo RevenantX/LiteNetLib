@@ -17,10 +17,7 @@ namespace LibSample
 
             readonly NetManager _server;
 
-            public NetStatistics Stats
-            {
-                get { return _server.Statistics; }
-            }
+            public NetStatistics Stats => _server.Statistics;
 
             public Server()
             {
@@ -30,7 +27,6 @@ namespace LibSample
                 _server.SimulatePacketLoss = false;
                 _server.SimulationPacketLossChance = 20;
                 _server.EnableStatistics = true;
-                _server.UseNativeSockets = true;
                 _server.Start(9050);
             }
 
@@ -97,10 +93,7 @@ namespace LibSample
             readonly NetDataWriter _writer;
             NetPeer _peer;
 
-            public NetStatistics Stats
-            {
-                get { return _client.Statistics; }
-            }
+            public NetStatistics Stats => _client.Statistics;
 
             public Client()
             {
