@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSample", "LibSample\LibSample.csproj", "{6499F9B4-0814-42EE-90A5-119AEA07E7EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibSample", "LibSample\LibSample.csproj", "{6499F9B4-0814-42EE-90A5-119AEA07E7EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,10 @@ Global
 		Debug|ARM = Debug|ARM
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		DebugUnsafe|Any CPU = DebugUnsafe|Any CPU
+		DebugUnsafe|ARM = DebugUnsafe|ARM
+		DebugUnsafe|x64 = DebugUnsafe|x64
+		DebugUnsafe|x86 = DebugUnsafe|x86
 		Release|Any CPU = Release|Any CPU
 		Release|ARM = Release|ARM
 		Release|x64 = Release|x64
@@ -34,6 +38,14 @@ Global
 		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.Debug|x64.Build.0 = Debug|Any CPU
 		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.Debug|x86.Build.0 = Debug|Any CPU
+		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.DebugUnsafe|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.DebugUnsafe|Any CPU.Build.0 = Debug|Any CPU
+		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.DebugUnsafe|ARM.ActiveCfg = Debug|Any CPU
+		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.DebugUnsafe|ARM.Build.0 = Debug|Any CPU
+		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.DebugUnsafe|x64.ActiveCfg = Debug|Any CPU
+		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.DebugUnsafe|x64.Build.0 = Debug|Any CPU
+		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.DebugUnsafe|x86.ActiveCfg = Debug|Any CPU
+		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.DebugUnsafe|x86.Build.0 = Debug|Any CPU
 		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -50,6 +62,14 @@ Global
 		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.Debug|x64.Build.0 = Debug|Any CPU
 		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.Debug|x86.Build.0 = Debug|Any CPU
+		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.DebugUnsafe|Any CPU.ActiveCfg = DebugUnsafe|Any CPU
+		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.DebugUnsafe|Any CPU.Build.0 = DebugUnsafe|Any CPU
+		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.DebugUnsafe|ARM.ActiveCfg = DebugUnsafe|Any CPU
+		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.DebugUnsafe|ARM.Build.0 = DebugUnsafe|Any CPU
+		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.DebugUnsafe|x64.ActiveCfg = DebugUnsafe|Any CPU
+		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.DebugUnsafe|x64.Build.0 = DebugUnsafe|Any CPU
+		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.DebugUnsafe|x86.ActiveCfg = DebugUnsafe|Any CPU
+		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.DebugUnsafe|x86.Build.0 = DebugUnsafe|Any CPU
 		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F98F12C-B72A-48FE-A7E5-6D8B0C5ABACB}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -66,6 +86,14 @@ Global
 		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.Debug|x64.Build.0 = Debug|Any CPU
 		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.Debug|x86.Build.0 = Debug|Any CPU
+		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.DebugUnsafe|Any CPU.ActiveCfg = Debug|Any CPU
+		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.DebugUnsafe|Any CPU.Build.0 = Debug|Any CPU
+		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.DebugUnsafe|ARM.ActiveCfg = Debug|Any CPU
+		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.DebugUnsafe|ARM.Build.0 = Debug|Any CPU
+		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.DebugUnsafe|x64.ActiveCfg = Debug|Any CPU
+		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.DebugUnsafe|x64.Build.0 = Debug|Any CPU
+		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.DebugUnsafe|x86.ActiveCfg = Debug|Any CPU
+		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.DebugUnsafe|x86.Build.0 = Debug|Any CPU
 		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.Release|ARM.ActiveCfg = Release|Any CPU

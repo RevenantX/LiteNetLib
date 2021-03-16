@@ -316,6 +316,12 @@ namespace LiteNetLib
         public NetPeer FirstPeer => _headPeer;
 
         /// <summary>
+        /// Experimental feature mostly for servers. Only for Windows/Linux
+        /// use direct socket calls for send/receive to drastically increase speed and reduce GC pressure
+        /// </summary>
+        public bool UseNativeSockets = false;
+
+        /// <summary>
         /// QoS channel count per message type (value must be between 1 and 64 channels)
         /// </summary>
         public byte ChannelsCount
@@ -384,6 +390,7 @@ namespace LiteNetLib
                 Array.Resize(ref _peersArray, newSize);
             }
             _peersArray[peer.Id] = peer;
+            _socket.RegisterEndPoint(peer.EndPoint);
             _peersLock.ExitWriteLock();
         }
 
@@ -409,6 +416,7 @@ namespace LiteNetLib
 
             _peersArray[peer.Id] = null;
             _peerIds.Enqueue(peer.Id);
+            _socket.UnregisterEndPoint(peer.EndPoint);
         }
 
         /// <summary>
@@ -1457,7 +1465,7 @@ namespace LiteNetLib
                 packet = NetPacketPool.GetWithData(PacketProperty.Broadcast, data, start, length);
             }
 
-            bool result = _socket.SendBroadcast(packet.RawData, 0, packet.Size, port);
+            bool result = _socket.SendBroadcast(packet.RawData, packet.Size, port);
             NetPacketPool.Recycle(packet);
             return result;
         }

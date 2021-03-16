@@ -274,6 +274,11 @@
             Automatically recycle NetPacketReader after OnReceive event
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.UseNativeSockets">
+            <summary>
+            Use fast,native sockets (tested only on Windows and Linux)
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.IPv6Enabled">
             <summary>
             IPv6 support
