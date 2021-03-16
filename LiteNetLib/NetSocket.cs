@@ -204,7 +204,10 @@ namespace LiteNetLib
             Socket socket = (Socket)state;
             var addrMap = new Dictionary<NativeAddr, IPEndPoint>(new NativeAddrComparer());
             IntPtr socketHandle = socket.Handle;
-            byte[] addrBuffer = new byte[NativeSocket.IPv6AddrSize];
+            byte[] addrBuffer = new byte[socket.AddressFamily == AddressFamily.InterNetwork 
+                ? NativeSocket.IPv4AddrSize 
+                : NativeSocket.IPv6AddrSize];
+
             int addrSize = addrBuffer.Length;
             IPEndPoint endPoint = null;
             NativeTimeValue timeValue = new NativeTimeValue

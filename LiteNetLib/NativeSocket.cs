@@ -50,7 +50,9 @@ namespace LiteNetLib
 
         public NativeEndPoint(byte[] address) : base(IPAddress.Any, 0)
         {
-            NativeAddress = address;
+            NativeAddress = new byte[address.Length];
+            Buffer.BlockCopy(address, 0, NativeAddress, 0, address.Length);
+
             short family = BitConverter.ToInt16(address, 0);
             Port = (ushort)((address[2] << 8) | address[3]);
 
