@@ -70,6 +70,7 @@ namespace LiteNetLib
 
         private readonly NetManager _listener;
         private bool _useNativeSockets;
+        private Dictionary<NativeAddr, IPEndPoint> _nativeAddrMap = new Dictionary<NativeAddr, IPEndPoint>(new NativeAddrComparer());
 
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("ff02::1");
@@ -134,6 +135,23 @@ namespace LiteNetLib
                 return false;
 #endif
             return IsRunning;
+        }
+
+        public void RegisterEndPoint(IPEndPoint ep)
+        {
+            if (_useNativeSockets && ep is NativeEndPoint nep)
+            {
+                _nativeAddrMap.Add(new NativeAddr(nep.NativeAddress, nep.NativeAddress.Length), nep);
+            }
+        }
+
+        public void UnregisterEndPoint(IPEndPoint ep)
+        {
+            if (_useNativeSockets && ep is NativeEndPoint nep)
+            {
+                var nativeAddr = new NativeAddr(nep.NativeAddress, nep.NativeAddress.Length);
+                _nativeAddrMap.Remove(nativeAddr);
+            }
         }
 
         private bool ProcessError(SocketException ex, EndPoint bufferEndPoint)
@@ -202,7 +220,6 @@ namespace LiteNetLib
         private void NativeReceiveLogic(object state)
         {
             Socket socket = (Socket)state;
-            var addrMap = new Dictionary<NativeAddr, IPEndPoint>(new NativeAddrComparer());
             IntPtr socketHandle = socket.Handle;
             byte[] addrBuffer = new byte[socket.AddressFamily == AddressFamily.InterNetwork 
                 ? NativeSocket.IPv4AddrSize 
@@ -239,11 +256,8 @@ namespace LiteNetLib
                         throw new SocketException((int)NativeSocket.GetSocketError());
 
                     NativeAddr nativeAddr = new NativeAddr(addrBuffer, addrSize);
-                    if (!addrMap.TryGetValue(nativeAddr, out endPoint))
-                    {
+                    if (!_nativeAddrMap.TryGetValue(nativeAddr, out endPoint))
                         endPoint = new NativeEndPoint(addrBuffer);
-                        addrMap.Add(nativeAddr, endPoint);
-                    }
                 }
                 catch (SocketException ex)
                 {

@@ -319,7 +319,7 @@ namespace LiteNetLib
         /// Experimental feature mostly for servers. Only for Windows/Linux
         /// use direct socket calls for send/receive to drastically increase speed and reduce GC pressure
         /// </summary>
-        public bool UseNativeSockets = true;
+        public bool UseNativeSockets = false;
 
         /// <summary>
         /// QoS channel count per message type (value must be between 1 and 64 channels)
@@ -390,6 +390,7 @@ namespace LiteNetLib
                 Array.Resize(ref _peersArray, newSize);
             }
             _peersArray[peer.Id] = peer;
+            _socket.RegisterEndPoint(peer.EndPoint);
             _peersLock.ExitWriteLock();
         }
 
@@ -415,6 +416,7 @@ namespace LiteNetLib
 
             _peersArray[peer.Id] = null;
             _peerIds.Enqueue(peer.Id);
+            _socket.UnregisterEndPoint(peer.EndPoint);
         }
 
         /// <summary>
