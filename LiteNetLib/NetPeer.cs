@@ -823,7 +823,7 @@ namespace LiteNetLib
                     return;
 
                 //Send increased packet
-                int newMtu = NetConstants.PossibleMtu[_mtuIdx + 1];
+                int newMtu = NetConstants.PossibleMtu[_mtuIdx + 1] - NetManager.ExtraPacketSizeForLayer;
                 var p = _packetPool.GetPacket(newMtu);
                 p.Property = PacketProperty.MtuCheck;
                 FastBitConverter.GetBytes(p.RawData, 1, newMtu);         //place into start
