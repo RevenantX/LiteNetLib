@@ -674,7 +674,7 @@ namespace LiteNetLib.Tests
             while (server.ConnectedPeersCount != 1 || client.ConnectedPeersCount != 1)
             {
                 Thread.Sleep(15);
-                server.ManualReceive();
+                server.PollEvents();
                 server.ManualUpdate(15);
             }
 
