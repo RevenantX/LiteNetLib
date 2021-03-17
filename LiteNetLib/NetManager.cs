@@ -716,6 +716,7 @@ namespace LiteNetLib
         [Conditional("DEBUG")]
         private void ProcessDelayedPackets()
         {
+#if DEBUG
             if (!SimulateLatency) 
                 return;
 
@@ -733,6 +734,7 @@ namespace LiteNetLib
                     }
                 }
             }
+#endif
         }
 
         private void ProcessNtpRequests(int elapsedMilliseconds)
