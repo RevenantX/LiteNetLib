@@ -189,7 +189,6 @@ namespace LiteNetLib
 
         private bool ManualReceive(Socket socket, EndPoint bufferEndPoint)
         {
-            int result;
             //Reading data
             try
             {
@@ -201,7 +200,7 @@ namespace LiteNetLib
                     var packet = _listener.NetPacketPool.GetPacket(NetConstants.MaxPacketSize);
                     packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
                         ref bufferEndPoint);
-                    NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
+                    NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), packet.Size);
                     _listener.OnMessageReceived(packet, 0, (IPEndPoint)bufferEndPoint);
                     available -= packet.Size;
                 }

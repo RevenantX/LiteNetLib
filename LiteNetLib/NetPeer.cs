@@ -322,7 +322,7 @@ namespace LiteNetLib
             //check connection id
             if (packet.ConnectionId != _connectTime)
             {
-                NetDebug.Write(NetLogLevel.Trace, "[NC] Invalid connectId: {0}", _connectTime);
+                NetDebug.Write(NetLogLevel.Trace, "[NC] Invalid connectId: {1} != our({0})", _connectTime, packet.ConnectionId);
                 return false;
             }
             //check connect num
@@ -909,6 +909,11 @@ namespace LiteNetLib
                     {
                         ushort size = BitConverter.ToUInt16(packet.RawData, pos);
                         pos += 2;
+                        if (packet.RawData.Length - pos < size)
+                        {
+                            _packetPool.Recycle(packet);
+                            return;
+                        }
                         NetPacket mergedPacket = _packetPool.GetPacket(size);
                         Buffer.BlockCopy(packet.RawData, pos, mergedPacket.RawData, 0, size);
                         mergedPacket.Size = size;

@@ -669,36 +669,46 @@ namespace LiteNetLib
 
             while (_socket.IsRunning)
             {
-                ProcessDelayedPackets();
-                int elapsed = (int)stopwatch.ElapsedMilliseconds;
-                elapsed = elapsed <= 0 ? 1 : elapsed;
-                stopwatch.Reset();
-                stopwatch.Start();
-
-                for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                try
                 {
-                    if (netPeer.ConnectionState == ConnectionState.Disconnected && netPeer.TimeSinceLastPacket > DisconnectTimeout)
-                    {
-                        peersToRemove.Add(netPeer);
-                    }
-                    else
-                    {
-                        netPeer.Update(elapsed);
-                    }
-                }
-                if (peersToRemove.Count > 0)
-                {
-                    _peersLock.EnterWriteLock();
-                    for (int i = 0; i < peersToRemove.Count; i++)
-                        RemovePeerInternal(peersToRemove[i]);
-                    _peersLock.ExitWriteLock();
-                    peersToRemove.Clear();
-                }
-                ProcessNtpRequests(elapsed);
+                    ProcessDelayedPackets();
+                    int elapsed = (int) stopwatch.ElapsedMilliseconds;
+                    elapsed = elapsed <= 0 ? 1 : elapsed;
+                    stopwatch.Reset();
+                    stopwatch.Start();
 
-                int sleepTime = UpdateTime - (int)stopwatch.ElapsedMilliseconds;
-                if (sleepTime > 0)
-                    _updateTriggerEvent.WaitOne(sleepTime);
+                    for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                    {
+                        if (netPeer.ConnectionState == ConnectionState.Disconnected &&
+                            netPeer.TimeSinceLastPacket > DisconnectTimeout)
+                        {
+                            peersToRemove.Add(netPeer);
+                        }
+                        else
+                        {
+                            netPeer.Update(elapsed);
+                        }
+                    }
+
+                    if (peersToRemove.Count > 0)
+                    {
+                        _peersLock.EnterWriteLock();
+                        for (int i = 0; i < peersToRemove.Count; i++)
+                            RemovePeerInternal(peersToRemove[i]);
+                        _peersLock.ExitWriteLock();
+                        peersToRemove.Clear();
+                    }
+
+                    ProcessNtpRequests(elapsed);
+
+                    int sleepTime = UpdateTime - (int) stopwatch.ElapsedMilliseconds;
+                    if (sleepTime > 0)
+                        _updateTriggerEvent.WaitOne(sleepTime);
+                }
+                catch (Exception e)
+                {
+                    NetDebug.WriteError("[NM] LogicThread error: " + e);
+                }
             }
             stopwatch.Stop();
         }
@@ -706,25 +716,23 @@ namespace LiteNetLib
         [Conditional("DEBUG")]
         private void ProcessDelayedPackets()
         {
-#if DEBUG
-            if (SimulateLatency)
+            if (!SimulateLatency) 
+                return;
+
+            var time = DateTime.UtcNow;
+            lock (_pingSimulationList)
             {
-                var time = DateTime.UtcNow;
-                lock (_pingSimulationList)
+                for (int i = 0; i < _pingSimulationList.Count; i++)
                 {
-                    for (int i = 0; i < _pingSimulationList.Count; i++)
+                    var incomingData = _pingSimulationList[i];
+                    if (incomingData.TimeWhenGet <= time)
                     {
-                        var incomingData = _pingSimulationList[i];
-                        if (incomingData.TimeWhenGet <= time)
-                        {
-                            DataReceived(incomingData.Data, incomingData.EndPoint);
-                            _pingSimulationList.RemoveAt(i);
-                            i--;
-                        }
+                        DataReceived(incomingData.Data, incomingData.EndPoint);
+                        _pingSimulationList.RemoveAt(i);
+                        i--;
                     }
                 }
             }
-#endif
         }
 
         private void ProcessNtpRequests(int elapsedMilliseconds)
@@ -771,19 +779,6 @@ namespace LiteNetLib
                 }
             }
             ProcessNtpRequests(elapsedMilliseconds);
-        }
-
-        /// <summary>
-        /// Receive logic. It will call Receive events immediately without need to use PollEvents or UnsyncedEvents
-        /// Use this only when NetManager started in manual mode
-        /// </summary>
-        public void ManualReceive()
-        {
-            if(!_manualMode)
-                return;
-                
-            _socket.ManualReceive();
-            ProcessDelayedPackets();
         }
 
         internal void OnMessageReceived(NetPacket packet, SocketError errorCode, IPEndPoint remoteEndPoint)
@@ -1480,9 +1475,16 @@ namespace LiteNetLib
 
         /// <summary>
         /// Receive all pending events. Call this in game update code
+        /// In Manual mode it will call also socket Receive (which can be slow)
         /// </summary>
         public void PollEvents()
         {
+            if (_manualMode)
+            {
+                _socket.ManualReceive();
+                ProcessDelayedPackets();
+                return;
+            }
             if (UnsyncedEvents)
                 return;
             int eventsCount = _netEventsQueue.Count;
