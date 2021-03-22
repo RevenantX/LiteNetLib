@@ -1104,8 +1104,7 @@ namespace LiteNetLib
                 //ping timeout
                 if (_pingTimer.IsRunning)
                     UpdateRoundTripTime((int)_pingTimer.ElapsedMilliseconds);
-                _pingTimer.Reset();
-                _pingTimer.Start();
+                _pingTimer.Restart();
                 NetManager.SendRaw(_pingPacket, EndPoint);
             }
 

@@ -1667,19 +1667,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.LocalPort
   nameWithType: NetManager.LocalPort
-- uid: LiteNetLib.NetManager.ManualReceive
-  name: ManualReceive()
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ManualReceive
-  commentId: M:LiteNetLib.NetManager.ManualReceive
-  fullName: LiteNetLib.NetManager.ManualReceive()
-  nameWithType: NetManager.ManualReceive()
-- uid: LiteNetLib.NetManager.ManualReceive*
-  name: ManualReceive
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ManualReceive_
-  commentId: Overload:LiteNetLib.NetManager.ManualReceive
-  isSpec: "True"
-  fullName: LiteNetLib.NetManager.ManualReceive
-  nameWithType: NetManager.ManualReceive
 - uid: LiteNetLib.NetManager.ManualUpdate(System.Int32)
   name: ManualUpdate(Int32)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ManualUpdate_System_Int32_
@@ -2189,6 +2176,12 @@ references:
   commentId: F:LiteNetLib.NetManager.UpdateTime
   fullName: LiteNetLib.NetManager.UpdateTime
   nameWithType: NetManager.UpdateTime
+- uid: LiteNetLib.NetManager.UseNativeSockets
+  name: UseNativeSockets
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_UseNativeSockets
+  commentId: F:LiteNetLib.NetManager.UseNativeSockets
+  fullName: LiteNetLib.NetManager.UseNativeSockets
+  nameWithType: NetManager.UseNativeSockets
 - uid: LiteNetLib.NetManager.UseSafeMtu
   name: UseSafeMtu
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_UseSafeMtu
