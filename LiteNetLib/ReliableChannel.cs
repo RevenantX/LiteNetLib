@@ -21,26 +21,24 @@ namespace LiteNetLib
                 _isSent = false;
             }
 
-            public void TrySend(long currentTime, NetPeer peer, out bool hasPacket)
+            //Returns true if there is a pending packet inside
+            public bool TrySend(long currentTime, NetPeer peer)
             {
                 if (_packet == null)
-                {
-                    hasPacket = false;
-                    return;
-                }
+                    return false;
 
-                hasPacket = true;
                 if (_isSent) //check send time
                 {
                     double resendDelay = peer.ResendDelay * TimeSpan.TicksPerMillisecond;
                     double packetHoldTime = currentTime - _timeStamp;
                     if (packetHoldTime < resendDelay)
-                        return;
+                        return true;
                     NetDebug.Write("[RC]Resend: {0} > {1}", (int)packetHoldTime, resendDelay);
                 }
                 _timeStamp = currentTime;
                 _isSent = true;
                 peer.SendUserData(_packet);
+                return true;
             }
 
             public bool Clear(NetPeer peer)
@@ -202,16 +200,12 @@ namespace LiteNetLib
                 for (int pendingSeq = _localWindowStart; pendingSeq != _localSeqence; pendingSeq = (pendingSeq + 1) % NetConstants.MaxSequence)
                 {
                     // Please note: TrySend is invoked on a mutable struct, it's important to not extract it into a variable here
-                    bool hasPacket;
-                    _pendingPackets[pendingSeq % _windowSize].TrySend(currentTime, Peer, out hasPacket);
-                    if (hasPacket)
-                    {
+                    if (_pendingPackets[pendingSeq % _windowSize].TrySend(currentTime, Peer))
                         hasPendingPackets = true;
-                    }
                 }
             }
 
-            return hasPendingPackets || _mustSendAcks || OutgoingQueue.Count > 0;
+            return hasPendingPackets || _mustSendAcks || !OutgoingQueue.IsEmpty;
         }
 
         //Process incoming packet
