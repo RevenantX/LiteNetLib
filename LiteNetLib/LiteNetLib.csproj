@@ -8,17 +8,22 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <OutputType>Library</OutputType>
     <LangVersion>7.3</LangVersion>
+
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\net35\LiteNetLib.xml</DocumentationFile>
-    <NoWarn>1701;1702;1705;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>$(DefineConstants);LITENETLIB_UNSAFE</DefineConstants>
   </PropertyGroup>
 
   <Target Name="UpdateUnityDLLS" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(TargetFramework)' == 'net35' and '$(Configuration)' == 'Release' ">
