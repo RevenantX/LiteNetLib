@@ -1,7 +1,10 @@
-﻿#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1
+﻿#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1 || NET5_0
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
+#endif
+#if NET5_0_OR_GREATER || NET5_0
+using System.Runtime.Intrinsics.Arm;
 #endif
 
 namespace LiteNetLib.Utils
@@ -15,8 +18,12 @@ namespace LiteNetLib.Utils
 
         static CRC32C()
         {
-#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1
-            if(Sse42.IsSupported)
+#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1 || NET5_0
+            if (Sse42.IsSupported)
+                return;
+#endif
+#if NET5_0_OR_GREATER || NET5_0
+            if (Crc32.IsSupported)
                 return;
 #endif
             Table = new uint[16 * 256];
@@ -25,7 +32,7 @@ namespace LiteNetLib.Utils
                 uint res = i;
                 for (int t = 0; t < 16; t++)
                 {
-                    for (int k = 0; k < 8; k++) 
+                    for (int k = 0; k < 8; k++)
                         res = (res & 1) == 1 ? Poly ^ (res >> 1) : (res >> 1);
                     Table[t * 256 + i] = res;
                 }
@@ -42,7 +49,7 @@ namespace LiteNetLib.Utils
         public static uint Compute(byte[] input, int offset, int length)
         {
             uint crcLocal = uint.MaxValue;
-#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1
+#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1 || NET5_0
             if (Sse42.IsSupported)
             {
                 var data = new ReadOnlySpan<byte>(input, offset, length);
@@ -72,6 +79,38 @@ namespace LiteNetLib.Utils
                 for (int i = processed; i < data.Length; i++)
                 {
                     crcLocal = Sse42.Crc32(crcLocal, data[i]);
+                }
+
+                return crcLocal ^ uint.MaxValue;
+            }
+#endif
+#if NET5_0_OR_GREATER || NET5_0
+            if (Crc32.IsSupported)
+            {
+                var data = new ReadOnlySpan<byte>(input, offset, length);
+                int processed = 0;
+                if (Crc32.Arm64.IsSupported && data.Length > sizeof(ulong))
+                {
+                    processed = data.Length / sizeof(ulong) * sizeof(ulong);
+                    var ulongs = MemoryMarshal.Cast<byte, ulong>(data.Slice(0, processed));
+                    for (int i = 0; i < ulongs.Length; i++)
+                    {
+                        crcLocal = Crc32.Arm64.ComputeCrc32C(crcLocal, ulongs[i]);
+                    }
+                }
+                else if (data.Length > sizeof(uint))
+                {
+                    processed = data.Length / sizeof(uint) * sizeof(uint);
+                    var uints = MemoryMarshal.Cast<byte, uint>(data.Slice(0, processed));
+                    for (int i = 0; i < uints.Length; i++)
+                    {
+                        crcLocal = Crc32.ComputeCrc32C(crcLocal, uints[i]);
+                    }
+                }
+
+                for (int i = processed; i < data.Length; i++)
+                {
+                    crcLocal = Crc32.ComputeCrc32C(crcLocal, data[i]);
                 }
 
                 return crcLocal ^ uint.MaxValue;
