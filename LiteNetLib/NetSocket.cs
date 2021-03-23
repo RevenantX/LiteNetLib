@@ -70,7 +70,7 @@ namespace LiteNetLib
 
         private readonly NetManager _listener;
         private bool _useNativeSockets;
-        private Dictionary<NativeAddr, IPEndPoint> _nativeAddrMap = new Dictionary<NativeAddr, IPEndPoint>(new NativeAddrComparer());
+        private Dictionary<NativeAddr, IPEndPoint> _nativeAddrMap = new Dictionary<NativeAddr, IPEndPoint>();
 
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("ff02::1");

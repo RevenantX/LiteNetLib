@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace LiteNetLib
 {
-    internal readonly struct NativeAddr
+    internal readonly struct NativeAddr : IEquatable<NativeAddr>
     {
         //common parts
         public readonly long Part1; //family, port, etc
@@ -41,6 +41,29 @@ namespace LiteNetLib
         public override int GetHashCode()
         {
             return _hash;
+        }
+
+        public bool Equals(NativeAddr other)
+        {
+            return Part1 == other.Part1 &&
+                   Part2 == other.Part2 &&
+                   Part3 == other.Part3 &&
+                   Part4 == other.Part4;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is NativeAddr other && Equals(other);
+        }
+
+        public static bool operator ==(NativeAddr left, NativeAddr right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(NativeAddr left, NativeAddr right)
+        {
+            return !left.Equals(right);
         }
     }
 
@@ -79,22 +102,6 @@ namespace LiteNetLib
                                                  (address[7] << 24)));
                 Address = new IPAddress(ipv4Addr);
             }
-        }
-    }
-
-    internal class NativeAddrComparer : IEqualityComparer<NativeAddr>
-    {
-        public bool Equals(NativeAddr x, NativeAddr y)
-        {
-            return x.Part1 == y.Part1 &&
-                   x.Part2 == y.Part2 &&
-                   x.Part3 == y.Part3 &&
-                   x.Part4 == y.Part4;
-        }
-
-        public int GetHashCode(NativeAddr obj)
-        {
-            return obj.GetHashCode();
         }
     }
 
