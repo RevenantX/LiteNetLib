@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace LiteNetLib
 {
@@ -115,7 +115,7 @@ namespace LiteNetLib
                 return;
             }
 
-            //check relevance     
+            //check relevance
             if (windowRel >= _windowSize)
             {
                 NetDebug.Write("[PA]Old acks");
@@ -141,7 +141,7 @@ namespace LiteNetLib
                     int currentBit = pendingIdx % BitsInByte;
                     if ((acksData[currentByte] & (1 << currentBit)) == 0)
                     {
-                        if (Peer.NetManager.EnableStatistics) 
+                        if (Peer.NetManager.EnableStatistics)
                         {
                             Peer.Statistics.IncrementPacketLoss();
                             Peer.NetManager.Statistics.IncrementPacketLoss();
@@ -154,7 +154,7 @@ namespace LiteNetLib
 
                     if (pendingSeq == _localWindowStart)
                     {
-                        //Move window                
+                        //Move window
                         _localWindowStart = (_localWindowStart + 1) % NetConstants.MaxSequence;
                     }
 
@@ -272,7 +272,7 @@ namespace LiteNetLib
                 //Final stage - process valid packet
                 //trigger acks send
                 _mustSendAcks = true;
-                
+
                 ackIdx = seq % _windowSize;
                 ackByte = NetConstants.ChanneledHeaderSize + ackIdx / BitsInByte;
                 ackBit = ackIdx % BitsInByte;

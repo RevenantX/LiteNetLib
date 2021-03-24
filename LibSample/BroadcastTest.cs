@@ -130,8 +130,8 @@ namespace LibSample
 
             NetManager client1 = new NetManager(_clientListener1)
             {
-                UnconnectedMessagesEnabled = true, 
-                SimulateLatency = true, 
+                UnconnectedMessagesEnabled = true,
+                SimulateLatency = true,
                 SimulationMaxLatency = 1500,
                 IPv6Mode = IPv6Mode.DualMode
             };
@@ -147,7 +147,7 @@ namespace LibSample
             NetManager client2 = new NetManager(_clientListener2)
             {
                 UnconnectedMessagesEnabled = true,
-                SimulateLatency = true, 
+                SimulateLatency = true,
                 SimulationMaxLatency = 1500,
                 IPv6Mode = IPv6Mode.DualMode
             };

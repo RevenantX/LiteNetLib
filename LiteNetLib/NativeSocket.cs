@@ -250,7 +250,7 @@ namespace LiteNetLib
             EHOSTDOWN        = 0x10070,
             ENODATA          = 0x10071
         }
-        
+
         private static readonly Dictionary<UnixSocketError, SocketError> NativeErrorToSocketError = new Dictionary<UnixSocketError, SocketError>(42)
         {
             { UnixSocketError.EACCES, SocketError.AccessDenied },

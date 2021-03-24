@@ -1,4 +1,4 @@
-#if UNITY_IOS && !UNITY_EDITOR
+﻿#if UNITY_IOS && !UNITY_EDITOR
 using UnityEngine;
 #endif
 #if NETSTANDARD || NETCOREAPP
@@ -220,8 +220,8 @@ namespace LiteNetLib
         {
             Socket socket = (Socket)state;
             IntPtr socketHandle = socket.Handle;
-            byte[] addrBuffer = new byte[socket.AddressFamily == AddressFamily.InterNetwork 
-                ? NativeSocket.IPv4AddrSize 
+            byte[] addrBuffer = new byte[socket.AddressFamily == AddressFamily.InterNetwork
+                ? NativeSocket.IPv4AddrSize
                 : NativeSocket.IPv6AddrSize];
 
             int addrSize = addrBuffer.Length;
@@ -318,8 +318,8 @@ namespace LiteNetLib
             bool dualMode = ipv6Mode == IPv6Mode.DualMode && IPv6Support;
 
             _udpSocketv4 = new Socket(
-                dualMode ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork, 
-                SocketType.Dgram, 
+                dualMode ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork,
+                SocketType.Dgram,
                 ProtocolType.Udp);
 
             if (!BindSocket(_udpSocketv4, new IPEndPoint(dualMode ? addressIPv6 : addressIPv4, port), reuseAddress, ipv6Mode))
@@ -646,7 +646,7 @@ namespace LiteNetLib
                     case SocketError.NoBufferSpaceAvailable:
                     case SocketError.Interrupted:
                         return 0;
-                    case SocketError.MessageSize: //do nothing              
+                    case SocketError.MessageSize: //do nothing
                         break;
                     default:
                         NetDebug.WriteError("[S]" + ex);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -67,9 +67,9 @@ namespace LibSample
             {
                 if (reader.AvailableBytes == 13218)
                 {
-                    Console.WriteLine("[{0}] TestFrag: {1}, {2}", 
-                        peer.NetManager.LocalPort, 
-                        reader.RawData[reader.UserDataOffset], 
+                    Console.WriteLine("[{0}] TestFrag: {1}, {2}",
+                        peer.NetManager.LocalPort,
+                        reader.RawData[reader.UserDataOffset],
                         reader.RawData[reader.UserDataOffset + 13217]);
                 }
                 else
@@ -88,7 +88,7 @@ namespace LibSample
 
             public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
             {
-                
+
             }
 
             public void OnConnectionRequest(ConnectionRequest request)
@@ -195,7 +195,7 @@ namespace LibSample
                 //SimulateLatency = true,
                 SimulationMaxLatency = 1500
             };
-            
+
             client2.Start();
             client2.Connect("::1", Port, "gamekey");
 
@@ -211,10 +211,10 @@ namespace LibSample
             client2.Stop();
             server.Stop();
             Console.ReadKey();
-            Console.WriteLine("ServStats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}", 
-                server.Statistics.BytesReceived, 
-                server.Statistics.PacketsReceived, 
-                server.Statistics.BytesSent, 
+            Console.WriteLine("ServStats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}",
+                server.Statistics.BytesReceived,
+                server.Statistics.PacketsReceived,
+                server.Statistics.BytesSent,
                 server.Statistics.PacketsSent);
             Console.WriteLine("Client1Stats:\n BytesReceived: {0}\n PacketsReceived: {1}\n BytesSent: {2}\n PacketsSent: {3}",
                 client1.Statistics.BytesReceived,

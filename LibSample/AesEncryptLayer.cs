@@ -9,7 +9,7 @@ namespace LibSample
     /// Uses AES encryption in CBC mode. Make sure you handle your key properly.
     /// GCHandle.Alloc(key, GCHandleType.Pinned) to avoid your key being moved around different memory segments.
     /// ZeroMemory(gch.AddrOfPinnedObject(), key.Length); to erase it when you are done.
-    /// Speed varies greatly depending on hardware encryption support. 
+    /// Speed varies greatly depending on hardware encryption support.
     /// Why encrypt: http://ithare.com/udp-for-games-security-encryption-and-ddos-protection/
     /// </summary>
     public class AesEncryptLayer : PacketLayerBase
@@ -92,7 +92,7 @@ namespace LibSample
         private void TransformBlocks(ICryptoTransform transform, byte[] input, int inputLength, ref int currentRead, ref int currentWrite)
         {
             //This loop produces a invalid padding exception
-            //I'm leaving it here as a start point in case others need support for 
+            //I'm leaving it here as a start point in case others need support for
             //Platforms wheere !transfom.CanTransformMultipleBlocks
             if (!transform.CanTransformMultipleBlocks)
             {

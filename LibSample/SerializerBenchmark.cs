@@ -127,8 +127,8 @@ namespace LibSample
         public void Run()
         {
             Console.WriteLine("=== Serializer benchmark ===");
-            
-            
+
+
             //Test serializer performance
             Stopwatch stopwatch = new Stopwatch();
             BinaryFormatter binaryFormatter = new BinaryFormatter();

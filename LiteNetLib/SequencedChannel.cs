@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace LiteNetLib
 {
@@ -82,7 +82,7 @@ namespace LiteNetLib
             bool packetProcessed = false;
             if (packet.Sequence < NetConstants.MaxSequence && relative > 0)
             {
-                if (Peer.NetManager.EnableStatistics) 
+                if (Peer.NetManager.EnableStatistics)
                 {
                     Peer.Statistics.AddPacketLoss(relative - 1);
                     Peer.NetManager.Statistics.AddPacketLoss(relative - 1);
@@ -90,8 +90,8 @@ namespace LiteNetLib
 
                 _remoteSequence = packet.Sequence;
                 Peer.NetManager.CreateReceiveEvent(
-                    packet, 
-                    _reliable ? DeliveryMethod.ReliableSequenced : DeliveryMethod.Sequenced, 
+                    packet,
+                    _reliable ? DeliveryMethod.ReliableSequenced : DeliveryMethod.Sequenced,
                     NetConstants.ChanneledHeaderSize,
                     Peer);
                 packetProcessed = true;

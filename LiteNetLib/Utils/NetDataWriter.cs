@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using System.Text;
 
@@ -209,7 +209,7 @@ namespace LiteNetLib.Utils
             Buffer.BlockCopy(data, 0, _data, _position, data.Length);
             _position += data.Length;
         }
-        
+
         public void PutSBytesWithLength(sbyte[] data, int offset, int length)
         {
             if (_autoResize)
@@ -218,7 +218,7 @@ namespace LiteNetLib.Utils
             Buffer.BlockCopy(data, offset, _data, _position + 4, length);
             _position += length + 4;
         }
-        
+
         public void PutSBytesWithLength(sbyte[] data)
         {
             if (_autoResize)

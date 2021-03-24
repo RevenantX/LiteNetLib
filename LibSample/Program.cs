@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 
 namespace LibSample
@@ -13,7 +13,7 @@ namespace LibSample
             new SpeedBench(),
             new PacketProcessorExample(),
             new AesEncryptionTest(),
-            new NtpTest(), 
+            new NtpTest(),
         };
 
         static void Main(string[] args)
@@ -104,4 +104,3 @@ namespace LibSample
         }
     }
 }
-
