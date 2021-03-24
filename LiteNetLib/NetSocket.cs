@@ -602,7 +602,7 @@ namespace LiteNetLib
                         }
                         else
                         {
-#if (NETCOREAPP || NETSTANDARD2_1)
+#if NETCOREAPP || NETSTANDARD2_1 || NETSTANDARD2_1_OR_GREATER
                             remoteEndPoint.Address.TryWriteBytes(new Span<byte>(socketAddress, 8, 16), out _);
 #else
                             byte[] addrBytes = remoteEndPoint.Address.GetAddressBytes();
