@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -143,12 +143,12 @@ namespace LiteNetLib
         public void PollEvents()
         {
             if (_natPunchListener == null || (_successEvents.IsEmpty && _requestEvents.IsEmpty))
-                return; 
+                return;
 
             while (_successEvents.TryDequeue(out var evt))
             {
                 _natPunchListener.OnNatIntroductionSuccess(
-                    evt.TargetEndPoint, 
+                    evt.TargetEndPoint,
                     evt.Type,
                     evt.Token);
             }
@@ -178,7 +178,7 @@ namespace LiteNetLib
                 {
                     Internal = NetUtils.MakeEndPoint(networkIp, _socket.LocalPort),
                     Token = additionalInfo
-                }, 
+                },
                 masterServerEndPoint);
         }
 
@@ -226,7 +226,7 @@ namespace LiteNetLib
             _successEvents.Enqueue(new SuccessEventData
             {
                 TargetEndPoint = senderEndPoint,
-                Type = req.IsExternal ? NatAddressType.External : NatAddressType.Internal, 
+                Type = req.IsExternal ? NatAddressType.External : NatAddressType.Internal,
                 Token = req.Token
             });
         }

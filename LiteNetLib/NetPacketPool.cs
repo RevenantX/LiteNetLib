@@ -34,7 +34,7 @@ namespace LiteNetLib
 
         public NetPacket GetPacket(int size)
         {
-            if (size > NetConstants.MaxPacketSize) 
+            if (size > NetConstants.MaxPacketSize)
                 return new NetPacket(size);
 
             NetPacket packet;

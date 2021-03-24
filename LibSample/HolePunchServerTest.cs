@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -84,7 +84,7 @@ namespace LibSample
         public void Run()
         {
             Console.WriteLine("=== HolePunch Test ===");
-            
+
             EventBasedNetListener clientListener = new EventBasedNetListener();
             EventBasedNatPunchListener natPunchListener1 = new EventBasedNatPunchListener();
             EventBasedNatPunchListener natPunchListener2 = new EventBasedNatPunchListener();
@@ -166,7 +166,7 @@ namespace LibSample
                         _c1.Stop();
                     }
                 }
-                
+
                 DateTime nowTime = DateTime.UtcNow;
 
                 _c1.NatPunchModule.PollEvents();

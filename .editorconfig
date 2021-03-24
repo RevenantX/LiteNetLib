@@ -1,8 +1,12 @@
 root = true
+
 [*]
 indent_style = space
 indent_size = 4
-[*.cs]
 
+[*.cs]
+charset = utf-8-bom
+trim_trailing_whitespace = true
+insert_final_newline = true
 # IDE0032: Use auto property
 dotnet_style_prefer_auto_properties = true:none

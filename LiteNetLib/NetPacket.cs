@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using LiteNetLib.Utils;
 
@@ -179,7 +179,7 @@ namespace LiteNetLib
         {
             return BitConverter.ToInt32(packet.RawData, 1);
         }
-        
+
         public static NetConnectRequestPacket FromData(NetPacket packet)
         {
             if (packet.ConnectionNumber >= NetConstants.MaxConnectionNumber)
@@ -187,7 +187,7 @@ namespace LiteNetLib
 
             //Getting new id for peer
             long connectionId = BitConverter.ToInt64(packet.RawData, 5);
-            
+
             //Get target address
             int addrSize = packet.RawData[13];
             if (addrSize != 16 && addrSize != 28)

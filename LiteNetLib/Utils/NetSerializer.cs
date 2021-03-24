@@ -593,7 +593,7 @@ namespace LiteNetLib.Utils
                     elementType = propertyType.GetGenericArguments()[0];
                     callType = CallType.List;
                 }
-                
+
                 if (Attribute.IsDefined(property, typeof(IgnoreDataMemberAttribute)))
                     continue;
 

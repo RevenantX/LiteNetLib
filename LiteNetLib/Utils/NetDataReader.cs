@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using System.Text;
 
@@ -20,7 +20,7 @@ namespace LiteNetLib.Utils
         public bool EndOfData => _position == _dataSize;
         public int AvailableBytes => _dataSize - _position;
 
-        public void SkipBytes(int count) 
+        public void SkipBytes(int count)
         {
             _position += count;
         }
@@ -353,7 +353,7 @@ namespace LiteNetLib.Utils
             Buffer.BlockCopy(_data, _position, destination, 0, count);
             _position += count;
         }
-        
+
         public sbyte[] GetSBytesWithLength()
         {
             int length = GetInt();
@@ -362,7 +362,7 @@ namespace LiteNetLib.Utils
             _position += length;
             return outgoingData;
         }
-        
+
         public byte[] GetBytesWithLength()
         {
             int length = GetInt();
@@ -660,4 +660,3 @@ namespace LiteNetLib.Utils
         }
     }
 }
-

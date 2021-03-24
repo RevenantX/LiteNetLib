@@ -75,7 +75,7 @@ namespace LibSample
 
             void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
             {
-                
+
             }
 
             public void Dispose()

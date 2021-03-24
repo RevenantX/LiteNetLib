@@ -2,7 +2,7 @@
 
 namespace LiteNetLib
 {
-    public sealed class NetStatistics 
+    public sealed class NetStatistics
     {
         private long _packetsSent;
         private long _packetsReceived;
@@ -18,15 +18,15 @@ namespace LiteNetLib
 
         public long PacketLossPercent
         {
-            get 
+            get
             {
                 long sent = PacketsSent, loss = PacketLoss;
-                
+
                 return sent == 0 ? 0 : loss * 100 / sent;
             }
         }
 
-        public void Reset() 
+        public void Reset()
         {
             Interlocked.Exchange(ref _packetsSent, 0);
             Interlocked.Exchange(ref _packetsReceived, 0);
@@ -35,36 +35,36 @@ namespace LiteNetLib
             Interlocked.Exchange(ref _packetLoss, 0);
         }
 
-        public void IncrementPacketsSent() 
+        public void IncrementPacketsSent()
         {
             Interlocked.Increment(ref _packetsSent);
         }
 
-        public void IncrementPacketsReceived() 
+        public void IncrementPacketsReceived()
         {
             Interlocked.Increment(ref _packetsReceived);
         }
 
-        public void AddBytesSent(long bytesSent) 
+        public void AddBytesSent(long bytesSent)
         {
             Interlocked.Add(ref _bytesSent, bytesSent);
         }
 
-        public void AddBytesReceived(long bytesReceived) 
+        public void AddBytesReceived(long bytesReceived)
         {
             Interlocked.Add(ref _bytesReceived, bytesReceived);
         }
 
-        public void IncrementPacketLoss() 
+        public void IncrementPacketLoss()
         {
             Interlocked.Increment(ref _packetLoss);
         }
 
-        public void AddPacketLoss(long packetLoss) 
+        public void AddPacketLoss(long packetLoss)
         {
             Interlocked.Add(ref _packetLoss, packetLoss);
         }
-        
+
         public override string ToString()
         {
             return

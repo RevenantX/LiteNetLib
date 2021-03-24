@@ -84,7 +84,7 @@ namespace LiteNetLib
             Result = ConnectionRequestResult.Accept;
             return _listener.OnConnectionSolved(this, null, 0, 0);
         }
-        
+
         public void Reject(byte[] rejectData, int start, int length, bool force)
         {
             if (!TryActivate())
