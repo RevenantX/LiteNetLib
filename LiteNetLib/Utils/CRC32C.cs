@@ -26,7 +26,11 @@ namespace LiteNetLib.Utils
             if (Crc32.IsSupported)
                 return;
 #endif
+#if NET5_0_OR_GREATER || NET5_0
+            Table = GC.AllocateUninitializedArray<uint>(16 * 256, true);
+#else
             Table = new uint[16 * 256];
+#endif
             for (uint i = 0; i < 256; i++)
             {
                 uint res = i;
