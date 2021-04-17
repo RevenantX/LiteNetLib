@@ -115,11 +115,6 @@ namespace LiteNetLib
         {
             private const string LibName = "ws2_32.dll";
 
-            [DllImport(LibName)]
-            public static extern SocketError WSAStartup(
-                ushort versionRequested,
-                [In, Out] byte[] wsaData);
-
             [DllImport(LibName, SetLastError = true)]
             public static extern int recvfrom(
                 IntPtr socketHandle,
@@ -230,7 +225,6 @@ namespace LiteNetLib
 
         static NativeSocket()
         {
-#if NETCOREAPP || NETSTANDARD2_0_OR_GREATER
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 IsSupported = true;
@@ -240,23 +234,6 @@ namespace LiteNetLib
             {
                 IsSupported = true;
             }
-#elif UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
-            IsSupported = true;
-            UnixMode = true;
-#elif UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-            IsSupported = true;
-#elif !UNITY_2018_3_OR_NEWER
-            try
-            {
-                // use a byte array cause we don't need the returned data, 500B should be always enough, .NET 5 uses 408B
-                IsSupported = WinSock.WSAStartup(0x0202 /* 2.2 */, new byte[500]) == SocketError.Success;
-                return;
-            }
-            catch
-            {
-                //do nothing
-            }
-#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

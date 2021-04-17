@@ -1,9 +1,7 @@
 ﻿#if UNITY_IOS && !UNITY_EDITOR
 using UnityEngine;
 #endif
-#if NETSTANDARD || NETCOREAPP
 using System.Runtime.InteropServices;
-#endif
 
 using System;
 using System.Collections.Generic;
@@ -384,19 +382,18 @@ namespace LiteNetLib
             socket.SendTimeout = 500;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
-#if !UNITY_2018_3_OR_NEWER || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-#if NETSTANDARD || NETCOREAPP
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-#endif
-            try
             {
-                socket.IOControl(SioUdpConnreset, new byte[] { 0 }, null);
+                try
+                {
+                    socket.IOControl(SioUdpConnreset, new byte[] {0}, null);
+                }
+                catch
+                {
+                    //ignored
+                }
             }
-            catch
-            {
-                //ignored
-            }
-#endif
 
             try
             {
@@ -411,13 +408,16 @@ namespace LiteNetLib
             {
                 Ttl = NetConstants.SocketTTL;
 
-#if NETCOREAPP || NETSTANDARD2_0_OR_GREATER
-                if(!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-#endif
-                try { socket.DontFragment = true; }
-                catch (SocketException e)
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
-                    NetDebug.WriteError($"[B]DontFragment error: {e.SocketErrorCode}");
+                    try
+                    {
+                        socket.DontFragment = true;
+                    }
+                    catch (SocketException e)
+                    {
+                        NetDebug.WriteError($"[B]DontFragment error: {e.SocketErrorCode}");
+                    }
                 }
 
                 try { socket.EnableBroadcast = true; }

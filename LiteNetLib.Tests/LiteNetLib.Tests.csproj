@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net5.0;netcoreapp2.1</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net5.0;net46;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net5.0;net471;netcoreapp2.1</TargetFrameworks>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
