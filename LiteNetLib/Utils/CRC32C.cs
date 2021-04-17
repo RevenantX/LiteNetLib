@@ -1,9 +1,9 @@
-﻿#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1 || NET5_0_OR_GREATER || NET_5_0
+﻿#if NETCOREAPP3_0_OR_GREATER || NETCOREAPP3_1 || NET5_0
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 #endif
-#if NET5_0_OR_GREATER || NET_5_0
+#if NET5_0_OR_GREATER || NET5_0
 using System.Runtime.Intrinsics.Arm;
 #endif
 
