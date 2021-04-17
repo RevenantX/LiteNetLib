@@ -174,8 +174,8 @@ namespace LiteNetLib
                 [In] int socketAddressSize);
         }
 
-        public static readonly bool IsSupported;
-        public static readonly bool UnixMode;
+        public static readonly bool IsSupported = false;
+        public static readonly bool UnixMode = false;
 
         public const int IPv4AddrSize = 16;
         public const int IPv6AddrSize = 28;
@@ -230,7 +230,22 @@ namespace LiteNetLib
 
         static NativeSocket()
         {
-            IsSupported = false;
+#if NETCOREAPP || NETSTANDARD2_0_OR_GREATER
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                IsSupported = true;
+                UnixMode = true;
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                IsSupported = true;
+            }
+#elif UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
+            IsSupported = true;
+            UnixMode = true;
+#elif UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            IsSupported = true;
+#elif !UNITY_2018_3_OR_NEWER
             try
             {
                 // use a byte array cause we don't need the returned data, 500B should be always enough, .NET 5 uses 408B
@@ -240,13 +255,6 @@ namespace LiteNetLib
             catch
             {
                 //do nothing
-            }
-
-#if NETCOREAPP || NETSTANDARD2_0_OR_GREATER
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                IsSupported = true;
-                UnixMode = true;
             }
 #endif
         }
