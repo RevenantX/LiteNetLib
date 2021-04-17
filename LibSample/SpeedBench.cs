@@ -21,22 +21,21 @@ namespace LibSample
 
             public Server()
             {
-                _server = new NetManager(this);
-                _server.AutoRecycle = true;
-                _server.UpdateTime = 1;
-                _server.SimulatePacketLoss = false;
-                _server.SimulationPacketLossChance = 20;
-                _server.EnableStatistics = true;
+                _server = new NetManager(this)
+                {
+                    AutoRecycle = true,
+                    UpdateTime = 1,
+                    SimulatePacketLoss = false,
+                    SimulationPacketLossChance = 20,
+                    EnableStatistics = true,
+                    UnsyncedEvents = true
+                };
                 _server.Start(9050);
-            }
-
-            public void PollEvents()
-            {
-                _server.PollEvents();
             }
 
             void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
             {
+                Console.WriteLine($"Server: error: {socketErrorCode}");
             }
 
             void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
@@ -70,12 +69,12 @@ namespace LibSample
 
             void INetEventListener.OnPeerConnected(NetPeer peer)
             {
-
+                Console.WriteLine($"Server: client connected: {peer.EndPoint}");
             }
 
             void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
             {
-
+                Console.WriteLine($"Server: client disconnected: {disconnectInfo.Reason}");
             }
 
             public void Dispose()
@@ -99,12 +98,14 @@ namespace LibSample
             {
                 _writer = new NetDataWriter();
 
-                _client = new NetManager(this);
-                _client.UnsyncedEvents = true;
-                _client.AutoRecycle = true;
-                _client.SimulatePacketLoss = false;
-                _client.SimulationPacketLossChance = 20;
-                _client.EnableStatistics = true;
+                _client = new NetManager(this)
+                {
+                    UnsyncedEvents = true,
+                    AutoRecycle = true,
+                    SimulatePacketLoss = false,
+                    SimulationPacketLossChance = 20,
+                    EnableStatistics = true
+                };
                 _client.Start();
             }
 
@@ -113,7 +114,6 @@ namespace LibSample
                 _writer.Reset();
                 _writer.Put(false);
                 _writer.Put(pData);
-
                 _peer.Send(_writer, DeliveryMethod.Unreliable);
                 UnreliableSent++;
             }
@@ -123,7 +123,6 @@ namespace LibSample
                 _writer.Reset();
                 _writer.Put(true);
                 _writer.Put(pData);
-
                 _peer.Send(_writer, DeliveryMethod.ReliableOrdered);
                 ReliableSent++;
             }
@@ -135,6 +134,7 @@ namespace LibSample
 
             void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
             {
+                Console.WriteLine($"Client: error: {socketErrorCode}");
             }
 
             void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
@@ -143,7 +143,7 @@ namespace LibSample
 
             public void OnConnectionRequest(ConnectionRequest request)
             {
-                request.AcceptIfKey("ConnKey");
+                request.RejectForce();
             }
 
             void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
@@ -158,10 +158,23 @@ namespace LibSample
 
             void INetEventListener.OnPeerConnected(NetPeer peer)
             {
+                Console.WriteLine("Client: Connected");
+                for (int i = 0; i < MAX_LOOP_COUNT; i++)
+                {
+                    for (int ui = 0; ui < UNRELIABLE_MESSAGES_PER_LOOP; ui++)
+                        SendUnreliable(DATA);
+
+                    for (int ri = 0; ri < RELIABLE_MESSAGES_PER_LOOP; ri++)
+                        SendReliable(DATA);
+                }
+
+                int dataSize = MAX_LOOP_COUNT * Encoding.UTF8.GetByteCount(DATA) * (UNRELIABLE_MESSAGES_PER_LOOP + RELIABLE_MESSAGES_PER_LOOP);
+                Console.WriteLine("DataSize: {0}b, {1}kb, {2}mb", dataSize, dataSize / 1024, dataSize / 1024 / 1024);
             }
 
             void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
             {
+                Console.WriteLine($"Client: Disconnected {disconnectInfo.Reason}");
             }
 
             public void Dispose()
@@ -173,7 +186,7 @@ namespace LibSample
         private const int MAX_LOOP_COUNT = 750;
         private const int UNRELIABLE_MESSAGES_PER_LOOP = 1000;
         private const int RELIABLE_MESSAGES_PER_LOOP = 350;
-        private static bool CLIENT_RUNNING = true;
+        private static volatile bool CLIENT_RUNNING = true;
 
         public void Run()
         {
@@ -193,13 +206,8 @@ namespace LibSample
             using (Server s = new Server())
             {
                 while (CLIENT_RUNNING)
-                {
-                    s.PollEvents();
-                    Thread.Sleep(1);
-                }
+                    Thread.Sleep(100);
 
-                Thread.Sleep(10000);
-                s.PollEvents();
                 Console.WriteLine("SERVER RECEIVED -> Reliable: " + s.ReliableReceived + ", Unreliable: " + s.UnreliableReceived);
                 Console.WriteLine("SERVER STATS:\n" + s.Stats);
             }
@@ -210,22 +218,8 @@ namespace LibSample
             using (Client c = new Client())
             {
                 c.Connect();
-
-                for (int i = 0; i < MAX_LOOP_COUNT; i++)
-                {
-                    for (int ui = 0; ui < UNRELIABLE_MESSAGES_PER_LOOP; ui++)
-                        c.SendUnreliable(DATA);
-
-                    for (int ri = 0; ri < RELIABLE_MESSAGES_PER_LOOP; ri++)
-                        c.SendReliable(DATA);
-                }
-
-                int dataSize = MAX_LOOP_COUNT * Encoding.UTF8.GetByteCount(DATA) * (UNRELIABLE_MESSAGES_PER_LOOP + RELIABLE_MESSAGES_PER_LOOP);
-                Console.WriteLine("DataSize: {0}b, {1}kb, {2}mb", dataSize, dataSize / 1024, dataSize / 1024 / 1024);
-
                 Thread.Sleep(10000);
                 CLIENT_RUNNING = false;
-
                 Console.WriteLine("CLIENT SENT -> Reliable: " + c.ReliableSent + ", Unreliable: " + c.UnreliableSent);
                 Console.WriteLine("CLIENT STATS:\n" + c.Stats);
             }

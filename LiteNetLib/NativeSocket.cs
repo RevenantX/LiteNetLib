@@ -10,32 +10,32 @@ namespace LiteNetLib
     internal readonly struct NativeAddr : IEquatable<NativeAddr>
     {
         //common parts
-        public readonly long Part1; //family, port, etc
-        public readonly long Part2;
+        private readonly long _part1; //family, port, etc
+        private readonly long _part2;
         //ipv6 parts
-        public readonly long Part3;
-        public readonly int Part4;
+        private readonly long _part3;
+        private readonly int _part4;
 
         private readonly int _hash;
 
         public NativeAddr(byte[] address, int len)
         {
-            Part1 = BitConverter.ToInt64(address, 0);
-            Part2 = BitConverter.ToInt64(address, 8);
+            _part1 = BitConverter.ToInt64(address, 0);
+            _part2 = BitConverter.ToInt64(address, 8);
             if (len > 16)
             {
-                Part3 = BitConverter.ToInt64(address, 16);
-                Part4 = BitConverter.ToInt32(address, 24);
+                _part3 = BitConverter.ToInt64(address, 16);
+                _part4 = BitConverter.ToInt32(address, 24);
             }
             else
             {
-                Part3 = 0;
-                Part4 = 0;
+                _part3 = 0;
+                _part4 = 0;
             }
-            _hash = (int)(Part1 >> 32) ^ (int)Part1 ^
-                    (int)(Part2 >> 32) ^ (int)Part2 ^
-                    (int)(Part3 >> 32) ^ (int)Part3 ^
-                    Part4;
+            _hash = (int)(_part1 >> 32) ^ (int)_part1 ^
+                    (int)(_part2 >> 32) ^ (int)_part2 ^
+                    (int)(_part3 >> 32) ^ (int)_part3 ^
+                    _part4;
         }
 
         public override int GetHashCode()
@@ -45,10 +45,10 @@ namespace LiteNetLib
 
         public bool Equals(NativeAddr other)
         {
-            return Part1 == other.Part1 &&
-                   Part2 == other.Part2 &&
-                   Part3 == other.Part3 &&
-                   Part4 == other.Part4;
+            return _part1 == other._part1 &&
+                   _part2 == other._part2 &&
+                   _part3 == other._part3 &&
+                   _part4 == other._part4;
         }
 
         public override bool Equals(object obj)
@@ -76,8 +76,8 @@ namespace LiteNetLib
             NativeAddress = new byte[address.Length];
             Buffer.BlockCopy(address, 0, NativeAddress, 0, address.Length);
 
-            short family = BitConverter.ToInt16(address, 0);
-            Port = (ushort)((address[2] << 8) | address[3]);
+            short family = (short)((address[1] << 8) | address[0]);
+            Port         =(ushort)((address[2] << 8) | address[3]);
 
             if ((NativeSocket.UnixMode && family == NativeSocket.AF_INET6) || (!NativeSocket.UnixMode && (AddressFamily)family == AddressFamily.InterNetworkV6))
             {
@@ -86,7 +86,7 @@ namespace LiteNetLib
                     (address[26] << 16) +
                     (address[25] << 8) +
                     (address[24])));
-#if NETCOREAPP || NETSTANDARD2_1 || NETSTANDARD2_1_OR_GREATER
+#if NETCOREAPP || NETSTANDARD2_0_OR_GREATER
                 Address = new IPAddress(new ReadOnlySpan<byte>(address, 8, 16), scope);
 #else
                 byte[] addrBuffer = new byte[16];
@@ -105,16 +105,9 @@ namespace LiteNetLib
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct NativeTimeValue
-    {
-        public int Seconds;
-        public int Microseconds;
-    }
-
     internal static class NativeSocket
     {
-        internal static
+        static
 #if LITENETLIB_UNSAFE
         unsafe
 #endif
@@ -148,17 +141,9 @@ namespace LiteNetLib
                 [In] SocketFlags socketFlags,
                 [In] byte[] socketAddress,
                 [In] int socketAddressSize);
-
-            [DllImport(LibName, SetLastError = true)]
-            internal static extern int select(
-                [In] int ignoredParameter,
-                [In, Out] IntPtr[] readfds,
-                [In, Out] IntPtr[] writefds,
-                [In, Out] IntPtr[] exceptfds,
-                [In] ref NativeTimeValue timeout);
         }
 
-        internal static
+        static
 #if LITENETLIB_UNSAFE
         unsafe
 #endif
@@ -166,7 +151,7 @@ namespace LiteNetLib
         {
             private const string LibName = "libc";
 
-            [DllImport(LibName)]
+            [DllImport(LibName, SetLastError = true)]
             public static extern int recvfrom(
                 IntPtr socketHandle,
                 [In, Out] byte[] pinnedBuffer,
@@ -175,7 +160,7 @@ namespace LiteNetLib
                 [Out] byte[] socketAddress,
                 [In, Out] ref int socketAddressSize);
 
-            [DllImport(LibName)]
+            [DllImport(LibName, SetLastError = true)]
             internal static extern int sendto(
                 IntPtr socketHandle,
 #if LITENETLIB_UNSAFE
@@ -187,14 +172,6 @@ namespace LiteNetLib
                 [In] SocketFlags socketFlags,
                 [In] byte[] socketAddress,
                 [In] int socketAddressSize);
-
-            [DllImport(LibName, SetLastError = true)]
-            internal static extern int select(
-                [In] int ignoredParameter,
-                [In, Out] IntPtr[] readfds,
-                [In, Out] IntPtr[] writefds,
-                [In, Out] IntPtr[] exceptfds,
-                [In] ref NativeTimeValue timeout);
         }
 
         public static readonly bool IsSupported;
@@ -205,96 +182,50 @@ namespace LiteNetLib
         public const int AF_INET = 2;
         public const int AF_INET6 = 10;
 
-        internal enum UnixSocketError
+        private static readonly Dictionary<int, SocketError> NativeErrorToSocketError = new Dictionary<int, SocketError>
         {
-            SUCCESS          = 0,
-            EACCES           = 0x10002,
-            EADDRINUSE       = 0x10003,
-            EADDRNOTAVAIL    = 0x10004,
-            EAFNOSUPPORT     = 0x10005,
-            EAGAIN           = 0x10006,
-            EALREADY         = 0x10007,
-            EBADF            = 0x10008,
-            ECANCELED        = 0x1000B,
-            ECONNABORTED     = 0x1000D,
-            ECONNREFUSED     = 0x1000E,
-            ECONNRESET       = 0x1000F,
-            EDESTADDRREQ     = 0x10011,
-            EFAULT           = 0x10015,
-            EHOSTUNREACH     = 0x10017,
-            EINPROGRESS      = 0x1001A,
-            EINTR            = 0x1001B,
-            EINVAL           = 0x1001C,
-            EISCONN          = 0x1001E,
-            EMFILE           = 0x10021,
-            EMSGSIZE         = 0x10023,
-            ENETDOWN         = 0x10026,
-            ENETRESET        = 0x10027,
-            ENETUNREACH      = 0x10028,
-            ENFILE           = 0x10029,
-            ENOBUFS          = 0x1002A,
-            ENOENT           = 0x1002D,
-            ENOPROTOOPT      = 0x10033,
-            ENOTCONN         = 0x10038,
-            ENOTSOCK         = 0x1003C,
-            ENOTSUP          = 0x1003D,
-            ENXIO            = 0x1003F,
-            EPERM            = 0x10042,
-            EPIPE            = 0x10043,
-            EPROTONOSUPPORT  = 0x10045,
-            EPROTOTYPE       = 0x10046,
-            ETIMEDOUT        = 0x1004D,
-            ESOCKTNOSUPPORT  = 0x1005E,
-            EPFNOSUPPORT     = 0x10060,
-            ESHUTDOWN        = 0x1006C,
-            EHOSTDOWN        = 0x10070,
-            ENODATA          = 0x10071
-        }
-
-        private static readonly Dictionary<UnixSocketError, SocketError> NativeErrorToSocketError = new Dictionary<UnixSocketError, SocketError>(42)
-        {
-            { UnixSocketError.EACCES, SocketError.AccessDenied },
-            { UnixSocketError.EADDRINUSE, SocketError.AddressAlreadyInUse },
-            { UnixSocketError.EADDRNOTAVAIL, SocketError.AddressNotAvailable },
-            { UnixSocketError.EAFNOSUPPORT, SocketError.AddressFamilyNotSupported },
-            { UnixSocketError.EAGAIN, SocketError.WouldBlock },
-            { UnixSocketError.EALREADY, SocketError.AlreadyInProgress },
-            { UnixSocketError.EBADF, SocketError.OperationAborted },
-            { UnixSocketError.ECANCELED, SocketError.OperationAborted },
-            { UnixSocketError.ECONNABORTED, SocketError.ConnectionAborted },
-            { UnixSocketError.ECONNREFUSED, SocketError.ConnectionRefused },
-            { UnixSocketError.ECONNRESET, SocketError.ConnectionReset },
-            { UnixSocketError.EDESTADDRREQ, SocketError.DestinationAddressRequired },
-            { UnixSocketError.EFAULT, SocketError.Fault },
-            { UnixSocketError.EHOSTDOWN, SocketError.HostDown },
-            { UnixSocketError.ENXIO, SocketError.HostNotFound },
-            { UnixSocketError.EHOSTUNREACH, SocketError.HostUnreachable },
-            { UnixSocketError.EINPROGRESS, SocketError.InProgress },
-            { UnixSocketError.EINTR, SocketError.Interrupted },
-            { UnixSocketError.EINVAL, SocketError.InvalidArgument },
-            { UnixSocketError.EISCONN, SocketError.IsConnected },
-            { UnixSocketError.EMFILE, SocketError.TooManyOpenSockets },
-            { UnixSocketError.EMSGSIZE, SocketError.MessageSize },
-            { UnixSocketError.ENETDOWN, SocketError.NetworkDown },
-            { UnixSocketError.ENETRESET, SocketError.NetworkReset },
-            { UnixSocketError.ENETUNREACH, SocketError.NetworkUnreachable },
-            { UnixSocketError.ENFILE, SocketError.TooManyOpenSockets },
-            { UnixSocketError.ENOBUFS, SocketError.NoBufferSpaceAvailable },
-            { UnixSocketError.ENODATA, SocketError.NoData },
-            { UnixSocketError.ENOENT, SocketError.AddressNotAvailable },
-            { UnixSocketError.ENOPROTOOPT, SocketError.ProtocolOption },
-            { UnixSocketError.ENOTCONN, SocketError.NotConnected },
-            { UnixSocketError.ENOTSOCK, SocketError.NotSocket },
-            { UnixSocketError.ENOTSUP, SocketError.OperationNotSupported },
-            { UnixSocketError.EPERM, SocketError.AccessDenied },
-            { UnixSocketError.EPIPE, SocketError.Shutdown },
-            { UnixSocketError.EPFNOSUPPORT, SocketError.ProtocolFamilyNotSupported },
-            { UnixSocketError.EPROTONOSUPPORT, SocketError.ProtocolNotSupported },
-            { UnixSocketError.EPROTOTYPE, SocketError.ProtocolType },
-            { UnixSocketError.ESOCKTNOSUPPORT, SocketError.SocketNotSupported },
-            { UnixSocketError.ESHUTDOWN, SocketError.Disconnecting },
-            { UnixSocketError.SUCCESS, SocketError.Success },
-            { UnixSocketError.ETIMEDOUT, SocketError.TimedOut },
+            { 13, SocketError.AccessDenied },               //EACCES
+            { 98, SocketError.AddressAlreadyInUse },        //EADDRINUSE
+            { 99, SocketError.AddressNotAvailable },        //EADDRNOTAVAIL
+            { 97, SocketError.AddressFamilyNotSupported },  //EAFNOSUPPORT
+            { 11, SocketError.WouldBlock },                 //EAGAIN
+            { 114, SocketError.AlreadyInProgress },         //EALREADY
+            { 9, SocketError.OperationAborted },            //EBADF
+            { 125, SocketError.OperationAborted },          //ECANCELED
+            { 103, SocketError.ConnectionAborted },         //ECONNABORTED
+            { 111, SocketError.ConnectionRefused },         //ECONNREFUSED
+            { 104, SocketError.ConnectionReset },           //ECONNRESET
+            { 89, SocketError.DestinationAddressRequired }, //EDESTADDRREQ
+            { 14, SocketError.Fault },                      //EFAULT
+            { 112, SocketError.HostDown },                  //EHOSTDOWN
+            { 6, SocketError.HostNotFound },                //ENXIO
+            { 113, SocketError.HostUnreachable },           //EHOSTUNREACH
+            { 115, SocketError.InProgress },                //EINPROGRESS
+            { 4, SocketError.Interrupted },                 //EINTR
+            { 22, SocketError.InvalidArgument },            //EINVAL
+            { 106, SocketError.IsConnected },               //EISCONN
+            { 24, SocketError.TooManyOpenSockets },         //EMFILE
+            { 90, SocketError.MessageSize },                //EMSGSIZE
+            { 100, SocketError.NetworkDown },               //ENETDOWN
+            { 102, SocketError.NetworkReset },              //ENETRESET
+            { 101, SocketError.NetworkUnreachable },        //ENETUNREACH
+            { 23, SocketError.TooManyOpenSockets },         //ENFILE
+            { 105, SocketError.NoBufferSpaceAvailable },    //ENOBUFS
+            { 61, SocketError.NoData },                     //ENODATA
+            { 2, SocketError.AddressNotAvailable },         //ENOENT
+            { 92, SocketError.ProtocolOption },             //ENOPROTOOPT
+            { 107, SocketError.NotConnected },              //ENOTCONN
+            { 88, SocketError.NotSocket },                  //ENOTSOCK
+            { 3440, SocketError.OperationNotSupported },    //ENOTSUP
+            { 1, SocketError.AccessDenied },                //EPERM
+            { 32, SocketError.Shutdown },                   //EPIPE
+            { 96, SocketError.ProtocolFamilyNotSupported }, //EPFNOSUPPORT
+            { 93, SocketError.ProtocolNotSupported },       //EPROTONOSUPPORT
+            { 91, SocketError.ProtocolType },               //EPROTOTYPE
+            { 94, SocketError.SocketNotSupported },         //ESOCKTNOSUPPORT
+            { 108, SocketError.Disconnecting },             //ESHUTDOWN
+            { 110, SocketError.TimedOut },                  //ETIMEDOUT
+            { 0, SocketError.Success }
         };
 
         static NativeSocket()
@@ -311,17 +242,13 @@ namespace LiteNetLib
                 //do nothing
             }
 
-            try
+#if NETCOREAPP || NETSTANDARD2_0_OR_GREATER
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                int temp = 0;
-                UnixSock.recvfrom(IntPtr.Zero, null, 0, 0, null, ref temp);
                 IsSupported = true;
                 UnixMode = true;
             }
-            catch
-            {
-                //do nothing
-            }
+#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -358,20 +285,24 @@ namespace LiteNetLib
                 : WinSock.sendto(socketHandle, pinnedBuffer, len, 0, socketAddress, socketAddressSize);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Poll(IntPtr[] pollHandle, ref NativeTimeValue timeout)
-        {
-            return UnixMode
-                ? UnixSock.select(0, pollHandle, null, null, ref timeout)
-                : WinSock.select(0, pollHandle, null, null, ref timeout);
-        }
-
         public static SocketError GetSocketError()
         {
             int error = Marshal.GetLastWin32Error();
             if (UnixMode)
-                return NativeErrorToSocketError.TryGetValue((UnixSocketError)error, out var err) ? err : SocketError.SocketError;
+                return NativeErrorToSocketError.TryGetValue(error, out var err)
+                    ? err
+                    : SocketError.SocketError;
             return (SocketError)error;
+        }
+
+        public static SocketException GetSocketException()
+        {
+            int error = Marshal.GetLastWin32Error();
+            if (UnixMode)
+                return NativeErrorToSocketError.TryGetValue(error, out var err)
+                    ? new SocketException((int)err)
+                    : new SocketException((int)SocketError.SocketError);
+            return new SocketException(error);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -380,11 +311,6 @@ namespace LiteNetLib
             return UnixMode
                 ? (short)(remoteEndPoint.AddressFamily == AddressFamily.InterNetwork ? AF_INET : AF_INET6)
                 : (short)remoteEndPoint.AddressFamily;
-        }
-
-        public static int GetSocketErrorCode()
-        {
-            return (int)GetSocketError();
         }
     }
 }
