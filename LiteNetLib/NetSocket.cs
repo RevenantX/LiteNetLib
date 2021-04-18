@@ -78,7 +78,7 @@ namespace LiteNetLib
         public void OnErrorRestore()
         {
             Close(false);
-            _listener.OnMessageReceived(null, 0, SocketError.NotConnected, new IPEndPoint(0,0));
+            _listener.OnMessageReceived(null, SocketError.NotConnected, new IPEndPoint(0,0));
         }
 #endif
         public int LocalPort { get; private set; }
