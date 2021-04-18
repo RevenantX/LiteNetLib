@@ -731,17 +731,20 @@ namespace LiteNetLib
                 //just simple packet
                 NetPacket resultingPacket = _packetPool.GetPacket(incomingFragments.TotalSize);
 
-                int firstFragmentSize = fragments[0].Size - NetConstants.FragmentedHeaderTotalSize;
+                int pos = 0;
                 for (int i = 0; i < incomingFragments.ReceivedCount; i++)
                 {
                     var fragment = fragments[i];
+
+                    int writtenSize = fragment.Size - NetConstants.FragmentedHeaderTotalSize;
                     //Create resulting big packet
                     Buffer.BlockCopy(
                         fragment.RawData,
                         NetConstants.FragmentedHeaderTotalSize,
                         resultingPacket.RawData,
-                        firstFragmentSize * i,
-                        fragment.Size - NetConstants.FragmentedHeaderTotalSize);
+                        pos,
+                        writtenSize);
+                    pos += writtenSize;
 
                     //Free memory
                     _packetPool.Recycle(fragment);
