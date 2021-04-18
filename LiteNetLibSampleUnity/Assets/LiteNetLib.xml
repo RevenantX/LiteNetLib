@@ -172,16 +172,18 @@
         <member name="F:LiteNetLib.NetManager.UpdateTime">
             <summary>
             Library logic update and send period in milliseconds
+            Lowest values in Windows doesn't change much because of Thread.Sleep precision
+            To more frequent sends (or sends tied to your game logic) use <see cref="M:LiteNetLib.NetManager.TriggerUpdate"/>
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.PingInterval">
             <summary>
-            Interval for latency detection and checking connection
+            Interval for latency detection and checking connection (in milliseconds)
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.DisconnectTimeout">
             <summary>
-            If NetManager doesn't receive any packet from remote peer during this time then connection will be closed
+            If NetManager doesn't receive any packet from remote peer during this time (in milliseconds) then connection will be closed
             (including library internal keepalive packets)
             </summary>
         </member>
@@ -202,12 +204,12 @@
         </member>
         <member name="F:LiteNetLib.NetManager.SimulationMinLatency">
             <summary>
-            Minimum simulated latency
+            Minimum simulated latency (in milliseconds)
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.SimulationMaxLatency">
             <summary>
-            Maximum simulated latency
+            Maximum simulated latency (in milliseconds)
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.UnsyncedEvents">
@@ -232,7 +234,7 @@
         </member>
         <member name="F:LiteNetLib.NetManager.ReconnectDelay">
             <summary>
-            Delay between initial connection attempts
+            Delay between initial connection attempts (in milliseconds)
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.MaxConnectAttempts">
@@ -275,12 +277,7 @@
             Automatically recycle NetPacketReader after OnReceive event
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetManager.UseNativeSockets">
-            <summary>
-            Use fast,native sockets (tested only on Windows and Linux)
-            </summary>
-        </member>
-        <member name="F:LiteNetLib.NetManager.IPv6Enabled">
+        <member name="F:LiteNetLib.NetManager.IPv6Mode">
             <summary>
             IPv6 support
             </summary>
@@ -298,6 +295,12 @@
         <member name="P:LiteNetLib.NetManager.FirstPeer">
             <summary>
             First peer. Useful for Client mode
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.NetManager.UseNativeSockets">
+            <summary>
+            Experimental feature mostly for servers. Only for Windows/Linux
+            use direct socket calls for send/receive to drastically increase speed and reduce GC pressure
             </summary>
         </member>
         <member name="P:LiteNetLib.NetManager.ChannelsCount">
@@ -334,12 +337,6 @@
             Update and send logic. Use this only when NetManager started in manual mode
             </summary>
             <param name="elapsedMilliseconds">elapsed milliseconds since last update call</param>
-        </member>
-        <member name="M:LiteNetLib.NetManager.ManualReceive">
-            <summary>
-            Receive logic. It will call Receive events immediately without need to use PollEvents or UnsyncedEvents
-            Use this only when NetManager started in manual mode
-            </summary>
         </member>
         <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">
             <summary>
@@ -537,6 +534,7 @@
         <member name="M:LiteNetLib.NetManager.PollEvents">
             <summary>
             Receive all pending events. Call this in game update code
+            In Manual mode it will call also socket Receive (which can be slow)
             </summary>
         </member>
         <member name="M:LiteNetLib.NetManager.Connect(System.String,System.Int32,System.String)">
