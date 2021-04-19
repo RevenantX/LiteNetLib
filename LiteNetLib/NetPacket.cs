@@ -127,6 +127,10 @@ namespace LiteNetLib
         //Pool node
         public NetPacket Next;
 
+#if DEBUG_REFCOUNT
+        public int RefCount = 0;
+#endif
+
         public NetPacket(int size)
         {
             RawData = new byte[size];

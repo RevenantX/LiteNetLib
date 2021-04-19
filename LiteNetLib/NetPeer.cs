@@ -743,12 +743,6 @@ namespace LiteNetLib
                         NetDebug.WriteError("Fragment error pos: {0} >= resultPacketSize: {1}", pos + writtenSize, resultingPacket.RawData.Length);
                         return;
                     }
-                    if (fragment.Size > fragment.RawData.Length)
-                    {
-                        _holdedFragments.Remove(packetFragId);
-                        NetDebug.WriteError("Fragment error size: {0} > fragment.RawData.Length: {1}", fragment.Size, fragment.RawData.Length);
-                        return;
-                    }
 
                     //Create resulting big packet
                     Buffer.BlockCopy(
