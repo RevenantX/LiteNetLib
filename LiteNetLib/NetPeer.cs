@@ -735,8 +735,21 @@ namespace LiteNetLib
                 for (int i = 0; i < incomingFragments.ReceivedCount; i++)
                 {
                     var fragment = fragments[i];
-
                     int writtenSize = fragment.Size - NetConstants.FragmentedHeaderTotalSize;
+
+                    if (pos+writtenSize > resultingPacket.RawData.Length)
+                    {
+                        _holdedFragments.Remove(packetFragId);
+                        NetDebug.WriteError("Fragment error pos: {0} >= resultPacketSize: {1}", pos + writtenSize, resultingPacket.RawData.Length);
+                        return;
+                    }
+                    if (fragment.Size > fragment.RawData.Length)
+                    {
+                        _holdedFragments.Remove(packetFragId);
+                        NetDebug.WriteError("Fragment error size: {0} > fragment.RawData.Length: {1}", fragment.Size, fragment.RawData.Length);
+                        return;
+                    }
+
                     //Create resulting big packet
                     Buffer.BlockCopy(
                         fragment.RawData,
@@ -748,14 +761,14 @@ namespace LiteNetLib
 
                     //Free memory
                     _packetPool.Recycle(fragment);
+                    fragments[i] = null;
                 }
-                Array.Clear(fragments, 0, incomingFragments.ReceivedCount);
-
-                //Send to process
-                NetManager.CreateReceiveEvent(resultingPacket, method, 0, this);
 
                 //Clear memory
                 _holdedFragments.Remove(packetFragId);
+
+                //Send to process
+                NetManager.CreateReceiveEvent(resultingPacket, method, 0, this);
             }
             else //Just simple packet
             {
