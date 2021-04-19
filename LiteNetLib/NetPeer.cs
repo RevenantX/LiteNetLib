@@ -730,7 +730,10 @@ namespace LiteNetLib
                     if (pos+writtenSize > resultingPacket.RawData.Length)
                     {
                         _holdedFragments.Remove(packetFragId);
-                        NetDebug.WriteError("Fragment error pos: {0} >= resultPacketSize: {1}", pos + writtenSize, resultingPacket.RawData.Length);
+                        NetDebug.WriteError("Fragment error pos: {0} >= resultPacketSize: {1} , totalSize: {2}", 
+                            pos + writtenSize, 
+                            resultingPacket.RawData.Length,
+                            incomingFragments.TotalSize);
                         return;
                     }
                     if (fragment.Size > fragment.RawData.Length)
@@ -926,22 +929,19 @@ namespace LiteNetLib
                         ushort size = BitConverter.ToUInt16(packet.RawData, pos);
                         pos += 2;
                         if (packet.RawData.Length - pos < size)
-                        {
-                            _packetPool.Recycle(packet);
-                            return;
-                        }
+                            break;
+
                         NetPacket mergedPacket = _packetPool.GetPacket(size);
                         Buffer.BlockCopy(packet.RawData, pos, mergedPacket.RawData, 0, size);
                         mergedPacket.Size = size;
 
-                        if (!mergedPacket.Verify() || packet.RawData.Length < pos + size)
-                        {
-                            _packetPool.Recycle(packet);
+                        if (!mergedPacket.Verify())
                             break;
-                        }
+
                         pos += size;
                         ProcessPacket(mergedPacket);
                     }
+                    _packetPool.Recycle(packet);
                     break;
                 //If we get ping, send pong
                 case PacketProperty.Ping:
