@@ -126,10 +126,10 @@ namespace LiteNetLib.Utils
             peer.Send(_netDataWriter, options);
         }
 
-        public void SendNetSerializable<T>(NetPeer peer, T packet, DeliveryMethod options) where T : INetSerializable
+        public void SendNetSerializable<T>(NetPeer peer, ref T packet, DeliveryMethod options) where T : INetSerializable
         {
             _netDataWriter.Reset();
-            WriteNetSerializable(_netDataWriter, packet);
+            WriteNetSerializable(_netDataWriter, ref packet);
             peer.Send(_netDataWriter, options);
         }
 
@@ -140,10 +140,10 @@ namespace LiteNetLib.Utils
             manager.SendToAll(_netDataWriter, options);
         }
 
-        public void SendNetSerializable<T>(NetManager manager, T packet, DeliveryMethod options) where T : INetSerializable
+        public void SendNetSerializable<T>(NetManager manager, ref T packet, DeliveryMethod options) where T : INetSerializable
         {
             _netDataWriter.Reset();
-            WriteNetSerializable(_netDataWriter, packet);
+            WriteNetSerializable(_netDataWriter, ref packet);
             manager.SendToAll(_netDataWriter, options);
         }
 
@@ -153,7 +153,7 @@ namespace LiteNetLib.Utils
             _netSerializer.Serialize(writer, packet);
         }
 
-        public void WriteNetSerializable<T>(NetDataWriter writer, T packet) where T : INetSerializable
+        public void WriteNetSerializable<T>(NetDataWriter writer, ref T packet) where T : INetSerializable
         {
             WriteHash<T>(writer);
             packet.Serialize(writer);

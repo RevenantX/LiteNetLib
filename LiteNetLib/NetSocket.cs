@@ -169,7 +169,7 @@ namespace LiteNetLib
                     //NetDebug.Write($"[R]Ignored error: {(int)ex.SocketErrorCode} - {ex}");
                     break;
                 default:
-                    NetDebug.WriteError($"[R]Error code: {(int)ex.SocketErrorCode} - {ex.ToString()}");
+                    NetDebug.WriteError($"[R]Error code: {(int)ex.SocketErrorCode} - {ex}");
                     _listener.OnMessageReceived(null, ex.SocketErrorCode, (IPEndPoint)bufferEndPoint);
                     break;
             }
