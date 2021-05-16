@@ -128,7 +128,7 @@ namespace LiteNetLib
         public NetPacket Next;
 
 #if DEBUG_REFCOUNT
-        public int RefCount = 0;
+        public int RefCount = 1;
 #endif
 
         public NetPacket(int size)

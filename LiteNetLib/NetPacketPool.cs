@@ -34,7 +34,7 @@ namespace LiteNetLib
 
         public NetPacket GetPacket(int size)
         {
-            if (size > NetConstants.MaxPacketSize) 
+            if (size > NetConstants.MaxPacketSize)
                 return new NetPacket(size);
 
             NetPacket packet;
@@ -46,15 +46,10 @@ namespace LiteNetLib
             } while (packet != Interlocked.CompareExchange(ref _head, packet.Next, packet));
 
 #if DEBUG_REFCOUNT
-            if (Interlocked.Increment(ref packet.RefCount) > 1)
-            {
-                Interlocked.Decrement(ref packet.RefCount);
-                NetDebug.WriteError("PacketRefCount more than 1: {0}", Environment.StackTrace);
-                return new NetPacket(size);
-            }
+            Interlocked.Increment(ref packet.RefCount);
 #endif
 
-            _count--;
+            Interlocked.Decrement(ref _count);
             packet.Size = size;
             if (packet.RawData.Length < size)
                 packet.RawData = new byte[size];
@@ -69,15 +64,16 @@ namespace LiteNetLib
                 return;
             }
 
-            _count++;
+#if DEBUG_REFCOUNT
+            int result = Interlocked.Decrement(ref packet.RefCount);
+            if (result != 0)
+                NetDebug.WriteError("PacketRefCount invalid: {0}, {1}", result, Environment.StackTrace);
+#endif
+
+            Interlocked.Increment(ref _count);
 
             //Clean fragmented flag
             packet.RawData[0] = 0;
-
-#if DEBUG_REFCOUNT
-            if (packet.RefCount > 0)
-                Interlocked.Decrement(ref packet.RefCount);
-#endif
 
             do
             {
