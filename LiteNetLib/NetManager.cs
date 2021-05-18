@@ -179,6 +179,7 @@ namespace LiteNetLib
         private int _lastPeerId;
         private readonly Queue<int> _peerIds;
         private byte _channelsCount = 1;
+        private readonly object _eventLock = new object();
 
         internal readonly NetPacketPool NetPacketPool;
 
@@ -572,15 +573,14 @@ namespace LiteNetLib
             else if (type == NetEvent.EType.MessageDelivered)
                 unsyncEvent = UnsyncedDeliveryEvent;
 
-            do
+            lock(_eventLock)
             {
                 evt = _netEventPoolHead;
                 if (evt == null)
-                {
                     evt = new NetEvent(this);
-                    break;
-                }
-            } while (evt != Interlocked.CompareExchange(ref _netEventPoolHead, evt.Next, evt));
+                else
+                    _netEventPoolHead = evt.Next;
+            }
 
             evt.Type = type;
             evt.DataReader.SetSource(readerSource, readerSource == null ? 0 : readerSource.GetHeaderSize());
@@ -657,10 +657,11 @@ namespace LiteNetLib
             evt.ErrorCode = 0;
             evt.RemoteEndPoint = null;
             evt.ConnectionRequest = null;
-            do
+            lock(_eventLock)
             {
                 evt.Next = _netEventPoolHead;
-            } while (evt.Next != Interlocked.CompareExchange(ref _netEventPoolHead, evt, evt.Next));
+                _netEventPoolHead = evt;
+            }
         }
 
         //Update function
@@ -1131,15 +1132,14 @@ namespace LiteNetLib
         internal void CreateReceiveEvent(NetPacket packet, DeliveryMethod method, int headerSize, NetPeer fromPeer)
         {
             NetEvent evt;
-            do
+            lock (_eventLock)
             {
                 evt = _netEventPoolHead;
                 if (evt == null)
-                {
                     evt = new NetEvent(this);
-                    break;
-                }
-            } while (evt != Interlocked.CompareExchange(ref _netEventPoolHead, evt.Next, evt));
+                else
+                    _netEventPoolHead = evt.Next;
+            }
             evt.Type = NetEvent.EType.Receive;
             evt.DataReader.SetSource(packet, headerSize);
             evt.Peer = fromPeer;

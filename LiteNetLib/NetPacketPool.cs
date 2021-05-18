@@ -7,6 +7,7 @@ namespace LiteNetLib
     {
         private NetPacket _head;
         private int _count;
+        private readonly object _lock = new object();
 
         public NetPacket GetWithData(PacketProperty property, byte[] data, int start, int length)
         {
@@ -38,16 +39,13 @@ namespace LiteNetLib
                 return new NetPacket(size);
 
             NetPacket packet;
-            do
+            lock (_lock)
             {
                 packet = _head;
                 if (packet == null)
                     return new NetPacket(size);
-            } while (packet != Interlocked.CompareExchange(ref _head, packet.Next, packet));
-
-#if DEBUG_REFCOUNT
-            Interlocked.Increment(ref packet.RefCount);
-#endif
+                _head = _head.Next;
+            }
 
             Interlocked.Decrement(ref _count);
             packet.Size = size;
@@ -64,21 +62,15 @@ namespace LiteNetLib
                 return;
             }
 
-#if DEBUG_REFCOUNT
-            int result = Interlocked.Decrement(ref packet.RefCount);
-            if (result != 0)
-                NetDebug.WriteError("PacketRefCount invalid: {0}, {1}", result, Environment.StackTrace);
-#endif
-
             Interlocked.Increment(ref _count);
 
             //Clean fragmented flag
             packet.RawData[0] = 0;
-
-            do
+            lock (_lock)
             {
                 packet.Next = _head;
-            } while (packet.Next != Interlocked.CompareExchange(ref _head, packet, packet.Next));
+                _head = packet;
+            }
         }
     }
 }
