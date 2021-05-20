@@ -174,6 +174,7 @@ namespace LiteNetLib
         private ConcurrentQueue<int> _peerIds;
         private byte _channelsCount = 1;
         private readonly object _eventLock = new object();
+        private readonly AutoResetEvent _canPoll = new AutoResetEvent(false);
 
         internal readonly NetPacketPool NetPacketPool;
 
@@ -321,6 +322,12 @@ namespace LiteNetLib
         /// use direct socket calls for send/receive to drastically increase speed and reduce GC pressure
         /// </summary>
         public bool UseNativeSockets = false;
+
+        /// <summary>
+        /// Blocking mode for PollEvents to prevent a thread sleeping without shooting up CPU usage
+        /// Caution: This will block the caller thread completely
+        /// </summary>
+        public bool BlockingPoll = false;
 
         /// <summary>
         /// QoS channel count per message type (value must be between 1 and 64 channels)
@@ -597,7 +604,10 @@ namespace LiteNetLib
             else
             {
                 lock (_netEventsQueue)
+                {
                     _netEventsQueue.Enqueue(evt);
+                    _canPoll.Set();
+                }
             }
         }
 
@@ -1139,7 +1149,11 @@ namespace LiteNetLib
             }
             else
             {
-                _netEventsQueue.Enqueue(evt);
+                lock(_netEventsQueue)
+                {
+                    _netEventsQueue.Enqueue(evt);
+                    _canPoll.Set();
+                }
             }
         }
 
@@ -1482,19 +1496,34 @@ namespace LiteNetLib
         {
             if (_manualMode)
             {
+                if (BlockingPoll)
+                    throw new Exception("Blocking Poll Events not supported in Manual mode");
+
                 _socket.ManualReceive();
                 ProcessDelayedPackets();
                 return;
             }
             if (UnsyncedEvents)
                 return;
-            int eventsCount = _netEventsQueue.Count;
-            for(int i = 0; i < eventsCount; i++)
+
+            if(!BlockingPoll)
             {
-                if (_netEventsQueue.TryDequeue(out var evt))
+                int eventsCount = _netEventsQueue.Count;
+                for (int i = 0; i < eventsCount; i++)
+                {
+                    if (_netEventsQueue.TryDequeue(out var evt))
+                        ProcessEvent(evt);
+                    else
+                        break;
+                }
+            }
+            else
+            {
+                _canPoll.WaitOne();
+                while(_netEventsQueue.TryDequeue(out var evt))
+                {
                     ProcessEvent(evt);
-                else
-                    break;
+                }
             }
         }
 
