@@ -1519,10 +1519,13 @@ namespace LiteNetLib
             }
             else
             {
-                _canPoll.WaitOne();
-                while(_netEventsQueue.TryDequeue(out var evt))
+                while (BlockingPoll)
                 {
-                    ProcessEvent(evt);
+                    _canPoll.WaitOne();
+                    while (_netEventsQueue.TryDequeue(out var evt))
+                    {
+                        ProcessEvent(evt);
+                    }
                 }
             }
         }
