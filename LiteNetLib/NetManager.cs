@@ -596,8 +596,7 @@ namespace LiteNetLib
             }
             else
             {
-                lock (_netEventsQueue)
-                    _netEventsQueue.Enqueue(evt);
+                _netEventsQueue.Enqueue(evt);
             }
         }
 
