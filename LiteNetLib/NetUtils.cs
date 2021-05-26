@@ -189,5 +189,14 @@ namespace LiteNetLib
         {
             return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
         }
+
+        internal static T[] AllocatePinnedUninitializedArray<T>(int count) where T : unmanaged
+        {
+#if NET5_0_OR_GREATER || NET5_0
+            return GC.AllocateUninitializedArray<T>(count, true);
+#else
+            return new T[count];
+#endif
+        }
     }
 }

@@ -33,11 +33,7 @@ namespace LiteNetLib
 
         static NetPacket()
         {
-#if NET5_0_OR_GREATER || NET5_0
-            HeaderSizes = GC.AllocateUninitializedArray<int>(PropertiesCount, true);
-#else
-            HeaderSizes = new int[PropertiesCount];
-#endif
+            HeaderSizes = NetUtils.AllocatePinnedUninitializedArray<int>(PropertiesCount);
             for (int i = 0; i < HeaderSizes.Length; i++)
             {
                 switch ((PacketProperty)i)
