@@ -62,8 +62,6 @@ namespace LiteNetLib
         private Socket _udpSocketv6;
         private Thread _threadv4;
         private Thread _threadv6;
-        private byte[] _receiveBufferv4;
-        private byte[] _receiveBufferv6;
         private IPEndPoint _bufferEndPointv4;
         private IPEndPoint _bufferEndPointv6;
 
@@ -167,14 +165,13 @@ namespace LiteNetLib
 
         public void ManualReceive()
         {
-            ManualReceive(_udpSocketv4, _bufferEndPointv4, _receiveBufferv4);
+            ManualReceive(_udpSocketv4, _bufferEndPointv4);
             if (_udpSocketv6 != null && _udpSocketv6 != _udpSocketv4)
-                ManualReceive(_udpSocketv6, _bufferEndPointv6, _receiveBufferv6);
+                ManualReceive(_udpSocketv6, _bufferEndPointv6);
         }
 
-        private bool ManualReceive(Socket socket, EndPoint bufferEndPoint, byte[] receiveBuffer)
+        private bool ManualReceive(Socket socket, EndPoint bufferEndPoint)
         {
-            int result;
             //Reading data
             try
             {
@@ -186,7 +183,7 @@ namespace LiteNetLib
                     var packet = _listener.NetPacketPool.GetPacket(NetConstants.MaxPacketSize);
                     packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
                         ref bufferEndPoint);
-                    NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
+                    NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), packet.Size);
                     _listener.OnMessageReceived(packet, 0, (IPEndPoint)bufferEndPoint);
                     available -= packet.Size;
                 }
@@ -209,7 +206,6 @@ namespace LiteNetLib
 
             while (IsActive())
             {
-                int result;
                 NetPacket packet;
 
                 //Reading data
@@ -233,7 +229,7 @@ namespace LiteNetLib
                 }
 
                 //All ok!
-                NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), result);
+                NetDebug.Write(NetLogLevel.Trace, "[R]Received data from {0}, result: {1}", bufferEndPoint.ToString(), packet.Size);
                 _listener.OnMessageReceived(packet, 0, (IPEndPoint)bufferEndPoint);
             }
         }
@@ -288,7 +284,6 @@ namespace LiteNetLib
             }
             else
             {
-                _receiveBufferv4 = new byte[NetConstants.MaxPacketSize];
                 _bufferEndPointv4 = new IPEndPoint(IPAddress.Any, 0);
             }
 
@@ -302,7 +297,6 @@ namespace LiteNetLib
             {
                 if (manualMode)
                 {
-                    _receiveBufferv6 = new byte[NetConstants.MaxPacketSize];
                     _bufferEndPointv6 = new IPEndPoint(IPAddress.IPv6Any, 0);
                 }
                 else
