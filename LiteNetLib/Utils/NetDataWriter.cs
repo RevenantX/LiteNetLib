@@ -362,7 +362,8 @@ namespace LiteNetLib.Utils
 
             int length = value.Length > maxLength ? maxLength : value.Length;
 
-            int totalBytesCount = Encoding.UTF8.GetByteCount(value); //gets length of total string and not substring
+            int totalBytesCount = Encoding.UTF8.GetMaxByteCount(length); //gets max length irrespective of actual length
+
             if (_autoResize)
                 ResizeIfNeed(_position + totalBytesCount + 4);
 
