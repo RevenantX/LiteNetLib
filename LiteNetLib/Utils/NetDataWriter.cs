@@ -370,7 +370,7 @@ namespace LiteNetLib.Utils
             _position += 4;
 
             int requiredBytesCount = Encoding.UTF8.GetBytes(value, 0, length, _data, _position); //put string here
-            int positionAfterWrite = _position + totalBytesCount; //position where string data ends
+            int positionAfterWrite = _position + requiredBytesCount; //position where string data ends
 
             _position = countPosition; //go to position where we need to write int value
 
