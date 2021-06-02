@@ -361,18 +361,21 @@ namespace LiteNetLib.Utils
             }
 
             int length = value.Length > maxLength ? maxLength : value.Length;
-            //calculate max count
-            int bytesCount = Encoding.UTF8.GetByteCount(value);
+
+            int totalBytesCount = Encoding.UTF8.GetByteCount(value); //gets length of total string and not substring
             if (_autoResize)
-                ResizeIfNeed(_position + bytesCount + 4);
+                ResizeIfNeed(_position + totalBytesCount + 4);
 
-            //put bytes count
-            Put(bytesCount);
+            int countPosition = _position; //save position where length needs to be stored
+            _position += 4;
 
-            //put string
-            Encoding.UTF8.GetBytes(value, 0, length, _data, _position);
+            int requiredBytesCount = Encoding.UTF8.GetBytes(value, 0, length, _data, _position); //put string here
+            int positionAfterWrite = _position + totalBytesCount; //position where string data ends
 
-            _position += bytesCount;
+            _position = countPosition; //go to position where we need to write int value
+
+            Put(requiredBytesCount); //put length of substring
+            _position = positionAfterWrite; //reset position to final position
         }
 
         public void Put<T>(T obj) where T : INetSerializable
