@@ -11,12 +11,12 @@ namespace LiteNetLib.Utils
         public static unsafe void GetBytes<T>(byte[] bytes, int startIndex, T value) where T : unmanaged
         {
             if (bytes.Length < startIndex + sizeof(T))
-                ThrowArgumentOutOfRangeException();
+                ThrowIndexOutOfRangeException();
             fixed (byte* ptr = &bytes[startIndex])
                 *(T*)ptr = value;
         }
 
-        private static void ThrowArgumentOutOfRangeException() => throw new IndexOutOfRangeException();
+        private static void ThrowIndexOutOfRangeException() => throw new IndexOutOfRangeException();
 #else
         [StructLayout(LayoutKind.Explicit)]
         private struct ConverterHelperDouble
