@@ -86,7 +86,7 @@ namespace LiteNetLib
                     (address[26] << 16) +
                     (address[25] << 8) +
                     (address[24])));
-#if NETCOREAPP || NETSTANDARD2_1_OR_GREATER
+#if NETCOREAPP || NETSTANDARD2_1 || NETSTANDARD2_1_OR_GREATER
                 Address = new IPAddress(new ReadOnlySpan<byte>(address, 8, 16), scope);
 #else
                 byte[] addrBuffer = new byte[16];
