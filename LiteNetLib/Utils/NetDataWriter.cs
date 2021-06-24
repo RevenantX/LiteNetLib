@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace LiteNetLib.Utils
@@ -65,15 +66,22 @@ namespace LiteNetLib.Utils
             return netDataWriter;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ResizeIfNeed(int newSize)
         {
-            int len = _data.Length;
-            if (len < newSize)
+            if (_data.Length < newSize)
             {
-                while (len < newSize)
-                    len *= 2;
-                Array.Resize(ref _data, len);
+                Resize(newSize);
             }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void Resize(int newSize)
+        {
+            int len = _data.Length;
+            while (len < newSize)
+                len *= 2;
+            Array.Resize(ref _data, len);
         }
 
         public void Reset(int size)
