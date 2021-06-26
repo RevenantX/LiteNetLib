@@ -6,14 +6,14 @@ namespace LiteNetLib.Utils
 {
     public static class FastBitConverter
     {
-#if (LITENETLIB_UNSAFE || NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER) && !BIGENDIAN
+#if (LITENETLIB_UNSAFE || LITENETLIB_UNSAFELIB || NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER) && !BIGENDIAN
 #if LITENETLIB_UNSAFE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe void GetBytes<T>(byte[] bytes, int startIndex, T value) where T : unmanaged
         {
             if (bytes.Length < startIndex + sizeof(T))
                 ThrowIndexOutOfRangeException();
-#if NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER
+#if LITENETLIB_UNSAFELIB || NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER
             Unsafe.As<byte, T>(ref bytes[startIndex]) = value;
 #else
             fixed (byte* ptr = &bytes[startIndex])
