@@ -27,7 +27,7 @@ namespace LiteNetLib.Tests
 
             int offset = 0;
             int length = packet.Length;
-            _crc32Layer.ProcessInboundPacket(_dummyEndpoint, ref packet, ref offset, ref length);
+            _crc32Layer.ProcessInboundPacket(ref _dummyEndpoint, ref packet, ref offset, ref length);
 
             Assert.AreEqual(packet.Length - CRC32C.ChecksumSize, length);
         }
@@ -42,7 +42,7 @@ namespace LiteNetLib.Tests
 
             int offset = 0;
             int length = packet.Length;
-            _crc32Layer.ProcessInboundPacket(_dummyEndpoint, ref packet, ref offset, ref length);
+            _crc32Layer.ProcessInboundPacket(ref _dummyEndpoint, ref packet, ref offset, ref length);
 
             Assert.AreEqual(0, length);
         }
@@ -55,7 +55,7 @@ namespace LiteNetLib.Tests
             int offset = 0;
             int length = packet.Length;
 
-            _crc32Layer.ProcessInboundPacket(_dummyEndpoint, ref packet, ref offset, ref length);
+            _crc32Layer.ProcessInboundPacket(ref _dummyEndpoint, ref packet, ref offset, ref length);
 
             Assert.AreEqual(0, length);
         }
@@ -71,8 +71,8 @@ namespace LiteNetLib.Tests
 
             int offset = 0;
             int length = message.Length;
-            _crc32Layer.ProcessOutBoundPacket(_dummyEndpoint, ref package, ref offset, ref length);
-            _crc32Layer.ProcessInboundPacket(_dummyEndpoint, ref package, ref offset, ref length);
+            _crc32Layer.ProcessOutBoundPacket(ref _dummyEndpoint, ref package, ref offset, ref length);
+            _crc32Layer.ProcessInboundPacket(ref _dummyEndpoint, ref package, ref offset, ref length);
         }
 
         private static byte[] GetTestPacketWithCrc()

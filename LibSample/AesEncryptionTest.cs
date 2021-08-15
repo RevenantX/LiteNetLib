@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -11,6 +12,8 @@ namespace LibSample
 
         private void AesLayerEncryptDecrypt()
         {
+            IPEndPoint emptyEndPoint = null;
+
             var keyGen = RandomNumberGenerator.Create();
             byte[] key = new byte[AesEncryptLayer.KeySizeInBytes];
             keyGen.GetBytes(key);
@@ -21,7 +24,7 @@ namespace LibSample
             int lengthOfPacket = outbound.Length;
             int start = 0;
             int length = outbound.Length;
-            outboudLayer.ProcessOutBoundPacket(null, ref outbound, ref start, ref length);
+            outboudLayer.ProcessOutBoundPacket(ref emptyEndPoint, ref outbound, ref start, ref length);
 
             int minLenth = lengthOfPacket + AesEncryptLayer.BlockSizeInBytes;
             int maxLength = lengthOfPacket + outboudLayer.ExtraPacketSizeForLayer;
@@ -34,7 +37,7 @@ namespace LibSample
             //Copy array so we dont read and write to same array
             byte[] inboundData = new byte[outbound.Length];
             outbound.CopyTo(inboundData, 0);
-            inboundLayer.ProcessInboundPacket(null, ref inboundData, ref start, ref length);
+            inboundLayer.ProcessInboundPacket(ref emptyEndPoint, ref inboundData, ref start, ref length);
 
             Console.WriteLine(Encoding.ASCII.GetString(inboundData, 0, length));
             byte[] expectedPlaintext = Encoding.ASCII.GetBytes(testData);

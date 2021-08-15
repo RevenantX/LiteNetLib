@@ -82,7 +82,7 @@ namespace LiteNetLib
         }
 
         //Channels
-        private readonly ConcurrentQueue<NetPacket> _unreliableChannel;
+        private readonly Queue<NetPacket> _unreliableChannel;
         private readonly ConcurrentQueue<BaseChannel> _channelSendQueue;
         private readonly BaseChannel[] _channels;
 
@@ -211,7 +211,7 @@ namespace LiteNetLib
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
             _pingPacket = new NetPacket(PacketProperty.Ping, 0) {Sequence = 1};
 
-            _unreliableChannel = new ConcurrentQueue<NetPacket>();
+            _unreliableChannel = new Queue<NetPacket>();
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
             _deliveredFragments = new Dictionary<ushort, ushort>();
 
@@ -577,7 +577,8 @@ namespace LiteNetLib
 
             if (channel == null) //unreliable
             {
-                _unreliableChannel.Enqueue(packet);
+                lock(_unreliableChannel)
+                    _unreliableChannel.Enqueue(packet);
             }
             else
             {
@@ -675,14 +676,6 @@ namespace LiteNetLib
                 int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
                 int totalPackets = length / packetDataSize + (length % packetDataSize == 0 ? 0 : 1);
 
-                NetDebug.Write("FragmentSend:\n" +
-                           " MTU: {0}\n" +
-                           " headerSize: {1}\n" +
-                           " packetFullSize: {2}\n" +
-                           " packetDataSize: {3}\n" +
-                           " totalPackets: {4}",
-                    mtu, headerSize, packetFullSize, packetDataSize, totalPackets);
-
                 if (totalPackets > ushort.MaxValue)
                     throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + ushort.MaxValue);
 
@@ -716,7 +709,8 @@ namespace LiteNetLib
 
             if (channel == null) //unreliable
             {
-                _unreliableChannel.Enqueue(packet);
+                lock(_unreliableChannel)
+                    _unreliableChannel.Enqueue(packet);
             }
             else
             {
@@ -870,8 +864,8 @@ namespace LiteNetLib
                     if (pos+writtenSize > resultingPacket.RawData.Length)
                     {
                         _holdedFragments.Remove(packetFragId);
-                        NetDebug.WriteError("Fragment error pos: {0} >= resultPacketSize: {1} , totalSize: {2}", 
-                            pos + writtenSize, 
+                        NetDebug.WriteError("Fragment error pos: {0} >= resultPacketSize: {1} , totalSize: {2}",
+                            pos + writtenSize,
                             resultingPacket.RawData.Length,
                             incomingFragments.TotalSize);
                         return;
@@ -1288,10 +1282,15 @@ namespace LiteNetLib
                 }
             }
 
-            while (_unreliableChannel.TryDequeue(out var packet))
+            lock (_unreliableChannel)
             {
-                SendUserData(packet);
-                NetManager.NetPacketPool.Recycle(packet);
+                int unreliableCount = _unreliableChannel.Count;
+                for (int i = 0; i < unreliableCount; i++)
+                {
+                    var packet = _unreliableChannel.Dequeue();
+                    SendUserData(packet);
+                    NetManager.NetPacketPool.Recycle(packet);
+                }
             }
 
             SendMerged();

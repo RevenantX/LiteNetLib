@@ -41,14 +41,6 @@ namespace LiteNetLib.Utils
             _dataSize = source.Length;
         }
 
-        public void SetSource(byte[] source, int offset)
-        {
-            _data = source;
-            _position = offset;
-            _offset = offset;
-            _dataSize = source.Length;
-        }
-
         public void SetSource(byte[] source, int offset, int maxSize)
         {
             _data = source;
@@ -70,11 +62,6 @@ namespace LiteNetLib.Utils
         public NetDataReader(byte[] source)
         {
             SetSource(source);
-        }
-
-        public NetDataReader(byte[] source, int offset)
-        {
-            SetSource(source, offset);
         }
 
         public NetDataReader(byte[] source, int offset, int maxSize)

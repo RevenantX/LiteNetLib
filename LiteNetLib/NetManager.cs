@@ -155,27 +155,29 @@ namespace LiteNetLib
         private bool _manualMode;
         private readonly AutoResetEvent _updateTriggerEvent = new AutoResetEvent(true);
 
-        private ConcurrentQueue<NetEvent> _netEventsQueue;
+        private Queue<NetEvent> _netEventsProduceQueue = new Queue<NetEvent>();
+        private Queue<NetEvent> _netEventsConsumeQueue = new Queue<NetEvent>();
+
         private NetEvent _netEventPoolHead;
         private readonly INetEventListener _netEventListener;
         private readonly IDeliveryEventListener _deliveryEventListener;
         private readonly INtpEventListener _ntpEventListener;
 
-        private readonly Dictionary<IPEndPoint, NetPeer> _peersDict;
-        private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict;
-        private readonly Dictionary<IPEndPoint, NtpRequest> _ntpRequests;
-        private readonly ReaderWriterLockSlim _peersLock;
+        private readonly Dictionary<IPEndPoint, NetPeer> _peersDict = new Dictionary<IPEndPoint, NetPeer>(new IPEndPointComparer());
+        private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>(new IPEndPointComparer());
+        private readonly Dictionary<IPEndPoint, NtpRequest> _ntpRequests = new Dictionary<IPEndPoint, NtpRequest>(new IPEndPointComparer());
+        private readonly ReaderWriterLockSlim _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private volatile NetPeer _headPeer;
         private volatile int _connectedPeersCount;
-        private readonly List<NetPeer> _connectedPeerListCache;
-        private NetPeer[] _peersArray;
+        private readonly List<NetPeer> _connectedPeerListCache = new List<NetPeer>();
+        private NetPeer[] _peersArray = new NetPeer[32];
         private readonly PacketLayerBase _extraPacketLayer;
         private int _lastPeerId;
-        private ConcurrentQueue<int> _peerIds;
+        private ConcurrentQueue<int> _peerIds = new ConcurrentQueue<int>();
         private byte _channelsCount = 1;
         private readonly object _eventLock = new object();
 
-        internal readonly NetPacketPool NetPacketPool;
+        internal readonly NetPacketPool NetPacketPool = new NetPacketPool();
 
         //config section
         /// <summary>
@@ -269,7 +271,7 @@ namespace LiteNetLib
         /// <summary>
         /// Statistics of all connections
         /// </summary>
-        public readonly NetStatistics Statistics;
+        public readonly NetStatistics Statistics = new NetStatistics();
 
         /// <summary>
         /// Toggles the collection of network statistics for the instance and all known peers
@@ -431,17 +433,7 @@ namespace LiteNetLib
             _netEventListener = listener;
             _deliveryEventListener = listener as IDeliveryEventListener;
             _ntpEventListener = listener as INtpEventListener;
-            _netEventsQueue = new ConcurrentQueue<NetEvent>();
-            NetPacketPool = new NetPacketPool();
             NatPunchModule = new NatPunchModule(_socket);
-            Statistics = new NetStatistics();
-            _connectedPeerListCache = new List<NetPeer>();
-            _peersDict = new Dictionary<IPEndPoint, NetPeer>(new IPEndPointComparer());
-            _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>(new IPEndPointComparer());
-            _ntpRequests = new Dictionary<IPEndPoint, NtpRequest>(new IPEndPointComparer());
-            _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-            _peerIds = new ConcurrentQueue<int>();
-            _peersArray = new NetPeer[32];
             _extraPacketLayer = extraPacketLayer;
         }
 
@@ -480,7 +472,7 @@ namespace LiteNetLib
                 var expandedPacket = NetPacketPool.GetPacket(length + _extraPacketLayer.ExtraPacketSizeForLayer);
                 Buffer.BlockCopy(message, start, expandedPacket.RawData, 0, length);
                 int newStart = 0;
-                _extraPacketLayer.ProcessOutBoundPacket(remoteEndPoint, ref expandedPacket.RawData, ref newStart, ref length);
+                _extraPacketLayer.ProcessOutBoundPacket(ref remoteEndPoint, ref expandedPacket.RawData, ref newStart, ref length);
                 result = _socket.SendTo(expandedPacket.RawData, newStart, length, remoteEndPoint, ref errorCode);
                 NetPacketPool.Recycle(expandedPacket);
             }
@@ -596,7 +588,8 @@ namespace LiteNetLib
             }
             else
             {
-                _netEventsQueue.Enqueue(evt);
+                lock(_netEventsProduceQueue)
+                    _netEventsProduceQueue.Enqueue(evt);
             }
         }
 
@@ -995,7 +988,7 @@ namespace LiteNetLib
             if (_extraPacketLayer != null)
             {
                 int start = 0;
-                _extraPacketLayer.ProcessInboundPacket(remoteEndPoint, ref packet.RawData, ref start, ref packet.Size);
+                _extraPacketLayer.ProcessInboundPacket(ref remoteEndPoint, ref packet.RawData, ref start, ref packet.Size);
                 if (packet.Size == 0)
                     return;
             }
@@ -1138,7 +1131,8 @@ namespace LiteNetLib
             }
             else
             {
-                _netEventsQueue.Enqueue(evt);
+                lock(_netEventsProduceQueue)
+                    _netEventsProduceQueue.Enqueue(evt);
             }
         }
 
@@ -1453,7 +1447,8 @@ namespace LiteNetLib
                 Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
                 var checksumComputeStart = 0;
                 int preCrcLength = length + headerSize;
-                _extraPacketLayer.ProcessOutBoundPacket(null, ref packet.RawData, ref checksumComputeStart, ref preCrcLength);
+                IPEndPoint emptyEp = null;
+                _extraPacketLayer.ProcessOutBoundPacket(ref emptyEp, ref packet.RawData, ref checksumComputeStart, ref preCrcLength);
             }
             else
             {
@@ -1487,13 +1482,16 @@ namespace LiteNetLib
             }
             if (UnsyncedEvents)
                 return;
-            int eventsCount = _netEventsQueue.Count;
-            for(int i = 0; i < eventsCount; i++)
+            lock (_netEventsProduceQueue)
             {
-                if (_netEventsQueue.TryDequeue(out var evt))
-                    ProcessEvent(evt);
-                else
-                    break;
+                (_netEventsConsumeQueue, _netEventsProduceQueue) = (_netEventsProduceQueue, _netEventsConsumeQueue);
+            }
+
+            lock (_netEventsConsumeQueue)
+            {
+                int eventsCount = _netEventsConsumeQueue.Count;
+                for(int i = 0; i < eventsCount; i++)
+                    ProcessEvent(_netEventsConsumeQueue.Dequeue());
             }
         }
 
@@ -1633,7 +1631,8 @@ namespace LiteNetLib
                 _pingSimulationList.Clear();
 #endif
             _connectedPeersCount = 0;
-            _netEventsQueue = new ConcurrentQueue<NetEvent>();
+            _netEventsProduceQueue.Clear();
+            _netEventsConsumeQueue.Clear();
         }
 
         /// <summary>

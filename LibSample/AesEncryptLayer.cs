@@ -47,7 +47,7 @@ namespace LibSample
             _decryptor = _aes.CreateDecryptor();
         }
 
-        public override void ProcessInboundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public override void ProcessInboundPacket(ref IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
         {
             //Can't copy directly to _aes.IV. It won't work for some reason.
             Buffer.BlockCopy(data, offset, ivBuffer, 0, ivBuffer.Length);
@@ -66,7 +66,7 @@ namespace LibSample
             length = lastBytes.Length;
         }
 
-        public override void ProcessOutBoundPacket(IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public override void ProcessOutBoundPacket(ref IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
         {
             //Some Unity platforms may need these (and will be slower + generate garbage)
             if (!_encryptor.CanReuseTransform)
