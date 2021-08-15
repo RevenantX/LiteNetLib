@@ -404,30 +404,16 @@ namespace LiteNetLib
             {
                 //Unity with IL2CPP throws an exception here, it doesn't matter in most cases so just ignore it
             }
-            if (socket.AddressFamily == AddressFamily.InterNetwork)
+            if (ep.AddressFamily == AddressFamily.InterNetwork || ipv6Mode == IPv6Mode.DualMode)
             {
                 Ttl = NetConstants.SocketTTL;
-
-                if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    try
-                    {
-                        socket.DontFragment = true;
-                    }
-                    catch (SocketException e)
-                    {
-                        NetDebug.WriteError($"[B]DontFragment error: {e.SocketErrorCode}");
-                    }
-                }
 
                 try { socket.EnableBroadcast = true; }
                 catch (SocketException e)
                 {
                     NetDebug.WriteError($"[B]Broadcast error: {e.SocketErrorCode}");
                 }
-            }
-            else //IPv6 specific
-            {
+
                 if (ipv6Mode == IPv6Mode.DualMode)
                 {
                     try
@@ -440,8 +426,18 @@ namespace LiteNetLib
                         NetDebug.WriteError($"[B]Bind exception (dualmode setting): {e}");
                     }
                 }
+                else if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    try
+                    {
+                        socket.DontFragment = true;
+                    }
+                    catch (SocketException e)
+                    {
+                        NetDebug.WriteError($"[B]DontFragment error: {e.SocketErrorCode}");
+                    }
+                }
             }
-
             //Bind
             try
             {
@@ -449,7 +445,7 @@ namespace LiteNetLib
                 NetDebug.Write(NetLogLevel.Trace, $"[B]Successfully binded to port: {((IPEndPoint)socket.LocalEndPoint).Port}, AF: {socket.AddressFamily}");
 
                 //join multicast
-                if (socket.AddressFamily == AddressFamily.InterNetworkV6)
+                if (ep.AddressFamily == AddressFamily.InterNetworkV6)
                 {
                     try
                     {
