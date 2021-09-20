@@ -48,7 +48,7 @@ namespace LiteNetLib
 
         public static IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily)
         {
-            IPAddress[] addresses = ResolveAddresses(hostStr);
+            IPAddress[] addresses = Dns.GetHostEntry(hostStr).AddressList;
             foreach (IPAddress ip in addresses)
             {
                 if (ip.AddressFamily == addressFamily)
@@ -57,11 +57,6 @@ namespace LiteNetLib
                 }
             }
             return null;
-        }
-
-        public static IPAddress[] ResolveAddresses(string hostStr)
-        {
-            return Dns.GetHostEntry(hostStr).AddressList;
         }
 
         /// <summary>
@@ -117,7 +112,7 @@ namespace LiteNetLib
             //Fallback mode (unity android)
             if (targetList.Count == 0)
             {
-                IPAddress[] addresses = ResolveAddresses(Dns.GetHostName());
+                IPAddress[] addresses = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
                 foreach (IPAddress ip in addresses)
                 {
                     if((ipv4 && ip.AddressFamily == AddressFamily.InterNetwork) ||
