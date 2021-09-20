@@ -61,10 +61,7 @@ namespace LiteNetLib
 
         public static IPAddress[] ResolveAddresses(string hostStr)
         {
-            var hostTask = Dns.GetHostEntryAsync(hostStr);
-            hostTask.GetAwaiter().GetResult();
-            var host = hostTask.Result;
-            return host.AddressList;
+            return Dns.GetHostEntry(hostStr).AddressList;
         }
 
         /// <summary>
