@@ -325,6 +325,11 @@ namespace LiteNetLib
         public bool UseNativeSockets = false;
 
         /// <summary>
+        /// Disconnect peers if HostUnreachable or NetworkUnreachable spawned (old behaviour 0.9.x was true)
+        /// </summary>
+        public bool DisconnectOnUnreachable = false;
+
+        /// <summary>
         /// QoS channel count per message type (value must be between 1 and 64 channels)
         /// </summary>
         public byte ChannelsCount
@@ -481,20 +486,22 @@ namespace LiteNetLib
                 result = _socket.SendTo(message, start, length, remoteEndPoint, ref errorCode);
             }
 
-            NetPeer fromPeer;
             switch (errorCode)
             {
                 case SocketError.MessageSize:
                     NetDebug.Write(NetLogLevel.Trace, "[SRD] 10040, datalen: {0}", length);
                     return -1;
+
                 case SocketError.HostUnreachable:
-                    if (TryGetPeer(remoteEndPoint, out fromPeer))
-                        DisconnectPeerForce(fromPeer, DisconnectReason.HostUnreachable, errorCode, null);
-                    CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
-                    return -1;
                 case SocketError.NetworkUnreachable:
-                    if (TryGetPeer(remoteEndPoint, out fromPeer))
-                        DisconnectPeerForce(fromPeer, DisconnectReason.NetworkUnreachable, errorCode, null);
+                    if (DisconnectOnUnreachable && TryGetPeer(remoteEndPoint, out var fromPeer))
+                    {
+                        DisconnectPeerForce(
+                            fromPeer,
+                            errorCode == SocketError.HostUnreachable ? DisconnectReason.HostUnreachable : DisconnectReason.NetworkUnreachable,
+                            errorCode,
+                            null);
+                    }
                     CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: errorCode);
                     return -1;
             }
