@@ -7,8 +7,20 @@ namespace LiteNetLib.Utils
     {
         private static class HashCache<T>
         {
-            public static bool Initialized;
-            public static ulong Id;
+            public static readonly ulong Id;
+
+            //FNV-1 64 bit hash
+            static HashCache()
+            {
+                ulong hash = 14695981039346656037UL; //offset
+                string typeName = typeof(T).FullName;
+                for (var i = 0; i < typeName.Length; i++)
+                {
+                    hash ^= typeName[i];
+                    hash *= 1099511628211UL; //prime
+                }
+                Id = hash;
+            }
         }
 
         protected delegate void SubscribeDelegate(NetDataReader reader, object userData);
@@ -26,22 +38,9 @@ namespace LiteNetLib.Utils
             _netSerializer = new NetSerializer(maxStringLength);
         }
 
-        //FNV-1 64 bit hash
         protected virtual ulong GetHash<T>()
         {
-            if(HashCache<T>.Initialized)
-                return HashCache<T>.Id;
-
-            ulong hash = 14695981039346656037UL; //offset
-            string typeName = typeof(T).FullName;
-            for (var i = 0; i < typeName.Length; i++)
-            {
-                hash = hash ^ typeName[i];
-                hash *= 1099511628211UL; //prime
-            }
-            HashCache<T>.Initialized = true;
-            HashCache<T>.Id = hash;
-            return hash;
+            return HashCache<T>.Id;
         }
 
         protected virtual SubscribeDelegate GetCallbackFromData(NetDataReader reader)
