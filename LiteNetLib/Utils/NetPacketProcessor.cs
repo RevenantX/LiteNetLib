@@ -13,7 +13,7 @@ namespace LiteNetLib.Utils
             static HashCache()
             {
                 ulong hash = 14695981039346656037UL; //offset
-                string typeName = typeof(T).FullName;
+                string typeName = typeof(T).ToString();
                 for (var i = 0; i < typeName.Length; i++)
                 {
                     hash ^= typeName[i];
