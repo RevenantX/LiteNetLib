@@ -505,7 +505,8 @@ namespace LiteNetLib
 
                 case SocketError.HostUnreachable:
                 case SocketError.NetworkUnreachable:
-                    if (DisconnectOnUnreachable && TryGetPeer(remoteEndPoint, out var fromPeer))
+                    NetPeer fromPeer;
+                    if (DisconnectOnUnreachable && TryGetPeer(remoteEndPoint, out fromPeer))
                     {
                         DisconnectPeerForce(
                             fromPeer,
