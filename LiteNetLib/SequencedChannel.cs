@@ -92,6 +92,7 @@ namespace LiteNetLib
                 Peer.NetManager.CreateReceiveEvent(
                     packet,
                     _reliable ? DeliveryMethod.ReliableSequenced : DeliveryMethod.Sequenced,
+                    (byte)(packet.ChannelId / NetConstants.ChannelTypeCount),
                     NetConstants.ChanneledHeaderSize,
                     Peer);
                 packetProcessed = true;

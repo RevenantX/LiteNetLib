@@ -44,7 +44,7 @@ namespace LibSample
             NetManager client = new NetManager(listener);
             client.Start();
             client.Connect("localhost" /* host ip or name */, 9050 /* port */, "SomeConnectionKey" /* text key or NetDataWriter */);
-            listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
+            listener.NetworkReceiveEvent += (fromPeer, dataReader, channel, deliveryMethod) =>
             {
                 Console.WriteLine("We got: {0}", dataReader.GetString(100 /* max length of string */));
                 dataReader.Recycle();
