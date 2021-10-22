@@ -52,6 +52,7 @@
         //protocol
         internal const int ProtocolId = 11;
         internal const int MaxUdpHeaderSize = 68;
+        internal const int ChannelTypeCount = 4;
 
         internal static readonly int[] PossibleMtu =
         {
