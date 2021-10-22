@@ -80,7 +80,7 @@ namespace LiteNetLib
         /// <param name="peer">From peer</param>
         /// <param name="reader">DataReader containing all received data</param>
         /// <param name="deliveryMethod">Type of received packet</param>
-        void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod, byte channel);
+        void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod);
 
         /// <summary>
         /// Received unconnected message
@@ -128,7 +128,7 @@ namespace LiteNetLib
         public delegate void OnPeerConnected(NetPeer peer);
         public delegate void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
         public delegate void OnNetworkError(IPEndPoint endPoint, SocketError socketError);
-        public delegate void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod, byte channel);
+        public delegate void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channel, DeliveryMethod deliveryMethod);
         public delegate void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType);
         public delegate void OnNetworkLatencyUpdate(NetPeer peer, int latency);
         public delegate void OnConnectionRequest(ConnectionRequest request);
@@ -208,10 +208,10 @@ namespace LiteNetLib
                 NetworkErrorEvent(endPoint, socketErrorCode);
         }
 
-        void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod, byte channel)
+        void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
         {
             if (NetworkReceiveEvent != null)
-                NetworkReceiveEvent(peer, reader, deliveryMethod, channel);
+                NetworkReceiveEvent(peer, reader, channelNumber, deliveryMethod);
         }
 
         void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)

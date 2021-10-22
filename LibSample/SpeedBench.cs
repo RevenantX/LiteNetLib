@@ -47,7 +47,7 @@ namespace LibSample
                 request.AcceptIfKey("ConnKey");
             }
 
-            void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod, byte channel)
+            void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
             {
                 var isReliable = reader.GetBool();
                 var data = reader.GetString();
@@ -146,7 +146,7 @@ namespace LibSample
                 request.RejectForce();
             }
 
-            void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod, byte channel)
+            void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
             {
 
             }

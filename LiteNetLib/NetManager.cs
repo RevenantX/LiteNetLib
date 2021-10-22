@@ -81,7 +81,7 @@ namespace LiteNetLib
         public DisconnectReason DisconnectReason;
         public ConnectionRequest ConnectionRequest;
         public DeliveryMethod DeliveryMethod;
-        public byte Channel;
+        public byte ChannelNumber;
         public readonly NetPacketReader DataReader;
 
         public NetEvent(NetManager manager)
@@ -559,7 +559,7 @@ namespace LiteNetLib
             DisconnectReason disconnectReason = DisconnectReason.ConnectionFailed,
             ConnectionRequest connectionRequest = null,
             DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable,
-            byte channel = 0,
+            byte channelNumber = 0,
             NetPacket readerSource = null,
             object userData = null)
         {
@@ -589,7 +589,7 @@ namespace LiteNetLib
             evt.DisconnectReason = disconnectReason;
             evt.ConnectionRequest = connectionRequest;
             evt.DeliveryMethod = deliveryMethod;
-            evt.Channel = channel;
+            evt.ChannelNumber = channelNumber;
             evt.UserData = userData;
 
             if (unsyncEvent || _manualMode)
@@ -622,7 +622,7 @@ namespace LiteNetLib
                     _netEventListener.OnPeerDisconnected(evt.Peer, info);
                     break;
                 case NetEvent.EType.Receive:
-                    _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader, evt.DeliveryMethod, evt.Channel);
+                    _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader, evt.ChannelNumber, evt.DeliveryMethod);
                     break;
                 case NetEvent.EType.ReceiveUnconnected:
                     _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.BasicMessage);
@@ -1120,7 +1120,7 @@ namespace LiteNetLib
             }
         }
 
-        internal void CreateReceiveEvent(NetPacket packet, DeliveryMethod method, byte channel, int headerSize, NetPeer fromPeer)
+        internal void CreateReceiveEvent(NetPacket packet, DeliveryMethod method, byte channelNumber, int headerSize, NetPeer fromPeer)
         {
             NetEvent evt;
             lock (_eventLock)
@@ -1135,7 +1135,7 @@ namespace LiteNetLib
             evt.DataReader.SetSource(packet, headerSize);
             evt.Peer = fromPeer;
             evt.DeliveryMethod = method;
-            evt.Channel = channel;
+            evt.ChannelNumber = channelNumber;
             if (UnsyncedEvents || UnsyncedReceiveEvent || _manualMode)
             {
                 ProcessEvent(evt);

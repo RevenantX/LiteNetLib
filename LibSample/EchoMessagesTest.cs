@@ -63,7 +63,7 @@ namespace LibSample
                 Console.WriteLine("[Client] error! " + socketErrorCode);
             }
 
-            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod, byte channel)
+            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
             {
                 if (reader.AvailableBytes == 13218)
                 {
@@ -121,7 +121,7 @@ namespace LibSample
                 Console.WriteLine("[Server] error: " + socketErrorCode);
             }
 
-            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod, byte channel)
+            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
             {
                 //echo
                 peer.Send(reader.GetRemainingBytes(), deliveryMethod);
