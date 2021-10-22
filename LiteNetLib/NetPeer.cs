@@ -817,6 +817,7 @@ namespace LiteNetLib
                 NetDebug.Write("Fragment. Id: {0}, Part: {1}, Total: {2}", p.FragmentId, p.FragmentPart, p.FragmentsTotal);
                 //Get needed array from dictionary
                 ushort packetFragId = p.FragmentId;
+                byte packetChannelId = p.ChannelId;
                 if (!_holdedFragments.TryGetValue(packetFragId, out var incomingFragments))
                 {
                     incomingFragments = new IncomingFragments
@@ -895,11 +896,11 @@ namespace LiteNetLib
                 _holdedFragments.Remove(packetFragId);
 
                 //Send to process
-                NetManager.CreateReceiveEvent(resultingPacket, method, 0, this);
+                NetManager.CreateReceiveEvent(resultingPacket, method, packetChannelId, 0, this);
             }
             else //Just simple packet
             {
-                NetManager.CreateReceiveEvent(p, method, NetConstants.ChanneledHeaderSize, this);
+                NetManager.CreateReceiveEvent(p, method, p.ChannelId, NetConstants.ChanneledHeaderSize, this);
             }
         }
 
@@ -1120,7 +1121,7 @@ namespace LiteNetLib
 
                 //Simple packet without acks
                 case PacketProperty.Unreliable:
-                    NetManager.CreateReceiveEvent(packet, DeliveryMethod.Unreliable, NetConstants.HeaderSize, this);
+                    NetManager.CreateReceiveEvent(packet, DeliveryMethod.Unreliable, 0, NetConstants.HeaderSize, this);
                     return;
 
                 case PacketProperty.MtuCheck:

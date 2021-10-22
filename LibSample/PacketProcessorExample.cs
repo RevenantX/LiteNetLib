@@ -52,7 +52,7 @@ namespace LibSample
                 request.AcceptIfKey("key");
             };
             serverListener.NetworkReceiveEvent +=
-                (peer, reader, method) =>
+                (peer, reader, method, channel) =>
                 {
                     _netPacketProcessor.ReadAllPackets(reader, peer);
                 };

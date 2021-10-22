@@ -28,7 +28,7 @@ namespace LibSample
                 Console.WriteLine("[Client] error! " + error);
             }
 
-            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod, byte channel)
             {
 
             }
@@ -78,7 +78,7 @@ namespace LibSample
                 Console.WriteLine("[Server] error: " + socketErrorCode);
             }
 
-            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod, byte channel)
             {
 
             }
