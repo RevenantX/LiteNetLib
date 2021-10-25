@@ -166,6 +166,7 @@ namespace LiteNetLib
                 case SocketError.ConnectionReset:
                 case SocketError.MessageSize:
                 case SocketError.TimedOut:
+                case SocketError.NetworkReset:
                     //NetDebug.Write($"[R]Ignored error: {(int)ex.SocketErrorCode} - {ex}");
                     break;
                 default:
