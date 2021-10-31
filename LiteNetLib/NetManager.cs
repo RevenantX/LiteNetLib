@@ -840,8 +840,8 @@ namespace LiteNetLib
                 if (rejectData != null && length > 0)
                 {
                     var shutdownPacket = NetPacketPool.GetWithProperty(PacketProperty.Disconnect, length);
-                    shutdownPacket.ConnectionNumber = request.ConnectionNumber;
-                    FastBitConverter.GetBytes(shutdownPacket.RawData, 1, request.ConnectionTime);
+                    shutdownPacket.ConnectionNumber = request.InternalPacket.ConnectionNumber;
+                    FastBitConverter.GetBytes(shutdownPacket.RawData, 1, request.InternalPacket.ConnectionTime);
                     if (shutdownPacket.Size >= NetConstants.PossibleMtu[0])
                         NetDebug.WriteError("[Peer] Disconnect additional data size more than MTU!");
                     else
@@ -860,14 +860,14 @@ namespace LiteNetLib
                 else if (request.Result == ConnectionRequestResult.Reject)
                 {
                     netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId());
-                    netPeer.Reject(request.ConnectionTime, request.ConnectionNumber, rejectData, start, length);
+                    netPeer.Reject(request.InternalPacket, rejectData, start, length);
                     AddPeer(netPeer);
                     _peersLock.ExitUpgradeableReadLock();
                     NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
                 }
                 else //Accept
                 {
-                    netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId(), request.ConnectionTime, request.ConnectionNumber);
+                    netPeer = new NetPeer(this, request, GetNextPeerId());
                     AddPeer(netPeer);
                     _peersLock.ExitUpgradeableReadLock();
                     CreateEvent(NetEvent.EType.Connect, netPeer);
@@ -892,9 +892,6 @@ namespace LiteNetLib
             NetPeer netPeer,
             NetConnectRequestPacket connRequest)
         {
-            byte connectionNumber = connRequest.ConnectionNumber;
-            ConnectionRequest req;
-
             //if we have peer
             if (netPeer != null)
             {
@@ -928,7 +925,7 @@ namespace LiteNetLib
                 //ConnectRequestResult.NewConnection
                 //Set next connection number
                 if(processResult != ConnectRequestResult.P2PLose)
-                    connectionNumber = (byte)((netPeer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
+                    connRequest.ConnectionNumber = (byte)((netPeer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
                 //To reconnect peer
             }
             else
@@ -936,6 +933,7 @@ namespace LiteNetLib
                 NetDebug.Write("ConnectRequest Id: {0}, EP: {1}", connRequest.ConnectionTime, remoteEndPoint);
             }
 
+            ConnectionRequest req;
             lock (_requestsDict)
             {
                 if (_requestsDict.TryGetValue(remoteEndPoint, out req))
@@ -943,12 +941,7 @@ namespace LiteNetLib
                     req.UpdateRequest(connRequest);
                     return;
                 }
-                req = new ConnectionRequest(
-                    connRequest.ConnectionTime,
-                    connectionNumber,
-                    connRequest.Data,
-                    remoteEndPoint,
-                    this);
+                req = new ConnectionRequest(remoteEndPoint, connRequest, this);
                 _requestsDict.Add(remoteEndPoint, req);
             }
             NetDebug.Write("[NM] Creating request event: " + connRequest.ConnectionTime);

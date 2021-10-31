@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class NetPacketProcessor
    ">
-    <meta name="generator" content="docfx 2.56.7.0">
+    <meta name="generator" content="docfx 2.58.5.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -658,12 +658,12 @@
   
   
   <a id="LiteNetLib_Utils_NetPacketProcessor_SendNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SendNetSerializable*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_SendNetSerializable__1_LiteNetLib_NetManager___0_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SendNetSerializable``1(LiteNetLib.NetManager,``0,LiteNetLib.DeliveryMethod)">SendNetSerializable&lt;T&gt;(NetManager, T, DeliveryMethod)</h4>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_SendNetSerializable__1_LiteNetLib_NetManager___0__LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SendNetSerializable``1(LiteNetLib.NetManager,``0@,LiteNetLib.DeliveryMethod)">SendNetSerializable&lt;T&gt;(NetManager, ref T, DeliveryMethod)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SendNetSerializable&lt;T&gt;(NetManager manager, T packet, DeliveryMethod options)
+    <pre><code class="lang-csharp hljs">public void SendNetSerializable&lt;T&gt;(NetManager manager, ref T packet, DeliveryMethod options)
     where T : INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -711,12 +711,12 @@
   
   
   <a id="LiteNetLib_Utils_NetPacketProcessor_SendNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SendNetSerializable*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_SendNetSerializable__1_LiteNetLib_NetPeer___0_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SendNetSerializable``1(LiteNetLib.NetPeer,``0,LiteNetLib.DeliveryMethod)">SendNetSerializable&lt;T&gt;(NetPeer, T, DeliveryMethod)</h4>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_SendNetSerializable__1_LiteNetLib_NetPeer___0__LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SendNetSerializable``1(LiteNetLib.NetPeer,``0@,LiteNetLib.DeliveryMethod)">SendNetSerializable&lt;T&gt;(NetPeer, ref T, DeliveryMethod)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SendNetSerializable&lt;T&gt;(NetPeer peer, T packet, DeliveryMethod options)
+    <pre><code class="lang-csharp hljs">public void SendNetSerializable&lt;T&gt;(NetPeer peer, ref T packet, DeliveryMethod options)
     where T : INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1310,12 +1310,12 @@ This method will overwrite last received packet class on receive (less garbage)<
   
   
   <a id="LiteNetLib_Utils_NetPacketProcessor_WriteNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.WriteNetSerializable*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_WriteNetSerializable__1_LiteNetLib_Utils_NetDataWriter___0_" data-uid="LiteNetLib.Utils.NetPacketProcessor.WriteNetSerializable``1(LiteNetLib.Utils.NetDataWriter,``0)">WriteNetSerializable&lt;T&gt;(NetDataWriter, T)</h4>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_WriteNetSerializable__1_LiteNetLib_Utils_NetDataWriter___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.WriteNetSerializable``1(LiteNetLib.Utils.NetDataWriter,``0@)">WriteNetSerializable&lt;T&gt;(NetDataWriter, ref T)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void WriteNetSerializable&lt;T&gt;(NetDataWriter writer, T packet)
+    <pre><code class="lang-csharp hljs">public void WriteNetSerializable&lt;T&gt;(NetDataWriter writer, ref T packet)
     where T : INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>

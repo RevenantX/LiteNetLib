@@ -60,7 +60,7 @@
             <param name="endPoint">From endPoint (can be null)</param>
             <param name="socketError">Socket error</param>
         </member>
-        <member name="M:LiteNetLib.INetEventListener.OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.NetPacketReader,LiteNetLib.DeliveryMethod)">
+        <member name="M:LiteNetLib.INetEventListener.OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.NetPacketReader,System.Byte,LiteNetLib.DeliveryMethod)">
             <summary>
             Received some data
             </summary>
@@ -105,6 +105,11 @@
         <member name="T:LiteNetLib.NatPunchModule">
             <summary>
             Module for UDP NAT Hole punching operations. Can be accessed from NetManager
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.NatPunchModule.UnsyncedEvents">
+            <summary>
+            Events automatically will be called without PollEvents method from another thread
             </summary>
         </member>
         <member name="T:LiteNetLib.DeliveryMethod">
@@ -301,6 +306,11 @@
             <summary>
             Experimental feature mostly for servers. Only for Windows/Linux
             use direct socket calls for send/receive to drastically increase speed and reduce GC pressure
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.NetManager.DisconnectOnUnreachable">
+            <summary>
+            Disconnect peers if HostUnreachable or NetworkUnreachable spawned (old behaviour 0.9.x was true)
             </summary>
         </member>
         <member name="P:LiteNetLib.NetManager.ChannelsCount">
@@ -700,6 +710,11 @@
         <member name="F:LiteNetLib.NetPeer.Id">
             <summary>
             Peer id can be used as key in your dictionary of peers
+            </summary>
+        </member>
+        <member name="P:LiteNetLib.NetPeer.RemoteId">
+            <summary>
+            Id assigned from server
             </summary>
         </member>
         <member name="P:LiteNetLib.NetPeer.Ping">

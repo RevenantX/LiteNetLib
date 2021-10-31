@@ -153,6 +153,11 @@ namespace LiteNetLib
         public readonly int Id;
 
         /// <summary>
+        /// Id assigned from server
+        /// </summary>
+        public int RemoteId { get; private set; }
+
+        /// <summary>
         /// Current ping in milliseconds
         /// </summary>
         public int Ping => _avgRtt/2;
@@ -281,36 +286,40 @@ namespace LiteNetLib
             ConnectionNum = connectNum;
 
             //Make initial packet
-            _connectRequestPacket = NetConnectRequestPacket.Make(connectData, remoteEndPoint.Serialize(), _connectTime);
+            _connectRequestPacket = NetConnectRequestPacket.Make(connectData, remoteEndPoint.Serialize(), _connectTime, id);
             _connectRequestPacket.ConnectionNumber = connectNum;
 
             //Send request
             NetManager.SendRaw(_connectRequestPacket, EndPoint);
 
-            NetDebug.Write(NetLogLevel.Trace, "[CC] ConnectId: {0}, ConnectNum: {1}", _connectTime, connectNum);
+            NetDebug.Write(NetLogLevel.Trace, $"[CC] ConnectId: {_connectTime}, ConnectNum: {connectNum}");
         }
 
         //"Accept" incoming constructor
-        internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id, long connectId, byte connectNum)
-            : this(netManager, remoteEndPoint, id)
+        internal NetPeer(NetManager netManager, ConnectionRequest request, int id)
+            : this(netManager, request.RemoteEndPoint, id)
         {
-            _connectTime = connectId;
-            _connectionState = ConnectionState.Connected;
-            ConnectionNum = connectNum;
+            _connectTime = request.InternalPacket.ConnectionTime;
+            ConnectionNum = request.InternalPacket.ConnectionNumber;
+            RemoteId = request.InternalPacket.PeerId;
 
             //Make initial packet
-            _connectAcceptPacket = NetConnectAcceptPacket.Make(_connectTime, connectNum, false);
+            _connectAcceptPacket = NetConnectAcceptPacket.Make(_connectTime, ConnectionNum, false, id);
+
+            //Make Connected
+            _connectionState = ConnectionState.Connected;
+
             //Send
             NetManager.SendRaw(_connectAcceptPacket, EndPoint);
 
-            NetDebug.Write(NetLogLevel.Trace, "[CC] ConnectId: {0}", _connectTime);
+            NetDebug.Write(NetLogLevel.Trace, $"[CC] ConnectId: {_connectTime}");
         }
 
         //Reject
-        internal void Reject(long connectionId, byte connectionNumber, byte[] data, int start, int length)
+        internal void Reject(NetConnectRequestPacket requestData, byte[] data, int start, int length)
         {
-            _connectTime = connectionId;
-            _connectNum = connectionNumber;
+            _connectTime = requestData.ConnectionTime;
+            _connectNum = requestData.ConnectionNumber;
             Shutdown(data, start, length, false);
         }
 
@@ -320,13 +329,14 @@ namespace LiteNetLib
                 return false;
 
             //check connection id
-            if (packet.ConnectionId != _connectTime)
+            if (packet.ConnectionTime != _connectTime)
             {
-                NetDebug.Write(NetLogLevel.Trace, "[NC] Invalid connectId: {1} != our({0})", _connectTime, packet.ConnectionId);
+                NetDebug.Write(NetLogLevel.Trace, $"[NC] Invalid connectId: {packet.ConnectionTime} != our({_connectTime})");
                 return false;
             }
             //check connect num
             ConnectionNum = packet.ConnectionNumber;
+            RemoteId = packet.PeerId;
 
             NetDebug.Write(NetLogLevel.Trace, "[NC] Received connection accept");
             Interlocked.Exchange(ref _timeSinceLastPacket, 0);

@@ -17,38 +17,35 @@ namespace LiteNetLib
         private readonly NetManager _listener;
         private int _used;
 
-        public readonly NetDataReader Data;
+        public NetDataReader Data => InternalPacket.Data;
 
         internal ConnectionRequestResult Result { get; private set; }
-        internal long ConnectionTime;
-        internal byte ConnectionNumber;
+        internal NetConnectRequestPacket InternalPacket;
+
         public readonly IPEndPoint RemoteEndPoint;
+
+        internal void UpdateRequest(NetConnectRequestPacket connectRequest)
+        {
+            //old request
+            if (connectRequest.ConnectionTime < InternalPacket.ConnectionTime)
+                return;
+
+            if (connectRequest.ConnectionTime == InternalPacket.ConnectionTime &&
+                connectRequest.ConnectionNumber == InternalPacket.ConnectionNumber)
+                return;
+
+            InternalPacket = connectRequest;
+        }
 
         private bool TryActivate()
         {
             return Interlocked.CompareExchange(ref _used, 1, 0) == 0;
         }
 
-        internal void UpdateRequest(NetConnectRequestPacket connRequest)
+        internal ConnectionRequest(IPEndPoint remoteEndPoint, NetConnectRequestPacket requestPacket, NetManager listener)
         {
-            if (connRequest.ConnectionTime >= ConnectionTime)
-            {
-                ConnectionTime = connRequest.ConnectionTime;
-                ConnectionNumber = connRequest.ConnectionNumber;
-            }
-        }
-
-        internal ConnectionRequest(
-            long connectionId,
-            byte connectionNumber,
-            NetDataReader netDataReader,
-            IPEndPoint endPoint,
-            NetManager listener)
-        {
-            ConnectionTime = connectionId;
-            ConnectionNumber = connectionNumber;
-            RemoteEndPoint = endPoint;
-            Data = netDataReader;
+            InternalPacket = requestPacket;
+            RemoteEndPoint = remoteEndPoint;
             _listener = listener;
         }
 

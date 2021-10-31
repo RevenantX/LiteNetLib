@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "C:/Projects/LiteNetLib/docfx_project",
+  "source_base_path": "D:/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -9,7 +9,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.ConnectionRequest.html",
-          "hash": "A/Yi0VpAx9wJPAt1HKQ+ug=="
+          "hash": "hm7/+KxzLKdTiF1A/qkSHk/03DKBRKQWoUeCeo/TP7s="
         }
       },
       "is_incremental": false,
@@ -21,7 +21,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.ConnectionState.html",
-          "hash": "vh2iQLGQDwNgArLv9KOtxA=="
+          "hash": "1iy8liB3vWfTtTXYI4tswF/cF1Y+CCgNzVHGpP94byA="
         }
       },
       "is_incremental": false,
@@ -33,7 +33,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.DeliveryMethod.html",
-          "hash": "pDfCRNPMB06vsPabNqZ7zA=="
+          "hash": "zGXM4WNOSqej5eMS16ANUIlJy2J96XFLQRGXYsSgAoU="
         }
       },
       "is_incremental": false,
@@ -45,7 +45,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.DisconnectInfo.html",
-          "hash": "bsen0b1looRfOTJUgA+wzQ=="
+          "hash": "4iHgVjWOHO0jLu9Z9jtux3qxOA+OXYBukpi9hJM+XSY="
         }
       },
       "is_incremental": false,
@@ -57,7 +57,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.DisconnectReason.html",
-          "hash": "qGQFCqpUiSGj+g33uLItqQ=="
+          "hash": "FLG5dG3q0t5kVsQ5woWxvUmRtZ6LWdP9wRwu2G+mi7g="
         }
       },
       "is_incremental": false,
@@ -69,7 +69,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.EventBasedNatPunchListener.html",
-          "hash": "qBNZsOZ0iij+nCqatT4Hrw=="
+          "hash": "NupoyI0W0kuQyKRkhysN6S4vmSIgdjm7XvoutKu4M2g="
         }
       },
       "is_incremental": false,
@@ -81,7 +81,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.EventBasedNetListener.html",
-          "hash": "SRDRhCVuorKlRutoUmLAQg=="
+          "hash": "LA19ZdbLR/lf5Ue3E586cvkE8LdCnVK3UnsN45huWBU="
         }
       },
       "is_incremental": false,
@@ -93,7 +93,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.IDeliveryEventListener.html",
-          "hash": "5ekHOiF9skm0gUt7PejIDA=="
+          "hash": "tLDlel5XykkbD05H3Z8J9Y+ehkOwmFgdrjtZVM0zRg8="
         }
       },
       "is_incremental": false,
@@ -105,7 +105,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.INatPunchListener.html",
-          "hash": "p4ZGY1uptonnoqROu97gXg=="
+          "hash": "SFDuBepu2XGPtQHxXvCqK+sNXEZDIlXlJI69UNR/mlo="
         }
       },
       "is_incremental": false,
@@ -117,7 +117,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.INetEventListener.html",
-          "hash": "g8BVJHskxbldaz5RqTauTQ=="
+          "hash": "Vk4onUzlgqxp7XW8fSf8ae/qVlTc1KlUsM9VK/t9SG8="
         }
       },
       "is_incremental": false,
@@ -129,7 +129,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.INetLogger.html",
-          "hash": "qKjyy4TivZmsMZeG96e+zg=="
+          "hash": "l9syeai5gweWhZYPlfZqBDSIF+2S8S5wtwn3V/FR8uU="
         }
       },
       "is_incremental": false,
@@ -141,7 +141,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.INtpEventListener.html",
-          "hash": "n/RRtu4TNln73CNC6qS+YQ=="
+          "hash": "K+gM0YHoHE5NfxhorWcxwCQiXt5ZgcHixJ3u3uzjAq8="
         }
       },
       "is_incremental": false,
@@ -153,7 +153,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.IPv6Mode.html",
-          "hash": "vMHSg4oNE0P6PAf9LLOGwA=="
+          "hash": "Udjh+TcN3JImLZOP3uEgnbD6+/m119U1evRs3Qel1Ec="
         }
       },
       "is_incremental": false,
@@ -165,7 +165,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.InvalidPacketException.html",
-          "hash": "TXQz8m3eZ6doyyi17iJDXA=="
+          "hash": "MNP5ziLycWPVojqy+PHrfoxLAnqGTSuIKvoWNWK8n4E="
         }
       },
       "is_incremental": false,
@@ -177,7 +177,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Layers.Crc32cLayer.html",
-          "hash": "alZHQ5DV4xMhYKbRWLrehQ=="
+          "hash": "5B1Ye61rapt9VYFXGQFpSKX+s+YqsRyk2+BEMDdUTUU="
         }
       },
       "is_incremental": false,
@@ -189,7 +189,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Layers.PacketLayerBase.html",
-          "hash": "ugMm/NosgV3B6EqGVVaJRA=="
+          "hash": "QXKywkNcVcXnl1vwQYptFeL6VW6UVhMpn8aEn02zP04="
         }
       },
       "is_incremental": false,
@@ -201,7 +201,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Layers.XorEncryptLayer.html",
-          "hash": "j9WV9VsJYi2N/ezi4RNm3A=="
+          "hash": "toC8tBo1h0097yvgZka249BaEnpBEXUhPD3ooCDh9+w="
         }
       },
       "is_incremental": false,
@@ -213,7 +213,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Layers.html",
-          "hash": "YCO3tPVcbwkYk/vr0NdcUQ=="
+          "hash": "Tb02d7kbEgAgrS9p6Rbt0gPj3UR8IX32EDm0c/cXZvc="
         }
       },
       "is_incremental": false,
@@ -225,7 +225,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.LocalAddrType.html",
-          "hash": "rUQr95rbdYsSfRmJ7fxsPg=="
+          "hash": "zPhCILc2mfbkYUDS/cK7D0qSoSbkCAO9Ow7J8nK2Nqs="
         }
       },
       "is_incremental": false,
@@ -237,7 +237,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NatAddressType.html",
-          "hash": "TWUK7yd1MQM8pymowVe8SQ=="
+          "hash": "y+uD6ULNZa2Ksas6sfxggJhyzFrgkfQXnS26R4LioWM="
         }
       },
       "is_incremental": false,
@@ -249,7 +249,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NatPunchModule.html",
-          "hash": "IW4yuQMZBz1DVKTqldfEVw=="
+          "hash": "afcyLxC4t1POTklwmD+CU7xc9NQTc0IHcw+cHovR9ac="
         }
       },
       "is_incremental": false,
@@ -261,7 +261,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetConstants.html",
-          "hash": "8YcAFk+b/F76pVTHY7KPyQ=="
+          "hash": "1bTyhbgZfbX1YQysG+QYnMa1Vcq0I09+MwaqYXR3bEU="
         }
       },
       "is_incremental": false,
@@ -273,7 +273,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetDebug.html",
-          "hash": "Fgn1ruIbSHOvAmxLpiHFIA=="
+          "hash": "mMfFmUALZAPrJHvH0WIWt29cutyaWbrrYDLplwsEOgg="
         }
       },
       "is_incremental": false,
@@ -285,7 +285,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetLogLevel.html",
-          "hash": "mWWqqzRS6TRylFaoYbZ4qw=="
+          "hash": "xnPwgpEPFaH5NUHQgOE2IU9QmDtEV56B4Ag1na/7nvc="
         }
       },
       "is_incremental": false,
@@ -297,7 +297,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.html",
-          "hash": "VRkYe7UFN4QO5ZRpzkWz7g=="
+          "hash": "AuE7d1or04gXkcUmKfgs9UVawEXt8Yv+ad14ru6LwiI="
         }
       },
       "is_incremental": false,
@@ -309,7 +309,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetManager.html",
-          "hash": "j7RqpYeSSpywjieIOwHIrg=="
+          "hash": "yNhA7f+E5JUur3RZBGF4zNcIJQaUqJN+zKt7Rsv7qYA="
         }
       },
       "is_incremental": false,
@@ -321,7 +321,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetPacketReader.html",
-          "hash": "g81FzFmtLig89OuNT60LDQ=="
+          "hash": "vLgOEyNczHzCiK0P293Ui7Cn6m40faioGdfCII8eNlw="
         }
       },
       "is_incremental": false,
@@ -333,7 +333,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetPeer.html",
-          "hash": "SvOKeW9t9tPghoNJ7e+Vyw=="
+          "hash": "nB+/L+jX9jNQbMeKUrGs5CfSmRVDLvw7H2psgwt01oE="
         }
       },
       "is_incremental": false,
@@ -345,7 +345,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetStatistics.html",
-          "hash": "AeijLZ/yQHOgYFVhoPivQw=="
+          "hash": "kEnhRf4GK4/bHwVLdtXdIMJ3o1Zo06YB86rw2+vkRBU="
         }
       },
       "is_incremental": false,
@@ -357,7 +357,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetUtils.html",
-          "hash": "Iwj3U7n/ryLTnkSlmarzTg=="
+          "hash": "cpou1NOYwY1fbAKjf5yJZryDGVuWjs6EnN3/T2PkMjY="
         }
       },
       "is_incremental": false,
@@ -369,7 +369,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.TooBigPacketException.html",
-          "hash": "qBrtn5WH04DTJLRupL1KeQ=="
+          "hash": "p0lMFO2uBX4S/becjfPwgV/tYp0AsjUOcxOg4Uchpd8="
         }
       },
       "is_incremental": false,
@@ -381,7 +381,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.UnconnectedMessageType.html",
-          "hash": "LeLAVHaVlLKoaUx2wYSgnw=="
+          "hash": "yfVu4FHkC/RTv1zoVdYywtoHa+nnq5CLUPNLoRCrz7k="
         }
       },
       "is_incremental": false,
@@ -393,7 +393,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.CRC32C.html",
-          "hash": "Xiiac+FcwS68RWFH80MA/Q=="
+          "hash": "V4vyfRdmfZGsLbCXpmUqkKt8Ie/KaiPIVzhf1H3Flrc="
         }
       },
       "is_incremental": false,
@@ -405,7 +405,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.FastBitConverter.html",
-          "hash": "q7pejcrQhdjSPw+KHIWH8w=="
+          "hash": "7vNeMACDw+W5DwCluZpSks5Mm4x58KlXryC2Fxxf7D8="
         }
       },
       "is_incremental": false,
@@ -417,7 +417,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.INetSerializable.html",
-          "hash": "SogjWbHAgmjz4D4XJVPrRA=="
+          "hash": "/+4Zuofsxppt+4HURJ2fRu1dBKIa/RaHeGN51HB9arM="
         }
       },
       "is_incremental": false,
@@ -429,7 +429,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.InvalidTypeException.html",
-          "hash": "EkxmCMmjkOU7RAeMw1llBA=="
+          "hash": "LklEZwg0bNCV7vIrS6mFUSK6dNHeBklXA1O0vYuc87E="
         }
       },
       "is_incremental": false,
@@ -441,7 +441,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NetDataReader.html",
-          "hash": "iJdOkBwrV98hHMNIZOorcg=="
+          "hash": "UkSaZg4Qm3XiF1pPC+HX0rmjyN5LeejwqumkwGRXGwI="
         }
       },
       "is_incremental": false,
@@ -453,7 +453,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NetDataWriter.html",
-          "hash": "9khpilGe38WuHKHxHPA7jA=="
+          "hash": "r3okFA+urDOQsRCn8xDZzyNfr4wVTE8cdK9+Bo1CdIk="
         }
       },
       "is_incremental": false,
@@ -465,7 +465,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NetPacketProcessor.html",
-          "hash": "waS5pzCiwIz4aR6RqS0viw=="
+          "hash": "unQv2x/cGNVwS+F2ESlA4dIEqE/p2JSEJiN1rF3cW/U="
         }
       },
       "is_incremental": false,
@@ -477,7 +477,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NetSerializer.html",
-          "hash": "R70h9qD543TJD5IHwPIZBw=="
+          "hash": "lrYyujVmLWNyXUZYePT4d34EteYDmjhND3c6M/Zh9ac="
         }
       },
       "is_incremental": false,
@@ -489,7 +489,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NtpLeapIndicator.html",
-          "hash": "FbFeZ1IcqKo55h3GKChCRA=="
+          "hash": "2WBS/2MwLnLLpb3C+sd1o0CuIGS1XwnJZWBNSIaWiVo="
         }
       },
       "is_incremental": false,
@@ -501,7 +501,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NtpMode.html",
-          "hash": "NUZT7qchEFMGY5Vm6vvt0g=="
+          "hash": "m1eT3BuhLAP2M8SslqtqLaSGClU9e1V2hUfkSNvZ/wU="
         }
       },
       "is_incremental": false,
@@ -513,7 +513,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NtpPacket.html",
-          "hash": "tmYvE56nSFhoPbwMrkoztA=="
+          "hash": "7ikDS8PUmxD5QrAsHzuNkmDPyc4yvnL74hWz8TLXeOE="
         }
       },
       "is_incremental": false,
@@ -525,7 +525,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.ParseException.html",
-          "hash": "Iz5sVqRQS+uwnBxVbUZmHA=="
+          "hash": "0dKN5WQecWRpZsuatTpiWXB6nclB6qySWaBK//eV4oA="
         }
       },
       "is_incremental": false,
@@ -537,7 +537,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.html",
-          "hash": "mKT/gQBilwSdxURxurpotQ=="
+          "hash": "ei59hIO0m+Z3RT868QeWssRTsMY5GWm5alzxfH+nuqg="
         }
       },
       "is_incremental": false,
@@ -549,7 +549,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.html",
-          "hash": "yaVFvsdofBvou6Mvd2bs2w=="
+          "hash": "aIh3sG7hAro0KRvDOH6BC+EG2lSmmpKh62Sj4enFiIE="
         }
       },
       "is_incremental": false,
@@ -561,7 +561,7 @@
       "output": {
         ".html": {
           "relative_path": "api/index.html",
-          "hash": "GSAoMiZJiUdFdsdMcJf3hw=="
+          "hash": "o88+V4pVPs9nrAHQKylmropm79KfjRgga546iPqiKtU="
         }
       },
       "is_incremental": false,
@@ -573,7 +573,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "XXaLyWE9gXbpwkLh/pDxPA=="
+          "hash": "N6uHLu42KySM2LUuoYpEPsF0pWtQ/w7E7BGvKvoetD8="
         }
       },
       "is_incremental": false,
@@ -585,7 +585,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/netserializerusage.html",
-          "hash": "0o8G3JiIra7ML0osOlneMA=="
+          "hash": "Ck5pfTfyCB/CK+mYrtgrsuBylZ7qD/vSmEQgeyWufiU="
         }
       },
       "is_incremental": false,
@@ -597,7 +597,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/toc.html",
-          "hash": "qzqDYS06xf+AljnrgcmZiw=="
+          "hash": "/jL6M34a7ZAzReEGsMx+SypIFwywA3Si0zDi2WN/QGc="
         }
       },
       "is_incremental": false,
@@ -609,7 +609,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "aqmx6UWU8bkvXLwxxIsxug=="
+          "hash": "FM0kLW7HeXKOBLghhtw2tUg/f5a+fn+OYe+WGaq7794="
         }
       },
       "is_incremental": false,
@@ -621,7 +621,7 @@
       "output": {
         ".html": {
           "relative_path": "toc.html",
-          "hash": "W7jy2EhK8cjyrdOBaz/Y7w=="
+          "hash": "imdeqiTm806nbULLG+gwUv94EfoSnyvU92+PkATu5u0="
         }
       },
       "is_incremental": false,
