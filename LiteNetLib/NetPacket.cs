@@ -168,12 +168,13 @@ namespace LiteNetLib
         public readonly NetDataReader Data;
         public readonly int PeerId;
 
-        private NetConnectRequestPacket(long connectionTime, byte connectionNumber, byte[] targetAddress, NetDataReader data)
+        private NetConnectRequestPacket(long connectionTime, byte connectionNumber, int localId, byte[] targetAddress, NetDataReader data)
         {
             ConnectionTime = connectionTime;
             ConnectionNumber = connectionNumber;
             TargetAddress = targetAddress;
             Data = data;
+            PeerId = localId;
         }
 
         public static int GetProtocolId(NetPacket packet)
@@ -204,7 +205,7 @@ namespace LiteNetLib
             if (packet.Size > HeaderSize+addrSize)
                 reader.SetSource(packet.RawData, HeaderSize + addrSize, packet.Size);
 
-            return new NetConnectRequestPacket(connectionTime, packet.ConnectionNumber, addressBytes, reader);
+            return new NetConnectRequestPacket(connectionTime, packet.ConnectionNumber, peerId, addressBytes, reader);
         }
 
         public static NetPacket Make(NetDataWriter connectData, SocketAddress addressBytes, long connectTime, int localId)
