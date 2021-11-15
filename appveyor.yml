@@ -1,5 +1,5 @@
-image: Visual Studio 2019
-version: 0.9.{build}
+image: Visual Studio 2022
+version: 1.0.{build}
 configuration:
   - Release
 before_build:
@@ -16,12 +16,12 @@ test:
   assemblies:
     - '**\*.Tests.dll'
 artifacts:
-  - path: LiteNetLib/bin/Release/net35
+  - path: LiteNetLib/bin/Release/net471
     name: LiteNetLib-$(appveyor_build_version)
     type: Zip
   - path: LiteNetLib/bin/Release/netstandard2.0
     name: LiteNetLibStandard-$(appveyor_build_version)
     type: Zip
-  - path: LiteNetLib/bin/Release/netcoreapp2.1
+  - path: LiteNetLib/bin/Release/netcoreapp3.1
     name: LiteNetLibNetCore-$(appveyor_build_version)
     type: Zip
