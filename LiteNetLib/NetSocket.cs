@@ -417,11 +417,7 @@ namespace LiteNetLib
 
                 if (ipv6Mode == IPv6Mode.DualMode)
                 {
-                    try
-                    {
-                        //Disable IPv6 only mode
-                        socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, false);
-                    }
+                    try { socket.DualMode = true; }
                     catch(Exception e)
                     {
                         NetDebug.WriteError($"[B]Bind exception (dualmode setting): {e}");
@@ -429,10 +425,7 @@ namespace LiteNetLib
                 }
                 else if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
-                    try
-                    {
-                        socket.DontFragment = true;
-                    }
+                    try { socket.DontFragment = true; }
                     catch (SocketException e)
                     {
                         NetDebug.WriteError($"[B]DontFragment error: {e.SocketErrorCode}");
@@ -474,7 +467,7 @@ namespace LiteNetLib
                             try
                             {
                                 //Set IPv6Only
-                                socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, true);
+                                socket.DualMode = false;
                                 socket.Bind(ep);
                             }
                             catch (SocketException ex)
