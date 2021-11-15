@@ -1,6 +1,6 @@
 # LiteNetLib 1.0 indev
 
-Lite reliable UDP library for .NET Framework 4.7.1, Mono, .NET Core 2.1, .NET Standard 2.0.
+Lite reliable UDP library for .NET Framework 4.7.1, Mono, .NET Core 3.1, .NET Standard 2.0.
 
 **Discord chat**: [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
