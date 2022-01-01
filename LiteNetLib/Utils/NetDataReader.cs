@@ -277,21 +277,8 @@ namespace LiteNetLib.Utils
 
         public string GetString(int maxLength)
         {
-            int bytesCount = GetInt();
-            if (bytesCount <= 0 || bytesCount > maxLength*2)
-            {
-                return string.Empty;
-            }
-
-            int charCount = Encoding.UTF8.GetCharCount(_data, _position, bytesCount);
-            if (charCount > maxLength)
-            {
-                return string.Empty;
-            }
-
-            string result = Encoding.UTF8.GetString(_data, _position, bytesCount);
-            _position += bytesCount;
-            return result;
+            string result = GetString();
+            return result.Length > maxLength ? result.Substring(0, maxLength) : result;
         }
 
         public string GetString()
