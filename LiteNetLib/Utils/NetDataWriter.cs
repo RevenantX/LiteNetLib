@@ -247,10 +247,7 @@ namespace LiteNetLib.Utils
 
         public void Put(bool value)
         {
-            if (_autoResize)
-                ResizeIfNeed(_position + 1);
-            _data[_position] = (byte)(value ? 1 : 0);
-            _position++;
+            Put((byte)(value ? 1 : 0));
         }
 
         private void PutArray(Array arr, int sz)
