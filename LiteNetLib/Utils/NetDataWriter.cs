@@ -71,17 +71,8 @@ namespace LiteNetLib.Utils
         {
             if (_data.Length < newSize)
             {
-                Resize(newSize);
+                Array.Resize(ref _data, Math.Max(newSize, _data.Length * 2));
             }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private void Resize(int newSize)
-        {
-            int len = _data.Length;
-            while (len < newSize)
-                len *= 2;
-            Array.Resize(ref _data, len);
         }
 
         public void Reset(int size)
@@ -256,10 +247,7 @@ namespace LiteNetLib.Utils
 
         public void Put(bool value)
         {
-            if (_autoResize)
-                ResizeIfNeed(_position + 1);
-            _data[_position] = (byte)(value ? 1 : 0);
-            _position++;
+            Put((byte)(value ? 1 : 0));
         }
 
         private void PutArray(Array arr, int sz)
