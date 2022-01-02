@@ -71,17 +71,8 @@ namespace LiteNetLib.Utils
         {
             if (_data.Length < newSize)
             {
-                Resize(newSize);
+                Array.Resize(ref _data, Math.Max(newSize, _data.Length * 2));
             }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private void Resize(int newSize)
-        {
-            int len = _data.Length;
-            while (len < newSize)
-                len *= 2;
-            Array.Resize(ref _data, len);
         }
 
         public void Reset(int size)
