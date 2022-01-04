@@ -20,6 +20,11 @@ namespace LiteNetLib.Utils
         public bool EndOfData => _position == _dataSize;
         public int AvailableBytes => _dataSize - _position;
 
+        // Cache encoding instead of creating it with BinaryWriter each time
+        // 1000 readers before: 1MB GC, 30ms
+        // 1000 readers after: .8MB GC, 18ms
+        private static readonly UTF8Encoding _uTF8Encoding = new UTF8Encoding(false, true);
+
         public void SkipBytes(int count)
         {
             _position += count;
@@ -296,14 +301,34 @@ namespace LiteNetLib.Utils
 
         public string GetString()
         {
-            int bytesCount = GetInt();
-            if (bytesCount <= 0)
+            ushort size = GetUShort();
+
+            if(size == 0)
             {
-                return string.Empty;
+                return null;
             }
 
-            string result = Encoding.UTF8.GetString(_data, _position, bytesCount);
-            _position += bytesCount;
+            int realSize = size - 1;
+
+            if(realSize >= NetDataWriter.StringBufferMaxLength)
+            {
+                return null;
+            }
+
+            ArraySegment<byte> data = GetBytesSegment(realSize);
+
+            return _uTF8Encoding.GetString(data.Array, data.Offset, data.Count);
+        }
+
+        public ArraySegment<byte> GetBytesSegment(int count)
+        {
+            /*if(_position + count > _data.Length)
+            {
+                throw new Exception("EndOfStream");
+            }*/
+
+            ArraySegment<byte> result = new ArraySegment<byte>(_data, _position, count);
+            _position += count;
             return result;
         }
 
