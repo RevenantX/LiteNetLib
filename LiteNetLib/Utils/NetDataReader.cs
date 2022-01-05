@@ -280,38 +280,40 @@ namespace LiteNetLib.Utils
             return result;
         }
 
+        /// <summary>
+        /// Note that "maxLength" only limits the number of characters, not the actual string size. It may be different if you use non-ASCII characters, etc.
+        /// </summary>
+        /// <returns>"string.Empty" if > "maxLength"</returns>
         public string GetString(int maxLength)
         {
-            int bytesCount = GetInt();
-            if (bytesCount <= 0 || bytesCount > maxLength*2)
+            ushort size = GetUShort();
+            if (size == 0)
             {
-                return string.Empty;
+                return null;
             }
 
-            int charCount = Encoding.UTF8.GetCharCount(_data, _position, bytesCount);
-            if (charCount > maxLength)
+            int realSize = size - 1; // For ""
+            if (realSize >= NetDataWriter.StringBufferMaxLength)
             {
-                return string.Empty;
+                return null;
             }
 
-            string result = Encoding.UTF8.GetString(_data, _position, bytesCount);
-            _position += bytesCount;
-            return result;
+            ArraySegment<byte> data = GetBytesSegment(realSize);
+
+            return (maxLength > 0 && _uTF8Encoding.GetCharCount(data.Array, data.Offset, data.Count) > maxLength) ?
+                string.Empty :
+                _uTF8Encoding.GetString(data.Array, data.Offset, data.Count);
         }
 
         public string GetString()
         {
             ushort size = GetUShort();
-
-            if(size == 0)
-            {
+            if (size == 0) {
                 return null;
             }
 
-            int realSize = size - 1;
-
-            if(realSize >= NetDataWriter.StringBufferMaxLength)
-            {
+            int realSize = size - 1; // For ""
+            if (realSize >= NetDataWriter.StringBufferMaxLength) {
                 return null;
             }
 
@@ -322,11 +324,6 @@ namespace LiteNetLib.Utils
 
         public ArraySegment<byte> GetBytesSegment(int count)
         {
-            /*if(_position + count > _data.Length)
-            {
-                throw new Exception("EndOfStream");
-            }*/
-
             ArraySegment<byte> result = new ArraySegment<byte>(_data, _position, count);
             _position += count;
             return result;
@@ -449,32 +446,38 @@ namespace LiteNetLib.Utils
 
         public string PeekString(int maxLength)
         {
-            int bytesCount = BitConverter.ToInt32(_data, _position);
-            if (bytesCount <= 0 || bytesCount > maxLength * 2)
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            if (size == 0)
             {
-                return string.Empty;
+                return null;
+            }
+            int realSize = size - 1; // For empty strings
+
+            if (realSize >= NetDataWriter.StringBufferMaxLength)
+            {
+                return null;
             }
 
-            int charCount = Encoding.UTF8.GetCharCount(_data, _position + 4, bytesCount);
-            if (charCount > maxLength)
-            {
-                return string.Empty;
-            }
-
-            string result = Encoding.UTF8.GetString(_data, _position + 4, bytesCount);
-            return result;
+            return (maxLength > 0 && _uTF8Encoding.GetCharCount(_data, _position + 2, realSize) > maxLength) ?
+                string.Empty :
+                _uTF8Encoding.GetString(_data, _position + 2, realSize);
         }
 
         public string PeekString()
         {
-            int bytesCount = BitConverter.ToInt32(_data, _position);
-            if (bytesCount <= 0)
+            ushort size = BitConverter.ToUInt16(_data, _position);
+            if (size == 0)
             {
-                return string.Empty;
+                return null;
+            }
+            int realSize = size - 1; // For empty strings
+
+            if (realSize >= NetDataWriter.StringBufferMaxLength)
+            {
+                return null;
             }
 
-            string result = Encoding.UTF8.GetString(_data, _position + 4, bytesCount);
-            return result;
+            return _uTF8Encoding.GetString(_data, _position + 2, realSize);
         }
         #endregion
 
@@ -613,10 +616,10 @@ namespace LiteNetLib.Utils
 
         public bool TryGetString(out string result)
         {
-            if (AvailableBytes >= 4)
+            if (AvailableBytes >= 2)
             {
-                var bytesCount = PeekInt();
-                if (AvailableBytes >= bytesCount + 4)
+                ushort bytesCount = PeekUShort();
+                if (AvailableBytes >= bytesCount + 2)
                 {
                     result = GetString();
                     return true;
