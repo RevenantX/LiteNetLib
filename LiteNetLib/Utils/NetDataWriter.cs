@@ -336,10 +336,15 @@ namespace LiteNetLib.Utils
             Put(endPoint.Port);
         }
 
+        public void Put(string value)
+        {
+            Put(value, 0);
+        }
+
         /// <summary>
         /// Note that "maxLength" only limits the number of characters, not the actual string size. It may be different if you use non-ASCII characters, etc.
         /// </summary>
-        public void Put(string value, int maxLength = 0)
+        public void Put(string value, int maxLength)
         {
             // If a string is null on the server, it should also be null on the client, not "", and vice versa
             if (value == null)
