@@ -316,18 +316,18 @@ namespace LiteNetLib.Utils
 
         public void PutArray(string[] value)
         {
-            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
-            Put(len);
-            for (int i = 0; i < len; i++)
+            ushort strArrayLength = value == null ? (ushort)0 : (ushort)value.Length;
+            Put(strArrayLength);
+            for (int i = 0; i < strArrayLength; i++)
                 Put(value[i]);
         }
 
-        public void PutArray(string[] value, int maxLength)
+        public void PutArray(string[] value, int strMaxLength)
         {
-            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
-            Put(len);
-            for (int i = 0; i < len; i++)
-                Put(value[i], maxLength);
+            ushort strArrayLength = value == null ? (ushort)0 : (ushort)value.Length;
+            Put(strArrayLength);
+            for (int i = 0; i < strArrayLength; i++)
+                Put(value[i], strMaxLength);
         }
 
         public void Put(IPEndPoint endPoint)
@@ -342,14 +342,13 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Note that "maxLength" only limits the number of characters, not the actual string size. It may be different if you use non-ASCII characters, etc.
+        /// Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
         /// </summary>
         public void Put(string value, int maxLength)
         {
-            // If a string is null on the server, it should also be null on the client, not "", and vice versa
             if (value == null)
             {
-                Put((ushort)0); // Size (ushort)
+                Put((ushort)0);
                 return;
             }
 
@@ -358,13 +357,12 @@ namespace LiteNetLib.Utils
 
             if (size >= StringBufferMaxLength)
             {
-                Put((ushort)0); // Size (ushort)
+                Put((ushort)0);
                 return;
             }
 
-            // "checked" / + 1 for empty ("") strings
-            Put(checked((ushort)(size + 1))); // Size (ushort)
-            Put(_stringBuffer, 0, size); // Buffer
+            Put(checked((ushort)(size + 1)));
+            Put(_stringBuffer, 0, size);
         }
 
         public void Put<T>(T obj) where T : INetSerializable

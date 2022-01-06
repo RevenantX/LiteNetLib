@@ -188,10 +188,9 @@ namespace LiteNetLib.Utils
 
         public string[] GetStringArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
-            _position += 2;
-            var arr = new string[size];
-            for (int i = 0; i < size; i++)
+            ushort arraySize = GetUShort();
+            var arr = new string[arraySize];
+            for (int i = 0; i < arraySize; i++)
             {
                 arr[i] = GetString();
             }
@@ -200,10 +199,9 @@ namespace LiteNetLib.Utils
 
         public string[] GetStringArray(int maxStringLength)
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
-            _position += 2;
-            var arr = new string[size];
-            for (int i = 0; i < size; i++)
+            ushort arraySize = GetUShort();
+            var arr = new string[arraySize];
+            for (int i = 0; i < arraySize; i++)
             {
                 arr[i] = GetString(maxStringLength);
             }
@@ -281,9 +279,9 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Note that "maxLength" only limits the number of characters, not the actual string size. It may be different if you use non-ASCII characters, etc.
+        /// Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
         /// </summary>
-        /// <returns>"string.Empty" if > "maxLength"</returns>
+        /// <returns>"string.Empty" if value > "maxLength"</returns>
         public string GetString(int maxLength)
         {
             ushort size = GetUShort();
@@ -292,13 +290,13 @@ namespace LiteNetLib.Utils
                 return null;
             }
 
-            int realSize = size - 1; // For ""
-            if (realSize >= NetDataWriter.StringBufferMaxLength)
+            int actualSize = size - 1;
+            if (actualSize >= NetDataWriter.StringBufferMaxLength)
             {
                 return null;
             }
 
-            ArraySegment<byte> data = GetBytesSegment(realSize);
+            ArraySegment<byte> data = GetBytesSegment(actualSize);
 
             return (maxLength > 0 && _uTF8Encoding.GetCharCount(data.Array, data.Offset, data.Count) > maxLength) ?
                 string.Empty :
@@ -308,25 +306,27 @@ namespace LiteNetLib.Utils
         public string GetString()
         {
             ushort size = GetUShort();
-            if (size == 0) {
+            if (size == 0)
+            {
                 return null;
             }
 
-            int realSize = size - 1; // For ""
-            if (realSize >= NetDataWriter.StringBufferMaxLength) {
+            int actualSize = size - 1;
+            if (actualSize >= NetDataWriter.StringBufferMaxLength)
+            {
                 return null;
             }
 
-            ArraySegment<byte> data = GetBytesSegment(realSize);
+            ArraySegment<byte> data = GetBytesSegment(actualSize);
 
             return _uTF8Encoding.GetString(data.Array, data.Offset, data.Count);
         }
 
         public ArraySegment<byte> GetBytesSegment(int count)
         {
-            ArraySegment<byte> result = new ArraySegment<byte>(_data, _position, count);
+            ArraySegment<byte> segment = new ArraySegment<byte>(_data, _position, count);
             _position += count;
-            return result;
+            return segment;
         }
 
         public ArraySegment<byte> GetRemainingBytesSegment()
@@ -446,38 +446,38 @@ namespace LiteNetLib.Utils
 
         public string PeekString(int maxLength)
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = PeekUShort();
             if (size == 0)
             {
                 return null;
             }
-            int realSize = size - 1; // For empty strings
 
-            if (realSize >= NetDataWriter.StringBufferMaxLength)
+            int actualSize = size - 1;
+            if (actualSize >= NetDataWriter.StringBufferMaxLength)
             {
                 return null;
             }
 
-            return (maxLength > 0 && _uTF8Encoding.GetCharCount(_data, _position + 2, realSize) > maxLength) ?
+            return (maxLength > 0 && _uTF8Encoding.GetCharCount(_data, _position + 2, actualSize) > maxLength) ?
                 string.Empty :
-                _uTF8Encoding.GetString(_data, _position + 2, realSize);
+                _uTF8Encoding.GetString(_data, _position + 2, actualSize);
         }
 
         public string PeekString()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = PeekUShort();
             if (size == 0)
             {
                 return null;
             }
-            int realSize = size - 1; // For empty strings
 
-            if (realSize >= NetDataWriter.StringBufferMaxLength)
+            int actualSize = size - 1;
+            if (actualSize >= NetDataWriter.StringBufferMaxLength)
             {
                 return null;
             }
 
-            return _uTF8Encoding.GetString(_data, _position + 2, realSize);
+            return _uTF8Encoding.GetString(_data, _position + 2, actualSize);
         }
         #endregion
 
@@ -618,8 +618,8 @@ namespace LiteNetLib.Utils
         {
             if (AvailableBytes >= 2)
             {
-                ushort bytesCount = PeekUShort();
-                if (AvailableBytes >= bytesCount + 2)
+                ushort strSize = PeekUShort();
+                if (AvailableBytes >= strSize + 2)
                 {
                     result = GetString();
                     return true;
@@ -631,15 +631,15 @@ namespace LiteNetLib.Utils
 
         public bool TryGetStringArray(out string[] result)
         {
-            ushort size;
-            if (!TryGetUShort(out size))
+            ushort strArrayLength;
+            if (!TryGetUShort(out strArrayLength))
             {
                 result = null;
                 return false;
             }
 
-            result = new string[size];
-            for (int i = 0; i < size; i++)
+            result = new string[strArrayLength];
+            for (int i = 0; i < strArrayLength; i++)
             {
                 if (!TryGetString(out result[i]))
                 {
