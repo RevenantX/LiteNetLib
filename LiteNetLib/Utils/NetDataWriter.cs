@@ -16,6 +16,13 @@ namespace LiteNetLib.Utils
         public byte[] Data => _data;
         public int Length => _position;
 
+        // Cache encoding instead of creating it with BinaryWriter each time
+        // 1000 readers before: 1MB GC, 30ms
+        // 1000 readers after: .8MB GC, 18ms
+        private static readonly UTF8Encoding _uTF8Encoding = new UTF8Encoding(false, true);
+        public const int StringBufferMaxLength = 1024 * 32; // <- short.MaxValue + 1
+        private static readonly byte[] _stringBuffer = new byte[StringBufferMaxLength];
+
         public NetDataWriter() : this(true, InitialSize)
         {
         }
@@ -309,18 +316,18 @@ namespace LiteNetLib.Utils
 
         public void PutArray(string[] value)
         {
-            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
-            Put(len);
-            for (int i = 0; i < len; i++)
+            ushort strArrayLength = value == null ? (ushort)0 : (ushort)value.Length;
+            Put(strArrayLength);
+            for (int i = 0; i < strArrayLength; i++)
                 Put(value[i]);
         }
 
-        public void PutArray(string[] value, int maxLength)
+        public void PutArray(string[] value, int strMaxLength)
         {
-            ushort len = value == null ? (ushort)0 : (ushort)value.Length;
-            Put(len);
-            for (int i = 0; i < len; i++)
-                Put(value[i], maxLength);
+            ushort strArrayLength = value == null ? (ushort)0 : (ushort)value.Length;
+            Put(strArrayLength);
+            for (int i = 0; i < strArrayLength; i++)
+                Put(value[i], strMaxLength);
         }
 
         public void Put(IPEndPoint endPoint)
@@ -331,48 +338,31 @@ namespace LiteNetLib.Utils
 
         public void Put(string value)
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                Put(0);
-                return;
-            }
-
-            //put bytes count
-            int bytesCount = Encoding.UTF8.GetByteCount(value);
-            if (_autoResize)
-                ResizeIfNeed(_position + bytesCount + 4);
-            Put(bytesCount);
-
-            //put string
-            Encoding.UTF8.GetBytes(value, 0, value.Length, _data, _position);
-            _position += bytesCount;
+            Put(value, 0);
         }
 
+        /// <summary>
+        /// Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+        /// </summary>
         public void Put(string value, int maxLength)
         {
-            if (string.IsNullOrEmpty(value))
+            if (value == null)
             {
-                Put(0);
+                Put((ushort)0);
                 return;
             }
 
-            int length = value.Length > maxLength ? maxLength : value.Length;
+            int length = maxLength > 0 && value.Length > maxLength ? maxLength : value.Length;
+            int size = _uTF8Encoding.GetBytes(value, 0, length, _stringBuffer, 0);
 
-            int totalBytesCount = Encoding.UTF8.GetMaxByteCount(length); //gets max length irrespective of actual length
+            if (size >= StringBufferMaxLength)
+            {
+                Put((ushort)0);
+                return;
+            }
 
-            if (_autoResize)
-                ResizeIfNeed(_position + totalBytesCount + 4);
-
-            int countPosition = _position; //save position where length needs to be stored
-            _position += 4;
-
-            int requiredBytesCount = Encoding.UTF8.GetBytes(value, 0, length, _data, _position); //put string here
-            int positionAfterWrite = _position + requiredBytesCount; //position where string data ends
-
-            _position = countPosition; //go to position where we need to write int value
-
-            Put(requiredBytesCount); //put length of substring
-            _position = positionAfterWrite; //reset position to final position
+            Put(checked((ushort)(size + 1)));
+            Put(_stringBuffer, 0, size);
         }
 
         public void Put<T>(T obj) where T : INetSerializable
