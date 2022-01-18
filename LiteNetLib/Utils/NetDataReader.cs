@@ -217,9 +217,7 @@ namespace LiteNetLib.Utils
 
         public char GetChar()
         {
-            char result = BitConverter.ToChar(_data, _position);
-            _position += 2;
-            return result;
+            return (char)GetUShort();
         }
 
         public ushort GetUShort()
@@ -401,7 +399,7 @@ namespace LiteNetLib.Utils
 
         public char PeekChar()
         {
-            return BitConverter.ToChar(_data, _position);
+            return (char)PeekUShort();
         }
 
         public ushort PeekUShort()
@@ -517,13 +515,13 @@ namespace LiteNetLib.Utils
 
         public bool TryGetChar(out char result)
         {
-            if (AvailableBytes >= 2)
+            if (!TryGetUShort(out ushort uShortValue))
             {
-                result = GetChar();
-                return true;
+                result = '\0';
+                return false;
             }
-            result = '\0';
-            return false;
+            result = (char)uShortValue;
+            return true;
         }
 
         public bool TryGetShort(out short result)
