@@ -19,9 +19,6 @@ Lite reliable UDP library for .NET Framework 4.7.1, Mono, .NET Core 3.1, .NET St
 ### [DLL build from master](https://ci.appveyor.com/project/RevenantX/litenetlib/branch/master/artifacts) [![](https://ci.appveyor.com/api/projects/status/354501wnvxs8kuh3/branch/master?svg=true)](https://ci.appveyor.com/project/RevenantX/litenetlib/branch/master)
 ( Warning! Master branch can be unstable! )
 
-### Donations are welcome and will help further development of this project.
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?business=G9PDX5KLGKBA2&no_recurring=0&currency_code=USD)
-
 ## Features
 
 * Lightweight
