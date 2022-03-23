@@ -169,7 +169,7 @@ namespace LiteNetLib
         private readonly Dictionary<IPEndPoint, NtpRequest> _ntpRequests = new Dictionary<IPEndPoint, NtpRequest>(new IPEndPointComparer());
         private readonly ReaderWriterLockSlim _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private volatile NetPeer _headPeer;
-        private volatile int _connectedPeersCount;
+        private int _connectedPeersCount;
         private readonly List<NetPeer> _connectedPeerListCache = new List<NetPeer>();
         private NetPeer[] _peersArray = new NetPeer[32];
         private readonly PacketLayerBase _extraPacketLayer;
@@ -374,7 +374,7 @@ namespace LiteNetLib
         /// <summary>
         /// Returns connected peers count
         /// </summary>
-        public int ConnectedPeersCount => _connectedPeersCount;
+        public int ConnectedPeersCount => Interlocked.CompareExchange(ref _connectedPeersCount,0,0);
 
         public int ExtraPacketSizeForLayer => _extraPacketLayer?.ExtraPacketSizeForLayer ?? 0;
 
@@ -546,7 +546,6 @@ namespace LiteNetLib
                 return;
             if(shutdownResult == ShutdownResult.WasConnected)
                 Interlocked.Decrement(ref _connectedPeersCount);
-            Thread.MemoryBarrier();
             CreateEvent(
                 NetEvent.EType.Disconnect,
                 peer,
