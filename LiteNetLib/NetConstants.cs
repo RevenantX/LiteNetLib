@@ -65,7 +65,8 @@
             1500 - MaxUdpHeaderSize  //Ethernet II (RFC 1191)
         };
 
-        internal static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
+        //Max possible single packet size
+        public static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
 
         //peer specific
         public const byte MaxConnectionNumber = 4;
