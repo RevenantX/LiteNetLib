@@ -28,7 +28,8 @@ namespace LiteNetLib
         InvalidProtocol,
         UnknownHost,
         Reconnect,
-        PeerToPeerConnection
+        PeerToPeerConnection,
+        PeerNotFound
     }
 
     /// <summary>

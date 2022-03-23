@@ -331,6 +331,11 @@ namespace LiteNetLib
         public bool DisconnectOnUnreachable = false;
 
         /// <summary>
+        /// Allows peer change it's ip (lte to wifi, wifi to lte, etc). Use only on server
+        /// </summary>
+        public bool AllowPeerAddressChange = false;
+
+        /// <summary>
         /// QoS channel count per message type (value must be between 1 and 64 channels)
         /// </summary>
         public byte ChannelsCount
@@ -1043,31 +1048,63 @@ namespace LiteNetLib
                         ProcessConnectRequest(remoteEndPoint, netPeer, connRequest);
                     break;
                 case PacketProperty.PeerNotFound:
-                    if (peerFound)
+                    if (peerFound) //local
                     {
                         if (netPeer.ConnectionState != ConnectionState.Connected)
                             return;
                         if (packet.Size == 1)
                         {
                             //first reply
-                            var p = NetPacketPool.GetWithProperty(PacketProperty.PeerNotFound, 9);
-                            p.RawData[1] = 0;
-                            FastBitConverter.GetBytes(p.RawData, 2, netPeer.ConnectTime);
-                            SendRawAndRecycle(p, remoteEndPoint);
-                            NetDebug.Write("PeerNotFound sending connectTime: {0}", netPeer.ConnectTime);
+                            //send NetworkChanged packet
+                            SendRaw(NetConnectAcceptPacket.MakeNetworkChanged(netPeer), remoteEndPoint);
+                            NetDebug.Write($"PeerNotFound sending connection info: {remoteEndPoint}");
                         }
-                        else if (packet.Size == 10 && packet.RawData[1] == 1 && BitConverter.ToInt64(packet.RawData, 2) == netPeer.ConnectTime)
+                        else if (packet.Size == 2 && packet.RawData[1] == 1)
                         {
                             //second reply
-                            NetDebug.Write("PeerNotFound received our connectTime: {0}", netPeer.ConnectTime);
-                            DisconnectPeerForce(netPeer, DisconnectReason.RemoteConnectionClose, 0, null);
+                            DisconnectPeerForce(netPeer, DisconnectReason.PeerNotFound, 0, null);
                         }
                     }
-                    else if (packet.Size == 10 && packet.RawData[1] == 0)
+                    else if (packet.Size > 1) //remote
                     {
-                        //send reply back
-                        packet.RawData[1] = 1;
-                        SendRawAndRecycle(packet, remoteEndPoint);
+                        //check if this is old peer
+                        bool isOldPeer = false;
+
+                        if (AllowPeerAddressChange)
+                        {
+                            NetDebug.Write($"[NM] Looks like address change: {packet.Size}");
+                            var remoteData = NetConnectAcceptPacket.FromData(packet);
+                            if (remoteData != null && 
+                                remoteData.PeerNetworkChanged &&
+                                remoteData.PeerId < _peersArray.Length)
+                            {
+                                _peersLock.EnterUpgradeableReadLock();
+                                var peer = _peersArray[remoteData.PeerId];
+                                if (peer != null && 
+                                    peer.ConnectTime == remoteData.ConnectionTime &&
+                                    peer.ConnectionNum == remoteData.ConnectionNumber)
+                                {
+                                    _peersLock.EnterWriteLock();
+                                    _peersDict.Remove(peer.EndPoint);
+                                    peer.EndPoint = remoteEndPoint;
+                                    _peersDict.Add(remoteEndPoint, peer);
+                                    _peersLock.ExitWriteLock();
+                                    NetDebug.Write("[NM] PeerNotFound change address of remote peer");
+                                    isOldPeer = true;
+                                }
+                                _peersLock.ExitUpgradeableReadLock();
+                            }
+                        }
+
+                        NetPacketPool.Recycle(packet);
+
+                        //else peer really not found
+                        if (!isOldPeer)
+                        {
+                            var secondResponse = NetPacketPool.GetWithProperty(PacketProperty.PeerNotFound, 1);
+                            secondResponse.RawData[1] = 1;
+                            SendRawAndRecycle(secondResponse, remoteEndPoint);
+                        }
                     }
                     break;
                 case PacketProperty.InvalidProtocol:
