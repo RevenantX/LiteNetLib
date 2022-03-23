@@ -196,7 +196,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(0, server.ConnectedPeersCount);
             Assert.AreEqual(0, client.ConnectedPeersCount);
             Assert.IsTrue(disconnectInfo.HasValue);
-            Assert.AreEqual(DisconnectReason.RemoteConnectionClose, disconnectInfo.Value.Reason);
+            Assert.AreEqual(DisconnectReason.PeerNotFound, disconnectInfo.Value.Reason);
         }
 
         [Test, Timeout(10000)]
