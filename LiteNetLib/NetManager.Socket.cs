@@ -67,7 +67,6 @@ namespace LiteNetLib
 #endif
         [ThreadStatic] private static byte[] _endPointBuffer;
 
-        private bool _useNativeSockets;
         private readonly Dictionary<NativeAddr, IPEndPoint> _nativeAddrMap = new Dictionary<NativeAddr, IPEndPoint>();
 
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
@@ -119,7 +118,7 @@ namespace LiteNetLib
 
         private void RegisterEndPoint(IPEndPoint ep)
         {
-            if (_useNativeSockets && ep is NativeEndPoint nep)
+            if (UseNativeSockets && ep is NativeEndPoint nep)
             {
                 _nativeAddrMap.Add(new NativeAddr(nep.NativeAddress, nep.NativeAddress.Length), nep);
             }
@@ -127,7 +126,7 @@ namespace LiteNetLib
 
         private void UnregisterEndPoint(IPEndPoint ep)
         {
-            if (_useNativeSockets && ep is NativeEndPoint nep)
+            if (UseNativeSockets && ep is NativeEndPoint nep)
             {
                 var nativeAddr = new NativeAddr(nep.NativeAddress, nep.NativeAddress.Length);
                 _nativeAddrMap.Remove(nativeAddr);
@@ -323,7 +322,7 @@ namespace LiteNetLib
             if (!_manualMode)
             {
                 ParameterizedThreadStart ts = ReceiveLogic;
-                if (_useNativeSockets)
+                if (UseNativeSockets)
                     ts = NativeReceiveLogic;
 
                 _threadv4 = new Thread(ts)
@@ -355,7 +354,7 @@ namespace LiteNetLib
                     else
                     {
                         ParameterizedThreadStart ts = ReceiveLogic;
-                        if (_useNativeSockets)
+                        if (UseNativeSockets)
                             ts = NativeReceiveLogic;
                         _threadv6 = new Thread(ts)
                         {
@@ -521,7 +520,7 @@ namespace LiteNetLib
             int result;
             try
             {
-                if (_useNativeSockets)
+                if (UseNativeSockets)
                 {
                     byte[] socketAddress;
 
