@@ -77,7 +77,7 @@ namespace LiteNetLib
             public bool IsExternal { get; set; }
         }
 
-        private readonly NetSocket _socket;
+        private readonly NetManager _socket;
         private readonly ConcurrentQueue<RequestEventData> _requestEvents = new ConcurrentQueue<RequestEventData>();
         private readonly ConcurrentQueue<SuccessEventData> _successEvents = new ConcurrentQueue<SuccessEventData>();
         private readonly NetDataReader _cacheReader = new NetDataReader();
@@ -91,7 +91,7 @@ namespace LiteNetLib
         /// </summary>
         public bool UnsyncedEvents = false;
 
-        internal NatPunchModule(NetSocket socket)
+        internal NatPunchModule(NetManager socket)
         {
             _socket = socket;
             _netPacketProcessor.SubscribeReusable<NatIntroduceResponsePacket>(OnNatIntroductionResponse);
@@ -115,11 +115,10 @@ namespace LiteNetLib
 
         private void Send<T>(T packet, IPEndPoint target) where T : class, new()
         {
-            SocketError errorCode = 0;
             _cacheWriter.Reset();
             _cacheWriter.Put((byte)PacketProperty.NatMessage);
             _netPacketProcessor.Write(_cacheWriter, packet);
-            _socket.SendTo(_cacheWriter.Data, 0, _cacheWriter.Length, target, ref errorCode);
+            _socket.SendRaw(_cacheWriter.Data, 0, _cacheWriter.Length, target);
         }
 
         public void NatIntroduce(
@@ -222,9 +221,8 @@ namespace LiteNetLib
             NetDebug.Write(NetLogLevel.Trace, "[NAT] internal punch sent to " + req.Internal);
 
             // hack for some routers
-            SocketError errorCode = 0;
             _socket.Ttl = 2;
-            _socket.SendTo(new[] { (byte)PacketProperty.Empty }, 0, 1, req.External, ref errorCode);
+            _socket.SendRaw(new[] { (byte)PacketProperty.Empty }, 0, 1, req.External);
 
             // send external punch
             _socket.Ttl = NetConstants.SocketTTL;
