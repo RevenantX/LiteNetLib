@@ -332,6 +332,9 @@ namespace LiteNetLib
                     IsBackground = true
                 };
                 _threadv4.Start(_udpSocketv4);
+
+                _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
+                _logicThread.Start();
             }
             else
             {
@@ -339,36 +342,29 @@ namespace LiteNetLib
             }
 
             //Check IPv6 support
-            if (!IPv6Support || IPv6Mode != IPv6Mode.SeparateSocket)
-                return true;
-
-            _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
-            //Use one port for two sockets
-            if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort)))
+            if (IPv6Support && IPv6Mode == IPv6Mode.SeparateSocket)
             {
-                if (_manualMode)
+                _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
+                //Use one port for two sockets
+                if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort)))
                 {
-                    _bufferEndPointv6 = new IPEndPoint(IPAddress.IPv6Any, 0);
-                }
-                else
-                {
-                    ParameterizedThreadStart ts = ReceiveLogic;
-                    if (_useNativeSockets)
-                        ts = NativeReceiveLogic;
-                    _threadv6 = new Thread(ts)
+                    if (_manualMode)
                     {
-                        Name = $"SocketThreadv6({LocalPort})",
-                        IsBackground = true
-                    };
-                    _threadv6.Start(_udpSocketv6);
+                        _bufferEndPointv6 = new IPEndPoint(IPAddress.IPv6Any, 0);
+                    }
+                    else
+                    {
+                        ParameterizedThreadStart ts = ReceiveLogic;
+                        if (_useNativeSockets)
+                            ts = NativeReceiveLogic;
+                        _threadv6 = new Thread(ts)
+                        {
+                            Name = $"SocketThreadv6({LocalPort})",
+                            IsBackground = true
+                        };
+                        _threadv6.Start(_udpSocketv6);
+                    }
                 }
-
-            }
-
-            if (!_manualMode)
-            {
-                _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
-                _logicThread.Start();
             }
 
             return true;
