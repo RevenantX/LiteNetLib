@@ -278,7 +278,7 @@ namespace LiteNetLib
             if (IsRunning && !IsActive())
                 return false;
             _manualMode = manualMode;
-            _useNativeSockets = UseNativeSockets && NativeSocket.IsSupported;
+            UseNativeSockets = UseNativeSockets && NativeSocket.IsSupported;
 
             //osx doesn't support dual mode
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && IPv6Mode == IPv6Mode.DualMode)
