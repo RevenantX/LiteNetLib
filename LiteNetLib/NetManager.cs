@@ -42,7 +42,7 @@ namespace LiteNetLib
         {
             Clear();
             if (_packet != null)
-                _manager.NetPacketPool.Recycle(_packet);
+                _manager.PoolRecycle(_packet);
             _packet = null;
             _manager.RecycleEvent(_evt);
         }
@@ -176,8 +176,6 @@ namespace LiteNetLib
         private ConcurrentQueue<int> _peerIds = new ConcurrentQueue<int>();
         private byte _channelsCount = 1;
         private readonly object _eventLock = new object();
-
-        internal readonly NetPacketPool NetPacketPool = new NetPacketPool();
 
         //config section
         /// <summary>
@@ -732,7 +730,7 @@ namespace LiteNetLib
                 NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject force.");
                 if (rejectData != null && length > 0)
                 {
-                    var shutdownPacket = NetPacketPool.GetWithProperty(PacketProperty.Disconnect, length);
+                    var shutdownPacket = PoolGetWithProperty(PacketProperty.Disconnect, length);
                     shutdownPacket.ConnectionNumber = request.InternalPacket.ConnectionNumber;
                     FastBitConverter.GetBytes(shutdownPacket.RawData, 1, request.InternalPacket.ConnectionTime);
                     if (shutdownPacket.Size >= NetConstants.PossibleMtu[0])
@@ -924,7 +922,7 @@ namespace LiteNetLib
             if (!packet.Verify())
             {
                 NetDebug.WriteError("[NM] DataReceived: bad!");
-                NetPacketPool.Recycle(packet);
+                PoolRecycle(packet);
                 return;
             }
 
@@ -934,7 +932,7 @@ namespace LiteNetLib
                 case PacketProperty.ConnectRequest:
                     if (NetConnectRequestPacket.GetProtocolId(packet) != NetConstants.ProtocolId)
                     {
-                        SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.InvalidProtocol), remoteEndPoint);
+                        SendRawAndRecycle(PoolGetWithProperty(PacketProperty.InvalidProtocol), remoteEndPoint);
                         return;
                     }
                     break;
@@ -1016,12 +1014,12 @@ namespace LiteNetLib
                             }
                         }
 
-                        NetPacketPool.Recycle(packet);
+                        PoolRecycle(packet);
 
                         //else peer really not found
                         if (!isOldPeer)
                         {
-                            var secondResponse = NetPacketPool.GetWithProperty(PacketProperty.PeerNotFound, 1);
+                            var secondResponse = PoolGetWithProperty(PacketProperty.PeerNotFound, 1);
                             secondResponse.RawData[1] = 1;
                             SendRawAndRecycle(secondResponse, remoteEndPoint);
                         }
@@ -1037,7 +1035,7 @@ namespace LiteNetLib
                         var disconnectResult = netPeer.ProcessDisconnect(packet);
                         if (disconnectResult == DisconnectResult.None)
                         {
-                            NetPacketPool.Recycle(packet);
+                            PoolRecycle(packet);
                             return;
                         }
                         DisconnectPeerForce(
@@ -1049,10 +1047,10 @@ namespace LiteNetLib
                     }
                     else
                     {
-                        NetPacketPool.Recycle(packet);
+                        PoolRecycle(packet);
                     }
                     //Send shutdown
-                    SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.ShutdownOk), remoteEndPoint);
+                    SendRawAndRecycle(PoolGetWithProperty(PacketProperty.ShutdownOk), remoteEndPoint);
                     break;
                 case PacketProperty.ConnectAccept:
                     if (!peerFound)
@@ -1065,7 +1063,7 @@ namespace LiteNetLib
                     if(peerFound)
                         netPeer.ProcessPacket(packet);
                     else
-                        SendRawAndRecycle(NetPacketPool.GetWithProperty(PacketProperty.PeerNotFound), remoteEndPoint);
+                        SendRawAndRecycle(PoolGetWithProperty(PacketProperty.PeerNotFound), remoteEndPoint);
                     break;
             }
         }
@@ -1375,7 +1373,7 @@ namespace LiteNetLib
         public bool SendUnconnectedMessage(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
             //No need for CRC here, SendRaw does that
-            NetPacket packet = NetPacketPool.GetWithData(PacketProperty.UnconnectedMessage, message, start, length);
+            NetPacket packet = PoolGetWithData(PacketProperty.UnconnectedMessage, message, start, length);
             return SendRawAndRecycle(packet, remoteEndPoint) > 0;
         }
 

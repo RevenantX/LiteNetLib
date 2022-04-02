@@ -166,7 +166,7 @@ namespace LiteNetLib
                     return;
                 while (available > 0)
                 {
-                    var packet = NetPacketPool.GetPacket(NetConstants.MaxPacketSize);
+                    var packet = PoolGetPacket(NetConstants.MaxPacketSize);
                     packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
                         ref bufferEndPoint);
                     //NetDebug.Write(NetLogLevel.Trace, $"[R]Received data from {bufferEndPoint}, result: {packet.Size}");
@@ -198,7 +198,7 @@ namespace LiteNetLib
                 : NativeSocket.IPv6AddrSize];
 
             int addrSize = addrBuffer.Length;
-            NetPacket packet = NetPacketPool.GetPacket(NetConstants.MaxPacketSize);
+            NetPacket packet = PoolGetPacket(NetConstants.MaxPacketSize);
 
             while (IsActive())
             {
@@ -223,7 +223,7 @@ namespace LiteNetLib
                 //All ok!
                 //NetDebug.WriteForce($"[R]Received data from {endPoint}, result: {packet.Size}");
                 OnMessageReceived(packet, endPoint);
-                packet = NetPacketPool.GetPacket(NetConstants.MaxPacketSize);
+                packet = PoolGetPacket(NetConstants.MaxPacketSize);
             }
         }
 
@@ -239,7 +239,7 @@ namespace LiteNetLib
                 {
                     if (socket.Available == 0 && !socket.Poll(ReceivePollingTime, SelectMode.SelectRead))
                         continue;
-                    NetPacket packet = NetPacketPool.GetPacket(NetConstants.MaxPacketSize);
+                    NetPacket packet = PoolGetPacket(NetConstants.MaxPacketSize);
                     packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
                         ref bufferEndPoint);
 
@@ -481,7 +481,7 @@ namespace LiteNetLib
         internal int SendRawAndRecycle(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             int result = SendRaw(packet.RawData, 0, packet.Size, remoteEndPoint);
-            NetPacketPool.Recycle(packet);
+            PoolRecycle(packet);
             return result;
         }
 
@@ -498,7 +498,7 @@ namespace LiteNetLib
             NetPacket expandedPacket = null;
             if (_extraPacketLayer != null)
             {
-                expandedPacket = NetPacketPool.GetPacket(length + _extraPacketLayer.ExtraPacketSizeForLayer);
+                expandedPacket = PoolGetPacket(length + _extraPacketLayer.ExtraPacketSizeForLayer);
                 Buffer.BlockCopy(message, start, expandedPacket.RawData, 0, length);
                 start = 0;
                 _extraPacketLayer.ProcessOutBoundPacket(ref remoteEndPoint, ref expandedPacket.RawData, ref start, ref length);
@@ -629,7 +629,7 @@ namespace LiteNetLib
             {
                 if (expandedPacket != null)
                 {
-                    NetPacketPool.Recycle(expandedPacket);
+                    PoolRecycle(expandedPacket);
                 }
             }
 
@@ -664,7 +664,7 @@ namespace LiteNetLib
             if (_extraPacketLayer != null)
             {
                 var headerSize = NetPacket.GetHeaderSize(PacketProperty.Broadcast);
-                packet = NetPacketPool.GetPacket(headerSize + length + _extraPacketLayer.ExtraPacketSizeForLayer);
+                packet = PoolGetPacket(headerSize + length + _extraPacketLayer.ExtraPacketSizeForLayer);
                 packet.Property = PacketProperty.Broadcast;
                 Buffer.BlockCopy(data, start, packet.RawData, headerSize, length);
                 var checksumComputeStart = 0;
@@ -674,7 +674,7 @@ namespace LiteNetLib
             }
             else
             {
-                packet = NetPacketPool.GetWithData(PacketProperty.Broadcast, data, start, length);
+                packet = PoolGetWithData(PacketProperty.Broadcast, data, start, length);
             }
 
             bool broadcastSuccess = false;
@@ -705,7 +705,7 @@ namespace LiteNetLib
             }
             finally
             {
-                NetPacketPool.Recycle(packet);
+                PoolRecycle(packet);
             }
 
             return broadcastSuccess || multicastSuccess;
