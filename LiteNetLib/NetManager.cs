@@ -374,6 +374,18 @@ namespace LiteNetLib
         }
 
         /// <summary>
+        /// Gets peer by peer id
+        /// </summary>
+        /// <param name="id">id of peer</param>
+        /// <returns>True if peer with id exist, otherwise false</returns>
+        public bool TryGetPeerById(int id, out NetPeer peer)
+        {
+            peer = GetPeerById(id);
+
+            return peer != null;
+        }
+
+        /// <summary>
         /// Returns connected peers count
         /// </summary>
         public int ConnectedPeersCount => Interlocked.CompareExchange(ref _connectedPeersCount,0,0);
