@@ -365,7 +365,12 @@ namespace LiteNetLib
         /// <returns>Peer if peer with id exist, otherwise null</returns>
         public NetPeer GetPeerById(int id)
         {
-            return _peersArray[id];
+            if (id >= 0 && id < _peersArray.Length)
+            {
+                return _peersArray[id];
+            }
+            
+            return null;
         }
 
         /// <summary>
