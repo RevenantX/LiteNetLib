@@ -1424,12 +1424,8 @@ namespace LiteNetLib
                 (_netEventsConsumeQueue, _netEventsProduceQueue) = (_netEventsProduceQueue, _netEventsConsumeQueue);
             }
 
-            lock (_netEventsConsumeQueue)
-            {
-                int eventsCount = _netEventsConsumeQueue.Count;
-                for(int i = 0; i < eventsCount; i++)
-                    ProcessEvent(_netEventsConsumeQueue.Dequeue());
-            }
+            while(_netEventsConsumeQueue.Count > 0)
+                ProcessEvent(_netEventsConsumeQueue.Dequeue());
         }
 
         /// <summary>
