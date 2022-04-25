@@ -30,6 +30,11 @@ namespace LiteNetLib.Utils
             _position += count;
         }
 
+        public void SetPosition(int position)
+        {
+            _position = position;
+        }
+
         public void SetSource(NetDataWriter dataWriter)
         {
             _data = dataWriter.Data;
