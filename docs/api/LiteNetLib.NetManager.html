@@ -133,6 +133,31 @@
   </h3>
   
   
+  <h4 id="LiteNetLib_NetManager_AllowPeerAddressChange" data-uid="LiteNetLib.NetManager.AllowPeerAddressChange">AllowPeerAddressChange</h4>
+  <div class="markdown level1 summary"><p>Allows peer change it&apos;s ip (lte to wifi, wifi to lte, etc). Use only on server</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool AllowPeerAddressChange</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <h4 id="LiteNetLib_NetManager_AutoRecycle" data-uid="LiteNetLib.NetManager.AutoRecycle">AutoRecycle</h4>
   <div class="markdown level1 summary"><p>Automatically recycle NetPacketReader after OnReceive event</p>
 </div>
@@ -278,6 +303,30 @@
     <tbody>
       <tr>
         <td><a class="xref" href="LiteNetLib.IPv6Mode.html">IPv6Mode</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="LiteNetLib_NetManager_IPv6Support" data-uid="LiteNetLib.NetManager.IPv6Support">IPv6Support</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly bool IPv6Support</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -964,6 +1013,31 @@ use direct socket calls for send/receive to drastically increase speed and reduc
     <tbody>
       <tr>
         <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_NetManager_Ttl_" data-uid="LiteNetLib.NetManager.Ttl*"></a>
+  <h4 id="LiteNetLib_NetManager_Ttl" data-uid="LiteNetLib.NetManager.Ttl">Ttl</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public short Ttl { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int16</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2746,6 +2820,68 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
   
   
   <a id="LiteNetLib_NetManager_Start_" data-uid="LiteNetLib.NetManager.Start*"></a>
+  <h4 id="LiteNetLib_NetManager_Start_System_Net_IPAddress_System_Net_IPAddress_System_Int32_System_Boolean_" data-uid="LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">Start(IPAddress, IPAddress, Int32, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Start logic thread and listening on selected port</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool manualMode)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.IPAddress</span></td>
+        <td><span class="parametername">addressIPv4</span></td>
+        <td><p>bind to specific ipv4 address</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.IPAddress</span></td>
+        <td><span class="parametername">addressIPv6</span></td>
+        <td><p>bind to specific ipv6 address</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">port</span></td>
+        <td><p>port to listen</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">manualMode</span></td>
+        <td><p>mode of library</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_NetManager_Start_" data-uid="LiteNetLib.NetManager.Start*"></a>
   <h4 id="LiteNetLib_NetManager_Start_System_String_System_String_System_Int32_" data-uid="LiteNetLib.NetManager.Start(System.String,System.String,System.Int32)">Start(String, String, Int32)</h4>
   <div class="markdown level1 summary"><p>Start logic thread and listening on selected port</p>
 </div>
@@ -3015,6 +3151,56 @@ This mode useful mostly for single-threaded servers</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void TriggerUpdate()</code></pre>
   </div>
+  
+  
+  <a id="LiteNetLib_NetManager_TryGetPeerById_" data-uid="LiteNetLib.NetManager.TryGetPeerById*"></a>
+  <h4 id="LiteNetLib_NetManager_TryGetPeerById_System_Int32_LiteNetLib_NetPeer__" data-uid="LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)">TryGetPeerById(Int32, out NetPeer)</h4>
+  <div class="markdown level1 summary"><p>Gets peer by peer id</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetPeerById(int id, out NetPeer peer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>id of peer</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">peer</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>True if peer with id exist, otherwise false</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="eii">Explicit Interface Implementations
   </h3>
   

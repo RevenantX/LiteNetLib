@@ -279,6 +279,12 @@ references:
   commentId: F:LiteNetLib.DisconnectReason.NetworkUnreachable
   fullName: LiteNetLib.DisconnectReason.NetworkUnreachable
   nameWithType: DisconnectReason.NetworkUnreachable
+- uid: LiteNetLib.DisconnectReason.PeerNotFound
+  name: PeerNotFound
+  href: api/LiteNetLib.DisconnectReason.html#LiteNetLib_DisconnectReason_PeerNotFound
+  commentId: F:LiteNetLib.DisconnectReason.PeerNotFound
+  fullName: LiteNetLib.DisconnectReason.PeerNotFound
+  nameWithType: DisconnectReason.PeerNotFound
 - uid: LiteNetLib.DisconnectReason.PeerToPeerConnection
   name: PeerToPeerConnection
   href: api/LiteNetLib.DisconnectReason.html#LiteNetLib_DisconnectReason_PeerToPeerConnection
@@ -1291,6 +1297,12 @@ references:
   commentId: F:LiteNetLib.NetConstants.MaxConnectionNumber
   fullName: LiteNetLib.NetConstants.MaxConnectionNumber
   nameWithType: NetConstants.MaxConnectionNumber
+- uid: LiteNetLib.NetConstants.MaxPacketSize
+  name: MaxPacketSize
+  href: api/LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_MaxPacketSize
+  commentId: F:LiteNetLib.NetConstants.MaxPacketSize
+  fullName: LiteNetLib.NetConstants.MaxPacketSize
+  nameWithType: NetConstants.MaxPacketSize
 - uid: LiteNetLib.NetConstants.MaxSequence
   name: MaxSequence
   href: api/LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_MaxSequence
@@ -1376,6 +1388,12 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.NetManager
   nameWithType: NetManager.NetManager
+- uid: LiteNetLib.NetManager.AllowPeerAddressChange
+  name: AllowPeerAddressChange
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_AllowPeerAddressChange
+  commentId: F:LiteNetLib.NetManager.AllowPeerAddressChange
+  fullName: LiteNetLib.NetManager.AllowPeerAddressChange
+  nameWithType: NetManager.AllowPeerAddressChange
 - uid: LiteNetLib.NetManager.AutoRecycle
   name: AutoRecycle
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_AutoRecycle
@@ -1660,6 +1678,12 @@ references:
   commentId: F:LiteNetLib.NetManager.IPv6Mode
   fullName: LiteNetLib.NetManager.IPv6Mode
   nameWithType: NetManager.IPv6Mode
+- uid: LiteNetLib.NetManager.IPv6Support
+  name: IPv6Support
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_IPv6Support
+  commentId: F:LiteNetLib.NetManager.IPv6Support
+  fullName: LiteNetLib.NetManager.IPv6Support
+  nameWithType: NetManager.IPv6Support
 - uid: LiteNetLib.NetManager.IsRunning
   name: IsRunning
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_IsRunning
@@ -2055,6 +2079,12 @@ references:
   commentId: M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32)
   fullName: LiteNetLib.NetManager.Start(System.Net.IPAddress, System.Net.IPAddress, System.Int32)
   nameWithType: NetManager.Start(IPAddress, IPAddress, Int32)
+- uid: LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)
+  name: Start(IPAddress, IPAddress, Int32, Boolean)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Start_System_Net_IPAddress_System_Net_IPAddress_System_Int32_System_Boolean_
+  commentId: M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)
+  fullName: LiteNetLib.NetManager.Start(System.Net.IPAddress, System.Net.IPAddress, System.Int32, System.Boolean)
+  nameWithType: NetManager.Start(IPAddress, IPAddress, Int32, Boolean)
 - uid: LiteNetLib.NetManager.Start(System.String,System.String,System.Int32)
   name: Start(String, String, Int32)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Start_System_String_System_String_System_Int32_
@@ -2165,6 +2195,35 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.TriggerUpdate
   nameWithType: NetManager.TriggerUpdate
+- uid: LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)
+  name: TryGetPeerById(Int32, out NetPeer)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_TryGetPeerById_System_Int32_LiteNetLib_NetPeer__
+  commentId: M:LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)
+  name.vb: TryGetPeerById(Int32, ByRef NetPeer)
+  fullName: LiteNetLib.NetManager.TryGetPeerById(System.Int32, out LiteNetLib.NetPeer)
+  fullName.vb: LiteNetLib.NetManager.TryGetPeerById(System.Int32, ByRef LiteNetLib.NetPeer)
+  nameWithType: NetManager.TryGetPeerById(Int32, out NetPeer)
+  nameWithType.vb: NetManager.TryGetPeerById(Int32, ByRef NetPeer)
+- uid: LiteNetLib.NetManager.TryGetPeerById*
+  name: TryGetPeerById
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_TryGetPeerById_
+  commentId: Overload:LiteNetLib.NetManager.TryGetPeerById
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.TryGetPeerById
+  nameWithType: NetManager.TryGetPeerById
+- uid: LiteNetLib.NetManager.Ttl
+  name: Ttl
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Ttl
+  commentId: P:LiteNetLib.NetManager.Ttl
+  fullName: LiteNetLib.NetManager.Ttl
+  nameWithType: NetManager.Ttl
+- uid: LiteNetLib.NetManager.Ttl*
+  name: Ttl
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Ttl_
+  commentId: Overload:LiteNetLib.NetManager.Ttl
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.Ttl
+  nameWithType: NetManager.Ttl
 - uid: LiteNetLib.NetManager.UnconnectedMessagesEnabled
   name: UnconnectedMessagesEnabled
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_UnconnectedMessagesEnabled
@@ -2285,7 +2344,14 @@ references:
 - uid: LiteNetLib.NetPeer.EndPoint
   name: EndPoint
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_EndPoint
-  commentId: F:LiteNetLib.NetPeer.EndPoint
+  commentId: P:LiteNetLib.NetPeer.EndPoint
+  fullName: LiteNetLib.NetPeer.EndPoint
+  nameWithType: NetPeer.EndPoint
+- uid: LiteNetLib.NetPeer.EndPoint*
+  name: EndPoint
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_EndPoint_
+  commentId: Overload:LiteNetLib.NetPeer.EndPoint
+  isSpec: "True"
   fullName: LiteNetLib.NetPeer.EndPoint
   nameWithType: NetPeer.EndPoint
 - uid: LiteNetLib.NetPeer.GetMaxSinglePacketSize(LiteNetLib.DeliveryMethod)
@@ -2391,6 +2457,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetPeer.RemoteUtcTime
   nameWithType: NetPeer.RemoteUtcTime
+- uid: LiteNetLib.NetPeer.RoundTripTime
+  name: RoundTripTime
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_RoundTripTime
+  commentId: P:LiteNetLib.NetPeer.RoundTripTime
+  fullName: LiteNetLib.NetPeer.RoundTripTime
+  nameWithType: NetPeer.RoundTripTime
+- uid: LiteNetLib.NetPeer.RoundTripTime*
+  name: RoundTripTime
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_RoundTripTime_
+  commentId: Overload:LiteNetLib.NetPeer.RoundTripTime
+  isSpec: "True"
+  fullName: LiteNetLib.NetPeer.RoundTripTime
+  nameWithType: NetPeer.RoundTripTime
 - uid: LiteNetLib.NetPeer.Send(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)
   name: Send(NetDataWriter, DeliveryMethod)
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Send_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_
@@ -3087,6 +3166,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.GetBytes
   nameWithType: NetDataReader.GetBytes
+- uid: LiteNetLib.Utils.NetDataReader.GetBytesSegment(System.Int32)
+  name: GetBytesSegment(Int32)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytesSegment_System_Int32_
+  commentId: M:LiteNetLib.Utils.NetDataReader.GetBytesSegment(System.Int32)
+  fullName: LiteNetLib.Utils.NetDataReader.GetBytesSegment(System.Int32)
+  nameWithType: NetDataReader.GetBytesSegment(Int32)
+- uid: LiteNetLib.Utils.NetDataReader.GetBytesSegment*
+  name: GetBytesSegment
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytesSegment_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.GetBytesSegment
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.GetBytesSegment
+  nameWithType: NetDataReader.GetBytesSegment
 - uid: LiteNetLib.Utils.NetDataReader.GetBytesWithLength
   name: GetBytesWithLength()
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytesWithLength
@@ -4419,6 +4511,12 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataWriter.SetPosition
   nameWithType: NetDataWriter.SetPosition
+- uid: LiteNetLib.Utils.NetDataWriter.StringBufferMaxLength
+  name: StringBufferMaxLength
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_StringBufferMaxLength
+  commentId: F:LiteNetLib.Utils.NetDataWriter.StringBufferMaxLength
+  fullName: LiteNetLib.Utils.NetDataWriter.StringBufferMaxLength
+  nameWithType: NetDataWriter.StringBufferMaxLength
 - uid: LiteNetLib.Utils.NetPacketProcessor
   name: NetPacketProcessor
   href: api/LiteNetLib.Utils.NetPacketProcessor.html

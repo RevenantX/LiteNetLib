@@ -66,6 +66,7 @@
             </summary>
             <param name="peer">From peer</param>
             <param name="reader">DataReader containing all received data</param>
+            <param name="channelNumber">Number of channel at which packet arrived</param>
             <param name="deliveryMethod">Type of received packet</param>
         </member>
         <member name="M:LiteNetLib.INetEventListener.OnNetworkReceiveUnconnected(System.Net.IPEndPoint,LiteNetLib.NetPacketReader,LiteNetLib.UnconnectedMessageType)">
@@ -313,6 +314,11 @@
             Disconnect peers if HostUnreachable or NetworkUnreachable spawned (old behaviour 0.9.x was true)
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.AllowPeerAddressChange">
+            <summary>
+            Allows peer change it's ip (lte to wifi, wifi to lte, etc). Use only on server
+            </summary>
+        </member>
         <member name="P:LiteNetLib.NetManager.ChannelsCount">
             <summary>
             QoS channel count per message type (value must be between 1 and 64 channels)
@@ -329,6 +335,13 @@
             </summary>
             <param name="id">id of peer</param>
             <returns>Peer if peer with id exist, otherwise null</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)">
+            <summary>
+            Gets peer by peer id
+            </summary>
+            <param name="id">id of peer</param>
+            <returns>True if peer with id exist, otherwise false</returns>
         </member>
         <member name="P:LiteNetLib.NetManager.ConnectedPeersCount">
             <summary>
@@ -677,6 +690,15 @@
             </summary>
             <param name="ntpServerAddress">NTP Server address.</param>
         </member>
+        <member name="M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">
+            <summary>
+            Start logic thread and listening on selected port
+            </summary>
+            <param name="addressIPv4">bind to specific ipv4 address</param>
+            <param name="addressIPv6">bind to specific ipv6 address</param>
+            <param name="port">port to listen</param>
+            <param name="manualMode">mode of library</param>
+        </member>
         <member name="T:LiteNetLib.ConnectionState">
             <summary>
             Peer connection state
@@ -687,7 +709,7 @@
             Network peer. Main purpose is sending messages to specific peer.
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetPeer.EndPoint">
+        <member name="P:LiteNetLib.NetPeer.EndPoint">
             <summary>
             Peer ip address and port
             </summary>
@@ -719,7 +741,12 @@
         </member>
         <member name="P:LiteNetLib.NetPeer.Ping">
             <summary>
-            Current ping in milliseconds
+            Current one-way ping (RTT/2) in milliseconds
+            </summary>
+        </member>
+        <member name="P:LiteNetLib.NetPeer.RoundTripTime">
+            <summary>
+            Round trip time in milliseconds
             </summary>
         </member>
         <member name="P:LiteNetLib.NetPeer.Mtu">
@@ -925,6 +952,12 @@
             <param name="length">length</param>
             <returns>CRC32C checksum</returns>
         </member>
+        <member name="M:LiteNetLib.Utils.NetDataReader.GetString(System.Int32)">
+            <summary>
+            Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+            </summary>
+            <returns>"string.Empty" if value > "maxLength"</returns>
+        </member>
         <member name="M:LiteNetLib.Utils.NetDataWriter.FromBytes(System.Byte[],System.Boolean)">
             <summary>
             Creates NetDataWriter from existing ByteArray
@@ -946,6 +979,11 @@
             </summary>
             <param name="position">new byte position</param>
             <returns>previous position of data writer</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetDataWriter.Put(System.String,System.Int32)">
+            <summary>
+            Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+            </summary>
         </member>
         <member name="M:LiteNetLib.Utils.NetPacketProcessor.RegisterNestedType``1">
             <summary>

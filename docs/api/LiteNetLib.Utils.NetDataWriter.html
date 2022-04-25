@@ -207,6 +207,30 @@
       </tr>
     </tbody>
   </table>
+  
+  
+  <h4 id="LiteNetLib_Utils_NetDataWriter_StringBufferMaxLength" data-uid="LiteNetLib.Utils.NetDataWriter.StringBufferMaxLength">StringBufferMaxLength</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int StringBufferMaxLength = 32768</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
   </h3>
   
@@ -824,7 +848,8 @@
   
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_String_System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.String,System.Int32)">Put(String, Int32)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Note that &quot;maxLength&quot; only limits the number of characters in a string, not its size in bytes.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -1173,7 +1198,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void PutArray(string[] value, int maxLength)</code></pre>
+    <pre><code class="lang-csharp hljs">public void PutArray(string[] value, int strMaxLength)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1192,7 +1217,7 @@
       </tr>
       <tr>
         <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">maxLength</span></td>
+        <td><span class="parametername">strMaxLength</span></td>
         <td></td>
       </tr>
     </tbody>

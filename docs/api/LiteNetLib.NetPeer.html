@@ -91,31 +91,6 @@
   </h3>
   
   
-  <h4 id="LiteNetLib_NetPeer_EndPoint" data-uid="LiteNetLib.NetPeer.EndPoint">EndPoint</h4>
-  <div class="markdown level1 summary"><p>Peer ip address and port</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly IPEndPoint EndPoint</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Net.IPEndPoint</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <h4 id="LiteNetLib_NetPeer_Id" data-uid="LiteNetLib.NetPeer.Id">Id</h4>
   <div class="markdown level1 summary"><p>Peer id can be used as key in your dictionary of peers</p>
 </div>
@@ -244,6 +219,32 @@
   </table>
   
   
+  <a id="LiteNetLib_NetPeer_EndPoint_" data-uid="LiteNetLib.NetPeer.EndPoint*"></a>
+  <h4 id="LiteNetLib_NetPeer_EndPoint" data-uid="LiteNetLib.NetPeer.EndPoint">EndPoint</h4>
+  <div class="markdown level1 summary"><p>Peer ip address and port</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IPEndPoint EndPoint { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.IPEndPoint</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="LiteNetLib_NetPeer_Mtu_" data-uid="LiteNetLib.NetPeer.Mtu*"></a>
   <h4 id="LiteNetLib_NetPeer_Mtu" data-uid="LiteNetLib.NetPeer.Mtu">Mtu</h4>
   <div class="markdown level1 summary"><p>Current MTU - Maximum Transfer Unit ( maximum udp packet size without fragmentation )</p>
@@ -272,7 +273,7 @@
   
   <a id="LiteNetLib_NetPeer_Ping_" data-uid="LiteNetLib.NetPeer.Ping*"></a>
   <h4 id="LiteNetLib_NetPeer_Ping" data-uid="LiteNetLib.NetPeer.Ping">Ping</h4>
-  <div class="markdown level1 summary"><p>Current ping in milliseconds</p>
+  <div class="markdown level1 summary"><p>Current one-way ping (RTT/2) in milliseconds</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -369,6 +370,32 @@ positive - remote time &gt; our time</p>
     <tbody>
       <tr>
         <td><span class="xref">System.DateTime</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_NetPeer_RoundTripTime_" data-uid="LiteNetLib.NetPeer.RoundTripTime*"></a>
+  <h4 id="LiteNetLib_NetPeer_RoundTripTime" data-uid="LiteNetLib.NetPeer.RoundTripTime">RoundTripTime</h4>
+  <div class="markdown level1 summary"><p>Round trip time in milliseconds</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RoundTripTime { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
         <td></td>
       </tr>
     </tbody>
