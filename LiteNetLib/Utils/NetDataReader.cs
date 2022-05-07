@@ -622,7 +622,7 @@ namespace LiteNetLib.Utils
             if (AvailableBytes >= 2)
             {
                 ushort strSize = PeekUShort();
-                if (AvailableBytes >= strSize + 2)
+                if (AvailableBytes >= strSize + 1)
                 {
                     result = GetString();
                     return true;
