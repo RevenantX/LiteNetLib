@@ -957,7 +957,7 @@ namespace LiteNetLib
                 //if maxed - finish.
                 if (_mtuIdx == NetConstants.PossibleMtu.Length - 1)
                     _finishMtu = true;
-
+                NetManager.PoolRecycle(packet);
                 NetDebug.Write("[MTU] ok. Increase to: " + _mtu);
             }
         }

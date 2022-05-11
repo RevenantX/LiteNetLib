@@ -49,8 +49,8 @@ namespace LiteNetLib
 
         public void Recycle()
         {
-            if(_manager.AutoRecycle)
-                throw new Exception("Recycle called with AutoRecycle enabled");
+            if (_manager.AutoRecycle)
+                return;
             RecycleInternal();
         }
     }

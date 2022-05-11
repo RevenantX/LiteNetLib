@@ -67,10 +67,9 @@
 
         //Max possible single packet size
         public static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
+        public static readonly int MaxUnreliableDataSize = MaxPacketSize - HeaderSize;
 
         //peer specific
         public const byte MaxConnectionNumber = 4;
-
-        public const int PacketPoolSize = 1000;
     }
 }

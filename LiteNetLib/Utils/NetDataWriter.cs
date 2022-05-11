@@ -82,6 +82,15 @@ namespace LiteNetLib.Utils
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void EnsureFit(int additionalSize)
+        {
+            if (_data.Length < _position + additionalSize)
+            {
+                Array.Resize(ref _data, Math.Max(_position + additionalSize, _data.Length * 2));
+            }
+        }
+
         public void Reset(int size)
         {
             ResizeIfNeed(size);
