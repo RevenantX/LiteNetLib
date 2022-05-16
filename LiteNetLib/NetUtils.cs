@@ -102,23 +102,24 @@ namespace LiteNetLib
                             targetList.Add(address.ToString());
                     }
                 }
+
+	            //Fallback mode (unity android)
+	            if (targetList.Count == 0)
+	            {
+	                IPAddress[] addresses = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
+	                foreach (IPAddress ip in addresses)
+	                {
+	                    if((ipv4 && ip.AddressFamily == AddressFamily.InterNetwork) ||
+	                       (ipv6 && ip.AddressFamily == AddressFamily.InterNetworkV6))
+	                        targetList.Add(ip.ToString());
+	                }
+	            }
             }
             catch
             {
                 //ignored
             }
-
-            //Fallback mode (unity android)
-            if (targetList.Count == 0)
-            {
-                IPAddress[] addresses = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
-                foreach (IPAddress ip in addresses)
-                {
-                    if((ipv4 && ip.AddressFamily == AddressFamily.InterNetwork) ||
-                       (ipv6 && ip.AddressFamily == AddressFamily.InterNetworkV6))
-                        targetList.Add(ip.ToString());
-                }
-            }
+            
             if (targetList.Count == 0)
             {
                 if(ipv4)
