@@ -690,6 +690,11 @@
             </summary>
             <param name="ntpServerAddress">NTP Server address.</param>
         </member>
+        <member name="F:LiteNetLib.NetManager.PacketPoolSize">
+            <summary>
+            Maximum packet pool size (increase if you have tons of packets sending)
+            </summary>
+        </member>
         <member name="M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">
             <summary>
             Start logic thread and listening on selected port
