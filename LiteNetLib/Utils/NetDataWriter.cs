@@ -21,7 +21,7 @@ namespace LiteNetLib.Utils
         // 1000 readers after: .8MB GC, 18ms
         private static readonly UTF8Encoding _uTF8Encoding = new UTF8Encoding(false, true);
         public const int StringBufferMaxLength = 1024 * 32; // <- short.MaxValue + 1
-        private static readonly byte[] _stringBuffer = new byte[StringBufferMaxLength];
+        private readonly byte[] _stringBuffer = new byte[StringBufferMaxLength];
 
         public NetDataWriter() : this(true, InitialSize)
         {
