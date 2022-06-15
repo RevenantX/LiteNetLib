@@ -16,7 +16,7 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 
 ## Build
 
-### [NuGet](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/v/LiteNetLib.svg)](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/dt/LiteNetLib.svg)](https://www.nuget.org/packages/LiteNetLib/)
+### [NuGet](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/v/LiteNetLib?color=blue)](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/vpre/LiteNetLib)](https://www.nuget.org/packages/LiteNetLib/#versions-body-tab) [![NuGet](https://img.shields.io/nuget/dt/LiteNetLib)](https://www.nuget.org/packages/LiteNetLib/) 
 
 ### [Release builds](https://github.com/RevenantX/LiteNetLib/releases) [![GitHub (pre-)release](https://img.shields.io/github/release/RevenantX/LiteNetLib/all.svg)](https://github.com/RevenantX/LiteNetLib/releases)
 
