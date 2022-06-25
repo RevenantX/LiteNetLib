@@ -1369,7 +1369,9 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Send message without connection
+        /// Send message without connection. WARNING This method allocates a new IPEndPoint object and 
+        /// synchronously makes a DNS request. If you're calling this method every frame it will be 
+        /// much faster to just cache the IPEndPoint.
         /// </summary>
         /// <param name="writer">Data serializer</param>
         /// <param name="address">Packet destination IP or hostname</param>
