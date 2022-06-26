@@ -1369,6 +1369,22 @@ namespace LiteNetLib
         }
 
         /// <summary>
+        /// Send message without connection. WARNING This method allocates a new IPEndPoint object and 
+        /// synchronously makes a DNS request. If you're calling this method every frame it will be 
+        /// much faster to just cache the IPEndPoint.
+        /// </summary>
+        /// <param name="writer">Data serializer</param>
+        /// <param name="address">Packet destination IP or hostname</param>
+        /// <param name="port">Packet destination port</param>
+        /// <returns>Operation result</returns>
+        public bool SendUnconnectedMessage(NetDataWriter writer, string address, int port)
+        {
+            IPEndPoint remoteEndPoint = NetUtils.MakeEndPoint(address, port);
+
+            return SendUnconnectedMessage(writer.Data, 0, writer.Length, remoteEndPoint);
+        }
+
+        /// <summary>
         /// Send message without connection
         /// </summary>
         /// <param name="writer">Data serializer</param>
