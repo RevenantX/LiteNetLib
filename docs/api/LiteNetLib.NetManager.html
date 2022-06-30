@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class NetManager
    ">
-    <meta name="generator" content="docfx 2.58.5.0">
+    <meta name="generator" content="docfx 2.59.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -427,6 +427,31 @@
     <tbody>
       <tr>
         <td><a class="xref" href="LiteNetLib.NatPunchModule.html">NatPunchModule</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="LiteNetLib_NetManager_PacketPoolSize" data-uid="LiteNetLib.NetManager.PacketPoolSize">PacketPoolSize</h4>
+  <div class="markdown level1 summary"><p>Maximum packet pool size (increase if you have tons of packets sending)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int PacketPoolSize</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -1001,6 +1026,31 @@ use direct socket calls for send/receive to drastically increase speed and reduc
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public int LocalPort { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_NetManager_PoolCount_" data-uid="LiteNetLib.NetManager.PoolCount*"></a>
+  <h4 id="LiteNetLib_NetManager_PoolCount" data-uid="LiteNetLib.NetManager.PoolCount">PoolCount</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int PoolCount { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2557,6 +2607,65 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
         <td><span class="xref">System.Net.IPEndPoint</span></td>
         <td><span class="parametername">remoteEndPoint</span></td>
         <td><p>Packet destination</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>Operation result</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="LiteNetLib_NetManager_SendUnconnectedMessage_" data-uid="LiteNetLib.NetManager.SendUnconnectedMessage*"></a>
+  <h4 id="LiteNetLib_NetManager_SendUnconnectedMessage_LiteNetLib_Utils_NetDataWriter_System_String_System_Int32_" data-uid="LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.String,System.Int32)">SendUnconnectedMessage(NetDataWriter, String, Int32)</h4>
+  <div class="markdown level1 summary"><p>Send message without connection. WARNING This method allocates a new IPEndPoint object and 
+synchronously makes a DNS request. If you&apos;re calling this method every frame it will be 
+much faster to just cache the IPEndPoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool SendUnconnectedMessage(NetDataWriter writer, string address, int port)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
+        <td><span class="parametername">writer</span></td>
+        <td><p>Data serializer</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>Packet destination IP or hostname</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">port</span></td>
+        <td><p>Packet destination port</p>
 </td>
       </tr>
     </tbody>

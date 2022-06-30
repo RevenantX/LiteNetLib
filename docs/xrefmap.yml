@@ -1309,12 +1309,12 @@ references:
   commentId: F:LiteNetLib.NetConstants.MaxSequence
   fullName: LiteNetLib.NetConstants.MaxSequence
   nameWithType: NetConstants.MaxSequence
-- uid: LiteNetLib.NetConstants.PacketPoolSize
-  name: PacketPoolSize
-  href: api/LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_PacketPoolSize
-  commentId: F:LiteNetLib.NetConstants.PacketPoolSize
-  fullName: LiteNetLib.NetConstants.PacketPoolSize
-  nameWithType: NetConstants.PacketPoolSize
+- uid: LiteNetLib.NetConstants.MaxUnreliableDataSize
+  name: MaxUnreliableDataSize
+  href: api/LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_MaxUnreliableDataSize
+  commentId: F:LiteNetLib.NetConstants.MaxUnreliableDataSize
+  fullName: LiteNetLib.NetConstants.MaxUnreliableDataSize
+  nameWithType: NetConstants.MaxUnreliableDataSize
 - uid: LiteNetLib.NetConstants.SocketBufferSize
   name: SocketBufferSize
   href: api/LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_SocketBufferSize
@@ -1835,6 +1835,12 @@ references:
   fullName: LiteNetLib.NetManager.NetPeerEnumerator.System.Collections.IEnumerator.Current
   nameWithType: NetManager.NetPeerEnumerator.IEnumerator.Current
   nameWithType.vb: NetManager.NetPeerEnumerator.System.Collections.IEnumerator.Current
+- uid: LiteNetLib.NetManager.PacketPoolSize
+  name: PacketPoolSize
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_PacketPoolSize
+  commentId: F:LiteNetLib.NetManager.PacketPoolSize
+  fullName: LiteNetLib.NetManager.PacketPoolSize
+  nameWithType: NetManager.PacketPoolSize
 - uid: LiteNetLib.NetManager.PingInterval
   name: PingInterval
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_PingInterval
@@ -1854,6 +1860,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.PollEvents
   nameWithType: NetManager.PollEvents
+- uid: LiteNetLib.NetManager.PoolCount
+  name: PoolCount
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_PoolCount
+  commentId: P:LiteNetLib.NetManager.PoolCount
+  fullName: LiteNetLib.NetManager.PoolCount
+  nameWithType: NetManager.PoolCount
+- uid: LiteNetLib.NetManager.PoolCount*
+  name: PoolCount
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_PoolCount_
+  commentId: Overload:LiteNetLib.NetManager.PoolCount
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.PoolCount
+  nameWithType: NetManager.PoolCount
 - uid: LiteNetLib.NetManager.ReconnectDelay
   name: ReconnectDelay
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ReconnectDelay
@@ -2006,6 +2025,12 @@ references:
   commentId: M:LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.Net.IPEndPoint)
   fullName: LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter, System.Net.IPEndPoint)
   nameWithType: NetManager.SendUnconnectedMessage(NetDataWriter, IPEndPoint)
+- uid: LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.String,System.Int32)
+  name: SendUnconnectedMessage(NetDataWriter, String, Int32)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendUnconnectedMessage_LiteNetLib_Utils_NetDataWriter_System_String_System_Int32_
+  commentId: M:LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.String,System.Int32)
+  fullName: LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter, System.String, System.Int32)
+  nameWithType: NetManager.SendUnconnectedMessage(NetDataWriter, String, Int32)
 - uid: LiteNetLib.NetManager.SendUnconnectedMessage(System.Byte[],System.Int32,System.Int32,System.Net.IPEndPoint)
   name: SendUnconnectedMessage(Byte[], Int32, Int32, IPEndPoint)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendUnconnectedMessage_System_Byte___System_Int32_System_Int32_System_Net_IPEndPoint_
@@ -3743,6 +3768,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.RawDataSize
   nameWithType: NetDataReader.RawDataSize
+- uid: LiteNetLib.Utils.NetDataReader.SetPosition(System.Int32)
+  name: SetPosition(Int32)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetPosition_System_Int32_
+  commentId: M:LiteNetLib.Utils.NetDataReader.SetPosition(System.Int32)
+  fullName: LiteNetLib.Utils.NetDataReader.SetPosition(System.Int32)
+  nameWithType: NetDataReader.SetPosition(Int32)
+- uid: LiteNetLib.Utils.NetDataReader.SetPosition*
+  name: SetPosition
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetPosition_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.SetPosition
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.SetPosition
+  nameWithType: NetDataReader.SetPosition
 - uid: LiteNetLib.Utils.NetDataReader.SetSource(LiteNetLib.Utils.NetDataWriter)
   name: SetSource(NetDataWriter)
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_LiteNetLib_Utils_NetDataWriter_
@@ -4135,6 +4173,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataWriter.Data
   nameWithType: NetDataWriter.Data
+- uid: LiteNetLib.Utils.NetDataWriter.EnsureFit(System.Int32)
+  name: EnsureFit(Int32)
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_EnsureFit_System_Int32_
+  commentId: M:LiteNetLib.Utils.NetDataWriter.EnsureFit(System.Int32)
+  fullName: LiteNetLib.Utils.NetDataWriter.EnsureFit(System.Int32)
+  nameWithType: NetDataWriter.EnsureFit(Int32)
+- uid: LiteNetLib.Utils.NetDataWriter.EnsureFit*
+  name: EnsureFit
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_EnsureFit_
+  commentId: Overload:LiteNetLib.Utils.NetDataWriter.EnsureFit
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataWriter.EnsureFit
+  nameWithType: NetDataWriter.EnsureFit
 - uid: LiteNetLib.Utils.NetDataWriter.FromBytes(System.Byte[],System.Boolean)
   name: FromBytes(Byte[], Boolean)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_FromBytes_System_Byte___System_Boolean_
