@@ -74,6 +74,11 @@ namespace LiteNetLib
         private UnitySocketFix _unitySocketFix;
 #endif
 
+        /// <summary>
+        /// Maximum packets count that will be processed in Manual PollEvents
+        /// </summary>
+        public int MaxPacketsReceivePerUpdate = 0;
+
         public short Ttl
         {
             get
@@ -161,17 +166,17 @@ namespace LiteNetLib
             //Reading data
             try
             {
-                int available = socket.Available;
-                if (available == 0)
-                    return;
-                while (available > 0)
+                int packetsReceived = 0;
+                while (socket.Available > 0)
                 {
                     var packet = PoolGetPacket(NetConstants.MaxPacketSize);
                     packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
                         ref bufferEndPoint);
                     //NetDebug.Write(NetLogLevel.Trace, $"[R]Received data from {bufferEndPoint}, result: {packet.Size}");
                     OnMessageReceived(packet, (IPEndPoint) bufferEndPoint);
-                    available -= packet.Size;
+                    packetsReceived++;
+                    if (packetsReceived == MaxPacketsReceivePerUpdate)
+                        break;
                 }
             }
             catch (SocketException ex)
