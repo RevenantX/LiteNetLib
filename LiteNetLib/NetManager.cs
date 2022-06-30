@@ -369,7 +369,7 @@ namespace LiteNetLib
             {
                 return _peersArray[id];
             }
-            
+
             return null;
         }
 
@@ -377,6 +377,7 @@ namespace LiteNetLib
         /// Gets peer by peer id
         /// </summary>
         /// <param name="id">id of peer</param>
+        /// <param name="peer">resulting peer</param>
         /// <returns>True if peer with id exist, otherwise false</returns>
         public bool TryGetPeerById(int id, out NetPeer peer)
         {
@@ -1369,8 +1370,8 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Send message without connection. WARNING This method allocates a new IPEndPoint object and 
-        /// synchronously makes a DNS request. If you're calling this method every frame it will be 
+        /// Send message without connection. WARNING This method allocates a new IPEndPoint object and
+        /// synchronously makes a DNS request. If you're calling this method every frame it will be
         /// much faster to just cache the IPEndPoint.
         /// </summary>
         /// <param name="writer">Data serializer</param>

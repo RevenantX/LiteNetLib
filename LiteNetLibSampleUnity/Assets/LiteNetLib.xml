@@ -341,6 +341,7 @@
             Gets peer by peer id
             </summary>
             <param name="id">id of peer</param>
+            <param name="peer">resulting peer</param>
             <returns>True if peer with id exist, otherwise false</returns>
         </member>
         <member name="P:LiteNetLib.NetManager.ConnectedPeersCount">
@@ -529,6 +530,17 @@
             </summary>
             <param name="message">Raw data</param>
             <param name="remoteEndPoint">Packet destination</param>
+            <returns>Operation result</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.String,System.Int32)">
+            <summary>
+            Send message without connection. WARNING This method allocates a new IPEndPoint object and
+            synchronously makes a DNS request. If you're calling this method every frame it will be
+            much faster to just cache the IPEndPoint.
+            </summary>
+            <param name="writer">Data serializer</param>
+            <param name="address">Packet destination IP or hostname</param>
+            <param name="port">Packet destination port</param>
             <returns>Operation result</returns>
         </member>
         <member name="M:LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.Net.IPEndPoint)">
