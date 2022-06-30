@@ -279,6 +279,8 @@ namespace LiteNetLib
                 if ((_outgoingAcks.RawData[ackByte] & (1 << ackBit)) != 0)
                 {
                     NetDebug.Write("[RR]ReliableInOrder duplicate");
+                    //because _mustSendAcks == true
+                    AddToPeerChannelSendQueue();
                     return false;
                 }
 
