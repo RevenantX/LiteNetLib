@@ -707,6 +707,11 @@
             Maximum packet pool size (increase if you have tons of packets sending)
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.MaxPacketsReceivePerUpdate">
+            <summary>
+            Maximum packets count that will be processed in Manual PollEvents
+            </summary>
+        </member>
         <member name="M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">
             <summary>
             Start logic thread and listening on selected port

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29519.181
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32611.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteNetLib.Tests", "LiteNetLib.Tests\LiteNetLib.Tests.csproj", "{6B591E33-E71F-4A37-A08D-B56DD47EDE3F}"
 EndProject
@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibSample", "LibSample\LibSample.csproj", "{6499F9B4-0814-42EE-90A5-119AEA07E7EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trimming", "Trimming", "{526AD654-856E-420E-8E32-438BB41E56F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib.Trim.Dummy", "Trimming\LiteNetLib.Trim.Dummy\LiteNetLib.Trim.Dummy.csproj", "{86C518B8-2ACF-4120-8B8C-7B8040081B0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,9 +106,36 @@ Global
 		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.Release|x64.Build.0 = Release|Any CPU
 		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.Release|x86.ActiveCfg = Release|Any CPU
 		{6499F9B4-0814-42EE-90A5-119AEA07E7EE}.Release|x86.Build.0 = Release|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Debug|ARM.Build.0 = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Debug|x64.Build.0 = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Debug|x86.Build.0 = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.DebugUnsafe|Any CPU.ActiveCfg = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.DebugUnsafe|Any CPU.Build.0 = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.DebugUnsafe|ARM.ActiveCfg = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.DebugUnsafe|ARM.Build.0 = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.DebugUnsafe|x64.ActiveCfg = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.DebugUnsafe|x64.Build.0 = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.DebugUnsafe|x86.ActiveCfg = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.DebugUnsafe|x86.Build.0 = Debug|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Release|ARM.ActiveCfg = Release|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Release|ARM.Build.0 = Release|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Release|x64.ActiveCfg = Release|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Release|x64.Build.0 = Release|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Release|x86.ActiveCfg = Release|Any CPU
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{86C518B8-2ACF-4120-8B8C-7B8040081B0F} = {526AD654-856E-420E-8E32-438BB41E56F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3629F29B-A78F-4AB0-8502-FEF6799FFBB9}

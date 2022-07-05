@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace LiteNetLib.Utils
 {
@@ -118,7 +119,11 @@ namespace LiteNetLib.Utils
             ReadPacket(reader, null);
         }
 
-        public void Send<T>(NetPeer peer, T packet, DeliveryMethod options) where T : class, new()
+        public void Send<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>(NetPeer peer, T packet, DeliveryMethod options) where T : class, new()
         {
             _netDataWriter.Reset();
             Write(_netDataWriter, packet);
@@ -132,7 +137,11 @@ namespace LiteNetLib.Utils
             peer.Send(_netDataWriter, options);
         }
 
-        public void Send<T>(NetManager manager, T packet, DeliveryMethod options) where T : class, new()
+        public void Send<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>(NetManager manager, T packet, DeliveryMethod options) where T : class, new()
         {
             _netDataWriter.Reset();
             Write(_netDataWriter, packet);
@@ -146,7 +155,11 @@ namespace LiteNetLib.Utils
             manager.SendToAll(_netDataWriter, options);
         }
 
-        public void Write<T>(NetDataWriter writer, T packet) where T : class, new()
+        public void Write<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>(NetDataWriter writer, T packet) where T : class, new()
         {
             WriteHash<T>(writer);
             _netSerializer.Serialize(writer, packet);
@@ -175,15 +188,24 @@ namespace LiteNetLib.Utils
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <param name="packetConstructor">Method that constructs packet instead of slow Activator.CreateInstance</param>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
-        public void Subscribe<T>(Action<T> onReceive, Func<T> packetConstructor) where T : class, new()
+        public void Subscribe<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>(Action<T> onReceive, Func<T> packetConstructor) where T : class, new()
         {
             _netSerializer.Register<T>();
-            _callbacks[GetHash<T>()] = (reader, userData) =>
+            _callbacks[GetHash<T>()] = Callback;
+
+#if NET5_0_OR_GREATER
+            [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2091", Justification = "Captured Type T in lambda is preserved via parent method.")]
+#endif
+            void Callback(NetDataReader reader, object userData)
             {
                 var reference = packetConstructor();
                 _netSerializer.Deserialize(reader, reference);
                 onReceive(reference);
-            };
+            }
         }
 
         /// <summary>
@@ -192,15 +214,24 @@ namespace LiteNetLib.Utils
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <param name="packetConstructor">Method that constructs packet instead of slow Activator.CreateInstance</param>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
-        public void Subscribe<T, TUserData>(Action<T, TUserData> onReceive, Func<T> packetConstructor) where T : class, new()
+        public void Subscribe<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T, TUserData>(Action<T, TUserData> onReceive, Func<T> packetConstructor) where T : class, new()
         {
             _netSerializer.Register<T>();
-            _callbacks[GetHash<T>()] = (reader, userData) =>
+            _callbacks[GetHash<T>()] = Callback;
+
+#if NET5_0_OR_GREATER
+            [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2091", Justification = "Captured Type T in lambda is preserved via parent method.")]
+#endif
+            void Callback(NetDataReader reader, object userData)
             {
                 var reference = packetConstructor();
                 _netSerializer.Deserialize(reader, reference);
                 onReceive(reference, (TUserData)userData);
-            };
+            }
         }
 
         /// <summary>
@@ -209,15 +240,25 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
-        public void SubscribeReusable<T>(Action<T> onReceive) where T : class, new()
+        public void SubscribeReusable<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>(Action<T> onReceive) where T : class, new()
         {
             _netSerializer.Register<T>();
             var reference = new T();
-            _callbacks[GetHash<T>()] = (reader, userData) =>
+            _callbacks[GetHash<T>()] = Callback;
+
+#if NET5_0_OR_GREATER
+            [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2091", Justification = "Captured Type T in lambda is preserved via parent method.")]
+#endif
+            void Callback(NetDataReader reader, object userData)
             {
                 _netSerializer.Deserialize(reader, reference);
                 onReceive(reference);
-            };
+            }
+
         }
 
         /// <summary>
@@ -226,15 +267,24 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="onReceive">event that will be called when packet deserialized with ReadPacket method</param>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
-        public void SubscribeReusable<T, TUserData>(Action<T, TUserData> onReceive) where T : class, new()
+        public void SubscribeReusable<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T, TUserData>(Action<T, TUserData> onReceive) where T : class, new()
         {
             _netSerializer.Register<T>();
             var reference = new T();
-            _callbacks[GetHash<T>()] = (reader, userData) =>
+            _callbacks[GetHash<T>()] = Callback;
+
+#if NET5_0_OR_GREATER
+            [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2091", Justification = "Captured Type T in lambda is preserved via parent method.")]
+#endif
+            void Callback(NetDataReader reader, object userData)
             {
                 _netSerializer.Deserialize(reader, reference);
                 onReceive(reference, (TUserData)userData);
-            };
+            }
         }
 
         public void SubscribeNetSerializable<T, TUserData>(
