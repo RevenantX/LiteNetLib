@@ -162,6 +162,7 @@ namespace LiteNetLib
         private readonly INetEventListener _netEventListener;
         private readonly IDeliveryEventListener _deliveryEventListener;
         private readonly INtpEventListener _ntpEventListener;
+        private readonly IPeerAddressChangedListener _peerAddressChangedListener;
 
         private readonly Dictionary<IPEndPoint, NetPeer> _peersDict = new Dictionary<IPEndPoint, NetPeer>(new IPEndPointComparer());
         private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>(new IPEndPointComparer());
@@ -458,6 +459,7 @@ namespace LiteNetLib
             _netEventListener = listener;
             _deliveryEventListener = listener as IDeliveryEventListener;
             _ntpEventListener = listener as INtpEventListener;
+            _peerAddressChangedListener = listener as IPeerAddressChangedListener;
             NatPunchModule = new NatPunchModule(this);
             _extraPacketLayer = extraPacketLayer;
         }
@@ -1022,9 +1024,11 @@ namespace LiteNetLib
                                 {
                                     _peersLock.EnterWriteLock();
                                     _peersDict.Remove(peer.EndPoint);
+                                    var previousAddress = peer.EndPoint;
                                     peer.EndPoint = remoteEndPoint;
                                     _peersDict.Add(remoteEndPoint, peer);
                                     _peersLock.ExitWriteLock();
+                                    _peerAddressChangedListener?.OnPeerAddressChanged(peer, previousAddress);
                                     NetDebug.Write("[NM] PeerNotFound change address of remote peer");
                                     isOldPeer = true;
                                 }
