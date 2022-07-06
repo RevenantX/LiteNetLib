@@ -663,6 +663,10 @@ namespace LiteNetLib
                     if (sleepTime > 0)
                         _updateTriggerEvent.WaitOne(sleepTime);
                 }
+                catch (ThreadAbortException)
+                {
+                    return;
+                }
                 catch (Exception e)
                 {
                     NetDebug.WriteError("[NM] LogicThread error: " + e);

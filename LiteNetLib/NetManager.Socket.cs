@@ -261,6 +261,11 @@ namespace LiteNetLib
                     //socket closed
                     return;
                 }
+                catch (ThreadAbortException)
+                {
+                    //thread closed
+                    return;
+                }
                 catch (Exception e)
                 {
                     //protects socket receive thread
