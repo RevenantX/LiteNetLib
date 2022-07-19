@@ -1,31 +1,31 @@
-﻿using System;
-
-namespace LiteNetLib
+﻿namespace LiteNetLib
 {
     public readonly ref struct PooledPacket
     {
         internal readonly NetPacket _packet;
-        internal readonly int _channelNumber;
+        internal readonly byte _channelNumber;
 
+        /// <summary>
+        /// Maximum data size that you can put into such packet
+        /// </summary>
         public readonly int MaxUserDataSize;
-        public readonly int UserDataOffset;
-        public byte[] Data => _packet.RawData;
-        public int UserDataSize
-        {
-            get => _packet.Size - UserDataOffset;
-            set
-            {
-                if (value > MaxUserDataSize)
-                    throw new Exception($"Size bigger than maximum({MaxUserDataSize})");
-                _packet.Size = value + UserDataOffset;
-            }
-        }
 
-        internal PooledPacket(NetPacket packet, int mtu, byte channelNumber)
+        /// <summary>
+        /// Offset for user data when writing to Data array
+        /// </summary>
+        public readonly int UserDataOffset;
+
+        /// <summary>
+        /// Raw packet data. Do not modify header! Use UserDataOffset as start point for your data
+        /// </summary>
+        public byte[] Data => _packet.RawData;
+
+        internal PooledPacket(NetPacket packet, int maxDataSize, byte channelNumber)
         {
             _packet = packet;
             UserDataOffset = _packet.GetHeaderSize();
-            MaxUserDataSize = mtu - UserDataOffset;
+            _packet.Size = UserDataOffset;
+            MaxUserDataSize = maxDataSize - UserDataOffset;
             _channelNumber = channelNumber;
         }
     }

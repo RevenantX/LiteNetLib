@@ -258,57 +258,47 @@ namespace LiteNetLib
             return channel != null ? ((ReliableChannel)channel).PacketsInQueue : 0;
         }
 
+        /// <summary>
+        /// Create temporary packet (maximum size MTU - headerSize) to send later without additional copies
+        /// </summary>
+        /// <param name="deliveryMethod">Delivery method (reliable, unreliable, etc.)</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <returns>PooledPacket that you can use to write data starting from UserDataOffset</returns>
         public PooledPacket CreatePacketFromPool(DeliveryMethod deliveryMethod, byte channelNumber)
         {
-            var packet = NetManager.PoolGetPacket(_mtu);
-            packet.Property = deliveryMethod == DeliveryMethod.Unreliable
-                ? PacketProperty.Unreliable
-                : PacketProperty.Channeled;
-            return new PooledPacket(packet, _mtu);
-        }
-
-        public PooledPacket CreatePacketFromPool(DeliveryMethod deliveryMethod, byte channelNumber, int size)
-        {
-            var packetProperty = deliveryMethod == DeliveryMethod.Unreliable
-                ? PacketProperty.Unreliable
-                : PacketProperty.Channeled;
-            int headerSize = NetPacket.GetHeaderSize(packetProperty);
-            if (headerSize + size > _mtu)
-            {
-                throw new ArgumentException($"Size({size}) + headerSize({headerSize} is bigger than MTU");
-            }
-            var packet = NetManager.PoolGetPacket(headerSize + size);
-            packet.Property = packetProperty;
-            return new PooledPacket(packet, _mtu);
-        }
-
-        public void SendPooledPacket(PooledPacket packet)
-        {
-            if (_connectionState != ConnectionState.Connected || channelNumber >= _channels.Length)
-                return;
-
-            //Select channel
-            PacketProperty property;
-            BaseChannel channel = null;
-
+            //multithreaded variable
+            int mtu = _mtu;
+            var packet = NetManager.PoolGetPacket(mtu);
             if (deliveryMethod == DeliveryMethod.Unreliable)
             {
-                property = PacketProperty.Unreliable;
+                packet.Property = PacketProperty.Unreliable;
+                return new PooledPacket(packet, mtu, 0);
             }
             else
             {
-                property = PacketProperty.Channeled;
-                channel = CreateChannel((byte)(channelNumber * NetConstants.ChannelTypeCount + (byte)deliveryMethod));
+                packet.Property = PacketProperty.Channeled;
+                return new PooledPacket(packet, mtu, (byte)(channelNumber * NetConstants.ChannelTypeCount + (byte)deliveryMethod));
             }
+        }
 
-            if (channel == null) //unreliable
+        /// <summary>
+        /// Sends pooled packet without data copy
+        /// </summary>
+        /// <param name="packet">packet to send</param>
+        /// <param name="userDataSize">size of user data you want to send</param>
+        public void SendPooledPacket(PooledPacket packet, int userDataSize)
+        {
+            if (_connectionState != ConnectionState.Connected)
+                return;
+            packet._packet.Size = packet.UserDataOffset + userDataSize;
+            if (packet._packet.Property == PacketProperty.Channeled)
+            {
+                CreateChannel(packet._channelNumber).AddToQueue(packet._packet);
+            }
+            else
             {
                 lock(_unreliableChannel)
-                    _unreliableChannel.Enqueue(packet);
-            }
-            else
-            {
-                channel.AddToQueue(packet);
+                    _unreliableChannel.Enqueue(packet._packet);
             }
         }
 
