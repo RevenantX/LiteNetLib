@@ -69,7 +69,8 @@ namespace LiteNetLib
             ConnectionLatencyUpdated,
             Broadcast,
             ConnectionRequest,
-            MessageDelivered
+            MessageDelivered,
+            PeerAddressChanged
         }
         public EType Type;
 
@@ -598,6 +599,9 @@ namespace LiteNetLib
                 case NetEvent.EType.MessageDelivered:
                     _deliveryEventListener.OnMessageDelivered(evt.Peer, evt.UserData);
                     break;
+                case NetEvent.EType.PeerAddressChanged:
+                    _peerAddressChangedListener.OnPeerAddressChanged(evt.Peer, evt.RemoteEndPoint);
+                    break;
             }
             //Recycle if not message
             if (emptyData)
@@ -631,7 +635,7 @@ namespace LiteNetLib
                 try
                 {
                     ProcessDelayedPackets();
-                    int elapsed = (int) stopwatch.ElapsedMilliseconds;
+                    int elapsed = (int)stopwatch.ElapsedMilliseconds;
                     elapsed = elapsed <= 0 ? 1 : elapsed;
                     stopwatch.Restart();
 
@@ -659,7 +663,7 @@ namespace LiteNetLib
 
                     ProcessNtpRequests(elapsed);
 
-                    int sleepTime = UpdateTime - (int) stopwatch.ElapsedMilliseconds;
+                    int sleepTime = UpdateTime - (int)stopwatch.ElapsedMilliseconds;
                     if (sleepTime > 0)
                         _updateTriggerEvent.WaitOne(sleepTime);
                 }
@@ -1032,7 +1036,10 @@ namespace LiteNetLib
                                     peer.EndPoint = remoteEndPoint;
                                     _peersDict.Add(remoteEndPoint, peer);
                                     _peersLock.ExitWriteLock();
-                                    _peerAddressChangedListener?.OnPeerAddressChanged(peer, previousAddress);
+                                    if (_peerAddressChangedListener != null)
+                                    {
+                                        CreateEvent(NetEvent.EType.PeerAddressChanged, peer, previousAddress);
+                                    }
                                     NetDebug.Write("[NM] PeerNotFound change address of remote peer");
                                     isOldPeer = true;
                                 }
