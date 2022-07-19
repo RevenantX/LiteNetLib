@@ -258,6 +258,60 @@ namespace LiteNetLib
             return channel != null ? ((ReliableChannel)channel).PacketsInQueue : 0;
         }
 
+        public PooledPacket CreatePacketFromPool(DeliveryMethod deliveryMethod, byte channelNumber)
+        {
+            var packet = NetManager.PoolGetPacket(_mtu);
+            packet.Property = deliveryMethod == DeliveryMethod.Unreliable
+                ? PacketProperty.Unreliable
+                : PacketProperty.Channeled;
+            return new PooledPacket(packet, _mtu);
+        }
+
+        public PooledPacket CreatePacketFromPool(DeliveryMethod deliveryMethod, byte channelNumber, int size)
+        {
+            var packetProperty = deliveryMethod == DeliveryMethod.Unreliable
+                ? PacketProperty.Unreliable
+                : PacketProperty.Channeled;
+            int headerSize = NetPacket.GetHeaderSize(packetProperty);
+            if (headerSize + size > _mtu)
+            {
+                throw new ArgumentException($"Size({size}) + headerSize({headerSize} is bigger than MTU");
+            }
+            var packet = NetManager.PoolGetPacket(headerSize + size);
+            packet.Property = packetProperty;
+            return new PooledPacket(packet, _mtu);
+        }
+
+        public void SendPooledPacket(PooledPacket packet)
+        {
+            if (_connectionState != ConnectionState.Connected || channelNumber >= _channels.Length)
+                return;
+
+            //Select channel
+            PacketProperty property;
+            BaseChannel channel = null;
+
+            if (deliveryMethod == DeliveryMethod.Unreliable)
+            {
+                property = PacketProperty.Unreliable;
+            }
+            else
+            {
+                property = PacketProperty.Channeled;
+                channel = CreateChannel((byte)(channelNumber * NetConstants.ChannelTypeCount + (byte)deliveryMethod));
+            }
+
+            if (channel == null) //unreliable
+            {
+                lock(_unreliableChannel)
+                    _unreliableChannel.Enqueue(packet);
+            }
+            else
+            {
+                channel.AddToQueue(packet);
+            }
+        }
+
         private BaseChannel CreateChannel(byte idx)
         {
             BaseChannel newChannel = _channels[idx];
@@ -1010,7 +1064,7 @@ namespace LiteNetLib
                         return ConnectRequestResult.P2PLose;
                     }
                     //slow rare case check
-                    else if (connRequest.ConnectionTime == _connectTime)
+                    if (connRequest.ConnectionTime == _connectTime)
                     {
                         var remoteBytes = _remoteEndPoint.Serialize();
                         var localBytes = connRequest.TargetAddress;
