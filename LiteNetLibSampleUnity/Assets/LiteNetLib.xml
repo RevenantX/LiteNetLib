@@ -103,6 +103,13 @@
             </summary>
             <param name="packet"></param>
         </member>
+        <member name="M:LiteNetLib.IPeerAddressChangedListener.OnPeerAddressChanged(LiteNetLib.NetPeer,System.Net.IPEndPoint)">
+            <summary>
+            Called when peer address changed (when AllowPeerAddressChange is enabled)
+            </summary>
+            <param name="peer">Peer that changed address (with new address)</param>
+            <param name="previousAddress">previous IP</param>
+        </member>
         <member name="T:LiteNetLib.NatPunchModule">
             <summary>
             Module for UDP NAT Hole punching operations. Can be accessed from NetManager
@@ -707,6 +714,11 @@
             Maximum packet pool size (increase if you have tons of packets sending)
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.MaxPacketsReceivePerUpdate">
+            <summary>
+            Maximum packets count that will be processed in Manual PollEvents
+            </summary>
+        </member>
         <member name="M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">
             <summary>
             Start logic thread and listening on selected port
@@ -804,6 +816,21 @@
             <param name="channelNumber">number of channel 0-63</param>
             <param name="ordered">type of channel ReliableOrdered or ReliableUnordered</param>
             <returns>packets count in channel queue</returns>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.CreatePacketFromPool(LiteNetLib.DeliveryMethod,System.Byte)">
+            <summary>
+            Create temporary packet (maximum size MTU - headerSize) to send later without additional copies
+            </summary>
+            <param name="deliveryMethod">Delivery method (reliable, unreliable, etc.)</param>
+            <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+            <returns>PooledPacket that you can use to write data starting from UserDataOffset</returns>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.SendPooledPacket(LiteNetLib.PooledPacket,System.Int32)">
+            <summary>
+            Sends pooled packet without data copy
+            </summary>
+            <param name="packet">packet to send</param>
+            <param name="userDataSize">size of user data you want to send</param>
         </member>
         <member name="M:LiteNetLib.NetPeer.GetMaxSinglePacketSize(LiteNetLib.DeliveryMethod)">
             <summary>
@@ -959,6 +986,21 @@
             </summary>
             <param name="addrType">type of address (IPv4, IPv6 or both)</param>
             <returns>IP address if available. Else - string.Empty</returns>
+        </member>
+        <member name="F:LiteNetLib.PooledPacket.MaxUserDataSize">
+            <summary>
+            Maximum data size that you can put into such packet
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.PooledPacket.UserDataOffset">
+            <summary>
+            Offset for user data when writing to Data array
+            </summary>
+        </member>
+        <member name="P:LiteNetLib.PooledPacket.Data">
+            <summary>
+            Raw packet data. Do not modify header! Use UserDataOffset as start point for your data
+            </summary>
         </member>
         <member name="M:LiteNetLib.Utils.CRC32C.Compute(System.Byte[],System.Int32,System.Int32)">
             <summary>
