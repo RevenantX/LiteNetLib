@@ -991,7 +991,7 @@ namespace LiteNetLib
             else if(receivedMtu > _mtu && !_finishMtu) //MtuOk
             {
                 //invalid packet
-                if (receivedMtu != NetConstants.PossibleMtu[_mtuIdx + 1])
+                if (receivedMtu != NetConstants.PossibleMtu[_mtuIdx + 1] - NetManager.ExtraPacketSizeForLayer)
                     return;
 
                 lock (_mtuMutex)
