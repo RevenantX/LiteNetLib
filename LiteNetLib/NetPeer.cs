@@ -21,7 +21,8 @@ namespace LiteNetLib
         Connected         = 1 << 2,
         ShutdownRequested = 1 << 3,
         Disconnected      = 1 << 4,
-        Any = Outgoing | Connected | ShutdownRequested
+        EndPointChange    = 1 << 5,
+        Any = Outgoing | Connected | ShutdownRequested | EndPointChange
     }
 
     internal enum ConnectRequestResult
@@ -130,11 +131,7 @@ namespace LiteNetLib
         /// <summary>
         /// Peer ip address and port
         /// </summary>
-        public IPEndPoint EndPoint
-        {
-            get => _remoteEndPoint;
-            internal set => _remoteEndPoint = value;
-        }
+        public IPEndPoint EndPoint => _remoteEndPoint;
 
         /// <summary>
         /// Peer parent NetManager
@@ -210,14 +207,7 @@ namespace LiteNetLib
             Id = id;
             Statistics = new NetStatistics();
             NetManager = netManager;
-
-            if (netManager.MtuOverride > 0)
-                OverrideMtu(netManager.MtuOverride);
-            else if (netManager.UseSafeMtu)
-                SetMtu(0);
-            else
-                SetMtu(1);
-
+            ResetMtu();
             _remoteEndPoint = remoteEndPoint;
             _connectionState = ConnectionState.Connected;
             _mergeData = new NetPacket(PacketProperty.Merged, NetConstants.MaxPacketSize);
@@ -230,6 +220,31 @@ namespace LiteNetLib
 
             _channels = new BaseChannel[netManager.ChannelsCount * NetConstants.ChannelTypeCount];
             _channelSendQueue = new ConcurrentQueue<BaseChannel>();
+        }
+
+        internal void InitiateEndPointChange()
+        {
+            ResetMtu();
+            _connectionState = ConnectionState.EndPointChange;
+        }
+
+        internal void FinishEndPointChange(IPEndPoint newEndPoint)
+        {
+            if (_connectionState != ConnectionState.EndPointChange)
+                return;
+            _connectionState = ConnectionState.Connected;
+            _remoteEndPoint = newEndPoint;
+        }
+
+        internal void ResetMtu()
+        {
+            _finishMtu = false;
+            if (NetManager.MtuOverride > 0)
+                OverrideMtu(NetManager.MtuOverride);
+            else if (NetManager.UseSafeMtu)
+                SetMtu(0);
+            else
+                SetMtu(1);
         }
 
         private void SetMtu(int mtuIdx)

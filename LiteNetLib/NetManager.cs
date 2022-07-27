@@ -600,7 +600,20 @@ namespace LiteNetLib
                     _deliveryEventListener.OnMessageDelivered(evt.Peer, evt.UserData);
                     break;
                 case NetEvent.EType.PeerAddressChanged:
-                    _peerAddressChangedListener.OnPeerAddressChanged(evt.Peer, evt.RemoteEndPoint);
+                    _peersLock.EnterUpgradeableReadLock();
+                    IPEndPoint previousAddress = null;
+                    if (_peersDict.ContainsKey(evt.Peer.EndPoint))
+                    {
+                        _peersLock.EnterWriteLock();
+                        _peersDict.Remove(evt.Peer.EndPoint);
+                        previousAddress = evt.Peer.EndPoint;
+                        evt.Peer.FinishEndPointChange(evt.RemoteEndPoint);
+                        _peersDict.Add(evt.Peer.EndPoint, evt.Peer);
+                        _peersLock.ExitWriteLock();
+                    }
+                    _peersLock.ExitUpgradeableReadLock();
+                    if(previousAddress != null)
+                        _peerAddressChangedListener.OnPeerAddressChanged(evt.Peer, previousAddress);
                     break;
             }
             //Recycle if not message
@@ -1002,6 +1015,7 @@ namespace LiteNetLib
                         {
                             //first reply
                             //send NetworkChanged packet
+                            netPeer.ResetMtu();
                             SendRaw(NetConnectAcceptPacket.MakeNetworkChanged(netPeer), remoteEndPoint);
                             NetDebug.Write($"PeerNotFound sending connection info: {remoteEndPoint}");
                         }
@@ -1030,17 +1044,15 @@ namespace LiteNetLib
                                     peer.ConnectTime == remoteData.ConnectionTime &&
                                     peer.ConnectionNum == remoteData.ConnectionNumber)
                                 {
-                                    _peersLock.EnterWriteLock();
-                                    _peersDict.Remove(peer.EndPoint);
-                                    var previousAddress = peer.EndPoint;
-                                    peer.EndPoint = remoteEndPoint;
-                                    _peersDict.Add(remoteEndPoint, peer);
-                                    _peersLock.ExitWriteLock();
-                                    if (_peerAddressChangedListener != null)
+                                    if (peer.ConnectionState == ConnectionState.Connected)
                                     {
-                                        CreateEvent(NetEvent.EType.PeerAddressChanged, peer, previousAddress);
+                                        peer.InitiateEndPointChange();
+                                        if (_peerAddressChangedListener != null)
+                                        {
+                                            CreateEvent(NetEvent.EType.PeerAddressChanged, peer, remoteEndPoint);
+                                        }
+                                        NetDebug.Write("[NM] PeerNotFound change address of remote peer");
                                     }
-                                    NetDebug.Write("[NM] PeerNotFound change address of remote peer");
                                     isOldPeer = true;
                                 }
                                 _peersLock.ExitUpgradeableReadLock();
