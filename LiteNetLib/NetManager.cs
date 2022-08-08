@@ -914,10 +914,11 @@ namespace LiteNetLib
         private void DebugMessageReceived(NetPacket packet, IPEndPoint remoteEndPoint)
         {
 #endif
+            var originalPacketSize = packet.Size;
             if (EnableStatistics)
             {
                 Statistics.IncrementPacketsReceived();
-                Statistics.AddBytesReceived(packet.Size);
+                Statistics.AddBytesReceived(originalPacketSize);
             }
 
             if (_ntpRequests.Count > 0)
@@ -998,6 +999,12 @@ namespace LiteNetLib
             _peersLock.EnterReadLock();
             bool peerFound = _peersDict.TryGetValue(remoteEndPoint, out var netPeer);
             _peersLock.ExitReadLock();
+
+            if (peerFound && EnableStatistics)
+            {
+                netPeer.Statistics.IncrementPacketsReceived();
+                netPeer.Statistics.AddBytesReceived(originalPacketSize);
+            }
 
             switch (packet.Property)
             {
