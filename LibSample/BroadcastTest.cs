@@ -86,9 +86,9 @@ namespace LibSample
             public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
             {
                 Console.WriteLine("[Server] ReceiveUnconnected {0}. From: {1}. Data: {2}", messageType, remoteEndPoint, reader.GetString(100));
-                NetDataWriter wrtier = new NetDataWriter();
-                wrtier.Put("SERVER DISCOVERY RESPONSE");
-                Server.SendUnconnectedMessage(wrtier, remoteEndPoint);
+                NetDataWriter writer = new NetDataWriter();
+                writer.Put("SERVER DISCOVERY RESPONSE");
+                Server.SendUnconnectedMessage(writer, remoteEndPoint);
             }
 
             public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
