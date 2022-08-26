@@ -6,9 +6,11 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/revx)
 
-`btc:bc1q8tlklzw4r5v7rcndmmk6huq3u7x0cuuvhaff7s`
+`BTC:3PF6yfBQbtCedjdDx6HAY2PZVUUnuTDFik`
 
-`litecoin:LTC1QHZYH9VD3Z2TYKSYMA8CDUZVTGHGXDZTTHGQRK7`
+`LTC:LTEdSyRomuJiMDM4r8rH17HYBHyU4D8sHR`
+
+`ETH:0x276Bc6F6e36773Eab084479F91FcB184B0B34927`
 
 **Discord chat**: [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
