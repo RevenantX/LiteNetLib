@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "D:/Projects/LiteNetLib/docfx_project",
+  "source_base_path": "d:/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -585,7 +585,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/netserializerusage.html",
-          "hash": "oOUQI0iABiQGut/lmxmqrjlo8K0OF3kvqsIGhlCpfT4="
+          "hash": "2AuloC57qynbPWwWGVUyC8YNLRE8Lk2MpO2YdDfe5iU="
         }
       },
       "is_incremental": false,
