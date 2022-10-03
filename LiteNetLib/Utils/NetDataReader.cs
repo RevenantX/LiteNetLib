@@ -107,12 +107,15 @@ namespace LiteNetLib.Utils
         }
 
         #region GetMethods
-        public IPEndPoint GetNetEndPoint()
+        public IPEndPoint GetIPEndPoint()
         {
             string host = GetString(1000);
-            int port = GetInt();
+            ushort port = GetUShort();
             return NetUtils.MakeEndPoint(host, port);
         }
+
+        [Obsolete("Use GetIPEndPoint instead")]
+        public IPEndPoint GetNetEndPoint() => GetIPEndPoint();
 
         public byte GetByte()
         {
@@ -126,10 +129,15 @@ namespace LiteNetLib.Utils
             return (sbyte)GetByte();
         }
 
+        #region Array
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T[] GetArray<T>(ushort size)
+            where T : unmanaged
         {
-            ushort length = BitConverter.ToUInt16(_data, _position);
-            _position += 2;
+            ushort length = GetUShort();
+            if (length == 0) return null;
+            if (length == 1) return Array.Empty<T>();
+            length--;
             T[] result = new T[length];
             length *= size;
             Buffer.BlockCopy(_data, _position, result, 0, length);
@@ -137,86 +145,37 @@ namespace LiteNetLib.Utils
             return result;
         }
 
-        public bool[] GetBoolArray()
-        {
-            return GetArray<bool>(1);
-        }
+        public byte[] GetByteArray() => GetArray<byte>(sizeof(byte));
+        public sbyte[] GetSByteArray() => GetArray<sbyte>(sizeof(sbyte));
+        public bool[] GetBoolArray() => GetArray<bool>(sizeof(bool));
+        public short[] GetShortArray() => GetArray<short>(sizeof(short));
+        public ushort[] GetUShortArray() => GetArray<ushort>(sizeof(ushort));
+        public int[] GetIntArray() => GetArray<int>(sizeof(int));
+        public uint[] GetUIntArray() => GetArray<uint>(sizeof(uint));
 
-        public ushort[] GetUShortArray()
-        {
-            return GetArray<ushort>(2);
-        }
+        public float[] GetFloatArray() => GetArray<float>(sizeof(float));
+        public long[] GetLongArray() => GetArray<long>(sizeof(long));
+        public ulong[] GetULongArray() => GetArray<ulong>(sizeof(ulong));
+        public double[] GetDoubleArray() => GetArray<double>(sizeof(double));
 
-        public short[] GetShortArray()
-        {
-            return GetArray<short>(2);
-        }
-
-        public int[] GetIntArray()
-        {
-            return GetArray<int>(4);
-        }
-
-        public uint[] GetUIntArray()
-        {
-            return GetArray<uint>(4);
-        }
-
-        public float[] GetFloatArray()
-        {
-            return GetArray<float>(4);
-        }
-
-        public double[] GetDoubleArray()
-        {
-            return GetArray<double>(8);
-        }
-
-        public long[] GetLongArray()
-        {
-            return GetArray<long>(8);
-        }
-
-        public ulong[] GetULongArray()
-        {
-            return GetArray<ulong>(8);
-        }
-
-        public string[] GetStringArray()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public string[] GetStringArray(int stringMaxLength)
         {
             ushort length = GetUShort();
-            string[] arr = new string[length];
-            for (int i = 0; i < length; i++)
-            {
-                arr[i] = GetString();
-            }
-            return arr;
+            if (length == 0) return null;
+            if (length == 1) return Array.Empty<string>();
+            length--;
+            string[] result = new string[length];
+            for (ushort i = 0; i < length; i++)
+                result[i] = GetString(stringMaxLength);
+            return result;
         }
 
-        /// <summary>
-        /// Note that "maxStringLength" only limits the number of characters in a string, not its size in bytes.
-        /// Strings that exceed this parameter are returned as empty
-        /// </summary>
-        public string[] GetStringArray(int maxStringLength)
-        {
-            ushort length = GetUShort();
-            string[] arr = new string[length];
-            for (int i = 0; i < length; i++)
-            {
-                arr[i] = GetString(maxStringLength);
-            }
-            return arr;
-        }
+        public string[] GetStringArray() => GetStringArray(0);
+        #endregion
 
-        public bool GetBool()
-        {
-            return GetByte() == 1;
-        }
-
-        public char GetChar()
-        {
-            return (char)GetUShort();
-        }
+        public bool GetBool() => GetByte() == NetDataWriter.TRUE;
+        public char GetChar() => (char)GetUShort();
 
         public ushort GetUShort()
         {
@@ -339,6 +298,7 @@ namespace LiteNetLib.Utils
             return obj;
         }
 
+        /// <summary>Raw bytes</summary>
         public byte[] GetRemainingBytes()
         {
             byte[] outgoingData = new byte[AvailableBytes];
@@ -347,23 +307,27 @@ namespace LiteNetLib.Utils
             return outgoingData;
         }
 
+        /// <summary>Raw bytes</summary>
         public void GetBytes(byte[] destination, int start, int count)
         {
             Buffer.BlockCopy(_data, _position, destination, start, count);
             _position += count;
         }
 
+        /// <summary>Raw bytes</summary>
         public void GetBytes(byte[] destination, int count)
         {
             Buffer.BlockCopy(_data, _position, destination, 0, count);
             _position += count;
         }
 
+        [Obsolete("Use GetSByteArray instead")]
         public sbyte[] GetSBytesWithLength()
         {
             return GetArray<sbyte>(1);
         }
 
+        [Obsolete("Use GetByteArray instead")]
         public byte[] GetBytesWithLength()
         {
             return GetArray<byte>(1);
@@ -647,7 +611,7 @@ namespace LiteNetLib.Utils
                 ushort length = PeekUShort();
                 if (length >= 0 && AvailableBytes >= 2 + length)
                 {
-                    result = GetBytesWithLength();
+                    result = GetByteArray();
                     return true;
                 }
             }

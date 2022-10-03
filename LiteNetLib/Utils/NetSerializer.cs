@@ -63,7 +63,7 @@ namespace LiteNetLib.Utils
             protected TProperty[] WriteArrayHelper(TClass inf, NetDataWriter w)
             {
                 var arr = GetterArr(inf);
-                w.Put((ushort)arr.Length);
+                w.PutUShort((ushort)arr.Length);
                 return arr;
             }
 
@@ -85,11 +85,11 @@ namespace LiteNetLib.Utils
                 if (list == null)
                 {
                     len = 0;
-                    w.Put(0);
+                    w.PutInt(0);
                     return null;
                 }
                 len = list.Count;
-                w.Put((ushort)len);
+                w.PutUShort((ushort)len);
                 return list;
             }
 
@@ -325,101 +325,101 @@ namespace LiteNetLib.Utils
         private class IntSerializer<T> : FastCallSpecific<T, int>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetInt()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutInt(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetIntArray()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutIntArray(GetterArr(inf)); }
         }
 
         private class UIntSerializer<T> : FastCallSpecific<T, uint>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetUInt()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutUInt(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetUIntArray()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutUIntArray(GetterArr(inf)); }
         }
 
         private class ShortSerializer<T> : FastCallSpecific<T, short>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetShort()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutShort(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetShortArray()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutShortArray(GetterArr(inf)); }
         }
 
         private class UShortSerializer<T> : FastCallSpecific<T, ushort>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetUShort()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutUShort(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetUShortArray()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutUShortArray(GetterArr(inf)); }
         }
 
         private class LongSerializer<T> : FastCallSpecific<T, long>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetLong()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutLong(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetLongArray()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutLongArray(GetterArr(inf)); }
         }
 
         private class ULongSerializer<T> : FastCallSpecific<T, ulong>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetULong()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutULong(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetULongArray()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutULongArray(GetterArr(inf)); }
         }
 
         private class ByteSerializer<T> : FastCallSpecific<T, byte>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetByte()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutByte(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetBytesWithLength()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutBytesWithLength(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutByteArray(GetterArr(inf)); }
         }
 
         private class SByteSerializer<T> : FastCallSpecific<T, sbyte>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetSByte()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutSByte(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetSBytesWithLength()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutSBytesWithLength(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutSByteArray(GetterArr(inf)); }
         }
 
         private class FloatSerializer<T> : FastCallSpecific<T, float>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetFloat()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutFloat(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetFloatArray()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutFloatArray(GetterArr(inf)); }
         }
 
         private class DoubleSerializer<T> : FastCallSpecific<T, double>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetDouble()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutDouble(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetDoubleArray()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutDoubleArray(GetterArr(inf)); }
         }
 
         private class BoolSerializer<T> : FastCallSpecific<T, bool>
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetBool()); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutBool(Getter(inf)); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetBoolArray()); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf)); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutBoolArray(GetterArr(inf)); }
         }
 
         private class CharSerializer<T> : FastCallSpecificAuto<T, char>
         {
-            protected override void ElementWrite(NetDataWriter w, ref char prop) { w.Put(prop); }
+            protected override void ElementWrite(NetDataWriter w, ref char prop) { w.PutChar(prop); }
             protected override void ElementRead(NetDataReader r, out char prop) { prop = r.GetChar(); }
         }
 
         private class IPEndPointSerializer<T> : FastCallSpecificAuto<T, IPEndPoint>
         {
-            protected override void ElementWrite(NetDataWriter w, ref IPEndPoint prop) { w.Put(prop); }
-            protected override void ElementRead(NetDataReader r, out IPEndPoint prop) { prop = r.GetNetEndPoint(); }
+            protected override void ElementWrite(NetDataWriter w, ref IPEndPoint prop) { w.PutIPEndPoint(prop); }
+            protected override void ElementRead(NetDataReader r, out IPEndPoint prop) { prop = r.GetIPEndPoint(); }
         }
 
         private class StringSerializer<T> : FastCallSpecific<T, string>
@@ -427,9 +427,9 @@ namespace LiteNetLib.Utils
             private readonly int _maxLength;
             public StringSerializer(int maxLength) { _maxLength = maxLength > 0 ? maxLength : short.MaxValue; }
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetString(_maxLength)); }
-            public override void Write(T inf, NetDataWriter w) { w.Put(Getter(inf), _maxLength); }
+            public override void Write(T inf, NetDataWriter w) { w.PutString(Getter(inf), _maxLength); }
             public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetStringArray(_maxLength)); }
-            public override void WriteArray(T inf, NetDataWriter w) { w.PutArray(GetterArr(inf), _maxLength); }
+            public override void WriteArray(T inf, NetDataWriter w) { w.PutStringArray(GetterArr(inf), _maxLength); }
         }
 
         private class EnumByteSerializer<T> : FastCall<T>
@@ -442,7 +442,7 @@ namespace LiteNetLib.Utils
                 PropertyType = propertyType;
             }
             public override void Read(T inf, NetDataReader r) { Property.SetValue(inf, Enum.ToObject(PropertyType, r.GetByte()), null); }
-            public override void Write(T inf, NetDataWriter w) { w.Put((byte)Property.GetValue(inf, null)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutByte((byte)Property.GetValue(inf, null)); }
             public override void ReadArray(T inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: Enum[]"); }
             public override void WriteArray(T inf, NetDataWriter w) { throw new InvalidTypeException("Unsupported type: Enum[]"); }
             public override void ReadList(T inf, NetDataReader r) { throw new InvalidTypeException("Unsupported type: List<Enum>"); }
@@ -453,7 +453,7 @@ namespace LiteNetLib.Utils
         {
             public EnumIntSerializer(PropertyInfo property, Type propertyType) : base(property, propertyType) { }
             public override void Read(T inf, NetDataReader r) { Property.SetValue(inf, Enum.ToObject(PropertyType, r.GetInt()), null); }
-            public override void Write(T inf, NetDataWriter w) { w.Put((int)Property.GetValue(inf, null)); }
+            public override void Write(T inf, NetDataWriter w) { w.PutInt((int)Property.GetValue(inf, null)); }
         }
 
         private sealed class ClassInfo<T>
