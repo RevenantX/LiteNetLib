@@ -13,8 +13,8 @@ namespace LibSample
 
         public void Serialize(NetDataWriter writer)
         {
-            writer.Put(X);
-            writer.Put(Y);
+            writer.PutInt(X);
+            writer.PutInt(Y);
         }
 
         public void Deserialize(NetDataReader reader)

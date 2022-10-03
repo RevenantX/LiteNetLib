@@ -25,7 +25,7 @@ namespace LibSample
             {
                 Console.WriteLine("We got connection: {0}", peer.EndPoint); // Show peer ip
                 NetDataWriter writer = new NetDataWriter();                 // Create writer class
-                writer.Put("Hello client!");                                // Put some string
+                writer.PutString("Hello client!");                                // Put some string
                 peer.Send(writer, DeliveryMethod.ReliableOrdered);             // Send with reliability
             };
 

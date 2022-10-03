@@ -112,8 +112,8 @@ namespace LibSample
             public void SendUnreliable(string pData)
             {
                 _writer.Reset();
-                _writer.Put(false);
-                _writer.Put(pData);
+                _writer.PutBool(false);
+                _writer.PutString(pData);
                 _peer.Send(_writer, DeliveryMethod.Unreliable);
                 UnreliableSent++;
             }
@@ -121,8 +121,8 @@ namespace LibSample
             public void SendReliable(string pData)
             {
                 _writer.Reset();
-                _writer.Put(true);
-                _writer.Put(pData);
+                _writer.PutBool(true);
+                _writer.PutString(pData);
                 _peer.Send(_writer, DeliveryMethod.ReliableOrdered);
                 ReliableSent++;
             }

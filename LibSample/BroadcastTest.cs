@@ -87,7 +87,7 @@ namespace LibSample
             {
                 Console.WriteLine("[Server] ReceiveUnconnected {0}. From: {1}. Data: {2}", messageType, remoteEndPoint, reader.GetString(100));
                 NetDataWriter writer = new NetDataWriter();
-                writer.Put("SERVER DISCOVERY RESPONSE");
+                writer.PutString("SERVER DISCOVERY RESPONSE");
                 Server.SendUnconnectedMessage(writer, remoteEndPoint);
             }
 
@@ -158,11 +158,11 @@ namespace LibSample
             //Send broadcast
             NetDataWriter writer = new NetDataWriter();
 
-            writer.Put("CLIENT 1 DISCOVERY REQUEST");
+            writer.PutString("CLIENT 1 DISCOVERY REQUEST");
             client1.SendBroadcast(writer, 9050);
             writer.Reset();
 
-            writer.Put("CLIENT 2 DISCOVERY REQUEST");
+            writer.PutString("CLIENT 2 DISCOVERY REQUEST");
             client2.SendBroadcast(writer, 9050);
 
             while (!Console.KeyAvailable)

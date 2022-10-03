@@ -55,7 +55,7 @@ namespace LiteNetLib.Utils
 
         protected virtual void WriteHash<T>(NetDataWriter writer)
         {
-            writer.Put(GetHash<T>());
+            writer.PutULong(GetHash<T>());
         }
 
         /// <summary>

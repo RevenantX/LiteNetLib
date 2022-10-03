@@ -114,7 +114,7 @@ namespace LiteNetLib
         private void Send<T>(T packet, IPEndPoint target) where T : class, new()
         {
             _cacheWriter.Reset();
-            _cacheWriter.Put((byte)PacketProperty.NatMessage);
+            _cacheWriter.PutByte((byte)PacketProperty.NatMessage);
             _netPacketProcessor.Write(_cacheWriter, packet);
             _socket.SendRaw(_cacheWriter.Data, 0, _cacheWriter.Length, target);
         }

@@ -21,28 +21,28 @@ namespace LibSample
                 for (int i = 0; i < 5; i++)
                 {
                     dataWriter.Reset();
-                    dataWriter.Put(0);
-                    dataWriter.Put(i);
+                    dataWriter.PutInt(0);
+                    dataWriter.PutInt(i);
                     peer.Send(dataWriter, DeliveryMethod.ReliableUnordered);
 
                     dataWriter.Reset();
-                    dataWriter.Put(1);
-                    dataWriter.Put(i);
+                    dataWriter.PutInt(1);
+                    dataWriter.PutInt(i);
                     peer.Send(dataWriter, DeliveryMethod.ReliableOrdered);
 
                     dataWriter.Reset();
-                    dataWriter.Put(2);
-                    dataWriter.Put(i);
+                    dataWriter.PutInt(2);
+                    dataWriter.PutInt(i);
                     peer.Send(dataWriter, DeliveryMethod.Sequenced);
 
                     dataWriter.Reset();
-                    dataWriter.Put(3);
-                    dataWriter.Put(i);
+                    dataWriter.PutInt(3);
+                    dataWriter.PutInt(i);
                     peer.Send(dataWriter, DeliveryMethod.Unreliable);
 
                     dataWriter.Reset();
-                    dataWriter.Put(4);
-                    dataWriter.Put(i);
+                    dataWriter.PutInt(4);
+                    dataWriter.PutInt(i);
                     peer.Send(dataWriter, DeliveryMethod.ReliableSequenced);
                 }
 
