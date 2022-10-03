@@ -52,8 +52,8 @@ namespace LiteNetLib.Tests
 
             public static void Serialize(NetDataWriter writer, SomeVector2 vector)
             {
-                writer.Put(vector.X);
-                writer.Put(vector.Y);
+                writer.PutInt(vector.X);
+                writer.PutInt(vector.Y);
             }
 
             public static SomeVector2 Deserialize(NetDataReader reader)
@@ -71,7 +71,7 @@ namespace LiteNetLib.Tests
 
             public void Serialize(NetDataWriter writer)
             {
-                writer.Put(Value);
+                writer.PutInt(Value);
             }
 
             public void Deserialize(NetDataReader reader)
@@ -86,7 +86,7 @@ namespace LiteNetLib.Tests
 
             public void Serialize(NetDataWriter writer)
             {
-                writer.Put(Value);
+                writer.PutInt(Value);
             }
 
             public void Deserialize(NetDataReader reader)

@@ -577,7 +577,7 @@ namespace LiteNetLib.Tests
                     foreach (var deliveryMethod in methods)
                     {
                         writer.Reset();
-                        writer.Put((byte) deliveryMethod);
+                        writer.PutByte((byte) deliveryMethod);
                         if (deliveryMethod == DeliveryMethod.ReliableOrdered ||
                             deliveryMethod == DeliveryMethod.ReliableUnordered)
                             writer.Put(new byte[506]);
@@ -630,14 +630,14 @@ namespace LiteNetLib.Tests
             server.BroadcastReceiveEnabled = true;
 
             var writer = new NetDataWriter();
-            writer.Put("Client request");
+            writer.PutString("Client request");
 
             ManagerStack.ServerListener(1).NetworkReceiveUnconnectedEvent += (point, reader, type) =>
             {
                 if (type == UnconnectedMessageType.Broadcast)
                 {
                     var serverWriter = new NetDataWriter();
-                    serverWriter.Put("Server response");
+                    serverWriter.PutString("Server response");
                     server.SendUnconnectedMessage(serverWriter, point);
                 }
             };

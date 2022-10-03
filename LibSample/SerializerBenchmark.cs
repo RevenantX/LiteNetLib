@@ -18,7 +18,7 @@ namespace LibSample
 
             public void Serialize(NetDataWriter writer)
             {
-                writer.Put(Value);
+                writer.PutInt(Value);
             }
 
             public void Deserialize(NetDataReader reader)
@@ -79,8 +79,8 @@ namespace LibSample
 
             public static void Serialize(NetDataWriter writer, SomeVector2 vector)
             {
-                writer.Put(vector.X);
-                writer.Put(vector.Y);
+                writer.PutInt(vector.X);
+                writer.PutInt(vector.Y);
             }
 
             public static SomeVector2 Deserialize(NetDataReader reader)
@@ -108,16 +108,16 @@ namespace LibSample
             stopwatch.Restart();
             for (int i = 0; i < LoopLength; i++)
             {
-                netDataWriter.Put(samplePacket.SomeString);
-                netDataWriter.Put(samplePacket.SomeFloat);
-                netDataWriter.PutArray(samplePacket.SomeIntArray);
+                netDataWriter.PutString(samplePacket.SomeString);
+                netDataWriter.PutFloat(samplePacket.SomeFloat);
+                netDataWriter.PutIntArray(samplePacket.SomeIntArray);
                 SomeVector2.Serialize(netDataWriter, samplePacket.SomeVector2);
-                netDataWriter.Put((ushort)samplePacket.SomeVectors.Length);
+                netDataWriter.PutUShort((ushort)samplePacket.SomeVectors.Length);
                 for (int j = 0; j < samplePacket.SomeVectors.Length; j++)
                 {
                     SomeVector2.Serialize(netDataWriter, samplePacket.SomeVectors[j]);
                 }
-                netDataWriter.Put(samplePacket.EmptyString);
+                netDataWriter.PutString(samplePacket.EmptyString);
                 netDataWriter.Put(samplePacket.TestObj);
             }
             stopwatch.Stop();

@@ -374,7 +374,7 @@ namespace LiteNetLib.Utils
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetByte()); }
             public override void Write(T inf, NetDataWriter w) { w.PutByte(Getter(inf)); }
-            public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetBytesWithLength()); }
+            public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetByteArray()); }
             public override void WriteArray(T inf, NetDataWriter w) { w.PutByteArray(GetterArr(inf)); }
         }
 
@@ -382,7 +382,7 @@ namespace LiteNetLib.Utils
         {
             public override void Read(T inf, NetDataReader r) { Setter(inf, r.GetSByte()); }
             public override void Write(T inf, NetDataWriter w) { w.PutSByte(Getter(inf)); }
-            public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetSBytesWithLength()); }
+            public override void ReadArray(T inf, NetDataReader r) { SetterArr(inf, r.GetSByteArray()); }
             public override void WriteArray(T inf, NetDataWriter w) { w.PutSByteArray(GetterArr(inf)); }
         }
 
