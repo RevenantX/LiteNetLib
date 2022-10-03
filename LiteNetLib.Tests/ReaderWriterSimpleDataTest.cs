@@ -12,7 +12,7 @@ namespace LiteNetLib.Tests
         public void WriteReadBool()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(true);
+            ndw.PutBool(true);
 
             var ndr = new NetDataReader(ndw.Data);
             var readBool = ndr.GetBool();
@@ -24,7 +24,7 @@ namespace LiteNetLib.Tests
         public void WriteReadBoolArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new[] {true, false, true, false, false});
+            ndw.PutBoolArray(new[] {true, false, true, false, false});
 
             var ndr = new NetDataReader(ndw.Data);
             var readBoolArray = ndr.GetBoolArray();
@@ -36,7 +36,7 @@ namespace LiteNetLib.Tests
         public void WriteReadByte()
         {
             var ndw = new NetDataWriter();
-            ndw.Put((byte) 8);
+            ndw.PutByte(8);
 
             var ndr = new NetDataReader(ndw.Data);
             var readByte = ndr.GetByte();
@@ -63,7 +63,7 @@ namespace LiteNetLib.Tests
         public void WriteReadDouble()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(3.1415);
+            ndw.PutDouble(3.1415);
 
             var ndr = new NetDataReader(ndw.Data);
             var readDouble = ndr.GetDouble();
@@ -75,7 +75,7 @@ namespace LiteNetLib.Tests
         public void WriteReadDoubleArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new[] {1.1, 2.2, 3.3, 4.4, double.MaxValue, double.MinValue});
+            ndw.PutDoubleArray(new[] {1.1, 2.2, 3.3, 4.4, double.MaxValue, double.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readDoubleArray = ndr.GetDoubleArray();
@@ -89,7 +89,7 @@ namespace LiteNetLib.Tests
         public void WriteReadFloat()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(3.1415f);
+            ndw.PutFloat(3.1415f);
 
             var ndr = new NetDataReader(ndw.Data);
             var readFloat = ndr.GetFloat();
@@ -101,7 +101,7 @@ namespace LiteNetLib.Tests
         public void WriteReadFloatArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new[] {1.1f, 2.2f, 3.3f, 4.4f, float.MaxValue, float.MinValue});
+            ndw.PutFloatArray(new[] {1.1f, 2.2f, 3.3f, 4.4f, float.MaxValue, float.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readFloatArray = ndr.GetFloatArray();
@@ -115,7 +115,7 @@ namespace LiteNetLib.Tests
         public void WriteReadInt()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(32);
+            ndw.PutInt(32);
 
             var ndr = new NetDataReader(ndw.Data);
             var readInt = ndr.GetInt();
@@ -127,7 +127,7 @@ namespace LiteNetLib.Tests
         public void WriteReadIntArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new[] {1, 2, 3, 4, 5, 6, 7, int.MaxValue, int.MinValue});
+            ndw.PutIntArray(new[] {1, 2, 3, 4, 5, 6, 7, int.MaxValue, int.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readIntArray = ndr.GetIntArray();
@@ -139,7 +139,7 @@ namespace LiteNetLib.Tests
         public void WriteReadLong()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(64L);
+            ndw.PutLong(64L);
 
             var ndr = new NetDataReader(ndw.Data);
             var readLong = ndr.GetLong();
@@ -151,7 +151,7 @@ namespace LiteNetLib.Tests
         public void WriteReadLongArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new[] {1L, 2L, 3L, 4L, long.MaxValue, long.MinValue});
+            ndw.PutLongArray(new[] {1L, 2L, 3L, 4L, long.MaxValue, long.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readLongArray = ndr.GetLongArray();
@@ -163,10 +163,10 @@ namespace LiteNetLib.Tests
         public void WriteReadNetEndPoint()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(NetUtils.MakeEndPoint("127.0.0.1", 7777));
+            ndw.PutIPEndPoint(NetUtils.MakeEndPoint("127.0.0.1", 7777));
 
             var ndr = new NetDataReader(ndw.Data);
-            var readNetEndPoint = ndr.GetNetEndPoint();
+            var readNetEndPoint = ndr.GetIPEndPoint();
 
             Assert.AreEqual(readNetEndPoint, NetUtils.MakeEndPoint("127.0.0.1", 7777));
         }
@@ -175,7 +175,7 @@ namespace LiteNetLib.Tests
         public void WriteReadSByte()
         {
             var ndw = new NetDataWriter();
-            ndw.Put((sbyte) 8);
+            ndw.PutSByte(8);
 
             var ndr = new NetDataReader(ndw.Data);
             var readSByte = ndr.GetSByte();
@@ -187,7 +187,7 @@ namespace LiteNetLib.Tests
         public void WriteReadShort()
         {
             var ndw = new NetDataWriter();
-            ndw.Put((short) 16);
+            ndw.PutShort(16);
 
             var ndr = new NetDataReader(ndw.Data);
             var readShort = ndr.GetShort();
@@ -199,7 +199,7 @@ namespace LiteNetLib.Tests
         public void WriteReadShortArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new short[] {1, 2, 3, 4, 5, 6, short.MaxValue, short.MinValue});
+            ndw.PutShortArray(new short[] {1, 2, 3, 4, 5, 6, short.MaxValue, short.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readShortArray = ndr.GetShortArray();
@@ -213,7 +213,7 @@ namespace LiteNetLib.Tests
         public void WriteReadString()
         {
             var ndw = new NetDataWriter();
-            ndw.Put("String", 10);
+            ndw.PutString("String", 10);
 
             var ndr = new NetDataReader(ndw.Data);
             var readString = ndr.GetString(10);
@@ -225,7 +225,7 @@ namespace LiteNetLib.Tests
         public void WriteReadStringArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new[] {"First", "Second", "Third", "Fourth"});
+            ndw.PutStringArray(new[] {"First", "Second", "Third", "Fourth"});
 
             var ndr = new NetDataReader(ndw.Data);
             var readStringArray = ndr.GetStringArray(10);
@@ -237,7 +237,7 @@ namespace LiteNetLib.Tests
         public void WriteReadUInt()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(34U);
+            ndw.PutUInt(34U);
 
             var ndr = new NetDataReader(ndw.Data);
             var readUInt = ndr.GetUInt();
@@ -249,7 +249,7 @@ namespace LiteNetLib.Tests
         public void WriteReadUIntArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new[] {1U, 2U, 3U, 4U, 5U, 6U, uint.MaxValue, uint.MinValue});
+            ndw.PutUIntArray(new[] {1U, 2U, 3U, 4U, 5U, 6U, uint.MaxValue, uint.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readUIntArray = ndr.GetUIntArray();
@@ -263,7 +263,7 @@ namespace LiteNetLib.Tests
         public void WriteReadULong()
         {
             var ndw = new NetDataWriter();
-            ndw.Put(64UL);
+            ndw.PutULong(64UL);
 
             var ndr = new NetDataReader(ndw.Data);
             var readULong = ndr.GetULong();
@@ -275,7 +275,7 @@ namespace LiteNetLib.Tests
         public void WriteReadULongArray()
         {
             var ndw = new NetDataWriter();
-            ndw.PutArray(new[] {1UL, 2UL, 3UL, 4UL, 5UL, ulong.MaxValue, ulong.MinValue});
+            ndw.PutULongArray(new[] {1UL, 2UL, 3UL, 4UL, 5UL, ulong.MaxValue, ulong.MinValue});
 
             var ndr = new NetDataReader(ndw.Data);
             var readULongArray = ndr.GetULongArray();
@@ -289,7 +289,7 @@ namespace LiteNetLib.Tests
         public void WriteReadUShort()
         {
             var ndw = new NetDataWriter();
-            ndw.Put((ushort) 16);
+            ndw.PutUShort(16);
 
             var ndr = new NetDataReader(ndw.Data);
             var readUShort = ndr.GetUShort();
