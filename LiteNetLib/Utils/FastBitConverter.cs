@@ -1,16 +1,31 @@
-﻿using System;
+﻿#if (LITENETLIB_UNSAFE || LITENETLIB_UNSAFELIB || NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER) && !BIGENDIAN
+#define WRITE_READ_UNMANAGED
+#endif
+
+#if WRITE_READ_UNMANAGED
+using System;
+using System.IO;
+using System.Runtime.CompilerServices;
+#else
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#endif
 
 namespace LiteNetLib.Utils
 {
     public static class FastBitConverter
     {
-#if (LITENETLIB_UNSAFE || LITENETLIB_UNSAFELIB || NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER) && !BIGENDIAN
+#if WRITE_READ_UNMANAGED
 #if LITENETLIB_UNSAFE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe void GetBytes<T>(byte[] bytes, int startIndex, T value) where T : unmanaged
         {
+            // calculate size
+            //   sizeof(T) gets the managed size at compile time.
+            //   Marshal.SizeOf<T> gets the unmanaged size at runtime (slow).
+            // => our 1mio writes benchmark is 6x slower with Marshal.SizeOf<T>
+            // => for blittable types, sizeof(T) is even recommended:
+            // https://docs.microsoft.com/en-us/dotnet/standard/native-interop/best-practices
             int size = sizeof(T);
             if (bytes.Length < startIndex + size)
                 ThrowIndexOutOfRangeException();
@@ -19,7 +34,7 @@ namespace LiteNetLib.Utils
 #else
             fixed (byte* ptr = &bytes[startIndex])
             {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || GODOT_ANDROID
                 // On some android systems, assigning *(T*)ptr throws a NRE if
                 // the ptr isn't aligned (i.e. if Position is 1,2,3,5, etc.).
                 // Here we have to use memcpy.
@@ -48,7 +63,33 @@ namespace LiteNetLib.Utils
 #endif
 
         private static void ThrowIndexOutOfRangeException() => throw new IndexOutOfRangeException();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe T ReadBlittable<T>(byte[] bytes, ref int position, int remaining) where T : unmanaged
+        {
+            int size = sizeof(T);
+
+            // ensure remaining
+            if (remaining < size) throw new EndOfStreamException($"ReadBlittable<{typeof(T)}> not enough data in buffer to read {size} bytes");
+
+            // read blittable
+            T value;
+            fixed (byte* ptr = &bytes[position])
+            {
+#if UNITY_ANDROID || GODOT_ANDROID
+                T* valueBuffer = stackalloc T[1];
+                UnsafeUtility.MemCpy(valueBuffer, ptr, size);
+                value = valueBuffer[0];
 #else
+                // cast buffer to a T* pointer and then read from it.
+                value = *(T*)ptr;
+#endif
+            }
+            position += size;
+            return value;
+        }
+#else
+#region Write
         [StructLayout(LayoutKind.Explicit)]
         private struct ConverterHelperDouble
         {
@@ -170,6 +211,7 @@ namespace LiteNetLib.Utils
         {
             WriteLittleEndian(bytes, startIndex, value);
         }
+#endregion
 #endif
     }
 }

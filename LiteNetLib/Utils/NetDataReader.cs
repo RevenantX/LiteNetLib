@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if (LITENETLIB_UNSAFE || LITENETLIB_UNSAFELIB || NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER) && !BIGENDIAN
+#define WRITE_READ_UNMANAGED
+#endif
+
+using System;
 using System.Net;
 using System.Runtime.CompilerServices;
 
@@ -106,7 +110,7 @@ namespace LiteNetLib.Utils
             SetSource(source, offset, maxSize);
         }
 
-        #region GetMethods
+#region GetMethods
         public IPEndPoint GetIPEndPoint()
         {
             string host = GetString(1000);
@@ -119,14 +123,24 @@ namespace LiteNetLib.Utils
 
         public byte GetByte()
         {
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<byte>(_data, ref _position, AvailableBytes);
+#else
             byte res = _data[_position];
             _position++;
             return res;
+#endif
         }
 
         public sbyte GetSByte()
         {
-            return (sbyte)GetByte();
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<sbyte>(_data, ref _position, AvailableBytes);
+#else
+            sbyte res = (sbyte)_data[_position];
+            _position++;
+            return res;
+#endif
         }
 
         #region Array
@@ -172,65 +186,97 @@ namespace LiteNetLib.Utils
         }
 
         public string[] GetStringArray() => GetStringArray(0);
-        #endregion
+#endregion
 
         public bool GetBool() => GetByte() == NetDataWriter.TRUE;
         public char GetChar() => (char)GetUShort();
 
         public ushort GetUShort()
         {
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<ushort>(_data, ref _position, AvailableBytes);
+#else
             ushort result = BitConverter.ToUInt16(_data, _position);
             _position += 2;
             return result;
+#endif
         }
 
         public short GetShort()
         {
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<short>(_data, ref _position, AvailableBytes);
+#else
             short result = BitConverter.ToInt16(_data, _position);
             _position += 2;
             return result;
+#endif
         }
 
         public long GetLong()
         {
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<long>(_data, ref _position, AvailableBytes);
+#else
             long result = BitConverter.ToInt64(_data, _position);
             _position += 8;
             return result;
+#endif
         }
 
         public ulong GetULong()
         {
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<ulong>(_data, ref _position, AvailableBytes);
+#else
             ulong result = BitConverter.ToUInt64(_data, _position);
             _position += 8;
             return result;
+#endif
         }
 
         public int GetInt()
         {
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<int>(_data, ref _position, AvailableBytes);
+#else
             int result = BitConverter.ToInt32(_data, _position);
             _position += 4;
             return result;
+#endif
         }
 
         public uint GetUInt()
         {
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<uint>(_data, ref _position, AvailableBytes);
+#else
             uint result = BitConverter.ToUInt32(_data, _position);
             _position += 4;
             return result;
+#endif
         }
 
         public float GetFloat()
         {
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<float>(_data, ref _position, AvailableBytes);
+#else
             float result = BitConverter.ToSingle(_data, _position);
             _position += 4;
             return result;
+#endif
         }
 
         public double GetDouble()
         {
+#if WRITE_READ_UNMANAGED
+            return FastBitConverter.ReadBlittable<double>(_data, ref _position, AvailableBytes);
+#else
             double result = BitConverter.ToDouble(_data, _position);
             _position += 8;
             return result;
+#endif
         }
 
         /// <summary>
@@ -332,9 +378,9 @@ namespace LiteNetLib.Utils
         {
             return GetArray<byte>(1);
         }
-        #endregion
+#endregion
 
-        #region PeekMethods
+#region PeekMethods
 
         public byte PeekByte()
         {
@@ -434,9 +480,9 @@ namespace LiteNetLib.Utils
 
             return NetDataWriter.uTF8Encoding.GetString(_data, _position + 2, actualSize);
         }
-        #endregion
+#endregion
 
-        #region TryGetMethods
+#region TryGetMethods
         public bool TryGetByte(out byte result)
         {
             if (AvailableBytes >= 1)
@@ -618,7 +664,7 @@ namespace LiteNetLib.Utils
             result = null;
             return false;
         }
-        #endregion
+#endregion
 
         public void Clear()
         {
