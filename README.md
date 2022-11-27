@@ -4,14 +4,6 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 
 [![Made in Ukraine](https://img.shields.io/badge/made_in-ukraine-ffd700.svg?labelColor=0057b7)](https://stand-with-ukraine.pp.ua)
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/revx)
-
-`BTC:bc1qn3lwhafsp7ka0r5lew0v7r3qnpj62atqju809n`
-
-`LTC:LTQqo9yjGVWrXahAByqvx9Jo5TaotjDKXJ`
-
-`ETH:0x78664986894932bD399B1539D9F65155D0BF55bd`
-
 **Discord chat**: [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
 [OLD BRANCH (and examples) for 0.9.x](https://github.com/RevenantX/LiteNetLib/tree/0.9)
@@ -62,6 +54,13 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
   * Monogame
   * Godot
   * Unity 2018.3 (Desktop platforms, Android, iOS, Switch)
+  
+## Support developer
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/revx)
+
+USDT TRX:`TQAjksKm6Mg6yivG4CDmvQhejBMkKn9hxv`
+
+USDT ETH:`0xe1303716ad9f97319FbEeE6616ccb4C4C81F5157`
 
 ## Unity notes!!!
 * Minimal supported Unity is 2018.3. For older Unity versions use [0.9.x library](https://github.com/RevenantX/LiteNetLib/tree/0.9) versions
