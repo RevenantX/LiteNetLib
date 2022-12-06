@@ -613,13 +613,12 @@ namespace LiteNetLib
                 int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
                 int totalPackets = length / packetDataSize + (length % packetDataSize == 0 ? 0 : 1);
 
-                NetDebug.Write("FragmentSend:\n" +
-                           " MTU: {0}\n" +
-                           " headerSize: {1}\n" +
-                           " packetFullSize: {2}\n" +
-                           " packetDataSize: {3}\n" +
-                           " totalPackets: {4}",
-                    mtu, headerSize, packetFullSize, packetDataSize, totalPackets);
+                NetDebug.Write($@"FragmentSend:
+ MTU: {mtu}
+ headerSize: {headerSize}
+ packetFullSize: {packetFullSize}
+ packetDataSize: {packetDataSize}
+ totalPackets: {totalPackets}");
 
                 if (totalPackets > ushort.MaxValue)
                     throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + ushort.MaxValue);
@@ -891,7 +890,7 @@ namespace LiteNetLib
         {
             if (p.IsFragmented)
             {
-                NetDebug.Write("Fragment. Id: {0}, Part: {1}, Total: {2}", p.FragmentId, p.FragmentPart, p.FragmentsTotal);
+                NetDebug.Write($"Fragment. Id: {p.FragmentId}, Part: {p.FragmentPart}, Total: {p.FragmentsTotal}");
                 //Get needed array from dictionary
                 ushort packetFragId = p.FragmentId;
                 byte packetChannelId = p.ChannelId;
@@ -942,16 +941,13 @@ namespace LiteNetLib
                     if (pos+writtenSize > resultingPacket.RawData.Length)
                     {
                         _holdedFragments.Remove(packetFragId);
-                        NetDebug.WriteError("Fragment error pos: {0} >= resultPacketSize: {1} , totalSize: {2}",
-                            pos + writtenSize,
-                            resultingPacket.RawData.Length,
-                            incomingFragments.TotalSize);
+                        NetDebug.WriteError($"Fragment error pos: {pos + writtenSize} >= resultPacketSize: {resultingPacket.RawData.Length} , totalSize: {incomingFragments.TotalSize}");
                         return;
                     }
                     if (fragment.Size > fragment.RawData.Length)
                     {
                         _holdedFragments.Remove(packetFragId);
-                        NetDebug.WriteError("Fragment error size: {0} > fragment.RawData.Length: {1}", fragment.Size, fragment.RawData.Length);
+                        NetDebug.WriteError($"Fragment error size: {fragment.Size} > fragment.RawData.Length: {fragment.RawData.Length}");
                         return;
                     }
 
@@ -992,7 +988,7 @@ namespace LiteNetLib
             int endMtuCheck = BitConverter.ToInt32(packet.RawData, packet.Size - 4);
             if (receivedMtu != packet.Size || receivedMtu != endMtuCheck || receivedMtu > NetConstants.MaxPacketSize)
             {
-                NetDebug.WriteError("[MTU] Broken packet. RMTU {0}, EMTU {1}, PSIZE {2}", receivedMtu, endMtuCheck, packet.Size);
+                NetDebug.WriteError($"[MTU] Broken packet. RMTU {receivedMtu}, EMTU {endMtuCheck}, PSIZE {packet.Size}");
                 return;
             }
 
@@ -1131,7 +1127,7 @@ namespace LiteNetLib
             }
             Interlocked.Exchange(ref _timeSinceLastPacket, 0);
 
-            NetDebug.Write("[RR]PacketProperty: {0}", packet.Property);
+            NetDebug.Write($"[RR]PacketProperty: {packet.Property}");
             switch (packet.Property)
             {
                 case PacketProperty.Merged:
@@ -1176,7 +1172,7 @@ namespace LiteNetLib
                         _remoteDelta = BitConverter.ToInt64(packet.RawData, 3) + (elapsedMs * TimeSpan.TicksPerMillisecond ) / 2 - DateTime.UtcNow.Ticks;
                         UpdateRoundTripTime(elapsedMs);
                         NetManager.ConnectionLatencyUpdated(this, elapsedMs / 2);
-                        NetDebug.Write("[PP]Ping: {0} - {1} - {2}", packet.Sequence, elapsedMs, _remoteDelta);
+                        NetDebug.Write($"[PP]Ping: {packet.Sequence} - {elapsedMs} - {_remoteDelta}");
                     }
                     NetManager.PoolRecycle(packet);
                     break;
@@ -1274,10 +1270,7 @@ namespace LiteNetLib
                 case ConnectionState.Connected:
                     if (_timeSinceLastPacket > NetManager.DisconnectTimeout)
                     {
-                        NetDebug.Write(
-                            "[UPDATE] Disconnect by timeout: {0} > {1}",
-                            _timeSinceLastPacket,
-                            NetManager.DisconnectTimeout);
+                        NetDebug.Write($"[UPDATE] Disconnect by timeout: {_timeSinceLastPacket} > {NetManager.DisconnectTimeout}");
                         NetManager.DisconnectPeerForce(this, DisconnectReason.Timeout, 0, null);
                         return;
                     }

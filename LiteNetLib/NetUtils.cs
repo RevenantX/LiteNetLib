@@ -119,7 +119,7 @@ namespace LiteNetLib
             {
                 //ignored
             }
-            
+
             if (targetList.Count == 0)
             {
                 if(ipv4)
@@ -150,7 +150,7 @@ namespace LiteNetLib
         // ===========================================
         internal static void PrintInterfaceInfos()
         {
-            NetDebug.WriteForce(NetLogLevel.Info, "IPv6Support: {0}", NetManager.IPv6Support);
+            NetDebug.WriteForce(NetLogLevel.Info, $"IPv6Support: { NetManager.IPv6Support}");
             try
             {
                 foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
@@ -162,18 +162,14 @@ namespace LiteNetLib
                         {
                             NetDebug.WriteForce(
                                 NetLogLevel.Info,
-                                "Interface: {0}, Type: {1}, Ip: {2}, OpStatus: {3}",
-                                ni.Name,
-                                ni.NetworkInterfaceType.ToString(),
-                                ip.Address.ToString(),
-                                ni.OperationalStatus.ToString());
+                                $"Interface: {ni.Name}, Type: {ni.NetworkInterfaceType}, Ip: {ip.Address}, OpStatus: {ni.OperationalStatus}");
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                NetDebug.WriteForce(NetLogLevel.Info, "Error while getting interface infos: {0}", e.ToString());
+                NetDebug.WriteForce(NetLogLevel.Info, $"Error while getting interface infos: {e}");
             }
         }
 

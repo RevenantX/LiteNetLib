@@ -803,8 +803,7 @@ namespace LiteNetLib
                     AddPeer(netPeer);
                     _peersLock.ExitUpgradeableReadLock();
                     CreateEvent(NetEvent.EType.Connect, netPeer);
-                    NetDebug.Write(NetLogLevel.Trace, "[NM] Received peer connection Id: {0}, EP: {1}",
-                        netPeer.ConnectTime, netPeer.EndPoint);
+                    NetDebug.Write(NetLogLevel.Trace, $"[NM] Received peer connection Id: {netPeer.ConnectTime}, EP: {netPeer.EndPoint}");
                 }
             }
 
@@ -828,11 +827,7 @@ namespace LiteNetLib
             if (netPeer != null)
             {
                 var processResult = netPeer.ProcessConnectRequest(connRequest);
-                NetDebug.Write("ConnectRequest LastId: {0}, NewId: {1}, EP: {2}, Result: {3}",
-                    netPeer.ConnectTime,
-                    connRequest.ConnectionTime,
-                    remoteEndPoint,
-                    processResult);
+                NetDebug.Write($"ConnectRequest LastId: {netPeer.ConnectTime}, NewId: {connRequest.ConnectionTime}, EP: {remoteEndPoint}, Result: {processResult}");
 
                 switch (processResult)
                 {
@@ -862,7 +857,7 @@ namespace LiteNetLib
             }
             else
             {
-                NetDebug.Write("ConnectRequest Id: {0}, EP: {1}", connRequest.ConnectionTime, remoteEndPoint);
+                NetDebug.Write($"ConnectRequest Id: {connRequest.ConnectionTime}, EP: {remoteEndPoint}");
             }
 
             ConnectionRequest req;
@@ -876,7 +871,7 @@ namespace LiteNetLib
                 req = new ConnectionRequest(remoteEndPoint, connRequest, this);
                 _requestsDict.Add(remoteEndPoint, req);
             }
-            NetDebug.Write("[NM] Creating request event: " + connRequest.ConnectionTime);
+            NetDebug.Write($"[NM] Creating request event: {connRequest.ConnectionTime}");
             CreateEvent(NetEvent.EType.ConnectionRequest, connectionRequest: req);
         }
 
@@ -927,7 +922,7 @@ namespace LiteNetLib
                 {
                     if (packet.Size < 48)
                     {
-                        NetDebug.Write(NetLogLevel.Trace, "NTP response too short: {}", packet.Size);
+                        NetDebug.Write(NetLogLevel.Trace, $"NTP response too short: {packet.Size}");
                         return;
                     }
 
@@ -940,7 +935,7 @@ namespace LiteNetLib
                     }
                     catch (InvalidOperationException ex)
                     {
-                        NetDebug.Write(NetLogLevel.Trace, "NTP response error: {}", ex.Message);
+                        NetDebug.Write(NetLogLevel.Trace, $"NTP response error: {ex.Message}");
                         ntpPacket = null;
                     }
 

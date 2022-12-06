@@ -606,7 +606,7 @@ namespace LiteNetLib
                     case SocketError.Interrupted:
                         return 0;
                     case SocketError.MessageSize:
-                        NetDebug.Write(NetLogLevel.Trace, "[SRD] 10040, datalen: {0}", length);
+                        NetDebug.Write(NetLogLevel.Trace, $"[SRD] 10040, datalen: {length}");
                         return 0;
 
                     case SocketError.HostUnreachable:
