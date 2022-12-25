@@ -51,11 +51,12 @@ namespace LibSample
             {
                 request.AcceptIfKey("key");
             };
-            serverListener.NetworkReceiveEvent +=
-                (peer, reader, channel, method) =>
-                {
-                    _netPacketProcessor.ReadAllPackets(reader, peer);
-                };
+            
+            serverListener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
+            {
+                _netPacketProcessor.ReadAllPackets(dataReader, fromPeer);
+            };
+                
             clientListener.PeerConnectedEvent += peer =>
             {
                 //send after connect
