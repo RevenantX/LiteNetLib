@@ -41,7 +41,7 @@ namespace LiteNetLib
             {
                 if (!Socket.Start(BindAddrIPv4, BindAddrIPv6, Port, ManualMode))
                 {
-                    NetDebug.WriteError("[S] Cannot restore connection \"{0}\",\"{1}\" port {2}", BindAddrIPv4, BindAddrIPv6, Port);
+                    NetDebug.WriteError($"[S] Cannot restore connection \"{BindAddrIPv4}\",\"{BindAddrIPv6}\" port {Port}");
                     Socket?.CloseSocket(false);
                 }
             }
