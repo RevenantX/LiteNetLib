@@ -11,6 +11,22 @@ namespace LiteNetLib
 
     public partial class NetManager
     {
+        public bool SocketActive(bool ipv4)
+        {
+            if (ipv4)
+            {
+                if (_udpSocketv4 != null)
+                    return _udpSocketv4.Connected;
+                return false;
+            }
+            else
+            {
+                if (_udpSocketv6 != null)
+                    return _udpSocketv6.Connected;
+                return false;
+            }
+        }
+
         private const int ReceivePollingTime = 500000; //0.5 second
 
         private Socket _udpSocketv4;
