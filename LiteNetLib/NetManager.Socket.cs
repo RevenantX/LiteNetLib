@@ -1,8 +1,4 @@
-#if UNITY_IOS && !UNITY_EDITOR
-using UnityEngine;
-#endif
 using System.Runtime.InteropServices;
-
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -12,45 +8,25 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-#if UNITY_IOS && !UNITY_EDITOR
-    public class UnitySocketFix : MonoBehaviour
-    {
-        internal IPAddress BindAddrIPv4;
-        internal IPAddress BindAddrIPv6;
-        internal int Port;
-        internal bool Paused;
-        internal NetManager Socket;
-        internal bool ManualMode;
-
-        private void Update()
-        {
-            if (Socket == null)
-                Destroy(gameObject);
-        }
-
-        private void OnApplicationPause(bool pause)
-        {
-            if (Socket == null)
-                return;
-            if (pause)
-            {
-                Paused = true;
-                Socket.CloseSocket(true);
-            }
-            else if (Paused)
-            {
-                if (!Socket.Start(BindAddrIPv4, BindAddrIPv6, Port, ManualMode))
-                {
-                    NetDebug.WriteError($"[S] Cannot restore connection \"{BindAddrIPv4}\",\"{BindAddrIPv6}\" port {Port}");
-                    Socket?.CloseSocket(false);
-                }
-            }
-        }
-    }
-#endif
 
     public partial class NetManager
     {
+        public bool SocketActive(bool ipv4)
+        {
+            if (ipv4)
+            {
+                if (_udpSocketv4 != null)
+                    return _udpSocketv4.Connected;
+                return false;
+            }
+            else
+            {
+                if (_udpSocketv6 != null)
+                    return _udpSocketv6.Connected;
+                return false;
+            }
+        }
+
         private const int ReceivePollingTime = 500000; //0.5 second
 
         private Socket _udpSocketv4;
@@ -59,6 +35,7 @@ namespace LiteNetLib
         private Thread _threadv6;
         private IPEndPoint _bufferEndPointv4;
         private IPEndPoint _bufferEndPointv6;
+        private PausedSocketFix _pausedSocketFix;
 
 #if !LITENETLIB_UNSAFE
         [ThreadStatic] private static byte[] _sendToBuffer;
@@ -70,9 +47,6 @@ namespace LiteNetLib
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("ff02::1");
         public static readonly bool IPv6Support;
-#if UNITY_IOS && !UNITY_EDITOR
-        private UnitySocketFix _unitySocketFix;
-#endif
 
         /// <summary>
         /// Maximum packets count that will be processed in Manual PollEvents
@@ -111,11 +85,6 @@ namespace LiteNetLib
 
         private bool IsActive()
         {
-#if UNITY_IOS && !UNITY_EDITOR
-            var unitySocketFix = _unitySocketFix; //save for multithread
-            if (unitySocketFix != null && unitySocketFix.Paused)
-                return false;
-#endif
             return IsRunning;
         }
 
@@ -304,23 +273,9 @@ namespace LiteNetLib
 
             LocalPort = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
 
-#if UNITY_IOS && !UNITY_EDITOR
-            if (_unitySocketFix == null)
-            {
-                var unityFixObj = new GameObject("LiteNetLib_UnitySocketFix");
-                GameObject.DontDestroyOnLoad(unityFixObj);
-                _unitySocketFix = unityFixObj.AddComponent<UnitySocketFix>();
-                _unitySocketFix.Socket = this;
-                _unitySocketFix.BindAddrIPv4 = addressIPv4;
-                _unitySocketFix.BindAddrIPv6 = addressIPv6;
-                _unitySocketFix.Port = LocalPort;
-                _unitySocketFix.ManualMode = _manualMode;
-            }
-            else
-            {
-                _unitySocketFix.Paused = false;
-            }
-#endif
+            if (_pausedSocketFix == null)
+                _pausedSocketFix = new PausedSocketFix(this, addressIPv4, addressIPv6, port, manualMode);
+
             if (dualMode)
                 _udpSocketv6 = _udpSocketv4;
 
