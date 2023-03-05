@@ -1584,6 +1584,8 @@ namespace LiteNetLib
                 return;
             NetDebug.Write("[NM] Stop");
 
+            _pausedSocketFix.Deinitialize();
+
             //Send last disconnect
             for(var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
                 netPeer.Shutdown(null, 0, 0, !sendDisconnectMessages);

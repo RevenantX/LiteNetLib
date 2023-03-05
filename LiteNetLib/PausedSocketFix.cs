@@ -1,4 +1,8 @@
 ﻿
+#if UNITY_64 || UNITY_EDITOR || UNITY_STANDALONE || UNITY_WII || UNITY_IOS || UNITY_ANDROID || UNITY_WSA || UNITY_WEBGL || UNITY_32
+#define UNITY
+#endif
+
 using System.Net;
 
 namespace LiteNetLib
@@ -6,20 +10,17 @@ namespace LiteNetLib
 
     public class PausedSocketFix
     {
-#if UNITY_32 || UNITY_64 || UNITY_EDITOR
-        public bool ApplicationFocused { get; private set; }
+        public bool ApplicationFocused { get; private set; } = true;
 
         private NetManager _netManager;
         private IPAddress _ipv4;
         private IPAddress _ipv6;
         private int _port;
         private bool _manualMode;
+        private bool _initialized;
 
-   
-        public PausedSocketFix() 
-        {
-            UnityEngine.Application.focusChanged += Application_focusChanged;
-        }
+        public PausedSocketFix() { }
+
         public PausedSocketFix(NetManager netManager, IPAddress ipv4, IPAddress ipv6, int port, bool manualMode) : this()
         {
             Initialize(netManager, ipv4, ipv6, port, manualMode);
@@ -27,18 +28,34 @@ namespace LiteNetLib
 
         ~PausedSocketFix()
         {
-            UnityEngine.Application.focusChanged -= Application_focusChanged;
+            Deinitialize();
         }
 
         public void Initialize(NetManager netManager, IPAddress ipv4, IPAddress ipv6, int port, bool manualMode)
         {
+#if UNITY
             _netManager = netManager;
             _ipv4 = ipv4;
             _ipv6 = ipv6;
             _port = port;
             _manualMode = manualMode;
+
+            if (!_initialized)
+                UnityEngine.Application.focusChanged += Application_focusChanged;
+
+            _initialized = true;
+#endif
         }
 
+        public void Deinitialize()
+        {
+#if UNITY
+            if (_initialized)
+                UnityEngine.Application.focusChanged -= Application_focusChanged;
+
+            _initialized = false;
+#endif
+        }
 
         private void Application_focusChanged(bool focused)
         {
@@ -51,6 +68,8 @@ namespace LiteNetLib
 
         private void TryReconnect()
         {
+            if (!_initialized)
+                return;
             if (_netManager == null)
                 return;
             //Was intentionally disconnected at some point.
@@ -68,7 +87,6 @@ namespace LiteNetLib
             }
         }
 
-#endif
     }
 
 }
