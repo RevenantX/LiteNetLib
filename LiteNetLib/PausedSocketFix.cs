@@ -70,8 +70,17 @@ namespace LiteNetLib
         {
             if (!_initialized)
                 return;
+
+            /* If initialized and networkmanager
+             * went null then soemthing did not
+             * go right. It's possible the netmanager
+             * was destroyed without calling deinitialize.
+             * When this occurs deinitialize this instance. */
             if (_netManager == null)
+            {
+                Deinitialize();
                 return;
+            }
             //Was intentionally disconnected at some point.
             if (!_netManager.IsRunning)
                 return;
