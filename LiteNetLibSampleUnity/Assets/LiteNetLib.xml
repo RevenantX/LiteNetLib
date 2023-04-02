@@ -1011,11 +1011,22 @@
             <param name="length">length</param>
             <returns>CRC32C checksum</returns>
         </member>
+        <member name="M:LiteNetLib.Utils.NetDataReader.GetStringArray(System.Int32)">
+            <summary>
+            Note that "maxStringLength" only limits the number of characters in a string, not its size in bytes.
+            Strings that exceed this parameter are returned as empty
+            </summary>
+        </member>
         <member name="M:LiteNetLib.Utils.NetDataReader.GetString(System.Int32)">
             <summary>
             Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
             </summary>
             <returns>"string.Empty" if value > "maxLength"</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetDataReader.PeekString(System.Int32)">
+            <summary>
+            Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+            </summary>
         </member>
         <member name="M:LiteNetLib.Utils.NetDataWriter.FromBytes(System.Byte[],System.Boolean)">
             <summary>

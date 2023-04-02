@@ -11,7 +11,8 @@
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
-    <PackageVersion>1.0.0-rc.3</PackageVersion>
+    <PackageVersion>1.0.1</PackageVersion>
+    <Title>Lite reliable UDP library for Mono and .NET </Title>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -34,7 +35,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>1.0.0-rc.2</Version>
     <Authors>Ruslan Pyrch</Authors>
-    <Copyright>Copyright 2022 Ruslan Pyrch</Copyright>
+    <Copyright>Copyright 2023 Ruslan Pyrch</Copyright>
     <Description>Lite reliable UDP library for .NET, Mono, and .NET Core</Description>
     <PackageIcon>LNL.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
