@@ -339,7 +339,7 @@ namespace LiteNetLib.Utils
             return obj;
         }
 
-        public T Get<T>(Func<T> constructor) where T : INetSerializable
+        public T Get<T>(Func<T> constructor) where T : class, INetSerializable
         {
             var obj = constructor();
             obj.Deserialize(this);
