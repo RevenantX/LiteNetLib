@@ -1,23 +1,22 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class NtpPacket
-   </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class NtpPacket
-   ">
-    <meta name="generator" content="docfx 2.59.2.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class NtpPacket
+ </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class NtpPacket
+ ">
     
-    <link rel="shortcut icon" href="../favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     
     
@@ -25,7 +24,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -35,7 +34,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -49,7 +48,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -59,7 +58,7 @@
         </div>
       </header>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -69,10 +68,10 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="LiteNetLib.Utils.NtpPacket">
-  
-  
+
+
   <h1 id="LiteNetLib_Utils_NtpPacket" data-uid="LiteNetLib.Utils.NtpPacket" class="text-break">Class NtpPacket
-  </h1>
+</h1>
   <div class="markdown level0 summary"><p>Represents RFC4330 SNTP packet used for communication to and from a network time server.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -107,15 +106,15 @@ with permission from Robert Vazan (@robertvazan) under MIT license, see <a href=
 </p>
 </div>
   <h3 id="constructors">Constructors
-  </h3>
-  
-  
+</h3>
+
+
   <a id="LiteNetLib_Utils_NtpPacket__ctor_" data-uid="LiteNetLib.Utils.NtpPacket.#ctor*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket__ctor" data-uid="LiteNetLib.Utils.NtpPacket.#ctor">NtpPacket()</h4>
   <div class="markdown level1 summary"><p>Initializes default request packet.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public NtpPacket()</code></pre>
   </div>
@@ -125,15 +124,15 @@ are set appropriately for request packet. Property <a class="xref" href="LiteNet
 is set to <span class="xref">System.DateTime.UtcNow</span>.</p>
 </div>
   <h3 id="properties">Properties
-  </h3>
-  
-  
+</h3>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_Bytes_" data-uid="LiteNetLib.Utils.NtpPacket.Bytes*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_Bytes" data-uid="LiteNetLib.Utils.NtpPacket.Bytes">Bytes</h4>
   <div class="markdown level1 summary"><p>Gets RFC4330-encoded SNTP packet.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public byte[] Bytes { get; }</code></pre>
   </div>
@@ -157,14 +156,14 @@ is set to <span class="xref">System.DateTime.UtcNow</span>.</p>
   <div class="markdown level1 remarks"><p>This is the only real property. All other properties except
 <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a> read from or write to this byte array.</p>
 </div>
-  
-  
+
+
   <a id="LiteNetLib_Utils_NtpPacket_CorrectionOffset_" data-uid="LiteNetLib.Utils.NtpPacket.CorrectionOffset*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_CorrectionOffset" data-uid="LiteNetLib.Utils.NtpPacket.CorrectionOffset">CorrectionOffset</h4>
   <div class="markdown level1 summary"><p>Gets the offset that should be added to local time to synchronize it with server time.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TimeSpan CorrectionOffset { get; }</code></pre>
   </div>
@@ -190,14 +189,33 @@ This property throws an exception in request packets.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 id="LiteNetLib_Utils_NtpPacket_CorrectionOffset_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_DestinationTimestamp_" data-uid="LiteNetLib.Utils.NtpPacket.DestinationTimestamp*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_DestinationTimestamp" data-uid="LiteNetLib.Utils.NtpPacket.DestinationTimestamp">DestinationTimestamp</h4>
   <div class="markdown level1 summary"><p>Gets or sets the time of reception of response SNTP packet on the client.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public DateTime? DestinationTimestamp { get; }</code></pre>
   </div>
@@ -211,7 +229,7 @@ This property throws an exception in request packets.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td><span class="xref">System.Nullable&lt;T&gt;</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
         <td><p>Time of reception of response SNTP packet on the client. It is <code>null</code> in request packets.</p>
 </td>
       </tr>
@@ -225,14 +243,14 @@ This property throws an exception in request packets.</p>
       <div><a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a></div>
       <div><a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_RoundTripTime">RoundTripTime</a></div>
   </div>
-  
-  
+
+
   <a id="LiteNetLib_Utils_NtpPacket_LeapIndicator_" data-uid="LiteNetLib.Utils.NtpPacket.LeapIndicator*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_LeapIndicator" data-uid="LiteNetLib.Utils.NtpPacket.LeapIndicator">LeapIndicator</h4>
   <div class="markdown level1 summary"><p>Gets the leap second indicator.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public NtpLeapIndicator LeapIndicator { get; }</code></pre>
   </div>
@@ -257,14 +275,14 @@ Default is <a class="xref" href="LiteNetLib.Utils.NtpLeapIndicator.html#LiteNetL
   <h5 id="LiteNetLib_Utils_NtpPacket_LeapIndicator_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Only servers fill in this property. Clients can consult this property for possible leap second warning.</p>
 </div>
-  
-  
+
+
   <a id="LiteNetLib_Utils_NtpPacket_Mode_" data-uid="LiteNetLib.Utils.NtpPacket.Mode*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_Mode" data-uid="LiteNetLib.Utils.NtpPacket.Mode">Mode</h4>
   <div class="markdown level1 summary"><p>Gets or sets SNTP packet mode, i.e. whether this is client or server packet.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public NtpMode Mode { get; }</code></pre>
   </div>
@@ -285,14 +303,33 @@ Server reply should have this property set to <a class="xref" href="LiteNetLib.U
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 id="LiteNetLib_Utils_NtpPacket_Mode_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_OriginTimestamp_" data-uid="LiteNetLib.Utils.NtpPacket.OriginTimestamp*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_OriginTimestamp" data-uid="LiteNetLib.Utils.NtpPacket.OriginTimestamp">OriginTimestamp</h4>
   <div class="markdown level1 summary"><p>Gets or sets the time when the client sent its request.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public DateTime? OriginTimestamp { get; }</code></pre>
   </div>
@@ -306,7 +343,7 @@ Server reply should have this property set to <a class="xref" href="LiteNetLib.U
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td><span class="xref">System.Nullable&lt;T&gt;</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
         <td><p>This property is <code>null</code> in request packets.
 In reply packets, it is the time when the client sent its request.
 Servers copy this value from <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_TransmitTimestamp">TransmitTimestamp</a>
@@ -315,19 +352,38 @@ that they find in received request packet.</p>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NtpPacket_OriginTimestamp_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
   <h5 id="LiteNetLib_Utils_NtpPacket_OriginTimestamp_seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a></div>
       <div><a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_RoundTripTime">RoundTripTime</a></div>
   </div>
-  
-  
+
+
   <a id="LiteNetLib_Utils_NtpPacket_Poll_" data-uid="LiteNetLib.Utils.NtpPacket.Poll*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_Poll" data-uid="LiteNetLib.Utils.NtpPacket.Poll">Poll</h4>
   <div class="markdown level1 summary"><p>Gets server&apos;s preferred polling interval.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public int Poll { get; }</code></pre>
   </div>
@@ -347,14 +403,33 @@ that they find in received request packet.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 id="LiteNetLib_Utils_NtpPacket_Poll_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_Precision_" data-uid="LiteNetLib.Utils.NtpPacket.Precision*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_Precision" data-uid="LiteNetLib.Utils.NtpPacket.Precision">Precision</h4>
   <div class="markdown level1 summary"><p>Gets the precision of server clock.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public int Precision { get; }</code></pre>
   </div>
@@ -374,14 +449,33 @@ that they find in received request packet.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 id="LiteNetLib_Utils_NtpPacket_Precision_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_ReceiveTimestamp_" data-uid="LiteNetLib.Utils.NtpPacket.ReceiveTimestamp*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_ReceiveTimestamp" data-uid="LiteNetLib.Utils.NtpPacket.ReceiveTimestamp">ReceiveTimestamp</h4>
   <div class="markdown level1 summary"><p>Gets or sets the time when the request was received by the server.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public DateTime? ReceiveTimestamp { get; }</code></pre>
   </div>
@@ -395,26 +489,45 @@ that they find in received request packet.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td><span class="xref">System.Nullable&lt;T&gt;</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
         <td><p>This property is <code>null</code> in request packets.
 In reply packets, it is the time when the server received client request.</p>
 </td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NtpPacket_ReceiveTimestamp_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
   <h5 id="LiteNetLib_Utils_NtpPacket_ReceiveTimestamp_seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a></div>
       <div><a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_RoundTripTime">RoundTripTime</a></div>
   </div>
-  
-  
+
+
   <a id="LiteNetLib_Utils_NtpPacket_ReferenceId_" data-uid="LiteNetLib.Utils.NtpPacket.ReferenceId*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_ReferenceId" data-uid="LiteNetLib.Utils.NtpPacket.ReferenceId">ReferenceId</h4>
   <div class="markdown level1 summary"><p>Gets the ID of the time source used by the server or Kiss-o&apos;-Death code sent by the server.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public uint ReferenceId { get; }</code></pre>
   </div>
@@ -448,14 +561,33 @@ this property contains so called kiss code that instructs the client to stop que
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 id="LiteNetLib_Utils_NtpPacket_ReferenceId_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_ReferenceTimestamp_" data-uid="LiteNetLib.Utils.NtpPacket.ReferenceTimestamp*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_ReferenceTimestamp" data-uid="LiteNetLib.Utils.NtpPacket.ReferenceTimestamp">ReferenceTimestamp</h4>
   <div class="markdown level1 summary"><p>Gets or sets the time when the server clock was last set or corrected.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public DateTime? ReferenceTimestamp { get; }</code></pre>
   </div>
@@ -469,7 +601,7 @@ this property contains so called kiss code that instructs the client to stop que
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td><span class="xref">System.Nullable&lt;T&gt;</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
         <td><p>Time when the server clock was last set or corrected or <code>null</code> when not specified.</p>
 </td>
       </tr>
@@ -479,14 +611,14 @@ this property contains so called kiss code that instructs the client to stop que
   <div class="markdown level1 remarks"><p>This Property is usually set only by servers. It usually lags server&apos;s current time by several minutes,
 so don&apos;t use this property for time synchronization.</p>
 </div>
-  
-  
+
+
   <a id="LiteNetLib_Utils_NtpPacket_RootDelay_" data-uid="LiteNetLib.Utils.NtpPacket.RootDelay*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_RootDelay" data-uid="LiteNetLib.Utils.NtpPacket.RootDelay">RootDelay</h4>
   <div class="markdown level1 summary"><p>Gets the total round-trip delay from the server to the reference clock.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TimeSpan RootDelay { get; }</code></pre>
   </div>
@@ -506,14 +638,33 @@ so don&apos;t use this property for time synchronization.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 id="LiteNetLib_Utils_NtpPacket_RootDelay_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_RootDispersion_" data-uid="LiteNetLib.Utils.NtpPacket.RootDispersion*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_RootDispersion" data-uid="LiteNetLib.Utils.NtpPacket.RootDispersion">RootDispersion</h4>
   <div class="markdown level1 summary"><p>Gets the estimated error in time reported by the server.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TimeSpan RootDispersion { get; }</code></pre>
   </div>
@@ -533,14 +684,33 @@ so don&apos;t use this property for time synchronization.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 id="LiteNetLib_Utils_NtpPacket_RootDispersion_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_RoundTripTime_" data-uid="LiteNetLib.Utils.NtpPacket.RoundTripTime*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_RoundTripTime" data-uid="LiteNetLib.Utils.NtpPacket.RoundTripTime">RoundTripTime</h4>
   <div class="markdown level1 summary"><p>Gets the round-trip time to the server.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TimeSpan RoundTripTime { get; }</code></pre>
   </div>
@@ -566,14 +736,33 @@ This property throws an exception in request packets.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 id="LiteNetLib_Utils_NtpPacket_RoundTripTime_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_Stratum_" data-uid="LiteNetLib.Utils.NtpPacket.Stratum*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_Stratum" data-uid="LiteNetLib.Utils.NtpPacket.Stratum">Stratum</h4>
   <div class="markdown level1 summary"><p>Gets server&apos;s distance from the reference clock.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public int Stratum { get; }</code></pre>
   </div>
@@ -601,14 +790,33 @@ with kiss code stored in <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#L
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 id="LiteNetLib_Utils_NtpPacket_Stratum_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_TransmitTimestamp_" data-uid="LiteNetLib.Utils.NtpPacket.TransmitTimestamp*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_TransmitTimestamp" data-uid="LiteNetLib.Utils.NtpPacket.TransmitTimestamp">TransmitTimestamp</h4>
   <div class="markdown level1 summary"><p>Gets or sets the time when the packet was sent.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public DateTime? TransmitTimestamp { get; }</code></pre>
   </div>
@@ -622,7 +830,7 @@ with kiss code stored in <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#L
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td><span class="xref">System.Nullable&lt;T&gt;</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
         <td><p>Time when the packet was sent. It should never be <code>null</code>.
 Default value is <span class="xref">System.DateTime.UtcNow</span>.</p>
 </td>
@@ -637,14 +845,14 @@ Default value is <span class="xref">System.DateTime.UtcNow</span>.</p>
       <div><a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a></div>
       <div><a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_RoundTripTime">RoundTripTime</a></div>
   </div>
-  
-  
+
+
   <a id="LiteNetLib_Utils_NtpPacket_VersionNumber_" data-uid="LiteNetLib.Utils.NtpPacket.VersionNumber*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_VersionNumber" data-uid="LiteNetLib.Utils.NtpPacket.VersionNumber">VersionNumber</h4>
   <div class="markdown level1 summary"><p>Gets or sets protocol version number.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public int VersionNumber { get; }</code></pre>
   </div>
@@ -669,15 +877,15 @@ Default value is <span class="xref">System.DateTime.UtcNow</span>.</p>
 Servers usually reply with the same protocol version.</p>
 </div>
   <h3 id="methods">Methods
-  </h3>
-  
-  
+</h3>
+
+
   <a id="LiteNetLib_Utils_NtpPacket_FromServerResponse_" data-uid="LiteNetLib.Utils.NtpPacket.FromServerResponse*"></a>
   <h4 id="LiteNetLib_Utils_NtpPacket_FromServerResponse_System_Byte___System_DateTime_" data-uid="LiteNetLib.Utils.NtpPacket.FromServerResponse(System.Byte[],System.DateTime)">FromServerResponse(Byte[], DateTime)</h4>
   <div class="markdown level1 summary"><p>Initializes packet from data received from a server.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+  <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static NtpPacket FromServerResponse(byte[] bytes, DateTime destinationTimestamp)</code></pre>
   </div>
@@ -720,9 +928,28 @@ Servers usually reply with the same protocol version.</p>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NtpPacket_FromServerResponse_System_Byte___System_DateTime__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Most applications should just use the <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_CorrectionOffset">CorrectionOffset</a> property.
+</p>
+<p>
+The same data structure represents both request and reply packets.
+Request and reply differ in which properties are set and to what values.
+</p>
+<p>
+The only real property is <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_Bytes">Bytes</a>.
+All other properties read from and write to the underlying byte array
+with the exception of <a class="xref" href="LiteNetLib.Utils.NtpPacket.html#LiteNetLib_Utils_NtpPacket_DestinationTimestamp">DestinationTimestamp</a>,
+which is not part of the packet on network and it is instead set locally after receiving the packet.
+</p>
+<p>
+Copied from <a href="https://guerrillantp.machinezoo.com/">GuerrillaNtp project</a>
+with permission from Robert Vazan (@robertvazan) under MIT license, see <a href="https://github.com/RevenantX/LiteNetLib/pull/236">https://github.com/RevenantX/LiteNetLib/pull/236</a>
+</p>
+</div>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -737,7 +964,7 @@ Servers usually reply with the same protocol version.</p>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -745,13 +972,13 @@ Servers usually reply with the same protocol version.</p>
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            
-            <span>Generated by <strong>DocFX</strong></span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
     </div>
-    
+
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>

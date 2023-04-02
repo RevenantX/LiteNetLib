@@ -64,24 +64,6 @@ references:
   commentId: M:LiteNetLib.ConnectionRequest.Reject(LiteNetLib.Utils.NetDataWriter)
   fullName: LiteNetLib.ConnectionRequest.Reject(LiteNetLib.Utils.NetDataWriter)
   nameWithType: ConnectionRequest.Reject(NetDataWriter)
-- uid: LiteNetLib.ConnectionRequest.Reject(System.Byte[])
-  name: Reject(Byte[])
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_System_Byte___
-  commentId: M:LiteNetLib.ConnectionRequest.Reject(System.Byte[])
-  name.vb: Reject(Byte())
-  fullName: LiteNetLib.ConnectionRequest.Reject(System.Byte[])
-  fullName.vb: LiteNetLib.ConnectionRequest.Reject(System.Byte())
-  nameWithType: ConnectionRequest.Reject(Byte[])
-  nameWithType.vb: ConnectionRequest.Reject(Byte())
-- uid: LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)
-  name: Reject(Byte[], Int32, Int32)
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_
-  commentId: M:LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)
-  name.vb: Reject(Byte(), Int32, Int32)
-  fullName: LiteNetLib.ConnectionRequest.Reject(System.Byte[], System.Int32, System.Int32)
-  fullName.vb: LiteNetLib.ConnectionRequest.Reject(System.Byte(), System.Int32, System.Int32)
-  nameWithType: ConnectionRequest.Reject(Byte[], Int32, Int32)
-  nameWithType.vb: ConnectionRequest.Reject(Byte(), Int32, Int32)
 - uid: LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32,System.Boolean)
   name: Reject(Byte[], Int32, Int32, Boolean)
   href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_System_Boolean_
@@ -91,6 +73,24 @@ references:
   fullName.vb: LiteNetLib.ConnectionRequest.Reject(System.Byte(), System.Int32, System.Int32, System.Boolean)
   nameWithType: ConnectionRequest.Reject(Byte[], Int32, Int32, Boolean)
   nameWithType.vb: ConnectionRequest.Reject(Byte(), Int32, Int32, Boolean)
+- uid: LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)
+  name: Reject(Byte[], Int32, Int32)
+  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_
+  commentId: M:LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)
+  name.vb: Reject(Byte(), Int32, Int32)
+  fullName: LiteNetLib.ConnectionRequest.Reject(System.Byte[], System.Int32, System.Int32)
+  fullName.vb: LiteNetLib.ConnectionRequest.Reject(System.Byte(), System.Int32, System.Int32)
+  nameWithType: ConnectionRequest.Reject(Byte[], Int32, Int32)
+  nameWithType.vb: ConnectionRequest.Reject(Byte(), Int32, Int32)
+- uid: LiteNetLib.ConnectionRequest.Reject(System.Byte[])
+  name: Reject(Byte[])
+  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_System_Byte___
+  commentId: M:LiteNetLib.ConnectionRequest.Reject(System.Byte[])
+  name.vb: Reject(Byte())
+  fullName: LiteNetLib.ConnectionRequest.Reject(System.Byte[])
+  fullName.vb: LiteNetLib.ConnectionRequest.Reject(System.Byte())
+  nameWithType: ConnectionRequest.Reject(Byte[])
+  nameWithType.vb: ConnectionRequest.Reject(Byte())
 - uid: LiteNetLib.ConnectionRequest.Reject*
   name: Reject
   href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_
@@ -110,15 +110,6 @@ references:
   commentId: M:LiteNetLib.ConnectionRequest.RejectForce(LiteNetLib.Utils.NetDataWriter)
   fullName: LiteNetLib.ConnectionRequest.RejectForce(LiteNetLib.Utils.NetDataWriter)
   nameWithType: ConnectionRequest.RejectForce(NetDataWriter)
-- uid: LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])
-  name: RejectForce(Byte[])
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RejectForce_System_Byte___
-  commentId: M:LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])
-  name.vb: RejectForce(Byte())
-  fullName: LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])
-  fullName.vb: LiteNetLib.ConnectionRequest.RejectForce(System.Byte())
-  nameWithType: ConnectionRequest.RejectForce(Byte[])
-  nameWithType.vb: ConnectionRequest.RejectForce(Byte())
 - uid: LiteNetLib.ConnectionRequest.RejectForce(System.Byte[],System.Int32,System.Int32)
   name: RejectForce(Byte[], Int32, Int32)
   href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RejectForce_System_Byte___System_Int32_System_Int32_
@@ -128,6 +119,15 @@ references:
   fullName.vb: LiteNetLib.ConnectionRequest.RejectForce(System.Byte(), System.Int32, System.Int32)
   nameWithType: ConnectionRequest.RejectForce(Byte[], Int32, Int32)
   nameWithType.vb: ConnectionRequest.RejectForce(Byte(), Int32, Int32)
+- uid: LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])
+  name: RejectForce(Byte[])
+  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RejectForce_System_Byte___
+  commentId: M:LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])
+  name.vb: RejectForce(Byte())
+  fullName: LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])
+  fullName.vb: LiteNetLib.ConnectionRequest.RejectForce(System.Byte())
+  nameWithType: ConnectionRequest.RejectForce(Byte[])
+  nameWithType.vb: ConnectionRequest.RejectForce(Byte())
 - uid: LiteNetLib.ConnectionRequest.RejectForce*
   name: RejectForce
   href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RejectForce_
@@ -1482,18 +1482,18 @@ references:
   commentId: M:LiteNetLib.NetManager.CreateNtpRequest(System.Net.IPEndPoint)
   fullName: LiteNetLib.NetManager.CreateNtpRequest(System.Net.IPEndPoint)
   nameWithType: NetManager.CreateNtpRequest(IPEndPoint)
-- uid: LiteNetLib.NetManager.CreateNtpRequest(System.String)
-  name: CreateNtpRequest(String)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateNtpRequest_System_String_
-  commentId: M:LiteNetLib.NetManager.CreateNtpRequest(System.String)
-  fullName: LiteNetLib.NetManager.CreateNtpRequest(System.String)
-  nameWithType: NetManager.CreateNtpRequest(String)
 - uid: LiteNetLib.NetManager.CreateNtpRequest(System.String,System.Int32)
   name: CreateNtpRequest(String, Int32)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateNtpRequest_System_String_System_Int32_
   commentId: M:LiteNetLib.NetManager.CreateNtpRequest(System.String,System.Int32)
   fullName: LiteNetLib.NetManager.CreateNtpRequest(System.String, System.Int32)
   nameWithType: NetManager.CreateNtpRequest(String, Int32)
+- uid: LiteNetLib.NetManager.CreateNtpRequest(System.String)
+  name: CreateNtpRequest(String)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateNtpRequest_System_String_
+  commentId: M:LiteNetLib.NetManager.CreateNtpRequest(System.String)
+  fullName: LiteNetLib.NetManager.CreateNtpRequest(System.String)
+  nameWithType: NetManager.CreateNtpRequest(String)
 - uid: LiteNetLib.NetManager.CreateNtpRequest*
   name: CreateNtpRequest
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateNtpRequest_
@@ -1529,27 +1529,12 @@ references:
   commentId: F:LiteNetLib.NetManager.DisconnectOnUnreachable
   fullName: LiteNetLib.NetManager.DisconnectOnUnreachable
   nameWithType: NetManager.DisconnectOnUnreachable
-- uid: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)
-  name: DisconnectPeer(NetPeer)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_
-  commentId: M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)
-  fullName: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)
-  nameWithType: NetManager.DisconnectPeer(NetPeer)
 - uid: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,LiteNetLib.Utils.NetDataWriter)
   name: DisconnectPeer(NetPeer, NetDataWriter)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_LiteNetLib_Utils_NetDataWriter_
   commentId: M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,LiteNetLib.Utils.NetDataWriter)
   fullName: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer, LiteNetLib.Utils.NetDataWriter)
   nameWithType: NetManager.DisconnectPeer(NetPeer, NetDataWriter)
-- uid: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,System.Byte[])
-  name: DisconnectPeer(NetPeer, Byte[])
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_System_Byte___
-  commentId: M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,System.Byte[])
-  name.vb: DisconnectPeer(NetPeer, Byte())
-  fullName: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer, System.Byte[])
-  fullName.vb: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer, System.Byte())
-  nameWithType: NetManager.DisconnectPeer(NetPeer, Byte[])
-  nameWithType.vb: NetManager.DisconnectPeer(NetPeer, Byte())
 - uid: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,System.Byte[],System.Int32,System.Int32)
   name: DisconnectPeer(NetPeer, Byte[], Int32, Int32)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_System_Byte___System_Int32_System_Int32_
@@ -1559,6 +1544,21 @@ references:
   fullName.vb: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer, System.Byte(), System.Int32, System.Int32)
   nameWithType: NetManager.DisconnectPeer(NetPeer, Byte[], Int32, Int32)
   nameWithType.vb: NetManager.DisconnectPeer(NetPeer, Byte(), Int32, Int32)
+- uid: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,System.Byte[])
+  name: DisconnectPeer(NetPeer, Byte[])
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_System_Byte___
+  commentId: M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,System.Byte[])
+  name.vb: DisconnectPeer(NetPeer, Byte())
+  fullName: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer, System.Byte[])
+  fullName.vb: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer, System.Byte())
+  nameWithType: NetManager.DisconnectPeer(NetPeer, Byte[])
+  nameWithType.vb: NetManager.DisconnectPeer(NetPeer, Byte())
+- uid: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)
+  name: DisconnectPeer(NetPeer)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_
+  commentId: M:LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)
+  fullName: LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)
+  nameWithType: NetManager.DisconnectPeer(NetPeer)
 - uid: LiteNetLib.NetManager.DisconnectPeer*
   name: DisconnectPeer
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DisconnectPeer_
@@ -1891,15 +1891,6 @@ references:
   commentId: M:LiteNetLib.NetManager.SendBroadcast(LiteNetLib.Utils.NetDataWriter,System.Int32)
   fullName: LiteNetLib.NetManager.SendBroadcast(LiteNetLib.Utils.NetDataWriter, System.Int32)
   nameWithType: NetManager.SendBroadcast(NetDataWriter, Int32)
-- uid: LiteNetLib.NetManager.SendBroadcast(System.Byte[],System.Int32)
-  name: SendBroadcast(Byte[], Int32)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendBroadcast_System_Byte___System_Int32_
-  commentId: M:LiteNetLib.NetManager.SendBroadcast(System.Byte[],System.Int32)
-  name.vb: SendBroadcast(Byte(), Int32)
-  fullName: LiteNetLib.NetManager.SendBroadcast(System.Byte[], System.Int32)
-  fullName.vb: LiteNetLib.NetManager.SendBroadcast(System.Byte(), System.Int32)
-  nameWithType: NetManager.SendBroadcast(Byte[], Int32)
-  nameWithType.vb: NetManager.SendBroadcast(Byte(), Int32)
 - uid: LiteNetLib.NetManager.SendBroadcast(System.Byte[],System.Int32,System.Int32,System.Int32)
   name: SendBroadcast(Byte[], Int32, Int32, Int32)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendBroadcast_System_Byte___System_Int32_System_Int32_System_Int32_
@@ -1909,6 +1900,15 @@ references:
   fullName.vb: LiteNetLib.NetManager.SendBroadcast(System.Byte(), System.Int32, System.Int32, System.Int32)
   nameWithType: NetManager.SendBroadcast(Byte[], Int32, Int32, Int32)
   nameWithType.vb: NetManager.SendBroadcast(Byte(), Int32, Int32, Int32)
+- uid: LiteNetLib.NetManager.SendBroadcast(System.Byte[],System.Int32)
+  name: SendBroadcast(Byte[], Int32)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendBroadcast_System_Byte___System_Int32_
+  commentId: M:LiteNetLib.NetManager.SendBroadcast(System.Byte[],System.Int32)
+  name.vb: SendBroadcast(Byte(), Int32)
+  fullName: LiteNetLib.NetManager.SendBroadcast(System.Byte[], System.Int32)
+  fullName.vb: LiteNetLib.NetManager.SendBroadcast(System.Byte(), System.Int32)
+  nameWithType: NetManager.SendBroadcast(Byte[], Int32)
+  nameWithType.vb: NetManager.SendBroadcast(Byte(), Int32)
 - uid: LiteNetLib.NetManager.SendBroadcast*
   name: SendBroadcast
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendBroadcast_
@@ -1916,39 +1916,30 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.SendBroadcast
   nameWithType: NetManager.SendBroadcast
-- uid: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)
-  name: SendToAll(NetDataWriter, DeliveryMethod)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)
-  fullName: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter, LiteNetLib.DeliveryMethod)
-  nameWithType: NetManager.SendToAll(NetDataWriter, DeliveryMethod)
 - uid: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
   name: SendToAll(NetDataWriter, DeliveryMethod, NetPeer)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_
   commentId: M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
   fullName: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter, LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
   nameWithType: NetManager.SendToAll(NetDataWriter, DeliveryMethod, NetPeer)
-- uid: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,System.Byte,LiteNetLib.DeliveryMethod)
-  name: SendToAll(NetDataWriter, Byte, DeliveryMethod)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_System_Byte_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,System.Byte,LiteNetLib.DeliveryMethod)
-  fullName: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter, System.Byte, LiteNetLib.DeliveryMethod)
-  nameWithType: NetManager.SendToAll(NetDataWriter, Byte, DeliveryMethod)
+- uid: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)
+  name: SendToAll(NetDataWriter, DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter, LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(NetDataWriter, DeliveryMethod)
 - uid: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
   name: SendToAll(NetDataWriter, Byte, DeliveryMethod, NetPeer)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_
   commentId: M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
   fullName: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter, System.Byte, LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
   nameWithType: NetManager.SendToAll(NetDataWriter, Byte, DeliveryMethod, NetPeer)
-- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.DeliveryMethod)
-  name: SendToAll(Byte[], DeliveryMethod)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.DeliveryMethod)
-  name.vb: SendToAll(Byte(), DeliveryMethod)
-  fullName: LiteNetLib.NetManager.SendToAll(System.Byte[], LiteNetLib.DeliveryMethod)
-  fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), LiteNetLib.DeliveryMethod)
-  nameWithType: NetManager.SendToAll(Byte[], DeliveryMethod)
-  nameWithType.vb: NetManager.SendToAll(Byte(), DeliveryMethod)
+- uid: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,System.Byte,LiteNetLib.DeliveryMethod)
+  name: SendToAll(NetDataWriter, Byte, DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_System_Byte_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,System.Byte,LiteNetLib.DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter, System.Byte, LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(NetDataWriter, Byte, DeliveryMethod)
 - uid: LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
   name: SendToAll(Byte[], DeliveryMethod, NetPeer)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_
@@ -1958,15 +1949,15 @@ references:
   fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
   nameWithType: NetManager.SendToAll(Byte[], DeliveryMethod, NetPeer)
   nameWithType.vb: NetManager.SendToAll(Byte(), DeliveryMethod, NetPeer)
-- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Byte,LiteNetLib.DeliveryMethod)
-  name: SendToAll(Byte[], Byte, DeliveryMethod)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Byte_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Byte,LiteNetLib.DeliveryMethod)
-  name.vb: SendToAll(Byte(), Byte, DeliveryMethod)
-  fullName: LiteNetLib.NetManager.SendToAll(System.Byte[], System.Byte, LiteNetLib.DeliveryMethod)
-  fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), System.Byte, LiteNetLib.DeliveryMethod)
-  nameWithType: NetManager.SendToAll(Byte[], Byte, DeliveryMethod)
-  nameWithType.vb: NetManager.SendToAll(Byte(), Byte, DeliveryMethod)
+- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.DeliveryMethod)
+  name: SendToAll(Byte[], DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.DeliveryMethod)
+  name.vb: SendToAll(Byte(), DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(System.Byte[], LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(Byte[], DeliveryMethod)
+  nameWithType.vb: NetManager.SendToAll(Byte(), DeliveryMethod)
 - uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
   name: SendToAll(Byte[], Byte, DeliveryMethod, NetPeer)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_
@@ -1976,15 +1967,15 @@ references:
   fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), System.Byte, LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
   nameWithType: NetManager.SendToAll(Byte[], Byte, DeliveryMethod, NetPeer)
   nameWithType.vb: NetManager.SendToAll(Byte(), Byte, DeliveryMethod, NetPeer)
-- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod)
-  name: SendToAll(Byte[], Int32, Int32, DeliveryMethod)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod)
-  name.vb: SendToAll(Byte(), Int32, Int32, DeliveryMethod)
-  fullName: LiteNetLib.NetManager.SendToAll(System.Byte[], System.Int32, System.Int32, LiteNetLib.DeliveryMethod)
-  fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), System.Int32, System.Int32, LiteNetLib.DeliveryMethod)
-  nameWithType: NetManager.SendToAll(Byte[], Int32, Int32, DeliveryMethod)
-  nameWithType.vb: NetManager.SendToAll(Byte(), Int32, Int32, DeliveryMethod)
+- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Byte,LiteNetLib.DeliveryMethod)
+  name: SendToAll(Byte[], Byte, DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Byte_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Byte,LiteNetLib.DeliveryMethod)
+  name.vb: SendToAll(Byte(), Byte, DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(System.Byte[], System.Byte, LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), System.Byte, LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(Byte[], Byte, DeliveryMethod)
+  nameWithType.vb: NetManager.SendToAll(Byte(), Byte, DeliveryMethod)
 - uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
   name: SendToAll(Byte[], Int32, Int32, DeliveryMethod, NetPeer)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_
@@ -1994,15 +1985,15 @@ references:
   fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), System.Int32, System.Int32, LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
   nameWithType: NetManager.SendToAll(Byte[], Int32, Int32, DeliveryMethod, NetPeer)
   nameWithType.vb: NetManager.SendToAll(Byte(), Int32, Int32, DeliveryMethod, NetPeer)
-- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name: SendToAll(Byte[], Int32, Int32, Byte, DeliveryMethod)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name.vb: SendToAll(Byte(), Int32, Int32, Byte, DeliveryMethod)
-  fullName: LiteNetLib.NetManager.SendToAll(System.Byte[], System.Int32, System.Int32, System.Byte, LiteNetLib.DeliveryMethod)
-  fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), System.Int32, System.Int32, System.Byte, LiteNetLib.DeliveryMethod)
-  nameWithType: NetManager.SendToAll(Byte[], Int32, Int32, Byte, DeliveryMethod)
-  nameWithType.vb: NetManager.SendToAll(Byte(), Int32, Int32, Byte, DeliveryMethod)
+- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod)
+  name: SendToAll(Byte[], Int32, Int32, DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod)
+  name.vb: SendToAll(Byte(), Int32, Int32, DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(System.Byte[], System.Int32, System.Int32, LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), System.Int32, System.Int32, LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(Byte[], Int32, Int32, DeliveryMethod)
+  nameWithType.vb: NetManager.SendToAll(Byte(), Int32, Int32, DeliveryMethod)
 - uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
   name: SendToAll(Byte[], Int32, Int32, Byte, DeliveryMethod, NetPeer)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_
@@ -2012,6 +2003,15 @@ references:
   fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), System.Int32, System.Int32, System.Byte, LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
   nameWithType: NetManager.SendToAll(Byte[], Int32, Int32, Byte, DeliveryMethod, NetPeer)
   nameWithType.vb: NetManager.SendToAll(Byte(), Int32, Int32, Byte, DeliveryMethod, NetPeer)
+- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name: SendToAll(Byte[], Int32, Int32, Byte, DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name.vb: SendToAll(Byte(), Int32, Int32, Byte, DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(System.Byte[], System.Int32, System.Int32, System.Byte, LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(System.Byte(), System.Int32, System.Int32, System.Byte, LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(Byte[], Int32, Int32, Byte, DeliveryMethod)
+  nameWithType.vb: NetManager.SendToAll(Byte(), Int32, Int32, Byte, DeliveryMethod)
 - uid: LiteNetLib.NetManager.SendToAll*
   name: SendToAll
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_
@@ -2098,18 +2098,18 @@ references:
   commentId: M:LiteNetLib.NetManager.Start(System.Int32)
   fullName: LiteNetLib.NetManager.Start(System.Int32)
   nameWithType: NetManager.Start(Int32)
-- uid: LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32)
-  name: Start(IPAddress, IPAddress, Int32)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Start_System_Net_IPAddress_System_Net_IPAddress_System_Int32_
-  commentId: M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32)
-  fullName: LiteNetLib.NetManager.Start(System.Net.IPAddress, System.Net.IPAddress, System.Int32)
-  nameWithType: NetManager.Start(IPAddress, IPAddress, Int32)
 - uid: LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)
   name: Start(IPAddress, IPAddress, Int32, Boolean)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Start_System_Net_IPAddress_System_Net_IPAddress_System_Int32_System_Boolean_
   commentId: M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)
   fullName: LiteNetLib.NetManager.Start(System.Net.IPAddress, System.Net.IPAddress, System.Int32, System.Boolean)
   nameWithType: NetManager.Start(IPAddress, IPAddress, Int32, Boolean)
+- uid: LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32)
+  name: Start(IPAddress, IPAddress, Int32)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Start_System_Net_IPAddress_System_Net_IPAddress_System_Int32_
+  commentId: M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32)
+  fullName: LiteNetLib.NetManager.Start(System.Net.IPAddress, System.Net.IPAddress, System.Int32)
+  nameWithType: NetManager.Start(IPAddress, IPAddress, Int32)
 - uid: LiteNetLib.NetManager.Start(System.String,System.String,System.Int32)
   name: Start(String, String, Int32)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Start_System_String_System_String_System_Int32_
@@ -2341,15 +2341,6 @@ references:
   commentId: M:LiteNetLib.NetPeer.Disconnect(LiteNetLib.Utils.NetDataWriter)
   fullName: LiteNetLib.NetPeer.Disconnect(LiteNetLib.Utils.NetDataWriter)
   nameWithType: NetPeer.Disconnect(NetDataWriter)
-- uid: LiteNetLib.NetPeer.Disconnect(System.Byte[])
-  name: Disconnect(Byte[])
-  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Disconnect_System_Byte___
-  commentId: M:LiteNetLib.NetPeer.Disconnect(System.Byte[])
-  name.vb: Disconnect(Byte())
-  fullName: LiteNetLib.NetPeer.Disconnect(System.Byte[])
-  fullName.vb: LiteNetLib.NetPeer.Disconnect(System.Byte())
-  nameWithType: NetPeer.Disconnect(Byte[])
-  nameWithType.vb: NetPeer.Disconnect(Byte())
 - uid: LiteNetLib.NetPeer.Disconnect(System.Byte[],System.Int32,System.Int32)
   name: Disconnect(Byte[], Int32, Int32)
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Disconnect_System_Byte___System_Int32_System_Int32_
@@ -2359,6 +2350,15 @@ references:
   fullName.vb: LiteNetLib.NetPeer.Disconnect(System.Byte(), System.Int32, System.Int32)
   nameWithType: NetPeer.Disconnect(Byte[], Int32, Int32)
   nameWithType.vb: NetPeer.Disconnect(Byte(), Int32, Int32)
+- uid: LiteNetLib.NetPeer.Disconnect(System.Byte[])
+  name: Disconnect(Byte[])
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Disconnect_System_Byte___
+  commentId: M:LiteNetLib.NetPeer.Disconnect(System.Byte[])
+  name.vb: Disconnect(Byte())
+  fullName: LiteNetLib.NetPeer.Disconnect(System.Byte[])
+  fullName.vb: LiteNetLib.NetPeer.Disconnect(System.Byte())
+  nameWithType: NetPeer.Disconnect(Byte[])
+  nameWithType.vb: NetPeer.Disconnect(Byte())
 - uid: LiteNetLib.NetPeer.Disconnect*
   name: Disconnect
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Disconnect_
@@ -2848,18 +2848,18 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetUtils.MakeEndPoint
   nameWithType: NetUtils.MakeEndPoint
-- uid: LiteNetLib.NetUtils.ResolveAddress(System.String)
-  name: ResolveAddress(String)
-  href: api/LiteNetLib.NetUtils.html#LiteNetLib_NetUtils_ResolveAddress_System_String_
-  commentId: M:LiteNetLib.NetUtils.ResolveAddress(System.String)
-  fullName: LiteNetLib.NetUtils.ResolveAddress(System.String)
-  nameWithType: NetUtils.ResolveAddress(String)
 - uid: LiteNetLib.NetUtils.ResolveAddress(System.String,System.Net.Sockets.AddressFamily)
   name: ResolveAddress(String, AddressFamily)
   href: api/LiteNetLib.NetUtils.html#LiteNetLib_NetUtils_ResolveAddress_System_String_System_Net_Sockets_AddressFamily_
   commentId: M:LiteNetLib.NetUtils.ResolveAddress(System.String,System.Net.Sockets.AddressFamily)
   fullName: LiteNetLib.NetUtils.ResolveAddress(System.String, System.Net.Sockets.AddressFamily)
   nameWithType: NetUtils.ResolveAddress(String, AddressFamily)
+- uid: LiteNetLib.NetUtils.ResolveAddress(System.String)
+  name: ResolveAddress(String)
+  href: api/LiteNetLib.NetUtils.html#LiteNetLib_NetUtils_ResolveAddress_System_String_
+  commentId: M:LiteNetLib.NetUtils.ResolveAddress(System.String)
+  fullName: LiteNetLib.NetUtils.ResolveAddress(System.String)
+  nameWithType: NetUtils.ResolveAddress(String)
 - uid: LiteNetLib.NetUtils.ResolveAddress*
   name: ResolveAddress
   href: api/LiteNetLib.NetUtils.html#LiteNetLib_NetUtils_ResolveAddress_
@@ -3017,43 +3017,6 @@ references:
   commentId: T:LiteNetLib.Utils.NetDataReader
   fullName: LiteNetLib.Utils.NetDataReader
   nameWithType: NetDataReader
-- uid: LiteNetLib.Utils.NetDataReader.#ctor
-  name: NetDataReader()
-  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor
-  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor
-  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader()
-  nameWithType: NetDataReader.NetDataReader()
-- uid: LiteNetLib.Utils.NetDataReader.#ctor(LiteNetLib.Utils.NetDataWriter)
-  name: NetDataReader(NetDataWriter)
-  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_LiteNetLib_Utils_NetDataWriter_
-  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor(LiteNetLib.Utils.NetDataWriter)
-  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader(LiteNetLib.Utils.NetDataWriter)
-  nameWithType: NetDataReader.NetDataReader(NetDataWriter)
-- uid: LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[])
-  name: NetDataReader(Byte[])
-  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_System_Byte___
-  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[])
-  name.vb: NetDataReader(Byte())
-  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader(System.Byte[])
-  fullName.vb: LiteNetLib.Utils.NetDataReader.NetDataReader(System.Byte())
-  nameWithType: NetDataReader.NetDataReader(Byte[])
-  nameWithType.vb: NetDataReader.NetDataReader(Byte())
-- uid: LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[],System.Int32,System.Int32)
-  name: NetDataReader(Byte[], Int32, Int32)
-  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_System_Byte___System_Int32_System_Int32_
-  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[],System.Int32,System.Int32)
-  name.vb: NetDataReader(Byte(), Int32, Int32)
-  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader(System.Byte[], System.Int32, System.Int32)
-  fullName.vb: LiteNetLib.Utils.NetDataReader.NetDataReader(System.Byte(), System.Int32, System.Int32)
-  nameWithType: NetDataReader.NetDataReader(Byte[], Int32, Int32)
-  nameWithType.vb: NetDataReader.NetDataReader(Byte(), Int32, Int32)
-- uid: LiteNetLib.Utils.NetDataReader.#ctor*
-  name: NetDataReader
-  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_
-  commentId: Overload:LiteNetLib.Utils.NetDataReader.#ctor
-  isSpec: "True"
-  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader
-  nameWithType: NetDataReader.NetDataReader
 - uid: LiteNetLib.Utils.NetDataReader._data
   name: _data
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__data
@@ -3072,6 +3035,43 @@ references:
   commentId: F:LiteNetLib.Utils.NetDataReader._position
   fullName: LiteNetLib.Utils.NetDataReader._position
   nameWithType: NetDataReader._position
+- uid: LiteNetLib.Utils.NetDataReader.#ctor
+  name: NetDataReader()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor
+  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor
+  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader()
+  nameWithType: NetDataReader.NetDataReader()
+- uid: LiteNetLib.Utils.NetDataReader.#ctor(LiteNetLib.Utils.NetDataWriter)
+  name: NetDataReader(NetDataWriter)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_LiteNetLib_Utils_NetDataWriter_
+  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor(LiteNetLib.Utils.NetDataWriter)
+  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader(LiteNetLib.Utils.NetDataWriter)
+  nameWithType: NetDataReader.NetDataReader(NetDataWriter)
+- uid: LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[],System.Int32,System.Int32)
+  name: NetDataReader(Byte[], Int32, Int32)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_System_Byte___System_Int32_System_Int32_
+  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[],System.Int32,System.Int32)
+  name.vb: NetDataReader(Byte(), Int32, Int32)
+  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader(System.Byte[], System.Int32, System.Int32)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.NetDataReader(System.Byte(), System.Int32, System.Int32)
+  nameWithType: NetDataReader.NetDataReader(Byte[], Int32, Int32)
+  nameWithType.vb: NetDataReader.NetDataReader(Byte(), Int32, Int32)
+- uid: LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[])
+  name: NetDataReader(Byte[])
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_System_Byte___
+  commentId: M:LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[])
+  name.vb: NetDataReader(Byte())
+  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader(System.Byte[])
+  fullName.vb: LiteNetLib.Utils.NetDataReader.NetDataReader(System.Byte())
+  nameWithType: NetDataReader.NetDataReader(Byte[])
+  nameWithType.vb: NetDataReader.NetDataReader(Byte())
+- uid: LiteNetLib.Utils.NetDataReader.#ctor*
+  name: NetDataReader
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__ctor_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.#ctor
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.NetDataReader
+  nameWithType: NetDataReader.NetDataReader
 - uid: LiteNetLib.Utils.NetDataReader.AvailableBytes
   name: AvailableBytes
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_AvailableBytes
@@ -3166,15 +3166,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.GetByte
   nameWithType: NetDataReader.GetByte
-- uid: LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[],System.Int32)
-  name: GetBytes(Byte[], Int32)
-  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_
-  commentId: M:LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[],System.Int32)
-  name.vb: GetBytes(Byte(), Int32)
-  fullName: LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[], System.Int32)
-  fullName.vb: LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte(), System.Int32)
-  nameWithType: NetDataReader.GetBytes(Byte[], Int32)
-  nameWithType.vb: NetDataReader.GetBytes(Byte(), Int32)
 - uid: LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[],System.Int32,System.Int32)
   name: GetBytes(Byte[], Int32, Int32)
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_System_Int32_
@@ -3184,6 +3175,15 @@ references:
   fullName.vb: LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte(), System.Int32, System.Int32)
   nameWithType: NetDataReader.GetBytes(Byte[], Int32, Int32)
   nameWithType.vb: NetDataReader.GetBytes(Byte(), Int32, Int32)
+- uid: LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[],System.Int32)
+  name: GetBytes(Byte[], Int32)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_
+  commentId: M:LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[],System.Int32)
+  name.vb: GetBytes(Byte(), Int32)
+  fullName: LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[], System.Int32)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte(), System.Int32)
+  nameWithType: NetDataReader.GetBytes(Byte[], Int32)
+  nameWithType.vb: NetDataReader.GetBytes(Byte(), Int32)
 - uid: LiteNetLib.Utils.NetDataReader.GetBytes*
   name: GetBytes
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytes_
@@ -3787,15 +3787,6 @@ references:
   commentId: M:LiteNetLib.Utils.NetDataReader.SetSource(LiteNetLib.Utils.NetDataWriter)
   fullName: LiteNetLib.Utils.NetDataReader.SetSource(LiteNetLib.Utils.NetDataWriter)
   nameWithType: NetDataReader.SetSource(NetDataWriter)
-- uid: LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[])
-  name: SetSource(Byte[])
-  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___
-  commentId: M:LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[])
-  name.vb: SetSource(Byte())
-  fullName: LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[])
-  fullName.vb: LiteNetLib.Utils.NetDataReader.SetSource(System.Byte())
-  nameWithType: NetDataReader.SetSource(Byte[])
-  nameWithType.vb: NetDataReader.SetSource(Byte())
 - uid: LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[],System.Int32,System.Int32)
   name: SetSource(Byte[], Int32, Int32)
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___System_Int32_System_Int32_
@@ -3805,6 +3796,15 @@ references:
   fullName.vb: LiteNetLib.Utils.NetDataReader.SetSource(System.Byte(), System.Int32, System.Int32)
   nameWithType: NetDataReader.SetSource(Byte[], Int32, Int32)
   nameWithType.vb: NetDataReader.SetSource(Byte(), Int32, Int32)
+- uid: LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[])
+  name: SetSource(Byte[])
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___
+  commentId: M:LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[])
+  name.vb: SetSource(Byte())
+  fullName: LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[])
+  fullName.vb: LiteNetLib.Utils.NetDataReader.SetSource(System.Byte())
+  nameWithType: NetDataReader.SetSource(Byte[])
+  nameWithType.vb: NetDataReader.SetSource(Byte())
 - uid: LiteNetLib.Utils.NetDataReader.SetSource*
   name: SetSource
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_
@@ -4097,31 +4097,6 @@ references:
   commentId: T:LiteNetLib.Utils.NetDataWriter
   fullName: LiteNetLib.Utils.NetDataWriter
   nameWithType: NetDataWriter
-- uid: LiteNetLib.Utils.NetDataWriter.#ctor
-  name: NetDataWriter()
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__ctor
-  commentId: M:LiteNetLib.Utils.NetDataWriter.#ctor
-  fullName: LiteNetLib.Utils.NetDataWriter.NetDataWriter()
-  nameWithType: NetDataWriter.NetDataWriter()
-- uid: LiteNetLib.Utils.NetDataWriter.#ctor(System.Boolean)
-  name: NetDataWriter(Boolean)
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__ctor_System_Boolean_
-  commentId: M:LiteNetLib.Utils.NetDataWriter.#ctor(System.Boolean)
-  fullName: LiteNetLib.Utils.NetDataWriter.NetDataWriter(System.Boolean)
-  nameWithType: NetDataWriter.NetDataWriter(Boolean)
-- uid: LiteNetLib.Utils.NetDataWriter.#ctor(System.Boolean,System.Int32)
-  name: NetDataWriter(Boolean, Int32)
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__ctor_System_Boolean_System_Int32_
-  commentId: M:LiteNetLib.Utils.NetDataWriter.#ctor(System.Boolean,System.Int32)
-  fullName: LiteNetLib.Utils.NetDataWriter.NetDataWriter(System.Boolean, System.Int32)
-  nameWithType: NetDataWriter.NetDataWriter(Boolean, Int32)
-- uid: LiteNetLib.Utils.NetDataWriter.#ctor*
-  name: NetDataWriter
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__ctor_
-  commentId: Overload:LiteNetLib.Utils.NetDataWriter.#ctor
-  isSpec: "True"
-  fullName: LiteNetLib.Utils.NetDataWriter.NetDataWriter
-  nameWithType: NetDataWriter.NetDataWriter
 - uid: LiteNetLib.Utils.NetDataWriter._data
   name: _data
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__data
@@ -4134,6 +4109,31 @@ references:
   commentId: F:LiteNetLib.Utils.NetDataWriter._position
   fullName: LiteNetLib.Utils.NetDataWriter._position
   nameWithType: NetDataWriter._position
+- uid: LiteNetLib.Utils.NetDataWriter.#ctor
+  name: NetDataWriter()
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__ctor
+  commentId: M:LiteNetLib.Utils.NetDataWriter.#ctor
+  fullName: LiteNetLib.Utils.NetDataWriter.NetDataWriter()
+  nameWithType: NetDataWriter.NetDataWriter()
+- uid: LiteNetLib.Utils.NetDataWriter.#ctor(System.Boolean,System.Int32)
+  name: NetDataWriter(Boolean, Int32)
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__ctor_System_Boolean_System_Int32_
+  commentId: M:LiteNetLib.Utils.NetDataWriter.#ctor(System.Boolean,System.Int32)
+  fullName: LiteNetLib.Utils.NetDataWriter.NetDataWriter(System.Boolean, System.Int32)
+  nameWithType: NetDataWriter.NetDataWriter(Boolean, Int32)
+- uid: LiteNetLib.Utils.NetDataWriter.#ctor(System.Boolean)
+  name: NetDataWriter(Boolean)
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__ctor_System_Boolean_
+  commentId: M:LiteNetLib.Utils.NetDataWriter.#ctor(System.Boolean)
+  fullName: LiteNetLib.Utils.NetDataWriter.NetDataWriter(System.Boolean)
+  nameWithType: NetDataWriter.NetDataWriter(Boolean)
+- uid: LiteNetLib.Utils.NetDataWriter.#ctor*
+  name: NetDataWriter
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__ctor_
+  commentId: Overload:LiteNetLib.Utils.NetDataWriter.#ctor
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataWriter.NetDataWriter
+  nameWithType: NetDataWriter.NetDataWriter
 - uid: LiteNetLib.Utils.NetDataWriter.Capacity
   name: Capacity
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Capacity
@@ -4249,15 +4249,6 @@ references:
   commentId: M:LiteNetLib.Utils.NetDataWriter.Put(System.Byte)
   fullName: LiteNetLib.Utils.NetDataWriter.Put(System.Byte)
   nameWithType: NetDataWriter.Put(Byte)
-- uid: LiteNetLib.Utils.NetDataWriter.Put(System.Byte[])
-  name: Put(Byte[])
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_Byte___
-  commentId: M:LiteNetLib.Utils.NetDataWriter.Put(System.Byte[])
-  name.vb: Put(Byte())
-  fullName: LiteNetLib.Utils.NetDataWriter.Put(System.Byte[])
-  fullName.vb: LiteNetLib.Utils.NetDataWriter.Put(System.Byte())
-  nameWithType: NetDataWriter.Put(Byte[])
-  nameWithType.vb: NetDataWriter.Put(Byte())
 - uid: LiteNetLib.Utils.NetDataWriter.Put(System.Byte[],System.Int32,System.Int32)
   name: Put(Byte[], Int32, Int32)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_Byte___System_Int32_System_Int32_
@@ -4267,6 +4258,15 @@ references:
   fullName.vb: LiteNetLib.Utils.NetDataWriter.Put(System.Byte(), System.Int32, System.Int32)
   nameWithType: NetDataWriter.Put(Byte[], Int32, Int32)
   nameWithType.vb: NetDataWriter.Put(Byte(), Int32, Int32)
+- uid: LiteNetLib.Utils.NetDataWriter.Put(System.Byte[])
+  name: Put(Byte[])
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_Byte___
+  commentId: M:LiteNetLib.Utils.NetDataWriter.Put(System.Byte[])
+  name.vb: Put(Byte())
+  fullName: LiteNetLib.Utils.NetDataWriter.Put(System.Byte[])
+  fullName.vb: LiteNetLib.Utils.NetDataWriter.Put(System.Byte())
+  nameWithType: NetDataWriter.Put(Byte[])
+  nameWithType.vb: NetDataWriter.Put(Byte())
 - uid: LiteNetLib.Utils.NetDataWriter.Put(System.Char)
   name: Put(Char)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_Char_
@@ -4315,18 +4315,18 @@ references:
   commentId: M:LiteNetLib.Utils.NetDataWriter.Put(System.Single)
   fullName: LiteNetLib.Utils.NetDataWriter.Put(System.Single)
   nameWithType: NetDataWriter.Put(Single)
-- uid: LiteNetLib.Utils.NetDataWriter.Put(System.String)
-  name: Put(String)
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_String_
-  commentId: M:LiteNetLib.Utils.NetDataWriter.Put(System.String)
-  fullName: LiteNetLib.Utils.NetDataWriter.Put(System.String)
-  nameWithType: NetDataWriter.Put(String)
 - uid: LiteNetLib.Utils.NetDataWriter.Put(System.String,System.Int32)
   name: Put(String, Int32)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_String_System_Int32_
   commentId: M:LiteNetLib.Utils.NetDataWriter.Put(System.String,System.Int32)
   fullName: LiteNetLib.Utils.NetDataWriter.Put(System.String, System.Int32)
   nameWithType: NetDataWriter.Put(String, Int32)
+- uid: LiteNetLib.Utils.NetDataWriter.Put(System.String)
+  name: Put(String)
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_String_
+  commentId: M:LiteNetLib.Utils.NetDataWriter.Put(System.String)
+  fullName: LiteNetLib.Utils.NetDataWriter.Put(System.String)
+  nameWithType: NetDataWriter.Put(String)
 - uid: LiteNetLib.Utils.NetDataWriter.Put(System.UInt16)
   name: Put(UInt16)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_UInt16_
@@ -4415,15 +4415,6 @@ references:
   fullName.vb: LiteNetLib.Utils.NetDataWriter.PutArray(System.Single())
   nameWithType: NetDataWriter.PutArray(Single[])
   nameWithType.vb: NetDataWriter.PutArray(Single())
-- uid: LiteNetLib.Utils.NetDataWriter.PutArray(System.String[])
-  name: PutArray(String[])
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutArray_System_String___
-  commentId: M:LiteNetLib.Utils.NetDataWriter.PutArray(System.String[])
-  name.vb: PutArray(String())
-  fullName: LiteNetLib.Utils.NetDataWriter.PutArray(System.String[])
-  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutArray(System.String())
-  nameWithType: NetDataWriter.PutArray(String[])
-  nameWithType.vb: NetDataWriter.PutArray(String())
 - uid: LiteNetLib.Utils.NetDataWriter.PutArray(System.String[],System.Int32)
   name: PutArray(String[], Int32)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutArray_System_String___System_Int32_
@@ -4433,6 +4424,15 @@ references:
   fullName.vb: LiteNetLib.Utils.NetDataWriter.PutArray(System.String(), System.Int32)
   nameWithType: NetDataWriter.PutArray(String[], Int32)
   nameWithType.vb: NetDataWriter.PutArray(String(), Int32)
+- uid: LiteNetLib.Utils.NetDataWriter.PutArray(System.String[])
+  name: PutArray(String[])
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutArray_System_String___
+  commentId: M:LiteNetLib.Utils.NetDataWriter.PutArray(System.String[])
+  name.vb: PutArray(String())
+  fullName: LiteNetLib.Utils.NetDataWriter.PutArray(System.String[])
+  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutArray(System.String())
+  nameWithType: NetDataWriter.PutArray(String[])
+  nameWithType.vb: NetDataWriter.PutArray(String())
 - uid: LiteNetLib.Utils.NetDataWriter.PutArray(System.UInt16[])
   name: PutArray(UInt16[])
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutArray_System_UInt16___
@@ -4467,15 +4467,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataWriter.PutArray
   nameWithType: NetDataWriter.PutArray
-- uid: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[])
-  name: PutBytesWithLength(Byte[])
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_System_Byte___
-  commentId: M:LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[])
-  name.vb: PutBytesWithLength(Byte())
-  fullName: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[])
-  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte())
-  nameWithType: NetDataWriter.PutBytesWithLength(Byte[])
-  nameWithType.vb: NetDataWriter.PutBytesWithLength(Byte())
 - uid: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[],System.Int32,System.Int32)
   name: PutBytesWithLength(Byte[], Int32, Int32)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_System_Byte___System_Int32_System_Int32_
@@ -4485,6 +4476,15 @@ references:
   fullName.vb: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte(), System.Int32, System.Int32)
   nameWithType: NetDataWriter.PutBytesWithLength(Byte[], Int32, Int32)
   nameWithType.vb: NetDataWriter.PutBytesWithLength(Byte(), Int32, Int32)
+- uid: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[])
+  name: PutBytesWithLength(Byte[])
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_System_Byte___
+  commentId: M:LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[])
+  name.vb: PutBytesWithLength(Byte())
+  fullName: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[])
+  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte())
+  nameWithType: NetDataWriter.PutBytesWithLength(Byte[])
+  nameWithType.vb: NetDataWriter.PutBytesWithLength(Byte())
 - uid: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength*
   name: PutBytesWithLength
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_
@@ -4492,15 +4492,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength
   nameWithType: NetDataWriter.PutBytesWithLength
-- uid: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[])
-  name: PutSBytesWithLength(SByte[])
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutSBytesWithLength_System_SByte___
-  commentId: M:LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[])
-  name.vb: PutSBytesWithLength(SByte())
-  fullName: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[])
-  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte())
-  nameWithType: NetDataWriter.PutSBytesWithLength(SByte[])
-  nameWithType.vb: NetDataWriter.PutSBytesWithLength(SByte())
 - uid: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[],System.Int32,System.Int32)
   name: PutSBytesWithLength(SByte[], Int32, Int32)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutSBytesWithLength_System_SByte___System_Int32_System_Int32_
@@ -4510,6 +4501,15 @@ references:
   fullName.vb: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte(), System.Int32, System.Int32)
   nameWithType: NetDataWriter.PutSBytesWithLength(SByte[], Int32, Int32)
   nameWithType.vb: NetDataWriter.PutSBytesWithLength(SByte(), Int32, Int32)
+- uid: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[])
+  name: PutSBytesWithLength(SByte[])
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutSBytesWithLength_System_SByte___
+  commentId: M:LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[])
+  name.vb: PutSBytesWithLength(SByte())
+  fullName: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[])
+  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte())
+  nameWithType: NetDataWriter.PutSBytesWithLength(SByte[])
+  nameWithType.vb: NetDataWriter.PutSBytesWithLength(SByte())
 - uid: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength*
   name: PutSBytesWithLength
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutSBytesWithLength_
@@ -4622,18 +4622,18 @@ references:
   fullName.vb: LiteNetLib.Utils.NetPacketProcessor.GetHash(Of T)()
   nameWithType: NetPacketProcessor.GetHash<T>()
   nameWithType.vb: NetPacketProcessor.GetHash(Of T)()
-- uid: LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader)
-  name: ReadAllPackets(NetDataReader)
-  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_LiteNetLib_Utils_NetDataReader_
-  commentId: M:LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader)
-  fullName: LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader)
-  nameWithType: NetPacketProcessor.ReadAllPackets(NetDataReader)
 - uid: LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader,System.Object)
   name: ReadAllPackets(NetDataReader, Object)
   href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_LiteNetLib_Utils_NetDataReader_System_Object_
   commentId: M:LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader,System.Object)
   fullName: LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader, System.Object)
   nameWithType: NetPacketProcessor.ReadAllPackets(NetDataReader, Object)
+- uid: LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader)
+  name: ReadAllPackets(NetDataReader)
+  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_LiteNetLib_Utils_NetDataReader_
+  commentId: M:LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader)
+  fullName: LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader)
+  nameWithType: NetPacketProcessor.ReadAllPackets(NetDataReader)
 - uid: LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets*
   name: ReadAllPackets
   href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_
@@ -4641,18 +4641,18 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets
   nameWithType: NetPacketProcessor.ReadAllPackets
-- uid: LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader)
-  name: ReadPacket(NetDataReader)
-  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_ReadPacket_LiteNetLib_Utils_NetDataReader_
-  commentId: M:LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader)
-  fullName: LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader)
-  nameWithType: NetPacketProcessor.ReadPacket(NetDataReader)
 - uid: LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader,System.Object)
   name: ReadPacket(NetDataReader, Object)
   href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_ReadPacket_LiteNetLib_Utils_NetDataReader_System_Object_
   commentId: M:LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader,System.Object)
   fullName: LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader, System.Object)
   nameWithType: NetPacketProcessor.ReadPacket(NetDataReader, Object)
+- uid: LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader)
+  name: ReadPacket(NetDataReader)
+  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_ReadPacket_LiteNetLib_Utils_NetDataReader_
+  commentId: M:LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader)
+  fullName: LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader)
+  nameWithType: NetPacketProcessor.ReadPacket(NetDataReader)
 - uid: LiteNetLib.Utils.NetPacketProcessor.ReadPacket*
   name: ReadPacket
   href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_ReadPacket_
@@ -4792,15 +4792,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable
   nameWithType: NetPacketProcessor.SubscribeNetSerializable
-- uid: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``1(System.Action{``0})
-  name: SubscribeNetSerializable<T>(Action<T>)
-  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__1_System_Action___0__
-  commentId: M:LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``1(System.Action{``0})
-  name.vb: SubscribeNetSerializable(Of T)(Action(Of T))
-  fullName: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable<T>(System.Action<T>)
-  fullName.vb: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable(Of T)(System.Action(Of T))
-  nameWithType: NetPacketProcessor.SubscribeNetSerializable<T>(Action<T>)
-  nameWithType.vb: NetPacketProcessor.SubscribeNetSerializable(Of T)(Action(Of T))
 - uid: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``1(System.Action{``0},System.Func{``0})
   name: SubscribeNetSerializable<T>(Action<T>, Func<T>)
   href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__1_System_Action___0__System_Func___0__
@@ -4810,15 +4801,15 @@ references:
   fullName.vb: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable(Of T)(System.Action(Of T), System.Func(Of T))
   nameWithType: NetPacketProcessor.SubscribeNetSerializable<T>(Action<T>, Func<T>)
   nameWithType.vb: NetPacketProcessor.SubscribeNetSerializable(Of T)(Action(Of T), Func(Of T))
-- uid: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``2(System.Action{``0,``1})
-  name: SubscribeNetSerializable<T, TUserData>(Action<T, TUserData>)
-  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__2_System_Action___0___1__
-  commentId: M:LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``2(System.Action{``0,``1})
-  name.vb: SubscribeNetSerializable(Of T, TUserData)(Action(Of T, TUserData))
-  fullName: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable<T, TUserData>(System.Action<T, TUserData>)
-  fullName.vb: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable(Of T, TUserData)(System.Action(Of T, TUserData))
-  nameWithType: NetPacketProcessor.SubscribeNetSerializable<T, TUserData>(Action<T, TUserData>)
-  nameWithType.vb: NetPacketProcessor.SubscribeNetSerializable(Of T, TUserData)(Action(Of T, TUserData))
+- uid: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``1(System.Action{``0})
+  name: SubscribeNetSerializable<T>(Action<T>)
+  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__1_System_Action___0__
+  commentId: M:LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``1(System.Action{``0})
+  name.vb: SubscribeNetSerializable(Of T)(Action(Of T))
+  fullName: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable<T>(System.Action<T>)
+  fullName.vb: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable(Of T)(System.Action(Of T))
+  nameWithType: NetPacketProcessor.SubscribeNetSerializable<T>(Action<T>)
+  nameWithType.vb: NetPacketProcessor.SubscribeNetSerializable(Of T)(Action(Of T))
 - uid: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``2(System.Action{``0,``1},System.Func{``0})
   name: SubscribeNetSerializable<T, TUserData>(Action<T, TUserData>, Func<T>)
   href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__2_System_Action___0___1__System_Func___0__
@@ -4828,6 +4819,15 @@ references:
   fullName.vb: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable(Of T, TUserData)(System.Action(Of T, TUserData), System.Func(Of T))
   nameWithType: NetPacketProcessor.SubscribeNetSerializable<T, TUserData>(Action<T, TUserData>, Func<T>)
   nameWithType.vb: NetPacketProcessor.SubscribeNetSerializable(Of T, TUserData)(Action(Of T, TUserData), Func(Of T))
+- uid: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``2(System.Action{``0,``1})
+  name: SubscribeNetSerializable<T, TUserData>(Action<T, TUserData>)
+  href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__2_System_Action___0___1__
+  commentId: M:LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``2(System.Action{``0,``1})
+  name.vb: SubscribeNetSerializable(Of T, TUserData)(Action(Of T, TUserData))
+  fullName: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable<T, TUserData>(System.Action<T, TUserData>)
+  fullName.vb: LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable(Of T, TUserData)(System.Action(Of T, TUserData))
+  nameWithType: NetPacketProcessor.SubscribeNetSerializable<T, TUserData>(Action<T, TUserData>)
+  nameWithType.vb: NetPacketProcessor.SubscribeNetSerializable(Of T, TUserData)(Action(Of T, TUserData))
 - uid: LiteNetLib.Utils.NetPacketProcessor.SubscribeReusable*
   name: SubscribeReusable
   href: api/LiteNetLib.Utils.NetPacketProcessor.html#LiteNetLib_Utils_NetPacketProcessor_SubscribeReusable_
@@ -4933,15 +4933,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetSerializer.Deserialize
   nameWithType: NetSerializer.Deserialize
-- uid: LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader)
-  name: Deserialize<T>(NetDataReader)
-  href: api/LiteNetLib.Utils.NetSerializer.html#LiteNetLib_Utils_NetSerializer_Deserialize__1_LiteNetLib_Utils_NetDataReader_
-  commentId: M:LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader)
-  name.vb: Deserialize(Of T)(NetDataReader)
-  fullName: LiteNetLib.Utils.NetSerializer.Deserialize<T>(LiteNetLib.Utils.NetDataReader)
-  fullName.vb: LiteNetLib.Utils.NetSerializer.Deserialize(Of T)(LiteNetLib.Utils.NetDataReader)
-  nameWithType: NetSerializer.Deserialize<T>(NetDataReader)
-  nameWithType.vb: NetSerializer.Deserialize(Of T)(NetDataReader)
 - uid: LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader,``0)
   name: Deserialize<T>(NetDataReader, T)
   href: api/LiteNetLib.Utils.NetSerializer.html#LiteNetLib_Utils_NetSerializer_Deserialize__1_LiteNetLib_Utils_NetDataReader___0_
@@ -4951,6 +4942,15 @@ references:
   fullName.vb: LiteNetLib.Utils.NetSerializer.Deserialize(Of T)(LiteNetLib.Utils.NetDataReader, T)
   nameWithType: NetSerializer.Deserialize<T>(NetDataReader, T)
   nameWithType.vb: NetSerializer.Deserialize(Of T)(NetDataReader, T)
+- uid: LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader)
+  name: Deserialize<T>(NetDataReader)
+  href: api/LiteNetLib.Utils.NetSerializer.html#LiteNetLib_Utils_NetSerializer_Deserialize__1_LiteNetLib_Utils_NetDataReader_
+  commentId: M:LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader)
+  name.vb: Deserialize(Of T)(NetDataReader)
+  fullName: LiteNetLib.Utils.NetSerializer.Deserialize<T>(LiteNetLib.Utils.NetDataReader)
+  fullName.vb: LiteNetLib.Utils.NetSerializer.Deserialize(Of T)(LiteNetLib.Utils.NetDataReader)
+  nameWithType: NetSerializer.Deserialize<T>(NetDataReader)
+  nameWithType.vb: NetSerializer.Deserialize(Of T)(NetDataReader)
 - uid: LiteNetLib.Utils.NetSerializer.Register*
   name: Register
   href: api/LiteNetLib.Utils.NetSerializer.html#LiteNetLib_Utils_NetSerializer_Register_

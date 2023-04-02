@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "d:/Projects/LiteNetLib/docfx_project",
+  "source_base_path": "D:/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -9,10 +9,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.ConnectionRequest.html",
-          "hash": "DwRydn8OzMlgk8oQoZPKM9qkWC+rmoYOkwKn/gSavRU="
+          "hash": "zMxlUhJlmsU12GJkGyhzdiBRfB7nUuxut5zZDlkuodk="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -21,10 +20,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.ConnectionState.html",
-          "hash": "HsR2i/Z+f18DpdpreObzD23o4sn6vaOCvpcRcvGuiyw="
+          "hash": "gdVF/fgDhDBUuIzqGWsr22bjcPJxMrYS9r/1dnvnLvk="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -33,10 +31,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.DeliveryMethod.html",
-          "hash": "XBzaQX3SjYr4iWA+6UtQS/Ts0eYZIVMTMXnobCKIR8c="
+          "hash": "n6pJJudeHOZsaaq74AcMsrofklamMM4SVWewfZSv99Q="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -45,10 +42,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.DisconnectInfo.html",
-          "hash": "cakegD1mugP/98uAxoqZisVR//sWy9y/VcEmbgU0mkk="
+          "hash": "m5qcDmNGu3iuwlx00Bf00medEQAzG7GIPVnUel6m9oc="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -57,10 +53,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.DisconnectReason.html",
-          "hash": "Z+psh1C9H3gqB5yBmWyDvPiZU3cZMw+2Uf+DlK7qAHA="
+          "hash": "2sYqK2fAs98BK4bzM4nanQQP1OXYqJOTBOJ3pfsrcOg="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -69,10 +64,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.EventBasedNatPunchListener.html",
-          "hash": "DvYfCkPEl1V8johBVKkgiXkD7UD2xdzp5dtF09A/9F8="
+          "hash": "0wQ+bEy0dqNRCCZO0YttszIMYVrWiybLGuCtKlyODX4="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -81,10 +75,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.EventBasedNetListener.html",
-          "hash": "jT1BlSTkASWIbtYEIDSnzKqoRI2pTwKewstrnHB1fsU="
+          "hash": "hP47sGCGGNXfXwMDO9teIhFcLiPbUV5fxeIeh/BFSg4="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -93,10 +86,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.IDeliveryEventListener.html",
-          "hash": "gtfkuMHdG1Bbt59Mmg6Qd7MZnbud4aIu/CIjZBxuvGY="
+          "hash": "aJg1zlJN0FUxBLyiKV/zoE5QBfTWZ00rFvT+aylpU4Y="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -105,10 +97,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.INatPunchListener.html",
-          "hash": "a6JZLlMhrnbDdep9HSQXmaBDOMV5nby+OddSBgsdaA4="
+          "hash": "z8Mevoa/+J/f17SdrqLrGHrFefM2vPPdUbxzueBwWcg="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -117,10 +108,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.INetEventListener.html",
-          "hash": "6qmY0z4PsepsbJSjndhwM3umL2rN2zuBh9/ESYX/+r8="
+          "hash": "B3bO9ob6+fWCF3FSmfu7iBLf36PIkbkcyjo0ladkHhU="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -129,10 +119,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.INetLogger.html",
-          "hash": "znpfVdYTkErmtDhyVf+tCBKdTkyqvey9HoAdrc817Hg="
+          "hash": "goOaU4Wa7b24TT27/pO7CS57l/K/RFpMMaaFKkpUfZI="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -141,10 +130,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.INtpEventListener.html",
-          "hash": "nHQbialSPecrt9slADuJ0UJ6KYF/KAvwCT4zyTOdD+g="
+          "hash": "oCbORPOqMvy2SoUAzk/5w0feO4sisdJ6AFax3Boc7pg="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -153,10 +141,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.IPv6Mode.html",
-          "hash": "PpXhvsyO8Q1UlPBB7nlNGYxuS4H3Yn8MrpwIKbJYmFw="
+          "hash": "kUKsqsZSToI8Uv9VnAlPLcQxCdO8Q/ra2zPQueAO2Ec="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -165,10 +152,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.InvalidPacketException.html",
-          "hash": "UC6Fb6OyyMl0SG7ud0F7iXlRX5JYyfF/dHlJSqoIN1w="
+          "hash": "N/WSagdJS8+eM1Bnjw3wzsLOr3KJJFsJsQ38AAugxHk="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -177,10 +163,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Layers.Crc32cLayer.html",
-          "hash": "d70jpjYhO5wVJYlIPef6LXuOC6gBcUzkXxXdfhyn4YU="
+          "hash": "Cb9S6Z1Wh6RpjzE3Kx63/6OBlJhVrqm1451Rwqa5tMA="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -189,10 +174,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Layers.PacketLayerBase.html",
-          "hash": "Wua36kNcPHZKi5tyQItN/3CL4an7+Z9pC7LLYINcLdM="
+          "hash": "nKHawTaxL7vuQkjq+xypimYnUA0LsOQKCQZ+TgJjjO4="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -201,10 +185,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Layers.XorEncryptLayer.html",
-          "hash": "vYmCTpXFcUndpgsShunMyVz+2q1SK545+EiZy3A15Oc="
+          "hash": "Dnfu2e/XkhZULbN+MB46JR2gaRbcJyvAyAxuo59Uj3Y="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -213,10 +196,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Layers.html",
-          "hash": "JLNlURWNosJwfB9na5+Uu9dNq4CI0V+GEJdq94zL0fs="
+          "hash": "f69V68KebJEM6aZykqnoyTcT5Q0k1JBEX1vQ2nCPLRE="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -225,10 +207,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.LocalAddrType.html",
-          "hash": "Jk1ZY8SkMh96fUgxeublUnW953um3c9VYYzgKqhSPiM="
+          "hash": "c5cJ7fKEr4oKd5YrvSzk5GOfk/RSc9JXUQkSNmsOBd8="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -237,10 +218,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NatAddressType.html",
-          "hash": "cLT3CjFAosDXrtByT9caVUD/NoZtNRTcLPN4BHaE32I="
+          "hash": "EsrDSASB7J4HE2TWm5wqo77GH6nBGb4shrniQU2fBYU="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -249,10 +229,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NatPunchModule.html",
-          "hash": "Xs/ezetoh+RVWT/hOZ8dt/mI7nbEVtZVpA6qO1FWutE="
+          "hash": "rodx7ieoK80M9HhrOdJ1c+ePIoOsynaiWPLWS3MB4fI="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -261,10 +240,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetConstants.html",
-          "hash": "CiKMizRe4kkTbM+LH7UE/ScROYuQ79cAUi6qyx4KjcE="
+          "hash": "ElcUpIG6uijlYoNz4CnARMEbSK/cZixlhGGc2yrOYJc="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -273,10 +251,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetDebug.html",
-          "hash": "1svI6GqI49QTUEHLwyYNOMn/B4q5f7Xd1xFghcVYWqY="
+          "hash": "SEt5cs+AZ2CTZxRyEkd4zDLsrg+jtQVJogplLrbZ3oE="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -285,10 +262,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetLogLevel.html",
-          "hash": "EUgZEVwqstE+7ubVIVCXFqZovASU9uAfAITVIloEdWc="
+          "hash": "WwSM1KQzTRd8pUwqmV9ow/sn7aG7JG8ejfxt0A9nA28="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -297,10 +273,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.html",
-          "hash": "bewsZhwaYGPj6r0M5SnDu9zlG5O6JQ0XaDnpjkY/5b4="
+          "hash": "AyJOm//vC3CsELKLpMFu9pPWmotC/0w+rV/TFfHdqeg="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -309,10 +284,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetManager.html",
-          "hash": "ENWvZI/XGh/yDLvcPCq5HVbJgMjvYZ41dqNkcU6UW2s="
+          "hash": "RiCLfALNjEBgv/i8ZTJBp8PGqHZ16UgRCp2y9pV0/Dc="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -321,10 +295,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetPacketReader.html",
-          "hash": "4MYKoVX/HPh5qPfRHqZHqc4mVGKgVKJi1Aqya4b6n98="
+          "hash": "kmLMnomdJ3poicTIfvo/D22KwV1C1MUP1UEbaK6gwt8="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -333,10 +306,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetPeer.html",
-          "hash": "PVwap4B7moyibTe4+j5ncpgUecjbaja80bwWUuJR3L4="
+          "hash": "wZb/IyzmnwbrSZH/GSW0+7PaFlfdYwLr44ZPFIRGfnU="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -345,10 +317,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetStatistics.html",
-          "hash": "xQ1GZUYVkb0lNcmTcqgqTH0ggHx91t/fG+L8ywSkfMw="
+          "hash": "Aa4mY0evmbt8+k+JNroNcERRFrXmpSb1SVlfYbJGiho="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -357,10 +328,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.NetUtils.html",
-          "hash": "8rVa9R7PsicrnqUIY0MlsSDfUJkGzSlKV5sm2S/ToFw="
+          "hash": "lph55jUogEnOW7I2kzaj9yUNrWIAMC8wqv41XWovUT4="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -369,10 +339,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.TooBigPacketException.html",
-          "hash": "grTO0Q6eELKz2ZB+VJODX2duhcW0A+q57bcMcL6arXM="
+          "hash": "hxrkGQlAlKS2XmVaydPNhBbJl0XcaYoxn97ct9c+B6U="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -381,10 +350,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.UnconnectedMessageType.html",
-          "hash": "BWcevurxq7+aERea4YCS4Fm5cbNzZwY+gk2kSBSg3Us="
+          "hash": "GMOzjiP5cFmF3urCHXP3ZZuNXuFl2urHnM7kr/NKoXs="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -393,10 +361,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.CRC32C.html",
-          "hash": "6Gzz8EDYaS5A53yf0Xmuk1ANibIsYtrDxdgljpRhv48="
+          "hash": "I/ZamzQmpdS8SyiZtaaaCRq/az7G8SgpLkwG8y3ibaU="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -405,10 +372,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.FastBitConverter.html",
-          "hash": "/2nB08SfyPfCJrlUVDja4mGaRAH4elec7xs8RSubtN4="
+          "hash": "rbe297MQKc0UMNbv/rULBtSBckSICSGiIzrkFDF8SwQ="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -417,10 +383,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.INetSerializable.html",
-          "hash": "DYhi8+QaXZzK8GAVwQeneEn+PkAO+9gP9QQEgCv3RJI="
+          "hash": "qFbeAvnzuR+FJmIHHMPHAOmWqpJQ16q/cZwKAMGyqZQ="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -429,10 +394,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.InvalidTypeException.html",
-          "hash": "oGwqz4LQehpiKmjlPb0dXaXzdNWi0+Dm/kIrvPro6mA="
+          "hash": "6RHb4dC7camu1yadFu5SYJPrqzB6kUdXQFy+o2/96a8="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -441,10 +405,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NetDataReader.html",
-          "hash": "FXFvpa9dl0F2pnJo6xbtpLgBBmgIGLAAdZY2goIeJ5U="
+          "hash": "CysEryd9iSsCTacup2JXdN0k5bxG7UtTNWbXfd1p2bg="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -453,10 +416,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NetDataWriter.html",
-          "hash": "r0VeDteZJNmHij/FbrVAX7ScKeNRiQUIGWpqC/aFlCc="
+          "hash": "JW//Tee90vuZAlVGJ9LTX/dsMHzXxDvB3YAK4H4ABsQ="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -465,10 +427,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NetPacketProcessor.html",
-          "hash": "DKj+L3anhzxsX878VSwn+Png++6KzpV5lzZ0CyZgivA="
+          "hash": "f3ielxIp4ZRsFkskKZ/rYTwid6IOJugldWcQZ1FHJ8A="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -477,10 +438,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NetSerializer.html",
-          "hash": "ArxFQpMucYvhPp56LxpM4N4OC3lDtXUT/MD8SkIY0s4="
+          "hash": "qeFaa5bWhc6UHXGNIpmNXGU5uoeN14fXmBjCX0XrWaQ="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -489,10 +449,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NtpLeapIndicator.html",
-          "hash": "UgEZv0iy9bq7w05IQD/2W2X1eKxJ/B+tqPg4W03KbRE="
+          "hash": "Z17dwn9pYu9+y8ex+pU0wWf/c5Bi8BZ4Zig5jxWsaF0="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -501,10 +460,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NtpMode.html",
-          "hash": "2j8ZyeJ2SW0gGvRI3MIR2g0A3dTnTXrbwje1wg5Nnlc="
+          "hash": "yYc3NVwBu+rJNdWHboVDUqux45UfrLMMAD0nV2blGTU="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -513,10 +471,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.NtpPacket.html",
-          "hash": "lo8KpTyj+LUWQ2kB4cos7H3CyJnnkvmlnlpnerKpOFY="
+          "hash": "fABxHHmEIKkRxLnXUZLChiM1vbSgnbqiEQM8ngILVaI="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -525,10 +482,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.ParseException.html",
-          "hash": "LG+Lz8fKXUy/mw8x7Or6UR64odqtWsl4PyODxj9JQ40="
+          "hash": "d0qFzD7iONlNXIaRJpQdJVyxe63Ks0OAf2PXGQefQTQ="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -537,10 +493,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.html",
-          "hash": "obHC00PXp9LP97Hc4tmfbWQs53uh5E9xSP1ngxr0K8Y="
+          "hash": "I1LqQWkOneuGRmE2wqDMvq5qxaXDSuxNflR8e0+WEgY="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -549,10 +504,9 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.html",
-          "hash": "MX3IXvhk9J+mSEl9YzFlYH1eIDIUT6D4VFiHRD7qb1o="
+          "hash": "lGAtdWqWMdrz8g8HMhV/lcRDVenqtiZasz0jKsu+330="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -561,10 +515,9 @@
       "output": {
         ".html": {
           "relative_path": "api/index.html",
-          "hash": "JNa0TphpiE1EKQtMP1EczRLU6tnN3M3OLR/e7NQcb1U="
+          "hash": "6dXGzyRr+xdUl1QHkcWP7Sp0ROx7N7lm8kxNhHCyL9E="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -573,10 +526,9 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "N6uHLu42KySM2LUuoYpEPsF0pWtQ/w7E7BGvKvoetD8="
+          "hash": "kQJ/3m7JXLpbOWFK1CDiaE/vSdWCn9P0hH7TxQup0SA="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -585,10 +537,9 @@
       "output": {
         ".html": {
           "relative_path": "articles/netserializerusage.html",
-          "hash": "2AuloC57qynbPWwWGVUyC8YNLRE8Lk2MpO2YdDfe5iU="
+          "hash": "xPHK/lSc7BZ3+gG9qwy6RaKEbluZHa+ijHlAp54y5pM="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -597,10 +548,9 @@
       "output": {
         ".html": {
           "relative_path": "articles/toc.html",
-          "hash": "/jL6M34a7ZAzReEGsMx+SypIFwywA3Si0zDi2WN/QGc="
+          "hash": "y/FVN/Xj7B5+aOXYz3bJLeDw0TsHGJpaC/WGEw/Vpzk="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -609,10 +559,9 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "uw5Vdq1sKYMJgm3YiJfuxw4Q+k+14C1xvjYyVSvMPmw="
+          "hash": "1m1kz/nYww3C1p/unSx037J1aTd/lx+b79+gzN+hLJc="
         }
       },
-      "is_incremental": false,
       "version": ""
     },
     {
@@ -621,54 +570,10 @@
       "output": {
         ".html": {
           "relative_path": "toc.html",
-          "hash": "imdeqiTm806nbULLG+gwUv94EfoSnyvU92+PkATu5u0="
+          "hash": "k59T7WJQ29zQ5+PLa89yz49KKtfbhg+49Eev0+ZqVOw="
         }
       },
-      "is_incremental": false,
       "version": ""
-    }
-  ],
-  "incremental_info": [
-    {
-      "status": {
-        "can_incremental": false,
-        "details": "Disable incremental build by force rebuild option.",
-        "incrementalPhase": "build",
-        "total_file_count": 0,
-        "skipped_file_count": 0,
-        "full_build_reason_code": "ForceRebuild"
-      },
-      "processors": {
-        "ConceptualDocumentProcessor": {
-          "can_incremental": false,
-          "incrementalPhase": "build",
-          "total_file_count": 3,
-          "skipped_file_count": 0
-        },
-        "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
-          "incrementalPhase": "build",
-          "total_file_count": 46,
-          "skipped_file_count": 0
-        },
-        "TocDocumentProcessor": {
-          "can_incremental": false,
-          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
-          "incrementalPhase": "build",
-          "total_file_count": 0,
-          "skipped_file_count": 0
-        }
-      }
-    },
-    {
-      "status": {
-        "can_incremental": false,
-        "details": "Cannot support incremental post processing, the reason is: it's disabled.",
-        "incrementalPhase": "postProcessing",
-        "total_file_count": 0,
-        "skipped_file_count": 0
-      },
-      "processors": {}
     }
   ],
   "version_info": {},
