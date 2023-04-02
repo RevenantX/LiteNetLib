@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -83,11 +83,6 @@ namespace LiteNetLib
 #else
             IPv6Support = Socket.OSSupportsIPv6;
 #endif
-        }
-
-        private bool IsActive()
-        {
-            return IsRunning;
         }
 
         private void RegisterEndPoint(IPEndPoint ep)
@@ -176,7 +171,7 @@ namespace LiteNetLib
             int addrSize = addrBuffer.Length;
             NetPacket packet = PoolGetPacket(NetConstants.MaxPacketSize);
 
-            while (IsActive())
+            while (IsRunning)
             {
                 //Reading data
                 packet.Size = NativeSocket.RecvFrom(socketHandle, packet.RawData, NetConstants.MaxPacketSize, addrBuffer, ref addrSize);
@@ -208,7 +203,7 @@ namespace LiteNetLib
             Socket socket = (Socket)state;
             EndPoint bufferEndPoint = new IPEndPoint(socket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
 
-            while (IsActive())
+            while (IsRunning)
             {
                 //Reading data
                 try
@@ -254,7 +249,7 @@ namespace LiteNetLib
         /// <param name="manualMode">mode of library</param>
         public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool manualMode)
         {
-            if (IsRunning && !IsActive())
+            if (IsRunning)
                 return false;
             _manualMode = manualMode;
             UseNativeSockets = UseNativeSockets && NativeSocket.IsSupported;
@@ -626,7 +621,7 @@ namespace LiteNetLib
 
         public bool SendBroadcast(byte[] data, int start, int length, int port)
         {
-            if (!IsActive())
+            if (!IsRunning)
                 return false;
 
             NetPacket packet;
