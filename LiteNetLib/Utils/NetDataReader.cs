@@ -332,9 +332,16 @@ namespace LiteNetLib.Utils
             return segment;
         }
 
-        public T Get<T>() where T : INetSerializable, new()
+        public T Get<T>() where T : struct, INetSerializable
         {
-            var obj = new T();
+            var obj = default(T);
+            obj.Deserialize(this);
+            return obj;
+        }
+
+        public T Get<T>(Func<T> constructor) where T : INetSerializable
+        {
+            var obj = constructor();
             obj.Deserialize(this);
             return obj;
         }

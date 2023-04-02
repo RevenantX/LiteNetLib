@@ -37,6 +37,7 @@ namespace LibSample
         private readonly NetPacketProcessor _netPacketProcessor = new NetPacketProcessor();
         private NetManager _client;
         private NetManager _server;
+        private NetDataWriter _writer = new NetDataWriter();
 
         public void Run()
         {
@@ -65,10 +66,9 @@ namespace LibSample
                     new CustomStruct {X = 5, Y = -28},
                     new CustomStruct {X = -114, Y = 65535}
                 };
-                _netPacketProcessor.Send(
-                    peer,
-                    new ArgumentsForLogin {Password = "pass", SomeInt = 5, UserId = "someUser", SomeList = testList},
-                    DeliveryMethod.ReliableOrdered);
+                _writer.Reset();
+                _netPacketProcessor.Write(_writer, new ArgumentsForLogin { Password = "pass", SomeInt = 5, UserId = "someUser", SomeList = testList });
+                peer.Send(_writer, DeliveryMethod.ReliableOrdered);
             };
 
             //start client/server
