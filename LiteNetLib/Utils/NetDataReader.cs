@@ -294,9 +294,9 @@ namespace LiteNetLib.Utils
 
             ArraySegment<byte> data = GetBytesSegment(actualSize);
 
-            return (maxLength > 0 && NetDataWriter.uTF8Encoding.GetCharCount(data.Array, data.Offset, data.Count) > maxLength) ?
+            return (maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(data.Array, data.Offset, data.Count) > maxLength) ?
                 string.Empty :
-                NetDataWriter.uTF8Encoding.GetString(data.Array, data.Offset, data.Count);
+                NetDataWriter.uTF8Encoding.Value.GetString(data.Array, data.Offset, data.Count);
         }
 
         public string GetString()
@@ -315,7 +315,7 @@ namespace LiteNetLib.Utils
 
             ArraySegment<byte> data = GetBytesSegment(actualSize);
 
-            return NetDataWriter.uTF8Encoding.GetString(data.Array, data.Offset, data.Count);
+            return NetDataWriter.uTF8Encoding.Value.GetString(data.Array, data.Offset, data.Count);
         }
 
         public ArraySegment<byte> GetBytesSegment(int count)
@@ -456,9 +456,9 @@ namespace LiteNetLib.Utils
                 return null;
             }
 
-            return (maxLength > 0 && NetDataWriter.uTF8Encoding.GetCharCount(_data, _position + 2, actualSize) > maxLength) ?
+            return (maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(_data, _position + 2, actualSize) > maxLength) ?
                 string.Empty :
-                NetDataWriter.uTF8Encoding.GetString(_data, _position + 2, actualSize);
+                NetDataWriter.uTF8Encoding.Value.GetString(_data, _position + 2, actualSize);
         }
 
         public string PeekString()
@@ -475,7 +475,7 @@ namespace LiteNetLib.Utils
                 return null;
             }
 
-            return NetDataWriter.uTF8Encoding.GetString(_data, _position + 2, actualSize);
+            return NetDataWriter.uTF8Encoding.Value.GetString(_data, _position + 2, actualSize);
         }
         #endregion
 

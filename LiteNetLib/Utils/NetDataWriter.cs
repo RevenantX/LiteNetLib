@@ -2,6 +2,7 @@
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 
 namespace LiteNetLib.Utils
 {
@@ -28,11 +29,8 @@ namespace LiteNetLib.Utils
             get => _position;
         }
 
-        // Cache encoding instead of creating it with BinaryWriter each time
-        // 1000 readers before: 1MB GC, 30ms
-        // 1000 readers after: .8MB GC, 18ms
-        public static readonly UTF8Encoding uTF8Encoding = new UTF8Encoding(false, true);
-        public const int StringBufferMaxLength = 1024 * 32; // <- short.MaxValue + 1
+        public static readonly ThreadLocal<UTF8Encoding> uTF8Encoding = new ThreadLocal<UTF8Encoding>(() => new UTF8Encoding(false, true));
+        public const int StringBufferMaxLength = 65535;
         private readonly byte[] _stringBuffer = new byte[StringBufferMaxLength];
 
         public NetDataWriter() : this(true, InitialSize)
@@ -356,16 +354,16 @@ namespace LiteNetLib.Utils
         /// </summary>
         public void Put(string value, int maxLength)
         {
-            if (value == null)
+            if (string.IsNullOrEmpty(value))
             {
                 Put((ushort)0);
                 return;
             }
 
             int length = maxLength > 0 && value.Length > maxLength ? maxLength : value.Length;
-            int size = uTF8Encoding.GetBytes(value, 0, length, _stringBuffer, 0);
+            int size = uTF8Encoding.Value.GetBytes(value, 0, length, _stringBuffer, 0);
 
-            if (size >= StringBufferMaxLength)
+            if (size == 0 || size >= StringBufferMaxLength)
             {
                 Put((ushort)0);
                 return;
