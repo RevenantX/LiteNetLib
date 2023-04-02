@@ -11,6 +11,8 @@
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
+    <PackageVersion>1.0.1.1</PackageVersion>
+    <Title>Lite reliable UDP library for Mono and .NET </Title>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -24,6 +26,19 @@
   <PropertyGroup>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>$(DefineConstants);LITENETLIB_UNSAFE</DefineConstants>
+    <PackageTags>udp reliable-udp network</PackageTags>
+    <PackageReleaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/v1.0.1.1</PackageReleaseNotes>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/RevenantX/LiteNetLib</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/RevenantX/LiteNetLib</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.0-rc.2</Version>
+    <Authors>Ruslan Pyrch</Authors>
+    <Copyright>Copyright 2023 Ruslan Pyrch</Copyright>
+    <Description>Lite reliable UDP library for .NET, Mono, and .NET Core</Description>
+    <PackageIcon>LNL.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <Target Name="UpdateUnityDLLS" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(TargetFramework)' == 'net471' and '$(Configuration)' == 'Release' ">
@@ -32,5 +47,16 @@
     </ItemGroup>
     <Copy SourceFiles="@(LibraryRelease)" DestinationFolder="..\LiteNetLibSampleUnity\Assets" />
   </Target>
+
+  <ItemGroup>
+    <None Include="..\LNL.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

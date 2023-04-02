@@ -53,7 +53,7 @@ namespace LiteNetLib
                     }
                     else
                     {
-                        Peer.NetManager.NetPacketPool.Recycle(packet);
+                        Peer.NetManager.PoolRecycle(packet);
                     }
                 }
             }

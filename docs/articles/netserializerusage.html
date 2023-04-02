@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>NetPacketProcessor </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="NetPacketProcessor ">
-    <meta name="generator" content="docfx 2.58.5.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>NetPacketProcessor </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="NetPacketProcessor ">
     
-    <link rel="shortcut icon" href="../favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,7 +56,7 @@
         </div>
       </header>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -70,12 +69,8 @@
 <h1 id="netpacketprocessor">NetPacketProcessor</h1>
 
 <p>Fast specialized for network purposes serializer.<br>
-It supports <strong>classes</strong> with <strong>public properties with &quot;get&quot; and &quot;set&quot;</strong> methods or <strong>classes/structs with implemented <code>INetSerializable</code></strong>.<br>
-Serializer adds some overhead in size: 64 bit hash of class name and namespace (8 bytes). All other class fields will be as is in resulting packet.</p>
-<h2 id="supported-property-types">Supported property types</h2>
-<pre><code class="lang-csharp">byte sbyte short ushort int uint long ulong float double bool string char IPEndPoint
-</code></pre><p>Arrays of all this types and custom types also supported <br>
-Enums also supported but work a bit slower than other types</p>
+It supports <strong>classes</strong> with <strong>public properties with &quot;get&quot; and &quot;set&quot;</strong> methods or <strong>classes/structs which implements <code>INetSerializable</code></strong>.<br>
+Serializer adds some overhead to packet size: 64 bit hash of class name and namespace (8 bytes). All other class fields will be as is in resulting packet.</p>
 <h2 id="serialization-speed-comparsion">Serialization speed comparsion</h2>
 <p>Serialization 100000 times of simple structure from <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">example</a> (<code>NET 4.5</code>):</p>
 <table>
@@ -109,26 +104,22 @@ Enums also supported but work a bit slower than other types</p>
 </tr>
 </tbody>
 </table>
-<h2 id="packet-example">Packet Example</h2>
-<pre><code class="lang-csharp">class SamplePacket
-{
-    public string SomeString { get; set; }
-    public float SomeFloat { get; set; }
-    public int[] SomeIntArray { get; set; }
-}
-</code></pre><h2 id="custom-field">Custom field</h2>
-<p>NetPacketProcessor doesn&#39;t support nested structs or classes.<br>
-But you can register custom type processor.<br>
-That usefull for game engine types such as Vector3 and Quaternion (in Unity3d).</p>
-<pre><code class="lang-csharp">//Your packet that will be sent over network
+<h2 id="supported-property-types">Supported property types</h2>
+<pre><code class="lang-csharp">byte sbyte short ushort int uint long ulong float double bool string char IPEndPoint
+</code></pre><p>Arrays of all these types (and custom types) are also supported. <br>
+Enums are supported but work a bit slower than other types.</p>
+<h2 id="custom-types">Custom types</h2>
+<p>NetPacketProcessor doesn&#39;t support nested structs or classes, but you can register your own custom type processors.<br>
+That useful for game engine types such as Vector3 and Quaternion (in Unity3d).</p>
+<pre><code class="lang-csharp">// Your packet that will be sent over network
 class SamplePacket
 {
+    // Both property and array are supported
     public MyType SomeMyType { get; set; }
-    //Arrays of custom types supported too
     public MyType[] SomeMyTypes { get; set; } 
 }
 
-//Some custom type (variant 1)
+// Some custom type variant 1: Basic struct
 struct MyType
 {
     public int Value1;
@@ -150,10 +141,10 @@ struct MyType
 }
 ...
 netPacketProcessor = new NetPacketProcessor();
-netPacketProcessor.RegisterNestedType( MyType.Serialize, MyType.Deserialize );
-</code></pre><p>Another variant you can implement INetSerializable interface:</p>
-<pre><code class="lang-csharp">//Some custom type (variant 2)
-struct SomeMyType : INetSerializable
+netPacketProcessor.RegisterNestedType( MyType.Serialize, MyType.Deserialize ); // Supply Serialization methods
+</code></pre><p>You can also implement INetSerializable interface:</p>
+<pre><code class="lang-csharp">// Some custom type variant 2: INetSerializable struct
+struct MyType : INetSerializable
 {
     public int Value1;
     public string Value2;
@@ -172,57 +163,92 @@ struct SomeMyType : INetSerializable
 }
 ...
 netPacketProcessor = new NetPacketProcessor();
-netPacketProcessor.RegisterNestedType&lt;SomeMyType&gt;();
-</code></pre><p>Or if you want use struct instead of class (and implement INetSerializable interface)
-you must provide constructor:</p>
-<pre><code class="lang-csharp">netPacketProcessor.RegisterNestedType&lt;SomeMyType&gt;(() =&gt; { return new SomeMyType(); });
-</code></pre><h2 id="usage-example-for-full-example-look-at-source-serializerbenchmarkhttpsgithubcomrevenantxlitenetlibblobmasterlibsampleserializerbenchmarkcs">Usage example (for full example look at source <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">SerializerBenchmark</a>)</h2>
-<pre><code class="lang-csharp">//First side
+netPacketProcessor.RegisterNestedType&lt;MyType&gt;(); // Serialization handled automatically thanks to INetSerializable
+</code></pre><p>If you want to use a class instead of a struct you must implement the INetSerializable interface and provide a constructor: </p>
+<pre><code class="lang-csharp">// Some custom type variant 3: Class, must implement INetSerializable
+class MyType : INetSerializable
+{
+    public int Value1;
+    public string Value2;
+
+    public void Serialize(NetDataWriter writer)
+    {
+        writer.Put(Value1);
+        writer.Put(Value2);
+    }
+
+    public void Deserialize(NetDataReader reader)
+    {
+        Value1 = reader.GetInt();
+        Value2 = reader.GetString();
+    }
+}
+...
+netPacketProcessor = new NetPacketProcessor();
+netPacketProcessor.RegisterNestedType&lt;MyType&gt;(() =&gt; { return new SomeMyType(); }); // Must provide constructor
+</code></pre><h2 id="usage-example">Usage example</h2>
+<p>For full example look at source <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">SerializerBenchmark</a></p>
+<h3 id="packet">Packet</h3>
+<pre><code class="lang-csharp">class SamplePacket
+{
+    // All of these will be automatically serialized and deserialized
+    public string SomeString { get; set; }
+    public float SomeFloat { get; set; }
+    public int[] SomeIntArray { get; set; }
+}
+</code></pre><h3 id="sending--recieving">Sending / recieving</h3>
+<pre><code class="lang-csharp">// Client
 class SomeClientListener : INetEventListener
 {
    private readonly NetPacketProcessor _netPacketProcessor = new NetPacketProcessor();
 ...
    public void OnPeerConnected(NetPeer peer)
    {
-       SamplePacket sp = new SamplePacket
+        // After connection is established you will have the server as a NetPeer
+       SamplePacket packet = new SamplePacket
        {
            SomeFloat = 3.42f,
            SomeIntArray = new[] {6, 5, 4},
            SomeString = &quot;Test String&quot;,
        }
-       peer.Send(_netPacketProcessor.Write(sp), DeliveryMethod.ReliableOrdered);
-       //or you can use _netPacketProcessor.Send(peer, sp, DeliveryMethod.ReliableOrdered);
+       // Serialize the packet with NetSerializer and send it to the peer (server)
+       peer.Send(_netPacketProcessor.Write(packet), DeliveryMethod.ReliableOrdered);
+       //You can also use _netPacketProcessor.Send(peer, packet, DeliveryMethod.ReliableOrdered);
    }
 }
 
-//Other side 
+// Server 
 class SomeServerListener : INetEventListener
 {
     private readonly NetPacketProcessor _netPacketProcessor = new NetPacketProcessor();
 
     public SomeServerListener()
     {
-        //Subscribe to packet receiving
+        // Subscribe to recieving packets.        
         _netPacketProcessor.SubscribeReusable&lt;SamplePacket, NetPeer&gt;(OnSamplePacketReceived);
     }
 
+    // Handler for SamplePacket, registered in constructor above
     private void OnSamplePacketReceived(SamplePacket samplePacket, NetPeer peer)
     {
         Console.WriteLine(&quot;[Server] ReceivedPacket:\n&quot; + samplePacket.SomeString);
     }
 
+    // INetEventListener function.
     public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
     {
         Console.WriteLine(&quot;[Server] received data. Processing...&quot;);
+        // Deserializes packet and calls the handler registered in constructor
         _netPacketProcessor.ReadAllPackets(reader, peer);
     }
 }
 </code></pre><h3 id="mini-faq">Mini FAQ</h3>
-<p>Q: <code>NetPacketProcessor</code> throws &quot;<code>Undefined packet in NetDataReader</code>&quot; but all packets registered <br>
-A: check that registered packet classes in same namespace (and better use shared code for packets)</p>
+<p>Q: <code>NetPacketProcessor</code> throws &quot;<code>Undefined packet in NetDataReader</code>&quot; but all packets are registered. <br>
+A: This can happen when packet definitions resides in different namespaces. Check that registered packet classes/structs are in the same namespace on both ends. 
+To avoid this error altogether, use shared code/-assembly for packets.</p>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -237,7 +263,7 @@ A: check that registered packet classes in same namespace (and better use shared
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -245,13 +271,13 @@ A: check that registered packet classes in same namespace (and better use shared
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            
-            <span>Generated by <strong>DocFX</strong></span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
     </div>
-    
+
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>

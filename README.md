@@ -1,6 +1,10 @@
-# LiteNetLib 1.0 indev
+# LiteNetLib 1.0
 
-Lite reliable UDP library for .NET Framework 4.7.1, Mono, .NET Core 3.1, .NET Standard 2.0.
+Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework)
+
+[![Made in Ukraine](https://img.shields.io/badge/made_in-ukraine-ffd700.svg?labelColor=0057b7)](https://stand-with-ukraine.pp.ua)
+
+**HighLevel API Part**: [LiteEntitySystem](https://github.com/RevenantX/LiteEntitySystem)
 
 **Discord chat**: [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
@@ -12,7 +16,7 @@ Lite reliable UDP library for .NET Framework 4.7.1, Mono, .NET Core 3.1, .NET St
 
 ## Build
 
-### [NuGet](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/v/LiteNetLib.svg)](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/dt/LiteNetLib.svg)](https://www.nuget.org/packages/LiteNetLib/)
+### [NuGet](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/v/LiteNetLib?color=blue)](https://www.nuget.org/packages/LiteNetLib/) [![NuGet](https://img.shields.io/nuget/vpre/LiteNetLib)](https://www.nuget.org/packages/LiteNetLib/#versions-body-tab) [![NuGet](https://img.shields.io/nuget/dt/LiteNetLib)](https://www.nuget.org/packages/LiteNetLib/) 
 
 ### [Release builds](https://github.com/RevenantX/LiteNetLib/releases) [![GitHub (pre-)release](https://img.shields.io/github/release/RevenantX/LiteNetLib/all.svg)](https://github.com/RevenantX/LiteNetLib/releases)
 
@@ -52,6 +56,9 @@ Lite reliable UDP library for .NET Framework 4.7.1, Mono, .NET Core 3.1, .NET St
   * Monogame
   * Godot
   * Unity 2018.3 (Desktop platforms, Android, iOS, Switch)
+  
+## Support developer
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/revx)
 
 ## Unity notes!!!
 * Minimal supported Unity is 2018.3. For older Unity versions use [0.9.x library](https://github.com/RevenantX/LiteNetLib/tree/0.9) versions

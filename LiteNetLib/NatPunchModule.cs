@@ -1,7 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Sockets;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -77,7 +75,7 @@ namespace LiteNetLib
             public bool IsExternal { get; set; }
         }
 
-        private readonly NetSocket _socket;
+        private readonly NetManager _socket;
         private readonly ConcurrentQueue<RequestEventData> _requestEvents = new ConcurrentQueue<RequestEventData>();
         private readonly ConcurrentQueue<SuccessEventData> _successEvents = new ConcurrentQueue<SuccessEventData>();
         private readonly NetDataReader _cacheReader = new NetDataReader();
@@ -91,7 +89,7 @@ namespace LiteNetLib
         /// </summary>
         public bool UnsyncedEvents = false;
 
-        internal NatPunchModule(NetSocket socket)
+        internal NatPunchModule(NetManager socket)
         {
             _socket = socket;
             _netPacketProcessor.SubscribeReusable<NatIntroduceResponsePacket>(OnNatIntroductionResponse);
@@ -115,11 +113,10 @@ namespace LiteNetLib
 
         private void Send<T>(T packet, IPEndPoint target) where T : class, new()
         {
-            SocketError errorCode = 0;
             _cacheWriter.Reset();
             _cacheWriter.Put((byte)PacketProperty.NatMessage);
             _netPacketProcessor.Write(_cacheWriter, packet);
-            _socket.SendTo(_cacheWriter.Data, 0, _cacheWriter.Length, target, ref errorCode);
+            _socket.SendRaw(_cacheWriter.Data, 0, _cacheWriter.Length, target);
         }
 
         public void NatIntroduce(
@@ -219,26 +216,24 @@ namespace LiteNetLib
             // send internal punch
             var punchPacket = new NatPunchPacket {Token = req.Token};
             Send(punchPacket, req.Internal);
-            NetDebug.Write(NetLogLevel.Trace, "[NAT] internal punch sent to " + req.Internal);
+            NetDebug.Write(NetLogLevel.Trace, $"[NAT] internal punch sent to {req.Internal}");
 
             // hack for some routers
-            SocketError errorCode = 0;
             _socket.Ttl = 2;
-            _socket.SendTo(new[] { (byte)PacketProperty.Empty }, 0, 1, req.External, ref errorCode);
+            _socket.SendRaw(new[] { (byte)PacketProperty.Empty }, 0, 1, req.External);
 
             // send external punch
             _socket.Ttl = NetConstants.SocketTTL;
             punchPacket.IsExternal = true;
             Send(punchPacket, req.External);
-            NetDebug.Write(NetLogLevel.Trace, "[NAT] external punch sent to " + req.External);
+            NetDebug.Write(NetLogLevel.Trace, $"[NAT] external punch sent to {req.External}");
         }
 
         //We got punch and can connect
         private void OnNatPunch(NatPunchPacket req, IPEndPoint senderEndPoint)
         {
             //Read info
-            NetDebug.Write(NetLogLevel.Trace, "[NAT] punch received from {0} - additional info: {1}",
-                senderEndPoint, req.Token);
+            NetDebug.Write(NetLogLevel.Trace, $"[NAT] punch received from {senderEndPoint} - additional info: {req.Token}");
 
             //Release punch success to client; enabling him to Connect() to Sender if token is ok
             if(UnsyncedEvents)

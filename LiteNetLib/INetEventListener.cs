@@ -125,7 +125,17 @@ namespace LiteNetLib
         void OnNtpResponse(NtpPacket packet);
     }
 
-    public class EventBasedNetListener : INetEventListener, IDeliveryEventListener, INtpEventListener
+    public interface IPeerAddressChangedListener
+    {
+        /// <summary>
+        /// Called when peer address changed (when AllowPeerAddressChange is enabled)
+        /// </summary>
+        /// <param name="peer">Peer that changed address (with new address)</param>
+        /// <param name="previousAddress">previous IP</param>
+        void OnPeerAddressChanged(NetPeer peer, IPEndPoint previousAddress);
+    }
+
+    public class EventBasedNetListener : INetEventListener, IDeliveryEventListener, INtpEventListener, IPeerAddressChangedListener
     {
         public delegate void OnPeerConnected(NetPeer peer);
         public delegate void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
@@ -136,6 +146,7 @@ namespace LiteNetLib
         public delegate void OnConnectionRequest(ConnectionRequest request);
         public delegate void OnDeliveryEvent(NetPeer peer, object userData);
         public delegate void OnNtpResponseEvent(NtpPacket packet);
+        public delegate void OnPeerAddressChangedEvent(NetPeer peer, IPEndPoint previousAddress);
 
         public event OnPeerConnected PeerConnectedEvent;
         public event OnPeerDisconnected PeerDisconnectedEvent;
@@ -146,6 +157,7 @@ namespace LiteNetLib
         public event OnConnectionRequest ConnectionRequestEvent;
         public event OnDeliveryEvent DeliveryEvent;
         public event OnNtpResponseEvent NtpResponseEvent;
+        public event OnPeerAddressChangedEvent PeerAddressChangedEvent;
 
         public void ClearPeerConnectedEvent()
         {
@@ -190,6 +202,11 @@ namespace LiteNetLib
         public void ClearNtpResponseEvent()
         {
             NtpResponseEvent = null;
+        }
+
+        public void ClearPeerAddressChangedEvent()
+        {
+            PeerAddressChangedEvent = null;
         }
 
         void INetEventListener.OnPeerConnected(NetPeer peer)
@@ -244,6 +261,12 @@ namespace LiteNetLib
         {
             if (NtpResponseEvent != null)
                 NtpResponseEvent(packet);
+        }
+
+        void IPeerAddressChangedListener.OnPeerAddressChanged(NetPeer peer, IPEndPoint previousAddress)
+        {
+            if (PeerAddressChangedEvent != null)
+                PeerAddressChangedEvent(peer, previousAddress);
         }
     }
 }

@@ -66,6 +66,7 @@
             </summary>
             <param name="peer">From peer</param>
             <param name="reader">DataReader containing all received data</param>
+            <param name="channelNumber">Number of channel at which packet arrived</param>
             <param name="deliveryMethod">Type of received packet</param>
         </member>
         <member name="M:LiteNetLib.INetEventListener.OnNetworkReceiveUnconnected(System.Net.IPEndPoint,LiteNetLib.NetPacketReader,LiteNetLib.UnconnectedMessageType)">
@@ -101,6 +102,13 @@
             Ntp response
             </summary>
             <param name="packet"></param>
+        </member>
+        <member name="M:LiteNetLib.IPeerAddressChangedListener.OnPeerAddressChanged(LiteNetLib.NetPeer,System.Net.IPEndPoint)">
+            <summary>
+            Called when peer address changed (when AllowPeerAddressChange is enabled)
+            </summary>
+            <param name="peer">Peer that changed address (with new address)</param>
+            <param name="previousAddress">previous IP</param>
         </member>
         <member name="T:LiteNetLib.NatPunchModule">
             <summary>
@@ -313,6 +321,11 @@
             Disconnect peers if HostUnreachable or NetworkUnreachable spawned (old behaviour 0.9.x was true)
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.AllowPeerAddressChange">
+            <summary>
+            Allows peer change it's ip (lte to wifi, wifi to lte, etc). Use only on server
+            </summary>
+        </member>
         <member name="P:LiteNetLib.NetManager.ChannelsCount">
             <summary>
             QoS channel count per message type (value must be between 1 and 64 channels)
@@ -329,6 +342,14 @@
             </summary>
             <param name="id">id of peer</param>
             <returns>Peer if peer with id exist, otherwise null</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)">
+            <summary>
+            Gets peer by peer id
+            </summary>
+            <param name="id">id of peer</param>
+            <param name="peer">resulting peer</param>
+            <returns>True if peer with id exist, otherwise false</returns>
         </member>
         <member name="P:LiteNetLib.NetManager.ConnectedPeersCount">
             <summary>
@@ -518,6 +539,17 @@
             <param name="remoteEndPoint">Packet destination</param>
             <returns>Operation result</returns>
         </member>
+        <member name="M:LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.String,System.Int32)">
+            <summary>
+            Send message without connection. WARNING This method allocates a new IPEndPoint object and
+            synchronously makes a DNS request. If you're calling this method every frame it will be
+            much faster to just cache the IPEndPoint.
+            </summary>
+            <param name="writer">Data serializer</param>
+            <param name="address">Packet destination IP or hostname</param>
+            <param name="port">Packet destination port</param>
+            <returns>Operation result</returns>
+        </member>
         <member name="M:LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.Net.IPEndPoint)">
             <summary>
             Send message without connection
@@ -677,6 +709,25 @@
             </summary>
             <param name="ntpServerAddress">NTP Server address.</param>
         </member>
+        <member name="F:LiteNetLib.NetManager.PacketPoolSize">
+            <summary>
+            Maximum packet pool size (increase if you have tons of packets sending)
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.NetManager.MaxPacketsReceivePerUpdate">
+            <summary>
+            Maximum packets count that will be processed in Manual PollEvents
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">
+            <summary>
+            Start logic thread and listening on selected port
+            </summary>
+            <param name="addressIPv4">bind to specific ipv4 address</param>
+            <param name="addressIPv6">bind to specific ipv6 address</param>
+            <param name="port">port to listen</param>
+            <param name="manualMode">mode of library</param>
+        </member>
         <member name="T:LiteNetLib.ConnectionState">
             <summary>
             Peer connection state
@@ -687,7 +738,7 @@
             Network peer. Main purpose is sending messages to specific peer.
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetPeer.EndPoint">
+        <member name="P:LiteNetLib.NetPeer.EndPoint">
             <summary>
             Peer ip address and port
             </summary>
@@ -719,7 +770,12 @@
         </member>
         <member name="P:LiteNetLib.NetPeer.Ping">
             <summary>
-            Current ping in milliseconds
+            Current one-way ping (RTT/2) in milliseconds
+            </summary>
+        </member>
+        <member name="P:LiteNetLib.NetPeer.RoundTripTime">
+            <summary>
+            Round trip time in milliseconds
             </summary>
         </member>
         <member name="P:LiteNetLib.NetPeer.Mtu">
@@ -760,6 +816,21 @@
             <param name="channelNumber">number of channel 0-63</param>
             <param name="ordered">type of channel ReliableOrdered or ReliableUnordered</param>
             <returns>packets count in channel queue</returns>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.CreatePacketFromPool(LiteNetLib.DeliveryMethod,System.Byte)">
+            <summary>
+            Create temporary packet (maximum size MTU - headerSize) to send later without additional copies
+            </summary>
+            <param name="deliveryMethod">Delivery method (reliable, unreliable, etc.)</param>
+            <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+            <returns>PooledPacket that you can use to write data starting from UserDataOffset</returns>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.SendPooledPacket(LiteNetLib.PooledPacket,System.Int32)">
+            <summary>
+            Sends pooled packet without data copy
+            </summary>
+            <param name="packet">packet to send</param>
+            <param name="userDataSize">size of user data you want to send</param>
         </member>
         <member name="M:LiteNetLib.NetPeer.GetMaxSinglePacketSize(LiteNetLib.DeliveryMethod)">
             <summary>
@@ -916,6 +987,21 @@
             <param name="addrType">type of address (IPv4, IPv6 or both)</param>
             <returns>IP address if available. Else - string.Empty</returns>
         </member>
+        <member name="F:LiteNetLib.PooledPacket.MaxUserDataSize">
+            <summary>
+            Maximum data size that you can put into such packet
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.PooledPacket.UserDataOffset">
+            <summary>
+            Offset for user data when writing to Data array
+            </summary>
+        </member>
+        <member name="P:LiteNetLib.PooledPacket.Data">
+            <summary>
+            Raw packet data. Do not modify header! Use UserDataOffset as start point for your data
+            </summary>
+        </member>
         <member name="M:LiteNetLib.Utils.CRC32C.Compute(System.Byte[],System.Int32,System.Int32)">
             <summary>
             Compute CRC32C for data
@@ -924,6 +1010,23 @@
             <param name="offset">offset</param>
             <param name="length">length</param>
             <returns>CRC32C checksum</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetDataReader.GetStringArray(System.Int32)">
+            <summary>
+            Note that "maxStringLength" only limits the number of characters in a string, not its size in bytes.
+            Strings that exceed this parameter are returned as empty
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetDataReader.GetString(System.Int32)">
+            <summary>
+            Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+            </summary>
+            <returns>"string.Empty" if value > "maxLength"</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetDataReader.PeekString(System.Int32)">
+            <summary>
+            Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+            </summary>
         </member>
         <member name="M:LiteNetLib.Utils.NetDataWriter.FromBytes(System.Byte[],System.Boolean)">
             <summary>
@@ -946,6 +1049,11 @@
             </summary>
             <param name="position">new byte position</param>
             <returns>previous position of data writer</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetDataWriter.Put(System.String,System.Int32)">
+            <summary>
+            Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+            </summary>
         </member>
         <member name="M:LiteNetLib.Utils.NetPacketProcessor.RegisterNestedType``1">
             <summary>

@@ -26,7 +26,6 @@ namespace LiteNetLib.Utils
         protected delegate void SubscribeDelegate(NetDataReader reader, object userData);
         private readonly NetSerializer _netSerializer;
         private readonly Dictionary<ulong, SubscribeDelegate> _callbacks = new Dictionary<ulong, SubscribeDelegate>();
-        private readonly NetDataWriter _netDataWriter = new NetDataWriter();
 
         public NetPacketProcessor()
         {
@@ -116,34 +115,6 @@ namespace LiteNetLib.Utils
         public void ReadPacket(NetDataReader reader)
         {
             ReadPacket(reader, null);
-        }
-
-        public void Send<T>(NetPeer peer, T packet, DeliveryMethod options) where T : class, new()
-        {
-            _netDataWriter.Reset();
-            Write(_netDataWriter, packet);
-            peer.Send(_netDataWriter, options);
-        }
-
-        public void SendNetSerializable<T>(NetPeer peer, ref T packet, DeliveryMethod options) where T : INetSerializable
-        {
-            _netDataWriter.Reset();
-            WriteNetSerializable(_netDataWriter, ref packet);
-            peer.Send(_netDataWriter, options);
-        }
-
-        public void Send<T>(NetManager manager, T packet, DeliveryMethod options) where T : class, new()
-        {
-            _netDataWriter.Reset();
-            Write(_netDataWriter, packet);
-            manager.SendToAll(_netDataWriter, options);
-        }
-
-        public void SendNetSerializable<T>(NetManager manager, ref T packet, DeliveryMethod options) where T : INetSerializable
-        {
-            _netDataWriter.Reset();
-            WriteNetSerializable(_netDataWriter, ref packet);
-            manager.SendToAll(_netDataWriter, options);
         }
 
         public void Write<T>(NetDataWriter writer, T packet) where T : class, new()
