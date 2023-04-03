@@ -1594,7 +1594,7 @@ namespace LiteNetLib
                 netPeer.Shutdown(null, 0, 0, !sendDisconnectMessages);
 
             //Stop
-            CloseSocket(false);
+            CloseSocket();
             _updateTriggerEvent.Set();
             if (!_manualMode)
             {

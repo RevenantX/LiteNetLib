@@ -675,16 +675,9 @@ namespace LiteNetLib
             return broadcastSuccess || multicastSuccess;
         }
 
-        internal void CloseSocket(bool suspend)
+        internal void CloseSocket()
         {
-            if (!suspend)
-            {
-                IsRunning = false;
-#if UNITY_IOS && !UNITY_EDITOR
-                _unitySocketFix.Socket = null;
-                _unitySocketFix = null;
-#endif
-            }
+            IsRunning = false;
             //cleanup dual mode
             if (_udpSocketv4 == _udpSocketv6)
                 _udpSocketv6 = null;
