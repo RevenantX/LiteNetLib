@@ -5,8 +5,6 @@ namespace LiteNetLib
 {
     public class PausedSocketFix
     {
-        public bool ApplicationFocused { get; private set; } = true;
-
         private readonly NetManager _netManager;
         private readonly IPAddress _ipv4;
         private readonly IPAddress _ipv6;
@@ -34,24 +32,12 @@ namespace LiteNetLib
 
         private void Application_focusChanged(bool focused)
         {
-            ApplicationFocused = focused;
             //If coming back into focus see if a reconnect is needed.
             if (focused)
             {
                 //try reconnect
                 if (!_initialized)
                     return;
-
-                /* If initialized and networkmanager
-                 * went null then soemthing did not
-                 * go right. It's possible the netmanager
-                 * was destroyed without calling deinitialize.
-                 * When this occurs deinitialize this instance. */
-                if (_netManager == null)
-                {
-                    Deinitialize();
-                    return;
-                }
                 //Was intentionally disconnected at some point.
                 if (!_netManager.IsRunning)
                     return;
@@ -63,7 +49,7 @@ namespace LiteNetLib
                 if (!_netManager.Start(_ipv4, _ipv6, _port, _manualMode))
                 {
                     NetDebug.WriteError($"[S] Cannot restore connection. Ipv4 {_ipv4}, Ipv6 {_ipv6}, Port {_port}, ManualMode {_manualMode}");
-                    _netManager.CloseSocket(false);
+                    _netManager.CloseSocket();
                 }
             }
         }
