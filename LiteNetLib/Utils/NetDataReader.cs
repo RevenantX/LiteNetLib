@@ -283,7 +283,7 @@ namespace LiteNetLib.Utils
             ushort size = GetUShort();
             if (size == 0)
             {
-                return null;
+                return string.Empty;
             }
 
             int actualSize = size - 1;
@@ -304,7 +304,7 @@ namespace LiteNetLib.Utils
             ushort size = GetUShort();
             if (size == 0)
             {
-                return null;
+                return string.Empty;
             }
 
             int actualSize = size - 1;
@@ -447,7 +447,7 @@ namespace LiteNetLib.Utils
             ushort size = PeekUShort();
             if (size == 0)
             {
-                return null;
+                return string.Empty;
             }
 
             int actualSize = size - 1;
@@ -466,7 +466,7 @@ namespace LiteNetLib.Utils
             ushort size = PeekUShort();
             if (size == 0)
             {
-                return null;
+                return string.Empty;
             }
 
             int actualSize = size - 1;
