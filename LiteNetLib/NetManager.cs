@@ -11,13 +11,6 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    public enum IPv6Mode
-    {
-        Disabled,
-        SeparateSocket,
-        DualMode
-    }
-
     public sealed class NetPacketReader : NetDataReader
     {
         private NetPacket _packet;
@@ -301,7 +294,7 @@ namespace LiteNetLib
         /// <summary>
         /// IPv6 support
         /// </summary>
-        public IPv6Mode IPv6Mode = IPv6Mode.SeparateSocket;
+        public bool IPv6Enabled = true;
 
         /// <summary>
         /// Override MTU for all new peers registered in this NetManager, will ignores MTU Discovery!

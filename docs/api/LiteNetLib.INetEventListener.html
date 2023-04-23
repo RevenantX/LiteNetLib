@@ -12,7 +12,7 @@
  ">
     
       <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
       <link rel="stylesheet" href="../styles/main.css">
       <meta property="docfx:navrel" content="../toc.html">
@@ -70,6 +70,7 @@
             <article class="content wrap" id="_content" data-uid="LiteNetLib.INetEventListener">
 
 
+
   <h1 id="LiteNetLib_INetEventListener" data-uid="LiteNetLib.INetEventListener" class="text-break">Interface INetEventListener
 </h1>
   <div class="markdown level0 summary"></div>
@@ -94,7 +95,7 @@
     <pre><code class="lang-csharp hljs">void OnConnectionRequest(ConnectionRequest request)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -123,7 +124,7 @@
     <pre><code class="lang-csharp hljs">void OnNetworkError(IPEndPoint endPoint, SocketError socketError)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -133,13 +134,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Net.IPEndPoint</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td><span class="parametername">endPoint</span></td>
         <td><p>From endPoint (can be null)</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Net.Sockets.SocketError</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.socketerror">SocketError</a></td>
         <td><span class="parametername">socketError</span></td>
         <td><p>Socket error</p>
 </td>
@@ -149,7 +150,7 @@
 
 
   <a id="LiteNetLib_INetEventListener_OnNetworkLatencyUpdate_" data-uid="LiteNetLib.INetEventListener.OnNetworkLatencyUpdate*"></a>
-  <h4 id="LiteNetLib_INetEventListener_OnNetworkLatencyUpdate_LiteNetLib_NetPeer_System_Int32_" data-uid="LiteNetLib.INetEventListener.OnNetworkLatencyUpdate(LiteNetLib.NetPeer,System.Int32)">OnNetworkLatencyUpdate(NetPeer, Int32)</h4>
+  <h4 id="LiteNetLib_INetEventListener_OnNetworkLatencyUpdate_LiteNetLib_NetPeer_System_Int32_" data-uid="LiteNetLib.INetEventListener.OnNetworkLatencyUpdate(LiteNetLib.NetPeer,System.Int32)">OnNetworkLatencyUpdate(NetPeer, int)</h4>
   <div class="markdown level1 summary"><p>Latency information updated</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -158,7 +159,7 @@
     <pre><code class="lang-csharp hljs">void OnNetworkLatencyUpdate(NetPeer peer, int latency)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -174,7 +175,7 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">latency</span></td>
         <td><p>latency value in milliseconds</p>
 </td>
@@ -184,7 +185,7 @@
 
 
   <a id="LiteNetLib_INetEventListener_OnNetworkReceive_" data-uid="LiteNetLib.INetEventListener.OnNetworkReceive*"></a>
-  <h4 id="LiteNetLib_INetEventListener_OnNetworkReceive_LiteNetLib_NetPeer_LiteNetLib_NetPacketReader_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.INetEventListener.OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.NetPacketReader,System.Byte,LiteNetLib.DeliveryMethod)">OnNetworkReceive(NetPeer, NetPacketReader, Byte, DeliveryMethod)</h4>
+  <h4 id="LiteNetLib_INetEventListener_OnNetworkReceive_LiteNetLib_NetPeer_LiteNetLib_NetPacketReader_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.INetEventListener.OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.NetPacketReader,System.Byte,LiteNetLib.DeliveryMethod)">OnNetworkReceive(NetPeer, NetPacketReader, byte, DeliveryMethod)</h4>
   <div class="markdown level1 summary"><p>Received some data</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -193,7 +194,7 @@
     <pre><code class="lang-csharp hljs">void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -215,7 +216,7 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Byte</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
         <td><span class="parametername">channelNumber</span></td>
         <td><p>Number of channel at which packet arrived</p>
 </td>
@@ -240,7 +241,7 @@
     <pre><code class="lang-csharp hljs">void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -250,7 +251,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Net.IPEndPoint</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td><span class="parametername">remoteEndPoint</span></td>
         <td><p>From address (IP and Port)</p>
 </td>
@@ -281,7 +282,7 @@
     <pre><code class="lang-csharp hljs">void OnPeerConnected(NetPeer peer)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -310,7 +311,7 @@
     <pre><code class="lang-csharp hljs">void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -333,6 +334,7 @@
       </tr>
     </tbody>
   </table>
+
 </article>
           </div>
 
@@ -365,7 +367,7 @@
       </footer>
     </div>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

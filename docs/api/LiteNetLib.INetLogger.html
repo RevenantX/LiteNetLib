@@ -12,7 +12,7 @@
  ">
     
       <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
       <link rel="stylesheet" href="../styles/main.css">
       <meta property="docfx:navrel" content="../toc.html">
@@ -70,6 +70,7 @@
             <article class="content wrap" id="_content" data-uid="LiteNetLib.INetLogger">
 
 
+
   <h1 id="LiteNetLib_INetLogger" data-uid="LiteNetLib.INetLogger" class="text-break">Interface INetLogger
 </h1>
   <div class="markdown level0 summary"><p>Interface to implement for your own logger</p>
@@ -86,7 +87,7 @@
 
 
   <a id="LiteNetLib_INetLogger_WriteNet_" data-uid="LiteNetLib.INetLogger.WriteNet*"></a>
-  <h4 id="LiteNetLib_INetLogger_WriteNet_LiteNetLib_NetLogLevel_System_String_System_Object___" data-uid="LiteNetLib.INetLogger.WriteNet(LiteNetLib.NetLogLevel,System.String,System.Object[])">WriteNet(NetLogLevel, String, Object[])</h4>
+  <h4 id="LiteNetLib_INetLogger_WriteNet_LiteNetLib_NetLogLevel_System_String_System_Object___" data-uid="LiteNetLib.INetLogger.WriteNet(LiteNetLib.NetLogLevel,System.String,System.Object[])">WriteNet(NetLogLevel, string, params object[])</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -94,7 +95,7 @@
     <pre><code class="lang-csharp hljs">void WriteNet(NetLogLevel level, string str, params object[] args)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -109,17 +110,18 @@
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">str</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Object</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</td>
         <td><span class="parametername">args</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
+
 </article>
           </div>
 
@@ -152,7 +154,7 @@
       </footer>
     </div>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

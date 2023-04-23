@@ -61,33 +61,6 @@ namespace LiteNetLib.Tests
         }
 
         [Test, Timeout(TestTimeout)]
-        public void ConnectionDualMode()
-        {
-            var listener = new EventBasedNetListener();
-            var server = new NetManager(listener, new Crc32cLayer());
-            server.IPv6Mode = IPv6Mode.DualMode;
-            server.Start(DefaultPort);
-
-            listener.ConnectionRequestEvent += request => request.AcceptIfKey(DefaultAppKey);
-
-            var client1 = ManagerStack.Client(1);
-            var client2 = ManagerStack.Client(2);
-            client1.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
-            client2.Connect("::1", DefaultPort, DefaultAppKey);
-
-            while (server.ConnectedPeersCount != 2 || client1.ConnectedPeersCount != 1 || client2.ConnectedPeersCount != 1)
-            {
-                Thread.Sleep(15);
-                server.PollEvents();
-            }
-
-            Assert.AreEqual(2, server.ConnectedPeersCount);
-            Assert.AreEqual(1, client1.ConnectedPeersCount);
-            Assert.AreEqual(1, client2.ConnectedPeersCount);
-            server.Stop(false);
-        }
-
-        [Test, Timeout(TestTimeout)]
         public void P2PConnect()
         {
             var client1 = ManagerStack.Client(1);

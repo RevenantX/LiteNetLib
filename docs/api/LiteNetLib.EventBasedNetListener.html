@@ -12,7 +12,7 @@
  ">
     
       <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
       <link rel="stylesheet" href="../styles/main.css">
       <meta property="docfx:navrel" content="../toc.html">
@@ -70,13 +70,14 @@
             <article class="content wrap" id="_content" data-uid="LiteNetLib.EventBasedNetListener">
 
 
+
   <h1 id="LiteNetLib_EventBasedNetListener" data-uid="LiteNetLib.EventBasedNetListener" class="text-break">Class EventBasedNetListener
 </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
-    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
     <div class="level1"><span class="xref">EventBasedNetListener</span></div>
   </div>
   <div class="implements">
@@ -84,12 +85,13 @@
     <div><a class="xref" href="LiteNetLib.INetEventListener.html">INetEventListener</a></div>
     <div><a class="xref" href="LiteNetLib.IDeliveryEventListener.html">IDeliveryEventListener</a></div>
     <div><a class="xref" href="LiteNetLib.INtpEventListener.html">INtpEventListener</a></div>
+    <div><a class="xref" href="LiteNetLib.IPeerAddressChangedListener.html">IPeerAddressChangedListener</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
   <h5 id="LiteNetLib_EventBasedNetListener_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class EventBasedNetListener : INetEventListener, IDeliveryEventListener, INtpEventListener</code></pre>
+    <pre><code class="lang-csharp hljs">public class EventBasedNetListener : INetEventListener, IDeliveryEventListener, INtpEventListener, IPeerAddressChangedListener</code></pre>
   </div>
   <h3 id="methods">Methods
 </h3>
@@ -165,6 +167,16 @@
   </div>
 
 
+  <a id="LiteNetLib_EventBasedNetListener_ClearPeerAddressChangedEvent_" data-uid="LiteNetLib.EventBasedNetListener.ClearPeerAddressChangedEvent*"></a>
+  <h4 id="LiteNetLib_EventBasedNetListener_ClearPeerAddressChangedEvent" data-uid="LiteNetLib.EventBasedNetListener.ClearPeerAddressChangedEvent">ClearPeerAddressChangedEvent()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ClearPeerAddressChangedEvent()</code></pre>
+  </div>
+
+
   <a id="LiteNetLib_EventBasedNetListener_ClearPeerConnectedEvent_" data-uid="LiteNetLib.EventBasedNetListener.ClearPeerConnectedEvent*"></a>
   <h4 id="LiteNetLib_EventBasedNetListener_ClearPeerConnectedEvent" data-uid="LiteNetLib.EventBasedNetListener.ClearPeerConnectedEvent">ClearPeerConnectedEvent()</h4>
   <div class="markdown level1 summary"></div>
@@ -195,7 +207,7 @@
     <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnConnectionRequest ConnectionRequestEvent</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -204,7 +216,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnConnectionRequest</span></td>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnConnectionRequest.html">OnConnectionRequest</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -219,7 +231,7 @@
     <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnDeliveryEvent DeliveryEvent</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -228,7 +240,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnDeliveryEvent</span></td>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnDeliveryEvent.html">OnDeliveryEvent</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -243,7 +255,7 @@
     <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnNetworkError NetworkErrorEvent</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -252,7 +264,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnNetworkError</span></td>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnNetworkError.html">OnNetworkError</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -267,7 +279,7 @@
     <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnNetworkLatencyUpdate NetworkLatencyUpdateEvent</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -276,7 +288,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnNetworkLatencyUpdate</span></td>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnNetworkLatencyUpdate.html">OnNetworkLatencyUpdate</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -291,7 +303,7 @@
     <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnNetworkReceive NetworkReceiveEvent</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -300,7 +312,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnNetworkReceive</span></td>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnNetworkReceive.html">OnNetworkReceive</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -315,7 +327,7 @@
     <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnNetworkReceiveUnconnected NetworkReceiveUnconnectedEvent</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -324,7 +336,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnNetworkReceiveUnconnected</span></td>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnNetworkReceiveUnconnected.html">OnNetworkReceiveUnconnected</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -339,7 +351,7 @@
     <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnNtpResponseEvent NtpResponseEvent</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -348,7 +360,31 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnNtpResponseEvent</span></td>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnNtpResponseEvent.html">OnNtpResponseEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4 id="LiteNetLib_EventBasedNetListener_PeerAddressChangedEvent" data-uid="LiteNetLib.EventBasedNetListener.PeerAddressChangedEvent">PeerAddressChangedEvent</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnPeerAddressChangedEvent PeerAddressChangedEvent</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnPeerAddressChangedEvent.html">OnPeerAddressChangedEvent</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -363,7 +399,7 @@
     <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnPeerConnected PeerConnectedEvent</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -372,7 +408,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnPeerConnected</span></td>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnPeerConnected.html">OnPeerConnected</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -387,7 +423,7 @@
     <pre><code class="lang-csharp hljs">public event EventBasedNetListener.OnPeerDisconnected PeerDisconnectedEvent</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -396,297 +432,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LiteNetLib.EventBasedNetListener.OnPeerDisconnected</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="eii">Explicit Interface Implementations
-</h3>
-
-
-  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_IDeliveryEventListener_OnMessageDelivered_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#IDeliveryEventListener#OnMessageDelivered*"></a>
-  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_IDeliveryEventListener_OnMessageDelivered_LiteNetLib_NetPeer_System_Object_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#IDeliveryEventListener#OnMessageDelivered(LiteNetLib.NetPeer,System.Object)">IDeliveryEventListener.OnMessageDelivered(NetPeer, Object)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void IDeliveryEventListener.OnMessageDelivered(NetPeer peer, object userData)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
-        <td><span class="parametername">peer</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Object</span></td>
-        <td><span class="parametername">userData</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnConnectionRequest_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnConnectionRequest*"></a>
-  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnConnectionRequest_LiteNetLib_ConnectionRequest_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnConnectionRequest(LiteNetLib.ConnectionRequest)">INetEventListener.OnConnectionRequest(ConnectionRequest)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void INetEventListener.OnConnectionRequest(ConnectionRequest request)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.ConnectionRequest.html">ConnectionRequest</a></td>
-        <td><span class="parametername">request</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnNetworkError_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnNetworkError*"></a>
-  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnNetworkError_System_Net_IPEndPoint_System_Net_Sockets_SocketError_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnNetworkError(System.Net.IPEndPoint,System.Net.Sockets.SocketError)">INetEventListener.OnNetworkError(IPEndPoint, SocketError)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Net.IPEndPoint</span></td>
-        <td><span class="parametername">endPoint</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Net.Sockets.SocketError</span></td>
-        <td><span class="parametername">socketErrorCode</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnNetworkLatencyUpdate_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnNetworkLatencyUpdate*"></a>
-  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnNetworkLatencyUpdate_LiteNetLib_NetPeer_System_Int32_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnNetworkLatencyUpdate(LiteNetLib.NetPeer,System.Int32)">INetEventListener.OnNetworkLatencyUpdate(NetPeer, Int32)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
-        <td><span class="parametername">peer</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">latency</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnNetworkReceive_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnNetworkReceive*"></a>
-  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnNetworkReceive_LiteNetLib_NetPeer_LiteNetLib_NetPacketReader_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.NetPacketReader,System.Byte,LiteNetLib.DeliveryMethod)">INetEventListener.OnNetworkReceive(NetPeer, NetPacketReader, Byte, DeliveryMethod)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
-        <td><span class="parametername">peer</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPacketReader.html">NetPacketReader</a></td>
-        <td><span class="parametername">reader</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Byte</span></td>
-        <td><span class="parametername">channelNumber</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
-        <td><span class="parametername">deliveryMethod</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnNetworkReceiveUnconnected_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnNetworkReceiveUnconnected*"></a>
-  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnNetworkReceiveUnconnected_System_Net_IPEndPoint_LiteNetLib_NetPacketReader_LiteNetLib_UnconnectedMessageType_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnNetworkReceiveUnconnected(System.Net.IPEndPoint,LiteNetLib.NetPacketReader,LiteNetLib.UnconnectedMessageType)">INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint, NetPacketReader, UnconnectedMessageType)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Net.IPEndPoint</span></td>
-        <td><span class="parametername">remoteEndPoint</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPacketReader.html">NetPacketReader</a></td>
-        <td><span class="parametername">reader</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.UnconnectedMessageType.html">UnconnectedMessageType</a></td>
-        <td><span class="parametername">messageType</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnPeerConnected_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnPeerConnected*"></a>
-  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnPeerConnected_LiteNetLib_NetPeer_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnPeerConnected(LiteNetLib.NetPeer)">INetEventListener.OnPeerConnected(NetPeer)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void INetEventListener.OnPeerConnected(NetPeer peer)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
-        <td><span class="parametername">peer</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnPeerDisconnected_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnPeerDisconnected*"></a>
-  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_INetEventListener_OnPeerDisconnected_LiteNetLib_NetPeer_LiteNetLib_DisconnectInfo_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INetEventListener#OnPeerDisconnected(LiteNetLib.NetPeer,LiteNetLib.DisconnectInfo)">INetEventListener.OnPeerDisconnected(NetPeer, DisconnectInfo)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
-        <td><span class="parametername">peer</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.DisconnectInfo.html">DisconnectInfo</a></td>
-        <td><span class="parametername">disconnectInfo</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_EventBasedNetListener_LiteNetLib_INtpEventListener_OnNtpResponse_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INtpEventListener#OnNtpResponse*"></a>
-  <h4 id="LiteNetLib_EventBasedNetListener_LiteNetLib_INtpEventListener_OnNtpResponse_LiteNetLib_Utils_NtpPacket_" data-uid="LiteNetLib.EventBasedNetListener.LiteNetLib#INtpEventListener#OnNtpResponse(LiteNetLib.Utils.NtpPacket)">INtpEventListener.OnNtpResponse(NtpPacket)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void INtpEventListener.OnNtpResponse(NtpPacket packet)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.Utils.NtpPacket.html">NtpPacket</a></td>
-        <td><span class="parametername">packet</span></td>
+        <td><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a>.<a class="xref" href="LiteNetLib.EventBasedNetListener.OnPeerDisconnected.html">OnPeerDisconnected</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -701,6 +447,10 @@
   <div>
       <a class="xref" href="LiteNetLib.INtpEventListener.html">INtpEventListener</a>
   </div>
+  <div>
+      <a class="xref" href="LiteNetLib.IPeerAddressChangedListener.html">IPeerAddressChangedListener</a>
+  </div>
+
 </article>
           </div>
 
@@ -733,7 +483,7 @@
       </footer>
     </div>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

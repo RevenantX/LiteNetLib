@@ -122,7 +122,7 @@ namespace LibSample
 
             _c1 = new NetManager(clientListener)
             {
-                IPv6Mode = IPv6Mode.DualMode,
+                IPv6Enabled = true,
                 NatPunchEnabled = true
             };
             _c1.NatPunchModule.Init(natPunchListener1);
@@ -130,7 +130,7 @@ namespace LibSample
 
             _c2 = new NetManager(clientListener)
             {
-                IPv6Mode = IPv6Mode.DualMode,
+                IPv6Enabled = true,
                 NatPunchEnabled = true
             };
             _c2.NatPunchModule.Init(natPunchListener2);
@@ -138,7 +138,7 @@ namespace LibSample
 
             _puncher = new NetManager(clientListener)
             {
-                IPv6Mode = IPv6Mode.DualMode,
+                IPv6Enabled = true,
                 NatPunchEnabled = true
             };
             _puncher.Start(ServerPort);

@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "D:/Projects/LiteNetLib/docfx_project",
+  "source_base_path": "E:/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -8,8 +8,7 @@
       "source_relative_path": "api/LiteNetLib.ConnectionRequest.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.ConnectionRequest.html",
-          "hash": "zMxlUhJlmsU12GJkGyhzdiBRfB7nUuxut5zZDlkuodk="
+          "relative_path": "api/LiteNetLib.ConnectionRequest.html"
         }
       },
       "version": ""
@@ -19,8 +18,7 @@
       "source_relative_path": "api/LiteNetLib.ConnectionState.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.ConnectionState.html",
-          "hash": "gdVF/fgDhDBUuIzqGWsr22bjcPJxMrYS9r/1dnvnLvk="
+          "relative_path": "api/LiteNetLib.ConnectionState.html"
         }
       },
       "version": ""
@@ -30,8 +28,7 @@
       "source_relative_path": "api/LiteNetLib.DeliveryMethod.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.DeliveryMethod.html",
-          "hash": "n6pJJudeHOZsaaq74AcMsrofklamMM4SVWewfZSv99Q="
+          "relative_path": "api/LiteNetLib.DeliveryMethod.html"
         }
       },
       "version": ""
@@ -41,8 +38,7 @@
       "source_relative_path": "api/LiteNetLib.DisconnectInfo.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.DisconnectInfo.html",
-          "hash": "m5qcDmNGu3iuwlx00Bf00medEQAzG7GIPVnUel6m9oc="
+          "relative_path": "api/LiteNetLib.DisconnectInfo.html"
         }
       },
       "version": ""
@@ -52,8 +48,7 @@
       "source_relative_path": "api/LiteNetLib.DisconnectReason.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.DisconnectReason.html",
-          "hash": "2sYqK2fAs98BK4bzM4nanQQP1OXYqJOTBOJ3pfsrcOg="
+          "relative_path": "api/LiteNetLib.DisconnectReason.html"
         }
       },
       "version": ""
@@ -63,8 +58,7 @@
       "source_relative_path": "api/LiteNetLib.EventBasedNatPunchListener.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.EventBasedNatPunchListener.html",
-          "hash": "0wQ+bEy0dqNRCCZO0YttszIMYVrWiybLGuCtKlyODX4="
+          "relative_path": "api/LiteNetLib.EventBasedNatPunchListener.html"
         }
       },
       "version": ""
@@ -74,8 +68,7 @@
       "source_relative_path": "api/LiteNetLib.EventBasedNetListener.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.EventBasedNetListener.html",
-          "hash": "hP47sGCGGNXfXwMDO9teIhFcLiPbUV5fxeIeh/BFSg4="
+          "relative_path": "api/LiteNetLib.EventBasedNetListener.html"
         }
       },
       "version": ""
@@ -85,8 +78,7 @@
       "source_relative_path": "api/LiteNetLib.IDeliveryEventListener.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.IDeliveryEventListener.html",
-          "hash": "aJg1zlJN0FUxBLyiKV/zoE5QBfTWZ00rFvT+aylpU4Y="
+          "relative_path": "api/LiteNetLib.IDeliveryEventListener.html"
         }
       },
       "version": ""
@@ -96,8 +88,7 @@
       "source_relative_path": "api/LiteNetLib.INatPunchListener.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.INatPunchListener.html",
-          "hash": "z8Mevoa/+J/f17SdrqLrGHrFefM2vPPdUbxzueBwWcg="
+          "relative_path": "api/LiteNetLib.INatPunchListener.html"
         }
       },
       "version": ""
@@ -107,8 +98,7 @@
       "source_relative_path": "api/LiteNetLib.INetEventListener.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.INetEventListener.html",
-          "hash": "B3bO9ob6+fWCF3FSmfu7iBLf36PIkbkcyjo0ladkHhU="
+          "relative_path": "api/LiteNetLib.INetEventListener.html"
         }
       },
       "version": ""
@@ -118,8 +108,7 @@
       "source_relative_path": "api/LiteNetLib.INetLogger.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.INetLogger.html",
-          "hash": "goOaU4Wa7b24TT27/pO7CS57l/K/RFpMMaaFKkpUfZI="
+          "relative_path": "api/LiteNetLib.INetLogger.html"
         }
       },
       "version": ""
@@ -129,8 +118,17 @@
       "source_relative_path": "api/LiteNetLib.INtpEventListener.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.INtpEventListener.html",
-          "hash": "oCbORPOqMvy2SoUAzk/5w0feO4sisdJ6AFax3Boc7pg="
+          "relative_path": "api/LiteNetLib.INtpEventListener.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.IPeerAddressChangedListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.IPeerAddressChangedListener.html"
         }
       },
       "version": ""
@@ -140,8 +138,7 @@
       "source_relative_path": "api/LiteNetLib.IPv6Mode.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.IPv6Mode.html",
-          "hash": "kUKsqsZSToI8Uv9VnAlPLcQxCdO8Q/ra2zPQueAO2Ec="
+          "relative_path": "api/LiteNetLib.IPv6Mode.html"
         }
       },
       "version": ""
@@ -151,8 +148,7 @@
       "source_relative_path": "api/LiteNetLib.InvalidPacketException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.InvalidPacketException.html",
-          "hash": "N/WSagdJS8+eM1Bnjw3wzsLOr3KJJFsJsQ38AAugxHk="
+          "relative_path": "api/LiteNetLib.InvalidPacketException.html"
         }
       },
       "version": ""
@@ -162,8 +158,7 @@
       "source_relative_path": "api/LiteNetLib.Layers.Crc32cLayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Layers.Crc32cLayer.html",
-          "hash": "Cb9S6Z1Wh6RpjzE3Kx63/6OBlJhVrqm1451Rwqa5tMA="
+          "relative_path": "api/LiteNetLib.Layers.Crc32cLayer.html"
         }
       },
       "version": ""
@@ -173,8 +168,7 @@
       "source_relative_path": "api/LiteNetLib.Layers.PacketLayerBase.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Layers.PacketLayerBase.html",
-          "hash": "nKHawTaxL7vuQkjq+xypimYnUA0LsOQKCQZ+TgJjjO4="
+          "relative_path": "api/LiteNetLib.Layers.PacketLayerBase.html"
         }
       },
       "version": ""
@@ -184,8 +178,7 @@
       "source_relative_path": "api/LiteNetLib.Layers.XorEncryptLayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Layers.XorEncryptLayer.html",
-          "hash": "Dnfu2e/XkhZULbN+MB46JR2gaRbcJyvAyAxuo59Uj3Y="
+          "relative_path": "api/LiteNetLib.Layers.XorEncryptLayer.html"
         }
       },
       "version": ""
@@ -195,8 +188,7 @@
       "source_relative_path": "api/LiteNetLib.Layers.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Layers.html",
-          "hash": "f69V68KebJEM6aZykqnoyTcT5Q0k1JBEX1vQ2nCPLRE="
+          "relative_path": "api/LiteNetLib.Layers.html"
         }
       },
       "version": ""
@@ -206,8 +198,7 @@
       "source_relative_path": "api/LiteNetLib.LocalAddrType.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.LocalAddrType.html",
-          "hash": "c5cJ7fKEr4oKd5YrvSzk5GOfk/RSc9JXUQkSNmsOBd8="
+          "relative_path": "api/LiteNetLib.LocalAddrType.html"
         }
       },
       "version": ""
@@ -217,8 +208,7 @@
       "source_relative_path": "api/LiteNetLib.NatAddressType.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NatAddressType.html",
-          "hash": "EsrDSASB7J4HE2TWm5wqo77GH6nBGb4shrniQU2fBYU="
+          "relative_path": "api/LiteNetLib.NatAddressType.html"
         }
       },
       "version": ""
@@ -228,8 +218,7 @@
       "source_relative_path": "api/LiteNetLib.NatPunchModule.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NatPunchModule.html",
-          "hash": "rodx7ieoK80M9HhrOdJ1c+ePIoOsynaiWPLWS3MB4fI="
+          "relative_path": "api/LiteNetLib.NatPunchModule.html"
         }
       },
       "version": ""
@@ -239,8 +228,7 @@
       "source_relative_path": "api/LiteNetLib.NetConstants.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NetConstants.html",
-          "hash": "ElcUpIG6uijlYoNz4CnARMEbSK/cZixlhGGc2yrOYJc="
+          "relative_path": "api/LiteNetLib.NetConstants.html"
         }
       },
       "version": ""
@@ -250,8 +238,7 @@
       "source_relative_path": "api/LiteNetLib.NetDebug.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NetDebug.html",
-          "hash": "SEt5cs+AZ2CTZxRyEkd4zDLsrg+jtQVJogplLrbZ3oE="
+          "relative_path": "api/LiteNetLib.NetDebug.html"
         }
       },
       "version": ""
@@ -261,8 +248,7 @@
       "source_relative_path": "api/LiteNetLib.NetLogLevel.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NetLogLevel.html",
-          "hash": "WwSM1KQzTRd8pUwqmV9ow/sn7aG7JG8ejfxt0A9nA28="
+          "relative_path": "api/LiteNetLib.NetLogLevel.html"
         }
       },
       "version": ""
@@ -272,8 +258,7 @@
       "source_relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.html",
-          "hash": "AyJOm//vC3CsELKLpMFu9pPWmotC/0w+rV/TFfHdqeg="
+          "relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.html"
         }
       },
       "version": ""
@@ -283,8 +268,7 @@
       "source_relative_path": "api/LiteNetLib.NetManager.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NetManager.html",
-          "hash": "RiCLfALNjEBgv/i8ZTJBp8PGqHZ16UgRCp2y9pV0/Dc="
+          "relative_path": "api/LiteNetLib.NetManager.html"
         }
       },
       "version": ""
@@ -294,8 +278,7 @@
       "source_relative_path": "api/LiteNetLib.NetPacketReader.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NetPacketReader.html",
-          "hash": "kmLMnomdJ3poicTIfvo/D22KwV1C1MUP1UEbaK6gwt8="
+          "relative_path": "api/LiteNetLib.NetPacketReader.html"
         }
       },
       "version": ""
@@ -305,8 +288,7 @@
       "source_relative_path": "api/LiteNetLib.NetPeer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NetPeer.html",
-          "hash": "wZb/IyzmnwbrSZH/GSW0+7PaFlfdYwLr44ZPFIRGfnU="
+          "relative_path": "api/LiteNetLib.NetPeer.html"
         }
       },
       "version": ""
@@ -316,8 +298,7 @@
       "source_relative_path": "api/LiteNetLib.NetStatistics.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NetStatistics.html",
-          "hash": "Aa4mY0evmbt8+k+JNroNcERRFrXmpSb1SVlfYbJGiho="
+          "relative_path": "api/LiteNetLib.NetStatistics.html"
         }
       },
       "version": ""
@@ -327,8 +308,17 @@
       "source_relative_path": "api/LiteNetLib.NetUtils.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.NetUtils.html",
-          "hash": "lph55jUogEnOW7I2kzaj9yUNrWIAMC8wqv41XWovUT4="
+          "relative_path": "api/LiteNetLib.NetUtils.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.PooledPacket.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.PooledPacket.html"
         }
       },
       "version": ""
@@ -338,8 +328,7 @@
       "source_relative_path": "api/LiteNetLib.TooBigPacketException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.TooBigPacketException.html",
-          "hash": "hxrkGQlAlKS2XmVaydPNhBbJl0XcaYoxn97ct9c+B6U="
+          "relative_path": "api/LiteNetLib.TooBigPacketException.html"
         }
       },
       "version": ""
@@ -349,8 +338,7 @@
       "source_relative_path": "api/LiteNetLib.UnconnectedMessageType.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.UnconnectedMessageType.html",
-          "hash": "GMOzjiP5cFmF3urCHXP3ZZuNXuFl2urHnM7kr/NKoXs="
+          "relative_path": "api/LiteNetLib.UnconnectedMessageType.html"
         }
       },
       "version": ""
@@ -360,8 +348,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.CRC32C.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.CRC32C.html",
-          "hash": "I/ZamzQmpdS8SyiZtaaaCRq/az7G8SgpLkwG8y3ibaU="
+          "relative_path": "api/LiteNetLib.Utils.CRC32C.html"
         }
       },
       "version": ""
@@ -371,8 +358,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.FastBitConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.FastBitConverter.html",
-          "hash": "rbe297MQKc0UMNbv/rULBtSBckSICSGiIzrkFDF8SwQ="
+          "relative_path": "api/LiteNetLib.Utils.FastBitConverter.html"
         }
       },
       "version": ""
@@ -382,8 +368,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.INetSerializable.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.INetSerializable.html",
-          "hash": "qFbeAvnzuR+FJmIHHMPHAOmWqpJQ16q/cZwKAMGyqZQ="
+          "relative_path": "api/LiteNetLib.Utils.INetSerializable.html"
         }
       },
       "version": ""
@@ -393,8 +378,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.InvalidTypeException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.InvalidTypeException.html",
-          "hash": "6RHb4dC7camu1yadFu5SYJPrqzB6kUdXQFy+o2/96a8="
+          "relative_path": "api/LiteNetLib.Utils.InvalidTypeException.html"
         }
       },
       "version": ""
@@ -404,8 +388,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.NetDataReader.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.NetDataReader.html",
-          "hash": "CysEryd9iSsCTacup2JXdN0k5bxG7UtTNWbXfd1p2bg="
+          "relative_path": "api/LiteNetLib.Utils.NetDataReader.html"
         }
       },
       "version": ""
@@ -415,8 +398,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.NetDataWriter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.NetDataWriter.html",
-          "hash": "JW//Tee90vuZAlVGJ9LTX/dsMHzXxDvB3YAK4H4ABsQ="
+          "relative_path": "api/LiteNetLib.Utils.NetDataWriter.html"
         }
       },
       "version": ""
@@ -426,8 +408,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.NetPacketProcessor.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.NetPacketProcessor.html",
-          "hash": "f3ielxIp4ZRsFkskKZ/rYTwid6IOJugldWcQZ1FHJ8A="
+          "relative_path": "api/LiteNetLib.Utils.NetPacketProcessor.html"
         }
       },
       "version": ""
@@ -437,8 +418,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.NetSerializer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.NetSerializer.html",
-          "hash": "qeFaa5bWhc6UHXGNIpmNXGU5uoeN14fXmBjCX0XrWaQ="
+          "relative_path": "api/LiteNetLib.Utils.NetSerializer.html"
         }
       },
       "version": ""
@@ -448,8 +428,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.NtpLeapIndicator.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.NtpLeapIndicator.html",
-          "hash": "Z17dwn9pYu9+y8ex+pU0wWf/c5Bi8BZ4Zig5jxWsaF0="
+          "relative_path": "api/LiteNetLib.Utils.NtpLeapIndicator.html"
         }
       },
       "version": ""
@@ -459,8 +438,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.NtpMode.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.NtpMode.html",
-          "hash": "yYc3NVwBu+rJNdWHboVDUqux45UfrLMMAD0nV2blGTU="
+          "relative_path": "api/LiteNetLib.Utils.NtpMode.html"
         }
       },
       "version": ""
@@ -470,8 +448,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.NtpPacket.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.NtpPacket.html",
-          "hash": "fABxHHmEIKkRxLnXUZLChiM1vbSgnbqiEQM8ngILVaI="
+          "relative_path": "api/LiteNetLib.Utils.NtpPacket.html"
         }
       },
       "version": ""
@@ -481,8 +458,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.ParseException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.ParseException.html",
-          "hash": "d0qFzD7iONlNXIaRJpQdJVyxe63Ks0OAf2PXGQefQTQ="
+          "relative_path": "api/LiteNetLib.Utils.ParseException.html"
         }
       },
       "version": ""
@@ -492,8 +468,7 @@
       "source_relative_path": "api/LiteNetLib.Utils.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.Utils.html",
-          "hash": "I1LqQWkOneuGRmE2wqDMvq5qxaXDSuxNflR8e0+WEgY="
+          "relative_path": "api/LiteNetLib.Utils.html"
         }
       },
       "version": ""
@@ -503,8 +478,7 @@
       "source_relative_path": "api/LiteNetLib.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.html",
-          "hash": "lGAtdWqWMdrz8g8HMhV/lcRDVenqtiZasz0jKsu+330="
+          "relative_path": "api/LiteNetLib.html"
         }
       },
       "version": ""
@@ -514,8 +488,7 @@
       "source_relative_path": "api/index.md",
       "output": {
         ".html": {
-          "relative_path": "api/index.html",
-          "hash": "6dXGzyRr+xdUl1QHkcWP7Sp0ROx7N7lm8kxNhHCyL9E="
+          "relative_path": "api/index.html"
         }
       },
       "version": ""
@@ -525,8 +498,7 @@
       "source_relative_path": "api/toc.yml",
       "output": {
         ".html": {
-          "relative_path": "api/toc.html",
-          "hash": "kQJ/3m7JXLpbOWFK1CDiaE/vSdWCn9P0hH7TxQup0SA="
+          "relative_path": "api/toc.html"
         }
       },
       "version": ""
@@ -536,8 +508,7 @@
       "source_relative_path": "articles/netserializerusage.md",
       "output": {
         ".html": {
-          "relative_path": "articles/netserializerusage.html",
-          "hash": "xPHK/lSc7BZ3+gG9qwy6RaKEbluZHa+ijHlAp54y5pM="
+          "relative_path": "articles/netserializerusage.html"
         }
       },
       "version": ""
@@ -547,8 +518,7 @@
       "source_relative_path": "articles/toc.yml",
       "output": {
         ".html": {
-          "relative_path": "articles/toc.html",
-          "hash": "y/FVN/Xj7B5+aOXYz3bJLeDw0TsHGJpaC/WGEw/Vpzk="
+          "relative_path": "articles/toc.html"
         }
       },
       "version": ""
@@ -558,8 +528,7 @@
       "source_relative_path": "index.md",
       "output": {
         ".html": {
-          "relative_path": "index.html",
-          "hash": "1m1kz/nYww3C1p/unSx037J1aTd/lx+b79+gzN+hLJc="
+          "relative_path": "index.html"
         }
       },
       "version": ""
@@ -569,8 +538,7 @@
       "source_relative_path": "toc.yml",
       "output": {
         ".html": {
-          "relative_path": "toc.html",
-          "hash": "k59T7WJQ29zQ5+PLa89yz49KKtfbhg+49Eev0+ZqVOw="
+          "relative_path": "toc.html"
         }
       },
       "version": ""

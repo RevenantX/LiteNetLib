@@ -12,7 +12,7 @@
  ">
     
       <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
       <link rel="stylesheet" href="../styles/main.css">
       <meta property="docfx:navrel" content="../toc.html">
@@ -70,27 +70,19 @@
             <article class="content wrap" id="_content" data-uid="LiteNetLib.NetPacketReader">
 
 
+
   <h1 id="LiteNetLib_NetPacketReader" data-uid="LiteNetLib.NetPacketReader" class="text-break">Class NetPacketReader
 </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
-    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
     <div class="level1"><a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a></div>
     <div class="level2"><span class="xref">NetPacketReader</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__data">NetDataReader._data</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__position">NetDataReader._position</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__dataSize">NetDataReader._dataSize</a>
-    </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_RawData">NetDataReader.RawData</a>
     </div>
@@ -116,19 +108,19 @@
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_AvailableBytes">NetDataReader.AvailableBytes</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SkipBytes_System_Int32_">NetDataReader.SkipBytes(Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SkipBytes_System_Int32_">NetDataReader.SkipBytes(int)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetPosition_System_Int32_">NetDataReader.SetPosition(Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetPosition_System_Int32_">NetDataReader.SetPosition(int)</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_LiteNetLib_Utils_NetDataWriter_">NetDataReader.SetSource(NetDataWriter)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___">NetDataReader.SetSource(Byte[])</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___">NetDataReader.SetSource(byte[])</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___System_Int32_System_Int32_">NetDataReader.SetSource(Byte[], Int32, Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___System_Int32_System_Int32_">NetDataReader.SetSource(byte[], int, int)</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetNetEndPoint">NetDataReader.GetNetEndPoint()</a>
@@ -140,6 +132,9 @@
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetSByte">NetDataReader.GetSByte()</a>
     </div>
     <div>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetArray__1_System_UInt16_">NetDataReader.GetArray&lt;T&gt;(ushort)</a>
+    </div>
+    <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBoolArray">NetDataReader.GetBoolArray()</a>
     </div>
     <div>
@@ -147,12 +142,6 @@
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetShortArray">NetDataReader.GetShortArray()</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetLongArray">NetDataReader.GetLongArray()</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetULongArray">NetDataReader.GetULongArray()</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetIntArray">NetDataReader.GetIntArray()</a>
@@ -167,10 +156,16 @@
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetDoubleArray">NetDataReader.GetDoubleArray()</a>
     </div>
     <div>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetLongArray">NetDataReader.GetLongArray()</a>
+    </div>
+    <div>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetULongArray">NetDataReader.GetULongArray()</a>
+    </div>
+    <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetStringArray">NetDataReader.GetStringArray()</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetStringArray_System_Int32_">NetDataReader.GetStringArray(Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetStringArray_System_Int32_">NetDataReader.GetStringArray(int)</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBool">NetDataReader.GetBool()</a>
@@ -203,13 +198,13 @@
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetDouble">NetDataReader.GetDouble()</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetString_System_Int32_">NetDataReader.GetString(Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetString_System_Int32_">NetDataReader.GetString(int)</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetString">NetDataReader.GetString()</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytesSegment_System_Int32_">NetDataReader.GetBytesSegment(Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytesSegment_System_Int32_">NetDataReader.GetBytesSegment(int)</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetRemainingBytesSegment">NetDataReader.GetRemainingBytesSegment()</a>
@@ -218,13 +213,16 @@
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get__1">NetDataReader.Get&lt;T&gt;()</a>
     </div>
     <div>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get__1_System_Func___0__">NetDataReader.Get&lt;T&gt;(Func&lt;T&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetRemainingBytes">NetDataReader.GetRemainingBytes()</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_System_Int32_">NetDataReader.GetBytes(Byte[], Int32, Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_System_Int32_">NetDataReader.GetBytes(byte[], int, int)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_">NetDataReader.GetBytes(Byte[], Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_">NetDataReader.GetBytes(byte[], int)</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetSBytesWithLength">NetDataReader.GetSBytesWithLength()</a>
@@ -269,55 +267,55 @@
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekDouble">NetDataReader.PeekDouble()</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekString_System_Int32_">NetDataReader.PeekString(Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekString_System_Int32_">NetDataReader.PeekString(int)</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekString">NetDataReader.PeekString()</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetByte_System_Byte__">NetDataReader.TryGetByte(Byte)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetByte_System_Byte__">NetDataReader.TryGetByte(out byte)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetSByte_System_SByte__">NetDataReader.TryGetSByte(SByte)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetSByte_System_SByte__">NetDataReader.TryGetSByte(out sbyte)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetBool_System_Boolean__">NetDataReader.TryGetBool(Boolean)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetBool_System_Boolean__">NetDataReader.TryGetBool(out bool)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetChar_System_Char__">NetDataReader.TryGetChar(Char)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetChar_System_Char__">NetDataReader.TryGetChar(out char)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetShort_System_Int16__">NetDataReader.TryGetShort(Int16)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetShort_System_Int16__">NetDataReader.TryGetShort(out short)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetUShort_System_UInt16__">NetDataReader.TryGetUShort(UInt16)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetUShort_System_UInt16__">NetDataReader.TryGetUShort(out ushort)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetInt_System_Int32__">NetDataReader.TryGetInt(Int32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetInt_System_Int32__">NetDataReader.TryGetInt(out int)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetUInt_System_UInt32__">NetDataReader.TryGetUInt(UInt32)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetUInt_System_UInt32__">NetDataReader.TryGetUInt(out uint)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetLong_System_Int64__">NetDataReader.TryGetLong(Int64)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetLong_System_Int64__">NetDataReader.TryGetLong(out long)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetULong_System_UInt64__">NetDataReader.TryGetULong(UInt64)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetULong_System_UInt64__">NetDataReader.TryGetULong(out ulong)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetFloat_System_Single__">NetDataReader.TryGetFloat(Single)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetFloat_System_Single__">NetDataReader.TryGetFloat(out float)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetDouble_System_Double__">NetDataReader.TryGetDouble(Double)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetDouble_System_Double__">NetDataReader.TryGetDouble(out double)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetString_System_String__">NetDataReader.TryGetString(String)</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetString_System_String__">NetDataReader.TryGetString(out string)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetStringArray_System_String____">NetDataReader.TryGetStringArray(String[])</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetStringArray_System_String____">NetDataReader.TryGetStringArray(out string[])</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetBytesWithLength_System_Byte____">NetDataReader.TryGetBytesWithLength(Byte[])</a>
+      <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetBytesWithLength_System_Byte____">NetDataReader.TryGetBytesWithLength(out byte[])</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Clear">NetDataReader.Clear()</a>
@@ -341,6 +339,7 @@
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Recycle()</code></pre>
   </div>
+
 </article>
           </div>
 
@@ -373,7 +372,7 @@
       </footer>
     </div>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

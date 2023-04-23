@@ -10,7 +10,7 @@
       <meta name="title" content="NetPacketProcessor ">
     
       <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
       <link rel="stylesheet" href="../styles/main.css">
       <meta property="docfx:navrel" content="../toc.html">
@@ -72,49 +72,25 @@
 It supports <strong>classes</strong> with <strong>public properties with &quot;get&quot; and &quot;set&quot;</strong> methods or <strong>classes/structs which implements <code>INetSerializable</code></strong>.<br>
 Serializer adds some overhead to packet size: 64 bit hash of class name and namespace (8 bytes). All other class fields will be as is in resulting packet.</p>
 <h2 id="serialization-speed-comparsion">Serialization speed comparsion</h2>
-<p>Serialization 100000 times of simple structure from <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">example</a> (<code>NET 4.5</code>):</p>
-<table>
-<thead>
-<tr>
-<th>Serializer</th>
-<th>Time</th>
-<th>Size</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>BinaryFormatter</td>
-<td>3334 ms</td>
-<td>1096 bytes</td>
-</tr>
-<tr>
-<td>NetSerializer (first run)</td>
-<td>45 ms</td>
-<td>204 bytes</td>
-</tr>
-<tr>
-<td>NetSerializer (second run)</td>
-<td>37 ms</td>
-<td>204 bytes</td>
-</tr>
-<tr>
-<td>Raw</td>
-<td>24 ms</td>
-<td>204 bytes</td>
-</tr>
-</tbody>
-</table>
+<p>Serialization 100000 times of simple structure from <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">example</a> (<code>NET 4.5</code>):
+Serializer|Time|Size
+---|---|---|
+BinaryFormatter|3334 ms|1096 bytes
+NetSerializer (first run)|45 ms|204 bytes
+NetSerializer (second run)|37 ms|204 bytes
+Raw|24 ms|204 bytes</p>
 <h2 id="supported-property-types">Supported property types</h2>
 <pre><code class="lang-csharp">byte sbyte short ushort int uint long ulong float double bool string char IPEndPoint
-</code></pre><p>Arrays of all these types (and custom types) are also supported. <br>
+</code></pre>
+<p>Arrays of all these types (and custom types) are also supported. <br>
 Enums are supported but work a bit slower than other types.</p>
 <h2 id="custom-types">Custom types</h2>
-<p>NetPacketProcessor doesn&#39;t support nested structs or classes, but you can register your own custom type processors.<br>
+<p>NetPacketProcessor doesn't support nested structs or classes, but you can register your own custom type processors.<br>
 That useful for game engine types such as Vector3 and Quaternion (in Unity3d).</p>
 <pre><code class="lang-csharp">// Your packet that will be sent over network
 class SamplePacket
 {
-    // Both property and array are supported
+	// Both property and array are supported
     public MyType SomeMyType { get; set; }
     public MyType[] SomeMyTypes { get; set; } 
 }
@@ -142,7 +118,8 @@ struct MyType
 ...
 netPacketProcessor = new NetPacketProcessor();
 netPacketProcessor.RegisterNestedType( MyType.Serialize, MyType.Deserialize ); // Supply Serialization methods
-</code></pre><p>You can also implement INetSerializable interface:</p>
+</code></pre>
+<p>You can also implement INetSerializable interface:</p>
 <pre><code class="lang-csharp">// Some custom type variant 2: INetSerializable struct
 struct MyType : INetSerializable
 {
@@ -164,7 +141,8 @@ struct MyType : INetSerializable
 ...
 netPacketProcessor = new NetPacketProcessor();
 netPacketProcessor.RegisterNestedType&lt;MyType&gt;(); // Serialization handled automatically thanks to INetSerializable
-</code></pre><p>If you want to use a class instead of a struct you must implement the INetSerializable interface and provide a constructor: </p>
+</code></pre>
+<p>If you want to use a class instead of a struct you must implement the INetSerializable interface and provide a constructor:</p>
 <pre><code class="lang-csharp">// Some custom type variant 3: Class, must implement INetSerializable
 class MyType : INetSerializable
 {
@@ -186,17 +164,19 @@ class MyType : INetSerializable
 ...
 netPacketProcessor = new NetPacketProcessor();
 netPacketProcessor.RegisterNestedType&lt;MyType&gt;(() =&gt; { return new SomeMyType(); }); // Must provide constructor
-</code></pre><h2 id="usage-example">Usage example</h2>
+</code></pre>
+<h2 id="usage-example">Usage example</h2>
 <p>For full example look at source <a href="https://github.com/RevenantX/LiteNetLib/blob/master/LibSample/SerializerBenchmark.cs">SerializerBenchmark</a></p>
 <h3 id="packet">Packet</h3>
 <pre><code class="lang-csharp">class SamplePacket
 {
-    // All of these will be automatically serialized and deserialized
+	// All of these will be automatically serialized and deserialized
     public string SomeString { get; set; }
     public float SomeFloat { get; set; }
     public int[] SomeIntArray { get; set; }
 }
-</code></pre><h3 id="sending--recieving">Sending / recieving</h3>
+</code></pre>
+<h3 id="sending--recieving">Sending / recieving</h3>
 <pre><code class="lang-csharp">// Client
 class SomeClientListener : INetEventListener
 {
@@ -204,7 +184,7 @@ class SomeClientListener : INetEventListener
 ...
    public void OnPeerConnected(NetPeer peer)
    {
-        // After connection is established you will have the server as a NetPeer
+		// After connection is established you will have the server as a NetPeer
        SamplePacket packet = new SamplePacket
        {
            SomeFloat = 3.42f,
@@ -228,13 +208,13 @@ class SomeServerListener : INetEventListener
         _netPacketProcessor.SubscribeReusable&lt;SamplePacket, NetPeer&gt;(OnSamplePacketReceived);
     }
 
-    // Handler for SamplePacket, registered in constructor above
+	// Handler for SamplePacket, registered in constructor above
     private void OnSamplePacketReceived(SamplePacket samplePacket, NetPeer peer)
     {
         Console.WriteLine(&quot;[Server] ReceivedPacket:\n&quot; + samplePacket.SomeString);
     }
 
-    // INetEventListener function.
+	// INetEventListener function.
     public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
     {
         Console.WriteLine(&quot;[Server] received data. Processing...&quot;);
@@ -242,9 +222,10 @@ class SomeServerListener : INetEventListener
         _netPacketProcessor.ReadAllPackets(reader, peer);
     }
 }
-</code></pre><h3 id="mini-faq">Mini FAQ</h3>
+</code></pre>
+<h3 id="mini-faq">Mini FAQ</h3>
 <p>Q: <code>NetPacketProcessor</code> throws &quot;<code>Undefined packet in NetDataReader</code>&quot; but all packets are registered. <br>
-A: This can happen when packet definitions resides in different namespaces. Check that registered packet classes/structs are in the same namespace on both ends. 
+A: This can happen when packet definitions resides in different namespaces. Check that registered packet classes/structs are in the same namespace on both ends.
 To avoid this error altogether, use shared code/-assembly for packets.</p>
 </article>
           </div>
@@ -278,7 +259,7 @@ To avoid this error altogether, use shared code/-assembly for packets.</p>
       </footer>
     </div>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

@@ -12,7 +12,7 @@
  ">
     
       <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
       <link rel="stylesheet" href="../styles/main.css">
       <meta property="docfx:navrel" content="../toc.html">
@@ -70,16 +70,17 @@
             <article class="content wrap" id="_content" data-uid="LiteNetLib.Utils.NetSerializer">
 
 
+
   <h1 id="LiteNetLib_Utils_NetSerializer" data-uid="LiteNetLib.Utils.NetSerializer" class="text-break">Class NetSerializer
 </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
-    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
     <div class="level1"><span class="xref">NetSerializer</span></div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.Utils.html">LiteNetLib.Utils</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a>.<a class="xref" href="LiteNetLib.Utils.html">Utils</a></h6>
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
   <h5 id="LiteNetLib_Utils_NetSerializer_syntax">Syntax</h5>
   <div class="codewrapper">
@@ -100,7 +101,7 @@
 
 
   <a id="LiteNetLib_Utils_NetSerializer__ctor_" data-uid="LiteNetLib.Utils.NetSerializer.#ctor*"></a>
-  <h4 id="LiteNetLib_Utils_NetSerializer__ctor_System_Int32_" data-uid="LiteNetLib.Utils.NetSerializer.#ctor(System.Int32)">NetSerializer(Int32)</h4>
+  <h4 id="LiteNetLib_Utils_NetSerializer__ctor_System_Int32_" data-uid="LiteNetLib.Utils.NetSerializer.#ctor(System.Int32)">NetSerializer(int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -108,7 +109,7 @@
     <pre><code class="lang-csharp hljs">public NetSerializer(int maxStringLength)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -118,7 +119,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">maxStringLength</span></td>
         <td></td>
       </tr>
@@ -129,94 +130,16 @@
 
 
   <a id="LiteNetLib_Utils_NetSerializer_Deserialize_" data-uid="LiteNetLib.Utils.NetSerializer.Deserialize*"></a>
-  <h4 id="LiteNetLib_Utils_NetSerializer_Deserialize__1_LiteNetLib_Utils_NetDataReader_" data-uid="LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader)">Deserialize&lt;T&gt;(NetDataReader)</h4>
-  <div class="markdown level1 summary"><p>Reads packet with known type</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public T Deserialize&lt;T&gt;(NetDataReader reader)
-    where T : class, new()</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a></td>
-        <td><span class="parametername">reader</span></td>
-        <td><p>NetDataReader with packet</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">T</span></td>
-        <td><p>Returns packet if packet in reader is matched type</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">T</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="exceptions">Exceptions</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Condition</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></td>
-        <td><p><code data-dev-comment-type="typeparamref" class="typeparamref">T</code>&apos;s fields are not supported, or it has no fields</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_Utils_NetSerializer_Deserialize_" data-uid="LiteNetLib.Utils.NetSerializer.Deserialize*"></a>
   <h4 id="LiteNetLib_Utils_NetSerializer_Deserialize__1_LiteNetLib_Utils_NetDataReader___0_" data-uid="LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader,``0)">Deserialize&lt;T&gt;(NetDataReader, T)</h4>
   <div class="markdown level1 summary"><p>Reads packet with known type (non alloc variant)</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool Deserialize&lt;T&gt;(NetDataReader reader, T target)
-    where T : class, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public bool Deserialize&lt;T&gt;(NetDataReader reader, T target) where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -240,7 +163,7 @@
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -249,14 +172,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><p>Returns true if packet in reader is matched type</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Name</th>
@@ -271,7 +194,7 @@
     </tbody>
   </table>
   <h5 class="exceptions">Exceptions</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -281,7 +204,83 @@
     <tbody>
       <tr>
         <td><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></td>
-        <td><p><code data-dev-comment-type="typeparamref" class="typeparamref">T</code>&apos;s fields are not supported, or it has no fields</p>
+        <td><p><code class="typeparamref">T</code>'s fields are not supported, or it has no fields</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetSerializer_Deserialize_" data-uid="LiteNetLib.Utils.NetSerializer.Deserialize*"></a>
+  <h4 id="LiteNetLib_Utils_NetSerializer_Deserialize__1_LiteNetLib_Utils_NetDataReader_" data-uid="LiteNetLib.Utils.NetSerializer.Deserialize``1(LiteNetLib.Utils.NetDataReader)">Deserialize&lt;T&gt;(NetDataReader)</h4>
+  <div class="markdown level1 summary"><p>Reads packet with known type</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T Deserialize&lt;T&gt;(NetDataReader reader) where T : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td><p>NetDataReader with packet</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><p>Returns packet if packet in reader is matched type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></td>
+        <td><p><code class="typeparamref">T</code>'s fields are not supported, or it has no fields</p>
 </td>
       </tr>
     </tbody>
@@ -297,7 +296,7 @@
     <pre><code class="lang-csharp hljs">public void Register&lt;T&gt;()</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Name</th>
@@ -312,7 +311,7 @@
     </tbody>
   </table>
   <h5 class="exceptions">Exceptions</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -322,7 +321,7 @@
     <tbody>
       <tr>
         <td><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></td>
-        <td><p><code data-dev-comment-type="typeparamref" class="typeparamref">T</code>&apos;s fields are not supported, or it has no fields</p>
+        <td><p><code class="typeparamref">T</code>'s fields are not supported, or it has no fields</p>
 </td>
       </tr>
     </tbody>
@@ -336,11 +335,10 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;()
-    where T : struct, INetSerializable</code></pre>
+    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;() where T : struct, INetSerializable</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Name</th>
@@ -367,7 +365,7 @@
     <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Action&lt;NetDataWriter, T&gt; writer, Func&lt;NetDataReader, T&gt; reader)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -377,13 +375,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Action&lt;T1, T2&gt;</span>&lt;<a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a>, T&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a>, T&gt;</td>
         <td><span class="parametername">writer</span></td>
         <td><p>custom type writer</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func&lt;T, TResult&gt;</span>&lt;<a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a>, T&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a>, T&gt;</td>
         <td><span class="parametername">reader</span></td>
         <td><p>custom type reader</p>
 </td>
@@ -391,7 +389,7 @@
     </tbody>
   </table>
   <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Name</th>
@@ -415,11 +413,10 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Func&lt;T&gt; constructor)
-    where T : class, INetSerializable</code></pre>
+    <pre><code class="lang-csharp hljs">public void RegisterNestedType&lt;T&gt;(Func&lt;T&gt; constructor) where T : class, INetSerializable</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -429,14 +426,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Func&lt;TResult&gt;</span>&lt;T&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
         <td><span class="parametername">constructor</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Name</th>
@@ -460,11 +457,10 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public byte[] Serialize&lt;T&gt;(T obj)
-    where T : class, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public byte[] Serialize&lt;T&gt;(T obj) where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -482,7 +478,7 @@
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -491,14 +487,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><p>byte array with serialized data</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Name</th>
@@ -521,11 +517,10 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Serialize&lt;T&gt;(NetDataWriter writer, T obj)
-    where T : class, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public void Serialize&lt;T&gt;(NetDataWriter writer, T obj) where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -549,7 +544,7 @@
     </tbody>
   </table>
   <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Name</th>
@@ -564,7 +559,7 @@
     </tbody>
   </table>
   <h5 class="exceptions">Exceptions</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -574,11 +569,12 @@
     <tbody>
       <tr>
         <td><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></td>
-        <td><p><code data-dev-comment-type="typeparamref" class="typeparamref">T</code>&apos;s fields are not supported, or it has no fields</p>
+        <td><p><code class="typeparamref">T</code>'s fields are not supported, or it has no fields</p>
 </td>
       </tr>
     </tbody>
   </table>
+
 </article>
           </div>
 
@@ -611,7 +607,7 @@
       </footer>
     </div>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>
