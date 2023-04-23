@@ -10,22 +10,6 @@ namespace LiteNetLib
 {
     public partial class NetManager
     {
-        public bool SocketActive(bool ipv4)
-        {
-            if (ipv4)
-            {
-                if (_udpSocketv4 != null)
-                    return _udpSocketv4.Connected;
-                return false;
-            }
-            else
-            {
-                if (_udpSocketv6 != null)
-                    return _udpSocketv6.Connected;
-                return false;
-            }
-        }
-
         private const int ReceivePollingTime = 500000; //0.5 second
 
         private Socket _udpSocketv4;
@@ -52,6 +36,9 @@ namespace LiteNetLib
         /// Maximum packets count that will be processed in Manual PollEvents
         /// </summary>
         public int MaxPacketsReceivePerUpdate = 0;
+
+        // special case in iOS (and possibly android that should be resolved in unity)
+        internal bool NotConnected;
 
         public short Ttl
         {
@@ -104,9 +91,9 @@ namespace LiteNetLib
         {
             switch (ex.SocketErrorCode)
             {
-#if UNITY_IOS && !UNITY_EDITOR
                 case SocketError.NotConnected:
-#endif
+                    NotConnected = true;
+                    return true;
                 case SocketError.Interrupted:
                 case SocketError.NotSocket:
                 case SocketError.OperationAborted:
@@ -329,8 +316,10 @@ namespace LiteNetLib
         /// <param name="manualMode">mode of library</param>
         public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool manualMode)
         {
-            if (IsRunning)
+            if (IsRunning && NotConnected == false)
                 return false;
+
+            NotConnected = false;
             _manualMode = manualMode;
             UseNativeSockets = UseNativeSockets && NativeSocket.IsSupported;
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -379,8 +368,11 @@ namespace LiteNetLib
                     IsBackground = true
                 };
                 _receiveThread.Start();
-                _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
-                _logicThread.Start();
+                if (_logicThread == null)
+                {
+                    _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
+                    _logicThread.Start();
+                }
             }
 
             return true;

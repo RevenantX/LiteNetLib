@@ -41,15 +41,14 @@ namespace LiteNetLib
                 //Was intentionally disconnected at some point.
                 if (!_netManager.IsRunning)
                     return;
-                //Socket is still running.
-                if (_netManager.SocketActive(false) || _netManager.SocketActive(true))
+                //Socket is in working state.
+                if (_netManager.NotConnected == false)
                     return;
 
                 //Socket isn't running but should be. Try to start again.
                 if (!_netManager.Start(_ipv4, _ipv6, _port, _manualMode))
                 {
                     NetDebug.WriteError($"[S] Cannot restore connection. Ipv4 {_ipv4}, Ipv6 {_ipv6}, Port {_port}, ManualMode {_manualMode}");
-                    _netManager.CloseSocket();
                 }
             }
         }
