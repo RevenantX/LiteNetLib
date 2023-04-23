@@ -191,24 +191,26 @@ namespace LiteNetLib
             int addrSize4 = addrBuffer4.Length;
             int addrSize6 = addrBuffer6.Length;
             var selectReadList = new List<Socket>(2);
+            var socketv4 = _udpSocketv4;
+            var socketV6 = _udpSocketv6;
             var packet = PoolGetPacket(NetConstants.MaxPacketSize);
 
             while (IsRunning)
             {
-                if (_udpSocketv6 == null)
+                if (socketV6 == null)
                 {
                     if (NativeReceiveFrom(ref packet, socketHandle4, addrBuffer4, addrSize4) == false)
                         return;
                     continue;
                 }
                 bool messageReceived = false;
-                if (_udpSocketv4.Available != 0)
+                if (socketv4.Available != 0)
                 {
                     if (NativeReceiveFrom(ref packet, socketHandle4, addrBuffer4, addrSize4) == false)
                         return;
                     messageReceived = true;
                 }
-                if (_udpSocketv6.Available != 0)
+                if (socketV6.Available != 0)
                 {
                     if (NativeReceiveFrom(ref packet, socketHandle6, addrBuffer6, addrSize6) == false)
                         return;
@@ -217,8 +219,8 @@ namespace LiteNetLib
                 if (messageReceived)
                     continue;
                 selectReadList.Clear();
-                selectReadList.Add(_udpSocketv4);
-                selectReadList.Add(_udpSocketv6);
+                selectReadList.Add(socketv4);
+                selectReadList.Add(socketV6);
                 try
                 {
                     Socket.Select(selectReadList, null, null, ReceivePollingTime);
@@ -258,37 +260,39 @@ namespace LiteNetLib
             EndPoint bufferEndPoint4 = new IPEndPoint(IPAddress.Any, 0);
             EndPoint bufferEndPoint6 = new IPEndPoint(IPAddress.IPv6Any, 0);
             var selectReadList = new List<Socket>(2);
+            var socketv4 = _udpSocketv4;
+            var socketV6 = _udpSocketv6;
 
             while (IsRunning)
             {
                 //Reading data
                 try
                 {
-                    if (_udpSocketv6 == null)
+                    if (socketV6 == null)
                     {
-                        if (_udpSocketv4.Available == 0 && !_udpSocketv4.Poll(ReceivePollingTime, SelectMode.SelectRead))
+                        if (socketv4.Available == 0 && !socketv4.Poll(ReceivePollingTime, SelectMode.SelectRead))
                             continue;
-                        ReceiveFrom(_udpSocketv4, ref bufferEndPoint4);
+                        ReceiveFrom(socketv4, ref bufferEndPoint4);
                     }
                     else
                     {
                         bool messageReceived = false;
-                        if (_udpSocketv4.Available != 0)
+                        if (socketv4.Available != 0)
                         {
-                            ReceiveFrom(_udpSocketv4, ref bufferEndPoint4);
+                            ReceiveFrom(socketv4, ref bufferEndPoint4);
                             messageReceived = true;
                         }
-                        if (_udpSocketv6.Available != 0)
+                        if (socketV6.Available != 0)
                         {
-                            ReceiveFrom(_udpSocketv6, ref bufferEndPoint6);
+                            ReceiveFrom(socketV6, ref bufferEndPoint6);
                             messageReceived = true;
                         }
                         if (messageReceived)
                             continue;
 
                         selectReadList.Clear();
-                        selectReadList.Add(_udpSocketv4);
-                        selectReadList.Add(_udpSocketv6);
+                        selectReadList.Add(socketv4);
+                        selectReadList.Add(socketV6);
                         Socket.Select(selectReadList, null, null, ReceivePollingTime);
                     }
                     //NetDebug.Write(NetLogLevel.Trace, $"[R]Received data from {bufferEndPoint}, result: {packet.Size}");
