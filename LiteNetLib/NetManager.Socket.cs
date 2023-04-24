@@ -120,11 +120,7 @@ namespace LiteNetLib
                 int packetsReceived = 0;
                 while (socket.Available > 0)
                 {
-                    var packet = PoolGetPacket(NetConstants.MaxPacketSize);
-                    packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
-                        ref bufferEndPoint);
-                    //NetDebug.Write(NetLogLevel.Trace, $"[R]Received data from {bufferEndPoint}, result: {packet.Size}");
-                    OnMessageReceived(packet, (IPEndPoint) bufferEndPoint);
+                    ReceiveFrom(socket, ref bufferEndPoint);
                     packetsReceived++;
                     if (packetsReceived == MaxPacketsReceivePerUpdate)
                         break;
