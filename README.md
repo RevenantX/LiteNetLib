@@ -1,4 +1,4 @@
-# LiteNetLib 1.0
+# LiteNetLib
 
 Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework)
 
