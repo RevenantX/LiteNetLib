@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections.Generic;
 using System.Threading;
 
 namespace LiteNetLib
@@ -6,7 +6,7 @@ namespace LiteNetLib
     internal abstract class BaseChannel
     {
         protected readonly NetPeer Peer;
-        protected readonly ConcurrentQueue<NetPacket> OutgoingQueue;
+        protected readonly Queue<NetPacket> OutgoingQueue = new Queue<NetPacket>(NetConstants.DefaultWindowSize);
         private int _isAddedToPeerChannelSendQueue;
 
         public int PacketsInQueue => OutgoingQueue.Count;
@@ -14,12 +14,14 @@ namespace LiteNetLib
         protected BaseChannel(NetPeer peer)
         {
             Peer = peer;
-            OutgoingQueue = new ConcurrentQueue<NetPacket>();
         }
 
         public void AddToQueue(NetPacket packet)
         {
-            OutgoingQueue.Enqueue(packet);
+            lock (OutgoingQueue)
+            {
+                OutgoingQueue.Enqueue(packet);
+            }
             AddToPeerChannelSendQueue();
         }
 

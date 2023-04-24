@@ -12,7 +12,7 @@
  ">
     
       <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
       <link rel="stylesheet" href="../styles/main.css">
       <meta property="docfx:navrel" content="../toc.html">
@@ -70,13 +70,14 @@
             <article class="content wrap" id="_content" data-uid="LiteNetLib.ConnectionRequest">
 
 
+
   <h1 id="LiteNetLib_ConnectionRequest" data-uid="LiteNetLib.ConnectionRequest" class="text-break">Class ConnectionRequest
 </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
-    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
     <div class="level1"><span class="xref">ConnectionRequest</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
@@ -97,7 +98,7 @@
     <pre><code class="lang-csharp hljs">public readonly IPEndPoint RemoteEndPoint</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -106,7 +107,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Net.IPEndPoint</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -124,7 +125,7 @@
     <pre><code class="lang-csharp hljs">public NetDataReader Data { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -152,7 +153,7 @@
     <pre><code class="lang-csharp hljs">public NetPeer Accept()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -170,7 +171,7 @@
 
 
   <a id="LiteNetLib_ConnectionRequest_AcceptIfKey_" data-uid="LiteNetLib.ConnectionRequest.AcceptIfKey*"></a>
-  <h4 id="LiteNetLib_ConnectionRequest_AcceptIfKey_System_String_" data-uid="LiteNetLib.ConnectionRequest.AcceptIfKey(System.String)">AcceptIfKey(String)</h4>
+  <h4 id="LiteNetLib_ConnectionRequest_AcceptIfKey_System_String_" data-uid="LiteNetLib.ConnectionRequest.AcceptIfKey(System.String)">AcceptIfKey(string)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -178,7 +179,7 @@
     <pre><code class="lang-csharp hljs">public NetPeer AcceptIfKey(string key)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -188,14 +189,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">key</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -230,7 +231,7 @@
     <pre><code class="lang-csharp hljs">public void Reject(NetDataWriter rejectData)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -249,71 +250,7 @@
 
 
   <a id="LiteNetLib_ConnectionRequest_Reject_" data-uid="LiteNetLib.ConnectionRequest.Reject*"></a>
-  <h4 id="LiteNetLib_ConnectionRequest_Reject_System_Byte___" data-uid="LiteNetLib.ConnectionRequest.Reject(System.Byte[])">Reject(Byte[])</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Reject(byte[] rejectData)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
-        <td><span class="parametername">rejectData</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_ConnectionRequest_Reject_" data-uid="LiteNetLib.ConnectionRequest.Reject*"></a>
-  <h4 id="LiteNetLib_ConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)">Reject(Byte[], Int32, Int32)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Reject(byte[] rejectData, int start, int length)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
-        <td><span class="parametername">rejectData</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">start</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">length</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_ConnectionRequest_Reject_" data-uid="LiteNetLib.ConnectionRequest.Reject*"></a>
-  <h4 id="LiteNetLib_ConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_System_Boolean_" data-uid="LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32,System.Boolean)">Reject(Byte[], Int32, Int32, Boolean)</h4>
+  <h4 id="LiteNetLib_ConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_System_Boolean_" data-uid="LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32,System.Boolean)">Reject(byte[], int, int, bool)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -321,7 +258,7 @@
     <pre><code class="lang-csharp hljs">public void Reject(byte[] rejectData, int start, int length, bool force)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -331,23 +268,87 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">rejectData</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">start</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">length</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><span class="parametername">force</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_ConnectionRequest_Reject_" data-uid="LiteNetLib.ConnectionRequest.Reject*"></a>
+  <h4 id="LiteNetLib_ConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)">Reject(byte[], int, int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reject(byte[] rejectData, int start, int length)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">rejectData</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">start</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">length</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_ConnectionRequest_Reject_" data-uid="LiteNetLib.ConnectionRequest.Reject*"></a>
+  <h4 id="LiteNetLib_ConnectionRequest_Reject_System_Byte___" data-uid="LiteNetLib.ConnectionRequest.Reject(System.Byte[])">Reject(byte[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reject(byte[] rejectData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">rejectData</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -373,7 +374,7 @@
     <pre><code class="lang-csharp hljs">public void RejectForce(NetDataWriter rejectData)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -392,34 +393,7 @@
 
 
   <a id="LiteNetLib_ConnectionRequest_RejectForce_" data-uid="LiteNetLib.ConnectionRequest.RejectForce*"></a>
-  <h4 id="LiteNetLib_ConnectionRequest_RejectForce_System_Byte___" data-uid="LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])">RejectForce(Byte[])</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RejectForce(byte[] rejectData)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
-        <td><span class="parametername">rejectData</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_ConnectionRequest_RejectForce_" data-uid="LiteNetLib.ConnectionRequest.RejectForce*"></a>
-  <h4 id="LiteNetLib_ConnectionRequest_RejectForce_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.ConnectionRequest.RejectForce(System.Byte[],System.Int32,System.Int32)">RejectForce(Byte[], Int32, Int32)</h4>
+  <h4 id="LiteNetLib_ConnectionRequest_RejectForce_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.ConnectionRequest.RejectForce(System.Byte[],System.Int32,System.Int32)">RejectForce(byte[], int, int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -427,7 +401,7 @@
     <pre><code class="lang-csharp hljs">public void RejectForce(byte[] rejectData, int start, int length)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -437,22 +411,50 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">rejectData</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">start</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">length</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
+
+
+  <a id="LiteNetLib_ConnectionRequest_RejectForce_" data-uid="LiteNetLib.ConnectionRequest.RejectForce*"></a>
+  <h4 id="LiteNetLib_ConnectionRequest_RejectForce_System_Byte___" data-uid="LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])">RejectForce(byte[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RejectForce(byte[] rejectData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">rejectData</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
 </article>
           </div>
 
@@ -485,7 +487,7 @@
       </footer>
     </div>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

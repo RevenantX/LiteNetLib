@@ -46,7 +46,7 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 * UDP NAT hole punching
 * NTP time requests
 * Packet loss and latency simulation
-* IPv6 support (dual mode)
+* IPv6 support (using separate socket for performance)
 * Connection statisitcs
 * Multicasting (for discovering hosts in local network)
 * Unity support

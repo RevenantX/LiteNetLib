@@ -12,7 +12,7 @@
  ">
     
       <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
       <link rel="stylesheet" href="../styles/main.css">
       <meta property="docfx:navrel" content="../toc.html">
@@ -70,17 +70,18 @@
             <article class="content wrap" id="_content" data-uid="LiteNetLib.Utils.NetDataReader">
 
 
+
   <h1 id="LiteNetLib_Utils_NetDataReader" data-uid="LiteNetLib.Utils.NetDataReader" class="text-break">Class NetDataReader
 </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
-    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
     <div class="level1"><span class="xref">NetDataReader</span></div>
       <div class="level2"><a class="xref" href="LiteNetLib.NetPacketReader.html">NetPacketReader</a></div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.Utils.html">LiteNetLib.Utils</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a>.<a class="xref" href="LiteNetLib.Utils.html">Utils</a></h6>
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
   <h5 id="LiteNetLib_Utils_NetDataReader_syntax">Syntax</h5>
   <div class="codewrapper">
@@ -109,7 +110,7 @@
     <pre><code class="lang-csharp hljs">public NetDataReader(NetDataWriter writer)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -128,34 +129,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader__ctor_" data-uid="LiteNetLib.Utils.NetDataReader.#ctor*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader__ctor_System_Byte___" data-uid="LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[])">NetDataReader(Byte[])</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public NetDataReader(byte[] source)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
-        <td><span class="parametername">source</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_Utils_NetDataReader__ctor_" data-uid="LiteNetLib.Utils.NetDataReader.#ctor*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader__ctor_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[],System.Int32,System.Int32)">NetDataReader(Byte[], Int32, Int32)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader__ctor_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[],System.Int32,System.Int32)">NetDataReader(byte[], int, int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -163,7 +137,7 @@
     <pre><code class="lang-csharp hljs">public NetDataReader(byte[] source, int offset, int maxSize)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -173,18 +147,45 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">source</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">offset</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">maxSize</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader__ctor_" data-uid="LiteNetLib.Utils.NetDataReader.#ctor*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader__ctor_System_Byte___" data-uid="LiteNetLib.Utils.NetDataReader.#ctor(System.Byte[])">NetDataReader(byte[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public NetDataReader(byte[] source)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">source</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -201,7 +202,7 @@
     <pre><code class="lang-csharp hljs">protected byte[] _data</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -210,7 +211,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -225,7 +226,7 @@
     <pre><code class="lang-csharp hljs">protected int _dataSize</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -234,7 +235,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -249,7 +250,7 @@
     <pre><code class="lang-csharp hljs">protected int _position</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -258,7 +259,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -276,7 +277,7 @@
     <pre><code class="lang-csharp hljs">public int AvailableBytes { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -285,7 +286,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -301,7 +302,7 @@
     <pre><code class="lang-csharp hljs">public bool EndOfData { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -310,7 +311,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -326,7 +327,7 @@
     <pre><code class="lang-csharp hljs">public bool IsNull { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -335,7 +336,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -351,7 +352,7 @@
     <pre><code class="lang-csharp hljs">public int Position { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -360,7 +361,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -376,7 +377,7 @@
     <pre><code class="lang-csharp hljs">public byte[] RawData { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -385,7 +386,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -401,7 +402,7 @@
     <pre><code class="lang-csharp hljs">public int RawDataSize { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -410,7 +411,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -426,7 +427,7 @@
     <pre><code class="lang-csharp hljs">public int UserDataOffset { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -435,7 +436,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -451,7 +452,7 @@
     <pre><code class="lang-csharp hljs">public int UserDataSize { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -460,7 +461,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -485,11 +486,10 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public T Get&lt;T&gt;()
-    where T : INetSerializable, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public T Get&lt;T&gt;() where T : struct, INetSerializable</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -504,7 +504,121 @@
     </tbody>
   </table>
   <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_Get_" data-uid="LiteNetLib.Utils.NetDataReader.Get*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_Get__1_System_Func___0__" data-uid="LiteNetLib.Utils.NetDataReader.Get``1(System.Func{``0})">Get&lt;T&gt;(Func&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T Get&lt;T&gt;(Func&lt;T&gt; constructor) where T : class, INetSerializable</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
+        <td><span class="parametername">constructor</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_GetArray_" data-uid="LiteNetLib.Utils.NetDataReader.GetArray*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetArray__1_System_UInt16_" data-uid="LiteNetLib.Utils.NetDataReader.GetArray``1(System.UInt16)">GetArray&lt;T&gt;(ushort)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T[] GetArray&lt;T&gt;(ushort size)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
+        <td><span class="parametername">size</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>T[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Name</th>
@@ -529,7 +643,7 @@
     <pre><code class="lang-csharp hljs">public bool GetBool()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -538,7 +652,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -554,7 +668,7 @@
     <pre><code class="lang-csharp hljs">public bool[] GetBoolArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -563,7 +677,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -579,7 +693,7 @@
     <pre><code class="lang-csharp hljs">public byte GetByte()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -588,7 +702,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -596,15 +710,15 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_GetBytes_" data-uid="LiteNetLib.Utils.NetDataReader.GetBytes*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[],System.Int32)">GetBytes(Byte[], Int32)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[],System.Int32,System.Int32)">GetBytes(byte[], int, int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void GetBytes(byte[] destination, int count)</code></pre>
+    <pre><code class="lang-csharp hljs">public void GetBytes(byte[] destination, int start, int count)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -614,12 +728,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">destination</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">start</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">count</span></td>
         <td></td>
       </tr>
@@ -628,15 +747,15 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_GetBytes_" data-uid="LiteNetLib.Utils.NetDataReader.GetBytes*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[],System.Int32,System.Int32)">GetBytes(Byte[], Int32, Int32)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetBytes_System_Byte___System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetBytes(System.Byte[],System.Int32)">GetBytes(byte[], int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void GetBytes(byte[] destination, int start, int count)</code></pre>
+    <pre><code class="lang-csharp hljs">public void GetBytes(byte[] destination, int count)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -646,17 +765,12 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">destination</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">start</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">count</span></td>
         <td></td>
       </tr>
@@ -665,7 +779,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_GetBytesSegment_" data-uid="LiteNetLib.Utils.NetDataReader.GetBytesSegment*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_GetBytesSegment_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetBytesSegment(System.Int32)">GetBytesSegment(Int32)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetBytesSegment_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetBytesSegment(System.Int32)">GetBytesSegment(int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -673,7 +787,7 @@
     <pre><code class="lang-csharp hljs">public ArraySegment&lt;byte&gt; GetBytesSegment(int count)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -683,14 +797,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">count</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -699,7 +813,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.ArraySegment&lt;T&gt;</span>&lt;<span class="xref">System.Byte</span>&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.arraysegment-1">ArraySegment</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -715,7 +829,7 @@
     <pre><code class="lang-csharp hljs">public byte[] GetBytesWithLength()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -724,7 +838,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -740,7 +854,7 @@
     <pre><code class="lang-csharp hljs">public char GetChar()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -749,7 +863,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Char</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -765,7 +879,7 @@
     <pre><code class="lang-csharp hljs">public double GetDouble()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -774,7 +888,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Double</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -790,7 +904,7 @@
     <pre><code class="lang-csharp hljs">public double[] GetDoubleArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -799,7 +913,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Double</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -815,7 +929,7 @@
     <pre><code class="lang-csharp hljs">public float GetFloat()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -824,7 +938,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Single</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -840,7 +954,7 @@
     <pre><code class="lang-csharp hljs">public float[] GetFloatArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -849,7 +963,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Single</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -865,7 +979,7 @@
     <pre><code class="lang-csharp hljs">public int GetInt()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -874,7 +988,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -890,7 +1004,7 @@
     <pre><code class="lang-csharp hljs">public int[] GetIntArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -899,7 +1013,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -915,7 +1029,7 @@
     <pre><code class="lang-csharp hljs">public long GetLong()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -924,7 +1038,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int64</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -940,7 +1054,7 @@
     <pre><code class="lang-csharp hljs">public long[] GetLongArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -949,7 +1063,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int64</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -965,7 +1079,7 @@
     <pre><code class="lang-csharp hljs">public IPEndPoint GetNetEndPoint()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -974,7 +1088,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Net.IPEndPoint</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -990,7 +1104,7 @@
     <pre><code class="lang-csharp hljs">public byte[] GetRemainingBytes()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -999,7 +1113,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -1015,7 +1129,7 @@
     <pre><code class="lang-csharp hljs">public ArraySegment&lt;byte&gt; GetRemainingBytesSegment()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1024,7 +1138,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.ArraySegment&lt;T&gt;</span>&lt;<span class="xref">System.Byte</span>&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.arraysegment-1">ArraySegment</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1040,7 +1154,7 @@
     <pre><code class="lang-csharp hljs">public sbyte GetSByte()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1049,7 +1163,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.SByte</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1065,7 +1179,7 @@
     <pre><code class="lang-csharp hljs">public sbyte[] GetSBytesWithLength()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1074,7 +1188,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.SByte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -1090,7 +1204,7 @@
     <pre><code class="lang-csharp hljs">public short GetShort()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1099,7 +1213,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int16</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1115,7 +1229,7 @@
     <pre><code class="lang-csharp hljs">public short[] GetShortArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1124,7 +1238,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int16</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -1140,7 +1254,7 @@
     <pre><code class="lang-csharp hljs">public string GetString()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1149,7 +1263,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1157,7 +1271,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_GetString_" data-uid="LiteNetLib.Utils.NetDataReader.GetString*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_GetString_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetString(System.Int32)">GetString(Int32)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetString_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetString(System.Int32)">GetString(int)</h4>
   <div class="markdown level1 summary"><p>Note that &quot;maxLength&quot; only limits the number of characters in a string, not its size in bytes.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -1166,7 +1280,7 @@
     <pre><code class="lang-csharp hljs">public string GetString(int maxLength)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1176,14 +1290,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">maxLength</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1192,7 +1306,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><p>&quot;string.Empty&quot; if value &gt; &quot;maxLength&quot;</p>
 </td>
       </tr>
@@ -1209,7 +1323,7 @@
     <pre><code class="lang-csharp hljs">public string[] GetStringArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1218,7 +1332,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -1226,15 +1340,17 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_GetStringArray_" data-uid="LiteNetLib.Utils.NetDataReader.GetStringArray*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_GetStringArray_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetStringArray(System.Int32)">GetStringArray(Int32)</h4>
-  <div class="markdown level1 summary"></div>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetStringArray_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.GetStringArray(System.Int32)">GetStringArray(int)</h4>
+  <div class="markdown level1 summary"><p>Note that &quot;maxStringLength&quot; only limits the number of characters in a string, not its size in bytes.
+Strings that exceed this parameter are returned as empty</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public string[] GetStringArray(int maxStringLength)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1244,14 +1360,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">maxStringLength</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1260,7 +1376,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -1276,7 +1392,7 @@
     <pre><code class="lang-csharp hljs">public uint GetUInt()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1285,7 +1401,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1301,7 +1417,7 @@
     <pre><code class="lang-csharp hljs">public uint[] GetUIntArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1310,7 +1426,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt32</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -1326,7 +1442,7 @@
     <pre><code class="lang-csharp hljs">public ulong GetULong()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1335,7 +1451,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt64</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1351,7 +1467,7 @@
     <pre><code class="lang-csharp hljs">public ulong[] GetULongArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1360,7 +1476,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt64</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -1376,7 +1492,7 @@
     <pre><code class="lang-csharp hljs">public ushort GetUShort()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1385,7 +1501,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt16</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1401,7 +1517,7 @@
     <pre><code class="lang-csharp hljs">public ushort[] GetUShortArray()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1410,7 +1526,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt16</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a>[]</td>
         <td></td>
       </tr>
     </tbody>
@@ -1426,7 +1542,7 @@
     <pre><code class="lang-csharp hljs">public bool PeekBool()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1435,7 +1551,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1451,7 +1567,7 @@
     <pre><code class="lang-csharp hljs">public byte PeekByte()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1460,7 +1576,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1476,7 +1592,7 @@
     <pre><code class="lang-csharp hljs">public char PeekChar()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1485,7 +1601,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Char</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1501,7 +1617,7 @@
     <pre><code class="lang-csharp hljs">public double PeekDouble()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1510,7 +1626,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Double</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1526,7 +1642,7 @@
     <pre><code class="lang-csharp hljs">public float PeekFloat()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1535,7 +1651,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Single</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1551,7 +1667,7 @@
     <pre><code class="lang-csharp hljs">public int PeekInt()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1560,7 +1676,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1576,7 +1692,7 @@
     <pre><code class="lang-csharp hljs">public long PeekLong()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1585,7 +1701,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int64</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1601,7 +1717,7 @@
     <pre><code class="lang-csharp hljs">public sbyte PeekSByte()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1610,7 +1726,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.SByte</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1626,7 +1742,7 @@
     <pre><code class="lang-csharp hljs">public short PeekShort()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1635,7 +1751,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int16</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1651,7 +1767,7 @@
     <pre><code class="lang-csharp hljs">public string PeekString()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1660,7 +1776,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1668,15 +1784,16 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_PeekString_" data-uid="LiteNetLib.Utils.NetDataReader.PeekString*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_PeekString_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.PeekString(System.Int32)">PeekString(Int32)</h4>
-  <div class="markdown level1 summary"></div>
+  <h4 id="LiteNetLib_Utils_NetDataReader_PeekString_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.PeekString(System.Int32)">PeekString(int)</h4>
+  <div class="markdown level1 summary"><p>Note that &quot;maxLength&quot; only limits the number of characters in a string, not its size in bytes.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public string PeekString(int maxLength)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1686,14 +1803,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">maxLength</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1702,7 +1819,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1718,7 +1835,7 @@
     <pre><code class="lang-csharp hljs">public uint PeekUInt()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1727,7 +1844,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1743,7 +1860,7 @@
     <pre><code class="lang-csharp hljs">public ulong PeekULong()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1752,7 +1869,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt64</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1768,7 +1885,7 @@
     <pre><code class="lang-csharp hljs">public ushort PeekUShort()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1777,7 +1894,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt16</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1785,7 +1902,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_SetPosition_" data-uid="LiteNetLib.Utils.NetDataReader.SetPosition*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_SetPosition_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.SetPosition(System.Int32)">SetPosition(Int32)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_SetPosition_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.SetPosition(System.Int32)">SetPosition(int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1793,7 +1910,7 @@
     <pre><code class="lang-csharp hljs">public void SetPosition(int position)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1803,7 +1920,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">position</span></td>
         <td></td>
       </tr>
@@ -1820,7 +1937,7 @@
     <pre><code class="lang-csharp hljs">public void SetSource(NetDataWriter dataWriter)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1839,34 +1956,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_SetSource_" data-uid="LiteNetLib.Utils.NetDataReader.SetSource*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___" data-uid="LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[])">SetSource(Byte[])</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SetSource(byte[] source)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
-        <td><span class="parametername">source</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_Utils_NetDataReader_SetSource_" data-uid="LiteNetLib.Utils.NetDataReader.SetSource*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[],System.Int32,System.Int32)">SetSource(Byte[], Int32, Int32)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[],System.Int32,System.Int32)">SetSource(byte[], int, int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1874,7 +1964,7 @@
     <pre><code class="lang-csharp hljs">public void SetSource(byte[] source, int offset, int maxSize)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1884,17 +1974,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">source</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">offset</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">maxSize</span></td>
         <td></td>
       </tr>
@@ -1902,16 +1992,16 @@
   </table>
 
 
-  <a id="LiteNetLib_Utils_NetDataReader_SkipBytes_" data-uid="LiteNetLib.Utils.NetDataReader.SkipBytes*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_SkipBytes_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.SkipBytes(System.Int32)">SkipBytes(Int32)</h4>
+  <a id="LiteNetLib_Utils_NetDataReader_SetSource_" data-uid="LiteNetLib.Utils.NetDataReader.SetSource*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_SetSource_System_Byte___" data-uid="LiteNetLib.Utils.NetDataReader.SetSource(System.Byte[])">SetSource(byte[])</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SkipBytes(int count)</code></pre>
+    <pre><code class="lang-csharp hljs">public void SetSource(byte[] source)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1921,7 +2011,34 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">source</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_SkipBytes_" data-uid="LiteNetLib.Utils.NetDataReader.SkipBytes*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_SkipBytes_System_Int32_" data-uid="LiteNetLib.Utils.NetDataReader.SkipBytes(System.Int32)">SkipBytes(int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SkipBytes(int count)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">count</span></td>
         <td></td>
       </tr>
@@ -1930,7 +2047,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetBool_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetBool*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetBool_System_Boolean__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetBool(System.Boolean@)">TryGetBool(out Boolean)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetBool_System_Boolean__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetBool(System.Boolean@)">TryGetBool(out bool)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1938,7 +2055,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetBool(out bool result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1948,14 +2065,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1964,7 +2081,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1972,7 +2089,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetByte_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetByte*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetByte_System_Byte__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetByte(System.Byte@)">TryGetByte(out Byte)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetByte_System_Byte__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetByte(System.Byte@)">TryGetByte(out byte)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -1980,7 +2097,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetByte(out byte result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -1990,14 +2107,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2006,7 +2123,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2014,7 +2131,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetBytesWithLength_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetBytesWithLength*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetBytesWithLength_System_Byte____" data-uid="LiteNetLib.Utils.NetDataReader.TryGetBytesWithLength(System.Byte[]@)">TryGetBytesWithLength(out Byte[])</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetBytesWithLength_System_Byte____" data-uid="LiteNetLib.Utils.NetDataReader.TryGetBytesWithLength(System.Byte[]@)">TryGetBytesWithLength(out byte[])</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2022,7 +2139,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetBytesWithLength(out byte[] result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2032,14 +2149,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2048,7 +2165,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2056,7 +2173,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetChar_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetChar*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetChar_System_Char__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetChar(System.Char@)">TryGetChar(out Char)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetChar_System_Char__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetChar(System.Char@)">TryGetChar(out char)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2064,7 +2181,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetChar(out char result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2074,14 +2191,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Char</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2090,7 +2207,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2098,7 +2215,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetDouble_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetDouble*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetDouble_System_Double__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetDouble(System.Double@)">TryGetDouble(out Double)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetDouble_System_Double__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetDouble(System.Double@)">TryGetDouble(out double)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2106,7 +2223,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetDouble(out double result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2116,14 +2233,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Double</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2132,7 +2249,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2140,7 +2257,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetFloat_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetFloat*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetFloat_System_Single__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetFloat(System.Single@)">TryGetFloat(out Single)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetFloat_System_Single__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetFloat(System.Single@)">TryGetFloat(out float)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2148,7 +2265,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetFloat(out float result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2158,14 +2275,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Single</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2174,7 +2291,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2182,7 +2299,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetInt_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetInt*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetInt_System_Int32__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetInt(System.Int32@)">TryGetInt(out Int32)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetInt_System_Int32__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetInt(System.Int32@)">TryGetInt(out int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2190,7 +2307,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetInt(out int result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2200,14 +2317,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2216,7 +2333,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2224,7 +2341,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetLong_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetLong*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetLong_System_Int64__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetLong(System.Int64@)">TryGetLong(out Int64)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetLong_System_Int64__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetLong(System.Int64@)">TryGetLong(out long)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2232,7 +2349,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetLong(out long result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2242,14 +2359,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int64</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2258,7 +2375,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2266,7 +2383,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetSByte_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetSByte*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetSByte_System_SByte__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetSByte(System.SByte@)">TryGetSByte(out SByte)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetSByte_System_SByte__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetSByte(System.SByte@)">TryGetSByte(out sbyte)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2274,7 +2391,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetSByte(out sbyte result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2284,14 +2401,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.SByte</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2300,7 +2417,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2308,7 +2425,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetShort_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetShort*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetShort_System_Int16__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetShort(System.Int16@)">TryGetShort(out Int16)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetShort_System_Int16__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetShort(System.Int16@)">TryGetShort(out short)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2316,7 +2433,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetShort(out short result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2326,14 +2443,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int16</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2342,7 +2459,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2350,7 +2467,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetString_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetString*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetString_System_String__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetString(System.String@)">TryGetString(out String)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetString_System_String__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetString(System.String@)">TryGetString(out string)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2358,7 +2475,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetString(out string result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2368,14 +2485,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2384,7 +2501,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2392,7 +2509,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetStringArray_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetStringArray*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetStringArray_System_String____" data-uid="LiteNetLib.Utils.NetDataReader.TryGetStringArray(System.String[]@)">TryGetStringArray(out String[])</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetStringArray_System_String____" data-uid="LiteNetLib.Utils.NetDataReader.TryGetStringArray(System.String[]@)">TryGetStringArray(out string[])</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2400,7 +2517,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetStringArray(out string[] result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2410,14 +2527,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2426,7 +2543,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2434,7 +2551,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetUInt_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetUInt*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetUInt_System_UInt32__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetUInt(System.UInt32@)">TryGetUInt(out UInt32)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetUInt_System_UInt32__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetUInt(System.UInt32@)">TryGetUInt(out uint)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2442,7 +2559,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetUInt(out uint result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2452,14 +2569,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt32</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2468,7 +2585,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2476,7 +2593,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetULong_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetULong*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetULong_System_UInt64__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetULong(System.UInt64@)">TryGetULong(out UInt64)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetULong_System_UInt64__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetULong(System.UInt64@)">TryGetULong(out ulong)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2484,7 +2601,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetULong(out ulong result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2494,14 +2611,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt64</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2510,7 +2627,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2518,7 +2635,7 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_TryGetUShort_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetUShort*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetUShort_System_UInt16__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetUShort(System.UInt16@)">TryGetUShort(out UInt16)</h4>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetUShort_System_UInt16__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetUShort(System.UInt16@)">TryGetUShort(out ushort)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2526,7 +2643,7 @@
     <pre><code class="lang-csharp hljs">public bool TryGetUShort(out ushort result)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2536,14 +2653,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.UInt16</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
         <td><span class="parametername">result</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -2552,11 +2669,12 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
+
 </article>
           </div>
 
@@ -2589,7 +2707,7 @@
       </footer>
     </div>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

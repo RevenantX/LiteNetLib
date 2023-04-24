@@ -12,7 +12,7 @@
  ">
     
       <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.css">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
       <link rel="stylesheet" href="../styles/main.css">
       <meta property="docfx:navrel" content="../toc.html">
@@ -70,21 +70,22 @@
             <article class="content wrap" id="_content" data-uid="LiteNetLib.NetManager.NetPeerEnumerator">
 
 
+
   <h1 id="LiteNetLib_NetManager_NetPeerEnumerator" data-uid="LiteNetLib.NetManager.NetPeerEnumerator" class="text-break">Struct NetManager.NetPeerEnumerator
 </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="implements">
     <h5>Implements</h5>
-    <div><span class="xref">System.Collections.Generic.IEnumerator&lt;T&gt;</span>&lt;<a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a>&gt;</div>
-    <div><span class="xref">System.IDisposable</span></div>
-    <div><span class="xref">System.Collections.IEnumerator</span></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator</a>&lt;<a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a>&gt;</div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerator">IEnumerator</a></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
   <h5 id="LiteNetLib_NetManager_NetPeerEnumerator_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public struct NetPeerEnumerator : IEnumerator&lt;NetPeer&gt;, IDisposable, IEnumerator</code></pre>
+    <pre><code class="lang-csharp hljs">public struct NetManager.NetPeerEnumerator : IEnumerator&lt;NetPeer&gt;, IEnumerator, IDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
 </h3>
@@ -99,7 +100,7 @@
     <pre><code class="lang-csharp hljs">public NetPeerEnumerator(NetPeer p)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -125,10 +126,10 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly NetPeer Current { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public NetPeer Current { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -148,7 +149,8 @@
 
   <a id="LiteNetLib_NetManager_NetPeerEnumerator_Dispose_" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.Dispose*"></a>
   <h4 id="LiteNetLib_NetManager_NetPeerEnumerator_Dispose" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.Dispose">Dispose()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -165,7 +167,7 @@
     <pre><code class="lang-csharp hljs">public bool MoveNext()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
@@ -174,7 +176,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -189,43 +191,17 @@
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Reset()</code></pre>
   </div>
-  <h3 id="eii">Explicit Interface Implementations
-</h3>
-
-
-  <a id="LiteNetLib_NetManager_NetPeerEnumerator_System_Collections_IEnumerator_Current_" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.System#Collections#IEnumerator#Current*"></a>
-  <h4 id="LiteNetLib_NetManager_NetPeerEnumerator_System_Collections_IEnumerator_Current" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.System#Collections#IEnumerator#Current">IEnumerator.Current</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">readonly object IEnumerator.Current { get; }</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Object</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <span class="xref">System.Collections.Generic.IEnumerator&lt;T&gt;</span>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator&lt;T&gt;</a>
   </div>
   <div>
-      <span class="xref">System.IDisposable</span>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerator">IEnumerator</a>
   </div>
   <div>
-      <span class="xref">System.Collections.IEnumerator</span>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
   </div>
+
 </article>
           </div>
 
@@ -258,7 +234,7 @@
       </footer>
     </div>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

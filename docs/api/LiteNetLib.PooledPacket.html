@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Interface INatPunchListener
+      <title>Struct PooledPacket
  </title>
       <meta name="viewport" content="width=device-width">
-      <meta name="title" content="Interface INatPunchListener
+      <meta name="title" content="Struct PooledPacket
  ">
     
       <link rel="shortcut icon" href="../favicon.ico">
@@ -67,92 +67,96 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="LiteNetLib.INatPunchListener">
+            <article class="content wrap" id="_content" data-uid="LiteNetLib.PooledPacket">
 
 
 
-  <h1 id="LiteNetLib_INatPunchListener" data-uid="LiteNetLib.INatPunchListener" class="text-break">Interface INatPunchListener
+  <h1 id="LiteNetLib_PooledPacket" data-uid="LiteNetLib.PooledPacket" class="text-break">Struct PooledPacket
 </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
-  <h5 id="LiteNetLib_INatPunchListener_syntax">Syntax</h5>
+  <h5 id="LiteNetLib_PooledPacket_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface INatPunchListener</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly ref struct PooledPacket</code></pre>
   </div>
-  <h3 id="methods">Methods
+  <h3 id="fields">Fields
 </h3>
 
 
-  <a id="LiteNetLib_INatPunchListener_OnNatIntroductionRequest_" data-uid="LiteNetLib.INatPunchListener.OnNatIntroductionRequest*"></a>
-  <h4 id="LiteNetLib_INatPunchListener_OnNatIntroductionRequest_System_Net_IPEndPoint_System_Net_IPEndPoint_System_String_" data-uid="LiteNetLib.INatPunchListener.OnNatIntroductionRequest(System.Net.IPEndPoint,System.Net.IPEndPoint,System.String)">OnNatIntroductionRequest(IPEndPoint, IPEndPoint, string)</h4>
-  <div class="markdown level1 summary"></div>
+  <h4 id="LiteNetLib_PooledPacket_MaxUserDataSize" data-uid="LiteNetLib.PooledPacket.MaxUserDataSize">MaxUserDataSize</h4>
+  <div class="markdown level1 summary"><p>Maximum data size that you can put into such packet</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token)</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly int MaxUserDataSize</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
-        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
-        <td><span class="parametername">localEndPoint</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
-        <td><span class="parametername">remoteEndPoint</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">token</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
 
 
-  <a id="LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_" data-uid="LiteNetLib.INatPunchListener.OnNatIntroductionSuccess*"></a>
-  <h4 id="LiteNetLib_INatPunchListener_OnNatIntroductionSuccess_System_Net_IPEndPoint_LiteNetLib_NatAddressType_System_String_" data-uid="LiteNetLib.INatPunchListener.OnNatIntroductionSuccess(System.Net.IPEndPoint,LiteNetLib.NatAddressType,System.String)">OnNatIntroductionSuccess(IPEndPoint, NatAddressType, string)</h4>
-  <div class="markdown level1 summary"></div>
+  <h4 id="LiteNetLib_PooledPacket_UserDataOffset" data-uid="LiteNetLib.PooledPacket.UserDataOffset">UserDataOffset</h4>
+  <div class="markdown level1 summary"><p>Offset for user data when writing to Data array</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, NatAddressType type, string token)</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly int UserDataOffset</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
-        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
-        <td><span class="parametername">targetEndPoint</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td></td>
       </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+
+
+  <a id="LiteNetLib_PooledPacket_Data_" data-uid="LiteNetLib.PooledPacket.Data*"></a>
+  <h4 id="LiteNetLib_PooledPacket_Data" data-uid="LiteNetLib.PooledPacket.Data">Data</h4>
+  <div class="markdown level1 summary"><p>Raw packet data. Do not modify header! Use UserDataOffset as start point for your data</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte[] Data { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
       <tr>
-        <td><a class="xref" href="LiteNetLib.NatAddressType.html">NatAddressType</a></td>
-        <td><span class="parametername">type</span></td>
-        <td></td>
+        <th>Type</th>
+        <th>Description</th>
       </tr>
+    </thead>
+    <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">token</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td></td>
       </tr>
     </tbody>

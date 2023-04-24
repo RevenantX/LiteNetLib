@@ -8,31 +8,13 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-
     public partial class NetManager
     {
-        public bool SocketActive(bool ipv4)
-        {
-            if (ipv4)
-            {
-                if (_udpSocketv4 != null)
-                    return _udpSocketv4.Connected;
-                return false;
-            }
-            else
-            {
-                if (_udpSocketv6 != null)
-                    return _udpSocketv6.Connected;
-                return false;
-            }
-        }
-
         private const int ReceivePollingTime = 500000; //0.5 second
 
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
-        private Thread _threadv4;
-        private Thread _threadv6;
+        private Thread _receiveThread;
         private IPEndPoint _bufferEndPointv4;
         private IPEndPoint _bufferEndPointv6;
 #if UNITY_2018_3_OR_NEWER
@@ -54,6 +36,9 @@ namespace LiteNetLib
         /// Maximum packets count that will be processed in Manual PollEvents
         /// </summary>
         public int MaxPacketsReceivePerUpdate = 0;
+
+        // special case in iOS (and possibly android that should be resolved in unity)
+        internal bool NotConnected;
 
         public short Ttl
         {
@@ -106,9 +91,9 @@ namespace LiteNetLib
         {
             switch (ex.SocketErrorCode)
             {
-#if UNITY_IOS && !UNITY_EDITOR
                 case SocketError.NotConnected:
-#endif
+                    NotConnected = true;
+                    return true;
                 case SocketError.Interrupted:
                 case SocketError.NotSocket:
                 case SocketError.OperationAborted:
@@ -135,11 +120,7 @@ namespace LiteNetLib
                 int packetsReceived = 0;
                 while (socket.Available > 0)
                 {
-                    var packet = PoolGetPacket(NetConstants.MaxPacketSize);
-                    packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
-                        ref bufferEndPoint);
-                    //NetDebug.Write(NetLogLevel.Trace, $"[R]Received data from {bufferEndPoint}, result: {packet.Size}");
-                    OnMessageReceived(packet, (IPEndPoint) bufferEndPoint);
+                    ReceiveFrom(socket, ref bufferEndPoint);
                     packetsReceived++;
                     if (packetsReceived == MaxPacketsReceivePerUpdate)
                         break;
@@ -160,62 +141,144 @@ namespace LiteNetLib
             }
         }
 
-        private void NativeReceiveLogic(object state)
+        private bool NativeReceiveFrom(ref NetPacket packet, IntPtr s, byte[] addrBuffer, int addrSize)
         {
-            Socket socket = (Socket)state;
-            IntPtr socketHandle = socket.Handle;
-            byte[] addrBuffer = new byte[socket.AddressFamily == AddressFamily.InterNetwork
-                ? NativeSocket.IPv4AddrSize
-                : NativeSocket.IPv6AddrSize];
+            //Reading data
+            packet.Size = NativeSocket.RecvFrom(s, packet.RawData, NetConstants.MaxPacketSize, addrBuffer, ref addrSize);
+            if (packet.Size == 0)
+                return false; //socket closed
+            if (packet.Size == -1)
+            {
+                var errorCode = NativeSocket.GetSocketError();
+                //Linux timeout EAGAIN
+                return errorCode == SocketError.WouldBlock || errorCode == SocketError.TimedOut || ProcessError(new SocketException((int)errorCode)) == false;
+            }
 
-            int addrSize = addrBuffer.Length;
-            NetPacket packet = PoolGetPacket(NetConstants.MaxPacketSize);
+            var nativeAddr = new NativeAddr(addrBuffer, addrSize);
+            if (!_nativeAddrMap.TryGetValue(nativeAddr, out var endPoint))
+                endPoint = new NativeEndPoint(addrBuffer);
+
+            //All ok!
+            //NetDebug.WriteForce($"[R]Received data from {endPoint}, result: {packet.Size}");
+            OnMessageReceived(packet, endPoint);
+            packet = PoolGetPacket(NetConstants.MaxPacketSize);
+            return true;
+        }
+
+        private void NativeReceiveLogic()
+        {
+            IntPtr socketHandle4 = _udpSocketv4.Handle;
+            IntPtr socketHandle6 = _udpSocketv6?.Handle ?? IntPtr.Zero;
+            byte[] addrBuffer4 = new byte[NativeSocket.IPv4AddrSize];
+            byte[] addrBuffer6 = new byte[NativeSocket.IPv6AddrSize];
+            int addrSize4 = addrBuffer4.Length;
+            int addrSize6 = addrBuffer6.Length;
+            var selectReadList = new List<Socket>(2);
+            var socketv4 = _udpSocketv4;
+            var socketV6 = _udpSocketv6;
+            var packet = PoolGetPacket(NetConstants.MaxPacketSize);
 
             while (IsRunning)
             {
-                //Reading data
-                packet.Size = NativeSocket.RecvFrom(socketHandle, packet.RawData, NetConstants.MaxPacketSize, addrBuffer, ref addrSize);
-                if (packet.Size == 0)
-                    return;
-                if (packet.Size == -1)
+                if (socketV6 == null)
                 {
-                    SocketError errorCode = NativeSocket.GetSocketError();
-                    if (errorCode == SocketError.WouldBlock || errorCode == SocketError.TimedOut) //Linux timeout EAGAIN
-                        continue;
-                    if (ProcessError(new SocketException((int)errorCode)))
+                    if (NativeReceiveFrom(ref packet, socketHandle4, addrBuffer4, addrSize4) == false)
                         return;
                     continue;
                 }
-
-                NativeAddr nativeAddr = new NativeAddr(addrBuffer, addrSize);
-                if (!_nativeAddrMap.TryGetValue(nativeAddr, out var endPoint))
-                    endPoint = new NativeEndPoint(addrBuffer);
-
-                //All ok!
-                //NetDebug.WriteForce($"[R]Received data from {endPoint}, result: {packet.Size}");
-                OnMessageReceived(packet, endPoint);
-                packet = PoolGetPacket(NetConstants.MaxPacketSize);
+                bool messageReceived = false;
+                if (socketv4.Available != 0)
+                {
+                    if (NativeReceiveFrom(ref packet, socketHandle4, addrBuffer4, addrSize4) == false)
+                        return;
+                    messageReceived = true;
+                }
+                if (socketV6.Available != 0)
+                {
+                    if (NativeReceiveFrom(ref packet, socketHandle6, addrBuffer6, addrSize6) == false)
+                        return;
+                    messageReceived = true;
+                }
+                if (messageReceived)
+                    continue;
+                selectReadList.Clear();
+                selectReadList.Add(socketv4);
+                selectReadList.Add(socketV6);
+                try
+                {
+                    Socket.Select(selectReadList, null, null, ReceivePollingTime);
+                }
+                catch (SocketException ex)
+                {
+                    if (ProcessError(ex))
+                        return;
+                }
+                catch (ObjectDisposedException)
+                {
+                    //socket closed
+                    return;
+                }
+                catch (ThreadAbortException)
+                {
+                    //thread closed
+                    return;
+                }
+                catch (Exception e)
+                {
+                    //protects socket receive thread
+                    NetDebug.WriteError("[NM] SocketReceiveThread error: " + e );
+                }
             }
         }
 
-        private void ReceiveLogic(object state)
+        private void ReceiveFrom(Socket s, ref EndPoint bufferEndPoint)
         {
-            Socket socket = (Socket)state;
-            EndPoint bufferEndPoint = new IPEndPoint(socket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, 0);
+            var packet = PoolGetPacket(NetConstants.MaxPacketSize);
+            packet.Size = s.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None, ref bufferEndPoint);
+            OnMessageReceived(packet, (IPEndPoint)bufferEndPoint);
+        }
+
+        private void ReceiveLogic()
+        {
+            EndPoint bufferEndPoint4 = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint bufferEndPoint6 = new IPEndPoint(IPAddress.IPv6Any, 0);
+            var selectReadList = new List<Socket>(2);
+            var socketv4 = _udpSocketv4;
+            var socketV6 = _udpSocketv6;
 
             while (IsRunning)
             {
                 //Reading data
                 try
                 {
-                    if (socket.Available == 0 && !socket.Poll(ReceivePollingTime, SelectMode.SelectRead))
-                        continue;
-                    NetPacket packet = PoolGetPacket(NetConstants.MaxPacketSize);
-                    packet.Size = socket.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None,
-                        ref bufferEndPoint);
+                    if (socketV6 == null)
+                    {
+                        if (socketv4.Available == 0 && !socketv4.Poll(ReceivePollingTime, SelectMode.SelectRead))
+                            continue;
+                        ReceiveFrom(socketv4, ref bufferEndPoint4);
+                    }
+                    else
+                    {
+                        bool messageReceived = false;
+                        if (socketv4.Available != 0)
+                        {
+                            ReceiveFrom(socketv4, ref bufferEndPoint4);
+                            messageReceived = true;
+                        }
+                        if (socketV6.Available != 0)
+                        {
+                            ReceiveFrom(socketV6, ref bufferEndPoint6);
+                            messageReceived = true;
+                        }
+                        if (messageReceived)
+                            continue;
 
+                        selectReadList.Clear();
+                        selectReadList.Add(socketv4);
+                        selectReadList.Add(socketV6);
+                        Socket.Select(selectReadList, null, null, ReceivePollingTime);
+                    }
                     //NetDebug.Write(NetLogLevel.Trace, $"[R]Received data from {bufferEndPoint}, result: {packet.Size}");
-                    OnMessageReceived(packet, (IPEndPoint)bufferEndPoint);
                 }
                 catch (SocketException ex)
                 {
@@ -249,23 +312,14 @@ namespace LiteNetLib
         /// <param name="manualMode">mode of library</param>
         public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool manualMode)
         {
-            if (IsRunning)
+            if (IsRunning && NotConnected == false)
                 return false;
+
+            NotConnected = false;
             _manualMode = manualMode;
             UseNativeSockets = UseNativeSockets && NativeSocket.IsSupported;
-
-            //osx doesn't support dual mode
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && IPv6Mode == IPv6Mode.DualMode)
-                IPv6Mode = IPv6Mode.SeparateSocket;
-
-            bool dualMode = IPv6Mode == IPv6Mode.DualMode && IPv6Support;
-
-            _udpSocketv4 = new Socket(
-                dualMode ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork,
-                SocketType.Dgram,
-                ProtocolType.Udp);
-
-            if (!BindSocket(_udpSocketv4, new IPEndPoint(dualMode ? addressIPv6 : addressIPv4, port)))
+            _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port)))
                 return false;
 
             LocalPort = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
@@ -275,33 +329,14 @@ namespace LiteNetLib
                 _pausedSocketFix = new PausedSocketFix(this, addressIPv4, addressIPv6, port, manualMode);
 #endif
 
-            if (dualMode)
-                _udpSocketv6 = _udpSocketv4;
-
             IsRunning = true;
-            if (!_manualMode)
-            {
-                ParameterizedThreadStart ts = ReceiveLogic;
-                if (UseNativeSockets)
-                    ts = NativeReceiveLogic;
-
-                _threadv4 = new Thread(ts)
-                {
-                    Name = $"SocketThreadv4({LocalPort})",
-                    IsBackground = true
-                };
-                _threadv4.Start(_udpSocketv4);
-
-                _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
-                _logicThread.Start();
-            }
-            else
+            if (_manualMode)
             {
                 _bufferEndPointv4 = new IPEndPoint(IPAddress.Any, 0);
             }
 
             //Check IPv6 support
-            if (IPv6Support && IPv6Mode == IPv6Mode.SeparateSocket)
+            if (IPv6Support && IPv6Enabled)
             {
                 _udpSocketv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
                 //Use one port for two sockets
@@ -311,18 +346,28 @@ namespace LiteNetLib
                     {
                         _bufferEndPointv6 = new IPEndPoint(IPAddress.IPv6Any, 0);
                     }
-                    else
-                    {
-                        ParameterizedThreadStart ts = ReceiveLogic;
-                        if (UseNativeSockets)
-                            ts = NativeReceiveLogic;
-                        _threadv6 = new Thread(ts)
-                        {
-                            Name = $"SocketThreadv6({LocalPort})",
-                            IsBackground = true
-                        };
-                        _threadv6.Start(_udpSocketv6);
-                    }
+                }
+                else
+                {
+                    _udpSocketv6 = null;
+                }
+            }
+
+            if (!manualMode)
+            {
+                ThreadStart ts = ReceiveLogic;
+                if (UseNativeSockets)
+                    ts = NativeReceiveLogic;
+                _receiveThread = new Thread(ts)
+                {
+                    Name = $"ReceiveThread({LocalPort})",
+                    IsBackground = true
+                };
+                _receiveThread.Start();
+                if (_logicThread == null)
+                {
+                    _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
+                    _logicThread.Start();
                 }
             }
 
@@ -336,6 +381,7 @@ namespace LiteNetLib
             socket.SendTimeout = 500;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
+            socket.Blocking = true;
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -358,7 +404,7 @@ namespace LiteNetLib
             {
                 //Unity with IL2CPP throws an exception here, it doesn't matter in most cases so just ignore it
             }
-            if (ep.AddressFamily == AddressFamily.InterNetwork || IPv6Mode == IPv6Mode.DualMode)
+            if (ep.AddressFamily == AddressFamily.InterNetwork)
             {
                 Ttl = NetConstants.SocketTTL;
 
@@ -368,15 +414,7 @@ namespace LiteNetLib
                     NetDebug.WriteError($"[B]Broadcast error: {e.SocketErrorCode}");
                 }
 
-                if (IPv6Mode == IPv6Mode.DualMode)
-                {
-                    try { socket.DualMode = true; }
-                    catch(Exception e)
-                    {
-                        NetDebug.WriteError($"[B]Bind exception (dualmode setting): {e}");
-                    }
-                }
-                else if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
                     try { socket.DontFragment = true; }
                     catch (SocketException e)
@@ -415,7 +453,7 @@ namespace LiteNetLib
                 {
                     //IPv6 bind fix
                     case SocketError.AddressAlreadyInUse:
-                        if (socket.AddressFamily == AddressFamily.InterNetworkV6 && IPv6Mode != IPv6Mode.DualMode)
+                        if (socket.AddressFamily == AddressFamily.InterNetworkV6)
                         {
                             try
                             {
@@ -675,24 +713,16 @@ namespace LiteNetLib
             return broadcastSuccess || multicastSuccess;
         }
 
-        internal void CloseSocket()
+        private void CloseSocket()
         {
             IsRunning = false;
-            //cleanup dual mode
-            if (_udpSocketv4 == _udpSocketv6)
-                _udpSocketv6 = null;
-
             _udpSocketv4?.Close();
             _udpSocketv6?.Close();
             _udpSocketv4 = null;
             _udpSocketv6 = null;
-
-            if (_threadv4 != null && _threadv4 != Thread.CurrentThread)
-                _threadv4.Join();
-            if (_threadv6 != null && _threadv6 != Thread.CurrentThread)
-                _threadv6.Join();
-            _threadv4 = null;
-            _threadv6 = null;
+            if (_receiveThread != null && _receiveThread != Thread.CurrentThread)
+                _receiveThread.Join();
+            _receiveThread = null;
         }
     }
 }

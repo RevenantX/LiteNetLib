@@ -290,7 +290,7 @@
             Automatically recycle NetPacketReader after OnReceive event
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetManager.IPv6Mode">
+        <member name="F:LiteNetLib.NetManager.IPv6Enabled">
             <summary>
             IPv6 support
             </summary>

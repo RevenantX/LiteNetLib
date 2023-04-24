@@ -11,13 +11,6 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    public enum IPv6Mode
-    {
-        Disabled,
-        SeparateSocket,
-        DualMode
-    }
-
     public sealed class NetPacketReader : NetDataReader
     {
         private NetPacket _packet;
@@ -156,8 +149,8 @@ namespace LiteNetLib
         private bool _manualMode;
         private readonly AutoResetEvent _updateTriggerEvent = new AutoResetEvent(true);
 
-        private Queue<NetEvent> _netEventsProduceQueue = new Queue<NetEvent>();
-        private Queue<NetEvent> _netEventsConsumeQueue = new Queue<NetEvent>();
+        private NetEvent _pendingEventHead;
+        private NetEvent _pendingEventTail;
 
         private NetEvent _netEventPoolHead;
         private readonly INetEventListener _netEventListener;
@@ -301,7 +294,7 @@ namespace LiteNetLib
         /// <summary>
         /// IPv6 support
         /// </summary>
-        public IPv6Mode IPv6Mode = IPv6Mode.SeparateSocket;
+        public bool IPv6Enabled = true;
 
         /// <summary>
         /// Override MTU for all new peers registered in this NetManager, will ignores MTU Discovery!
@@ -537,6 +530,7 @@ namespace LiteNetLib
                     _netEventPoolHead = evt.Next;
             }
 
+            evt.Next = null;
             evt.Type = type;
             evt.DataReader.SetSource(readerSource, readerSource?.GetHeaderSize() ?? 0);
             evt.Peer = peer;
@@ -555,8 +549,14 @@ namespace LiteNetLib
             }
             else
             {
-                lock(_netEventsProduceQueue)
-                    _netEventsProduceQueue.Enqueue(evt);
+                lock (_eventLock)
+                {
+                    if (_pendingEventTail == null)
+                        _pendingEventHead = evt;
+                    else
+                        _pendingEventTail.Next = evt;
+                    _pendingEventTail = evt;
+                }
             }
         }
 
@@ -1118,27 +1118,48 @@ namespace LiteNetLib
         internal void CreateReceiveEvent(NetPacket packet, DeliveryMethod method, byte channelNumber, int headerSize, NetPeer fromPeer)
         {
             NetEvent evt;
-            lock (_eventLock)
-            {
-                evt = _netEventPoolHead;
-                if (evt == null)
-                    evt = new NetEvent(this);
-                else
-                    _netEventPoolHead = evt.Next;
-            }
-            evt.Type = NetEvent.EType.Receive;
-            evt.DataReader.SetSource(packet, headerSize);
-            evt.Peer = fromPeer;
-            evt.DeliveryMethod = method;
-            evt.ChannelNumber = channelNumber;
+
             if (UnsyncedEvents || UnsyncedReceiveEvent || _manualMode)
             {
+                lock (_eventLock)
+                {
+                    evt = _netEventPoolHead;
+                    if (evt == null)
+                        evt = new NetEvent(this);
+                    else
+                        _netEventPoolHead = evt.Next;
+                }
+                evt.Next = null;
+                evt.Type = NetEvent.EType.Receive;
+                evt.DataReader.SetSource(packet, headerSize);
+                evt.Peer = fromPeer;
+                evt.DeliveryMethod = method;
+                evt.ChannelNumber = channelNumber;
                 ProcessEvent(evt);
             }
             else
             {
-                lock(_netEventsProduceQueue)
-                    _netEventsProduceQueue.Enqueue(evt);
+                lock (_eventLock)
+                {
+                    evt = _netEventPoolHead;
+                    if (evt == null)
+                        evt = new NetEvent(this);
+                    else
+                        _netEventPoolHead = evt.Next;
+
+                    evt.Next = null;
+                    evt.Type = NetEvent.EType.Receive;
+                    evt.DataReader.SetSource(packet, headerSize);
+                    evt.Peer = fromPeer;
+                    evt.DeliveryMethod = method;
+                    evt.ChannelNumber = channelNumber;
+
+                    if (_pendingEventTail == null)
+                        _pendingEventHead = evt;
+                    else
+                        _pendingEventTail.Next = evt;
+                    _pendingEventTail = evt;
+                }
             }
         }
 
@@ -1465,13 +1486,20 @@ namespace LiteNetLib
             }
             if (UnsyncedEvents)
                 return;
-            lock (_netEventsProduceQueue)
+            NetEvent pendingEvent;
+            lock (_eventLock)
             {
-                (_netEventsConsumeQueue, _netEventsProduceQueue) = (_netEventsProduceQueue, _netEventsConsumeQueue);
+                pendingEvent = _pendingEventHead;
+                _pendingEventHead = null;
+                _pendingEventTail = null;
             }
 
-            while(_netEventsConsumeQueue.Count > 0)
-                ProcessEvent(_netEventsConsumeQueue.Dequeue());
+            while (pendingEvent != null)
+            {
+                var next = pendingEvent.Next;
+                ProcessEvent(pendingEvent);
+                pendingEvent = next;
+            }
         }
 
         /// <summary>
@@ -1615,8 +1643,8 @@ namespace LiteNetLib
                 _pingSimulationList.Clear();
 #endif
             _connectedPeersCount = 0;
-            _netEventsProduceQueue.Clear();
-            _netEventsConsumeQueue.Clear();
+            _pendingEventHead = null;
+            _pendingEventTail = null;
         }
 
         /// <summary>
