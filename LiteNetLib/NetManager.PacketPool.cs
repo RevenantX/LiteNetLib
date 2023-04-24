@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 
 namespace LiteNetLib
 {
@@ -42,6 +41,9 @@ namespace LiteNetLib
 
         internal NetPacket PoolGetPacket(int size)
         {
+            if (size > NetConstants.MaxPacketSize)
+                return new NetPacket(size);
+
             NetPacket packet;
             lock (_poolLock)
             {
