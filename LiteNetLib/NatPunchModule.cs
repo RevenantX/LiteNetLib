@@ -58,21 +58,21 @@ namespace LiteNetLib
 
         class NatIntroduceRequestPacket
         {
-            public IPEndPoint Internal { get; set; }
-            public string Token { get; set; }
+            public IPEndPoint Internal { [Preserve] get; [Preserve] set; }
+            public string Token { [Preserve] get; [Preserve] set; }
         }
 
         class NatIntroduceResponsePacket
         {
-            public IPEndPoint Internal { get; set; }
-            public IPEndPoint External { get; set; }
-            public string Token { get; set; }
+            public IPEndPoint Internal { [Preserve] get; [Preserve] set; }
+            public IPEndPoint External { [Preserve] get; [Preserve] set; }
+            public string Token { [Preserve] get; [Preserve] set; }
         }
 
         class NatPunchPacket
         {
-            public string Token { get; set; }
-            public bool IsExternal { get; set; }
+            public string Token { [Preserve] get; [Preserve] set; }
+            public bool IsExternal { [Preserve] get; [Preserve] set; }
         }
 
         private readonly NetManager _socket;
