@@ -617,6 +617,10 @@ namespace LiteNetLib
                         CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: ex.SocketErrorCode);
                         return -1;
 
+                    case SocketError.Shutdown:
+                        CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: ex.SocketErrorCode);
+                        return -1;
+
                     default:
                         NetDebug.WriteError($"[S] {ex}");
                         return -1;
