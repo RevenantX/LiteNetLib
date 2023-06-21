@@ -26,8 +26,8 @@ namespace LibSample
             };
 
             NetManager nm = new NetManager(listener);
-            nm.Start();
             nm.CreateNtpRequest(ntpService);
+            nm.Start();
 
             while (!ntpComplete)
             {
