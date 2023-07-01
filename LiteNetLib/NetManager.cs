@@ -612,7 +612,7 @@ namespace LiteNetLib
                         _peersLock.ExitWriteLock();
                     }
                     _peersLock.ExitUpgradeableReadLock();
-                    if(previousAddress != null)
+                    if(previousAddress != null && _peerAddressChangedListener != null)
                         _peerAddressChangedListener.OnPeerAddressChanged(evt.Peer, previousAddress);
                     break;
             }
