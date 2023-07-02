@@ -612,7 +612,7 @@ namespace LiteNetLib
                         _peersLock.ExitWriteLock();
                     }
                     _peersLock.ExitUpgradeableReadLock();
-                    if(previousAddress != null)
+                    if(previousAddress != null && _peerAddressChangedListener != null)
                         _peerAddressChangedListener.OnPeerAddressChanged(evt.Peer, previousAddress);
                     break;
             }
@@ -1049,10 +1049,7 @@ namespace LiteNetLib
                                     if (peer.ConnectionState == ConnectionState.Connected)
                                     {
                                         peer.InitiateEndPointChange();
-                                        if (_peerAddressChangedListener != null)
-                                        {
-                                            CreateEvent(NetEvent.EType.PeerAddressChanged, peer, remoteEndPoint);
-                                        }
+                                        CreateEvent(NetEvent.EType.PeerAddressChanged, peer, remoteEndPoint);
                                         NetDebug.Write("[NM] PeerNotFound change address of remote peer");
                                     }
                                     isOldPeer = true;
