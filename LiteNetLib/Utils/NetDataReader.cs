@@ -108,6 +108,18 @@ namespace LiteNetLib.Utils
 
         #region GetMethods
 
+        public void Get<T>(out T result) where T : struct, INetSerializable
+        {
+            result = default(T);
+            result.Deserialize(this);
+        }
+
+        public void Get<T>(out T result, Func<T> constructor) where T : class, INetSerializable
+        {
+            result = constructor();
+            result.Deserialize(this);
+        }
+
         public void Get(out IPEndPoint result)
         {
             result = GetNetEndPoint();
