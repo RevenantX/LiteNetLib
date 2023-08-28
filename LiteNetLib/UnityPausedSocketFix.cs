@@ -1,9 +1,10 @@
-﻿#if UNITY_2018_3_OR_NEWER
+﻿using System;
 using System.Net;
+using System.Reflection;
 
 namespace LiteNetLib
 {
-    public class PausedSocketFix
+    public class UnityPausedSocketFix
     {
         private readonly NetManager _netManager;
         private readonly IPAddress _ipv4;
@@ -11,22 +12,33 @@ namespace LiteNetLib
         private readonly int _port;
         private readonly bool _manualMode;
         private bool _initialized;
+        private static EventInfo focusChangedEvent;
 
-        public PausedSocketFix(NetManager netManager, IPAddress ipv4, IPAddress ipv6, int port, bool manualMode)
+        public UnityPausedSocketFix(NetManager netManager, IPAddress ipv4, IPAddress ipv6, int port, bool manualMode)
         {
+            if (focusChangedEvent == null)
+            {
+                focusChangedEvent = Type.GetType("UnityEngine.Application, UnityEngine.CoreModule")?.GetEvent("focusChanged", BindingFlags.Public | BindingFlags.Static);
+                if (focusChangedEvent == null)
+                {
+                    NetDebug.WriteError($"Cannot find UnityEngine.Application.focusChanged event. {nameof(UnityPausedSocketFix)} will not work.");
+                    return;
+                }
+            }
+
             _netManager = netManager;
             _ipv4 = ipv4;
             _ipv6 = ipv6;
             _port = port;
             _manualMode = manualMode;
-            UnityEngine.Application.focusChanged += Application_focusChanged;
+            focusChangedEvent.AddEventHandler(this, (Action<bool>)Application_focusChanged);
             _initialized = true;
         }
 
         public void Deinitialize()
         {
-            if (_initialized)
-                UnityEngine.Application.focusChanged -= Application_focusChanged;
+            if (_initialized && focusChangedEvent != null)
+                focusChangedEvent.RemoveEventHandler(this, (Action<bool>)Application_focusChanged);
             _initialized = false;
         }
 
@@ -54,4 +66,3 @@ namespace LiteNetLib
         }
     }
 }
-#endif

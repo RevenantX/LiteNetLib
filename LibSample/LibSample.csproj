@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net6.0;net5.0;net471;netcoreapp3.1</TargetFrameworks>
-    <TargetFrameworks>net6.0;net5.0;net8.0;net471;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net6.0;</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net6.0;net471</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;net471</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LiteNetLib\LiteNetLib.csproj" />
+    <ProjectReference Include="..\LiteNetLib\LiteNetLib.csproj"/>
   </ItemGroup>
 
 </Project>

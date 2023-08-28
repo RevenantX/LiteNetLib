@@ -17,9 +17,7 @@ namespace LiteNetLib
         private Thread _receiveThread;
         private IPEndPoint _bufferEndPointv4;
         private IPEndPoint _bufferEndPointv6;
-#if UNITY_2018_3_OR_NEWER
-        private PausedSocketFix _pausedSocketFix;
-#endif
+        private UnityPausedSocketFix _pausedSocketFix;
 
 #if !LITENETLIB_UNSAFE
         [ThreadStatic] private static byte[] _sendToBuffer;
@@ -44,17 +42,18 @@ namespace LiteNetLib
         {
             get
             {
-#if UNITY_SWITCH
-                return 0;
-#else
+                if (AppEnvironment.Unity.IsSwitchPlatform)
+                {
+                    return 0;
+                }
                 return _udpSocketv4.Ttl;
-#endif
             }
             internal set
             {
-#if !UNITY_SWITCH
-                _udpSocketv4.Ttl = value;
-#endif
+                if (!AppEnvironment.Unity.IsSwitchPlatform)
+                {
+                    _udpSocketv4.Ttl = value;
+                }
             }
         }
 
@@ -62,11 +61,15 @@ namespace LiteNetLib
         {
 #if DISABLE_IPV6
             IPv6Support = false;
-#elif !UNITY_2019_1_OR_NEWER && !UNITY_2018_4_OR_NEWER && (!UNITY_EDITOR && ENABLE_IL2CPP)
-            string version = UnityEngine.Application.unityVersion;
-            IPv6Support = Socket.OSSupportsIPv6 && int.Parse(version.Remove(version.IndexOf('f')).Split('.')[2]) >= 6;
 #else
-            IPv6Support = Socket.OSSupportsIPv6;
+            if (AppEnvironment.Unity.IsAvailable && AppEnvironment.Unity.Version < new Version(2018, 4) && !AppEnvironment.Unity.IsEditor && AppEnvironment.Unity.IsIl2cpp)
+            {
+                IPv6Support = Socket.OSSupportsIPv6 && AppEnvironment.Unity.Version.Build >= 6;
+            }
+            else
+            {
+                IPv6Support = Socket.OSSupportsIPv6;
+            }
 #endif
         }
 
@@ -330,10 +333,10 @@ namespace LiteNetLib
 
             LocalPort = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
 
-#if UNITY_2018_3_OR_NEWER
-            if (_pausedSocketFix == null)
-                _pausedSocketFix = new PausedSocketFix(this, addressIPv4, addressIPv6, port, manualMode);
-#endif
+            if (AppEnvironment.Unity.IsAvailable && _pausedSocketFix == null)
+            {
+                _pausedSocketFix = new UnityPausedSocketFix(this, addressIPv4, addressIPv6, port, manualMode);
+            }
 
             IsRunning = true;
             if (_manualMode)
@@ -437,20 +440,21 @@ namespace LiteNetLib
                 NetDebug.Write(NetLogLevel.Trace, $"[B]Successfully binded to port: {((IPEndPoint)socket.LocalEndPoint).Port}, AF: {socket.AddressFamily}");
 
                 //join multicast
-                if (ep.AddressFamily == AddressFamily.InterNetworkV6)
+                if (AppEnvironment.Unity.IsAvailable && AppEnvironment.Unity.Version < new Version(2018, 3))
                 {
-                    try
+                    if (ep.AddressFamily == AddressFamily.InterNetworkV6)
                     {
-#if !UNITY_2018_3_OR_NEWER
-                        socket.SetSocketOption(
-                            SocketOptionLevel.IPv6,
-                            SocketOptionName.AddMembership,
-                            new IPv6MulticastOption(MulticastAddressV6));
-#endif
-                    }
-                    catch (Exception)
-                    {
-                        // Unity3d throws exception - ignored
+                        try
+                        {
+                            socket.SetSocketOption(
+                                SocketOptionLevel.IPv6,
+                                SocketOptionName.AddMembership,
+                                new IPv6MulticastOption(MulticastAddressV6));
+                        }
+                        catch (Exception)
+                        {
+                            // Unity3d throws exception - ignored
+                        }
                     }
                 }
             }

@@ -62,7 +62,7 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 
 ## Unity notes!!!
 * Minimal supported Unity is 2018.3. For older Unity versions use [0.9.x library](https://github.com/RevenantX/LiteNetLib/tree/0.9) versions
-* Always use library sources instead of precompiled DLL files ( because there are platform specific #ifdefs and workarounds for unity bugs )
+* If using IL2CPP, always use library sources instead of precompiled DLL files ( because there are platform specific #ifdefs for Unity bugs )
 
 ## Usage samples
 

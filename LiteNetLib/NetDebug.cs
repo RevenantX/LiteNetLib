@@ -35,23 +35,40 @@ namespace LiteNetLib
 
     /// <summary>
     /// Static class for defining your own LiteNetLib logger instead of Console.WriteLine
-    /// or Debug.Log if compiled with UNITY flag
+    /// or Debug.Log if running in Unity.
     /// </summary>
     public static class NetDebug
     {
         public static INetLogger Logger = null;
         private static readonly object DebugLogLock = new object();
+        private static Action<string, object[]> fallbackLogMethod = (str, args) =>
+        {
+            Action<string, object[]> newHandler = null;
+#if UNITY_5_3_OR_NEWER
+            newHandler = UnityEngine.Debug.LogFormat;
+#else
+            if (AppEnvironment.Unity.IsAvailable && AppEnvironment.Unity.Version >= new Version(5, 3))
+            {
+                if (Type.GetType("UnityEngine.Debug, UnityEngine.CoreModule")?.GetMethod("LogFormat", new[] { typeof(string), typeof(object[]) })?.CreateDelegate(typeof(Action<string, object[]>)) is Action<string, object[]> unityLog)
+                    newHandler = unityLog;
+            }
+#endif
+            if (newHandler == null)
+                newHandler = Console.WriteLine;
+
+            // Set log method function to the new handler for future calls
+            fallbackLogMethod = newHandler;
+            // We need to call the new handler to not ignore the first message
+            fallbackLogMethod(str, args);
+        };
+
         private static void WriteLogic(NetLogLevel logLevel, string str, params object[] args)
         {
             lock (DebugLogLock)
             {
                 if (Logger == null)
                 {
-#if UNITY_5_3_OR_NEWER
-                    UnityEngine.Debug.Log(string.Format(str, args));
-#else
-                    Console.WriteLine(str, args);
-#endif
+                    fallbackLogMethod(str, args);
                 }
                 else
                 {

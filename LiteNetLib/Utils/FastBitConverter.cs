@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -6,6 +7,15 @@ namespace LiteNetLib.Utils
 {
     public static class FastBitConverter
     {
+        private unsafe delegate void UnityMemCpy(void* dest, void* src, long size);
+#if UNITY_2018_3_OR_NEWER
+        private static readonly UnityMemCpy UnityMemCpyMethod = Unity.Collections.LowLevel.Unsafe.UnsafeUtility.MemCpy;
+#else
+        private static readonly UnityMemCpy UnityMemCpyMethod = Type.GetType("Unity.Collections.LowLevel.Unsafe.UnsafeUtility, UnityEngine.CoreModule")
+            ?.GetMethod("MemCpy", BindingFlags.Public | BindingFlags.Static)
+            ?.CreateDelegate(typeof(UnityMemCpy)) as UnityMemCpy;
+#endif
+
 #if (LITENETLIB_UNSAFE || LITENETLIB_UNSAFELIB || NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER) && !BIGENDIAN
 #if LITENETLIB_UNSAFE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -19,21 +29,24 @@ namespace LiteNetLib.Utils
 #else
             fixed (byte* ptr = &bytes[startIndex])
             {
-#if UNITY_ANDROID
-                // On some android systems, assigning *(T*)ptr throws a NRE if
-                // the ptr isn't aligned (i.e. if Position is 1,2,3,5, etc.).
-                // Here we have to use memcpy.
-                //
-                // => we can't get a pointer of a struct in C# without
-                //    marshalling allocations
-                // => instead, we stack allocate an array of type T and use that
-                // => stackalloc avoids GC and is very fast. it only works for
-                //    value types, but all blittable types are anyway.
-                T* valueBuffer = stackalloc T[1] { value };
-                UnsafeUtility.MemCpy(ptr, valueBuffer, size);
-#else
-                *(T*)ptr = value;
-#endif
+                if (AppEnvironment.Unity.IsAndroidPlatform)
+                {
+                    // On some android systems, assigning *(T*)ptr throws a NRE if
+                    // the ptr isn't aligned (i.e. if Position is 1,2,3,5, etc.).
+                    // Here we have to use memcpy.
+                    //
+                    // => we can't get a pointer of a struct in C# without
+                    //    marshalling allocations
+                    // => instead, we stack allocate an array of type T and use that
+                    // => stackalloc avoids GC and is very fast. it only works for
+                    //    value types, but all blittable types are anyway.
+                    T* valueBuffer = stackalloc T[1] { value };
+                    UnityMemCpyMethod(ptr, valueBuffer, size);
+                }
+                else
+                {
+                    *(T*)ptr = value;
+                }
             }
 #endif
         }
