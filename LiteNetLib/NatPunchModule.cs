@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Net;
+using System.Net.Sockets;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
@@ -173,7 +174,7 @@ namespace LiteNetLib
         {
             //prepare outgoing data
             string networkIp = NetUtils.GetLocalIp(LocalAddrType.IPv4);
-            if (string.IsNullOrEmpty(networkIp))
+            if (string.IsNullOrEmpty(networkIp) || masterServerEndPoint.AddressFamily == AddressFamily.InterNetworkV6)
             {
                 networkIp = NetUtils.GetLocalIp(LocalAddrType.IPv6);
             }
