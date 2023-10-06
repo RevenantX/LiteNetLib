@@ -1179,7 +1179,7 @@ namespace LiteNetLib
 
                 case PacketProperty.Ack:
                 case PacketProperty.Channeled:
-                    if (packet.ChannelId > _channels.Length)
+                    if (packet.ChannelId >= _channels.Length)
                     {
                         NetManager.PoolRecycle(packet);
                         break;
