@@ -1042,6 +1042,7 @@ namespace LiteNetLib
                             {
                                 _peersLock.EnterUpgradeableReadLock();
                                 var peer = _peersArray[remoteData.PeerId];
+                                _peersLock.ExitUpgradeableReadLock();
                                 if (peer != null &&
                                     peer.ConnectTime == remoteData.ConnectionTime &&
                                     peer.ConnectionNum == remoteData.ConnectionNumber)
@@ -1054,7 +1055,6 @@ namespace LiteNetLib
                                     }
                                     isOldPeer = true;
                                 }
-                                _peersLock.ExitUpgradeableReadLock();
                             }
                         }
 
