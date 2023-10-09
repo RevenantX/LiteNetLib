@@ -13,6 +13,8 @@
     <NoWarn>1701;1702;1705;1591</NoWarn>
     <PackageVersion>1.1.0</PackageVersion>
     <Title>Lite reliable UDP library for Mono and .NET </Title>
+    <IsTrimmable>true</IsTrimmable>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -39,6 +41,7 @@
     <Description>Lite reliable UDP library for .NET, Mono, and .NET Core</Description>
     <PackageIcon>LNL.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <TargetFrameworks>net471;net6.0;net7.0;net5.0;netstandard2.0;netstandard2.1;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
 
   <Target Name="UpdateUnityDLLS" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(TargetFramework)' == 'net471' and '$(Configuration)' == 'Release' ">

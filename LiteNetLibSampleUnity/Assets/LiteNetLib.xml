@@ -1493,5 +1493,10 @@
             Identifies server-to-client SNTP packet.
             </summary>
         </member>
+        <member name="T:LiteNetLib.Utils.PreserveAttribute">
+            <summary>
+              <para>PreserveAttribute prevents byte code stripping from removing a class, method, field, or property.</para>
+            </summary>
+        </member>
     </members>
 </doc>
