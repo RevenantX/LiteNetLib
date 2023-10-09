@@ -19,7 +19,7 @@ namespace LibSample
         public const int KeySizeInBytes = KeySize / 8;
         public const int BlockSizeInBytes = BlockSize / 8;
 
-        private readonly AesCryptoServiceProvider _aes;
+        private readonly Aes _aes;
         private ICryptoTransform _encryptor;
         private byte[] cipherBuffer = new byte[1500]; //Max possible UDP packet size
         private ICryptoTransform _decryptor;
@@ -36,7 +36,7 @@ namespace LibSample
             if (key.Length != KeySizeInBytes) throw new NotSupportedException("EncryptLayer only supports keysize " + KeySize);
 
             //Switch this with AesGCM for better performance, requires .NET Core 3.0 or Standard 2.1
-            _aes = new AesCryptoServiceProvider();
+            _aes = Aes.Create();
             _aes.KeySize = KeySize;
             _aes.BlockSize = BlockSize;
             _aes.Key = key;
