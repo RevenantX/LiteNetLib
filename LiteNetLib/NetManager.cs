@@ -160,7 +160,7 @@ namespace LiteNetLib
 
         private readonly Dictionary<IPEndPoint, NetPeer> _peersDict = new Dictionary<IPEndPoint, NetPeer>(new IPEndPointComparer());
         private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>(new IPEndPointComparer());
-        private readonly Dictionary<IPEndPoint, NtpRequest> _ntpRequests = new Dictionary<IPEndPoint, NtpRequest>(new IPEndPointComparer());
+        private readonly ConcurrentDictionary<IPEndPoint, NtpRequest> _ntpRequests = new ConcurrentDictionary<IPEndPoint, NtpRequest>(new IPEndPointComparer());
         private readonly ReaderWriterLockSlim _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private volatile NetPeer _headPeer;
         private int _connectedPeersCount;
@@ -734,7 +734,7 @@ namespace LiteNetLib
             {
                 foreach (var ipEndPoint in requestsToRemove)
                 {
-                    _ntpRequests.Remove(ipEndPoint);
+                    _ntpRequests.TryRemove(ipEndPoint, out _);
                 }
             }
         }
@@ -941,7 +941,7 @@ namespace LiteNetLib
 
                     if (ntpPacket != null)
                     {
-                        _ntpRequests.Remove(remoteEndPoint);
+                        _ntpRequests.TryRemove(remoteEndPoint, out _);
                         _ntpEventListener?.OnNtpResponse(ntpPacket);
                     }
                     return;
@@ -1776,7 +1776,7 @@ namespace LiteNetLib
         /// <param name="endPoint">NTP Server address.</param>
         public void CreateNtpRequest(IPEndPoint endPoint)
         {
-            _ntpRequests.Add(endPoint, new NtpRequest(endPoint));
+            _ntpRequests.TryAdd(endPoint, new NtpRequest(endPoint));
         }
 
         /// <summary>
@@ -1787,7 +1787,7 @@ namespace LiteNetLib
         public void CreateNtpRequest(string ntpServerAddress, int port)
         {
             IPEndPoint endPoint = NetUtils.MakeEndPoint(ntpServerAddress, port);
-            _ntpRequests.Add(endPoint, new NtpRequest(endPoint));
+            _ntpRequests.TryAdd(endPoint, new NtpRequest(endPoint));
         }
 
         /// <summary>
@@ -1797,7 +1797,7 @@ namespace LiteNetLib
         public void CreateNtpRequest(string ntpServerAddress)
         {
             IPEndPoint endPoint = NetUtils.MakeEndPoint(ntpServerAddress, NtpRequest.DefaultPort);
-            _ntpRequests.Add(endPoint, new NtpRequest(endPoint));
+            _ntpRequests.TryAdd(endPoint, new NtpRequest(endPoint));
         }
 
         public NetPeerEnumerator GetEnumerator()
