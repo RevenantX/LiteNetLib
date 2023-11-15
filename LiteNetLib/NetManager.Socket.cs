@@ -187,21 +187,24 @@ namespace LiteNetLib
                     continue;
                 }
                 bool messageReceived = false;
-                if (socketv4.Available != 0)
+                if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
                 {
                     if (NativeReceiveFrom(ref packet, socketHandle4, addrBuffer4, addrSize4) == false)
                         return;
                     messageReceived = true;
                 }
-                if (socketV6.Available != 0)
+                if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
                 {
                     if (NativeReceiveFrom(ref packet, socketHandle6, addrBuffer6, addrSize6) == false)
                         return;
                     messageReceived = true;
                 }
+
+                selectReadList.Clear();
+
                 if (messageReceived)
                     continue;
-                selectReadList.Clear();
+                
                 selectReadList.Add(socketv4);
                 selectReadList.Add(socketV6);
                 try
@@ -270,10 +273,12 @@ namespace LiteNetLib
                             ReceiveFrom(socketV6, ref bufferEndPoint6);
                             messageReceived = true;
                         }
+
+                        selectReadList.Clear();
+
                         if (messageReceived)
                             continue;
 
-                        selectReadList.Clear();
                         selectReadList.Add(socketv4);
                         selectReadList.Add(socketV6);
                         Socket.Select(selectReadList, null, null, ReceivePollingTime);
