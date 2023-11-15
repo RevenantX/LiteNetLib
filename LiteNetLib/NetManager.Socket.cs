@@ -146,7 +146,8 @@ namespace LiteNetLib
             //Reading data
             packet.Size = NativeSocket.RecvFrom(s, packet.RawData, NetConstants.MaxPacketSize, addrBuffer, ref addrSize);
             if (packet.Size == 0)
-                return false; //socket closed
+                return true; //socket closed or empty packet
+
             if (packet.Size == -1)
             {
                 var errorCode = NativeSocket.GetSocketError();
@@ -204,7 +205,7 @@ namespace LiteNetLib
 
                 if (messageReceived)
                     continue;
-                
+
                 selectReadList.Add(socketv4);
                 selectReadList.Add(socketV6);
                 try
