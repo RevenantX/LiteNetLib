@@ -263,12 +263,12 @@ namespace LiteNetLib
                     else
                     {
                         bool messageReceived = false;
-                        if (socketv4.Available != 0)
+                        if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
                         {
                             ReceiveFrom(socketv4, ref bufferEndPoint4);
                             messageReceived = true;
                         }
-                        if (socketV6.Available != 0)
+                        if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
                         {
                             ReceiveFrom(socketV6, ref bufferEndPoint6);
                             messageReceived = true;
