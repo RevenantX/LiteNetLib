@@ -877,6 +877,11 @@ namespace LiteNetLib
 
         private void OnMessageReceived(NetPacket packet, IPEndPoint remoteEndPoint)
         {
+            if (packet.Size == 0)
+            {
+                PoolRecycle(packet);
+                return;
+            }
 #if DEBUG
             if (SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance)
             {
@@ -916,42 +921,38 @@ namespace LiteNetLib
                 Statistics.AddBytesReceived(originalPacketSize);
             }
 
-            if (_ntpRequests.Count > 0)
+            if (_ntpRequests.Count > 0 && _ntpRequests.TryGetValue(remoteEndPoint, out var request))
             {
-                if (_ntpRequests.TryGetValue(remoteEndPoint, out var request))
+                if (packet.Size < 48)
                 {
-                    if (packet.Size < 48)
-                    {
-                        NetDebug.Write(NetLogLevel.Trace, $"NTP response too short: {packet.Size}");
-                        return;
-                    }
-
-                    byte[] copiedData = new byte[packet.Size];
-                    Buffer.BlockCopy(packet.RawData, 0, copiedData, 0, packet.Size);
-                    NtpPacket ntpPacket = NtpPacket.FromServerResponse(copiedData, DateTime.UtcNow);
-                    try
-                    {
-                        ntpPacket.ValidateReply();
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        NetDebug.Write(NetLogLevel.Trace, $"NTP response error: {ex.Message}");
-                        ntpPacket = null;
-                    }
-
-                    if (ntpPacket != null)
-                    {
-                        _ntpRequests.TryRemove(remoteEndPoint, out _);
-                        _ntpEventListener?.OnNtpResponse(ntpPacket);
-                    }
+                    NetDebug.Write(NetLogLevel.Trace, $"NTP response too short: {packet.Size}");
                     return;
                 }
+
+                byte[] copiedData = new byte[packet.Size];
+                Buffer.BlockCopy(packet.RawData, 0, copiedData, 0, packet.Size);
+                NtpPacket ntpPacket = NtpPacket.FromServerResponse(copiedData, DateTime.UtcNow);
+                try
+                {
+                    ntpPacket.ValidateReply();
+                }
+                catch (InvalidOperationException ex)
+                {
+                    NetDebug.Write(NetLogLevel.Trace, $"NTP response error: {ex.Message}");
+                    ntpPacket = null;
+                }
+
+                if (ntpPacket != null)
+                {
+                    _ntpRequests.TryRemove(remoteEndPoint, out _);
+                    _ntpEventListener?.OnNtpResponse(ntpPacket);
+                }
+                return;
             }
 
             if (_extraPacketLayer != null)
             {
-                int start = 0;
-                _extraPacketLayer.ProcessInboundPacket(ref remoteEndPoint, ref packet.RawData, ref start, ref packet.Size);
+                _extraPacketLayer.ProcessInboundPacket(ref remoteEndPoint, ref packet.RawData, ref packet.Size);
                 if (packet.Size == 0)
                     return;
             }

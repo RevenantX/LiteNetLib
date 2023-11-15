@@ -578,8 +578,7 @@ namespace LiteNetLib.Utils
             if (ClassInfo<T>.Instance != null)
                 return ClassInfo<T>.Instance;
 
-            Type t = typeof(T);
-            var props = t.GetProperties(
+            var props = typeof(T).GetProperties(
                 BindingFlags.Instance |
                 BindingFlags.Public |
                 BindingFlags.GetProperty |

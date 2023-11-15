@@ -47,22 +47,20 @@ namespace LibSample
             _decryptor = _aes.CreateDecryptor();
         }
 
-        public override void ProcessInboundPacket(ref IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public override void ProcessInboundPacket(ref IPEndPoint endPoint, ref byte[] data, ref int length)
         {
             //Can't copy directly to _aes.IV. It won't work for some reason.
-            Buffer.BlockCopy(data, offset, ivBuffer, 0, ivBuffer.Length);
+            Buffer.BlockCopy(data, 0, ivBuffer, 0, ivBuffer.Length);
             //_aes.IV = ivBuffer;
             _decryptor = _aes.CreateDecryptor(_aes.Key, ivBuffer);
-            offset += BlockSizeInBytes;
 
             //int currentRead = ivBuffer.Length;
             //int currentWrite = 0;
 
             //TransformBlocks(_decryptor, data, length, ref currentRead, ref currentWrite);
-            byte[] lastBytes = _decryptor.TransformFinalBlock(data, offset, length - offset);
+            byte[] lastBytes = _decryptor.TransformFinalBlock(data, BlockSizeInBytes, length - BlockSizeInBytes);
 
             data = lastBytes;
-            offset = 0;
             length = lastBytes.Length;
         }
 
