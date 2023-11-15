@@ -146,7 +146,8 @@ namespace LiteNetLib
             //Reading data
             packet.Size = NativeSocket.RecvFrom(s, packet.RawData, NetConstants.MaxPacketSize, addrBuffer, ref addrSize);
             if (packet.Size == 0)
-                return false; //socket closed
+                return true; //socket closed or empty packet
+
             if (packet.Size == -1)
             {
                 var errorCode = NativeSocket.GetSocketError();
@@ -187,21 +188,24 @@ namespace LiteNetLib
                     continue;
                 }
                 bool messageReceived = false;
-                if (socketv4.Available != 0)
+                if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
                 {
                     if (NativeReceiveFrom(ref packet, socketHandle4, addrBuffer4, addrSize4) == false)
                         return;
                     messageReceived = true;
                 }
-                if (socketV6.Available != 0)
+                if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
                 {
                     if (NativeReceiveFrom(ref packet, socketHandle6, addrBuffer6, addrSize6) == false)
                         return;
                     messageReceived = true;
                 }
+
+                selectReadList.Clear();
+
                 if (messageReceived)
                     continue;
-                selectReadList.Clear();
+
                 selectReadList.Add(socketv4);
                 selectReadList.Add(socketV6);
                 try
@@ -260,20 +264,22 @@ namespace LiteNetLib
                     else
                     {
                         bool messageReceived = false;
-                        if (socketv4.Available != 0)
+                        if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
                         {
                             ReceiveFrom(socketv4, ref bufferEndPoint4);
                             messageReceived = true;
                         }
-                        if (socketV6.Available != 0)
+                        if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
                         {
                             ReceiveFrom(socketV6, ref bufferEndPoint6);
                             messageReceived = true;
                         }
+
+                        selectReadList.Clear();
+
                         if (messageReceived)
                             continue;
 
-                        selectReadList.Clear();
                         selectReadList.Add(socketv4);
                         selectReadList.Add(socketV6);
                         Socket.Select(selectReadList, null, null, ReceivePollingTime);
