@@ -405,6 +405,7 @@ namespace LiteNetLib
             {
                 socket.ExclusiveAddressUse = !ReuseAddress;
                 socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, ReuseAddress);
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontRoute, true);
             }
             catch
             {
