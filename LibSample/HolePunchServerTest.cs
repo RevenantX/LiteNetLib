@@ -91,7 +91,7 @@ namespace LibSample
 
             clientListener.PeerConnectedEvent += peer =>
             {
-                Console.WriteLine("PeerConnected: " + peer.EndPoint);
+                Console.WriteLine("PeerConnected: " + peer);
             };
 
             clientListener.ConnectionRequestEvent += request =>

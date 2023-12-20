@@ -841,15 +841,15 @@ references:
   fullName.vb: LiteNetLib.Layers.Crc32cLayer.New
   nameWithType: Crc32cLayer.Crc32cLayer
   nameWithType.vb: Crc32cLayer.New
-- uid: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@,System.Int32@)
-  name: ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int, ref int)
-  href: api/LiteNetLib.Layers.Crc32cLayer.html#LiteNetLib_Layers_Crc32cLayer_ProcessInboundPacket_System_Net_IPEndPoint__System_Byte____System_Int32__System_Int32__
-  commentId: M:LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@,System.Int32@)
-  name.vb: ProcessInboundPacket(IPEndPoint, Byte(), Integer, Integer)
-  fullName: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(ref System.Net.IPEndPoint, ref byte[], ref int, ref int)
-  fullName.vb: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint, Byte(), Integer, Integer)
-  nameWithType: Crc32cLayer.ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int, ref int)
-  nameWithType.vb: Crc32cLayer.ProcessInboundPacket(IPEndPoint, Byte(), Integer, Integer)
+- uid: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@)
+  name: ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int)
+  href: api/LiteNetLib.Layers.Crc32cLayer.html#LiteNetLib_Layers_Crc32cLayer_ProcessInboundPacket_System_Net_IPEndPoint__System_Byte____System_Int32__
+  commentId: M:LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@)
+  name.vb: ProcessInboundPacket(IPEndPoint, Byte(), Integer)
+  fullName: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(ref System.Net.IPEndPoint, ref byte[], ref int)
+  fullName.vb: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket(System.Net.IPEndPoint, Byte(), Integer)
+  nameWithType: Crc32cLayer.ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int)
+  nameWithType.vb: Crc32cLayer.ProcessInboundPacket(IPEndPoint, Byte(), Integer)
 - uid: LiteNetLib.Layers.Crc32cLayer.ProcessInboundPacket*
   name: ProcessInboundPacket
   href: api/LiteNetLib.Layers.Crc32cLayer.html#LiteNetLib_Layers_Crc32cLayer_ProcessInboundPacket_
@@ -904,15 +904,15 @@ references:
   commentId: F:LiteNetLib.Layers.PacketLayerBase.ExtraPacketSizeForLayer
   fullName: LiteNetLib.Layers.PacketLayerBase.ExtraPacketSizeForLayer
   nameWithType: PacketLayerBase.ExtraPacketSizeForLayer
-- uid: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@,System.Int32@)
-  name: ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int, ref int)
-  href: api/LiteNetLib.Layers.PacketLayerBase.html#LiteNetLib_Layers_PacketLayerBase_ProcessInboundPacket_System_Net_IPEndPoint__System_Byte____System_Int32__System_Int32__
-  commentId: M:LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@,System.Int32@)
-  name.vb: ProcessInboundPacket(IPEndPoint, Byte(), Integer, Integer)
-  fullName: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(ref System.Net.IPEndPoint, ref byte[], ref int, ref int)
-  fullName.vb: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint, Byte(), Integer, Integer)
-  nameWithType: PacketLayerBase.ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int, ref int)
-  nameWithType.vb: PacketLayerBase.ProcessInboundPacket(IPEndPoint, Byte(), Integer, Integer)
+- uid: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@)
+  name: ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int)
+  href: api/LiteNetLib.Layers.PacketLayerBase.html#LiteNetLib_Layers_PacketLayerBase_ProcessInboundPacket_System_Net_IPEndPoint__System_Byte____System_Int32__
+  commentId: M:LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@)
+  name.vb: ProcessInboundPacket(IPEndPoint, Byte(), Integer)
+  fullName: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(ref System.Net.IPEndPoint, ref byte[], ref int)
+  fullName.vb: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket(System.Net.IPEndPoint, Byte(), Integer)
+  nameWithType: PacketLayerBase.ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int)
+  nameWithType.vb: PacketLayerBase.ProcessInboundPacket(IPEndPoint, Byte(), Integer)
 - uid: LiteNetLib.Layers.PacketLayerBase.ProcessInboundPacket*
   name: ProcessInboundPacket
   href: api/LiteNetLib.Layers.PacketLayerBase.html#LiteNetLib_Layers_PacketLayerBase_ProcessInboundPacket_
@@ -979,15 +979,15 @@ references:
   fullName.vb: LiteNetLib.Layers.XorEncryptLayer.New
   nameWithType: XorEncryptLayer.XorEncryptLayer
   nameWithType.vb: XorEncryptLayer.New
-- uid: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@,System.Int32@)
-  name: ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int, ref int)
-  href: api/LiteNetLib.Layers.XorEncryptLayer.html#LiteNetLib_Layers_XorEncryptLayer_ProcessInboundPacket_System_Net_IPEndPoint__System_Byte____System_Int32__System_Int32__
-  commentId: M:LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@,System.Int32@)
-  name.vb: ProcessInboundPacket(IPEndPoint, Byte(), Integer, Integer)
-  fullName: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(ref System.Net.IPEndPoint, ref byte[], ref int, ref int)
-  fullName.vb: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint, Byte(), Integer, Integer)
-  nameWithType: XorEncryptLayer.ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int, ref int)
-  nameWithType.vb: XorEncryptLayer.ProcessInboundPacket(IPEndPoint, Byte(), Integer, Integer)
+- uid: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@)
+  name: ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int)
+  href: api/LiteNetLib.Layers.XorEncryptLayer.html#LiteNetLib_Layers_XorEncryptLayer_ProcessInboundPacket_System_Net_IPEndPoint__System_Byte____System_Int32__
+  commentId: M:LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint@,System.Byte[]@,System.Int32@)
+  name.vb: ProcessInboundPacket(IPEndPoint, Byte(), Integer)
+  fullName: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(ref System.Net.IPEndPoint, ref byte[], ref int)
+  fullName.vb: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket(System.Net.IPEndPoint, Byte(), Integer)
+  nameWithType: XorEncryptLayer.ProcessInboundPacket(ref IPEndPoint, ref byte[], ref int)
+  nameWithType.vb: XorEncryptLayer.ProcessInboundPacket(IPEndPoint, Byte(), Integer)
 - uid: LiteNetLib.Layers.XorEncryptLayer.ProcessInboundPacket*
   name: ProcessInboundPacket
   href: api/LiteNetLib.Layers.XorEncryptLayer.html#LiteNetLib_Layers_XorEncryptLayer_ProcessInboundPacket_
@@ -1520,6 +1520,12 @@ references:
   commentId: F:LiteNetLib.NetManager.DisconnectTimeout
   fullName: LiteNetLib.NetManager.DisconnectTimeout
   nameWithType: NetManager.DisconnectTimeout
+- uid: LiteNetLib.NetManager.DontRoute
+  name: DontRoute
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_DontRoute
+  commentId: F:LiteNetLib.NetManager.DontRoute
+  fullName: LiteNetLib.NetManager.DontRoute
+  nameWithType: NetManager.DontRoute
 - uid: LiteNetLib.NetManager.EnableStatistics
   name: EnableStatistics
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_EnableStatistics
@@ -1957,6 +1963,33 @@ references:
   fullName.vb: LiteNetLib.NetManager.SendToAll(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod)
   nameWithType: NetManager.SendToAll(byte[], int, int, byte, DeliveryMethod)
   nameWithType.vb: NetManager.SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod)
+- uid: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
+  name: SendToAll(ReadOnlySpan<byte>, DeliveryMethod, NetPeer)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
+  name.vb: SendToAll(ReadOnlySpan(Of Byte), DeliveryMethod, NetPeer)
+  fullName: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan<byte>, LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan(Of Byte), LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
+  nameWithType: NetManager.SendToAll(ReadOnlySpan<byte>, DeliveryMethod, NetPeer)
+  nameWithType.vb: NetManager.SendToAll(ReadOnlySpan(Of Byte), DeliveryMethod, NetPeer)
+- uid: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod)
+  name: SendToAll(ReadOnlySpan<byte>, DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod)
+  name.vb: SendToAll(ReadOnlySpan(Of Byte), DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan<byte>, LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan(Of Byte), LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(ReadOnlySpan<byte>, DeliveryMethod)
+  nameWithType.vb: NetManager.SendToAll(ReadOnlySpan(Of Byte), DeliveryMethod)
+- uid: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
+  name: SendToAll(ReadOnlySpan<byte>, byte, DeliveryMethod, NetPeer)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)
+  name.vb: SendToAll(ReadOnlySpan(Of Byte), Byte, DeliveryMethod, NetPeer)
+  fullName: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan<byte>, byte, LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan(Of Byte), Byte, LiteNetLib.DeliveryMethod, LiteNetLib.NetPeer)
+  nameWithType: NetManager.SendToAll(ReadOnlySpan<byte>, byte, DeliveryMethod, NetPeer)
+  nameWithType.vb: NetManager.SendToAll(ReadOnlySpan(Of Byte), Byte, DeliveryMethod, NetPeer)
 - uid: LiteNetLib.NetManager.SendToAll*
   name: SendToAll
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_
@@ -2034,22 +2067,6 @@ references:
   commentId: F:LiteNetLib.NetManager.SimulationPacketLossChance
   fullName: LiteNetLib.NetManager.SimulationPacketLossChance
   nameWithType: NetManager.SimulationPacketLossChance
-- uid: LiteNetLib.NetManager.SocketActive(System.Boolean)
-  name: SocketActive(bool)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SocketActive_System_Boolean_
-  commentId: M:LiteNetLib.NetManager.SocketActive(System.Boolean)
-  name.vb: SocketActive(Boolean)
-  fullName: LiteNetLib.NetManager.SocketActive(bool)
-  fullName.vb: LiteNetLib.NetManager.SocketActive(Boolean)
-  nameWithType: NetManager.SocketActive(bool)
-  nameWithType.vb: NetManager.SocketActive(Boolean)
-- uid: LiteNetLib.NetManager.SocketActive*
-  name: SocketActive
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SocketActive_
-  commentId: Overload:LiteNetLib.NetManager.SocketActive
-  isSpec: "True"
-  fullName: LiteNetLib.NetManager.SocketActive
-  nameWithType: NetManager.SocketActive
 - uid: LiteNetLib.NetManager.Start
   name: Start()
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_Start
@@ -2336,19 +2353,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetPeer.Disconnect
   nameWithType: NetPeer.Disconnect
-- uid: LiteNetLib.NetPeer.EndPoint
-  name: EndPoint
-  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_EndPoint
-  commentId: P:LiteNetLib.NetPeer.EndPoint
-  fullName: LiteNetLib.NetPeer.EndPoint
-  nameWithType: NetPeer.EndPoint
-- uid: LiteNetLib.NetPeer.EndPoint*
-  name: EndPoint
-  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_EndPoint_
-  commentId: Overload:LiteNetLib.NetPeer.EndPoint
+- uid: LiteNetLib.NetPeer.GetHashCode
+  name: GetHashCode()
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_GetHashCode
+  commentId: M:LiteNetLib.NetPeer.GetHashCode
+  fullName: LiteNetLib.NetPeer.GetHashCode()
+  nameWithType: NetPeer.GetHashCode()
+- uid: LiteNetLib.NetPeer.GetHashCode*
+  name: GetHashCode
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_GetHashCode_
+  commentId: Overload:LiteNetLib.NetPeer.GetHashCode
   isSpec: "True"
-  fullName: LiteNetLib.NetPeer.EndPoint
-  nameWithType: NetPeer.EndPoint
+  fullName: LiteNetLib.NetPeer.GetHashCode
+  nameWithType: NetPeer.GetHashCode
 - uid: LiteNetLib.NetPeer.GetMaxSinglePacketSize(LiteNetLib.DeliveryMethod)
   name: GetMaxSinglePacketSize(DeliveryMethod)
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_GetMaxSinglePacketSize_LiteNetLib_DeliveryMethod_
@@ -2603,6 +2620,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetPeer.SendWithDeliveryEvent
   nameWithType: NetPeer.SendWithDeliveryEvent
+- uid: LiteNetLib.NetPeer.Serialize
+  name: Serialize()
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Serialize
+  commentId: M:LiteNetLib.NetPeer.Serialize
+  fullName: LiteNetLib.NetPeer.Serialize()
+  nameWithType: NetPeer.Serialize()
+- uid: LiteNetLib.NetPeer.Serialize*
+  name: Serialize
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Serialize_
+  commentId: Overload:LiteNetLib.NetPeer.Serialize
+  isSpec: "True"
+  fullName: LiteNetLib.NetPeer.Serialize
+  nameWithType: NetPeer.Serialize
 - uid: LiteNetLib.NetPeer.Statistics
   name: Statistics
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Statistics
@@ -3203,6 +3233,141 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.EndOfData
   nameWithType: NetDataReader.EndOfData
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.Boolean@)
+  name: Get(out bool)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_Boolean__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.Boolean@)
+  name.vb: Get(Boolean)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out bool)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Boolean)
+  nameWithType: NetDataReader.Get(out bool)
+  nameWithType.vb: NetDataReader.Get(Boolean)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.Byte@)
+  name: Get(out byte)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_Byte__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.Byte@)
+  name.vb: Get(Byte)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out byte)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Byte)
+  nameWithType: NetDataReader.Get(out byte)
+  nameWithType.vb: NetDataReader.Get(Byte)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.Char@)
+  name: Get(out char)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_Char__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.Char@)
+  name.vb: Get(Char)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out char)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Char)
+  nameWithType: NetDataReader.Get(out char)
+  nameWithType.vb: NetDataReader.Get(Char)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.Double@)
+  name: Get(out double)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_Double__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.Double@)
+  name.vb: Get(Double)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out double)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Double)
+  nameWithType: NetDataReader.Get(out double)
+  nameWithType.vb: NetDataReader.Get(Double)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.Int16@)
+  name: Get(out short)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_Int16__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.Int16@)
+  name.vb: Get(Short)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out short)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Short)
+  nameWithType: NetDataReader.Get(out short)
+  nameWithType.vb: NetDataReader.Get(Short)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.Int32@)
+  name: Get(out int)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_Int32__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.Int32@)
+  name.vb: Get(Integer)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out int)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Integer)
+  nameWithType: NetDataReader.Get(out int)
+  nameWithType.vb: NetDataReader.Get(Integer)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.Int64@)
+  name: Get(out long)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_Int64__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.Int64@)
+  name.vb: Get(Long)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out long)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Long)
+  nameWithType: NetDataReader.Get(out long)
+  nameWithType.vb: NetDataReader.Get(Long)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.Net.IPEndPoint@)
+  name: Get(out IPEndPoint)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_Net_IPEndPoint__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.Net.IPEndPoint@)
+  name.vb: Get(IPEndPoint)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out System.Net.IPEndPoint)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(System.Net.IPEndPoint)
+  nameWithType: NetDataReader.Get(out IPEndPoint)
+  nameWithType.vb: NetDataReader.Get(IPEndPoint)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.SByte@)
+  name: Get(out sbyte)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_SByte__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.SByte@)
+  name.vb: Get(SByte)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out sbyte)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(SByte)
+  nameWithType: NetDataReader.Get(out sbyte)
+  nameWithType.vb: NetDataReader.Get(SByte)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.Single@)
+  name: Get(out float)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_Single__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.Single@)
+  name.vb: Get(Single)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out float)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Single)
+  nameWithType: NetDataReader.Get(out float)
+  nameWithType.vb: NetDataReader.Get(Single)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.String@,System.Int32)
+  name: Get(out string, int)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_String__System_Int32_
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.String@,System.Int32)
+  name.vb: Get(String, Integer)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out string, int)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(String, Integer)
+  nameWithType: NetDataReader.Get(out string, int)
+  nameWithType.vb: NetDataReader.Get(String, Integer)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.String@)
+  name: Get(out string)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_String__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.String@)
+  name.vb: Get(String)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out string)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(String)
+  nameWithType: NetDataReader.Get(out string)
+  nameWithType.vb: NetDataReader.Get(String)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.UInt16@)
+  name: Get(out ushort)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_UInt16__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.UInt16@)
+  name.vb: Get(UShort)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out ushort)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(UShort)
+  nameWithType: NetDataReader.Get(out ushort)
+  nameWithType.vb: NetDataReader.Get(UShort)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.UInt32@)
+  name: Get(out uint)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_UInt32__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.UInt32@)
+  name.vb: Get(UInteger)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out uint)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(UInteger)
+  nameWithType: NetDataReader.Get(out uint)
+  nameWithType.vb: NetDataReader.Get(UInteger)
+- uid: LiteNetLib.Utils.NetDataReader.Get(System.UInt64@)
+  name: Get(out ulong)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_System_UInt64__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get(System.UInt64@)
+  name.vb: Get(ULong)
+  fullName: LiteNetLib.Utils.NetDataReader.Get(out ulong)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(ULong)
+  nameWithType: NetDataReader.Get(out ulong)
+  nameWithType.vb: NetDataReader.Get(ULong)
 - uid: LiteNetLib.Utils.NetDataReader.Get*
   name: Get
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get_
@@ -3219,6 +3384,24 @@ references:
   fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Of T)()
   nameWithType: NetDataReader.Get<T>()
   nameWithType.vb: NetDataReader.Get(Of T)()
+- uid: LiteNetLib.Utils.NetDataReader.Get``1(``0@,System.Func{``0})
+  name: Get<T>(out T, Func<T>)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get__1___0__System_Func___0__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get``1(``0@,System.Func{``0})
+  name.vb: Get(Of T)(T, Func(Of T))
+  fullName: LiteNetLib.Utils.NetDataReader.Get<T>(out T, System.Func<T>)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Of T)(T, System.Func(Of T))
+  nameWithType: NetDataReader.Get<T>(out T, Func<T>)
+  nameWithType.vb: NetDataReader.Get(Of T)(T, Func(Of T))
+- uid: LiteNetLib.Utils.NetDataReader.Get``1(``0@)
+  name: Get<T>(out T)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get__1___0__
+  commentId: M:LiteNetLib.Utils.NetDataReader.Get``1(``0@)
+  name.vb: Get(Of T)(T)
+  fullName: LiteNetLib.Utils.NetDataReader.Get<T>(out T)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.Get(Of T)(T)
+  nameWithType: NetDataReader.Get<T>(out T)
+  nameWithType.vb: NetDataReader.Get(Of T)(T)
 - uid: LiteNetLib.Utils.NetDataReader.Get``1(System.Func{``0})
   name: Get<T>(Func<T>)
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get__1_System_Func___0__
@@ -3493,6 +3676,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.GetRemainingBytesSegment
   nameWithType: NetDataReader.GetRemainingBytesSegment
+- uid: LiteNetLib.Utils.NetDataReader.GetRemainingBytesSpan
+  name: GetRemainingBytesSpan()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetRemainingBytesSpan
+  commentId: M:LiteNetLib.Utils.NetDataReader.GetRemainingBytesSpan
+  fullName: LiteNetLib.Utils.NetDataReader.GetRemainingBytesSpan()
+  nameWithType: NetDataReader.GetRemainingBytesSpan()
+- uid: LiteNetLib.Utils.NetDataReader.GetRemainingBytesSpan*
+  name: GetRemainingBytesSpan
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetRemainingBytesSpan_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.GetRemainingBytesSpan
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.GetRemainingBytesSpan
+  nameWithType: NetDataReader.GetRemainingBytesSpan
 - uid: LiteNetLib.Utils.NetDataReader.GetSByte
   name: GetSByte()
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetSByte
@@ -5554,3 +5750,9 @@ references:
   fullName.vb: LiteNetLib.Utils.ParseException.New
   nameWithType: ParseException.ParseException
   nameWithType.vb: ParseException.New
+- uid: LiteNetLib.Utils.PreserveAttribute
+  name: PreserveAttribute
+  href: api/LiteNetLib.Utils.PreserveAttribute.html
+  commentId: T:LiteNetLib.Utils.PreserveAttribute
+  fullName: LiteNetLib.Utils.PreserveAttribute
+  nameWithType: PreserveAttribute

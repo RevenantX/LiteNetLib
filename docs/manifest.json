@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "E:/Projects/LiteNetLib/docfx_project",
+  "source_base_path": "e:/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -459,6 +459,16 @@
       "output": {
         ".html": {
           "relative_path": "api/LiteNetLib.Utils.ParseException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.PreserveAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.PreserveAttribute.html"
         }
       },
       "version": ""

@@ -69,7 +69,7 @@ namespace LibSample
 
             void INetEventListener.OnPeerConnected(NetPeer peer)
             {
-                Console.WriteLine($"Server: client connected: {peer.EndPoint}");
+                Console.WriteLine($"Server: client connected: {peer}");
             }
 
             void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
