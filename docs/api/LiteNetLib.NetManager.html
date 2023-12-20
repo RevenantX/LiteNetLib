@@ -259,6 +259,33 @@
   </table>
 
 
+  <h4 id="LiteNetLib_NetManager_DontRoute" data-uid="LiteNetLib.NetManager.DontRoute">DontRoute</h4>
+  <div class="markdown level1 summary"><p>UDP Only Socket Option
+Normally IP sockets send packets of data through routers and gateways until they reach the final destination.
+If the DontRoute flag is set to True, then data will be delivered on the local subnet only.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool DontRoute</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <h4 id="LiteNetLib_NetManager_EnableStatistics" data-uid="LiteNetLib.NetManager.EnableStatistics">EnableStatistics</h4>
   <div class="markdown level1 summary"><p>Toggles the collection of network statistics for the instance and all known peers</p>
 </div>
@@ -2603,6 +2630,129 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
   </table>
 
 
+  <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(ReadOnlySpan&lt;byte&gt;, DeliveryMethod, NetPeer)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendToAll(ReadOnlySpan&lt;byte&gt; data, DeliveryMethod options, NetPeer excludePeer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">excludePeer</span></td>
+        <td><p>Excluded peer</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod)">SendToAll(ReadOnlySpan&lt;byte&gt;, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendToAll(ReadOnlySpan&lt;byte&gt; data, DeliveryMethod options)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(ReadOnlySpan&lt;byte&gt;, byte, DeliveryMethod, NetPeer)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendToAll(ReadOnlySpan&lt;byte&gt; data, byte channelNumber, DeliveryMethod options, NetPeer excludePeer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
+        <td><span class="parametername">channelNumber</span></td>
+        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">excludePeer</span></td>
+        <td><p>Excluded peer</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="LiteNetLib_NetManager_SendUnconnectedMessage_" data-uid="LiteNetLib.NetManager.SendUnconnectedMessage*"></a>
   <h4 id="LiteNetLib_NetManager_SendUnconnectedMessage_LiteNetLib_Utils_NetDataWriter_System_Net_IPEndPoint_" data-uid="LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.Net.IPEndPoint)">SendUnconnectedMessage(NetDataWriter, IPEndPoint)</h4>
   <div class="markdown level1 summary"><p>Send message without connection</p>
@@ -2822,48 +2972,6 @@ much faster to just cache the IPEndPoint.</p>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><p>Operation result</p>
 </td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_NetManager_SocketActive_" data-uid="LiteNetLib.NetManager.SocketActive*"></a>
-  <h4 id="LiteNetLib_NetManager_SocketActive_System_Boolean_" data-uid="LiteNetLib.NetManager.SocketActive(System.Boolean)">SocketActive(bool)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool SocketActive(bool ipv4)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">ipv4</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
       </tr>
     </tbody>
   </table>

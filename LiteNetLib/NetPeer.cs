@@ -196,10 +196,23 @@ namespace LiteNetLib
         public readonly NetStatistics Statistics;
 
         private SocketAddress _cachedSocketAddr;
+        private int _cachedHashCode;
 
+        internal byte[] NativeAddress;
+
+        /// <summary>
+        /// IPEndPoint serialize
+        /// </summary>
+        /// <returns>SocketAddress</returns>
         public override SocketAddress Serialize()
         {
-            return _cachedSocketAddr ?? (_cachedSocketAddr = base.Serialize());
+            return _cachedSocketAddr;
+        }
+
+        public override int GetHashCode()
+        {
+            //uses SocketAddress hash in NET8 and IPEndPoint hash for NativeSockets and previous NET versions
+            return _cachedHashCode;
         }
 
         //incoming connection constructor
@@ -208,6 +221,16 @@ namespace LiteNetLib
             Id = id;
             Statistics = new NetStatistics();
             NetManager = netManager;
+
+            if (NetManager.UseNativeSockets && remoteEndPoint is NativeEndPoint nep)
+                NativeAddress = nep.NativeAddress;
+            _cachedSocketAddr = base.Serialize();
+#if NET8_0_OR_GREATER
+            _cachedHashCode = NetManager.UseNativeSockets ? base.GetHashCode() : _cachedSocketAddr.GetHashCode();
+#else
+            _cachedHashCode = base.GetHashCode();
+#endif
+
             ResetMtu();
 
             _connectionState = ConnectionState.Connected;
@@ -234,8 +257,18 @@ namespace LiteNetLib
             if (_connectionState != ConnectionState.EndPointChange)
                 return;
             _connectionState = ConnectionState.Connected;
+            
             Address = newEndPoint.Address;
             Port = newEndPoint.Port;
+
+            if (NetManager.UseNativeSockets && newEndPoint is NativeEndPoint nep)
+                NativeAddress = nep.NativeAddress;
+            _cachedSocketAddr = base.Serialize();
+#if NET8_0_OR_GREATER
+            _cachedHashCode = NetManager.UseNativeSockets ? base.GetHashCode() : _cachedSocketAddr.GetHashCode();
+#else
+            _cachedHashCode = base.GetHashCode();
+#endif
         }
 
         internal void ResetMtu()
@@ -1069,11 +1102,10 @@ namespace LiteNetLib
                     //slow rare case check
                     if (connRequest.ConnectionTime == _connectTime)
                     {
-                        var remoteBytes = this.Serialize();
                         var localBytes = connRequest.TargetAddress;
-                        for (int i = remoteBytes.Size-1; i >= 0; i--)
+                        for (int i = _cachedSocketAddr.Size-1; i >= 0; i--)
                         {
-                            byte rb = remoteBytes[i];
+                            byte rb = _cachedSocketAddr[i];
                             if (rb == localBytes[i])
                                 continue;
                             if (rb < localBytes[i])

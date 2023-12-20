@@ -7,75 +7,20 @@ using System.Runtime.InteropServices;
 
 namespace LiteNetLib
 {
-    internal readonly struct NativeAddr : IEquatable<NativeAddr>
-    {
-        //common parts
-        private readonly long _part1; //family, port, etc
-        private readonly long _part2;
-        //ipv6 parts
-        private readonly long _part3;
-        private readonly int _part4;
-
-        private readonly int _hash;
-
-        public NativeAddr(byte[] address)
-        {
-            _part1 = BitConverter.ToInt64(address, 0);
-            _part2 = BitConverter.ToInt64(address, 8);
-            if (address.Length > 16)
-            {
-                _part3 = BitConverter.ToInt64(address, 16);
-                _part4 = BitConverter.ToInt32(address, 24);
-            }
-            else
-            {
-                _part3 = 0;
-                _part4 = 0;
-            }
-            _hash = (int)(_part1 >> 32) ^ (int)_part1 ^
-                    (int)(_part2 >> 32) ^ (int)_part2 ^
-                    (int)(_part3 >> 32) ^ (int)_part3 ^
-                    _part4;
-        }
-
-        public override int GetHashCode()
-        {
-            return _hash;
-        }
-
-        public bool Equals(NativeAddr other)
-        {
-            return _part1 == other._part1 &&
-                   _part2 == other._part2 &&
-                   _part3 == other._part3 &&
-                   _part4 == other._part4;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is NativeAddr other && Equals(other);
-        }
-
-        public static bool operator ==(NativeAddr left, NativeAddr right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(NativeAddr left, NativeAddr right)
-        {
-            return !left.Equals(right);
-        }
-    }
-
     internal class NativeEndPoint : IPEndPoint
     {
         public byte[] NativeAddress;
 
+        public void CopyNativeAddress()
+        {
+            var tempAddr = new byte[NativeAddress.Length];
+            Buffer.BlockCopy(NativeAddress, 0, tempAddr, 0, NativeAddress.Length);
+            NativeAddress = tempAddr;
+        }
+
         public void SetNetAddress(byte[] address)
         {
-            NativeAddress = new byte[address.Length];
-            Buffer.BlockCopy(address, 0, NativeAddress, 0, address.Length);
-
+            NativeAddress = address;
             short family = (short)((address[1] << 8) | address[0]);
             Port         =(ushort)((address[2] << 8) | address[3]);
 
