@@ -212,57 +212,6 @@
 
 
   <a id="LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_LiteNetLib_Utils_NetDataReader_System_Object_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader,System.Object)">ReadAllPackets(NetDataReader, object)</h4>
-  <div class="markdown level1 summary"><p>Reads all available data from NetDataReader and calls OnReceive delegates</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void ReadAllPackets(NetDataReader reader, object userData)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a></td>
-        <td><span class="parametername">reader</span></td>
-        <td><p>NetDataReader with packets data</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
-        <td><span class="parametername">userData</span></td>
-        <td><p>Argument that passed to OnReceivedEvent</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="exceptions">Exceptions</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Condition</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.Utils.ParseException.html">ParseException</a></td>
-        <td><p>Malformed packet</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets*"></a>
   <h4 id="LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_LiteNetLib_Utils_NetDataReader_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader)">ReadAllPackets(NetDataReader)</h4>
   <div class="markdown level1 summary"><p>Reads all available data from NetDataReader and calls OnReceive delegates</p>
 </div>
@@ -291,14 +240,14 @@
   </table>
 
 
-  <a id="LiteNetLib_Utils_NetPacketProcessor_ReadPacket_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadPacket*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_ReadPacket_LiteNetLib_Utils_NetDataReader_System_Object_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader,System.Object)">ReadPacket(NetDataReader, object)</h4>
-  <div class="markdown level1 summary"><p>Reads one packet from NetDataReader and calls OnReceive delegate</p>
+  <a id="LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets*"></a>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_ReadAllPackets_LiteNetLib_Utils_NetDataReader_System_Object_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadAllPackets(LiteNetLib.Utils.NetDataReader,System.Object)">ReadAllPackets(NetDataReader, object)</h4>
+  <div class="markdown level1 summary"><p>Reads all available data from NetDataReader and calls OnReceive delegates</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void ReadPacket(NetDataReader reader, object userData)</code></pre>
+    <pre><code class="lang-csharp hljs">public void ReadAllPackets(NetDataReader reader, object userData)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -313,7 +262,7 @@
       <tr>
         <td><a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a></td>
         <td><span class="parametername">reader</span></td>
-        <td><p>NetDataReader with packet</p>
+        <td><p>NetDataReader with packets data</p>
 </td>
       </tr>
       <tr>
@@ -365,6 +314,57 @@
         <td><a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a></td>
         <td><span class="parametername">reader</span></td>
         <td><p>NetDataReader with packet</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.ParseException.html">ParseException</a></td>
+        <td><p>Malformed packet</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetPacketProcessor_ReadPacket_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadPacket*"></a>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_ReadPacket_LiteNetLib_Utils_NetDataReader_System_Object_" data-uid="LiteNetLib.Utils.NetPacketProcessor.ReadPacket(LiteNetLib.Utils.NetDataReader,System.Object)">ReadPacket(NetDataReader, object)</h4>
+  <div class="markdown level1 summary"><p>Reads one packet from NetDataReader and calls OnReceive delegate</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ReadPacket(NetDataReader reader, object userData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td><p>NetDataReader with packet</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">userData</span></td>
+        <td><p>Argument that passed to OnReceivedEvent</p>
 </td>
       </tr>
     </tbody>
@@ -549,14 +549,13 @@
   </table>
 
 
-  <a id="LiteNetLib_Utils_NetPacketProcessor_Subscribe_" data-uid="LiteNetLib.Utils.NetPacketProcessor.Subscribe*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_Subscribe__1_System_Action___0__System_Func___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.Subscribe``1(System.Action{``0},System.Func{``0})">Subscribe&lt;T&gt;(Action&lt;T&gt;, Func&lt;T&gt;)</h4>
-  <div class="markdown level1 summary"><p>Register and subscribe to packet receive event</p>
-</div>
+  <a id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable*"></a>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__1_System_Action___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``1(System.Action{``0})">SubscribeNetSerializable&lt;T&gt;(Action&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Subscribe&lt;T&gt;(Action&lt;T&gt; onReceive, Func&lt;T&gt; packetConstructor) where T : class, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public void SubscribeNetSerializable&lt;T&gt;(Action&lt;T&gt; onReceive) where T : INetSerializable, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -571,14 +570,7 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;T&gt;</td>
         <td><span class="parametername">onReceive</span></td>
-        <td><p>event that will be called when packet deserialized with ReadPacket method</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
-        <td><span class="parametername">packetConstructor</span></td>
-        <td><p>Method that constructs packet instead of slow Activator.CreateInstance</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -594,92 +586,6 @@
       <tr>
         <td><span class="parametername">T</span></td>
         <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="exceptions">Exceptions</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Condition</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></td>
-        <td><p><code class="typeparamref">T</code>'s fields are not supported, or it has no fields</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_Utils_NetPacketProcessor_Subscribe_" data-uid="LiteNetLib.Utils.NetPacketProcessor.Subscribe*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_Subscribe__2_System_Action___0___1__System_Func___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.Subscribe``2(System.Action{``0,``1},System.Func{``0})">Subscribe&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt;, Func&lt;T&gt;)</h4>
-  <div class="markdown level1 summary"><p>Register and subscribe to packet receive event (with userData)</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Subscribe&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt; onReceive, Func&lt;T&gt; packetConstructor) where T : class, new()</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;T, TUserData&gt;</td>
-        <td><span class="parametername">onReceive</span></td>
-        <td><p>event that will be called when packet deserialized with ReadPacket method</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
-        <td><span class="parametername">packetConstructor</span></td>
-        <td><p>Method that constructs packet instead of slow Activator.CreateInstance</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">T</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="parametername">TUserData</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="exceptions">Exceptions</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Condition</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></td>
-        <td><p><code class="typeparamref">T</code>'s fields are not supported, or it has no fields</p>
-</td>
       </tr>
     </tbody>
   </table>
@@ -733,12 +639,12 @@
 
 
   <a id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__1_System_Action___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``1(System.Action{``0})">SubscribeNetSerializable&lt;T&gt;(Action&lt;T&gt;)</h4>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__2_System_Action___0___1__" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``2(System.Action{``0,``1})">SubscribeNetSerializable&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SubscribeNetSerializable&lt;T&gt;(Action&lt;T&gt; onReceive) where T : INetSerializable, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public void SubscribeNetSerializable&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt; onReceive) where T : INetSerializable, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -751,7 +657,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;T&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;T, TUserData&gt;</td>
         <td><span class="parametername">onReceive</span></td>
         <td></td>
       </tr>
@@ -768,6 +674,10 @@
     <tbody>
       <tr>
         <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TUserData</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -800,52 +710,6 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
         <td><span class="parametername">packetConstructor</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">T</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="parametername">TUserData</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__2_System_Action___0___1__" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``2(System.Action{``0,``1})">SubscribeNetSerializable&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt;)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SubscribeNetSerializable&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt; onReceive) where T : INetSerializable, new()</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;T, TUserData&gt;</td>
-        <td><span class="parametername">onReceive</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -997,13 +861,14 @@ This method will overwrite last received packet class on receive (less garbage)<
   </table>
 
 
-  <a id="LiteNetLib_Utils_NetPacketProcessor_Write_" data-uid="LiteNetLib.Utils.NetPacketProcessor.Write*"></a>
-  <h4 id="LiteNetLib_Utils_NetPacketProcessor_Write__1_LiteNetLib_Utils_NetDataWriter___0_" data-uid="LiteNetLib.Utils.NetPacketProcessor.Write``1(LiteNetLib.Utils.NetDataWriter,``0)">Write&lt;T&gt;(NetDataWriter, T)</h4>
-  <div class="markdown level1 summary"></div>
+  <a id="LiteNetLib_Utils_NetPacketProcessor_Subscribe_" data-uid="LiteNetLib.Utils.NetPacketProcessor.Subscribe*"></a>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_Subscribe__1_System_Action___0__System_Func___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.Subscribe``1(System.Action{``0},System.Func{``0})">Subscribe&lt;T&gt;(Action&lt;T&gt;, Func&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"><p>Register and subscribe to packet receive event</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Write&lt;T&gt;(NetDataWriter writer, T packet) where T : class, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public void Subscribe&lt;T&gt;(Action&lt;T&gt; onReceive, Func&lt;T&gt; packetConstructor) where T : class, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -1016,14 +881,16 @@ This method will overwrite last received packet class on receive (less garbage)<
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
-        <td><span class="parametername">writer</span></td>
-        <td></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;T&gt;</td>
+        <td><span class="parametername">onReceive</span></td>
+        <td><p>event that will be called when packet deserialized with ReadPacket method</p>
+</td>
       </tr>
       <tr>
-        <td><span class="xref">T</span></td>
-        <td><span class="parametername">packet</span></td>
-        <td></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
+        <td><span class="parametername">packetConstructor</span></td>
+        <td><p>Method that constructs packet instead of slow Activator.CreateInstance</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1039,6 +906,92 @@ This method will overwrite last received packet class on receive (less garbage)<
       <tr>
         <td><span class="parametername">T</span></td>
         <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></td>
+        <td><p><code class="typeparamref">T</code>'s fields are not supported, or it has no fields</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetPacketProcessor_Subscribe_" data-uid="LiteNetLib.Utils.NetPacketProcessor.Subscribe*"></a>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_Subscribe__2_System_Action___0___1__System_Func___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.Subscribe``2(System.Action{``0,``1},System.Func{``0})">Subscribe&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt;, Func&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"><p>Register and subscribe to packet receive event (with userData)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Subscribe&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt; onReceive, Func&lt;T&gt; packetConstructor) where T : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;T, TUserData&gt;</td>
+        <td><span class="parametername">onReceive</span></td>
+        <td><p>event that will be called when packet deserialized with ReadPacket method</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
+        <td><span class="parametername">packetConstructor</span></td>
+        <td><p>Method that constructs packet instead of slow Activator.CreateInstance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TUserData</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.InvalidTypeException.html">InvalidTypeException</a></td>
+        <td><p><code class="typeparamref">T</code>'s fields are not supported, or it has no fields</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1132,6 +1085,53 @@ This method will overwrite last received packet class on receive (less garbage)<
     </tbody>
   </table>
 
+
+  <a id="LiteNetLib_Utils_NetPacketProcessor_Write_" data-uid="LiteNetLib.Utils.NetPacketProcessor.Write*"></a>
+  <h4 id="LiteNetLib_Utils_NetPacketProcessor_Write__1_LiteNetLib_Utils_NetDataWriter___0_" data-uid="LiteNetLib.Utils.NetPacketProcessor.Write``1(LiteNetLib.Utils.NetDataWriter,``0)">Write&lt;T&gt;(NetDataWriter, T)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Write&lt;T&gt;(NetDataWriter writer, T packet) where T : class, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
+        <td><span class="parametername">writer</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">packet</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
 </article>
           </div>
 
@@ -1142,7 +1142,7 @@ This method will overwrite last received packet class on receive (less garbage)<
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In This Article</h5>
+                <h5>In this article</h5>
                 <div></div>
               </nav>
             </div>
