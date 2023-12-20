@@ -13,7 +13,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 
     [SerializeField] private GameObject _serverBall;
 
-    void Start()
+    private void Start()
     {
         NetDebug.Logger = this;
         _dataWriter = new NetDataWriter();
@@ -23,12 +23,12 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         _netServer.UpdateTime = 15;
     }
 
-    void Update()
+    private void Update()
     {
         _netServer.PollEvents();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (_ourPeer != null)
         {
@@ -39,25 +39,25 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         }
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
         NetDebug.Logger = null;
         if (_netServer != null)
             _netServer.Stop();
     }
 
-    public void OnPeerConnected(NetPeer peer)
+    void INetEventListener.OnPeerConnected(NetPeer peer)
     {
-        Debug.Log("[SERVER] We have new peer " + peer.EndPoint);
+        Debug.Log("[SERVER] We have new peer " + peer);
         _ourPeer = peer;
     }
 
-    public void OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
+    void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
     {
         Debug.Log("[SERVER] error " + socketErrorCode);
     }
 
-    public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader,
+    void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader,
         UnconnectedMessageType messageType)
     {
         if (messageType == UnconnectedMessageType.Broadcast)
@@ -69,27 +69,27 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         }
     }
 
-    public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
+    void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
     {
     }
 
-    public void OnConnectionRequest(ConnectionRequest request)
+    void INetEventListener.OnConnectionRequest(ConnectionRequest request)
     {
         request.AcceptIfKey("sample_app");
     }
 
-    public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+    void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
-        Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + disconnectInfo.Reason);
+        Debug.Log("[SERVER] peer disconnected " + peer + ", info: " + disconnectInfo.Reason);
         if (peer == _ourPeer)
             _ourPeer = null;
     }
 
-    public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+    void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
     {
     }
 
-    public void WriteNet(NetLogLevel level, string str, params object[] args)
+    void INetLogger.WriteNet(NetLogLevel level, string str, params object[] args)
     {
         Debug.LogFormat(str, args);
     }

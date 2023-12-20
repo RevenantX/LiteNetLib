@@ -257,7 +257,7 @@ namespace LiteNetLib
             if (_connectionState != ConnectionState.EndPointChange)
                 return;
             _connectionState = ConnectionState.Connected;
-            
+
             Address = newEndPoint.Address;
             Port = newEndPoint.Port;
 
