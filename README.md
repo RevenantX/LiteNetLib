@@ -50,6 +50,7 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 * Connection statisitcs
 * Multicasting (for discovering hosts in local network)
 * Unity support
+* Support for .NET8 optimized socket calls (much less gc)
 * Supported platforms:
   * Windows/Mac/Linux (.NET Framework, Mono, .NET Core, .NET Standard)
   * Lumin OS (Magic Leap)
