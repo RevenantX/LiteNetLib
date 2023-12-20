@@ -89,19 +89,6 @@ namespace LiteNetLib
     /// </summary>
     public partial class NetManager : IEnumerable<NetPeer>
     {
-        private class IPEndPointComparer : IEqualityComparer<IPEndPoint>
-        {
-            public bool Equals(IPEndPoint x, IPEndPoint y)
-            {
-                return x.Address.Equals(y.Address) && x.Port == y.Port;
-            }
-
-            public int GetHashCode(IPEndPoint obj)
-            {
-                return obj.GetHashCode();
-            }
-        }
-
         public struct NetPeerEnumerator : IEnumerator<NetPeer>
         {
             private readonly NetPeer _initialPeer;
@@ -158,9 +145,8 @@ namespace LiteNetLib
         private readonly INtpEventListener _ntpEventListener;
         private readonly IPeerAddressChangedListener _peerAddressChangedListener;
 
-        private readonly Dictionary<IPEndPoint, NetPeer> _peersDict = new Dictionary<IPEndPoint, NetPeer>(new IPEndPointComparer());
-        private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>(new IPEndPointComparer());
-        private readonly ConcurrentDictionary<IPEndPoint, NtpRequest> _ntpRequests = new ConcurrentDictionary<IPEndPoint, NtpRequest>(new IPEndPointComparer());
+        private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>();
+        private readonly ConcurrentDictionary<IPEndPoint, NtpRequest> _ntpRequests = new ConcurrentDictionary<IPEndPoint, NtpRequest>();
         private readonly ReaderWriterLockSlim _peersLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private volatile NetPeer _headPeer;
         private int _connectedPeersCount;
@@ -384,7 +370,6 @@ namespace LiteNetLib
         public bool TryGetPeerById(int id, out NetPeer peer)
         {
             peer = GetPeerById(id);
-
             return peer != null;
         }
 
@@ -395,14 +380,6 @@ namespace LiteNetLib
 
         public int ExtraPacketSizeForLayer => _extraPacketLayer?.ExtraPacketSizeForLayer ?? 0;
 
-        private bool TryGetPeer(IPEndPoint endPoint, out NetPeer peer)
-        {
-            _peersLock.EnterReadLock();
-            bool result = _peersDict.TryGetValue(endPoint, out peer);
-            _peersLock.ExitReadLock();
-            return result;
-        }
-
         private void AddPeer(NetPeer peer)
         {
             _peersLock.EnterWriteLock();
@@ -412,7 +389,7 @@ namespace LiteNetLib
                 _headPeer.PrevPeer = peer;
             }
             _headPeer = peer;
-            _peersDict.Add(peer.EndPoint, peer);
+            AddPeerToSet(peer);
             if (peer.Id >= _peersArray.Length)
             {
                 int newSize = _peersArray.Length * 2;
@@ -421,7 +398,6 @@ namespace LiteNetLib
                 Array.Resize(ref _peersArray, newSize);
             }
             _peersArray[peer.Id] = peer;
-            RegisterEndPoint(peer.EndPoint);
             _peersLock.ExitWriteLock();
         }
 
@@ -434,7 +410,7 @@ namespace LiteNetLib
 
         private void RemovePeerInternal(NetPeer peer)
         {
-            if (!_peersDict.Remove(peer.EndPoint))
+            if (!RemovePeerFromSet(peer))
                 return;
             if (peer == _headPeer)
                 _headPeer = peer.NextPeer;
@@ -447,7 +423,6 @@ namespace LiteNetLib
 
             _peersArray[peer.Id] = null;
             _peerIds.Enqueue(peer.Id);
-            UnregisterEndPoint(peer.EndPoint);
         }
 
         /// <summary>
@@ -609,13 +584,13 @@ namespace LiteNetLib
                 case NetEvent.EType.PeerAddressChanged:
                     _peersLock.EnterUpgradeableReadLock();
                     IPEndPoint previousAddress = null;
-                    if (_peersDict.ContainsKey(evt.Peer.EndPoint))
+                    if (ContainsPeer(evt.Peer))
                     {
                         _peersLock.EnterWriteLock();
-                        _peersDict.Remove(evt.Peer.EndPoint);
-                        previousAddress = evt.Peer.EndPoint;
+                        RemovePeerFromSet(evt.Peer);
+                        previousAddress = evt.Peer;
                         evt.Peer.FinishEndPointChange(evt.RemoteEndPoint);
-                        _peersDict.Add(evt.Peer.EndPoint, evt.Peer);
+                        AddPeerToSet(evt.Peer);
                         _peersLock.ExitWriteLock();
                     }
                     _peersLock.ExitUpgradeableReadLock();
@@ -791,7 +766,7 @@ namespace LiteNetLib
             else
             {
                 _peersLock.EnterUpgradeableReadLock();
-                if (_peersDict.TryGetValue(request.RemoteEndPoint, out netPeer))
+                if (TryGetPeer(request.RemoteEndPoint, out netPeer))
                 {
                     //already have peer
                     _peersLock.ExitUpgradeableReadLock();
@@ -810,7 +785,7 @@ namespace LiteNetLib
                     AddPeer(netPeer);
                     _peersLock.ExitUpgradeableReadLock();
                     CreateEvent(NetEvent.EType.Connect, netPeer);
-                    NetDebug.Write(NetLogLevel.Trace, $"[NM] Received peer connection Id: {netPeer.ConnectTime}, EP: {netPeer.EndPoint}");
+                    NetDebug.Write(NetLogLevel.Trace, $"[NM] Received peer connection Id: {netPeer.ConnectTime}, EP: {netPeer}");
                 }
             }
 
@@ -1000,7 +975,7 @@ namespace LiteNetLib
 
             //Check normal packets
             _peersLock.EnterReadLock();
-            bool peerFound = _peersDict.TryGetValue(remoteEndPoint, out var netPeer);
+            bool peerFound = TryGetPeer(remoteEndPoint, out var netPeer);
             _peersLock.ExitReadLock();
 
             if (peerFound && EnableStatistics)
@@ -1621,7 +1596,7 @@ namespace LiteNetLib
 
             byte connectionNumber = 0;
             _peersLock.EnterUpgradeableReadLock();
-            if (_peersDict.TryGetValue(target, out var peer))
+            if (TryGetPeer(target, out var peer))
             {
                 switch (peer.ConnectionState)
                 {
@@ -1684,7 +1659,7 @@ namespace LiteNetLib
             //clear peers
             _peersLock.EnterWriteLock();
             _headPeer = null;
-            _peersDict.Clear();
+            ClearPeerSet();
             _peersArray = new NetPeer[32];
             _peersLock.ExitWriteLock();
             _peerIds = new ConcurrentQueue<int>();

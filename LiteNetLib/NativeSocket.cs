@@ -18,11 +18,11 @@ namespace LiteNetLib
 
         private readonly int _hash;
 
-        public NativeAddr(byte[] address, int len)
+        public NativeAddr(byte[] address)
         {
             _part1 = BitConverter.ToInt64(address, 0);
             _part2 = BitConverter.ToInt64(address, 8);
-            if (len > 16)
+            if (address.Length > 16)
             {
                 _part3 = BitConverter.ToInt64(address, 16);
                 _part4 = BitConverter.ToInt32(address, 24);
@@ -69,9 +69,9 @@ namespace LiteNetLib
 
     internal class NativeEndPoint : IPEndPoint
     {
-        public readonly byte[] NativeAddress;
+        public byte[] NativeAddress;
 
-        public NativeEndPoint(byte[] address) : base(IPAddress.Any, 0)
+        public void SetNetAddress(byte[] address)
         {
             NativeAddress = new byte[address.Length];
             Buffer.BlockCopy(address, 0, NativeAddress, 0, address.Length);
@@ -102,6 +102,11 @@ namespace LiteNetLib
                                                  (address[7] << 24)));
                 Address = new IPAddress(ipv4Addr);
             }
+        }
+
+        public NativeEndPoint() : base(IPAddress.Any, 0)
+        {
+
         }
     }
 

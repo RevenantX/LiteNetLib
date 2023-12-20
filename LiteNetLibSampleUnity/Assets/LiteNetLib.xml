@@ -260,6 +260,13 @@
             Enables socket option "ReuseAddress" for specific purposes
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.DontRoute">
+            <summary>
+            UDP Only Socket Option
+            Normally IP sockets send packets of data through routers and gateways until they reach the final destination.
+            If the DontRoute flag is set to True, then data will be delivered on the local subnet only.
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.Statistics">
             <summary>
             Statistics of all connections
@@ -736,11 +743,6 @@
         <member name="T:LiteNetLib.NetPeer">
             <summary>
             Network peer. Main purpose is sending messages to specific peer.
-            </summary>
-        </member>
-        <member name="P:LiteNetLib.NetPeer.EndPoint">
-            <summary>
-            Peer ip address and port
             </summary>
         </member>
         <member name="F:LiteNetLib.NetPeer.NetManager">

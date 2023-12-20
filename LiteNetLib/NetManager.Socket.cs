@@ -21,12 +21,14 @@ namespace LiteNetLib
         private PausedSocketFix _pausedSocketFix;
 #endif
 
+#if NET8_0_OR_GREATER
+        private SocketAddress _sockAddrCache = new SocketAddress(AddressFamily.InterNetworkV6);
+#endif
+
 #if !LITENETLIB_UNSAFE
         [ThreadStatic] private static byte[] _sendToBuffer;
 #endif
         [ThreadStatic] private static byte[] _endPointBuffer;
-
-        private readonly Dictionary<NativeAddr, IPEndPoint> _nativeAddrMap = new Dictionary<NativeAddr, IPEndPoint>();
 
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("ff02::1");
@@ -70,23 +72,6 @@ namespace LiteNetLib
 #endif
         }
 
-        private void RegisterEndPoint(IPEndPoint ep)
-        {
-            if (UseNativeSockets && ep is NativeEndPoint nep)
-            {
-                _nativeAddrMap.Add(new NativeAddr(nep.NativeAddress, nep.NativeAddress.Length), nep);
-            }
-        }
-
-        private void UnregisterEndPoint(IPEndPoint ep)
-        {
-            if (UseNativeSockets && ep is NativeEndPoint nep)
-            {
-                var nativeAddr = new NativeAddr(nep.NativeAddress, nep.NativeAddress.Length);
-                _nativeAddrMap.Remove(nativeAddr);
-            }
-        }
-
         private bool ProcessError(SocketException ex)
         {
             switch (ex.SocketErrorCode)
@@ -102,6 +87,7 @@ namespace LiteNetLib
                 case SocketError.MessageSize:
                 case SocketError.TimedOut:
                 case SocketError.NetworkReset:
+                case SocketError.WouldBlock:
                     //NetDebug.Write($"[R]Ignored error: {(int)ex.SocketErrorCode} - {ex}");
                     break;
                 default:
@@ -141,62 +127,36 @@ namespace LiteNetLib
             }
         }
 
-        private bool NativeReceiveFrom(ref NetPacket packet, IntPtr s, byte[] addrBuffer, int addrSize)
-        {
-            //Reading data
-            packet.Size = NativeSocket.RecvFrom(s, packet.RawData, NetConstants.MaxPacketSize, addrBuffer, ref addrSize);
-            if (packet.Size == 0)
-                return true; //socket closed or empty packet
-
-            if (packet.Size == -1)
-            {
-                var errorCode = NativeSocket.GetSocketError();
-                //Linux timeout EAGAIN
-                return errorCode == SocketError.WouldBlock || errorCode == SocketError.TimedOut || ProcessError(new SocketException((int)errorCode)) == false;
-            }
-
-            var nativeAddr = new NativeAddr(addrBuffer, addrSize);
-            if (!_nativeAddrMap.TryGetValue(nativeAddr, out var endPoint))
-                endPoint = new NativeEndPoint(addrBuffer);
-
-            //All ok!
-            //NetDebug.WriteForce($"[R]Received data from {endPoint}, result: {packet.Size}");
-            OnMessageReceived(packet, endPoint);
-            packet = PoolGetPacket(NetConstants.MaxPacketSize);
-            return true;
-        }
-
         private void NativeReceiveLogic()
         {
             IntPtr socketHandle4 = _udpSocketv4.Handle;
             IntPtr socketHandle6 = _udpSocketv6?.Handle ?? IntPtr.Zero;
             byte[] addrBuffer4 = new byte[NativeSocket.IPv4AddrSize];
             byte[] addrBuffer6 = new byte[NativeSocket.IPv6AddrSize];
-            int addrSize4 = addrBuffer4.Length;
-            int addrSize6 = addrBuffer6.Length;
             var selectReadList = new List<Socket>(2);
             var socketv4 = _udpSocketv4;
             var socketV6 = _udpSocketv6;
             var packet = PoolGetPacket(NetConstants.MaxPacketSize);
+            var nativeEndPointCache = new NativeEndPoint();
 
             while (IsRunning)
             {
                 if (socketV6 == null)
                 {
-                    if (NativeReceiveFrom(ref packet, socketHandle4, addrBuffer4, addrSize4) == false)
+                    if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
                         return;
                     continue;
                 }
                 bool messageReceived = false;
                 if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
                 {
-                    if (NativeReceiveFrom(ref packet, socketHandle4, addrBuffer4, addrSize4) == false)
+                    if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
                         return;
                     messageReceived = true;
                 }
                 if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
                 {
-                    if (NativeReceiveFrom(ref packet, socketHandle6, addrBuffer6, addrSize6) == false)
+                    if (NativeReceiveFrom(socketHandle6, addrBuffer6) == false)
                         return;
                     messageReceived = true;
                 }
@@ -233,13 +193,41 @@ namespace LiteNetLib
                     NetDebug.WriteError("[NM] SocketReceiveThread error: " + e );
                 }
             }
+
+            bool NativeReceiveFrom(IntPtr s, byte[] addrBuffer)
+            {
+                //Reading data
+                int addrSize = addrBuffer.Length;
+                packet.Size = NativeSocket.RecvFrom(s, packet.RawData, NetConstants.MaxPacketSize, addrBuffer, ref addrSize);
+                if (packet.Size == 0)
+                    return true; //socket closed or empty packet
+
+                if (packet.Size == -1)
+                {
+                    //Linux timeout EAGAIN
+                    return ProcessError(new SocketException((int)NativeSocket.GetSocketError())) == false;
+                }
+
+                //All ok!
+                //NetDebug.WriteForce($"[R]Received data from {endPoint}, result: {packet.Size}");
+                nativeEndPointCache.SetNetAddress(addrBuffer);
+                OnMessageReceived(packet, nativeEndPointCache);
+                packet = PoolGetPacket(NetConstants.MaxPacketSize);
+                return true;
+            }
         }
 
         private void ReceiveFrom(Socket s, ref EndPoint bufferEndPoint)
         {
             var packet = PoolGetPacket(NetConstants.MaxPacketSize);
-            packet.Size = s.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None, ref bufferEndPoint);
+#if NET8_0_OR_GREATER
+            packet.Size = s.ReceiveFrom(packet, SocketFlags.None, _sockAddrCache);
+            OnMessageReceived(packet, (IPEndPoint)bufferEndPoint.Create(_sockAddrCache));
+#else
+            packet.Size =
+ s.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None, ref bufferEndPoint);
             OnMessageReceived(packet, (IPEndPoint)bufferEndPoint);
+#endif
         }
 
         private void ReceiveLogic()
@@ -610,15 +598,19 @@ namespace LiteNetLib
 
                     case SocketError.HostUnreachable:
                     case SocketError.NetworkUnreachable:
-                        if (DisconnectOnUnreachable && TryGetPeer(remoteEndPoint, out var fromPeer))
+                        if (DisconnectOnUnreachable)
                         {
-                            DisconnectPeerForce(
-                                fromPeer,
-                                ex.SocketErrorCode == SocketError.HostUnreachable
-                                    ? DisconnectReason.HostUnreachable
-                                    : DisconnectReason.NetworkUnreachable,
-                                ex.SocketErrorCode,
-                                null);
+                            _peersLock.EnterReadLock();
+                            TryGetPeer(remoteEndPoint, out var fromPeer);
+                            _peersLock.ExitReadLock();
+                            if(fromPeer != null)
+                                DisconnectPeerForce(
+                                    fromPeer,
+                                    ex.SocketErrorCode == SocketError.HostUnreachable
+                                        ? DisconnectReason.HostUnreachable
+                                        : DisconnectReason.NetworkUnreachable,
+                                    ex.SocketErrorCode,
+                                    null);
                         }
 
                         CreateEvent(NetEvent.EType.Error, remoteEndPoint: remoteEndPoint, errorCode: ex.SocketErrorCode);
@@ -710,6 +702,13 @@ namespace LiteNetLib
                         SocketFlags.None,
                         new IPEndPoint(MulticastAddressV6, port)) > 0;
                 }
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode == SocketError.HostUnreachable)
+                    return false;
+                NetDebug.WriteError($"[S][MCAST] {ex}");
+                return broadcastSuccess;
             }
             catch (Exception ex)
             {
