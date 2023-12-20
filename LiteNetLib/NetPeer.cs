@@ -198,8 +198,6 @@ namespace LiteNetLib
         private SocketAddress _cachedSocketAddr;
         private int _cachedHashCode;
 
-        internal byte[] NativeAddress;
-
         /// <summary>
         /// IPEndPoint serialize
         /// </summary>
@@ -223,14 +221,8 @@ namespace LiteNetLib
             NetManager = netManager;
 
             _cachedSocketAddr = base.Serialize();
-            if (NetManager.UseNativeSockets)
-            {
-                NativeAddress = new byte[_cachedSocketAddr.Size];
-                for (int i = 0; i < _cachedSocketAddr.Size; i++)
-                    NativeAddress[i] = _cachedSocketAddr[i];
-            }
 #if NET8_0_OR_GREATER
-            _cachedHashCode = NetManager.UseNativeSockets ? base.GetHashCode() : _cachedSocketAddr.GetHashCode();
+            _cachedHashCode = _cachedSocketAddr.GetHashCode();
 #else
             _cachedHashCode = base.GetHashCode();
 #endif
@@ -265,15 +257,9 @@ namespace LiteNetLib
             Address = newEndPoint.Address;
             Port = newEndPoint.Port;
 
-            if (NetManager.UseNativeSockets)
-            {
-                NativeAddress = new byte[_cachedSocketAddr.Size];
-                for (int i = 0; i < _cachedSocketAddr.Size; i++)
-                    NativeAddress[i] = _cachedSocketAddr[i];
-            }
             _cachedSocketAddr = base.Serialize();
 #if NET8_0_OR_GREATER
-            _cachedHashCode = NetManager.UseNativeSockets ? base.GetHashCode() : _cachedSocketAddr.GetHashCode();
+            _cachedHashCode = _cachedSocketAddr.GetHashCode();
 #else
             _cachedHashCode = base.GetHashCode();
 #endif

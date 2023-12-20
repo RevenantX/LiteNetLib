@@ -317,12 +317,6 @@
             First peer. Useful for Client mode
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetManager.UseNativeSockets">
-            <summary>
-            Experimental feature mostly for servers. Only for Windows/Linux
-            use direct socket calls for send/receive to drastically increase speed and reduce GC pressure
-            </summary>
-        </member>
         <member name="F:LiteNetLib.NetManager.DisconnectOnUnreachable">
             <summary>
             Disconnect peers if HostUnreachable or NetworkUnreachable spawned (old behaviour 0.9.x was true)

@@ -302,12 +302,6 @@ namespace LiteNetLib
         public NetPeer FirstPeer => _headPeer;
 
         /// <summary>
-        /// Experimental feature mostly for servers. Only for Windows/Linux
-        /// use direct socket calls for send/receive to drastically increase speed and reduce GC pressure
-        /// </summary>
-        public bool UseNativeSockets = false;
-
-        /// <summary>
         /// Disconnect peers if HostUnreachable or NetworkUnreachable spawned (old behaviour 0.9.x was true)
         /// </summary>
         public bool DisconnectOnUnreachable = false;
@@ -1358,10 +1352,9 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="message">Raw data</param>
         /// <param name="remoteEndPoint">Packet destination</param>
-        /// <returns>Operation result</returns>
-        public bool SendUnconnectedMessage(byte[] message, IPEndPoint remoteEndPoint)
+        public void SendUnconnectedMessage(byte[] message, IPEndPoint remoteEndPoint)
         {
-            return SendUnconnectedMessage(message, 0, message.Length, remoteEndPoint);
+            SendUnconnectedMessage(message, 0, message.Length, remoteEndPoint);
         }
 
         /// <summary>
@@ -1372,12 +1365,10 @@ namespace LiteNetLib
         /// <param name="writer">Data serializer</param>
         /// <param name="address">Packet destination IP or hostname</param>
         /// <param name="port">Packet destination port</param>
-        /// <returns>Operation result</returns>
-        public bool SendUnconnectedMessage(NetDataWriter writer, string address, int port)
+        public void SendUnconnectedMessage(NetDataWriter writer, string address, int port)
         {
             IPEndPoint remoteEndPoint = NetUtils.MakeEndPoint(address, port);
-
-            return SendUnconnectedMessage(writer.Data, 0, writer.Length, remoteEndPoint);
+            SendUnconnectedMessage(writer.Data, 0, writer.Length, remoteEndPoint);
         }
 
         /// <summary>
@@ -1385,10 +1376,9 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="writer">Data serializer</param>
         /// <param name="remoteEndPoint">Packet destination</param>
-        /// <returns>Operation result</returns>
-        public bool SendUnconnectedMessage(NetDataWriter writer, IPEndPoint remoteEndPoint)
+        public void SendUnconnectedMessage(NetDataWriter writer, IPEndPoint remoteEndPoint)
         {
-            return SendUnconnectedMessage(writer.Data, 0, writer.Length, remoteEndPoint);
+            SendUnconnectedMessage(writer.Data, 0, writer.Length, remoteEndPoint);
         }
 
         /// <summary>
@@ -1398,12 +1388,11 @@ namespace LiteNetLib
         /// <param name="start">data start</param>
         /// <param name="length">data length</param>
         /// <param name="remoteEndPoint">Packet destination</param>
-        /// <returns>Operation result</returns>
-        public bool SendUnconnectedMessage(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
+        public void SendUnconnectedMessage(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
             //No need for CRC here, SendRaw does that
             NetPacket packet = PoolGetWithData(PacketProperty.UnconnectedMessage, message, start, length);
-            return SendRawAndRecycle(packet, remoteEndPoint) > 0;
+            SendRawAndRecycle(packet, remoteEndPoint);
         }
 
         /// <summary>

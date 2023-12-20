@@ -1,20 +1,17 @@
 ﻿using System.Runtime.InteropServices;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
     public partial class NetManager
     {
-        private const int ReceivePollingTime = 500000; //0.5 second
-
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
-        private Thread _receiveThread;
         private IPEndPoint _bufferEndPointv4;
         private IPEndPoint _bufferEndPointv6;
 #if UNITY_2018_3_OR_NEWER
@@ -68,9 +65,9 @@ namespace LiteNetLib
 #endif
         }
 
-        private bool ProcessError(SocketException ex)
+        private bool ProcessError(SocketError ex)
         {
-            switch (ex.SocketErrorCode)
+            switch (ex)
             {
                 case SocketError.NotConnected:
                     NotConnected = true;
@@ -87,8 +84,8 @@ namespace LiteNetLib
                     //NetDebug.Write($"[R]Ignored error: {(int)ex.SocketErrorCode} - {ex}");
                     break;
                 default:
-                    NetDebug.WriteError($"[R]Error code: {(int)ex.SocketErrorCode} - {ex}");
-                    CreateEvent(NetEvent.EType.Error, errorCode: ex.SocketErrorCode);
+                    NetDebug.WriteError($"[R]Error code: {(int)ex}");
+                    CreateEvent(NetEvent.EType.Error, errorCode: ex);
                     break;
             }
             return false;
@@ -102,7 +99,8 @@ namespace LiteNetLib
                 int packetsReceived = 0;
                 while (socket.Available > 0)
                 {
-                    ReceiveFrom(socket, ref bufferEndPoint);
+                    //TODO
+                    //ReceiveFrom(socket, ref bufferEndPoint);
                     packetsReceived++;
                     if (packetsReceived == MaxPacketsReceivePerUpdate)
                         break;
@@ -110,7 +108,7 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                ProcessError(ex);
+                ProcessError(ex.SocketErrorCode);
             }
             catch (ObjectDisposedException)
             {
@@ -120,209 +118,6 @@ namespace LiteNetLib
             {
                 //protects socket receive thread
                 NetDebug.WriteError("[NM] SocketReceiveThread error: " + e );
-            }
-        }
-
-        private void NativeReceiveLogic()
-        {
-            IntPtr socketHandle4 = _udpSocketv4.Handle;
-            IntPtr socketHandle6 = _udpSocketv6?.Handle ?? IntPtr.Zero;
-            byte[] addrBuffer4 = new byte[NativeSocket.IPv4AddrSize];
-            byte[] addrBuffer6 = new byte[NativeSocket.IPv6AddrSize];
-            var tempEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            var selectReadList = new List<Socket>(2);
-            var socketv4 = _udpSocketv4;
-            var socketV6 = _udpSocketv6;
-            var packet = PoolGetPacket(NetConstants.MaxPacketSize);
-
-            while (IsRunning)
-            {
-                if (socketV6 == null)
-                {
-                    if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
-                        return;
-                    continue;
-                }
-                bool messageReceived = false;
-                if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
-                {
-                    if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
-                        return;
-                    messageReceived = true;
-                }
-                if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
-                {
-                    if (NativeReceiveFrom(socketHandle6, addrBuffer6) == false)
-                        return;
-                    messageReceived = true;
-                }
-
-                selectReadList.Clear();
-
-                if (messageReceived)
-                    continue;
-
-                selectReadList.Add(socketv4);
-                selectReadList.Add(socketV6);
-                try
-                {
-                    Socket.Select(selectReadList, null, null, ReceivePollingTime);
-                }
-                catch (SocketException ex)
-                {
-                    if (ProcessError(ex))
-                        return;
-                }
-                catch (ObjectDisposedException)
-                {
-                    //socket closed
-                    return;
-                }
-                catch (ThreadAbortException)
-                {
-                    //thread closed
-                    return;
-                }
-                catch (Exception e)
-                {
-                    //protects socket receive thread
-                    NetDebug.WriteError("[NM] SocketReceiveThread error: " + e );
-                }
-            }
-
-            bool NativeReceiveFrom(IntPtr s, byte[] address)
-            {
-                int addrSize = address.Length;
-                packet.Size = NativeSocket.RecvFrom(s, packet.RawData, NetConstants.MaxPacketSize, address, ref addrSize);
-                if (packet.Size == 0)
-                    return true; //socket closed or empty packet
-
-                if (packet.Size == -1)
-                {
-                    //Linux timeout EAGAIN
-                    return ProcessError(new SocketException((int)NativeSocket.GetSocketError())) == false;
-                }
-
-                //NetDebug.WriteForce($"[R]Received data from {endPoint}, result: {packet.Size}");
-                //refresh temp Addr/Port
-                short family      = (short)((address[1] << 8) | address[0]);
-                tempEndPoint.Port =(ushort)((address[2] << 8) | address[3]);
-                if ((NativeSocket.UnixMode && family == NativeSocket.AF_INET6) || (!NativeSocket.UnixMode && (AddressFamily)family == AddressFamily.InterNetworkV6))
-                {
-                    uint scope = unchecked((uint)(
-                        (address[27] << 24) +
-                        (address[26] << 16) +
-                        (address[25] << 8) +
-                        (address[24])));
-#if NETCOREAPP || NETSTANDARD2_1 || NETSTANDARD2_1_OR_GREATER
-                    tempEndPoint.Address = new IPAddress(new ReadOnlySpan<byte>(address, 8, 16), scope);
-#else
-                    byte[] addrBuffer = new byte[16];
-                    Buffer.BlockCopy(address, 8, addrBuffer, 0, 16);
-                    tempEndPoint.Address = new IPAddress(addrBuffer, scope);
-#endif
-                }
-                else //IPv4
-                {
-                    long ipv4Addr = unchecked((uint)((address[4] & 0x000000FF) |
-                                                     (address[5] << 8 & 0x0000FF00) |
-                                                     (address[6] << 16 & 0x00FF0000) |
-                                                     (address[7] << 24)));
-                    tempEndPoint.Address = new IPAddress(ipv4Addr);
-                }
-
-                if (TryGetPeer(tempEndPoint, out var peer))
-                {
-                    //use cached native ep
-                    OnMessageReceived(packet, peer);
-                }
-                else
-                {
-                    OnMessageReceived(packet, tempEndPoint);
-                    tempEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                }
-                packet = PoolGetPacket(NetConstants.MaxPacketSize);
-                return true;
-            }
-        }
-
-        private void ReceiveFrom(Socket s, ref EndPoint bufferEndPoint)
-        {
-            var packet = PoolGetPacket(NetConstants.MaxPacketSize);
-#if NET8_0_OR_GREATER
-            var sockAddr = s.AddressFamily == AddressFamily.InterNetwork ? _sockAddrCacheV4 : _sockAddrCacheV6;
-            packet.Size = s.ReceiveFrom(packet, SocketFlags.None, sockAddr);
-            OnMessageReceived(packet, TryGetPeer(sockAddr, out var peer) ? peer : (IPEndPoint)bufferEndPoint.Create(sockAddr));
-#else
-            packet.Size = s.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None, ref bufferEndPoint);
-            OnMessageReceived(packet, (IPEndPoint)bufferEndPoint);
-#endif
-        }
-
-        private void ReceiveLogic()
-        {
-            EndPoint bufferEndPoint4 = new IPEndPoint(IPAddress.Any, 0);
-            EndPoint bufferEndPoint6 = new IPEndPoint(IPAddress.IPv6Any, 0);
-            var selectReadList = new List<Socket>(2);
-            var socketv4 = _udpSocketv4;
-            var socketV6 = _udpSocketv6;
-
-            while (IsRunning)
-            {
-                //Reading data
-                try
-                {
-                    if (socketV6 == null)
-                    {
-                        if (socketv4.Available == 0 && !socketv4.Poll(ReceivePollingTime, SelectMode.SelectRead))
-                            continue;
-                        ReceiveFrom(socketv4, ref bufferEndPoint4);
-                    }
-                    else
-                    {
-                        bool messageReceived = false;
-                        if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
-                        {
-                            ReceiveFrom(socketv4, ref bufferEndPoint4);
-                            messageReceived = true;
-                        }
-                        if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
-                        {
-                            ReceiveFrom(socketV6, ref bufferEndPoint6);
-                            messageReceived = true;
-                        }
-
-                        selectReadList.Clear();
-
-                        if (messageReceived)
-                            continue;
-
-                        selectReadList.Add(socketv4);
-                        selectReadList.Add(socketV6);
-                        Socket.Select(selectReadList, null, null, ReceivePollingTime);
-                    }
-                    //NetDebug.Write(NetLogLevel.Trace, $"[R]Received data from {bufferEndPoint}, result: {packet.Size}");
-                }
-                catch (SocketException ex)
-                {
-                    if (ProcessError(ex))
-                        return;
-                }
-                catch (ObjectDisposedException)
-                {
-                    //socket closed
-                    return;
-                }
-                catch (ThreadAbortException)
-                {
-                    //thread closed
-                    return;
-                }
-                catch (Exception e)
-                {
-                    //protects socket receive thread
-                    NetDebug.WriteError("[NM] SocketReceiveThread error: " + e );
-                }
             }
         }
 
@@ -340,7 +135,6 @@ namespace LiteNetLib
 
             NotConnected = false;
             _manualMode = manualMode;
-            UseNativeSockets = UseNativeSockets && NativeSocket.IsSupported;
             _udpSocketv4 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port)))
                 return false;
@@ -353,10 +147,7 @@ namespace LiteNetLib
 #endif
 
             IsRunning = true;
-            if (_manualMode)
-            {
-                _bufferEndPointv4 = new IPEndPoint(IPAddress.Any, 0);
-            }
+            _bufferEndPointv4 = new IPEndPoint(IPAddress.Any, 0);
 
             //Check IPv6 support
             if (IPv6Support && IPv6Enabled)
@@ -365,8 +156,7 @@ namespace LiteNetLib
                 //Use one port for two sockets
                 if (BindSocket(_udpSocketv6, new IPEndPoint(addressIPv6, LocalPort)))
                 {
-                    if (_manualMode)
-                        _bufferEndPointv6 = new IPEndPoint(IPAddress.IPv6Any, 0);
+                    _bufferEndPointv6 = new IPEndPoint(IPAddress.IPv6Any, 0);
                 }
                 else
                 {
@@ -376,15 +166,27 @@ namespace LiteNetLib
 
             if (!manualMode)
             {
-                ThreadStart ts = ReceiveLogic;
-                if (UseNativeSockets)
-                    ts = NativeReceiveLogic;
-                _receiveThread = new Thread(ts)
+#if NET8_0_OR_GREATER
+                Task.Run(() => ReceiveLogic(_udpSocketv4, _sockAddrCacheV4));
+                if(_udpSocketv6 != null)
+                    ReceiveLogic(_udpSocketv6, _sockAddrCacheV6);
+#else
+                var sockArgs = new SocketAsyncEventArgs { RemoteEndPoint = _bufferEndPointv4 };
+                var bufferPacket = PoolGetPacket(NetConstants.MaxPacketSize);
+                sockArgs.UserToken = bufferPacket;
+                sockArgs.SetBuffer(bufferPacket.RawData, 0, bufferPacket.Size);
+                sockArgs.Completed += ReceiveCompleted;
+                _udpSocketv4.ReceiveFromAsync(sockArgs);
+                if (_udpSocketv6 != null)
                 {
-                    Name = $"ReceiveThread({LocalPort})",
-                    IsBackground = true
-                };
-                _receiveThread.Start();
+                    sockArgs = new SocketAsyncEventArgs { RemoteEndPoint = _bufferEndPointv6, };
+                    bufferPacket = PoolGetPacket(NetConstants.MaxPacketSize);
+                    sockArgs.UserToken = bufferPacket;
+                    sockArgs.SetBuffer(bufferPacket.RawData, 0, bufferPacket.Size);
+                    sockArgs.Completed += ReceiveCompleted;
+                    _udpSocketv6.ReceiveFromAsync(sockArgs);
+                }
+#endif
                 if (_logicThread == null)
                 {
                     _logicThread = new Thread(UpdateLogic) { Name = "LogicThread", IsBackground = true };
@@ -395,6 +197,67 @@ namespace LiteNetLib
             return true;
         }
 
+#if NET8_0_OR_GREATER
+        private async void ReceiveLogic(Socket s, SocketAddress saddr)
+        {
+            try
+            {
+                var bufferPacket = PoolGetPacket(NetConstants.MaxPacketSize);
+                bufferPacket.Size = await s.ReceiveFromAsync(
+                    new Memory<byte>(bufferPacket.RawData, 0, NetConstants.MaxPacketSize),
+                    SocketFlags.None,
+                    saddr);
+                OnMessageReceived(bufferPacket, TryGetPeer(saddr, out var peer) ? peer : (IPEndPoint)_bufferEndPointv4.Create(saddr));
+            }
+            catch (ObjectDisposedException)
+            {
+                return; //socket closed
+            }
+            catch (SocketException ex)
+            {
+                if (ProcessError(ex.SocketErrorCode))
+                    return;
+            }
+            catch (Exception ex)
+            {
+                NetDebug.WriteError("[NM] SocketReceive error: " + ex);
+            }
+            ReceiveLogic(s, saddr);
+        }
+#else
+        private void ReceiveCompleted(object sender, SocketAsyncEventArgs e)
+        {
+            var packet = (NetPacket)e.UserToken;
+            var socket = (Socket)sender;
+            bool isPending = false;
+            while (!isPending)
+            {
+                if (e.SocketError != SocketError.Success && ProcessError(e.SocketError))
+                    return;
+                packet.Size = e.BytesTransferred;
+                try
+                {
+                    OnMessageReceived(packet, (IPEndPoint)e.RemoteEndPoint);
+                }
+                catch (Exception ex)
+                {
+                    NetDebug.WriteError("[NM] SocketReceive error: " + ex);
+                }
+                packet = PoolGetPacket(NetConstants.MaxPacketSize);
+                e.UserToken = packet;
+                e.SetBuffer(packet.RawData, 0, NetConstants.MaxPacketSize);
+                try
+                {
+                    isPending = socket.ReceiveFromAsync(e);
+                }
+                catch (ObjectDisposedException)
+                {
+                    //socket closed
+                    break;
+                }
+            };
+        }
+#endif
         private bool BindSocket(Socket socket, IPEndPoint ep)
         {
             //Setup socket
@@ -540,25 +403,13 @@ namespace LiteNetLib
             int result;
             try
             {
-                if (UseNativeSockets && remoteEndPoint is NetPeer peer)
-                {
-                    unsafe
-                    {
-                        fixed (byte* dataWithOffset = &message[start])
-                            result = NativeSocket.SendTo(socket.Handle, dataWithOffset, length, peer.NativeAddress, peer.NativeAddress.Length);
-                    }
-                    if (result == -1)
-                        throw NativeSocket.GetSocketException();
-                }
-                else
-                {
 #if NET8_0_OR_GREATER
                     result = socket.SendTo(new ReadOnlySpan<byte>(message, start, length), SocketFlags.None, remoteEndPoint.Serialize());
+#elif NET6_0_OR_GREATER
+                    result = socket.SendToAsync(new ReadOnlyMemory<byte>(message, start, length), SocketFlags.None, remoteEndPoint).Result;
 #else
                     result = socket.SendTo(message, start, length, SocketFlags.None, remoteEndPoint);
 #endif
-                }
-                //NetDebug.WriteForce("[S]Send packet to {0}, result: {1}", remoteEndPoint, result);
             }
             catch (SocketException ex)
             {
@@ -596,16 +447,9 @@ namespace LiteNetLib
                         return -1;
                 }
             }
-            catch (Exception ex)
-            {
-                NetDebug.WriteError($"[S] {ex}");
-                return 0;
-            }
-            finally
-            {
-                if (expandedPacket != null)
-                    PoolRecycle(expandedPacket);
-            }
+
+            if(expandedPacket != null)
+                PoolRecycle(expandedPacket);
 
             if (result <= 0)
                 return 0;
@@ -699,9 +543,7 @@ namespace LiteNetLib
             _udpSocketv6?.Close();
             _udpSocketv4 = null;
             _udpSocketv6 = null;
-            if (_receiveThread != null && _receiveThread != Thread.CurrentThread)
-                _receiveThread.Join();
-            _receiveThread = null;
+
         }
     }
 }
