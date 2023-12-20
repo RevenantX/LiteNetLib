@@ -343,21 +343,6 @@
             Returns connected peers list (with internal cached list)
             </summary>
         </member>
-        <member name="M:LiteNetLib.NetManager.GetPeerById(System.Int32)">
-            <summary>
-            Gets peer by peer id
-            </summary>
-            <param name="id">id of peer</param>
-            <returns>Peer if peer with id exist, otherwise null</returns>
-        </member>
-        <member name="M:LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)">
-            <summary>
-            Gets peer by peer id
-            </summary>
-            <param name="id">id of peer</param>
-            <param name="peer">resulting peer</param>
-            <returns>True if peer with id exist, otherwise false</returns>
-        </member>
         <member name="P:LiteNetLib.NetManager.ConnectedPeersCount">
             <summary>
             Returns connected peers count
@@ -716,6 +701,21 @@
             </summary>
             <param name="ntpServerAddress">NTP Server address.</param>
         </member>
+        <member name="M:LiteNetLib.NetManager.GetPeerById(System.Int32)">
+            <summary>
+            Gets peer by peer id
+            </summary>
+            <param name="id">id of peer</param>
+            <returns>Peer if peer with id exist, otherwise null</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)">
+            <summary>
+            Gets peer by peer id
+            </summary>
+            <param name="id">id of peer</param>
+            <param name="peer">resulting peer</param>
+            <returns>True if peer with id exist, otherwise false</returns>
+        </member>
         <member name="F:LiteNetLib.NetManager.PacketPoolSize">
             <summary>
             Maximum packet pool size (increase if you have tons of packets sending)
@@ -810,6 +810,12 @@
             <summary>
             Statistics of peer connection
             </summary>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.Serialize">
+            <summary>
+            IPEndPoint serialize
+            </summary>
+            <returns>SocketAddress</returns>
         </member>
         <member name="M:LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Byte,System.Boolean)">
             <summary>
