@@ -7,54 +7,6 @@ using System.Runtime.InteropServices;
 
 namespace LiteNetLib
 {
-    internal class NativeEndPoint : IPEndPoint
-    {
-        public byte[] NativeAddress;
-
-        public void CopyNativeAddress()
-        {
-            var tempAddr = new byte[NativeAddress.Length];
-            Buffer.BlockCopy(NativeAddress, 0, tempAddr, 0, NativeAddress.Length);
-            NativeAddress = tempAddr;
-        }
-
-        public void SetNetAddress(byte[] address)
-        {
-            NativeAddress = address;
-            short family = (short)((address[1] << 8) | address[0]);
-            Port         =(ushort)((address[2] << 8) | address[3]);
-
-            if ((NativeSocket.UnixMode && family == NativeSocket.AF_INET6) || (!NativeSocket.UnixMode && (AddressFamily)family == AddressFamily.InterNetworkV6))
-            {
-                uint scope = unchecked((uint)(
-                    (address[27] << 24) +
-                    (address[26] << 16) +
-                    (address[25] << 8) +
-                    (address[24])));
-#if NETCOREAPP || NETSTANDARD2_1 || NETSTANDARD2_1_OR_GREATER
-                Address = new IPAddress(new ReadOnlySpan<byte>(address, 8, 16), scope);
-#else
-                byte[] addrBuffer = new byte[16];
-                Buffer.BlockCopy(address, 8, addrBuffer, 0, 16);
-                Address = new IPAddress(addrBuffer, scope);
-#endif
-            }
-            else //IPv4
-            {
-                long ipv4Addr = unchecked((uint)((address[4] & 0x000000FF) |
-                                                 (address[5] << 8 & 0x0000FF00) |
-                                                 (address[6] << 16 & 0x00FF0000) |
-                                                 (address[7] << 24)));
-                Address = new IPAddress(ipv4Addr);
-            }
-        }
-
-        public NativeEndPoint() : base(IPAddress.Any, 0)
-        {
-
-        }
-    }
-
     internal static class NativeSocket
     {
         static

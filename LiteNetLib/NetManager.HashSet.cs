@@ -205,7 +205,7 @@ namespace LiteNetLib
             {
 #if NET8_0_OR_GREATER
                 //can be NetPeer or IPEndPoint
-                int hashCode = endPoint.Serialize().GetHashCode() & Lower31BitMask;
+                int hashCode = (UseNativeSockets ? endPoint.GetHashCode() : endPoint.Serialize().GetHashCode()) & Lower31BitMask;
 #else
                 int hashCode = endPoint.GetHashCode() & Lower31BitMask;
 #endif
