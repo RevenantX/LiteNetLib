@@ -9,11 +9,7 @@ namespace LiteNetLib
 {
     internal static class NativeSocket
     {
-        static
-#if LITENETLIB_UNSAFE
-        unsafe
-#endif
-        class WinSock
+        static unsafe class WinSock
         {
             private const string LibName = "ws2_32.dll";
 
@@ -29,22 +25,14 @@ namespace LiteNetLib
             [DllImport(LibName, SetLastError = true)]
             internal static extern int sendto(
                 IntPtr socketHandle,
-#if LITENETLIB_UNSAFE
                 byte* pinnedBuffer,
-#else
-                [In] byte[] pinnedBuffer,
-#endif
                 [In] int len,
                 [In] SocketFlags socketFlags,
                 [In] byte[] socketAddress,
                 [In] int socketAddressSize);
         }
 
-        static
-#if LITENETLIB_UNSAFE
-        unsafe
-#endif
-        class UnixSock
+        static unsafe class UnixSock
         {
             private const string LibName = "libc";
 
@@ -60,11 +48,7 @@ namespace LiteNetLib
             [DllImport(LibName, SetLastError = true)]
             internal static extern int sendto(
                 IntPtr socketHandle,
-#if LITENETLIB_UNSAFE
                 byte* pinnedBuffer,
-#else
-                [In] byte[] pinnedBuffer,
-#endif
                 [In] int len,
                 [In] SocketFlags socketFlags,
                 [In] byte[] socketAddress,
@@ -152,17 +136,9 @@ namespace LiteNetLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public
-#if LITENETLIB_UNSAFE
-            unsafe
-#endif
-            static int SendTo(
+        public static unsafe int SendTo(
             IntPtr socketHandle,
-#if LITENETLIB_UNSAFE
             byte* pinnedBuffer,
-#else
-            byte[] pinnedBuffer,
-#endif
             int len,
             byte[] socketAddress,
             int socketAddressSize)
