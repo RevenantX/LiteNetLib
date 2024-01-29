@@ -137,35 +137,36 @@ namespace LiteNetLib
 
             while (IsRunning)
             {
-                if (socketV6 == null)
-                {
-                    if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
-                        return;
-                    continue;
-                }
-                bool messageReceived = false;
-                if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
-                {
-                    if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
-                        return;
-                    messageReceived = true;
-                }
-                if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
-                {
-                    if (NativeReceiveFrom(socketHandle6, addrBuffer6) == false)
-                        return;
-                    messageReceived = true;
-                }
-
-                selectReadList.Clear();
-
-                if (messageReceived)
-                    continue;
-
-                selectReadList.Add(socketv4);
-                selectReadList.Add(socketV6);
                 try
                 {
+                    if (socketV6 == null)
+                    {
+                        if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
+                            return;
+                        continue;
+                    }
+                    bool messageReceived = false;
+                    if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
+                    {
+                        if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
+                            return;
+                        messageReceived = true;
+                    }
+                    if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
+                    {
+                        if (NativeReceiveFrom(socketHandle6, addrBuffer6) == false)
+                            return;
+                        messageReceived = true;
+                    }
+
+                    selectReadList.Clear();
+
+                    if (messageReceived)
+                        continue;
+
+                    selectReadList.Add(socketv4);
+                    selectReadList.Add(socketV6);
+
                     Socket.Select(selectReadList, null, null, ReceivePollingTime);
                 }
                 catch (SocketException ex)
