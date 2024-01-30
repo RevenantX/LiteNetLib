@@ -30,11 +30,6 @@ namespace LiteNetLib
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("ff02::1");
         public static readonly bool IPv6Support;
 
-        /// <summary>
-        /// Maximum packets count that will be processed in Manual PollEvents
-        /// </summary>
-        public int MaxPacketsReceivePerUpdate = 0;
-
         // special case in iOS (and possibly android that should be resolved in unity)
         internal bool NotConnected;
 
@@ -94,7 +89,7 @@ namespace LiteNetLib
             return false;
         }
 
-        private void ManualReceive(Socket socket, EndPoint bufferEndPoint)
+        private void ManualReceive(Socket socket, EndPoint bufferEndPoint, int maxReceive)
         {
             //Reading data
             try
@@ -104,7 +99,7 @@ namespace LiteNetLib
                 {
                     ReceiveFrom(socket, ref bufferEndPoint);
                     packetsReceived++;
-                    if (packetsReceived == MaxPacketsReceivePerUpdate)
+                    if (packetsReceived == maxReceive)
                         break;
                 }
             }

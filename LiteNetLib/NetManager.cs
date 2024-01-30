@@ -1415,17 +1415,19 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Receive all pending events. Call this in game update code
+        /// Receive "maxProcessedEvents" pending events. Call this in game update code
         /// In Manual mode it will call also socket Receive (which can be slow)
+        /// 0 - receive all events
         /// </summary>
-        public void PollEvents()
+        /// <param name="maxProcessedEvents">Max events that will be processed (called INetEventListener Connect/Receive/Etc), 0 - receive all events</param>
+        public void PollEvents(int maxProcessedEvents = 0)
         {
             if (_manualMode)
             {
                 if (_udpSocketv4 != null)
-                    ManualReceive(_udpSocketv4, _bufferEndPointv4);
+                    ManualReceive(_udpSocketv4, _bufferEndPointv4, maxProcessedEvents);
                 if (_udpSocketv6 != null && _udpSocketv6 != _udpSocketv4)
-                    ManualReceive(_udpSocketv6, _bufferEndPointv6);
+                    ManualReceive(_udpSocketv6, _bufferEndPointv6, maxProcessedEvents);
                 ProcessDelayedPackets();
                 return;
             }
@@ -1439,11 +1441,15 @@ namespace LiteNetLib
                 _pendingEventTail = null;
             }
 
+            int counter = 0;
             while (pendingEvent != null)
             {
                 var next = pendingEvent.Next;
                 ProcessEvent(pendingEvent);
                 pendingEvent = next;
+                counter++;
+                if (counter == maxProcessedEvents)
+                    break;
             }
         }
 
