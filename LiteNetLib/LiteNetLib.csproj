@@ -42,7 +42,7 @@
     <Description>Lite reliable UDP library for .NET, Mono, and .NET Core</Description>
     <PackageIcon>LNL.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <TargetFrameworks>net471;net6.0;net7.0;net8.0;net5.0;netstandard2.0;netstandard2.1;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net5.0;net6.0;net7.0;net8.0;netstandard2.0;netstandard2.1;net471</TargetFrameworks>
   </PropertyGroup>
 
   <Target Name="UpdateUnityDLLS" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(TargetFramework)' == 'net471' and '$(Configuration)' == 'Release' ">

@@ -565,11 +565,13 @@
             Triggers update and send logic immediately (works asynchronously)
             </summary>
         </member>
-        <member name="M:LiteNetLib.NetManager.PollEvents">
+        <member name="M:LiteNetLib.NetManager.PollEvents(System.Int32)">
             <summary>
-            Receive all pending events. Call this in game update code
+            Receive "maxProcessedEvents" pending events. Call this in game update code
             In Manual mode it will call also socket Receive (which can be slow)
+            0 - receive all events
             </summary>
+            <param name="maxProcessedEvents">Max events that will be processed (called INetEventListener Connect/Receive/Etc), 0 - receive all events</param>
         </member>
         <member name="M:LiteNetLib.NetManager.Connect(System.String,System.Int32,System.String)">
             <summary>
@@ -719,11 +721,6 @@
         <member name="F:LiteNetLib.NetManager.PacketPoolSize">
             <summary>
             Maximum packet pool size (increase if you have tons of packets sending)
-            </summary>
-        </member>
-        <member name="F:LiteNetLib.NetManager.MaxPacketsReceivePerUpdate">
-            <summary>
-            Maximum packets count that will be processed in Manual PollEvents
             </summary>
         </member>
         <member name="M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">
