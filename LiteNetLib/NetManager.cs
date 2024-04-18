@@ -1268,6 +1268,21 @@ namespace LiteNetLib
                 _peersLock.ExitReadLock();
             }
         }
+        
+        /// <summary>
+        /// Send message without connection
+        /// </summary>
+        /// <param name="message">Raw data</param>
+        /// <param name="remoteEndPoint">Packet destination</param>
+        /// <returns>Operation result</returns>
+        public bool SendUnconnectedMessage(ReadOnlySpan<byte> message, IPEndPoint remoteEndPoint)
+        {
+            int headerSize = NetPacket.GetHeaderSize(PacketProperty.UnconnectedMessage);
+            var packet = PoolGetPacket(message.Length + headerSize);
+            packet.Property = PacketProperty.UnconnectedMessage;
+            message.CopyTo(new Span<byte>(packet.RawData, headerSize, message.Length));
+            return SendRawAndRecycle(packet, remoteEndPoint) > 0;
+        }
 #endif
 
         /// <summary>
