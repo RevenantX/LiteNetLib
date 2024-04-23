@@ -337,6 +337,14 @@ namespace LiteNetLib.Utils
             for (int i = 0; i < strArrayLength; i++)
                 Put(value[i], strMaxLength);
         }
+        
+        public void PutArray<T>(T[] value) where T : INetSerializable, new()
+        {
+            ushort strArrayLength = (ushort)(value?.Length ?? 0);
+            Put(strArrayLength);
+            for (int i = 0; i < strArrayLength; i++)
+                value[i].Serialize(this);
+        }
 
         public void Put(IPEndPoint endPoint)
         {
