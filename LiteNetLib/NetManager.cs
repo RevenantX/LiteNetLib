@@ -748,7 +748,7 @@ namespace LiteNetLib
                 const int maxIdValue = int.MaxValue;
                 long addable = Math.Min(addCount, (maxIdValue - _nextPeerId));
 
-                if (addable == 0)
+                if (addable <= 0)
                 {
                     NetDebug.Write(NetLogLevel.Error, $"[NM] PeerIds have exceeded the maximum value of {maxIdValue}. A new Id cannot be returned.");
                     return 0;
