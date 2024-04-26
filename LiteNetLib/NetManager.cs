@@ -355,7 +355,9 @@ namespace LiteNetLib
 
         public NetManager(bool useSocketFix = true)
         {
+#if UNITY_SOCKET_FIX
             _useSocketFix = useSocketFix;
+#endif
         }
         /// <summary>
         /// NetManager constructor
