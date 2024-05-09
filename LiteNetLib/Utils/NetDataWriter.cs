@@ -216,6 +216,18 @@ namespace LiteNetLib.Utils
             _position++;
         }
 
+        public void Put(Guid value)
+        {
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+            if (_autoResize)
+                ResizeIfNeed(_position + 16);
+            value.TryWriteBytes(_data.AsSpan(_position));
+            _position += 16;
+#else
+            PutBytesWithLength(value.ToByteArray());
+#endif
+        }
+
         public void Put(byte[] data, int offset, int length)
         {
             if (_autoResize)

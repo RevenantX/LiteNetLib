@@ -194,6 +194,11 @@ namespace LiteNetLib.Utils
         {
             result = GetString(maxLength);
         }
+        
+        public void Get(out Guid result)
+        {
+            result = GetGuid();
+        }
 
         public IPEndPoint GetNetEndPoint()
         {
@@ -428,6 +433,17 @@ namespace LiteNetLib.Utils
             ArraySegment<byte> data = GetBytesSegment(actualSize);
 
             return NetDataWriter.uTF8Encoding.Value.GetString(data.Array, data.Offset, data.Count);
+        }
+        
+        public Guid GetGuid()
+        {
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+            var result =  new Guid(_data.AsSpan(_position, 16));
+            _position += 16;
+            return result;
+#else
+            return new Guid(GetBytesWithLength());
+#endif
         }
 
         public ArraySegment<byte> GetBytesSegment(int count)
