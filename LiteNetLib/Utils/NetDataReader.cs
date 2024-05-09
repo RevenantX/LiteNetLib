@@ -239,6 +239,16 @@ namespace LiteNetLib.Utils
             return result;
         }
         
+        public T[] GetArray<T>(Func<T> constructor) where T : class, INetSerializable
+        {
+            ushort length = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            T[] result = new T[length];
+            for (int i = 0; i < length; i++)
+                Get(out result[i], constructor);
+            return result;
+        }
+        
         public bool[] GetBoolArray()
         {
             return GetArray<bool>(1);
