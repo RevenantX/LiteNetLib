@@ -399,40 +399,36 @@ namespace LiteNetLib.Utils
         {
             ushort size = GetUShort();
             if (size == 0)
-            {
                 return string.Empty;
-            }
-
+            
             int actualSize = size - 1;
-            if (actualSize >= NetDataWriter.StringBufferMaxLength)
-            {
-                return null;
-            }
-
-            ArraySegment<byte> data = GetBytesSegment(actualSize);
-
-            return (maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(data.Array, data.Offset, data.Count) > maxLength) ?
+            string result = maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(_data, _position, actualSize) > maxLength ?
                 string.Empty :
-                NetDataWriter.uTF8Encoding.Value.GetString(data.Array, data.Offset, data.Count);
+                NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, actualSize);
+            _position += actualSize;
+            return result;
         }
 
         public string GetString()
         {
             ushort size = GetUShort();
             if (size == 0)
-            {
                 return string.Empty;
-            }
-
+            
             int actualSize = size - 1;
-            if (actualSize >= NetDataWriter.StringBufferMaxLength)
-            {
-                return null;
-            }
+            string result = NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, actualSize);
+            _position += actualSize;
+            return result;
+        }
 
-            ArraySegment<byte> data = GetBytesSegment(actualSize);
-
-            return NetDataWriter.uTF8Encoding.Value.GetString(data.Array, data.Offset, data.Count);
+        public string GetLargeString()
+        {
+            int size = GetInt();
+            if (size <= 0)
+                return string.Empty;
+            string result = NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, size);
+            _position += size;
+            return result;
         }
         
         public Guid GetGuid()
@@ -582,16 +578,9 @@ namespace LiteNetLib.Utils
         {
             ushort size = PeekUShort();
             if (size == 0)
-            {
                 return string.Empty;
-            }
-
+            
             int actualSize = size - 1;
-            if (actualSize >= NetDataWriter.StringBufferMaxLength)
-            {
-                return null;
-            }
-
             return (maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(_data, _position + 2, actualSize) > maxLength) ?
                 string.Empty :
                 NetDataWriter.uTF8Encoding.Value.GetString(_data, _position + 2, actualSize);
@@ -601,16 +590,9 @@ namespace LiteNetLib.Utils
         {
             ushort size = PeekUShort();
             if (size == 0)
-            {
                 return string.Empty;
-            }
 
             int actualSize = size - 1;
-            if (actualSize >= NetDataWriter.StringBufferMaxLength)
-            {
-                return null;
-            }
-
             return NetDataWriter.uTF8Encoding.Value.GetString(_data, _position + 2, actualSize);
         }
         #endregion

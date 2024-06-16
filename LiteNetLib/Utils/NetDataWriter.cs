@@ -30,8 +30,6 @@ namespace LiteNetLib.Utils
         }
 
         public static readonly ThreadLocal<UTF8Encoding> uTF8Encoding = new ThreadLocal<UTF8Encoding>(() => new UTF8Encoding(false, true));
-        public const int StringBufferMaxLength = 65535;
-        private readonly byte[] _stringBuffer = new byte[StringBufferMaxLength];
 
         public NetDataWriter() : this(true, InitialSize)
         {
@@ -349,7 +347,7 @@ namespace LiteNetLib.Utils
             for (int i = 0; i < strArrayLength; i++)
                 Put(value[i], strMaxLength);
         }
-        
+
         public void PutArray<T>(T[] value) where T : INetSerializable, new()
         {
             ushort strArrayLength = (ushort)(value?.Length ?? 0);
@@ -362,6 +360,26 @@ namespace LiteNetLib.Utils
         {
             Put(endPoint.Address.ToString());
             Put(endPoint.Port);
+        }
+
+        public void PutLargeString(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                Put(0);
+                return;
+            }
+            int size = uTF8Encoding.Value.GetByteCount(value);
+            if (size == 0)
+            {
+                Put(0);
+                return;
+            }
+            Put(size);
+            if (_autoResize)
+                ResizeIfNeed(_position + size);
+            uTF8Encoding.Value.GetBytes(value, 0, size, _data, _position);
+            _position += size;
         }
 
         public void Put(string value)
@@ -381,16 +399,17 @@ namespace LiteNetLib.Utils
             }
 
             int length = maxLength > 0 && value.Length > maxLength ? maxLength : value.Length;
-            int size = uTF8Encoding.Value.GetBytes(value, 0, length, _stringBuffer, 0);
-
-            if (size == 0 || size >= StringBufferMaxLength)
+            int maxSize = uTF8Encoding.Value.GetMaxByteCount(length);
+            if (_autoResize)
+                ResizeIfNeed(_position + maxSize);
+            int size = uTF8Encoding.Value.GetBytes(value, 0, length, _data, _position + sizeof(ushort));
+            if (size == 0)
             {
                 Put((ushort)0);
                 return;
             }
-
             Put(checked((ushort)(size + 1)));
-            Put(_stringBuffer, 0, size);
+            _position += size;
         }
 
         public void Put<T>(T obj) where T : INetSerializable
