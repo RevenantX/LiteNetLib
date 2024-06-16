@@ -401,7 +401,7 @@ namespace LiteNetLib.Utils
             int length = maxLength > 0 && value.Length > maxLength ? maxLength : value.Length;
             int maxSize = uTF8Encoding.Value.GetMaxByteCount(length);
             if (_autoResize)
-                ResizeIfNeed(_position + maxSize);
+                ResizeIfNeed(_position + maxSize + sizeof(ushort));
             int size = uTF8Encoding.Value.GetBytes(value, 0, length, _data, _position + sizeof(ushort));
             if (size == 0)
             {
