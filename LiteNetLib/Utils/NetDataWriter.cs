@@ -29,6 +29,13 @@ namespace LiteNetLib.Utils
             get => _position;
         }
 
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+        public ReadOnlySpan<byte> AsReadOnlySpan()
+        {
+            return new ReadOnlySpan<byte>(_data, 0, _position);
+        }
+#endif
+
         public static readonly ThreadLocal<UTF8Encoding> uTF8Encoding = new ThreadLocal<UTF8Encoding>(() => new UTF8Encoding(false, true));
 
         public NetDataWriter() : this(true, InitialSize)
