@@ -153,6 +153,12 @@ namespace LiteNetLib
         private byte _channelsCount = 1;
         private readonly object _eventLock = new object();
 
+        /// <summary>
+        ///     Used with <see cref="SimulateLatency"/> and <see cref="SimulatePacketLoss"/> to tag packets that
+        ///     need to be dropped. Only relevant when <c>DEBUG</c> is defined.
+        /// </summary>
+        private bool dropPacket;
+
         //config section
         /// <summary>
         /// Enable messages receiving without connection. (with SendUnconnectedMessage method)
@@ -793,8 +799,6 @@ namespace LiteNetLib
             // ProcessEvents
             HandleMessageReceived(packet, remoteEndPoint);
         }
-
-        private bool dropPacket;
 
         [Conditional("DEBUG")]
         private void HandleSimulateLatency(NetPacket packet, IPEndPoint remoteEndPoint)
