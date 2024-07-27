@@ -120,7 +120,6 @@ namespace LiteNetLib
             object IEnumerator.Current => _p;
         }
 
-#if DEBUG
         private struct IncomingData
         {
             public NetPacket Data;
@@ -130,7 +129,6 @@ namespace LiteNetLib
         private readonly List<IncomingData> _pingSimulationList = new List<IncomingData>();
         private readonly Random _randomGenerator = new Random();
         private const int MinLatencyThreshold = 5;
-#endif
 
         private Thread _logicThread;
         private bool _manualMode;
@@ -154,6 +152,12 @@ namespace LiteNetLib
         private ConcurrentQueue<int> _peerIds = new ConcurrentQueue<int>();
         private byte _channelsCount = 1;
         private readonly object _eventLock = new object();
+
+        /// <summary>
+        ///     Used with <see cref="SimulateLatency"/> and <see cref="SimulatePacketLoss"/> to tag packets that
+        ///     need to be dropped. Only relevant when <c>DEBUG</c> is defined.
+        /// </summary>
+        private bool dropPacket;
 
         //config section
         /// <summary>
@@ -602,7 +606,6 @@ namespace LiteNetLib
         [Conditional("DEBUG")]
         private void ProcessDelayedPackets()
         {
-#if DEBUG
             if (!SimulateLatency)
                 return;
 
@@ -614,13 +617,12 @@ namespace LiteNetLib
                     var incomingData = _pingSimulationList[i];
                     if (incomingData.TimeWhenGet <= time)
                     {
-                        DebugMessageReceived(incomingData.Data, incomingData.EndPoint);
+                        HandleMessageReceived(incomingData.Data, incomingData.EndPoint);
                         _pingSimulationList.RemoveAt(i);
                         i--;
                     }
                 }
             }
-#endif
         }
 
         private void ProcessNtpRequests(int elapsedMilliseconds)
@@ -785,38 +787,55 @@ namespace LiteNetLib
                 PoolRecycle(packet);
                 return;
             }
-#if DEBUG
-            if (SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance)
+
+            dropPacket = false;
+            HandleSimulateLatency(packet, remoteEndPoint);
+            HandleSimulatePacketLoss();
+            if (dropPacket)
             {
-                //drop packet
                 return;
             }
-            if (SimulateLatency)
-            {
-                int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
-                if (latency > MinLatencyThreshold)
-                {
-                    lock (_pingSimulationList)
-                    {
-                        _pingSimulationList.Add(new IncomingData
-                        {
-                            Data = packet,
-                            EndPoint = remoteEndPoint,
-                            TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
-                        });
-                    }
-                    //hold packet
-                    return;
-                }
-            }
 
-            //ProcessEvents
-            DebugMessageReceived(packet, remoteEndPoint);
+            // ProcessEvents
+            HandleMessageReceived(packet, remoteEndPoint);
         }
 
-        private void DebugMessageReceived(NetPacket packet, IPEndPoint remoteEndPoint)
+        [Conditional("DEBUG")]
+        private void HandleSimulateLatency(NetPacket packet, IPEndPoint remoteEndPoint)
         {
-#endif
+            if (!SimulateLatency)
+            {
+                return;
+            }
+
+            int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
+            if (latency > MinLatencyThreshold)
+            {
+                lock (_pingSimulationList)
+                {
+                    _pingSimulationList.Add(new IncomingData
+                    {
+                        Data = packet,
+                        EndPoint = remoteEndPoint,
+                        TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
+                    });
+                }
+                // hold packet
+                dropPacket = true;
+            }
+        }
+
+        [Conditional("DEBUG")]
+        private void HandleSimulatePacketLoss()
+        {
+            if (SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance)
+            {
+                dropPacket = true;
+            }
+        }
+
+        private void HandleMessageReceived(NetPacket packet, IPEndPoint remoteEndPoint)
+        {
             var originalPacketSize = packet.Size;
             if (EnableStatistics)
             {
@@ -1268,7 +1287,7 @@ namespace LiteNetLib
                 _peersLock.ExitReadLock();
             }
         }
-        
+
         /// <summary>
         /// Send message without connection
         /// </summary>
@@ -1596,13 +1615,19 @@ namespace LiteNetLib
             ClearPeerSet();
             _peerIds = new ConcurrentQueue<int>();
             _lastPeerId = 0;
-#if DEBUG
-            lock (_pingSimulationList)
-                _pingSimulationList.Clear();
-#endif
+
+            ClearPingSimulationList();
+
             _connectedPeersCount = 0;
             _pendingEventHead = null;
             _pendingEventTail = null;
+        }
+
+        [Conditional("DEBUG")]
+        private void ClearPingSimulationList()
+        {
+            lock (_pingSimulationList)
+                _pingSimulationList.Clear();
         }
 
         /// <summary>
