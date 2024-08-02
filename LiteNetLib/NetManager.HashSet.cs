@@ -150,22 +150,16 @@ namespace LiteNetLib
             _peersLock.ExitWriteLock();
         }
 
-        private void RemovePeer(NetPeer peer)
+        private void RemovePeer(NetPeer peer, bool enableWriteLock)
         {
-            _peersLock.EnterWriteLock();
-            RemovePeerInternal(peer);
-            _peersLock.ExitWriteLock();
-        }
-
-        private void RemovePeerInternal(NetPeer peer)
-        {
-            if (peer == null)
+            if(enableWriteLock)
+                _peersLock.EnterWriteLock();
+            if (!RemovePeerFromSet(peer))
             {
-                NetDebug.WriteError($"Remove peer null: {peer}");
+                if(enableWriteLock)
+                    _peersLock.ExitWriteLock();
                 return;
             }
-            if (!RemovePeerFromSet(peer))
-                return;
             if (peer == _headPeer)
                 _headPeer = peer.NextPeer;
 
@@ -177,11 +171,14 @@ namespace LiteNetLib
 
             _peersArray[peer.Id] = null;
             _peerIds.Enqueue(peer.Id);
+
+            if(enableWriteLock)
+                _peersLock.ExitWriteLock();
         }
 
         private bool RemovePeerFromSet(NetPeer peer)
         {
-            if (_buckets == null)
+            if (_buckets == null || peer == null)
                 return false;
             int hashCode = peer.GetHashCode() & Lower31BitMask;
             int bucket = hashCode % _buckets.Length;

@@ -580,7 +580,7 @@ namespace LiteNetLib
                     {
                         _peersLock.EnterWriteLock();
                         for (int i = 0; i < peersToRemove.Count; i++)
-                            RemovePeerInternal(peersToRemove[i]);
+                            RemovePeer(peersToRemove[i], false);
                         _peersLock.ExitWriteLock();
                         peersToRemove.Clear();
                     }
@@ -661,7 +661,7 @@ namespace LiteNetLib
             {
                 if (netPeer.ConnectionState == ConnectionState.Disconnected && netPeer.TimeSinceLastPacket > DisconnectTimeout)
                 {
-                    RemovePeerInternal(netPeer);
+                    RemovePeer(netPeer, false);
                 }
                 else
                 {
@@ -738,16 +738,16 @@ namespace LiteNetLib
                 {
                     case ConnectRequestResult.Reconnection:
                         DisconnectPeerForce(netPeer, DisconnectReason.Reconnect, 0, null);
-                        RemovePeer(netPeer);
+                        RemovePeer(netPeer, true);
                         //go to new connection
                         break;
                     case ConnectRequestResult.NewConnection:
-                        RemovePeer(netPeer);
+                        RemovePeer(netPeer, true);
                         //go to new connection
                         break;
                     case ConnectRequestResult.P2PLose:
                         DisconnectPeerForce(netPeer, DisconnectReason.PeerToPeerConnection, 0, null);
-                        RemovePeer(netPeer);
+                        RemovePeer(netPeer, true);
                         //go to new connection
                         break;
                     default:
@@ -1564,7 +1564,7 @@ namespace LiteNetLib
                     }
                     //else reconnect
                     connectionNumber = (byte)((peer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
-                    RemovePeer(peer);
+                    RemovePeer(peer, true);
                 }
 
                 //Create reliable connection
