@@ -708,27 +708,27 @@ namespace LiteNetLib
                     _requestsDict.Remove(request.RemoteEndPoint);
             }
             else lock (_requestsDict)
+            {
+                if (TryGetPeer(request.RemoteEndPoint, out netPeer))
                 {
-                    if (TryGetPeer(request.RemoteEndPoint, out netPeer))
-                    {
-                        //already have peer
-                    }
-                    else if (request.Result == ConnectionRequestResult.Reject)
-                    {
-                        netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId());
-                        netPeer.Reject(request.InternalPacket, rejectData, start, length);
-                        AddPeer(netPeer);
-                        NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
-                    }
-                    else //Accept
-                    {
-                        netPeer = new NetPeer(this, request, GetNextPeerId());
-                        AddPeer(netPeer);
-                        CreateEvent(NetEvent.EType.Connect, netPeer);
-                        NetDebug.Write(NetLogLevel.Trace, $"[NM] Received peer connection Id: {netPeer.ConnectTime}, EP: {netPeer}");
-                    }
-                    _requestsDict.Remove(request.RemoteEndPoint);
+                    //already have peer
                 }
+                else if (request.Result == ConnectionRequestResult.Reject)
+                {
+                    netPeer = new NetPeer(this, request.RemoteEndPoint, GetNextPeerId());
+                    netPeer.Reject(request.InternalPacket, rejectData, start, length);
+                    AddPeer(netPeer);
+                    NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
+                }
+                else //Accept
+                {
+                    netPeer = new NetPeer(this, request, GetNextPeerId());
+                    AddPeer(netPeer);
+                    CreateEvent(NetEvent.EType.Connect, netPeer);
+                    NetDebug.Write(NetLogLevel.Trace, $"[NM] Received peer connection Id: {netPeer.ConnectTime}, EP: {netPeer}");
+                }
+                _requestsDict.Remove(request.RemoteEndPoint);
+            }
 
             return netPeer;
         }
