@@ -559,8 +559,8 @@ namespace LiteNetLib
                 try
                 {
                     ProcessDelayedPackets();
-                    int elapsed = (int)stopwatch.ElapsedMilliseconds;
-                    elapsed = elapsed <= 0 ? 1 : elapsed;
+                    float elapsed = (float)(stopwatch.ElapsedTicks / (double)Stopwatch.Frequency * 1000.0);
+                    elapsed = elapsed <= 0.0f ? 0.001f : elapsed;
                     stopwatch.Restart();
 
                     for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
@@ -625,7 +625,7 @@ namespace LiteNetLib
             }
         }
 
-        private void ProcessNtpRequests(int elapsedMilliseconds)
+        private void ProcessNtpRequests(float elapsedMilliseconds)
         {
             List<IPEndPoint> requestsToRemove = null;
             foreach (var ntpRequest in _ntpRequests)
@@ -652,7 +652,7 @@ namespace LiteNetLib
         /// Update and send logic. Use this only when NetManager started in manual mode
         /// </summary>
         /// <param name="elapsedMilliseconds">elapsed milliseconds since last update call</param>
-        public void ManualUpdate(int elapsedMilliseconds)
+        public void ManualUpdate(float elapsedMilliseconds)
         {
             if (!_manualMode)
                 return;

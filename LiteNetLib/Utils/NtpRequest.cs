@@ -9,8 +9,8 @@ namespace LiteNetLib.Utils
         private const int KillTimer = 10000;
         public const int DefaultPort = 123;
         private readonly IPEndPoint _ntpEndPoint;
-        private int _resendTime = ResendTimer;
-        private int _killTime = 0;
+        private float _resendTime = ResendTimer;
+        private float _killTime = 0;
 
         public NtpRequest(IPEndPoint endPoint)
         {
@@ -19,7 +19,7 @@ namespace LiteNetLib.Utils
 
         public bool NeedToKill => _killTime >= KillTimer;
 
-        public bool Send(Socket socket, int time)
+        public bool Send(Socket socket, float time)
         {
             _resendTime += time;
             _killTime += time;

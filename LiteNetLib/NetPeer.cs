@@ -57,10 +57,10 @@ namespace LiteNetLib
         private int _avgRtt;
         private int _rttCount;
         private double _resendDelay = 27.0;
-        private int _pingSendTimer;
-        private int _rttResetTimer;
+        private float _pingSendTimer;
+        private float _rttResetTimer;
         private readonly Stopwatch _pingTimer = new Stopwatch();
-        private int _timeSinceLastPacket;
+        private volatile float _timeSinceLastPacket;
         private long _remoteDelta;
 
         //Common
@@ -90,7 +90,7 @@ namespace LiteNetLib
         private int _mtu;
         private int _mtuIdx;
         private bool _finishMtu;
-        private int _mtuCheckTimer;
+        private float _mtuCheckTimer;
         private int _mtuCheckAttempts;
         private const int MtuCheckDelay = 1000;
         private const int MaxMtuCheckAttempts = 4;
@@ -115,13 +115,13 @@ namespace LiteNetLib
 
         //Connection
         private int _connectAttempts;
-        private int _connectTimer;
+        private float _connectTimer;
         private long _connectTime;
         private byte _connectNum;
         private ConnectionState _connectionState;
         private NetPacket _shutdownPacket;
         private const int ShutdownDelay = 300;
-        private int _shutdownTimer;
+        private float _shutdownTimer;
         private readonly NetPacket _pingPacket;
         private readonly NetPacket _pongPacket;
         private readonly NetPacket _connectRequestPacket;
@@ -179,9 +179,9 @@ namespace LiteNetLib
         public DateTime RemoteUtcTime => new DateTime(DateTime.UtcNow.Ticks + _remoteDelta);
 
         /// <summary>
-        /// Time since last packet received (including internal library packets)
+        /// Time since last packet received (including internal library packets) in milliseconds
         /// </summary>
-        public int TimeSinceLastPacket => _timeSinceLastPacket;
+        public float TimeSinceLastPacket => _timeSinceLastPacket;
 
         internal double ResendDelay => _resendDelay;
 
@@ -1060,7 +1060,7 @@ namespace LiteNetLib
             }
         }
 
-        private void UpdateMtuLogic(int deltaTime)
+        private void UpdateMtuLogic(float deltaTime)
         {
             if (_finishMtu)
                 return;
@@ -1304,9 +1304,9 @@ namespace LiteNetLib
             //DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2) + ", count: " + _mergeCount);
         }
 
-        internal void Update(int deltaTime)
+        internal void Update(float deltaTime)
         {
-            Interlocked.Add(ref _timeSinceLastPacket, deltaTime);
+            _timeSinceLastPacket = _timeSinceLastPacket + deltaTime;
             switch (_connectionState)
             {
                 case ConnectionState.Connected:
