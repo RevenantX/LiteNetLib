@@ -160,7 +160,7 @@ namespace LiteNetLib
         ///     Used with <see cref="SimulateLatency"/> and <see cref="SimulatePacketLoss"/> to tag packets that
         ///     need to be dropped. Only relevant when <c>DEBUG</c> is defined.
         /// </summary>
-        private bool dropPacket;
+        private bool _dropPacket;
 
         //config section
         /// <summary>
@@ -803,10 +803,10 @@ namespace LiteNetLib
                 return;
             }
 
-            dropPacket = false;
+            _dropPacket = false;
             HandleSimulateLatency(packet, remoteEndPoint);
             HandleSimulatePacketLoss();
-            if (dropPacket)
+            if (_dropPacket)
             {
                 return;
             }
@@ -836,7 +836,7 @@ namespace LiteNetLib
                     });
                 }
                 // hold packet
-                dropPacket = true;
+                _dropPacket = true;
             }
         }
 
@@ -845,7 +845,7 @@ namespace LiteNetLib
         {
             if (SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance)
             {
-                dropPacket = true;
+                _dropPacket = true;
             }
         }
 
