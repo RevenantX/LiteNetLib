@@ -172,6 +172,12 @@
             Main class for all network operations. Can be used as client and/or server.
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager._dropPacket">
+            <summary>
+                Used with <see cref="F:LiteNetLib.NetManager.SimulateLatency"/> and <see cref="F:LiteNetLib.NetManager.SimulatePacketLoss"/> to tag packets that
+                need to be dropped. Only relevant when <c>DEBUG</c> is defined.
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.UnconnectedMessagesEnabled">
             <summary>
             Enable messages receiving without connection. (with SendUnconnectedMessage method)
@@ -355,7 +361,7 @@
             <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
             <param name="extraPacketLayer">Extra processing of packages, like CRC checksum or encryption. All connected NetManagers must have same layer.</param>
         </member>
-        <member name="M:LiteNetLib.NetManager.ManualUpdate(System.Int32)">
+        <member name="M:LiteNetLib.NetManager.ManualUpdate(System.Single)">
             <summary>
             Update and send logic. Use this only when NetManager started in manual mode
             </summary>
@@ -795,7 +801,7 @@
         </member>
         <member name="P:LiteNetLib.NetPeer.TimeSinceLastPacket">
             <summary>
-            Time since last packet received (including internal library packets)
+            Time since last packet received (including internal library packets) in milliseconds
             </summary>
         </member>
         <member name="F:LiteNetLib.NetPeer.Tag">

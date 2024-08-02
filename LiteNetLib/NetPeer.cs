@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using LiteNetLib.Utils;
 
@@ -82,7 +83,11 @@ namespace LiteNetLib
         }
 
         //Channels
-        private readonly Queue<NetPacket> _unreliableChannel;
+        private NetPacket[] _unreliableSecondQueue;
+        private NetPacket[] _unreliableChannel;
+        private int _unreliablePendingCount;
+        private readonly object _unreliableChannelLock = new object();
+
         private readonly ConcurrentQueue<BaseChannel> _channelSendQueue;
         private readonly BaseChannel[] _channels;
 
@@ -242,7 +247,8 @@ namespace LiteNetLib
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
             _pingPacket = new NetPacket(PacketProperty.Ping, 0) {Sequence = 1};
 
-            _unreliableChannel = new Queue<NetPacket>();
+            _unreliableSecondQueue = new NetPacket[8];
+            _unreliableChannel = new NetPacket[8];
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
             _deliveredFragments = new Dictionary<ushort, ushort>();
 
@@ -354,9 +360,17 @@ namespace LiteNetLib
                 CreateChannel(packet._channelNumber).AddToQueue(packet._packet);
             }
             else
+                EnqueueUnreliable(packet._packet);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void EnqueueUnreliable(NetPacket packet)
+        {
+            lock (_unreliableChannelLock)
             {
-                lock(_unreliableChannel)
-                    _unreliableChannel.Enqueue(packet._packet);
+                if (_unreliablePendingCount == _unreliableChannel.Length)
+                    Array.Resize(ref _unreliableChannel, _unreliablePendingCount*2);
+                _unreliableChannel[_unreliablePendingCount++] = packet;
             }
         }
 
@@ -696,8 +710,7 @@ namespace LiteNetLib
 
             if (channel == null) //unreliable
             {
-                lock(_unreliableChannel)
-                    _unreliableChannel.Enqueue(packet);
+                EnqueueUnreliable(packet);
             }
             else
             {
@@ -828,8 +841,7 @@ namespace LiteNetLib
 
             if (channel == null) //unreliable
             {
-                lock(_unreliableChannel)
-                    _unreliableChannel.Enqueue(packet);
+                EnqueueUnreliable(packet);
             }
             else
             {
@@ -1395,15 +1407,18 @@ namespace LiteNetLib
                 }
             }
 
-            lock (_unreliableChannel)
+            int unreliableCount;
+            lock (_unreliableChannelLock)
             {
-                int unreliableCount = _unreliableChannel.Count;
-                for (int i = 0; i < unreliableCount; i++)
-                {
-                    var packet = _unreliableChannel.Dequeue();
-                    SendUserData(packet);
-                    NetManager.PoolRecycle(packet);
-                }
+                (_unreliableChannel, _unreliableSecondQueue) = (_unreliableSecondQueue, _unreliableChannel);
+                unreliableCount = _unreliablePendingCount;
+                _unreliablePendingCount = 0;
+            }
+            for (int i = 0; i < unreliableCount; i++)
+            {
+                var packet = _unreliableSecondQueue[i];
+                SendUserData(packet);
+                NetManager.PoolRecycle(packet);
             }
 
             SendMerged();
