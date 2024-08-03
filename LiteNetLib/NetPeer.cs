@@ -1406,19 +1406,22 @@ namespace LiteNetLib
                     _channelSendQueue.Enqueue(channel);
                 }
             }
-
-            int unreliableCount;
-            lock (_unreliableChannelLock)
+            
+            if (_unreliablePendingCount > 0)
             {
-                (_unreliableChannel, _unreliableSecondQueue) = (_unreliableSecondQueue, _unreliableChannel);
-                unreliableCount = _unreliablePendingCount;
-                _unreliablePendingCount = 0;
-            }
-            for (int i = 0; i < unreliableCount; i++)
-            {
-                var packet = _unreliableSecondQueue[i];
-                SendUserData(packet);
-                NetManager.PoolRecycle(packet);
+                int unreliableCount;
+                lock (_unreliableChannelLock)
+                {
+                    (_unreliableChannel, _unreliableSecondQueue) = (_unreliableSecondQueue, _unreliableChannel);
+                    unreliableCount = _unreliablePendingCount;
+                    _unreliablePendingCount = 0;
+                }
+                for (int i = 0; i < unreliableCount; i++)
+                {
+                    var packet = _unreliableSecondQueue[i];
+                    SendUserData(packet);
+                    NetManager.PoolRecycle(packet);
+                }
             }
 
             SendMerged();
