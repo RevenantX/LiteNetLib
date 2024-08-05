@@ -356,12 +356,6 @@ namespace LiteNetLib
         public int ConnectedPeersCount => (int)Interlocked.Read(ref _connectedPeersCount);
 
         public int ExtraPacketSizeForLayer => _extraPacketLayer?.ExtraPacketSizeForLayer ?? 0;
-        public NetManager(bool useSocketFix = true)
-        {
-#if UNITY_SOCKET_FIX
-            _useSocketFix = useSocketFix;
-#endif
-        }
 
         /// <summary>
         /// NetManager constructor
