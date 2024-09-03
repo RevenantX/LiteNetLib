@@ -194,7 +194,7 @@ namespace LiteNetLib.Utils
         {
             result = GetString(maxLength);
         }
-
+        
         public void Get(out Guid result)
         {
             result = GetGuid();
@@ -243,7 +243,7 @@ namespace LiteNetLib.Utils
             }
             return result;
         }
-
+        
         public T[] GetArray<T>(Func<T> constructor) where T : class, INetSerializable
         {
             ushort length = BitConverter.ToUInt16(_data, _position);
@@ -253,7 +253,7 @@ namespace LiteNetLib.Utils
                 Get(out result[i], constructor);
             return result;
         }
-
+        
         public bool[] GetBoolArray()
         {
             return GetArray<bool>(1);
@@ -400,7 +400,7 @@ namespace LiteNetLib.Utils
             ushort size = GetUShort();
             if (size == 0)
                 return string.Empty;
-
+            
             int actualSize = size - 1;
             string result = maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(_data, _position, actualSize) > maxLength ?
                 string.Empty :
@@ -414,7 +414,7 @@ namespace LiteNetLib.Utils
             ushort size = GetUShort();
             if (size == 0)
                 return string.Empty;
-
+            
             int actualSize = size - 1;
             string result = NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, actualSize);
             _position += actualSize;
@@ -430,7 +430,7 @@ namespace LiteNetLib.Utils
             _position += size;
             return result;
         }
-
+        
         public Guid GetGuid()
         {
 #if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
@@ -476,7 +476,7 @@ namespace LiteNetLib.Utils
         {
             return new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
         }
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlyMemory<byte> GetRemainingBytesMemory()
         {
@@ -585,7 +585,7 @@ namespace LiteNetLib.Utils
             ushort size = PeekUShort();
             if (size == 0)
                 return string.Empty;
-
+            
             int actualSize = size - 1;
             return (maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(_data, _position + 2, actualSize) > maxLength) ?
                 string.Empty :
