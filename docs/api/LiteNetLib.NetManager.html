@@ -259,6 +259,33 @@
   </table>
 
 
+  <h4 id="LiteNetLib_NetManager_DontRoute" data-uid="LiteNetLib.NetManager.DontRoute">DontRoute</h4>
+  <div class="markdown level1 summary"><p>UDP Only Socket Option
+Normally IP sockets send packets of data through routers and gateways until they reach the final destination.
+If the DontRoute flag is set to True, then data will be delivered on the local subnet only.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool DontRoute</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <h4 id="LiteNetLib_NetManager_EnableStatistics" data-uid="LiteNetLib.NetManager.EnableStatistics">EnableStatistics</h4>
   <div class="markdown level1 summary"><p>Toggles the collection of network statistics for the instance and all known peers</p>
 </div>
@@ -1431,6 +1458,35 @@ use direct socket calls for send/receive to drastically increase speed and reduc
 
 
   <a id="LiteNetLib_NetManager_CreateNtpRequest_" data-uid="LiteNetLib.NetManager.CreateNtpRequest*"></a>
+  <h4 id="LiteNetLib_NetManager_CreateNtpRequest_System_String_" data-uid="LiteNetLib.NetManager.CreateNtpRequest(System.String)">CreateNtpRequest(string)</h4>
+  <div class="markdown level1 summary"><p>Create the requests for NTP server (default port)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CreateNtpRequest(string ntpServerAddress)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">ntpServerAddress</span></td>
+        <td><p>NTP Server address.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_CreateNtpRequest_" data-uid="LiteNetLib.NetManager.CreateNtpRequest*"></a>
   <h4 id="LiteNetLib_NetManager_CreateNtpRequest_System_String_System_Int32_" data-uid="LiteNetLib.NetManager.CreateNtpRequest(System.String,System.Int32)">CreateNtpRequest(string, int)</h4>
   <div class="markdown level1 summary"><p>Create the requests for NTP server</p>
 </div>
@@ -1459,35 +1515,6 @@ use direct socket calls for send/receive to drastically increase speed and reduc
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">port</span></td>
         <td><p>port</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_NetManager_CreateNtpRequest_" data-uid="LiteNetLib.NetManager.CreateNtpRequest*"></a>
-  <h4 id="LiteNetLib_NetManager_CreateNtpRequest_System_String_" data-uid="LiteNetLib.NetManager.CreateNtpRequest(System.String)">CreateNtpRequest(string)</h4>
-  <div class="markdown level1 summary"><p>Create the requests for NTP server (default port)</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void CreateNtpRequest(string ntpServerAddress)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">ntpServerAddress</span></td>
-        <td><p>NTP Server address.</p>
 </td>
       </tr>
     </tbody>
@@ -1547,6 +1574,35 @@ use direct socket calls for send/receive to drastically increase speed and reduc
 
 
   <a id="LiteNetLib_NetManager_DisconnectPeer_" data-uid="LiteNetLib.NetManager.DisconnectPeer*"></a>
+  <h4 id="LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)">DisconnectPeer(NetPeer)</h4>
+  <div class="markdown level1 summary"><p>Disconnect peer from server</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DisconnectPeer(NetPeer peer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">peer</span></td>
+        <td><p>peer to disconnect</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_DisconnectPeer_" data-uid="LiteNetLib.NetManager.DisconnectPeer*"></a>
   <h4 id="LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_LiteNetLib_Utils_NetDataWriter_" data-uid="LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,LiteNetLib.Utils.NetDataWriter)">DisconnectPeer(NetPeer, NetDataWriter)</h4>
   <div class="markdown level1 summary"><p>Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)</p>
 </div>
@@ -1574,6 +1630,41 @@ use direct socket calls for send/receive to drastically increase speed and reduc
       <tr>
         <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
         <td><span class="parametername">writer</span></td>
+        <td><p>additional data</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_DisconnectPeer_" data-uid="LiteNetLib.NetManager.DisconnectPeer*"></a>
+  <h4 id="LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_System_Byte___" data-uid="LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,System.Byte[])">DisconnectPeer(NetPeer, byte[])</h4>
+  <div class="markdown level1 summary"><p>Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DisconnectPeer(NetPeer peer, byte[] data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">peer</span></td>
+        <td><p>peer to disconnect</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
         <td><p>additional data</p>
 </td>
       </tr>
@@ -1622,70 +1713,6 @@ use direct socket calls for send/receive to drastically increase speed and reduc
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">count</span></td>
         <td><p>data length</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_NetManager_DisconnectPeer_" data-uid="LiteNetLib.NetManager.DisconnectPeer*"></a>
-  <h4 id="LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_System_Byte___" data-uid="LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer,System.Byte[])">DisconnectPeer(NetPeer, byte[])</h4>
-  <div class="markdown level1 summary"><p>Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void DisconnectPeer(NetPeer peer, byte[] data)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
-        <td><span class="parametername">peer</span></td>
-        <td><p>peer to disconnect</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
-        <td><span class="parametername">data</span></td>
-        <td><p>additional data</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_NetManager_DisconnectPeer_" data-uid="LiteNetLib.NetManager.DisconnectPeer*"></a>
-  <h4 id="LiteNetLib_NetManager_DisconnectPeer_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.DisconnectPeer(LiteNetLib.NetPeer)">DisconnectPeer(NetPeer)</h4>
-  <div class="markdown level1 summary"><p>Disconnect peer from server</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void DisconnectPeer(NetPeer peer)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
-        <td><span class="parametername">peer</span></td>
-        <td><p>peer to disconnect</p>
 </td>
       </tr>
     </tbody>
@@ -1960,6 +1987,53 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
 
 
   <a id="LiteNetLib_NetManager_SendBroadcast_" data-uid="LiteNetLib.NetManager.SendBroadcast*"></a>
+  <h4 id="LiteNetLib_NetManager_SendBroadcast_System_Byte___System_Int32_" data-uid="LiteNetLib.NetManager.SendBroadcast(System.Byte[],System.Int32)">SendBroadcast(byte[], int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool SendBroadcast(byte[] data, int port)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">port</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_SendBroadcast_" data-uid="LiteNetLib.NetManager.SendBroadcast*"></a>
   <h4 id="LiteNetLib_NetManager_SendBroadcast_System_Byte___System_Int32_System_Int32_System_Int32_" data-uid="LiteNetLib.NetManager.SendBroadcast(System.Byte[],System.Int32,System.Int32,System.Int32)">SendBroadcast(byte[], int, int, int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
@@ -2016,94 +2090,6 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
   </table>
 
 
-  <a id="LiteNetLib_NetManager_SendBroadcast_" data-uid="LiteNetLib.NetManager.SendBroadcast*"></a>
-  <h4 id="LiteNetLib_NetManager_SendBroadcast_System_Byte___System_Int32_" data-uid="LiteNetLib.NetManager.SendBroadcast(System.Byte[],System.Int32)">SendBroadcast(byte[], int)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool SendBroadcast(byte[] data, int port)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
-        <td><span class="parametername">data</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">port</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
-  <h4 id="LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(NetDataWriter, DeliveryMethod, NetPeer)</h4>
-  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SendToAll(NetDataWriter writer, DeliveryMethod options, NetPeer excludePeer)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
-        <td><span class="parametername">writer</span></td>
-        <td><p>DataWriter with data</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
-        <td><span class="parametername">options</span></td>
-        <td><p>Send options (reliable, unreliable, etc.)</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
-        <td><span class="parametername">excludePeer</span></td>
-        <td><p>Excluded peer</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
   <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
   <h4 id="LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">SendToAll(NetDataWriter, DeliveryMethod)</h4>
   <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
@@ -2140,13 +2126,13 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
 
 
   <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
-  <h4 id="LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(NetDataWriter, byte, DeliveryMethod, NetPeer)</h4>
-  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
+  <h4 id="LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(NetDataWriter, DeliveryMethod, NetPeer)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SendToAll(NetDataWriter writer, byte channelNumber, DeliveryMethod options, NetPeer excludePeer)</code></pre>
+    <pre><code class="lang-csharp hljs">public void SendToAll(NetDataWriter writer, DeliveryMethod options, NetPeer excludePeer)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -2162,12 +2148,6 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
         <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
         <td><span class="parametername">writer</span></td>
         <td><p>DataWriter with data</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
-        <td><span class="parametername">channelNumber</span></td>
-        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
 </td>
       </tr>
       <tr>
@@ -2228,13 +2208,13 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
 
 
   <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
-  <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(byte[], DeliveryMethod, NetPeer)</h4>
-  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
+  <h4 id="LiteNetLib_NetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(NetDataWriter, byte, DeliveryMethod, NetPeer)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, DeliveryMethod options, NetPeer excludePeer)</code></pre>
+    <pre><code class="lang-csharp hljs">public void SendToAll(NetDataWriter writer, byte channelNumber, DeliveryMethod options, NetPeer excludePeer)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -2247,9 +2227,15 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
-        <td><span class="parametername">data</span></td>
-        <td><p>Data</p>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
+        <td><span class="parametername">writer</span></td>
+        <td><p>DataWriter with data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
+        <td><span class="parametername">channelNumber</span></td>
+        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
 </td>
       </tr>
       <tr>
@@ -2291,6 +2277,88 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">data</span></td>
         <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(byte[], DeliveryMethod, NetPeer)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, DeliveryMethod options, NetPeer excludePeer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">excludePeer</span></td>
+        <td><p>Excluded peer</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],System.Byte,LiteNetLib.DeliveryMethod)">SendToAll(byte[], byte, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, byte channelNumber, DeliveryMethod options)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
+        <td><span class="parametername">channelNumber</span></td>
+        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
 </td>
       </tr>
       <tr>
@@ -2351,13 +2419,13 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
 
 
   <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
-  <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],System.Byte,LiteNetLib.DeliveryMethod)">SendToAll(byte[], byte, DeliveryMethod)</h4>
-  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod)">SendToAll(byte[], int, int, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, byte channelNumber, DeliveryMethod options)</code></pre>
+    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, int start, int length, DeliveryMethod options)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -2376,9 +2444,15 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
-        <td><span class="parametername">channelNumber</span></td>
-        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">start</span></td>
+        <td><p>Start of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">length</span></td>
+        <td><p>Length of data</p>
 </td>
       </tr>
       <tr>
@@ -2445,13 +2519,13 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
 
 
   <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
-  <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod)">SendToAll(byte[], int, int, DeliveryMethod)</h4>
-  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)">SendToAll(byte[], int, int, byte, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, int start, int length, DeliveryMethod options)</code></pre>
+    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -2479,6 +2553,12 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">length</span></td>
         <td><p>Length of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
+        <td><span class="parametername">channelNumber</span></td>
+        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
 </td>
       </tr>
       <tr>
@@ -2551,13 +2631,13 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
 
 
   <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
-  <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)">SendToAll(byte[], int, int, byte, DeliveryMethod)</h4>
-  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod)">SendToAll(ReadOnlySpan&lt;byte&gt;, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)</code></pre>
+    <pre><code class="lang-csharp hljs">public void SendToAll(ReadOnlySpan&lt;byte&gt; data, DeliveryMethod options)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -2570,21 +2650,85 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
         <td><span class="parametername">data</span></td>
         <td><p>Data</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">start</span></td>
-        <td><p>Start of data</p>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(ReadOnlySpan&lt;byte&gt;, DeliveryMethod, NetPeer)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers (channel - 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendToAll(ReadOnlySpan&lt;byte&gt; data, DeliveryMethod options, NetPeer excludePeer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">length</span></td>
-        <td><p>Length of data</p>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">excludePeer</span></td>
+        <td><p>Excluded peer</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_NetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.NetPeer)">SendToAll(ReadOnlySpan&lt;byte&gt;, byte, DeliveryMethod, NetPeer)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendToAll(ReadOnlySpan&lt;byte&gt; data, byte channelNumber, DeliveryMethod options, NetPeer excludePeer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
 </td>
       </tr>
       <tr>
@@ -2597,6 +2741,12 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
         <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
         <td><span class="parametername">options</span></td>
         <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">excludePeer</span></td>
+        <td><p>Excluded peer</p>
 </td>
       </tr>
     </tbody>
@@ -2827,48 +2977,6 @@ much faster to just cache the IPEndPoint.</p>
   </table>
 
 
-  <a id="LiteNetLib_NetManager_SocketActive_" data-uid="LiteNetLib.NetManager.SocketActive*"></a>
-  <h4 id="LiteNetLib_NetManager_SocketActive_System_Boolean_" data-uid="LiteNetLib.NetManager.SocketActive(System.Boolean)">SocketActive(bool)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool SocketActive(bool ipv4)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">ipv4</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
   <a id="LiteNetLib_NetManager_Start_" data-uid="LiteNetLib.NetManager.Start*"></a>
   <h4 id="LiteNetLib_NetManager_Start" data-uid="LiteNetLib.NetManager.Start">Start()</h4>
   <div class="markdown level1 summary"><p>Start logic thread and listening on available port</p>
@@ -2940,6 +3048,62 @@ much faster to just cache the IPEndPoint.</p>
 
 
   <a id="LiteNetLib_NetManager_Start_" data-uid="LiteNetLib.NetManager.Start*"></a>
+  <h4 id="LiteNetLib_NetManager_Start_System_Net_IPAddress_System_Net_IPAddress_System_Int32_" data-uid="LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32)">Start(IPAddress, IPAddress, int)</h4>
+  <div class="markdown level1 summary"><p>Start logic thread and listening on selected port</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipaddress">IPAddress</a></td>
+        <td><span class="parametername">addressIPv4</span></td>
+        <td><p>bind to specific ipv4 address</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipaddress">IPAddress</a></td>
+        <td><span class="parametername">addressIPv6</span></td>
+        <td><p>bind to specific ipv6 address</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">port</span></td>
+        <td><p>port to listen</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_Start_" data-uid="LiteNetLib.NetManager.Start*"></a>
   <h4 id="LiteNetLib_NetManager_Start_System_Net_IPAddress_System_Net_IPAddress_System_Int32_System_Boolean_" data-uid="LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">Start(IPAddress, IPAddress, int, bool)</h4>
   <div class="markdown level1 summary"><p>Start logic thread and listening on selected port</p>
 </div>
@@ -2980,62 +3144,6 @@ much faster to just cache the IPEndPoint.</p>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><span class="parametername">manualMode</span></td>
         <td><p>mode of library</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_NetManager_Start_" data-uid="LiteNetLib.NetManager.Start*"></a>
-  <h4 id="LiteNetLib_NetManager_Start_System_Net_IPAddress_System_Net_IPAddress_System_Int32_" data-uid="LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32)">Start(IPAddress, IPAddress, int)</h4>
-  <div class="markdown level1 summary"><p>Start logic thread and listening on selected port</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipaddress">IPAddress</a></td>
-        <td><span class="parametername">addressIPv4</span></td>
-        <td><p>bind to specific ipv4 address</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipaddress">IPAddress</a></td>
-        <td><span class="parametername">addressIPv6</span></td>
-        <td><p>bind to specific ipv6 address</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">port</span></td>
-        <td><p>port to listen</p>
 </td>
       </tr>
     </tbody>
@@ -3396,7 +3504,7 @@ This mode useful mostly for single-threaded servers</p>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In This Article</h5>
+                <h5>In this article</h5>
                 <div></div>
               </nav>
             </div>

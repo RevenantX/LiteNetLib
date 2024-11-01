@@ -131,7 +131,6 @@ namespace LibSample
 
             //Test serializer performance
             Stopwatch stopwatch = new Stopwatch();
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
             MemoryStream memoryStream = new MemoryStream();
             NetDataWriter netDataWriter = new NetDataWriter();
 
@@ -157,14 +156,6 @@ namespace LibSample
             {
                 double c = Math.Sin(i);
             }
-
-            //Test binary formatter
-            stopwatch.Start();
-            for (int i = 0; i < LoopLength; i++)
-                binaryFormatter.Serialize(memoryStream, samplePacket);
-            stopwatch.Stop();
-            Console.WriteLine("BinaryFormatter time: " + stopwatch.ElapsedMilliseconds + " ms");
-            Console.WriteLine("BinaryFormatter size: " + memoryStream.Position / LoopLength);
 
             DataWriterTest(netDataWriter, stopwatch, samplePacket);
             NetSerializerTest(netSerializer, netDataWriter, stopwatch, samplePacket);

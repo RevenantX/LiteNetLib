@@ -122,7 +122,8 @@
 
   <a id="LiteNetLib_NetManager_NetPeerEnumerator_Current_" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.Current*"></a>
   <h4 id="LiteNetLib_NetManager_NetPeerEnumerator_Current" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.Current">Current</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the element in the collection at the current position of the enumerator.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -139,7 +140,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
-        <td></td>
+        <td><p>The element in the collection at the current position of the enumerator.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -160,7 +162,8 @@
 
   <a id="LiteNetLib_NetManager_NetPeerEnumerator_MoveNext_" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.MoveNext*"></a>
   <h4 id="LiteNetLib_NetManager_NetPeerEnumerator_MoveNext" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.MoveNext">MoveNext()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Advances the enumerator to the next element of the collection.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -177,7 +180,24 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
+        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the enumerator was successfully advanced to the next element; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> if the enumerator has passed the end of the collection.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></td>
+        <td><p>The collection was modified after the enumerator was created.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -185,12 +205,29 @@
 
   <a id="LiteNetLib_NetManager_NetPeerEnumerator_Reset_" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.Reset*"></a>
   <h4 id="LiteNetLib_NetManager_NetPeerEnumerator_Reset" data-uid="LiteNetLib.NetManager.NetPeerEnumerator.Reset">Reset()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Sets the enumerator to its initial position, which is before the first element in the collection.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Reset()</code></pre>
   </div>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></td>
+        <td><p>The collection was modified after the enumerator was created.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator&lt;T&gt;</a>
@@ -212,7 +249,7 @@
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In This Article</h5>
+                <h5>In this article</h5>
                 <div></div>
               </nav>
             </div>

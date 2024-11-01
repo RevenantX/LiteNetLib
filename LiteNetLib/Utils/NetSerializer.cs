@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Runtime.Serialization;
 
@@ -568,13 +569,16 @@ namespace LiteNetLib.Utils
             _maxStringLength = maxStringLength;
         }
 
-        private ClassInfo<T> RegisterInternal<T>()
+        private ClassInfo<T> RegisterInternal<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+            T>()
         {
             if (ClassInfo<T>.Instance != null)
                 return ClassInfo<T>.Instance;
 
-            Type t = typeof(T);
-            var props = t.GetProperties(
+            var props = typeof(T).GetProperties(
                 BindingFlags.Instance |
                 BindingFlags.Public |
                 BindingFlags.GetProperty |
@@ -663,7 +667,11 @@ namespace LiteNetLib.Utils
         }
 
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
-        public void Register<T>()
+        public void Register<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>()
         {
             RegisterInternal<T>();
         }
@@ -674,7 +682,11 @@ namespace LiteNetLib.Utils
         /// <param name="reader">NetDataReader with packet</param>
         /// <returns>Returns packet if packet in reader is matched type</returns>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
-        public T Deserialize<T>(NetDataReader reader) where T : class, new()
+        public T Deserialize<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>(NetDataReader reader) where T : class, new()
         {
             var info = RegisterInternal<T>();
             var result = new T();
@@ -696,7 +708,11 @@ namespace LiteNetLib.Utils
         /// <param name="target">Deserialization target</param>
         /// <returns>Returns true if packet in reader is matched type</returns>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
-        public bool Deserialize<T>(NetDataReader reader, T target) where T : class, new()
+        public bool Deserialize<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>(NetDataReader reader, T target) where T : class, new()
         {
             var info = RegisterInternal<T>();
             try
@@ -716,7 +732,11 @@ namespace LiteNetLib.Utils
         /// <param name="writer">Serialization target NetDataWriter</param>
         /// <param name="obj">Object to serialize</param>
         /// <exception cref="InvalidTypeException"><typeparamref name="T"/>'s fields are not supported, or it has no fields</exception>
-        public void Serialize<T>(NetDataWriter writer, T obj) where T : class, new()
+        public void Serialize<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>(NetDataWriter writer, T obj) where T : class, new()
         {
             RegisterInternal<T>().Write(obj, writer);
         }
@@ -726,7 +746,11 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="obj">Object to serialize</param>
         /// <returns>byte array with serialized data</returns>
-        public byte[] Serialize<T>(T obj) where T : class, new()
+        public byte[] Serialize<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.SerializerMemberTypes)]
+#endif
+        T>(T obj) where T : class, new()
         {
             if (_writer == null)
                 _writer = new NetDataWriter();

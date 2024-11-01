@@ -1,4 +1,4 @@
-# LiteNetLib 1.0
+# LiteNetLib
 
 Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework)
 
@@ -50,6 +50,7 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 * Connection statisitcs
 * Multicasting (for discovering hosts in local network)
 * Unity support
+* Support for .NET8 optimized socket calls (much less gc)
 * Supported platforms:
   * Windows/Mac/Linux (.NET Framework, Mono, .NET Core, .NET Standard)
   * Lumin OS (Magic Leap)
@@ -72,7 +73,7 @@ EventBasedNetListener listener = new EventBasedNetListener();
 NetManager client = new NetManager(listener);
 client.Start();
 client.Connect("localhost" /* host ip or name */, 9050 /* port */, "SomeConnectionKey" /* text key or NetDataWriter */);
-listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
+listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod, channel) =>
 {
     Console.WriteLine("We got: {0}", dataReader.GetString(100 /* max length of string */));
     dataReader.Recycle();
@@ -102,10 +103,10 @@ listener.ConnectionRequestEvent += request =>
 
 listener.PeerConnectedEvent += peer =>
 {
-    Console.WriteLine("We got connection: {0}", peer.EndPoint); // Show peer ip
-    NetDataWriter writer = new NetDataWriter();                 // Create writer class
-    writer.Put("Hello client!");                                // Put some string
-    peer.Send(writer, DeliveryMethod.ReliableOrdered);             // Send with reliability
+    Console.WriteLine("We got connection: {0}", peer);  // Show peer ip
+    NetDataWriter writer = new NetDataWriter();         // Create writer class
+    writer.Put("Hello client!");                        // Put some string
+    peer.Send(writer, DeliveryMethod.ReliableOrdered);  // Send with reliability
 };
 
 while (!Console.KeyAvailable)

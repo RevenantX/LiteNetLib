@@ -15,7 +15,7 @@ namespace LibSample
 
             public void OnPeerConnected(NetPeer peer)
             {
-                Console.WriteLine("[Client {0}] connected to: {1}:{2}", Client.LocalPort, peer.EndPoint.Address, peer.EndPoint.Port);
+                Console.WriteLine("[Client {0}] connected to: {1}:{2}", Client.LocalPort, peer.Address, peer.Port);
             }
 
             public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
@@ -60,17 +60,17 @@ namespace LibSample
 
             public void OnPeerConnected(NetPeer peer)
             {
-                Console.WriteLine("[Server] Peer connected: " + peer.EndPoint);
+                Console.WriteLine("[Server] Peer connected: " + peer);
                 var peers = Server.ConnectedPeerList;
                 foreach (var netPeer in peers)
                 {
-                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer.EndPoint);
+                    Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer);
                 }
             }
 
             public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
             {
-                Console.WriteLine("[Server] Peer disconnected: " + peer.EndPoint + ", reason: " + disconnectInfo.Reason);
+                Console.WriteLine("[Server] Peer disconnected: " + peer + ", reason: " + disconnectInfo.Reason);
             }
 
             public void OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)

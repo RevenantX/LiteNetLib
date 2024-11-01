@@ -1,4 +1,7 @@
-/* Copyright (c) Microsoft Corporation. All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. */
+/**
+ * Licensed to the .NET Foundation under one or more agreements.
+ * The .NET Foundation licenses this file to you under the MIT license.
+ */
 html,
 body {
   font-family: 'Segoe UI', Tahoma, Helvetica, sans-serif;
@@ -106,10 +109,6 @@ span.typeparamref {
 }
 span.languagekeyword{
     font-weight: bold;
-}
-
-svg:hover path {
-    fill: #ffffff;
 }
 
 .hljs {
@@ -826,7 +825,7 @@ footer {
   .toc .level1 > li {
     display: block;
   }
-  
+
   .toc .level1 > li:after {
     display: none;
   }
@@ -1033,4 +1032,10 @@ div.embeddedvideo iframe {
 #fields, #properties, #methods, #events {
     font-weight: bold;
     margin-top: 2em;
+}
+
+@media print {
+  @page {
+    margin: .4in;
+  }
 }

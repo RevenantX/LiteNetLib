@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -684,7 +683,7 @@ namespace LiteNetLib.Tests
             server.Stop();
         }
 
-        [Test]
+        [Test, Timeout(TestTimeout)]
         public void SendRawDataToAll()
         {
             var clientCount = 10;
@@ -726,7 +725,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(server.ConnectedPeersCount, clientCount);
             for (ushort i = 1; i <= clientCount; i++)
             {
-                Assert.AreEqual(ManagerStack.Client(i).ConnectedPeersCount, 1);
+                Assert.AreEqual(1, ManagerStack.Client(i).ConnectedPeersCount);
                 Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
             }
         }

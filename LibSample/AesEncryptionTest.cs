@@ -37,7 +37,7 @@ namespace LibSample
             //Copy array so we dont read and write to same array
             byte[] inboundData = new byte[outbound.Length];
             outbound.CopyTo(inboundData, 0);
-            inboundLayer.ProcessInboundPacket(ref emptyEndPoint, ref inboundData, ref start, ref length);
+            inboundLayer.ProcessInboundPacket(ref emptyEndPoint, ref inboundData, ref length);
 
             Console.WriteLine(Encoding.ASCII.GetString(inboundData, 0, length));
             byte[] expectedPlaintext = Encoding.ASCII.GetBytes(testData);

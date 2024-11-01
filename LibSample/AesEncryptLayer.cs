@@ -19,7 +19,7 @@ namespace LibSample
         public const int KeySizeInBytes = KeySize / 8;
         public const int BlockSizeInBytes = BlockSize / 8;
 
-        private readonly AesCryptoServiceProvider _aes;
+        private readonly Aes _aes;
         private ICryptoTransform _encryptor;
         private byte[] cipherBuffer = new byte[1500]; //Max possible UDP packet size
         private ICryptoTransform _decryptor;
@@ -36,7 +36,7 @@ namespace LibSample
             if (key.Length != KeySizeInBytes) throw new NotSupportedException("EncryptLayer only supports keysize " + KeySize);
 
             //Switch this with AesGCM for better performance, requires .NET Core 3.0 or Standard 2.1
-            _aes = new AesCryptoServiceProvider();
+            _aes = Aes.Create();
             _aes.KeySize = KeySize;
             _aes.BlockSize = BlockSize;
             _aes.Key = key;
@@ -47,22 +47,20 @@ namespace LibSample
             _decryptor = _aes.CreateDecryptor();
         }
 
-        public override void ProcessInboundPacket(ref IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
+        public override void ProcessInboundPacket(ref IPEndPoint endPoint, ref byte[] data, ref int length)
         {
             //Can't copy directly to _aes.IV. It won't work for some reason.
-            Buffer.BlockCopy(data, offset, ivBuffer, 0, ivBuffer.Length);
+            Buffer.BlockCopy(data, 0, ivBuffer, 0, ivBuffer.Length);
             //_aes.IV = ivBuffer;
             _decryptor = _aes.CreateDecryptor(_aes.Key, ivBuffer);
-            offset += BlockSizeInBytes;
 
             //int currentRead = ivBuffer.Length;
             //int currentWrite = 0;
 
             //TransformBlocks(_decryptor, data, length, ref currentRead, ref currentWrite);
-            byte[] lastBytes = _decryptor.TransformFinalBlock(data, offset, length - offset);
+            byte[] lastBytes = _decryptor.TransformFinalBlock(data, BlockSizeInBytes, length - BlockSizeInBytes);
 
             data = lastBytes;
-            offset = 0;
             length = lastBytes.Length;
         }
 

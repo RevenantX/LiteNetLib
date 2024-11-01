@@ -79,13 +79,42 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">NetPeer</span></div>
+    <div class="level1"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.endpoint">EndPoint</a></div>
+    <div class="level2"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></div>
+    <div class="level3"><span class="xref">NetPeer</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.maxport">IPEndPoint.MaxPort</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.minport">IPEndPoint.MinPort</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.create">IPEndPoint.Create(SocketAddress)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.equals">IPEndPoint.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.tostring">IPEndPoint.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.address">IPEndPoint.Address</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.addressfamily">IPEndPoint.AddressFamily</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.port">IPEndPoint.Port</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
   <h5 id="LiteNetLib_NetPeer_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class NetPeer</code></pre>
+    <pre><code class="lang-csharp hljs">public class NetPeer : IPEndPoint</code></pre>
   </div>
   <h3 id="fields">Fields
 </h3>
@@ -213,32 +242,6 @@
     <tbody>
       <tr>
         <td><a class="xref" href="LiteNetLib.ConnectionState.html">ConnectionState</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_NetPeer_EndPoint_" data-uid="LiteNetLib.NetPeer.EndPoint*"></a>
-  <h4 id="LiteNetLib_NetPeer_EndPoint" data-uid="LiteNetLib.NetPeer.EndPoint">EndPoint</h4>
-  <div class="markdown level1 summary"><p>Peer ip address and port</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IPEndPoint EndPoint { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -519,6 +522,33 @@ positive - remote time &gt; our time</p>
 
 
   <a id="LiteNetLib_NetPeer_Disconnect_" data-uid="LiteNetLib.NetPeer.Disconnect*"></a>
+  <h4 id="LiteNetLib_NetPeer_Disconnect_System_Byte___" data-uid="LiteNetLib.NetPeer.Disconnect(System.Byte[])">Disconnect(byte[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Disconnect(byte[] data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetPeer_Disconnect_" data-uid="LiteNetLib.NetPeer.Disconnect*"></a>
   <h4 id="LiteNetLib_NetPeer_Disconnect_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.NetPeer.Disconnect(System.Byte[],System.Int32,System.Int32)">Disconnect(byte[], int, int)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
@@ -555,31 +585,33 @@ positive - remote time &gt; our time</p>
   </table>
 
 
-  <a id="LiteNetLib_NetPeer_Disconnect_" data-uid="LiteNetLib.NetPeer.Disconnect*"></a>
-  <h4 id="LiteNetLib_NetPeer_Disconnect_System_Byte___" data-uid="LiteNetLib.NetPeer.Disconnect(System.Byte[])">Disconnect(byte[])</h4>
-  <div class="markdown level1 summary"></div>
+  <a id="LiteNetLib_NetPeer_GetHashCode_" data-uid="LiteNetLib.NetPeer.GetHashCode*"></a>
+  <h4 id="LiteNetLib_NetPeer_GetHashCode" data-uid="LiteNetLib.NetPeer.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>Returns a hash value for a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a> instance.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Disconnect(byte[] data)</code></pre>
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
+  <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
-        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
-        <td><span class="parametername">data</span></td>
-        <td></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><p>An integer hash value.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.gethashcode">IPEndPoint.GetHashCode()</a></div>
 
 
   <a id="LiteNetLib_NetPeer_GetMaxSinglePacketSize_" data-uid="LiteNetLib.NetPeer.GetMaxSinglePacketSize*"></a>
@@ -1448,6 +1480,35 @@ Fragment count exceeded ushort.MaxValue<p></p>
     </tbody>
   </table>
 
+
+  <a id="LiteNetLib_NetPeer_Serialize_" data-uid="LiteNetLib.NetPeer.Serialize*"></a>
+  <h4 id="LiteNetLib_NetPeer_Serialize" data-uid="LiteNetLib.NetPeer.Serialize">Serialize()</h4>
+  <div class="markdown level1 summary"><p>IPEndPoint serialize</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override SocketAddress Serialize()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.socketaddress">SocketAddress</a></td>
+        <td><p>SocketAddress</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.serialize">IPEndPoint.Serialize()</a></div>
+
 </article>
           </div>
 
@@ -1458,7 +1519,7 @@ Fragment count exceeded ushort.MaxValue<p></p>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In This Article</h5>
+                <h5>In this article</h5>
                 <div></div>
               </nav>
             </div>

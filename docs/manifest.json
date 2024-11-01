@@ -1,5 +1,4 @@
 {
-  "homepages": [],
   "source_base_path": "E:/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
@@ -465,6 +464,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.Utils.PreserveAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.Utils.PreserveAttribute.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/LiteNetLib.Utils.yml",
       "output": {
         ".html": {
@@ -499,6 +508,9 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
         }
       },
       "version": ""
@@ -519,6 +531,9 @@
       "output": {
         ".html": {
           "relative_path": "articles/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/toc.json"
         }
       },
       "version": ""
@@ -539,12 +554,14 @@
       "output": {
         ".html": {
           "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
         }
       },
       "version": ""
     }
   ],
-  "version_info": {},
   "groups": [
     {
       "xrefmap": "xrefmap.yml"

@@ -107,6 +107,94 @@ namespace LiteNetLib.Utils
         }
 
         #region GetMethods
+
+        public void Get<T>(out T result) where T : struct, INetSerializable
+        {
+            result = default(T);
+            result.Deserialize(this);
+        }
+
+        public void Get<T>(out T result, Func<T> constructor) where T : class, INetSerializable
+        {
+            result = constructor();
+            result.Deserialize(this);
+        }
+
+        public void Get(out IPEndPoint result)
+        {
+            result = GetNetEndPoint();
+        }
+
+        public void Get(out byte result)
+        {
+            result = GetByte();
+        }
+
+        public void Get(out sbyte result)
+        {
+            result = (sbyte)GetByte();
+        }
+
+        public void Get(out bool result)
+        {
+            result = GetBool();
+        }
+
+        public void Get(out char result)
+        {
+            result = GetChar();
+        }
+
+        public void Get(out ushort result)
+        {
+            result = GetUShort();
+        }
+
+        public void Get(out short result)
+        {
+            result = GetShort();
+        }
+
+        public void Get(out ulong result)
+        {
+            result = GetULong();
+        }
+
+        public void Get(out long result)
+        {
+            result = GetLong();
+        }
+
+        public void Get(out uint result)
+        {
+            result = GetUInt();
+        }
+
+        public void Get(out int result)
+        {
+            result = GetInt();
+        }
+
+        public void Get(out double result)
+        {
+            result = GetDouble();
+        }
+
+        public void Get(out float result)
+        {
+            result = GetFloat();
+        }
+
+        public void Get(out string result)
+        {
+            result = GetString();
+        }
+
+        public void Get(out string result, int maxLength)
+        {
+            result = GetString(maxLength);
+        }
+
         public IPEndPoint GetNetEndPoint()
         {
             string host = GetString(1000);
@@ -345,6 +433,14 @@ namespace LiteNetLib.Utils
             obj.Deserialize(this);
             return obj;
         }
+
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlySpan<byte> GetRemainingBytesSpan()
+        {
+            return new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
+        }
+#endif
 
         public byte[] GetRemainingBytes()
         {

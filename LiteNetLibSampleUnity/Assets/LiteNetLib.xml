@@ -260,6 +260,13 @@
             Enables socket option "ReuseAddress" for specific purposes
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.DontRoute">
+            <summary>
+            UDP Only Socket Option
+            Normally IP sockets send packets of data through routers and gateways until they reach the final destination.
+            If the DontRoute flag is set to True, then data will be delivered on the local subnet only.
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.Statistics">
             <summary>
             Statistics of all connections
@@ -335,21 +342,6 @@
             <summary>
             Returns connected peers list (with internal cached list)
             </summary>
-        </member>
-        <member name="M:LiteNetLib.NetManager.GetPeerById(System.Int32)">
-            <summary>
-            Gets peer by peer id
-            </summary>
-            <param name="id">id of peer</param>
-            <returns>Peer if peer with id exist, otherwise null</returns>
-        </member>
-        <member name="M:LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)">
-            <summary>
-            Gets peer by peer id
-            </summary>
-            <param name="id">id of peer</param>
-            <param name="peer">resulting peer</param>
-            <returns>True if peer with id exist, otherwise false</returns>
         </member>
         <member name="P:LiteNetLib.NetManager.ConnectedPeersCount">
             <summary>
@@ -709,6 +701,21 @@
             </summary>
             <param name="ntpServerAddress">NTP Server address.</param>
         </member>
+        <member name="M:LiteNetLib.NetManager.GetPeerById(System.Int32)">
+            <summary>
+            Gets peer by peer id
+            </summary>
+            <param name="id">id of peer</param>
+            <returns>Peer if peer with id exist, otherwise null</returns>
+        </member>
+        <member name="M:LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)">
+            <summary>
+            Gets peer by peer id
+            </summary>
+            <param name="id">id of peer</param>
+            <param name="peer">resulting peer</param>
+            <returns>True if peer with id exist, otherwise false</returns>
+        </member>
         <member name="F:LiteNetLib.NetManager.PacketPoolSize">
             <summary>
             Maximum packet pool size (increase if you have tons of packets sending)
@@ -736,11 +743,6 @@
         <member name="T:LiteNetLib.NetPeer">
             <summary>
             Network peer. Main purpose is sending messages to specific peer.
-            </summary>
-        </member>
-        <member name="P:LiteNetLib.NetPeer.EndPoint">
-            <summary>
-            Peer ip address and port
             </summary>
         </member>
         <member name="F:LiteNetLib.NetPeer.NetManager">
@@ -808,6 +810,12 @@
             <summary>
             Statistics of peer connection
             </summary>
+        </member>
+        <member name="M:LiteNetLib.NetPeer.Serialize">
+            <summary>
+            IPEndPoint serialize
+            </summary>
+            <returns>SocketAddress</returns>
         </member>
         <member name="M:LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Byte,System.Boolean)">
             <summary>
@@ -1491,6 +1499,11 @@
         <member name="F:LiteNetLib.Utils.NtpMode.Server">
             <summary>
             Identifies server-to-client SNTP packet.
+            </summary>
+        </member>
+        <member name="T:LiteNetLib.Utils.PreserveAttribute">
+            <summary>
+              <para>PreserveAttribute prevents byte code stripping from removing a class, method, field, or property.</para>
             </summary>
         </member>
     </members>
