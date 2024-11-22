@@ -1603,6 +1603,13 @@ namespace LiteNetLib
                 return;
             NetDebug.Write("[NM] Stop");
 
+            //Send last disconnect
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                netPeer.Shutdown(null, 0, 0, !sendDisconnectMessages);
+
+            //Stop
+            CloseSocket();
+            
 #if UNITY_SOCKET_FIX
             if (_useSocketFix)
             {
@@ -1610,13 +1617,7 @@ namespace LiteNetLib
                 _pausedSocketFix = null;
             }
 #endif
-
-            //Send last disconnect
-            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
-                netPeer.Shutdown(null, 0, 0, !sendDisconnectMessages);
-
-            //Stop
-            CloseSocket();
+            
             _updateTriggerEvent.Set();
             if (!_manualMode)
             {
