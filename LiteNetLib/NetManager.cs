@@ -299,9 +299,10 @@ namespace LiteNetLib
         public int MtuOverride = 0;
 
         /// <summary>
-        /// Sets initial MTU to lowest possible value according to RFC1191 (576 bytes)
+        /// Automatically discovery mtu starting from. Use at own risk because some routers can break MTU detection
+        /// and connection in result
         /// </summary>
-        public bool UseSafeMtu = false;
+        public bool MtuDiscovery = false;
 
         /// <summary>
         /// First peer. Useful for Client mode

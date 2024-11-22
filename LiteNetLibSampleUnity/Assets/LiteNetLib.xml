@@ -313,9 +313,10 @@
             Override MTU for all new peers registered in this NetManager, will ignores MTU Discovery!
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetManager.UseSafeMtu">
+        <member name="F:LiteNetLib.NetManager.MtuDiscovery">
             <summary>
-            Sets initial MTU to lowest possible value according to RFC1191 (576 bytes)
+            Automatically discovery mtu starting from. Use at own risk because some routers can break MTU detection
+            and connection in result
             </summary>
         </member>
         <member name="P:LiteNetLib.NetManager.FirstPeer">

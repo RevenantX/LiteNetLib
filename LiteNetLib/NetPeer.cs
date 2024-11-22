@@ -287,13 +287,12 @@ namespace LiteNetLib
 
         internal void ResetMtu()
         {
-            _finishMtu = false;
+            //finish if discovery disabled
+            _finishMtu = !NetManager.MtuDiscovery;
             if (NetManager.MtuOverride > 0)
                 OverrideMtu(NetManager.MtuOverride);
-            else if (NetManager.UseSafeMtu)
-                SetMtu(0);
             else
-                SetMtu(1);
+                SetMtu(0);
         }
 
         private void SetMtu(int mtuIdx)
@@ -1406,7 +1405,7 @@ namespace LiteNetLib
                     _channelSendQueue.Enqueue(channel);
                 }
             }
-            
+
             if (_unreliablePendingCount > 0)
             {
                 int unreliableCount;
