@@ -1,5 +1,6 @@
 ﻿#if UNITY_2018_3_OR_NEWER
 using System.Net;
+using UnityEngine;
 
 namespace LiteNetLib
 {
@@ -19,14 +20,23 @@ namespace LiteNetLib
             _ipv6 = ipv6;
             _port = port;
             _manualMode = manualMode;
-            UnityEngine.Application.focusChanged += Application_focusChanged;
+            Application.focusChanged += Application_focusChanged;
+            Application.quitting += Deinitialize;
             _initialized = true;
         }
 
         public void Deinitialize()
         {
             if (_initialized)
-                UnityEngine.Application.focusChanged -= Application_focusChanged;
+            {
+                Application.focusChanged -= Application_focusChanged;
+                Application.quitting -= Deinitialize;
+            }
+
+            if (_netManager.IsRunning)
+            {
+                _netManager.Stop();
+            }
             _initialized = false;
         }
 

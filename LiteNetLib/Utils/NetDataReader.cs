@@ -194,6 +194,11 @@ namespace LiteNetLib.Utils
         {
             result = GetString(maxLength);
         }
+        
+        public void Get(out Guid result)
+        {
+            result = GetGuid();
+        }
 
         public IPEndPoint GetNetEndPoint()
         {
@@ -225,6 +230,30 @@ namespace LiteNetLib.Utils
             return result;
         }
 
+        public T[] GetArray<T>() where T : INetSerializable, new()
+        {
+            ushort length = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            T[] result = new T[length];
+            for (int i = 0; i < length; i++)
+            {
+                var item = new T();
+                item.Deserialize(this);
+                result[i] = item;
+            }
+            return result;
+        }
+        
+        public T[] GetArray<T>(Func<T> constructor) where T : class, INetSerializable
+        {
+            ushort length = BitConverter.ToUInt16(_data, _position);
+            _position += 2;
+            T[] result = new T[length];
+            for (int i = 0; i < length; i++)
+                Get(out result[i], constructor);
+            return result;
+        }
+        
         public bool[] GetBoolArray()
         {
             return GetArray<bool>(1);
@@ -370,40 +399,47 @@ namespace LiteNetLib.Utils
         {
             ushort size = GetUShort();
             if (size == 0)
-            {
                 return string.Empty;
-            }
-
+            
             int actualSize = size - 1;
-            if (actualSize >= NetDataWriter.StringBufferMaxLength)
-            {
-                return null;
-            }
-
-            ArraySegment<byte> data = GetBytesSegment(actualSize);
-
-            return (maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(data.Array, data.Offset, data.Count) > maxLength) ?
+            string result = maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(_data, _position, actualSize) > maxLength ?
                 string.Empty :
-                NetDataWriter.uTF8Encoding.Value.GetString(data.Array, data.Offset, data.Count);
+                NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, actualSize);
+            _position += actualSize;
+            return result;
         }
 
         public string GetString()
         {
             ushort size = GetUShort();
             if (size == 0)
-            {
                 return string.Empty;
-            }
-
+            
             int actualSize = size - 1;
-            if (actualSize >= NetDataWriter.StringBufferMaxLength)
-            {
-                return null;
-            }
+            string result = NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, actualSize);
+            _position += actualSize;
+            return result;
+        }
 
-            ArraySegment<byte> data = GetBytesSegment(actualSize);
-
-            return NetDataWriter.uTF8Encoding.Value.GetString(data.Array, data.Offset, data.Count);
+        public string GetLargeString()
+        {
+            int size = GetInt();
+            if (size <= 0)
+                return string.Empty;
+            string result = NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, size);
+            _position += size;
+            return result;
+        }
+        
+        public Guid GetGuid()
+        {
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+            var result =  new Guid(_data.AsSpan(_position, 16));
+            _position += 16;
+            return result;
+#else
+            return new Guid(GetBytesWithLength());
+#endif
         }
 
         public ArraySegment<byte> GetBytesSegment(int count)
@@ -439,6 +475,12 @@ namespace LiteNetLib.Utils
         public ReadOnlySpan<byte> GetRemainingBytesSpan()
         {
             return new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlyMemory<byte> GetRemainingBytesMemory()
+        {
+            return new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
         }
 #endif
 
@@ -542,16 +584,9 @@ namespace LiteNetLib.Utils
         {
             ushort size = PeekUShort();
             if (size == 0)
-            {
                 return string.Empty;
-            }
-
+            
             int actualSize = size - 1;
-            if (actualSize >= NetDataWriter.StringBufferMaxLength)
-            {
-                return null;
-            }
-
             return (maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(_data, _position + 2, actualSize) > maxLength) ?
                 string.Empty :
                 NetDataWriter.uTF8Encoding.Value.GetString(_data, _position + 2, actualSize);
@@ -561,16 +596,9 @@ namespace LiteNetLib.Utils
         {
             ushort size = PeekUShort();
             if (size == 0)
-            {
                 return string.Empty;
-            }
 
             int actualSize = size - 1;
-            if (actualSize >= NetDataWriter.StringBufferMaxLength)
-            {
-                return null;
-            }
-
             return NetDataWriter.uTF8Encoding.Value.GetString(_data, _position + 2, actualSize);
         }
         #endregion

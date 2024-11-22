@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using LiteNetLib.Utils;
 
@@ -16,17 +18,20 @@ namespace LiteNetLib.Tests
             _samplePacket = new SamplePacket
             {
                 SomeFloat = 3.42f,
-                SomeIntArray = new[] {6, 5, 4},
+                SomeIntArray = new[] { 6, 5, 4 },
                 SomeString = "Test String",
+                SomeGuid = Guid.NewGuid(),
                 SomeVector2 = new SomeVector2(4, 5),
-                SomeVectors = new[] {new SomeVector2(1, 2), new SomeVector2(3, 4)},
+                SomeVectors = new[] { new SomeVector2(1, 2), new SomeVector2(3, 4) },
                 SomeEnum = TestEnum.B,
                 SomeByteArray = new byte[] { 255, 1, 0 },
-                TestObj = new SampleNetSerializable {Value = 5},
-                TestArray = new [] { new SampleNetSerializable { Value = 6 }, new SampleNetSerializable { Value = 15 } },
-                SampleClassArray = new[] { new SampleClass { Value = 6 }, new SampleClass { Value = 15 } },
-                SampleClassList = new List<SampleClass> { new SampleClass { Value = 1 }, new SampleClass { Value = 5 }},
-                VectorList = new List<SomeVector2> { new SomeVector2(-1,-2), new SomeVector2(700, 800) },
+                TestObj = new SampleNetSerializable { Value = 5 },
+                TestArray = new[] { new SampleNetSerializable { Value = 6 }, new SampleNetSerializable { Value = 15 } },
+                SampleClassArray = new[]
+                    { FillTestArray(new SampleClass { Value = 6 }), FillTestArray(new SampleClass { Value = 15 }) },
+                SampleClassList = new List<SampleClass>
+                    { FillTestArray(new SampleClass { Value = 1 }), FillTestArray(new SampleClass { Value = 5 }) },
+                VectorList = new List<SomeVector2> { new SomeVector2(-1, -2), new SomeVector2(700, 800) },
                 IgnoreMe = 1337
             };
 
@@ -83,7 +88,37 @@ namespace LiteNetLib.Tests
         private class SampleClass : INetSerializable
         {
             public int Value;
+            public ChildClass[] TestArray = Array.Empty<ChildClass>();
 
+            public void Serialize(NetDataWriter writer)
+            {
+                writer.Put(Value);
+                writer.PutArray(TestArray);
+            }
+
+            public void Deserialize(NetDataReader reader)
+            {
+                Value = reader.GetInt();
+                TestArray = reader.GetArray<ChildClass>();
+            }
+
+            public override bool Equals(object obj)
+            {
+                var other = (SampleClass)obj;
+                return other.Value == Value && (TestArray is null && other.TestArray is null || TestArray != null &&
+                    other.TestArray != null && TestArray.SequenceEqual(other.TestArray));
+            }
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
+        }
+
+        private class ChildClass : INetSerializable
+        {
+            public int Value;
+            
             public void Serialize(NetDataWriter writer)
             {
                 writer.Put(Value);
@@ -93,15 +128,10 @@ namespace LiteNetLib.Tests
             {
                 Value = reader.GetInt();
             }
-
+            
             public override bool Equals(object obj)
             {
-                return ((SampleClass)obj).Value == Value;
-            }
-
-            public override int GetHashCode()
-            {
-                return base.GetHashCode();
+                return ((ChildClass)obj).Value == Value;
             }
         }
 
@@ -119,6 +149,7 @@ namespace LiteNetLib.Tests
             public int[] SomeIntArray { get; set; }
             public byte[] SomeByteArray { get; set; }
             public string SomeString { get; set; }
+            public Guid SomeGuid { get; set; }
             public SomeVector2 SomeVector2 { get; set; }
             public SomeVector2[] SomeVectors { get; set; }
             public TestEnum SomeEnum { get; set; }
@@ -138,6 +169,15 @@ namespace LiteNetLib.Tests
                 return true;
             }
             return s1 == s2;
+        }
+
+        private static SampleClass FillTestArray(SampleClass obj)
+        {
+            var random = new Random();
+            obj.TestArray = new ChildClass[random.Next(10)];
+            for (int i = 0; i < obj.TestArray.Length; i++)
+                obj.TestArray[i] = new ChildClass { Value = random.Next() };
+            return obj;
         }
 
         [Test, MaxTime(2000)]
@@ -162,6 +202,7 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(_samplePacket.SomeFloat, readPackage.SomeFloat);
             Assert.AreEqual(_samplePacket.SomeIntArray, readPackage.SomeIntArray);
             Assert.IsTrue(AreSame(_samplePacket.SomeString, readPackage.SomeString));
+            Assert.AreEqual(_samplePacket.SomeGuid, readPackage.SomeGuid);
             Assert.AreEqual(_samplePacket.SomeVector2, readPackage.SomeVector2);
             Assert.AreEqual(_samplePacket.SomeVectors, readPackage.SomeVectors);
             Assert.AreEqual(_samplePacket.SomeEnum, readPackage.SomeEnum);

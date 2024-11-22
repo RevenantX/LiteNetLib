@@ -172,6 +172,12 @@
             Main class for all network operations. Can be used as client and/or server.
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager._dropPacket">
+            <summary>
+                Used with <see cref="F:LiteNetLib.NetManager.SimulateLatency"/> and <see cref="F:LiteNetLib.NetManager.SimulatePacketLoss"/> to tag packets that
+                need to be dropped. Only relevant when <c>DEBUG</c> is defined.
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.UnconnectedMessagesEnabled">
             <summary>
             Enable messages receiving without connection. (with SendUnconnectedMessage method)
@@ -307,9 +313,10 @@
             Override MTU for all new peers registered in this NetManager, will ignores MTU Discovery!
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetManager.UseSafeMtu">
+        <member name="F:LiteNetLib.NetManager.MtuDiscovery">
             <summary>
-            Sets initial MTU to lowest possible value according to RFC1191 (576 bytes)
+            Automatically discovery mtu starting from. Use at own risk because some routers can break MTU detection
+            and connection in result
             </summary>
         </member>
         <member name="P:LiteNetLib.NetManager.FirstPeer">
@@ -355,7 +362,7 @@
             <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
             <param name="extraPacketLayer">Extra processing of packages, like CRC checksum or encryption. All connected NetManagers must have same layer.</param>
         </member>
-        <member name="M:LiteNetLib.NetManager.ManualUpdate(System.Int32)">
+        <member name="M:LiteNetLib.NetManager.ManualUpdate(System.Single)">
             <summary>
             Update and send logic. Use this only when NetManager started in manual mode
             </summary>
@@ -565,11 +572,13 @@
             Triggers update and send logic immediately (works asynchronously)
             </summary>
         </member>
-        <member name="M:LiteNetLib.NetManager.PollEvents">
+        <member name="M:LiteNetLib.NetManager.PollEvents(System.Int32)">
             <summary>
-            Receive all pending events. Call this in game update code
+            Receive "maxProcessedEvents" pending events. Call this in game update code
             In Manual mode it will call also socket Receive (which can be slow)
+            0 - receive all events
             </summary>
+            <param name="maxProcessedEvents">Max events that will be processed (called INetEventListener Connect/Receive/Etc), 0 - receive all events</param>
         </member>
         <member name="M:LiteNetLib.NetManager.Connect(System.String,System.Int32,System.String)">
             <summary>
@@ -721,11 +730,6 @@
             Maximum packet pool size (increase if you have tons of packets sending)
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetManager.MaxPacketsReceivePerUpdate">
-            <summary>
-            Maximum packets count that will be processed in Manual PollEvents
-            </summary>
-        </member>
         <member name="M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">
             <summary>
             Start logic thread and listening on selected port
@@ -798,7 +802,7 @@
         </member>
         <member name="P:LiteNetLib.NetPeer.TimeSinceLastPacket">
             <summary>
-            Time since last packet received (including internal library packets)
+            Time since last packet received (including internal library packets) in milliseconds
             </summary>
         </member>
         <member name="F:LiteNetLib.NetPeer.Tag">

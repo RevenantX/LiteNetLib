@@ -56,7 +56,7 @@
 
         internal static readonly int[] PossibleMtu =
         {
-            576  - MaxUdpHeaderSize, //minimal (RFC 1191)
+            //576  - MaxUdpHeaderSize minimal (RFC 1191)
             1024,                    //most games standard
             1232 - MaxUdpHeaderSize,
             1460 - MaxUdpHeaderSize, //google cloud
@@ -66,6 +66,7 @@
         };
 
         //Max possible single packet size
+        public static readonly int InitialMtu = PossibleMtu[0];
         public static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
         public static readonly int MaxUnreliableDataSize = MaxPacketSize - HeaderSize;
 

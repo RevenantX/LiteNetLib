@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿#if UNITY_2018_3_OR_NEWER
+#define UNITY_SOCKET_FIX
+#endif
+using System.Runtime.InteropServices;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -17,8 +20,9 @@ namespace LiteNetLib
         private Thread _receiveThread;
         private IPEndPoint _bufferEndPointv4;
         private IPEndPoint _bufferEndPointv6;
-#if UNITY_2018_3_OR_NEWER
+#if UNITY_SOCKET_FIX
         private PausedSocketFix _pausedSocketFix;
+        private bool _useSocketFix;
 #endif
 
 #if NET8_0_OR_GREATER
@@ -29,11 +33,6 @@ namespace LiteNetLib
         private const int SioUdpConnreset = -1744830452; //SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12
         private static readonly IPAddress MulticastAddressV6 = IPAddress.Parse("ff02::1");
         public static readonly bool IPv6Support;
-
-        /// <summary>
-        /// Maximum packets count that will be processed in Manual PollEvents
-        /// </summary>
-        public int MaxPacketsReceivePerUpdate = 0;
 
         // special case in iOS (and possibly android that should be resolved in unity)
         internal bool NotConnected;
@@ -94,7 +93,7 @@ namespace LiteNetLib
             return false;
         }
 
-        private void ManualReceive(Socket socket, EndPoint bufferEndPoint)
+        private void ManualReceive(Socket socket, EndPoint bufferEndPoint, int maxReceive)
         {
             //Reading data
             try
@@ -104,7 +103,7 @@ namespace LiteNetLib
                 {
                     ReceiveFrom(socket, ref bufferEndPoint);
                     packetsReceived++;
-                    if (packetsReceived == MaxPacketsReceivePerUpdate)
+                    if (packetsReceived == maxReceive)
                         break;
                 }
             }
@@ -119,7 +118,7 @@ namespace LiteNetLib
             catch (Exception e)
             {
                 //protects socket receive thread
-                NetDebug.WriteError("[NM] SocketReceiveThread error: " + e );
+                NetDebug.WriteError("[NM] SocketReceiveThread error: " + e);
             }
         }
 
@@ -137,35 +136,36 @@ namespace LiteNetLib
 
             while (IsRunning)
             {
-                if (socketV6 == null)
-                {
-                    if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
-                        return;
-                    continue;
-                }
-                bool messageReceived = false;
-                if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
-                {
-                    if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
-                        return;
-                    messageReceived = true;
-                }
-                if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
-                {
-                    if (NativeReceiveFrom(socketHandle6, addrBuffer6) == false)
-                        return;
-                    messageReceived = true;
-                }
-
-                selectReadList.Clear();
-
-                if (messageReceived)
-                    continue;
-
-                selectReadList.Add(socketv4);
-                selectReadList.Add(socketV6);
                 try
                 {
+                    if (socketV6 == null)
+                    {
+                        if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
+                            return;
+                        continue;
+                    }
+                    bool messageReceived = false;
+                    if (socketv4.Available != 0 || selectReadList.Contains(socketv4))
+                    {
+                        if (NativeReceiveFrom(socketHandle4, addrBuffer4) == false)
+                            return;
+                        messageReceived = true;
+                    }
+                    if (socketV6.Available != 0 || selectReadList.Contains(socketV6))
+                    {
+                        if (NativeReceiveFrom(socketHandle6, addrBuffer6) == false)
+                            return;
+                        messageReceived = true;
+                    }
+
+                    selectReadList.Clear();
+
+                    if (messageReceived)
+                        continue;
+
+                    selectReadList.Add(socketv4);
+                    selectReadList.Add(socketV6);
+
                     Socket.Select(selectReadList, null, null, ReceivePollingTime);
                 }
                 catch (SocketException ex)
@@ -186,7 +186,7 @@ namespace LiteNetLib
                 catch (Exception e)
                 {
                     //protects socket receive thread
-                    NetDebug.WriteError("[NM] SocketReceiveThread error: " + e );
+                    NetDebug.WriteError("[NM] SocketReceiveThread error: " + e);
                 }
             }
 
@@ -205,8 +205,8 @@ namespace LiteNetLib
 
                 //NetDebug.WriteForce($"[R]Received data from {endPoint}, result: {packet.Size}");
                 //refresh temp Addr/Port
-                short family      = (short)((address[1] << 8) | address[0]);
-                tempEndPoint.Port =(ushort)((address[2] << 8) | address[3]);
+                short family = (short)((address[1] << 8) | address[0]);
+                tempEndPoint.Port = (ushort)((address[2] << 8) | address[3]);
                 if ((NativeSocket.UnixMode && family == NativeSocket.AF_INET6) || (!NativeSocket.UnixMode && (AddressFamily)family == AddressFamily.InterNetworkV6))
                 {
                     uint scope = unchecked((uint)(
@@ -321,12 +321,12 @@ namespace LiteNetLib
                 catch (Exception e)
                 {
                     //protects socket receive thread
-                    NetDebug.WriteError("[NM] SocketReceiveThread error: " + e );
+                    NetDebug.WriteError("[NM] SocketReceiveThread error: " + e);
                 }
             }
         }
 
-         /// <summary>
+        /// <summary>
         /// Start logic thread and listening on selected port
         /// </summary>
         /// <param name="addressIPv4">bind to specific ipv4 address</param>
@@ -345,10 +345,10 @@ namespace LiteNetLib
             if (!BindSocket(_udpSocketv4, new IPEndPoint(addressIPv4, port)))
                 return false;
 
-            LocalPort = ((IPEndPoint) _udpSocketv4.LocalEndPoint).Port;
+            LocalPort = ((IPEndPoint)_udpSocketv4.LocalEndPoint).Port;
 
-#if UNITY_2018_3_OR_NEWER
-            if (_pausedSocketFix == null)
+#if UNITY_SOCKET_FIX
+            if (_useSocketFix && _pausedSocketFix == null)
                 _pausedSocketFix = new PausedSocketFix(this, addressIPv4, addressIPv6, port, manualMode);
 #endif
 
@@ -408,7 +408,7 @@ namespace LiteNetLib
             {
                 try
                 {
-                    socket.IOControl(SioUdpConnreset, new byte[] {0}, null);
+                    socket.IOControl(SioUdpConnreset, new byte[] { 0 }, null);
                 }
                 catch
                 {
@@ -456,7 +456,7 @@ namespace LiteNetLib
                 {
                     try
                     {
-#if !UNITY_2018_3_OR_NEWER
+#if !UNITY_SOCKET_FIX
                         socket.SetSocketOption(
                             SocketOptionLevel.IPv6,
                             SocketOptionName.AddMembership,

@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using LiteNetLib.Utils;
 
@@ -57,10 +58,10 @@ namespace LiteNetLib
         private int _avgRtt;
         private int _rttCount;
         private double _resendDelay = 27.0;
-        private int _pingSendTimer;
-        private int _rttResetTimer;
+        private float _pingSendTimer;
+        private float _rttResetTimer;
         private readonly Stopwatch _pingTimer = new Stopwatch();
-        private int _timeSinceLastPacket;
+        private volatile float _timeSinceLastPacket;
         private long _remoteDelta;
 
         //Common
@@ -82,7 +83,11 @@ namespace LiteNetLib
         }
 
         //Channels
-        private readonly Queue<NetPacket> _unreliableChannel;
+        private NetPacket[] _unreliableSecondQueue;
+        private NetPacket[] _unreliableChannel;
+        private int _unreliablePendingCount;
+        private readonly object _unreliableChannelLock = new object();
+
         private readonly ConcurrentQueue<BaseChannel> _channelSendQueue;
         private readonly BaseChannel[] _channels;
 
@@ -90,7 +95,7 @@ namespace LiteNetLib
         private int _mtu;
         private int _mtuIdx;
         private bool _finishMtu;
-        private int _mtuCheckTimer;
+        private float _mtuCheckTimer;
         private int _mtuCheckAttempts;
         private const int MtuCheckDelay = 1000;
         private const int MaxMtuCheckAttempts = 4;
@@ -115,13 +120,13 @@ namespace LiteNetLib
 
         //Connection
         private int _connectAttempts;
-        private int _connectTimer;
+        private float _connectTimer;
         private long _connectTime;
         private byte _connectNum;
         private ConnectionState _connectionState;
         private NetPacket _shutdownPacket;
         private const int ShutdownDelay = 300;
-        private int _shutdownTimer;
+        private float _shutdownTimer;
         private readonly NetPacket _pingPacket;
         private readonly NetPacket _pongPacket;
         private readonly NetPacket _connectRequestPacket;
@@ -179,9 +184,9 @@ namespace LiteNetLib
         public DateTime RemoteUtcTime => new DateTime(DateTime.UtcNow.Ticks + _remoteDelta);
 
         /// <summary>
-        /// Time since last packet received (including internal library packets)
+        /// Time since last packet received (including internal library packets) in milliseconds
         /// </summary>
-        public int TimeSinceLastPacket => _timeSinceLastPacket;
+        public float TimeSinceLastPacket => _timeSinceLastPacket;
 
         internal double ResendDelay => _resendDelay;
 
@@ -242,7 +247,8 @@ namespace LiteNetLib
             _pongPacket = new NetPacket(PacketProperty.Pong, 0);
             _pingPacket = new NetPacket(PacketProperty.Ping, 0) {Sequence = 1};
 
-            _unreliableChannel = new Queue<NetPacket>();
+            _unreliableSecondQueue = new NetPacket[8];
+            _unreliableChannel = new NetPacket[8];
             _holdedFragments = new Dictionary<ushort, IncomingFragments>();
             _deliveredFragments = new Dictionary<ushort, ushort>();
 
@@ -281,13 +287,12 @@ namespace LiteNetLib
 
         internal void ResetMtu()
         {
-            _finishMtu = false;
+            //finish if discovery disabled
+            _finishMtu = !NetManager.MtuDiscovery;
             if (NetManager.MtuOverride > 0)
                 OverrideMtu(NetManager.MtuOverride);
-            else if (NetManager.UseSafeMtu)
-                SetMtu(0);
             else
-                SetMtu(1);
+                SetMtu(0);
         }
 
         private void SetMtu(int mtuIdx)
@@ -354,9 +359,17 @@ namespace LiteNetLib
                 CreateChannel(packet._channelNumber).AddToQueue(packet._packet);
             }
             else
+                EnqueueUnreliable(packet._packet);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void EnqueueUnreliable(NetPacket packet)
+        {
+            lock (_unreliableChannelLock)
             {
-                lock(_unreliableChannel)
-                    _unreliableChannel.Enqueue(packet._packet);
+                if (_unreliablePendingCount == _unreliableChannel.Length)
+                    Array.Resize(ref _unreliableChannel, _unreliablePendingCount*2);
+                _unreliableChannel[_unreliablePendingCount++] = packet;
             }
         }
 
@@ -696,8 +709,7 @@ namespace LiteNetLib
 
             if (channel == null) //unreliable
             {
-                lock(_unreliableChannel)
-                    _unreliableChannel.Enqueue(packet);
+                EnqueueUnreliable(packet);
             }
             else
             {
@@ -828,8 +840,7 @@ namespace LiteNetLib
 
             if (channel == null) //unreliable
             {
-                lock(_unreliableChannel)
-                    _unreliableChannel.Enqueue(packet);
+                EnqueueUnreliable(packet);
             }
             else
             {
@@ -1060,7 +1071,7 @@ namespace LiteNetLib
             }
         }
 
-        private void UpdateMtuLogic(int deltaTime)
+        private void UpdateMtuLogic(float deltaTime)
         {
             if (_finishMtu)
                 return;
@@ -1304,9 +1315,9 @@ namespace LiteNetLib
             //DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2) + ", count: " + _mergeCount);
         }
 
-        internal void Update(int deltaTime)
+        internal void Update(float deltaTime)
         {
-            Interlocked.Add(ref _timeSinceLastPacket, deltaTime);
+            _timeSinceLastPacket = _timeSinceLastPacket + deltaTime;
             switch (_connectionState)
             {
                 case ConnectionState.Connected:
@@ -1395,12 +1406,18 @@ namespace LiteNetLib
                 }
             }
 
-            lock (_unreliableChannel)
+            if (_unreliablePendingCount > 0)
             {
-                int unreliableCount = _unreliableChannel.Count;
+                int unreliableCount;
+                lock (_unreliableChannelLock)
+                {
+                    (_unreliableChannel, _unreliableSecondQueue) = (_unreliableSecondQueue, _unreliableChannel);
+                    unreliableCount = _unreliablePendingCount;
+                    _unreliablePendingCount = 0;
+                }
                 for (int i = 0; i < unreliableCount; i++)
                 {
-                    var packet = _unreliableChannel.Dequeue();
+                    var packet = _unreliableSecondQueue[i];
                     SendUserData(packet);
                     NetManager.PoolRecycle(packet);
                 }

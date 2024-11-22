@@ -29,9 +29,14 @@ namespace LiteNetLib.Utils
             get => _position;
         }
 
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+        public ReadOnlySpan<byte> AsReadOnlySpan()
+        {
+            return new ReadOnlySpan<byte>(_data, 0, _position);
+        }
+#endif
+
         public static readonly ThreadLocal<UTF8Encoding> uTF8Encoding = new ThreadLocal<UTF8Encoding>(() => new UTF8Encoding(false, true));
-        public const int StringBufferMaxLength = 65535;
-        private readonly byte[] _stringBuffer = new byte[StringBufferMaxLength];
 
         public NetDataWriter() : this(true, InitialSize)
         {
@@ -216,6 +221,18 @@ namespace LiteNetLib.Utils
             _position++;
         }
 
+        public void Put(Guid value)
+        {
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+            if (_autoResize)
+                ResizeIfNeed(_position + 16);
+            value.TryWriteBytes(_data.AsSpan(_position));
+            _position += 16;
+#else
+            PutBytesWithLength(value.ToByteArray());
+#endif
+        }
+
         public void Put(byte[] data, int offset, int length)
         {
             if (_autoResize)
@@ -338,10 +355,38 @@ namespace LiteNetLib.Utils
                 Put(value[i], strMaxLength);
         }
 
+        public void PutArray<T>(T[] value) where T : INetSerializable, new()
+        {
+            ushort strArrayLength = (ushort)(value?.Length ?? 0);
+            Put(strArrayLength);
+            for (int i = 0; i < strArrayLength; i++)
+                value[i].Serialize(this);
+        }
+
         public void Put(IPEndPoint endPoint)
         {
             Put(endPoint.Address.ToString());
             Put(endPoint.Port);
+        }
+
+        public void PutLargeString(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                Put(0);
+                return;
+            }
+            int size = uTF8Encoding.Value.GetByteCount(value);
+            if (size == 0)
+            {
+                Put(0);
+                return;
+            }
+            Put(size);
+            if (_autoResize)
+                ResizeIfNeed(_position + size);
+            uTF8Encoding.Value.GetBytes(value, 0, size, _data, _position);
+            _position += size;
         }
 
         public void Put(string value)
@@ -361,16 +406,17 @@ namespace LiteNetLib.Utils
             }
 
             int length = maxLength > 0 && value.Length > maxLength ? maxLength : value.Length;
-            int size = uTF8Encoding.Value.GetBytes(value, 0, length, _stringBuffer, 0);
-
-            if (size == 0 || size >= StringBufferMaxLength)
+            int maxSize = uTF8Encoding.Value.GetMaxByteCount(length);
+            if (_autoResize)
+                ResizeIfNeed(_position + maxSize + sizeof(ushort));
+            int size = uTF8Encoding.Value.GetBytes(value, 0, length, _data, _position + sizeof(ushort));
+            if (size == 0)
             {
                 Put((ushort)0);
                 return;
             }
-
             Put(checked((ushort)(size + 1)));
-            Put(_stringBuffer, 0, size);
+            _position += size;
         }
 
         public void Put<T>(T obj) where T : INetSerializable
