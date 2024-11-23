@@ -3,19 +3,19 @@
   <PropertyGroup>
     <AssemblyName>LiteNetLib</AssemblyName>
     <RootNamespace>LiteNetLib</RootNamespace>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net6.0;net5.0;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net471;net6.0;net5.0;netstandard2.0;netstandard2.1;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net7.0;net6.0;netcoreapp3.1;netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net7.0;net6.0;netcoreapp3.1;netstandard2.0;netstandard2.0;net471</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <OutputType>Library</OutputType>
     <LangVersion>7.3</LangVersion>
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
-    <PackageVersion>1.3.0</PackageVersion>
+    <PackageVersion>1.3.1</PackageVersion>
     <Title>Lite reliable UDP library for Mono and .NET </Title>
     <IsTrimmable>true</IsTrimmable>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <AssemblyVersion>1.3.1</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -30,7 +30,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>$(DefineConstants);LITENETLIB_UNSAFE</DefineConstants>
     <PackageTags>udp reliable-udp network</PackageTags>
-    <PackageReleaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/1.3.0</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/1.3.1</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/RevenantX/LiteNetLib</RepositoryUrl>
     <PackageProjectUrl>https://github.com/RevenantX/LiteNetLib</PackageProjectUrl>
@@ -44,13 +44,6 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <TargetFrameworks>net5.0;net6.0;net7.0;net8.0;netstandard2.0;netstandard2.1;net471</TargetFrameworks>
   </PropertyGroup>
-
-  <Target Name="UpdateUnityDLLS" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(TargetFramework)' == 'net471' and '$(Configuration)' == 'Release' ">
-    <ItemGroup>
-      <LibraryRelease Include="$(TargetDir)LiteNetLib.dll;$(TargetDir)LiteNetLib.pdb;$(TargetDir)LiteNetLib.xml" />
-    </ItemGroup>
-    <Copy SourceFiles="@(LibraryRelease)" DestinationFolder="..\LiteNetLibSampleUnity\Assets" />
-  </Target>
 
   <ItemGroup>
     <None Include="..\LNL.png">

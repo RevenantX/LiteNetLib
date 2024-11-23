@@ -118,7 +118,7 @@ namespace LiteNetLib.Tests
         private class ChildClass : INetSerializable
         {
             public int Value;
-            
+
             public void Serialize(NetDataWriter writer)
             {
                 writer.Put(Value);
@@ -128,10 +128,15 @@ namespace LiteNetLib.Tests
             {
                 Value = reader.GetInt();
             }
-            
+
             public override bool Equals(object obj)
             {
                 return ((ChildClass)obj).Value == Value;
+            }
+
+            public override int GetHashCode()
+            {
+                return Value.GetHashCode();
             }
         }
 
