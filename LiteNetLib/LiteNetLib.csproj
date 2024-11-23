@@ -3,8 +3,8 @@
   <PropertyGroup>
     <AssemblyName>LiteNetLib</AssemblyName>
     <RootNamespace>LiteNetLib</RootNamespace>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netstandard2.1;netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netstandard2.0;netstandard2.0;net471</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net7.0;net6.0;netcoreapp3.1;netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net7.0;net6.0;netcoreapp3.1;netstandard2.0;netstandard2.0;net471</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <OutputType>Library</OutputType>
     <LangVersion>7.3</LangVersion>
