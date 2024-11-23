@@ -4,7 +4,6 @@
     <OutputType>Exe</OutputType>
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net7.0;net6.0;netcoreapp3.1</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net7.0;net6.0;net471;netcoreapp3.1</TargetFrameworks>
-    <TargetFrameworks>net6.0;net8.0;net471</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

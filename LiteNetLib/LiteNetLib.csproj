@@ -36,7 +36,6 @@
     <PackageProjectUrl>https://github.com/RevenantX/LiteNetLib</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.1.0</Version>
     <Authors>Ruslan Pyrch</Authors>
     <Copyright>Copyright 2024 Ruslan Pyrch</Copyright>
     <Description>Lite reliable UDP library for .NET, Mono, and .NET Core</Description>
