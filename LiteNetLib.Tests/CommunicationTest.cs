@@ -20,7 +20,7 @@ namespace LiteNetLib.Tests
     }
 
     [TestFixture]
-    [Category("Communication")]
+    [Category("Communication"), NonParallelizable]
     public class CommunicationTest
     {
         const int TestTimeout = 4000;
