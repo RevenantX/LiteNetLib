@@ -13,7 +13,7 @@ assembly_info:
 build:
   project: LiteNetLib.sln
 test_script:
-    - dotnet test m:1 "LiteNetLib\LiteNetLib.Tests\LiteNetLib.Tests.csproj" --configuration Release --no-build
+    - dotnet test -m:1 "LiteNetLib\LiteNetLib.Tests\LiteNetLib.Tests.csproj" --configuration Release --no-build
 artifacts:
   - path: LiteNetLib/bin/Release/net471
     name: LiteNetLib-$(appveyor_build_version)
