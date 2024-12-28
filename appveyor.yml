@@ -12,9 +12,8 @@ assembly_info:
   assembly_file_version: '{version}'
 build:
   project: LiteNetLib.sln
-test:
-  assemblies:
-    - '**\*.Tests.dll'
+test_script:
+    - dotnet test -m:1 "LiteNetLib.Tests\LiteNetLib.Tests.csproj" --configuration Release --no-build
 artifacts:
   - path: LiteNetLib/bin/Release/net471
     name: LiteNetLib-$(appveyor_build_version)

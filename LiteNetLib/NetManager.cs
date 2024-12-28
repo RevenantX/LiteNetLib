@@ -155,6 +155,7 @@ namespace LiteNetLib
         private ConcurrentQueue<int> _peerIds = new ConcurrentQueue<int>();
         private byte _channelsCount = 1;
         private readonly object _eventLock = new object();
+        private volatile bool _isRunning;
 
         /// <summary>
         ///     Used with <see cref="SimulateLatency"/> and <see cref="SimulatePacketLoss"/> to tag packets that
@@ -276,7 +277,7 @@ namespace LiteNetLib
         /// <summary>
         /// Returns true if socket listening and update thread is running
         /// </summary>
-        public bool IsRunning { get; private set; }
+        public bool IsRunning => _isRunning;
 
         /// <summary>
         /// Local EndPoint (host and port)
@@ -564,7 +565,7 @@ namespace LiteNetLib
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            while (IsRunning)
+            while (_isRunning)
             {
                 try
                 {
@@ -1554,7 +1555,7 @@ namespace LiteNetLib
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
         public NetPeer Connect(IPEndPoint target, NetDataWriter connectionData)
         {
-            if (!IsRunning)
+            if (!_isRunning)
                 throw new InvalidOperationException("Client is not running");
 
             lock (_requestsDict)
@@ -1599,7 +1600,7 @@ namespace LiteNetLib
         /// <param name="sendDisconnectMessages">Send disconnect messages</param>
         public void Stop(bool sendDisconnectMessages)
         {
-            if (!IsRunning)
+            if (!_isRunning)
                 return;
             NetDebug.Write("[NM] Stop");
 
@@ -1609,7 +1610,7 @@ namespace LiteNetLib
 
             //Stop
             CloseSocket();
-            
+
 #if UNITY_SOCKET_FIX
             if (_useSocketFix)
             {
@@ -1617,7 +1618,7 @@ namespace LiteNetLib
                 _pausedSocketFix = null;
             }
 #endif
-            
+
             _updateTriggerEvent.Set();
             if (!_manualMode)
             {
