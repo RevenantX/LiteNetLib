@@ -8,6 +8,8 @@ using LiteNetLib.Utils;
 
 using NUnit.Framework;
 
+[assembly:NonParallelizable]
+
 namespace LiteNetLib.Tests
 {
     class LibErrorChecker : INetLogger
@@ -20,7 +22,7 @@ namespace LiteNetLib.Tests
     }
 
     [TestFixture]
-    [Category("Communication"), NonParallelizable]
+    [Category("Communication")]
     public class CommunicationTest
     {
         const int TestTimeout = 4000;
