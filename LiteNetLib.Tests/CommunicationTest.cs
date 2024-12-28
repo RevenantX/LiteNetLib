@@ -8,8 +8,6 @@ using LiteNetLib.Utils;
 
 using NUnit.Framework;
 
-[assembly:NonParallelizable]
-
 namespace LiteNetLib.Tests
 {
     class LibErrorChecker : INetLogger
