@@ -13,8 +13,6 @@ namespace LiteNetLib
 {
     public partial class NetManager
     {
-        private const int ReceivePollingTime = 500000; //0.5 second
-
         private Socket _udpSocketv4;
         private Socket _udpSocketv6;
         private Thread _receiveThread;
@@ -36,6 +34,11 @@ namespace LiteNetLib
 
         // special case in iOS (and possibly android that should be resolved in unity)
         internal bool NotConnected;
+
+        /// <summary>
+        /// Poll timeout in microseconds. Increasing can slightly increase performance in cost of slow NetManager.Stop(Socket.Close)
+        /// </summary>
+        public int ReceivePollingTime = 50000; //0.05 second
 
         public short Ttl
         {
@@ -134,7 +137,7 @@ namespace LiteNetLib
             var socketV6 = _udpSocketv6;
             var packet = PoolGetPacket(NetConstants.MaxPacketSize);
 
-            while (IsRunning)
+            while (_isRunning)
             {
                 try
                 {
@@ -267,7 +270,7 @@ namespace LiteNetLib
             var socketv4 = _udpSocketv4;
             var socketV6 = _udpSocketv6;
 
-            while (IsRunning)
+            while (_isRunning)
             {
                 //Reading data
                 try
@@ -352,7 +355,7 @@ namespace LiteNetLib
                 _pausedSocketFix = new PausedSocketFix(this, addressIPv4, addressIPv6, port, manualMode);
 #endif
 
-            IsRunning = true;
+            _isRunning = true;
             if (_manualMode)
             {
                 _bufferEndPointv4 = new IPEndPoint(IPAddress.Any, 0);
@@ -516,7 +519,7 @@ namespace LiteNetLib
 
         internal int SendRaw(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
-            if (!IsRunning)
+            if (!_isRunning)
                 return 0;
 
             NetPacket expandedPacket = null;
@@ -694,14 +697,14 @@ namespace LiteNetLib
 
         private void CloseSocket()
         {
-            IsRunning = false;
+            _isRunning = false;
+            if (_receiveThread != null && _receiveThread != Thread.CurrentThread)
+                _receiveThread.Join();
+            _receiveThread = null;
             _udpSocketv4?.Close();
             _udpSocketv6?.Close();
             _udpSocketv4 = null;
             _udpSocketv6 = null;
-            if (_receiveThread != null && _receiveThread != Thread.CurrentThread)
-                _receiveThread.Join();
-            _receiveThread = null;
         }
     }
 }
