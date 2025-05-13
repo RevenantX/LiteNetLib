@@ -35,7 +35,7 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 * Different send mechanics
   * Reliable with order
   * Reliable without order
-  * Reliable sequenced (realiable only last packet)
+  * Reliable sequenced (reliable only last packet)
   * Ordered but unreliable with duplication prevention
   * Simple UDP packets without order and reliability
 * Fast packet serializer [(Usage manual)](https://revenantx.github.io/LiteNetLib/articles/netserializerusage.html)
@@ -47,14 +47,14 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 * NTP time requests
 * Packet loss and latency simulation
 * IPv6 support (using separate socket for performance)
-* Connection statisitcs
+* Connection statistics
 * Multicasting (for discovering hosts in local network)
 * Unity support
 * Support for .NET8 optimized socket calls (much less gc)
 * Supported platforms:
   * Windows/Mac/Linux (.NET Framework, Mono, .NET Core, .NET Standard)
   * Lumin OS (Magic Leap)
-  * Monogame
+  * MonoGame
   * Godot
   * Unity 2018.3 (Desktop platforms, Android, iOS, Switch)
   
@@ -78,7 +78,7 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 EventBasedNetListener listener = new EventBasedNetListener();
 NetManager client = new NetManager(listener);
 client.Start();
-client.Connect("localhost" /* host ip or name */, 9050 /* port */, "SomeConnectionKey" /* text key or NetDataWriter */);
+client.Connect("localhost" /* host IP or name */, 9050 /* port */, "SomeConnectionKey" /* text key or NetDataWriter */);
 listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod, channel) =>
 {
     Console.WriteLine("We got: {0}", dataReader.GetString(100 /* max length of string */));
@@ -109,7 +109,7 @@ listener.ConnectionRequestEvent += request =>
 
 listener.PeerConnectedEvent += peer =>
 {
-    Console.WriteLine("We got connection: {0}", peer);  // Show peer ip
+    Console.WriteLine("We got connection: {0}", peer);  // Show peer IP
     NetDataWriter writer = new NetDataWriter();         // Create writer class
     writer.Put("Hello client!");                        // Put some string
     peer.Send(writer, DeliveryMethod.ReliableOrdered);  // Send with reliability
