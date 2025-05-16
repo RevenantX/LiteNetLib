@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using LiteNetLib.Utils;
 
@@ -68,6 +68,24 @@ namespace LiteNetLib
             Buffer.BlockCopy(connectData.Data, 0, packet.RawData, HeaderSize + addressBytes.Size, connectData.Length);
             return packet;
         }
+
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+        public static NetPacket Make(ReadOnlySpan<byte> connectData, SocketAddress addressBytes, long connectTime, int localId)
+        {
+            //Make initial packet
+            var packet = new NetPacket(PacketProperty.ConnectRequest, connectData.Length+addressBytes.Size);
+
+            //Add data
+            FastBitConverter.GetBytes(packet.RawData, 1, NetConstants.ProtocolId);
+            FastBitConverter.GetBytes(packet.RawData, 5, connectTime);
+            FastBitConverter.GetBytes(packet.RawData, 13, localId);
+            packet.RawData[HeaderSize - 1] = (byte)addressBytes.Size;
+            for (int i = 0; i < addressBytes.Size; i++)
+                packet.RawData[HeaderSize + i] = addressBytes[i];
+            connectData.CopyTo(packet.RawData.AsSpan(HeaderSize + addressBytes.Size));
+            return packet;
+        }
+#endif
     }
 
     internal sealed class NetConnectAcceptPacket
