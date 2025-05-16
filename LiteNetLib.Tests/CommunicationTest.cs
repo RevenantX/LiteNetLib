@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -39,6 +41,7 @@ namespace LiteNetLib.Tests
 
         private const int DefaultPort = 9050;
         private const string DefaultAppKey = "test_server";
+        private static readonly byte[] DefaultAppKeyBytes = new byte[] { 12, 0, 116, 101, 115, 116, 95, 115, 101, 114, 118, 101, 114 };
 
         public NetManagerStack ManagerStack { get; set; }
 
@@ -78,6 +81,30 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client1.ConnectedPeersCount);
             Assert.AreEqual(1, client2.ConnectedPeersCount);
         }
+
+#if NET5_0_OR_GREATER
+        [Test, Timeout(TestTimeout)]
+        public void P2PConnectWithSpan()
+        {
+            var client1 = ManagerStack.Client(1);
+            var client2 = ManagerStack.Client(2);
+
+            IPEndPoint endPoint1 = new IPEndPoint(IPAddress.Loopback, client2.LocalPort);
+            IPEndPoint endPoint2 = new IPEndPoint(IPAddress.Loopback, client1.LocalPort);
+            client1.Connect(endPoint1, DefaultAppKeyBytes.AsSpan());
+            client2.Connect(endPoint2, DefaultAppKeyBytes.AsSpan());
+
+            while (client1.ConnectedPeersCount != 1 || client2.ConnectedPeersCount != 1)
+            {
+                Thread.Sleep(15);
+                client1.PollEvents();
+                client2.PollEvents();
+            }
+
+            Assert.AreEqual(1, client1.ConnectedPeersCount);
+            Assert.AreEqual(1, client2.ConnectedPeersCount);
+        }
+#endif
 
         [Test, Timeout(TestTimeout)]
         public void ConnectionByIpV4Unsynced()

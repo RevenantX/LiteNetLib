@@ -1,6 +1,7 @@
 ﻿using LiteNetLib.Utils;
 
 using NUnit.Framework;
+using System;
 
 namespace LiteNetLib.Tests
 {
@@ -58,6 +59,26 @@ namespace LiteNetLib.Tests
                 new byte[] {1, 2, 4, 8, 16, byte.MaxValue, byte.MinValue},
                 Is.EqualTo(readByteArray).AsCollection);
         }
+
+#if NET5_0_OR_GREATER
+        [Test]
+        public void WriteReadByteSpan()
+        {
+            Span<byte> tempBytes = new byte[] { 1, 2, 4, 8 };
+            var ndw = new NetDataWriter();
+            ndw.Put(tempBytes);
+            Span<byte> anotherTempBytes = new byte[] { 16, byte.MaxValue, byte.MinValue };
+            ndw.Put(anotherTempBytes);
+
+            var ndr = new NetDataReader(ndw.Data);
+            var readByteArray = new byte[7];
+            ndr.GetBytes(readByteArray, 7);
+
+            Assert.That(
+                new byte[] { 1, 2, 4, 8, 16, byte.MaxValue, byte.MinValue },
+                Is.EqualTo(readByteArray).AsCollection);
+        }
+#endif
 
         [Test]
         public void WriteReadDouble()
