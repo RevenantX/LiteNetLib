@@ -81,6 +81,18 @@ namespace LiteNetLib.Utils
             return netDataWriter;
         }
 
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+        /// <summary>
+        /// Creates NetDataWriter from the given <paramref name="bytes"/>.
+        /// </summary>
+        public static NetDataWriter FromBytes(Span<byte> bytes)
+        {
+            var netDataWriter = new NetDataWriter(true, bytes.Length);
+            netDataWriter.Put(bytes);
+            return netDataWriter;
+        }
+#endif
+
         public static NetDataWriter FromString(string value)
         {
             var netDataWriter = new NetDataWriter();
@@ -248,6 +260,16 @@ namespace LiteNetLib.Utils
             Buffer.BlockCopy(data, 0, _data, _position, data.Length);
             _position += data.Length;
         }
+
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+        public void Put(ReadOnlySpan<byte> data)
+        {
+            if (_autoResize)
+                ResizeIfNeed(_position + data.Length);
+            data.CopyTo(_data.AsSpan(_position));
+            _position += data.Length;
+        }
+#endif
 
         public void PutSBytesWithLength(sbyte[] data, int offset, ushort length)
         {
