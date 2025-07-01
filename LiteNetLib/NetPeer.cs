@@ -271,13 +271,13 @@ namespace LiteNetLib
             Address = newEndPoint.Address;
             Port = newEndPoint.Port;
 
+            _cachedSocketAddr = base.Serialize();            
             if (NetManager.UseNativeSockets)
             {
                 NativeAddress = new byte[_cachedSocketAddr.Size];
                 for (int i = 0; i < _cachedSocketAddr.Size; i++)
                     NativeAddress[i] = _cachedSocketAddr[i];
             }
-            _cachedSocketAddr = base.Serialize();
 #if NET8_0_OR_GREATER
             _cachedHashCode = NetManager.UseNativeSockets ? base.GetHashCode() : _cachedSocketAddr.GetHashCode();
 #else
@@ -417,6 +417,26 @@ namespace LiteNetLib
 
             NetDebug.Write(NetLogLevel.Trace, $"[CC] ConnectId: {_connectTime}, ConnectNum: {connectNum}");
         }
+
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+        //"Connect to" constructor
+        internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id, byte connectNum, ReadOnlySpan<byte> connectData)
+            : this(netManager, remoteEndPoint, id)
+        {
+            _connectTime = DateTime.UtcNow.Ticks;
+            _connectionState = ConnectionState.Outgoing;
+            ConnectionNum = connectNum;
+
+            //Make initial packet
+            _connectRequestPacket = NetConnectRequestPacket.Make(connectData, remoteEndPoint.Serialize(), _connectTime, id);
+            _connectRequestPacket.ConnectionNumber = connectNum;
+
+            //Send request
+            NetManager.SendRaw(_connectRequestPacket, this);
+
+            NetDebug.Write(NetLogLevel.Trace, $"[CC] ConnectId: {_connectTime}, ConnectNum: {connectNum}");
+        }
+#endif
 
         //"Accept" incoming constructor
         internal NetPeer(NetManager netManager, ConnectionRequest request, int id)

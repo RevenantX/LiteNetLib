@@ -1591,6 +1591,48 @@ namespace LiteNetLib
             }
         }
 
+#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
+        /// <summary>
+        /// Connect to remote host
+        /// </summary>
+        /// <param name="target">Server end point (ip and port)</param>
+        /// <param name="connectionData">Additional data for remote peer</param>
+        /// <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
+        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
+        public NetPeer Connect(IPEndPoint target, ReadOnlySpan<byte> connectionData)
+        {
+            if (!_isRunning)
+                throw new InvalidOperationException("Client is not running");
+
+            lock (_requestsDict)
+            {
+                if (_requestsDict.ContainsKey(target))
+                    return null;
+
+                byte connectionNumber = 0;
+                if (TryGetPeer(target, out var peer))
+                {
+                    switch (peer.ConnectionState)
+                    {
+                        //just return already connected peer
+                        case ConnectionState.Connected:
+                        case ConnectionState.Outgoing:
+                            return peer;
+                    }
+                    //else reconnect
+                    connectionNumber = (byte)((peer.ConnectionNum + 1) % NetConstants.MaxConnectionNumber);
+                    RemovePeer(peer, true);
+                }
+
+                //Create reliable connection
+                //And send connection request
+                peer = new NetPeer(this, target, GetNextPeerId(), connectionNumber, connectionData);
+                AddPeer(peer);
+                return peer;
+            }
+        }
+#endif
+
         /// <summary>
         /// Force closes connection and stop all threads.
         /// </summary>
