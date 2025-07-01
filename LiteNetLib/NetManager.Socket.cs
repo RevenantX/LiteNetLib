@@ -532,6 +532,45 @@ namespace LiteNetLib
                 message = expandedPacket.RawData;
             }
 
+#if DEBUG || SIMULATE_NETWORK
+            // Apply outbound simulation (packet loss and latency)
+            if (HandleSimulateOutboundPacketLoss())
+            {
+                if (expandedPacket != null)
+                    PoolRecycle(expandedPacket);
+                return 0; // Simulate successful send to avoid triggering error handling
+            }
+
+            if (HandleSimulateOutboundLatency(message, start, length, remoteEndPoint))
+            {
+                if (expandedPacket != null)
+                    PoolRecycle(expandedPacket);
+                return length; // Simulate successful send
+            }
+#endif
+
+            return SendRawCoreWithCleanup(message, start, length, remoteEndPoint, expandedPacket);
+        }
+
+        private int SendRawCoreWithCleanup(byte[] message, int start, int length, IPEndPoint remoteEndPoint, NetPacket expandedPacket)
+        {
+            try
+            {
+                return SendRawCore(message, start, length, remoteEndPoint);
+            }
+            finally
+            {
+                if (expandedPacket != null)
+                    PoolRecycle(expandedPacket);
+            }
+        }
+
+        // Core socket sending logic without simulation - used by both SendRaw and delayed packet processing
+        internal int SendRawCore(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
+        {
+            if (!_isRunning)
+                return 0;
+
             var socket = _udpSocketv4;
             if (remoteEndPoint.AddressFamily == AddressFamily.InterNetworkV6 && IPv6Support)
             {
@@ -603,11 +642,6 @@ namespace LiteNetLib
             {
                 NetDebug.WriteError($"[S] {ex}");
                 return 0;
-            }
-            finally
-            {
-                if (expandedPacket != null)
-                    PoolRecycle(expandedPacket);
             }
 
             if (result <= 0)
