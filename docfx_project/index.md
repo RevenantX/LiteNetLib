@@ -113,10 +113,10 @@ server.Stop();
   * (including library internal keepalive packets)
   * default value: **5000 msec**.
 * **SimulatePacketLoss**
-  * simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)
+  * simulate packet loss by dropping random amout of packets. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
   * default value: **false**
 * **SimulateLatency**
-  * simulate latency by holding packets for random time. (Works only in DEBUG mode)
+  * simulate latency by holding packets for random time. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
   * default value: **false**
 * **SimulationPacketLossChance**
   * chance of packet loss when simulation enabled. value in percents.

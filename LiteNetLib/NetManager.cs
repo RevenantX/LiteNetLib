@@ -193,12 +193,12 @@ namespace LiteNetLib
         public int DisconnectTimeout = 5000;
 
         /// <summary>
-        /// Simulate packet loss by dropping random amount of packets. (Works only in DEBUG mode)
+        /// Simulate packet loss by dropping random amount of packets. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
         /// </summary>
         public bool SimulatePacketLoss = false;
 
         /// <summary>
-        /// Simulate latency by holding packets for random time. (Works only in DEBUG mode)
+        /// Simulate latency by holding packets for random time. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
         /// </summary>
         public bool SimulateLatency = false;
 
@@ -614,7 +614,7 @@ namespace LiteNetLib
             stopwatch.Stop();
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
         private void ProcessDelayedPackets()
         {
             if (!SimulateLatency)
@@ -816,7 +816,7 @@ namespace LiteNetLib
             HandleMessageReceived(packet, remoteEndPoint);
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
         private void HandleSimulateLatency(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             if (!SimulateLatency)
@@ -841,7 +841,7 @@ namespace LiteNetLib
             }
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
         private void HandleSimulatePacketLoss()
         {
             if (SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance)
@@ -1643,7 +1643,7 @@ namespace LiteNetLib
             _pendingEventTail = null;
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
         private void ClearPingSimulationList()
         {
             lock (_pingSimulationList)
