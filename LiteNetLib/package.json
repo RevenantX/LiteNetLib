@@ -1,6 +1,6 @@
 {
     "name": "com.revenantx.litenetlib",
-    "version": "1.3.3",
+    "version": "1.3.4",
     "displayName": "LiteNetLib",
     "description": "Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework)",
     "unity": "2018.3",
