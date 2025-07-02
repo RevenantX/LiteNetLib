@@ -229,31 +229,6 @@ namespace LiteNetLib
         public int SimulationMaxLatency = 100;
 
         /// <summary>
-        /// Simulate packet loss on outbound packets by dropping random amount of packets. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
-        /// </summary>
-        public bool SimulateOutboundPacketLoss = false;
-
-        /// <summary>
-        /// Simulate latency on outbound packets by holding packets for random time. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
-        /// </summary>
-        public bool SimulateOutboundLatency = false;
-
-        /// <summary>
-        /// Chance of outbound packet loss when simulation enabled. value in percents (1 - 100).
-        /// </summary>
-        public int SimulationOutboundPacketLossChance = 10;
-
-        /// <summary>
-        /// Minimum simulated outbound latency (in milliseconds)
-        /// </summary>
-        public int SimulationOutboundMinLatency = 30;
-
-        /// <summary>
-        /// Maximum simulated outbound latency (in milliseconds)
-        /// </summary>
-        public int SimulationOutboundMaxLatency = 100;
-
-        /// <summary>
         /// Events automatically will be called without PollEvents method from another thread
         /// </summary>
         public bool UnsyncedEvents = false;
@@ -606,7 +581,6 @@ namespace LiteNetLib
                 try
                 {
                     ProcessDelayedPackets();
-                    ProcessDelayedOutboundPackets();
                     float elapsed = (float)(stopwatch.ElapsedTicks / (double)Stopwatch.Frequency * 1000.0);
                     elapsed = elapsed <= 0.0f ? 0.001f : elapsed;
                     stopwatch.Restart();
@@ -671,15 +645,7 @@ namespace LiteNetLib
                     }
                 }
             }
-        }
 
-        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
-        private void ProcessDelayedOutboundPackets()
-        {
-            if (!SimulateOutboundLatency)
-                return;
-
-            var time = DateTime.UtcNow;
             lock (_outboundSimulationList)
             {
                 for (int i = 0; i < _outboundSimulationList.Count; i++)
@@ -913,12 +879,12 @@ namespace LiteNetLib
 #if DEBUG || SIMULATE_NETWORK
         private bool HandleSimulateOutboundLatency(byte[] data, int start, int length, IPEndPoint remoteEndPoint)
         {
-            if (!SimulateOutboundLatency)
+            if (!SimulateLatency)
             {
                 return false;
             }
 
-            int latency = _randomGenerator.Next(SimulationOutboundMinLatency, SimulationOutboundMaxLatency);
+            int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
             if (latency > MinLatencyThreshold)
             {
                 // Create a copy of the data to avoid issues with recycled packets
@@ -946,7 +912,7 @@ namespace LiteNetLib
 #if DEBUG || SIMULATE_NETWORK
         private bool HandleSimulateOutboundPacketLoss()
         {
-            bool shouldDrop = SimulateOutboundPacketLoss && _randomGenerator.NextDouble() * 100 < SimulationOutboundPacketLossChance;
+            bool shouldDrop = SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance;
             return shouldDrop;
         }
 #endif
@@ -1580,7 +1546,6 @@ namespace LiteNetLib
                 if (_udpSocketv6 != null && _udpSocketv6 != _udpSocketv4)
                     ManualReceive(_udpSocketv6, _bufferEndPointv6, maxProcessedEvents);
                 ProcessDelayedPackets();
-                ProcessDelayedOutboundPackets();
                 return;
             }
             if (UnsyncedEvents)

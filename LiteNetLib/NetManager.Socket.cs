@@ -533,7 +533,6 @@ namespace LiteNetLib
             }
 
 #if DEBUG || SIMULATE_NETWORK
-            // Apply outbound simulation (packet loss and latency)
             if (HandleSimulateOutboundPacketLoss())
             {
                 if (expandedPacket != null)
