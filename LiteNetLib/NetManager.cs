@@ -130,6 +130,17 @@ namespace LiteNetLib
             public DateTime TimeWhenGet;
         }
         private readonly List<IncomingData> _pingSimulationList = new List<IncomingData>();
+
+        private struct OutboundDelayedPacket
+        {
+            public byte[] Data;
+            public int Start;
+            public int Length;
+            public IPEndPoint EndPoint;
+            public DateTime TimeWhenSend;
+        }
+        private readonly List<OutboundDelayedPacket> _outboundSimulationList = new List<OutboundDelayedPacket>();
+
         private readonly Random _randomGenerator = new Random();
         private const int MinLatencyThreshold = 5;
 
@@ -193,12 +204,12 @@ namespace LiteNetLib
         public int DisconnectTimeout = 5000;
 
         /// <summary>
-        /// Simulate packet loss by dropping random amount of packets. (Works only in DEBUG mode)
+        /// Simulate packet loss by dropping random amount of packets. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
         /// </summary>
         public bool SimulatePacketLoss = false;
 
         /// <summary>
-        /// Simulate latency by holding packets for random time. (Works only in DEBUG mode)
+        /// Simulate latency by holding packets for random time. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
         /// </summary>
         public bool SimulateLatency = false;
 
@@ -208,12 +219,12 @@ namespace LiteNetLib
         public int SimulationPacketLossChance = 10;
 
         /// <summary>
-        /// Minimum simulated latency (in milliseconds)
+        /// Minimum simulated round-trip latency (in milliseconds). Actual latency applied per direction is half of this value.
         /// </summary>
         public int SimulationMinLatency = 30;
 
         /// <summary>
-        /// Maximum simulated latency (in milliseconds)
+        /// Maximum simulated round-trip latency (in milliseconds). Actual latency applied per direction is half of this value.
         /// </summary>
         public int SimulationMaxLatency = 100;
 
@@ -614,7 +625,7 @@ namespace LiteNetLib
             stopwatch.Stop();
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
         private void ProcessDelayedPackets()
         {
             if (!SimulateLatency)
@@ -630,6 +641,21 @@ namespace LiteNetLib
                     {
                         HandleMessageReceived(incomingData.Data, incomingData.EndPoint);
                         _pingSimulationList.RemoveAt(i);
+                        i--;
+                    }
+                }
+            }
+
+            lock (_outboundSimulationList)
+            {
+                for (int i = 0; i < _outboundSimulationList.Count; i++)
+                {
+                    var outboundData = _outboundSimulationList[i];
+                    if (outboundData.TimeWhenSend <= time)
+                    {
+                        // Send the delayed packet directly to socket layer bypassing simulation
+                        SendRawCore(outboundData.Data, outboundData.Start, outboundData.Length, outboundData.EndPoint);
+                        _outboundSimulationList.RemoveAt(i);
                         i--;
                     }
                 }
@@ -816,7 +842,7 @@ namespace LiteNetLib
             HandleMessageReceived(packet, remoteEndPoint);
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
         private void HandleSimulateLatency(NetPacket packet, IPEndPoint remoteEndPoint)
         {
             if (!SimulateLatency)
@@ -824,8 +850,9 @@ namespace LiteNetLib
                 return;
             }
 
-            int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
-            if (latency > MinLatencyThreshold)
+            int roundTripLatency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
+            int inboundLatency = roundTripLatency / 2;
+            if (inboundLatency > MinLatencyThreshold)
             {
                 lock (_pingSimulationList)
                 {
@@ -833,7 +860,7 @@ namespace LiteNetLib
                     {
                         Data = packet,
                         EndPoint = remoteEndPoint,
-                        TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
+                        TimeWhenGet = DateTime.UtcNow.AddMilliseconds(inboundLatency)
                     });
                 }
                 // hold packet
@@ -841,7 +868,7 @@ namespace LiteNetLib
             }
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
         private void HandleSimulatePacketLoss()
         {
             if (SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance)
@@ -849,6 +876,48 @@ namespace LiteNetLib
                 _dropPacket = true;
             }
         }
+
+#if DEBUG || SIMULATE_NETWORK
+        private bool HandleSimulateOutboundLatency(byte[] data, int start, int length, IPEndPoint remoteEndPoint)
+        {
+            if (!SimulateLatency)
+            {
+                return false;
+            }
+
+            int roundTripLatency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
+            int outboundLatency = roundTripLatency / 2;
+            if (outboundLatency > MinLatencyThreshold)
+            {
+                // Create a copy of the data to avoid issues with recycled packets
+                byte[] dataCopy = new byte[length];
+                Array.Copy(data, start, dataCopy, 0, length);
+
+                lock (_outboundSimulationList)
+                {
+                    _outboundSimulationList.Add(new OutboundDelayedPacket
+                    {
+                        Data = dataCopy,
+                        Start = 0,
+                        Length = length,
+                        EndPoint = remoteEndPoint,
+                        TimeWhenSend = DateTime.UtcNow.AddMilliseconds(outboundLatency)
+                    });
+                }
+
+                return true;
+            }
+            return false;
+        }
+#endif
+
+#if DEBUG || SIMULATE_NETWORK
+        private bool HandleSimulateOutboundPacketLoss()
+        {
+            bool shouldDrop = SimulatePacketLoss && _randomGenerator.NextDouble() * 100 < SimulationPacketLossChance;
+            return shouldDrop;
+        }
+#endif
 
         private void HandleMessageReceived(NetPacket packet, IPEndPoint remoteEndPoint)
         {
@@ -1679,17 +1748,25 @@ namespace LiteNetLib
             _lastPeerId = 0;
 
             ClearPingSimulationList();
+            ClearOutboundSimulationList();
 
             _connectedPeersCount = 0;
             _pendingEventHead = null;
             _pendingEventTail = null;
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
         private void ClearPingSimulationList()
         {
             lock (_pingSimulationList)
                 _pingSimulationList.Clear();
+        }
+
+        [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
+        private void ClearOutboundSimulationList()
+        {
+            lock (_outboundSimulationList)
+                _outboundSimulationList.Clear();
         }
 
         /// <summary>
