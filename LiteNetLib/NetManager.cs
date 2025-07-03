@@ -219,12 +219,12 @@ namespace LiteNetLib
         public int SimulationPacketLossChance = 10;
 
         /// <summary>
-        /// Minimum simulated latency (in milliseconds)
+        /// Minimum simulated round-trip latency (in milliseconds). Actual latency applied per direction is half of this value.
         /// </summary>
         public int SimulationMinLatency = 30;
 
         /// <summary>
-        /// Maximum simulated latency (in milliseconds)
+        /// Maximum simulated round-trip latency (in milliseconds). Actual latency applied per direction is half of this value.
         /// </summary>
         public int SimulationMaxLatency = 100;
 
@@ -850,8 +850,9 @@ namespace LiteNetLib
                 return;
             }
 
-            int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
-            if (latency > MinLatencyThreshold)
+            int roundTripLatency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
+            int inboundLatency = roundTripLatency / 2;
+            if (inboundLatency > MinLatencyThreshold)
             {
                 lock (_pingSimulationList)
                 {
@@ -859,7 +860,7 @@ namespace LiteNetLib
                     {
                         Data = packet,
                         EndPoint = remoteEndPoint,
-                        TimeWhenGet = DateTime.UtcNow.AddMilliseconds(latency)
+                        TimeWhenGet = DateTime.UtcNow.AddMilliseconds(inboundLatency)
                     });
                 }
                 // hold packet
@@ -884,8 +885,9 @@ namespace LiteNetLib
                 return false;
             }
 
-            int latency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
-            if (latency > MinLatencyThreshold)
+            int roundTripLatency = _randomGenerator.Next(SimulationMinLatency, SimulationMaxLatency);
+            int outboundLatency = roundTripLatency / 2;
+            if (outboundLatency > MinLatencyThreshold)
             {
                 // Create a copy of the data to avoid issues with recycled packets
                 byte[] dataCopy = new byte[length];
@@ -899,13 +901,13 @@ namespace LiteNetLib
                         Start = 0,
                         Length = length,
                         EndPoint = remoteEndPoint,
-                        TimeWhenSend = DateTime.UtcNow.AddMilliseconds(latency)
+                        TimeWhenSend = DateTime.UtcNow.AddMilliseconds(outboundLatency)
                     });
                 }
 
-                return true; // packet was delayed
+                return true;
             }
-            return false; // packet not delayed
+            return false;
         }
 #endif
 
