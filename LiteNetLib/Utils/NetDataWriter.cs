@@ -29,12 +29,10 @@ namespace LiteNetLib.Utils
             get => _position;
         }
 
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
         public ReadOnlySpan<byte> AsReadOnlySpan()
         {
             return new ReadOnlySpan<byte>(_data, 0, _position);
         }
-#endif
 
         public static readonly ThreadLocal<UTF8Encoding> uTF8Encoding = new ThreadLocal<UTF8Encoding>(() => new UTF8Encoding(false, true));
 
@@ -81,7 +79,6 @@ namespace LiteNetLib.Utils
             return netDataWriter;
         }
 
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
         /// <summary>
         /// Creates NetDataWriter from the given <paramref name="bytes"/>.
         /// </summary>
@@ -91,7 +88,6 @@ namespace LiteNetLib.Utils
             netDataWriter.Put(bytes);
             return netDataWriter;
         }
-#endif
 
         public static NetDataWriter FromString(string value)
         {
@@ -235,14 +231,10 @@ namespace LiteNetLib.Utils
 
         public void Put(Guid value)
         {
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
             if (_autoResize)
                 ResizeIfNeed(_position + 16);
             value.TryWriteBytes(_data.AsSpan(_position));
             _position += 16;
-#else
-            PutBytesWithLength(value.ToByteArray());
-#endif
         }
 
         public void Put(byte[] data, int offset, int length)
@@ -261,7 +253,6 @@ namespace LiteNetLib.Utils
             _position += data.Length;
         }
 
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
         public void Put(ReadOnlySpan<byte> data)
         {
             if (_autoResize)
@@ -269,7 +260,6 @@ namespace LiteNetLib.Utils
             data.CopyTo(_data.AsSpan(_position));
             _position += data.Length;
         }
-#endif
 
         public void PutSBytesWithLength(sbyte[] data, int offset, ushort length)
         {

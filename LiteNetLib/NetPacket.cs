@@ -84,10 +84,8 @@ namespace LiteNetLib
 
         public bool IsFragmented => (RawData[0] & 0x80) != 0;
 
-        public void MarkFragmented()
-        {
+        public void MarkFragmented() =>
             RawData[0] |= 0x80; //set first bit
-        }
 
         public byte ChannelId
         {
@@ -137,15 +135,11 @@ namespace LiteNetLib
             Size = size;
         }
 
-        public static int GetHeaderSize(PacketProperty property)
-        {
-            return HeaderSizes[(int)property];
-        }
+        public static int GetHeaderSize(PacketProperty property) =>
+            HeaderSizes[(int)property];
 
-        public int GetHeaderSize()
-        {
-            return HeaderSizes[RawData[0] & 0x1F];
-        }
+        public int GetHeaderSize() =>
+            HeaderSizes[RawData[0] & 0x1F];
 
         public bool Verify()
         {

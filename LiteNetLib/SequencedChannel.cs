@@ -13,7 +13,7 @@ namespace LiteNetLib
         private readonly byte _id;
         private long _lastPacketSendTime;
 
-        public SequencedChannel(NetPeer peer, bool reliable, byte id) : base(peer)
+        public SequencedChannel(LiteNetPeer peer, bool reliable, byte id) : base(peer)
         {
             _id = id;
             _reliable = reliable;

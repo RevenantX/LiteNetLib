@@ -22,10 +22,8 @@ namespace LiteNetLib
             PeerId = localId;
         }
 
-        public static int GetProtocolId(NetPacket packet)
-        {
-            return BitConverter.ToInt32(packet.RawData, 1);
-        }
+        public static int GetProtocolId(NetPacket packet) =>
+            BitConverter.ToInt32(packet.RawData, 1);
 
         public static NetConnectRequestPacket FromData(NetPacket packet)
         {
@@ -137,8 +135,8 @@ namespace LiteNetLib
             FastBitConverter.GetBytes(packet.RawData, 11, localPeerId);
             return packet;
         }
-        
-        public static NetPacket MakeNetworkChanged(NetPeer peer)
+
+        public static NetPacket MakeNetworkChanged(LiteNetPeer peer)
         {
             var packet = new NetPacket(PacketProperty.PeerNotFound, Size-1);
             FastBitConverter.GetBytes(packet.RawData, 1, peer.ConnectTime);
