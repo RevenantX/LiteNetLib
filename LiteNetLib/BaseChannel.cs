@@ -38,7 +38,8 @@ namespace LiteNetLib
             return hasPacketsToSend;
         }
 
-        protected abstract bool SendNextPackets();
+        public abstract bool SendNextPackets();
+
         public abstract bool ProcessPacket(NetPacket packet);
     }
 }

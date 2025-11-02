@@ -10,10 +10,7 @@ namespace LiteNetLib
             private long _timeStamp;
             private bool _isSent;
 
-            public override string ToString()
-            {
-                return _packet == null ? "Empty" : _packet.Sequence.ToString();
-            }
+            public override string ToString() => _packet == null ? "Empty" : _packet.Sequence.ToString();
 
             public void Init(NetPacket packet)
             {
@@ -165,7 +162,7 @@ namespace LiteNetLib
             }
         }
 
-        protected override bool SendNextPackets()
+        public override bool SendNextPackets()
         {
             if (_mustSendAcks)
             {

@@ -1137,8 +1137,8 @@ namespace LiteNetLib
 
         protected virtual void UpdateChannels()
         {
-            _reliableChannel?.SendAndCheckQueue();
-            _sequencedChannel?.SendAndCheckQueue();
+            _reliableChannel?.SendNextPackets();
+            _sequencedChannel?.SendNextPackets();
         }
 
         internal void Update(float deltaTime)

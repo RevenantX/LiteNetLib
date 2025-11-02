@@ -202,7 +202,9 @@ namespace LiteNetLib
         /// <summary>
         /// NatPunchModule for NAT hole punching operations
         /// </summary>
-        public readonly NatPunchModule NatPunchModule;
+        public NatPunchModule NatPunchModule => _natPunchModule.Value;
+
+        private readonly Lazy<NatPunchModule> _natPunchModule;
 
         /// <summary>
         /// Returns true if socket listening and update thread is running
@@ -289,7 +291,7 @@ namespace LiteNetLib
         {
 #endif
             _netEventListener = listener;
-            NatPunchModule = new NatPunchModule(this);
+            _natPunchModule = new Lazy<NatPunchModule>(() => new NatPunchModule(this));
             _extraPacketLayer = extraPacketLayer;
         }
 
