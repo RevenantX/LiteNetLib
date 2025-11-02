@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class LiteNetPeer </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class LiteNetPeer ">
+    
+    <meta name="description" content="Network peer. Main purpose is sending messages to specific peer.">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LiteNetLib.LiteNetPeer">
+
+
+
+  <h1 id="LiteNetLib_LiteNetPeer" data-uid="LiteNetLib.LiteNetPeer" class="text-break">Class LiteNetPeer</h1>
+  <div class="markdown level0 summary"><p>Network peer. Main purpose is sending messages to specific peer.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">object</span></div>
+    <div class="level1"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.endpoint">EndPoint</a></div>
+    <div class="level2"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></div>
+    <div class="level3"><span class="xref">LiteNetPeer</span></div>
+      <div class="level4"><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.maxport">IPEndPoint.MaxPort</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.minport">IPEndPoint.MinPort</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.create">IPEndPoint.Create(SocketAddress)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.equals">IPEndPoint.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.tostring">IPEndPoint.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.address">IPEndPoint.Address</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.addressfamily">IPEndPoint.AddressFamily</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.port">IPEndPoint.Port</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
+  <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
+  <h5 id="LiteNetLib_LiteNetPeer_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class LiteNetPeer : IPEndPoint</code></pre>
+  </div>
+  <h3 id="fields">Fields
+</h3>
+
+
+  <h4 id="LiteNetLib_LiteNetPeer_Id" data-uid="LiteNetLib.LiteNetPeer.Id">Id</h4>
+  <div class="markdown level1 summary"><p>Peer id can be used as key in your dictionary of peers</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly int Id</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4 id="LiteNetLib_LiteNetPeer_NetManager" data-uid="LiteNetLib.LiteNetPeer.NetManager">NetManager</h4>
+  <div class="markdown level1 summary"><p>Peer parent NetManager</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly LiteNetManager NetManager</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.LiteNetManager.html">LiteNetManager</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4 id="LiteNetLib_LiteNetPeer_Statistics" data-uid="LiteNetLib.LiteNetPeer.Statistics">Statistics</h4>
+  <div class="markdown level1 summary"><p>Statistics of peer connection</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly NetStatistics Statistics</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetStatistics.html">NetStatistics</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4 id="LiteNetLib_LiteNetPeer_Tag" data-uid="LiteNetLib.LiteNetPeer.Tag">Tag</h4>
+  <div class="markdown level1 summary"><p>Application defined object containing data about the connection</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object Tag</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">object</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+
+
+  <a id="LiteNetLib_LiteNetPeer_ChannelsCount_" data-uid="LiteNetLib.LiteNetPeer.ChannelsCount*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_ChannelsCount" data-uid="LiteNetLib.LiteNetPeer.ChannelsCount">ChannelsCount</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual int ChannelsCount { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_ConnectionState_" data-uid="LiteNetLib.LiteNetPeer.ConnectionState*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_ConnectionState" data-uid="LiteNetLib.LiteNetPeer.ConnectionState">ConnectionState</h4>
+  <div class="markdown level1 summary"><p>Current connection state</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConnectionState ConnectionState { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.ConnectionState.html">ConnectionState</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Mtu_" data-uid="LiteNetLib.LiteNetPeer.Mtu*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Mtu" data-uid="LiteNetLib.LiteNetPeer.Mtu">Mtu</h4>
+  <div class="markdown level1 summary"><p>Current MTU - Maximum Transfer Unit ( maximum udp packet size without fragmentation )</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Mtu { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Ping_" data-uid="LiteNetLib.LiteNetPeer.Ping*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Ping" data-uid="LiteNetLib.LiteNetPeer.Ping">Ping</h4>
+  <div class="markdown level1 summary"><p>Current one-way ping (RTT/2) in milliseconds</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Ping { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_RemoteId_" data-uid="LiteNetLib.LiteNetPeer.RemoteId*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_RemoteId" data-uid="LiteNetLib.LiteNetPeer.RemoteId">RemoteId</h4>
+  <div class="markdown level1 summary"><p>Id assigned from server</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RemoteId { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_RemoteTimeDelta_" data-uid="LiteNetLib.LiteNetPeer.RemoteTimeDelta*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_RemoteTimeDelta" data-uid="LiteNetLib.LiteNetPeer.RemoteTimeDelta">RemoteTimeDelta</h4>
+  <div class="markdown level1 summary"><p>Delta with remote time in ticks (not accurate)
+positive - remote time &gt; our time</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long RemoteTimeDelta { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_RemoteUtcTime_" data-uid="LiteNetLib.LiteNetPeer.RemoteUtcTime*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_RemoteUtcTime" data-uid="LiteNetLib.LiteNetPeer.RemoteUtcTime">RemoteUtcTime</h4>
+  <div class="markdown level1 summary"><p>Remote UTC time (not accurate)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTime RemoteUtcTime { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_RoundTripTime_" data-uid="LiteNetLib.LiteNetPeer.RoundTripTime*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_RoundTripTime" data-uid="LiteNetLib.LiteNetPeer.RoundTripTime">RoundTripTime</h4>
+  <div class="markdown level1 summary"><p>Round trip time in milliseconds</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RoundTripTime { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_TimeSinceLastPacket_" data-uid="LiteNetLib.LiteNetPeer.TimeSinceLastPacket*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_TimeSinceLastPacket" data-uid="LiteNetLib.LiteNetPeer.TimeSinceLastPacket">TimeSinceLastPacket</h4>
+  <div class="markdown level1 summary"><p>Time since last packet received (including internal library packets) in milliseconds</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float TimeSinceLastPacket { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+
+
+  <a id="LiteNetLib_LiteNetPeer_CreatePacketFromPool_" data-uid="LiteNetLib.LiteNetPeer.CreatePacketFromPool*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_CreatePacketFromPool_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.LiteNetPeer.CreatePacketFromPool(LiteNetLib.DeliveryMethod)">CreatePacketFromPool(DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Create temporary packet (maximum size MTU - headerSize) to send later without additional copies</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PooledPacket CreatePacketFromPool(DeliveryMethod deliveryMethod)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Delivery method (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.PooledPacket.html">PooledPacket</a></td>
+        <td><p>PooledPacket that you can use to write data starting from UserDataOffset</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Disconnect_" data-uid="LiteNetLib.LiteNetPeer.Disconnect*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Disconnect" data-uid="LiteNetLib.LiteNetPeer.Disconnect">Disconnect()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Disconnect()</code></pre>
+  </div>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Disconnect_" data-uid="LiteNetLib.LiteNetPeer.Disconnect*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Disconnect_LiteNetLib_Utils_NetDataWriter_" data-uid="LiteNetLib.LiteNetPeer.Disconnect(LiteNetLib.Utils.NetDataWriter)">Disconnect(NetDataWriter)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Disconnect(NetDataWriter writer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
+        <td><span class="parametername">writer</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Disconnect_" data-uid="LiteNetLib.LiteNetPeer.Disconnect*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Disconnect_System_Byte___" data-uid="LiteNetLib.LiteNetPeer.Disconnect(System.Byte[])">Disconnect(byte[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Disconnect(byte[] data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Disconnect_" data-uid="LiteNetLib.LiteNetPeer.Disconnect*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Disconnect_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.LiteNetPeer.Disconnect(System.Byte[],System.Int32,System.Int32)">Disconnect(byte[], int, int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Disconnect(byte[] data, int start, int count)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">start</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">count</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_GetHashCode_" data-uid="LiteNetLib.LiteNetPeer.GetHashCode*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_GetHashCode" data-uid="LiteNetLib.LiteNetPeer.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>Returns a hash value for a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><p>An integer hash value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.gethashcode">IPEndPoint.GetHashCode()</a></div>
+
+
+  <a id="LiteNetLib_LiteNetPeer_GetMaxSinglePacketSize_" data-uid="LiteNetLib.LiteNetPeer.GetMaxSinglePacketSize*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_GetMaxSinglePacketSize_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.LiteNetPeer.GetMaxSinglePacketSize(LiteNetLib.DeliveryMethod)">GetMaxSinglePacketSize(DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Gets maximum size of packet that will be not fragmented.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetMaxSinglePacketSize(DeliveryMethod options)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Type of packet that you want send</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><p>size in bytes</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_GetPacketsCountInReliableQueue_" data-uid="LiteNetLib.LiteNetPeer.GetPacketsCountInReliableQueue*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_GetPacketsCountInReliableQueue_System_Boolean_" data-uid="LiteNetLib.LiteNetPeer.GetPacketsCountInReliableQueue(System.Boolean)">GetPacketsCountInReliableQueue(bool)</h4>
+  <div class="markdown level1 summary"><p>Returns packets count in queue for reliable channel 0</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetPacketsCountInReliableQueue(bool ordered)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">ordered</span></td>
+        <td><p>type of channel ReliableOrdered or ReliableUnordered</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><p>packets count in channel queue</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Send_" data-uid="LiteNetLib.LiteNetPeer.Send*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Send_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.LiteNetPeer.Send(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">Send(NetDataWriter, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer (channel - 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Send(NetDataWriter dataWriter, DeliveryMethod deliveryMethod)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
+        <td><span class="parametername">dataWriter</span></td>
+        <td><p>DataWriter with data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.TooBigPacketException.html">TooBigPacketException</a></td>
+        <td><p>If size exceeds maximum limit:<p></p>
+MTU - headerSize bytes for Unreliable<p></p>
+Fragment count exceeded ushort.MaxValue<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Send_" data-uid="LiteNetLib.LiteNetPeer.Send*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Send_System_Byte___LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.LiteNetPeer.Send(System.Byte[],LiteNetLib.DeliveryMethod)">Send(byte[], DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer (channel - 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Send(byte[] data, DeliveryMethod deliveryMethod)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.TooBigPacketException.html">TooBigPacketException</a></td>
+        <td><p>If size exceeds maximum limit:<p></p>
+MTU - headerSize bytes for Unreliable<p></p>
+Fragment count exceeded ushort.MaxValue<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Send_" data-uid="LiteNetLib.LiteNetPeer.Send*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Send_System_Byte___System_Int32_System_Int32_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.LiteNetPeer.Send(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod)">Send(byte[], int, int, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer (channel - 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Send(byte[] data, int start, int length, DeliveryMethod options)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">start</span></td>
+        <td><p>Start of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">length</span></td>
+        <td><p>Length of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.TooBigPacketException.html">TooBigPacketException</a></td>
+        <td><p>If size exceeds maximum limit:<p></p>
+MTU - headerSize bytes for Unreliable<p></p>
+Fragment count exceeded ushort.MaxValue<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Send_" data-uid="LiteNetLib.LiteNetPeer.Send*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Send_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.LiteNetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)">Send(byte[], int, int, byte, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Send(byte[] data, int start, int length, byte channelNumber, DeliveryMethod deliveryMethod)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">start</span></td>
+        <td><p>Start of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">length</span></td>
+        <td><p>Length of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
+        <td><span class="parametername">channelNumber</span></td>
+        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Delivery method (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.TooBigPacketException.html">TooBigPacketException</a></td>
+        <td><p>If size exceeds maximum limit:<p></p>
+MTU - headerSize bytes for Unreliable<p></p>
+Fragment count exceeded ushort.MaxValue<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Send_" data-uid="LiteNetLib.LiteNetPeer.Send*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Send_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.LiteNetPeer.Send(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod)">Send(ReadOnlySpan&lt;byte&gt;, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer (channel - 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Send(ReadOnlySpan&lt;byte&gt; data, DeliveryMethod deliveryMethod)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.TooBigPacketException.html">TooBigPacketException</a></td>
+        <td><p>If size exceeds maximum limit:<p></p>
+MTU - headerSize bytes for Unreliable<p></p>
+Fragment count exceeded ushort.MaxValue<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_SendInternal_" data-uid="LiteNetLib.LiteNetPeer.SendInternal*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_SendInternal_System_ReadOnlySpan_System_Byte__System_Byte_LiteNetLib_DeliveryMethod_System_Object_" data-uid="LiteNetLib.LiteNetPeer.SendInternal(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod,System.Object)">SendInternal(ReadOnlySpan&lt;byte&gt;, byte, DeliveryMethod, object)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void SendInternal(ReadOnlySpan&lt;byte&gt; data, byte channelNumber, DeliveryMethod deliveryMethod, object userData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
+        <td><span class="parametername">channelNumber</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">object</span></td>
+        <td><span class="parametername">userData</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_SendPooledPacket_" data-uid="LiteNetLib.LiteNetPeer.SendPooledPacket*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_SendPooledPacket_LiteNetLib_PooledPacket_System_Int32_" data-uid="LiteNetLib.LiteNetPeer.SendPooledPacket(LiteNetLib.PooledPacket,System.Int32)">SendPooledPacket(PooledPacket, int)</h4>
+  <div class="markdown level1 summary"><p>Sends pooled packet without data copy</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendPooledPacket(PooledPacket packet, int userDataSize)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.PooledPacket.html">PooledPacket</a></td>
+        <td><span class="parametername">packet</span></td>
+        <td><p>packet to send</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">userDataSize</span></td>
+        <td><p>size of user data you want to send</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_SendWithDeliveryEvent_" data-uid="LiteNetLib.LiteNetPeer.SendWithDeliveryEvent*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_SendWithDeliveryEvent_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_System_Object_" data-uid="LiteNetLib.LiteNetPeer.SendWithDeliveryEvent(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod,System.Object)">SendWithDeliveryEvent(NetDataWriter, DeliveryMethod, object)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer with delivery event called</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendWithDeliveryEvent(NetDataWriter dataWriter, DeliveryMethod deliveryMethod, object userData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
+        <td><span class="parametername">dataWriter</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Delivery method (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">object</span></td>
+        <td><span class="parametername">userData</span></td>
+        <td><p>User data that will be received in DeliveryEvent</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
+        <td><p>If you trying to send unreliable packet type<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_SendWithDeliveryEvent_" data-uid="LiteNetLib.LiteNetPeer.SendWithDeliveryEvent*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_SendWithDeliveryEvent_System_Byte___LiteNetLib_DeliveryMethod_System_Object_" data-uid="LiteNetLib.LiteNetPeer.SendWithDeliveryEvent(System.Byte[],LiteNetLib.DeliveryMethod,System.Object)">SendWithDeliveryEvent(byte[], DeliveryMethod, object)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer with delivery event called</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendWithDeliveryEvent(byte[] data, DeliveryMethod deliveryMethod, object userData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Delivery method (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">object</span></td>
+        <td><span class="parametername">userData</span></td>
+        <td><p>User data that will be received in DeliveryEvent</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
+        <td><p>If you trying to send unreliable packet type<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_SendWithDeliveryEvent_" data-uid="LiteNetLib.LiteNetPeer.SendWithDeliveryEvent*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_SendWithDeliveryEvent_System_Byte___System_Int32_System_Int32_LiteNetLib_DeliveryMethod_System_Object_" data-uid="LiteNetLib.LiteNetPeer.SendWithDeliveryEvent(System.Byte[],System.Int32,System.Int32,LiteNetLib.DeliveryMethod,System.Object)">SendWithDeliveryEvent(byte[], int, int, DeliveryMethod, object)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer with delivery event called</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendWithDeliveryEvent(byte[] data, int start, int length, DeliveryMethod deliveryMethod, object userData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">start</span></td>
+        <td><p>Start of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">length</span></td>
+        <td><p>Length of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Delivery method (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">object</span></td>
+        <td><span class="parametername">userData</span></td>
+        <td><p>User data that will be received in DeliveryEvent</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
+        <td><p>If you trying to send unreliable packet type<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_SendWithDeliveryEvent_" data-uid="LiteNetLib.LiteNetPeer.SendWithDeliveryEvent*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_SendWithDeliveryEvent_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_System_Object_" data-uid="LiteNetLib.LiteNetPeer.SendWithDeliveryEvent(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod,System.Object)">SendWithDeliveryEvent(ReadOnlySpan&lt;byte&gt;, DeliveryMethod, object)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer with delivery event called</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendWithDeliveryEvent(ReadOnlySpan&lt;byte&gt; data, DeliveryMethod deliveryMethod, object userData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Delivery method (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">object</span></td>
+        <td><span class="parametername">userData</span></td>
+        <td><p>User data that will be received in DeliveryEvent</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
+        <td><p>If you trying to send unreliable packet type<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteNetPeer_Serialize_" data-uid="LiteNetLib.LiteNetPeer.Serialize*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_Serialize" data-uid="LiteNetLib.LiteNetPeer.Serialize">Serialize()</h4>
+  <div class="markdown level1 summary"><p>IPEndPoint serialize</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override SocketAddress Serialize()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.socketaddress">SocketAddress</a></td>
+        <td><p>SocketAddress</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint.serialize">IPEndPoint.Serialize()</a></div>
+
+
+  <a id="LiteNetLib_LiteNetPeer_UpdateChannels_" data-uid="LiteNetLib.LiteNetPeer.UpdateChannels*"></a>
+  <h4 id="LiteNetLib_LiteNetPeer_UpdateChannels" data-uid="LiteNetLib.LiteNetPeer.UpdateChannels">UpdateChannels()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void UpdateChannels()</code></pre>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
