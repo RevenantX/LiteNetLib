@@ -3,19 +3,18 @@
   <PropertyGroup>
     <AssemblyName>LiteNetLib</AssemblyName>
     <RootNamespace>LiteNetLib</RootNamespace>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net471</TargetFrameworks>
+    <TargetFrameworks>net8.0;netstandard2.1</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <OutputType>Library</OutputType>
     <LangVersion>8</LangVersion>
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
-    <PackageVersion>1.3.1</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
     <Title>Lite reliable UDP library for Mono and .NET </Title>
     <IsTrimmable>true</IsTrimmable>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    <AssemblyVersion>1.3.1</AssemblyVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -34,18 +33,17 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>$(DefineConstants);LITENETLIB_UNSAFE</DefineConstants>
     <PackageTags>udp reliable-udp network</PackageTags>
-    <PackageReleaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/1.3.1</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/2.0.0</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/RevenantX/LiteNetLib</RepositoryUrl>
     <PackageProjectUrl>https://github.com/RevenantX/LiteNetLib</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Ruslan Pyrch</Authors>
-    <Copyright>Copyright 2024 Ruslan Pyrch</Copyright>
+    <Copyright>Copyright 2025 Ruslan Pyrch</Copyright>
     <Description>Lite reliable UDP library for .NET, Mono, and .NET Core</Description>
     <PackageIcon>LNL.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <TargetFrameworks>net8.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
