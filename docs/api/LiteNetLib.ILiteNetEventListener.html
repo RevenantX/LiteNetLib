@@ -217,13 +217,13 @@
 
 
   <a id="LiteNetLib_ILiteNetEventListener_OnNetworkReceive_" data-uid="LiteNetLib.ILiteNetEventListener.OnNetworkReceive*"></a>
-  <h4 id="LiteNetLib_ILiteNetEventListener_OnNetworkReceive_LiteNetLib_LiteNetPeer_LiteNetLib_NetPacketReader_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.ILiteNetEventListener.OnNetworkReceive(LiteNetLib.LiteNetPeer,LiteNetLib.NetPacketReader,System.Byte,LiteNetLib.DeliveryMethod)">OnNetworkReceive(LiteNetPeer, NetPacketReader, byte, DeliveryMethod)</h4>
+  <h4 id="LiteNetLib_ILiteNetEventListener_OnNetworkReceive_LiteNetLib_LiteNetPeer_LiteNetLib_NetPacketReader_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.ILiteNetEventListener.OnNetworkReceive(LiteNetLib.LiteNetPeer,LiteNetLib.NetPacketReader,LiteNetLib.DeliveryMethod)">OnNetworkReceive(LiteNetPeer, NetPacketReader, DeliveryMethod)</h4>
   <div class="markdown level1 summary"><p>Received some data</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void OnNetworkReceive(LiteNetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)</code></pre>
+    <pre><code class="lang-csharp hljs">void OnNetworkReceive(LiteNetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -245,12 +245,6 @@
         <td><a class="xref" href="LiteNetLib.NetPacketReader.html">NetPacketReader</a></td>
         <td><span class="parametername">reader</span></td>
         <td><p>DataReader containing all received data</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
-        <td><span class="parametername">channelNumber</span></td>
-        <td><p>Number of channel at which packet arrived</p>
 </td>
       </tr>
       <tr>

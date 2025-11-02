@@ -53,6 +53,7 @@ namespace LiteNetLib
         }
         private readonly List<IncomingData> _pingSimulationList = new List<IncomingData>();
 
+#if DEBUG || SIMULATE_NETWORK
         private struct OutboundDelayedPacket
         {
             public byte[] Data;
@@ -62,6 +63,7 @@ namespace LiteNetLib
             public DateTime TimeWhenSend;
         }
         private readonly List<OutboundDelayedPacket> _outboundSimulationList = new List<OutboundDelayedPacket>();
+#endif
 
         private readonly Random _randomGenerator = new Random();
         private const int MinLatencyThreshold = 5;
@@ -409,7 +411,7 @@ namespace LiteNetLib
                     _netEventListener.OnPeerDisconnected(evt.Peer, info);
                     break;
                 case NetEvent.EType.Receive:
-                    _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader, evt.ChannelNumber, evt.DeliveryMethod);
+                    _netEventListener.OnNetworkReceive(evt.Peer, evt.DataReader, evt.DeliveryMethod);
                     break;
                 case NetEvent.EType.ReceiveUnconnected:
                     _netEventListener.OnNetworkReceiveUnconnected(evt.RemoteEndPoint, evt.DataReader, UnconnectedMessageType.BasicMessage);
@@ -548,6 +550,7 @@ namespace LiteNetLib
                 }
             }
 
+#if DEBUG || SIMULATE_NETWORK
             lock (_outboundSimulationList)
             {
                 for (int i = 0; i < _outboundSimulationList.Count; i++)
@@ -562,6 +565,7 @@ namespace LiteNetLib
                     }
                 }
             }
+#endif
         }
 
 
@@ -1507,8 +1511,10 @@ namespace LiteNetLib
         [Conditional("DEBUG"), Conditional("SIMULATE_NETWORK")]
         private void ClearOutboundSimulationList()
         {
+#if DEBUG || SIMULATE_NETWORK
             lock (_outboundSimulationList)
                 _outboundSimulationList.Clear();
+#endif
         }
 
         /// <summary>

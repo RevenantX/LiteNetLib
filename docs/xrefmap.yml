@@ -715,28 +715,6 @@ references:
   commentId: E:LiteNetLib.EventBasedNetListener.PeerDisconnectedEvent
   fullName: LiteNetLib.EventBasedNetListener.PeerDisconnectedEvent
   nameWithType: EventBasedNetListener.PeerDisconnectedEvent
-- uid: LiteNetLib.IDeliveryEventListener
-  name: IDeliveryEventListener
-  href: api/LiteNetLib.IDeliveryEventListener.html
-  commentId: T:LiteNetLib.IDeliveryEventListener
-  fullName: LiteNetLib.IDeliveryEventListener
-  nameWithType: IDeliveryEventListener
-- uid: LiteNetLib.IDeliveryEventListener.OnMessageDelivered(LiteNetLib.NetPeer,System.Object)
-  name: OnMessageDelivered(NetPeer, object)
-  href: api/LiteNetLib.IDeliveryEventListener.html#LiteNetLib_IDeliveryEventListener_OnMessageDelivered_LiteNetLib_NetPeer_System_Object_
-  commentId: M:LiteNetLib.IDeliveryEventListener.OnMessageDelivered(LiteNetLib.NetPeer,System.Object)
-  name.vb: OnMessageDelivered(NetPeer, Object)
-  fullName: LiteNetLib.IDeliveryEventListener.OnMessageDelivered(LiteNetLib.NetPeer, object)
-  fullName.vb: LiteNetLib.IDeliveryEventListener.OnMessageDelivered(LiteNetLib.NetPeer, Object)
-  nameWithType: IDeliveryEventListener.OnMessageDelivered(NetPeer, object)
-  nameWithType.vb: IDeliveryEventListener.OnMessageDelivered(NetPeer, Object)
-- uid: LiteNetLib.IDeliveryEventListener.OnMessageDelivered*
-  name: OnMessageDelivered
-  href: api/LiteNetLib.IDeliveryEventListener.html#LiteNetLib_IDeliveryEventListener_OnMessageDelivered_
-  commentId: Overload:LiteNetLib.IDeliveryEventListener.OnMessageDelivered
-  isSpec: "True"
-  fullName: LiteNetLib.IDeliveryEventListener.OnMessageDelivered
-  nameWithType: IDeliveryEventListener.OnMessageDelivered
 - uid: LiteNetLib.ILiteNetEventListener
   name: ILiteNetEventListener
   href: api/LiteNetLib.ILiteNetEventListener.html
@@ -801,15 +779,12 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.ILiteNetEventListener.OnNetworkLatencyUpdate
   nameWithType: ILiteNetEventListener.OnNetworkLatencyUpdate
-- uid: LiteNetLib.ILiteNetEventListener.OnNetworkReceive(LiteNetLib.LiteNetPeer,LiteNetLib.NetPacketReader,System.Byte,LiteNetLib.DeliveryMethod)
-  name: OnNetworkReceive(LiteNetPeer, NetPacketReader, byte, DeliveryMethod)
-  href: api/LiteNetLib.ILiteNetEventListener.html#LiteNetLib_ILiteNetEventListener_OnNetworkReceive_LiteNetLib_LiteNetPeer_LiteNetLib_NetPacketReader_System_Byte_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.ILiteNetEventListener.OnNetworkReceive(LiteNetLib.LiteNetPeer,LiteNetLib.NetPacketReader,System.Byte,LiteNetLib.DeliveryMethod)
-  name.vb: OnNetworkReceive(LiteNetPeer, NetPacketReader, Byte, DeliveryMethod)
-  fullName: LiteNetLib.ILiteNetEventListener.OnNetworkReceive(LiteNetLib.LiteNetPeer, LiteNetLib.NetPacketReader, byte, LiteNetLib.DeliveryMethod)
-  fullName.vb: LiteNetLib.ILiteNetEventListener.OnNetworkReceive(LiteNetLib.LiteNetPeer, LiteNetLib.NetPacketReader, Byte, LiteNetLib.DeliveryMethod)
-  nameWithType: ILiteNetEventListener.OnNetworkReceive(LiteNetPeer, NetPacketReader, byte, DeliveryMethod)
-  nameWithType.vb: ILiteNetEventListener.OnNetworkReceive(LiteNetPeer, NetPacketReader, Byte, DeliveryMethod)
+- uid: LiteNetLib.ILiteNetEventListener.OnNetworkReceive(LiteNetLib.LiteNetPeer,LiteNetLib.NetPacketReader,LiteNetLib.DeliveryMethod)
+  name: OnNetworkReceive(LiteNetPeer, NetPacketReader, DeliveryMethod)
+  href: api/LiteNetLib.ILiteNetEventListener.html#LiteNetLib_ILiteNetEventListener_OnNetworkReceive_LiteNetLib_LiteNetPeer_LiteNetLib_NetPacketReader_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.ILiteNetEventListener.OnNetworkReceive(LiteNetLib.LiteNetPeer,LiteNetLib.NetPacketReader,LiteNetLib.DeliveryMethod)
+  fullName: LiteNetLib.ILiteNetEventListener.OnNetworkReceive(LiteNetLib.LiteNetPeer, LiteNetLib.NetPacketReader, LiteNetLib.DeliveryMethod)
+  nameWithType: ILiteNetEventListener.OnNetworkReceive(LiteNetPeer, NetPacketReader, DeliveryMethod)
 - uid: LiteNetLib.ILiteNetEventListener.OnNetworkReceive*
   name: OnNetworkReceive
   href: api/LiteNetLib.ILiteNetEventListener.html#LiteNetLib_ILiteNetEventListener_OnNetworkReceive_
@@ -1074,68 +1049,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.INetLogger.WriteNet
   nameWithType: INetLogger.WriteNet
-- uid: LiteNetLib.INtpEventListener
-  name: INtpEventListener
-  href: api/LiteNetLib.INtpEventListener.html
-  commentId: T:LiteNetLib.INtpEventListener
-  fullName: LiteNetLib.INtpEventListener
-  nameWithType: INtpEventListener
-- uid: LiteNetLib.INtpEventListener.OnNtpResponse(LiteNetLib.Utils.NtpPacket)
-  name: OnNtpResponse(NtpPacket)
-  href: api/LiteNetLib.INtpEventListener.html#LiteNetLib_INtpEventListener_OnNtpResponse_LiteNetLib_Utils_NtpPacket_
-  commentId: M:LiteNetLib.INtpEventListener.OnNtpResponse(LiteNetLib.Utils.NtpPacket)
-  fullName: LiteNetLib.INtpEventListener.OnNtpResponse(LiteNetLib.Utils.NtpPacket)
-  nameWithType: INtpEventListener.OnNtpResponse(NtpPacket)
-- uid: LiteNetLib.INtpEventListener.OnNtpResponse*
-  name: OnNtpResponse
-  href: api/LiteNetLib.INtpEventListener.html#LiteNetLib_INtpEventListener_OnNtpResponse_
-  commentId: Overload:LiteNetLib.INtpEventListener.OnNtpResponse
-  isSpec: "True"
-  fullName: LiteNetLib.INtpEventListener.OnNtpResponse
-  nameWithType: INtpEventListener.OnNtpResponse
-- uid: LiteNetLib.IPeerAddressChangedListener
-  name: IPeerAddressChangedListener
-  href: api/LiteNetLib.IPeerAddressChangedListener.html
-  commentId: T:LiteNetLib.IPeerAddressChangedListener
-  fullName: LiteNetLib.IPeerAddressChangedListener
-  nameWithType: IPeerAddressChangedListener
-- uid: LiteNetLib.IPeerAddressChangedListener.OnPeerAddressChanged(LiteNetLib.NetPeer,System.Net.IPEndPoint)
-  name: OnPeerAddressChanged(NetPeer, IPEndPoint)
-  href: api/LiteNetLib.IPeerAddressChangedListener.html#LiteNetLib_IPeerAddressChangedListener_OnPeerAddressChanged_LiteNetLib_NetPeer_System_Net_IPEndPoint_
-  commentId: M:LiteNetLib.IPeerAddressChangedListener.OnPeerAddressChanged(LiteNetLib.NetPeer,System.Net.IPEndPoint)
-  fullName: LiteNetLib.IPeerAddressChangedListener.OnPeerAddressChanged(LiteNetLib.NetPeer, System.Net.IPEndPoint)
-  nameWithType: IPeerAddressChangedListener.OnPeerAddressChanged(NetPeer, IPEndPoint)
-- uid: LiteNetLib.IPeerAddressChangedListener.OnPeerAddressChanged*
-  name: OnPeerAddressChanged
-  href: api/LiteNetLib.IPeerAddressChangedListener.html#LiteNetLib_IPeerAddressChangedListener_OnPeerAddressChanged_
-  commentId: Overload:LiteNetLib.IPeerAddressChangedListener.OnPeerAddressChanged
-  isSpec: "True"
-  fullName: LiteNetLib.IPeerAddressChangedListener.OnPeerAddressChanged
-  nameWithType: IPeerAddressChangedListener.OnPeerAddressChanged
-- uid: LiteNetLib.IPv6Mode
-  name: IPv6Mode
-  href: api/LiteNetLib.IPv6Mode.html
-  commentId: T:LiteNetLib.IPv6Mode
-  fullName: LiteNetLib.IPv6Mode
-  nameWithType: IPv6Mode
-- uid: LiteNetLib.IPv6Mode.Disabled
-  name: Disabled
-  href: api/LiteNetLib.IPv6Mode.html#LiteNetLib_IPv6Mode_Disabled
-  commentId: F:LiteNetLib.IPv6Mode.Disabled
-  fullName: LiteNetLib.IPv6Mode.Disabled
-  nameWithType: IPv6Mode.Disabled
-- uid: LiteNetLib.IPv6Mode.DualMode
-  name: DualMode
-  href: api/LiteNetLib.IPv6Mode.html#LiteNetLib_IPv6Mode_DualMode
-  commentId: F:LiteNetLib.IPv6Mode.DualMode
-  fullName: LiteNetLib.IPv6Mode.DualMode
-  nameWithType: IPv6Mode.DualMode
-- uid: LiteNetLib.IPv6Mode.SeparateSocket
-  name: SeparateSocket
-  href: api/LiteNetLib.IPv6Mode.html#LiteNetLib_IPv6Mode_SeparateSocket
-  commentId: F:LiteNetLib.IPv6Mode.SeparateSocket
-  fullName: LiteNetLib.IPv6Mode.SeparateSocket
-  nameWithType: IPv6Mode.SeparateSocket
 - uid: LiteNetLib.InvalidPacketException
   name: InvalidPacketException
   href: api/LiteNetLib.InvalidPacketException.html
@@ -1840,7 +1753,14 @@ references:
 - uid: LiteNetLib.LiteNetManager.NatPunchModule
   name: NatPunchModule
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_NatPunchModule
-  commentId: F:LiteNetLib.LiteNetManager.NatPunchModule
+  commentId: P:LiteNetLib.LiteNetManager.NatPunchModule
+  fullName: LiteNetLib.LiteNetManager.NatPunchModule
+  nameWithType: LiteNetManager.NatPunchModule
+- uid: LiteNetLib.LiteNetManager.NatPunchModule*
+  name: NatPunchModule
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_NatPunchModule_
+  commentId: Overload:LiteNetLib.LiteNetManager.NatPunchModule
+  isSpec: "True"
   fullName: LiteNetLib.LiteNetManager.NatPunchModule
   nameWithType: LiteNetManager.NatPunchModule
 - uid: LiteNetLib.LiteNetManager.NetPeerEnumerator
@@ -3391,83 +3311,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.CreateRejectPeer
   nameWithType: NetManager.CreateRejectPeer
-- uid: LiteNetLib.NetManager.NetPeerEnumerator
-  name: NetManager.NetPeerEnumerator
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html
-  commentId: T:LiteNetLib.NetManager.NetPeerEnumerator
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator
-  nameWithType: NetManager.NetPeerEnumerator
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.#ctor(LiteNetLib.NetPeer)
-  name: NetPeerEnumerator(NetPeer)
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator__ctor_LiteNetLib_NetPeer_
-  commentId: M:LiteNetLib.NetManager.NetPeerEnumerator.#ctor(LiteNetLib.NetPeer)
-  name.vb: New(NetPeer)
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.NetPeerEnumerator(LiteNetLib.NetPeer)
-  fullName.vb: LiteNetLib.NetManager.NetPeerEnumerator.New(LiteNetLib.NetPeer)
-  nameWithType: NetManager.NetPeerEnumerator.NetPeerEnumerator(NetPeer)
-  nameWithType.vb: NetManager.NetPeerEnumerator.New(NetPeer)
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.#ctor*
-  name: NetPeerEnumerator
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator__ctor_
-  commentId: Overload:LiteNetLib.NetManager.NetPeerEnumerator.#ctor
-  isSpec: "True"
-  name.vb: New
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.NetPeerEnumerator
-  fullName.vb: LiteNetLib.NetManager.NetPeerEnumerator.New
-  nameWithType: NetManager.NetPeerEnumerator.NetPeerEnumerator
-  nameWithType.vb: NetManager.NetPeerEnumerator.New
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.Current
-  name: Current
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator_Current
-  commentId: P:LiteNetLib.NetManager.NetPeerEnumerator.Current
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.Current
-  nameWithType: NetManager.NetPeerEnumerator.Current
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.Current*
-  name: Current
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator_Current_
-  commentId: Overload:LiteNetLib.NetManager.NetPeerEnumerator.Current
-  isSpec: "True"
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.Current
-  nameWithType: NetManager.NetPeerEnumerator.Current
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.Dispose
-  name: Dispose()
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator_Dispose
-  commentId: M:LiteNetLib.NetManager.NetPeerEnumerator.Dispose
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.Dispose()
-  nameWithType: NetManager.NetPeerEnumerator.Dispose()
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.Dispose*
-  name: Dispose
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator_Dispose_
-  commentId: Overload:LiteNetLib.NetManager.NetPeerEnumerator.Dispose
-  isSpec: "True"
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.Dispose
-  nameWithType: NetManager.NetPeerEnumerator.Dispose
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.MoveNext
-  name: MoveNext()
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator_MoveNext
-  commentId: M:LiteNetLib.NetManager.NetPeerEnumerator.MoveNext
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.MoveNext()
-  nameWithType: NetManager.NetPeerEnumerator.MoveNext()
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.MoveNext*
-  name: MoveNext
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator_MoveNext_
-  commentId: Overload:LiteNetLib.NetManager.NetPeerEnumerator.MoveNext
-  isSpec: "True"
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.MoveNext
-  nameWithType: NetManager.NetPeerEnumerator.MoveNext
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.Reset
-  name: Reset()
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator_Reset
-  commentId: M:LiteNetLib.NetManager.NetPeerEnumerator.Reset
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.Reset()
-  nameWithType: NetManager.NetPeerEnumerator.Reset()
-- uid: LiteNetLib.NetManager.NetPeerEnumerator.Reset*
-  name: Reset
-  href: api/LiteNetLib.NetManager.NetPeerEnumerator.html#LiteNetLib_NetManager_NetPeerEnumerator_Reset_
-  commentId: Overload:LiteNetLib.NetManager.NetPeerEnumerator.Reset
-  isSpec: "True"
-  fullName: LiteNetLib.NetManager.NetPeerEnumerator.Reset
-  nameWithType: NetManager.NetPeerEnumerator.Reset
 - uid: LiteNetLib.NetManager.ProcessEvent(LiteNetLib.NetEvent)
   name: ProcessEvent(NetEvent)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ProcessEvent_LiteNetLib_NetEvent_

@@ -1,5 +1,5 @@
 {
-  "source_base_path": "E:/Projects/LiteNetLib/docfx_project",
+  "source_base_path": "/home/revenantx/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -116,20 +116,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.IDeliveryEventListener.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/LiteNetLib.IDeliveryEventListener.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "LiteNetLib.IDeliveryEventListener",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/LiteNetLib.ILiteNetEventListener.yml",
       "output": {
         ".html": {
@@ -183,48 +169,6 @@
       "IsMRef": true,
       "Title": "LiteNetLib.INetLogger",
       "Summary": "<p sourcefile=\"api/LiteNetLib.INetLogger.yml\" sourcestartlinenumber=\"1\">Interface to implement for your own logger</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.INtpEventListener.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/LiteNetLib.INtpEventListener.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "LiteNetLib.INtpEventListener",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.IPeerAddressChangedListener.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/LiteNetLib.IPeerAddressChangedListener.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "LiteNetLib.IPeerAddressChangedListener",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.IPv6Mode.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/LiteNetLib.IPv6Mode.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "LiteNetLib.IPv6Mode",
-      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -448,20 +392,6 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.NetLogLevel",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "LiteNetLib.NetManager.NetPeerEnumerator",
       "Summary": null
     },
     {

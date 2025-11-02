@@ -488,7 +488,6 @@ namespace LiteNetLib
         /// Send data to peer with delivery event called
         /// </summary>
         /// <param name="dataWriter">Data</param>
-        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
         /// <param name="deliveryMethod">Delivery method (reliable, unreliable, etc.)</param>
         /// <param name="userData">User data that will be received in DeliveryEvent</param>
         /// <exception cref="ArgumentException">

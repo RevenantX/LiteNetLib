@@ -266,7 +266,7 @@ namespace LiteNetLib
         /// <param name="port">Server Port</param>
         /// <param name="key">Connection key</param>
         /// <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
-        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
+        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="LiteNetManager.Start()"/></exception>
         public new NetPeer Connect(string address, int port, string key) =>
             Connect(address, port, NetDataWriter.FromString(key));
 
@@ -277,7 +277,7 @@ namespace LiteNetLib
         /// <param name="port">Server Port</param>
         /// <param name="connectionData">Additional data for remote peer</param>
         /// <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
-        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
+        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="LiteNetManager.Start()"/></exception>
         public new NetPeer Connect(string address, int port, NetDataWriter connectionData) =>
             (NetPeer)base.Connect(address, port, connectionData);
 
@@ -287,7 +287,7 @@ namespace LiteNetLib
         /// <param name="target">Server end point (ip and port)</param>
         /// <param name="key">Connection key</param>
         /// <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
-        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
+        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="LiteNetManager.Start()"/></exception>
         public new NetPeer Connect(IPEndPoint target, string key) =>
             (NetPeer)base.Connect(target, key);
 
@@ -297,7 +297,7 @@ namespace LiteNetLib
         /// <param name="target">Server end point (ip and port)</param>
         /// <param name="connectionData">Additional data for remote peer</param>
         /// <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
-        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
+        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="LiteNetManager.Start()"/></exception>
         public new NetPeer Connect(IPEndPoint target, NetDataWriter connectionData) =>
             (NetPeer)base.Connect(target, connectionData);
 
@@ -307,7 +307,7 @@ namespace LiteNetLib
         /// <param name="target">Server end point (ip and port)</param>
         /// <param name="connectionData">Additional data for remote peer</param>
         /// <returns>New NetPeer if new connection, Old NetPeer if already connected, null peer if there is ConnectionRequest awaiting</returns>
-        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="Start()"/></exception>
+        /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="LiteNetManager.Start()"/></exception>
         public new NetPeer Connect(IPEndPoint target, ReadOnlySpan<byte> connectionData) =>
             (NetPeer)base.Connect(target, connectionData);
     }

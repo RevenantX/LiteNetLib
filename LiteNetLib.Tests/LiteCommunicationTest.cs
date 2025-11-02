@@ -136,7 +136,7 @@ namespace LiteNetLib.Tests
                 arr[testSize - 1] = 254;
                 peer.SendWithDeliveryEvent(arr, DeliveryMethod.ReliableUnordered, testData);
             };
-            ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, channel, method) =>
+            ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, method) =>
             {
                 Assert.AreEqual(testSize, reader.UserDataSize);
                 Assert.AreEqual(196, reader.RawData[reader.UserDataOffset]);
@@ -436,10 +436,10 @@ namespace LiteNetLib.Tests
         [Test, Timeout(5000)]
         public void EncryptTest()
         {
-            EventBasedNetListener srvListener = new EventBasedNetListener();
-            EventBasedNetListener cliListener = new EventBasedNetListener();
-            NetManager srv = new NetManager(srvListener, new XorEncryptLayer("secret_key"));
-            NetManager cli = new NetManager(cliListener, new XorEncryptLayer("secret_key"));
+            var srvListener = new EventBasedLiteNetListener();
+            var cliListener = new EventBasedLiteNetListener();
+            var srv = new LiteNetManager(srvListener, new XorEncryptLayer("secret_key"));
+            var cli = new LiteNetManager(cliListener, new XorEncryptLayer("secret_key"));
             srv.Start(DefaultPort + 1);
             cli.Start();
 
@@ -463,8 +463,8 @@ namespace LiteNetLib.Tests
         {
             var server = ManagerStack.Server(1);
 
-            EventBasedNetListener listener = new EventBasedNetListener();
-            NetManager client = new NetManager(listener, new Crc32cLayer());
+            var listener = new EventBasedLiteNetListener();
+            var client = new LiteNetManager(listener, new Crc32cLayer());
             Assert.True(client.Start(9049));
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             while (server.ConnectedPeersCount != 1)
@@ -623,8 +623,8 @@ namespace LiteNetLib.Tests
         [Test, Timeout(TestTimeout)]
         public void ManualMode()
         {
-            var serverListener = new EventBasedNetListener();
-            var server = new NetManager(serverListener, new Crc32cLayer());
+            var serverListener = new EventBasedLiteNetListener();
+            var server = new LiteNetManager(serverListener, new Crc32cLayer());
 
             serverListener.ConnectionRequestEvent += request => request.AcceptIfKey(DefaultAppKey);
 
@@ -670,7 +670,7 @@ namespace LiteNetLib.Tests
             var dataStack = new Stack<byte[]>(clientCount);
 
             ManagerStack.ClientForeach(
-                (i, manager, l) => l.NetworkReceiveEvent += (peer, reader, channel, type) => dataStack.Push(reader.GetRemainingBytes()));
+                (i, manager, l) => l.NetworkReceiveEvent += (peer, reader, type) => dataStack.Push(reader.GetRemainingBytes()));
 
             var data = Encoding.Default.GetBytes("TextForTest");
             server.SendToAll(data, DeliveryMethod.ReliableUnordered);
