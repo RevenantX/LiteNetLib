@@ -594,6 +594,18 @@ namespace LiteNetLib
             ProcessNtpRequests(elapsedMilliseconds);
         }
 
+        //connect to
+        protected virtual LiteNetPeer CreateOutgoingPeer(IPEndPoint remoteEndPoint, int id, byte connectNum, ReadOnlySpan<byte> connectData) =>
+            new LiteNetPeer(this, remoteEndPoint, id, connectNum, connectData);
+
+        //accept
+        protected virtual LiteNetPeer CreateIncomingPeer(ConnectionRequest request, int id) =>
+            new LiteNetPeer(this, request, id);
+
+        //reject
+        protected virtual LiteNetPeer CreateRejectPeer(IPEndPoint remoteEndPoint, int id) =>
+            new LiteNetPeer(this, remoteEndPoint, id);
+
         internal LiteNetPeer OnConnectionSolved(ConnectionRequest request, byte[] rejectData, int start, int length)
         {
             LiteNetPeer netPeer = null;
@@ -623,14 +635,14 @@ namespace LiteNetLib
                 }
                 else if (request.Result == ConnectionRequestResult.Reject)
                 {
-                    netPeer = new LiteNetPeer(this, request.RemoteEndPoint, GetNextPeerId());
+                    netPeer = CreateRejectPeer(request.RemoteEndPoint, GetNextPeerId());
                     netPeer.Reject(request.InternalPacket, rejectData, start, length);
                     AddPeer(netPeer);
                     NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
                 }
                 else //Accept
                 {
-                    netPeer = new LiteNetPeer(this, request, GetNextPeerId());
+                    netPeer = CreateIncomingPeer(request, GetNextPeerId());
                     AddPeer(netPeer);
                     CreateEvent(NetEvent.EType.Connect, netPeer);
                     NetDebug.Write(NetLogLevel.Trace, $"[NM] Received peer connection Id: {netPeer.ConnectTime}, EP: {netPeer}");
@@ -1400,7 +1412,7 @@ namespace LiteNetLib
 
                 //Create reliable connection
                 //And send connection request
-                peer = new LiteNetPeer(this, target, GetNextPeerId(), connectionNumber, connectionData.AsReadOnlySpan());
+                peer = CreateOutgoingPeer(target, GetNextPeerId(), connectionNumber, connectionData.AsReadOnlySpan());
                 AddPeer(peer);
                 return peer;
             }
@@ -1440,7 +1452,7 @@ namespace LiteNetLib
 
                 //Create reliable connection
                 //And send connection request
-                peer = new LiteNetPeer(this, target, GetNextPeerId(), connectionNumber, connectionData);
+                peer = CreateOutgoingPeer(target, GetNextPeerId(), connectionNumber, connectionData);
                 AddPeer(peer);
                 return peer;
             }

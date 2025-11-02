@@ -92,6 +92,18 @@ namespace LiteNetLib
             return false;
         }
 
+        //connect to
+        protected override LiteNetPeer CreateOutgoingPeer(IPEndPoint remoteEndPoint, int id, byte connectNum, ReadOnlySpan<byte> connectData) =>
+            new NetPeer(this, remoteEndPoint, id, connectNum, connectData);
+
+        //accept
+        protected override LiteNetPeer CreateIncomingPeer(ConnectionRequest request, int id) =>
+            new NetPeer(this, request, id);
+
+        //reject
+        protected override LiteNetPeer CreateRejectPeer(IPEndPoint remoteEndPoint, int id) =>
+            new NetPeer(this, remoteEndPoint, id);
+
         protected override void ProcessEvent(NetEvent evt)
         {
             NetDebug.Write("[NM] Processing event: " + evt.Type);
@@ -159,9 +171,7 @@ namespace LiteNetLib
         protected override void ProcessNtpRequests(float elapsedMilliseconds)
         {
             if (_ntpRequests.IsEmpty)
-            {
                 return;
-            }
 
             List<IPEndPoint> requestsToRemove = null;
             foreach (var ntpRequest in _ntpRequests)
@@ -178,9 +188,7 @@ namespace LiteNetLib
             if (requestsToRemove != null)
             {
                 foreach (var ipEndPoint in requestsToRemove)
-                {
                     _ntpRequests.TryRemove(ipEndPoint, out _);
-                }
             }
         }
 

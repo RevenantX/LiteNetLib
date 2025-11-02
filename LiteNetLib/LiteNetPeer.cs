@@ -203,7 +203,7 @@ namespace LiteNetLib
 
         internal byte[] NativeAddress;
 
-        protected virtual int ChannelsCount => 0;
+        protected virtual int ChannelsCount => 1;
 
         /// <summary>
         /// IPEndPoint serialize
@@ -306,7 +306,7 @@ namespace LiteNetLib
         /// <param name="ordered">type of channel ReliableOrdered or ReliableUnordered</param>
         /// <returns>packets count in channel queue</returns>
         public int GetPacketsCountInReliableQueue(bool ordered) =>
-            _reliableChannel.PacketsInQueue;
+            _reliableChannel?.PacketsInQueue ?? 0;
 
         /// <summary>
         /// Create temporary packet (maximum size MTU - headerSize) to send later without additional copies
@@ -345,7 +345,14 @@ namespace LiteNetLib
                 CreateChannel(packet._channelNumber).AddToQueue(packet._packet);
             }
             else
-                EnqueueUnreliable(packet._packet);
+            {
+                lock (_unreliableChannelLock)
+                {
+                    if (_unreliablePendingCount == _unreliableChannel.Length)
+                        Array.Resize(ref _unreliableChannel, _unreliablePendingCount*2);
+                    _unreliableChannel[_unreliablePendingCount++] = packet._packet;
+                }
+            }
         }
 
         internal virtual BaseChannel CreateChannel(byte channelNumber)
@@ -358,23 +365,12 @@ namespace LiteNetLib
                 case DeliveryMethod.ReliableOrdered:
                 case DeliveryMethod.ReliableUnordered:
                 case DeliveryMethod.ReliableSequenced:
-                    return _reliableChannel ??= new ReliableChannel(this, true, (byte)DeliveryMethod.ReliableOrdered);
+                    return _reliableChannel ??= new ReliableChannel(this, true, channelNumber);
                 case DeliveryMethod.Sequenced:
-                    return _sequencedChannel ??= new SequencedChannel(this, true, (byte)DeliveryMethod.Sequenced);
+                    return _sequencedChannel ??= new SequencedChannel(this, true, channelNumber);
 
                 default:
                     throw new Exception("Invalid channel type");
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void EnqueueUnreliable(NetPacket packet)
-        {
-            lock (_unreliableChannelLock)
-            {
-                if (_unreliablePendingCount == _unreliableChannel.Length)
-                    Array.Resize(ref _unreliableChannel, _unreliablePendingCount*2);
-                _unreliableChannel[_unreliablePendingCount++] = packet;
             }
         }
 
@@ -664,7 +660,12 @@ namespace LiteNetLib
 
             if (channel == null) //unreliable
             {
-                EnqueueUnreliable(packet);
+                lock (_unreliableChannelLock)
+                {
+                    if (_unreliablePendingCount == _unreliableChannel.Length)
+                        Array.Resize(ref _unreliableChannel, _unreliablePendingCount*2);
+                    _unreliableChannel[_unreliablePendingCount++] = packet;
+                }
             }
             else
             {
@@ -1134,9 +1135,10 @@ namespace LiteNetLib
             //DebugWriteForce("Merged: " + _mergePos + "/" + (_mtu - 2) + ", count: " + _mergeCount);
         }
 
-        protected virtual void CustomUpdate()
+        protected virtual void UpdateChannels()
         {
-
+            _reliableChannel?.SendAndCheckQueue();
+            _sequencedChannel?.SendAndCheckQueue();
         }
 
         internal void Update(float deltaTime)
@@ -1217,7 +1219,7 @@ namespace LiteNetLib
 
             UpdateMtuLogic(deltaTime);
 
-            CustomUpdate();
+            UpdateChannels();
 
             if (_unreliablePendingCount > 0)
             {

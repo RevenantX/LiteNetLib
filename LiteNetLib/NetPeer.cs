@@ -8,23 +8,24 @@ namespace LiteNetLib
 {
     public class NetPeer : LiteNetPeer
     {
-        private readonly ConcurrentQueue<BaseChannel> _channelSendQueue;
+        private readonly ConcurrentQueue<BaseChannel> _channelSendQueue = new ConcurrentQueue<BaseChannel>();
         private readonly BaseChannel[] _channels;
 
-        protected override int ChannelsCount => _channels.Length;
+        protected override int ChannelsCount => ((NetManager)NetManager).ChannelsCount;
 
         internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id) : base(netManager, remoteEndPoint, id)
         {
-            _channels = new BaseChannel[netManager.ChannelsCount * NetConstants.ChannelTypeCount];
-            _channelSendQueue = new ConcurrentQueue<BaseChannel>();
+
         }
 
         internal NetPeer(NetManager netManager, IPEndPoint remoteEndPoint, int id, byte connectNum, ReadOnlySpan<byte> connectData) : base(netManager, remoteEndPoint, id, connectNum, connectData)
         {
+            _channels = new BaseChannel[netManager.ChannelsCount * NetConstants.ChannelTypeCount];
         }
 
         internal NetPeer(NetManager netManager, ConnectionRequest request, int id) : base(netManager, request, id)
         {
+            _channels = new BaseChannel[netManager.ChannelsCount * NetConstants.ChannelTypeCount];
         }
 
         /// <summary>
@@ -172,11 +173,10 @@ namespace LiteNetLib
         {
             int idx = channelNumber * NetConstants.ChannelTypeCount +
                       (byte) (ordered ? DeliveryMethod.ReliableOrdered : DeliveryMethod.ReliableUnordered);
-            var channel = _channels[idx];
-            return channel != null ? ((ReliableChannel)channel).PacketsInQueue : 0;
+            return ((ReliableChannel)_channels[idx])?.PacketsInQueue ?? 0;
         }
 
-        protected override void CustomUpdate()
+        protected override void UpdateChannels()
         {
             //Pending send
             int count = _channelSendQueue.Count;
@@ -200,11 +200,8 @@ namespace LiteNetLib
                 return;
             }
             var channel = _channels[packet.ChannelId] ?? (packet.Property == PacketProperty.Ack ? null : CreateChannel(packet.ChannelId));
-            if (channel != null)
-            {
-                if (!channel.ProcessPacket(packet))
-                    NetManager.PoolRecycle(packet);
-            }
+            if (channel != null && !channel.ProcessPacket(packet))
+                NetManager.PoolRecycle(packet);
         }
 
         internal override void AddToReliableChannelSendQueue(BaseChannel channel) =>
