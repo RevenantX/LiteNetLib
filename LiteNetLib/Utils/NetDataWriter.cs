@@ -32,7 +32,10 @@ namespace LiteNetLib.Utils
 
         public ReadOnlySpan<byte> AsReadOnlySpan() => new ReadOnlySpan<byte>(_data, 0, _position);
 
-        public static readonly ThreadLocal<UTF8Encoding> uTF8Encoding = new ThreadLocal<UTF8Encoding>(() => new UTF8Encoding(false, true));
+        [ThreadStatic]
+        private static UTF8Encoding Utf8EncodingInternal;
+
+        public static UTF8Encoding uTF8Encoding => Utf8EncodingInternal ??= new UTF8Encoding(false, true);
 
         public NetDataWriter() : this(true, InitialSize) { }
 
@@ -345,7 +348,7 @@ namespace LiteNetLib.Utils
                 Put(0);
                 return;
             }
-            int size = uTF8Encoding.Value.GetByteCount(value);
+            int size = uTF8Encoding.GetByteCount(value);
             if (size == 0)
             {
                 Put(0);
@@ -354,7 +357,7 @@ namespace LiteNetLib.Utils
             Put(size);
             if (_autoResize)
                 ResizeIfNeed(_position + size);
-            uTF8Encoding.Value.GetBytes(value, 0, size, _data, _position);
+            uTF8Encoding.GetBytes(value, 0, size, _data, _position);
             _position += size;
         }
 
@@ -370,10 +373,10 @@ namespace LiteNetLib.Utils
             }
 
             int length = maxLength > 0 && value.Length > maxLength ? maxLength : value.Length;
-            int maxSize = uTF8Encoding.Value.GetMaxByteCount(length);
+            int maxSize = uTF8Encoding.GetMaxByteCount(length);
             if (_autoResize)
                 ResizeIfNeed(_position + maxSize + sizeof(ushort));
-            int size = uTF8Encoding.Value.GetBytes(value, 0, length, _data, _position + sizeof(ushort));
+            int size = uTF8Encoding.GetBytes(value, 0, length, _data, _position + sizeof(ushort));
             if (size == 0)
             {
                 Put((ushort)0);
