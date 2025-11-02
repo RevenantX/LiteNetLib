@@ -199,6 +199,7 @@ namespace LiteNetLib
         private SocketAddress _cachedSocketAddr;
         private int _cachedHashCode;
         private ReliableChannel _reliableChannel;
+        private ReliableChannel _reliableUnorderedChannel;
         private SequencedChannel _sequencedChannel;
 
         internal byte[] NativeAddress;
@@ -357,15 +358,15 @@ namespace LiteNetLib
 
         internal virtual BaseChannel CreateChannel(byte channelNumber)
         {
-            if (channelNumber >= NetConstants.ChannelTypeCount)
-                throw new Exception("Invalid channel number");
-
             switch ((DeliveryMethod)channelNumber)
             {
                 case DeliveryMethod.ReliableOrdered:
-                case DeliveryMethod.ReliableUnordered:
                 case DeliveryMethod.ReliableSequenced:
-                    return _reliableChannel ??= new ReliableChannel(this, true, channelNumber);
+                    return _reliableChannel ??= new ReliableChannel(this, true, (int)DeliveryMethod.ReliableOrdered);
+
+                case DeliveryMethod.ReliableUnordered:
+                    return _reliableUnorderedChannel ??= new ReliableChannel(this, false, channelNumber);
+
                 case DeliveryMethod.Sequenced:
                     return _sequencedChannel ??= new SequencedChannel(this, true, channelNumber);
 
@@ -974,11 +975,13 @@ namespace LiteNetLib
 
         internal virtual void ProcessChanneled(NetPacket packet)
         {
-            if (packet.ChannelId >= NetConstants.ChannelTypeCount)
+            if (packet.ChannelId >= NetConstants.ChannelTypeCount ||
+                packet.ChannelId == (int)DeliveryMethod.ReliableSequenced)
             {
                 NetManager.PoolRecycle(packet);
                 return;
             }
+
             if (!CreateChannel(packet.ChannelId).ProcessPacket(packet))
                 NetManager.PoolRecycle(packet);
         }
@@ -1138,6 +1141,7 @@ namespace LiteNetLib
         protected virtual void UpdateChannels()
         {
             _reliableChannel?.SendNextPackets();
+            _reliableUnorderedChannel?.SendNextPackets();
             _sequencedChannel?.SendNextPackets();
         }
 
