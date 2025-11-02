@@ -77,7 +77,7 @@ namespace LiteNetLib
             public bool IsExternal { [Preserve] get; [Preserve] set; }
         }
 
-        private readonly NetManager _socket;
+        private readonly LiteNetManager _socket;
         private readonly ConcurrentQueue<RequestEventData> _requestEvents = new ConcurrentQueue<RequestEventData>();
         private readonly ConcurrentQueue<SuccessEventData> _successEvents = new ConcurrentQueue<SuccessEventData>();
         private readonly NetDataReader _cacheReader = new NetDataReader();
@@ -91,7 +91,7 @@ namespace LiteNetLib
         /// </summary>
         public bool UnsyncedEvents = false;
 
-        internal NatPunchModule(NetManager socket)
+        internal NatPunchModule(LiteNetManager socket)
         {
             _socket = socket;
             _netPacketProcessor.SubscribeReusable<NatIntroduceResponsePacket>(OnNatIntroductionResponse);

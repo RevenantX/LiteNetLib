@@ -2,6 +2,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Net;
 
 namespace LiteNetLib.Tests
 {
@@ -15,7 +16,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put(true);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readBool = ndr.GetBool();
 
             Assert.AreEqual(readBool, true);
@@ -27,7 +28,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.PutArray(new[] {true, false, true, false, false});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readBoolArray = ndr.GetBoolArray();
 
             Assert.That(new[] {true, false, true, false, false}, Is.EqualTo(readBoolArray).AsCollection);
@@ -39,7 +40,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put((byte) 8);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readByte = ndr.GetByte();
 
             Assert.AreEqual(readByte, (byte) 8);
@@ -51,7 +52,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put(new byte[] {1, 2, 4, 8, 16, byte.MaxValue, byte.MinValue});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readByteArray = new byte[7];
             ndr.GetBytes(readByteArray, 7);
 
@@ -70,7 +71,7 @@ namespace LiteNetLib.Tests
             Span<byte> anotherTempBytes = new byte[] { 16, byte.MaxValue, byte.MinValue };
             ndw.Put(anotherTempBytes);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readByteArray = new byte[7];
             ndr.GetBytes(readByteArray, 7);
 
@@ -86,7 +87,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put(3.1415);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readDouble = ndr.GetDouble();
 
             Assert.AreEqual(readDouble, 3.1415);
@@ -98,7 +99,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.PutArray(new[] {1.1, 2.2, 3.3, 4.4, double.MaxValue, double.MinValue});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readDoubleArray = ndr.GetDoubleArray();
 
             Assert.That(
@@ -112,7 +113,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put(3.1415f);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readFloat = ndr.GetFloat();
 
             Assert.AreEqual(readFloat, 3.1415f);
@@ -124,7 +125,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.PutArray(new[] {1.1f, 2.2f, 3.3f, 4.4f, float.MaxValue, float.MinValue});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readFloatArray = ndr.GetFloatArray();
 
             Assert.That(
@@ -138,7 +139,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put(32);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readInt = ndr.GetInt();
 
             Assert.AreEqual(readInt, 32);
@@ -150,7 +151,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.PutArray(new[] {1, 2, 3, 4, 5, 6, 7, int.MaxValue, int.MinValue});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readIntArray = ndr.GetIntArray();
 
             Assert.That(new[] {1, 2, 3, 4, 5, 6, 7, int.MaxValue, int.MinValue}, Is.EqualTo(readIntArray).AsCollection);
@@ -162,7 +163,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put(64L);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readLong = ndr.GetLong();
 
             Assert.AreEqual(readLong, 64L);
@@ -174,7 +175,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.PutArray(new[] {1L, 2L, 3L, 4L, long.MaxValue, long.MinValue});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readLongArray = ndr.GetLongArray();
 
             Assert.That(new[] {1L, 2L, 3L, 4L, long.MaxValue, long.MinValue}, Is.EqualTo(readLongArray).AsCollection);
@@ -186,8 +187,8 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put(NetUtils.MakeEndPoint("127.0.0.1", 7777));
 
-            var ndr = new NetDataReader(ndw.Data);
-            var readNetEndPoint = ndr.GetNetEndPoint();
+            var ndr = new NetDataReader(ndw);
+            var readNetEndPoint = ndr.GetIPEndPoint();
 
             Assert.AreEqual(readNetEndPoint, NetUtils.MakeEndPoint("127.0.0.1", 7777));
         }
@@ -198,7 +199,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put((sbyte) 8);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readSByte = ndr.GetSByte();
 
             Assert.AreEqual(readSByte, (sbyte) 8);
@@ -210,7 +211,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put((short) 16);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readShort = ndr.GetShort();
 
             Assert.AreEqual(readShort, (short) 16);
@@ -222,7 +223,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.PutArray(new short[] {1, 2, 3, 4, 5, 6, short.MaxValue, short.MinValue});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readShortArray = ndr.GetShortArray();
 
             Assert.That(
@@ -236,7 +237,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put("String", 10);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readString = ndr.GetString(10);
 
             Assert.AreEqual(readString, "String");
@@ -248,7 +249,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.PutArray(new[] {"First", "Second", "Third", "Fourth"});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readStringArray = ndr.GetStringArray(10);
 
             Assert.That(new[] {"First", "Second", "Third", "Fourth"}, Is.EqualTo(readStringArray).AsCollection);
@@ -260,7 +261,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put(34U);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readUInt = ndr.GetUInt();
 
             Assert.AreEqual(readUInt, 34U);
@@ -272,7 +273,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.PutArray(new[] {1U, 2U, 3U, 4U, 5U, 6U, uint.MaxValue, uint.MinValue});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readUIntArray = ndr.GetUIntArray();
 
             Assert.That(
@@ -286,7 +287,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put(64UL);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readULong = ndr.GetULong();
 
             Assert.AreEqual(readULong, 64UL);
@@ -298,7 +299,7 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.PutArray(new[] {1UL, 2UL, 3UL, 4UL, 5UL, ulong.MaxValue, ulong.MinValue});
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readULongArray = ndr.GetULongArray();
 
             Assert.That(
@@ -312,10 +313,28 @@ namespace LiteNetLib.Tests
             var ndw = new NetDataWriter();
             ndw.Put((ushort) 16);
 
-            var ndr = new NetDataReader(ndw.Data);
+            var ndr = new NetDataReader(ndw);
             var readUShort = ndr.GetUShort();
 
             Assert.AreEqual(readUShort, (ushort) 16);
+        }
+
+        [Test]
+        public void WriteReadIPEndPoint()
+        {
+            var ndw = new NetDataWriter();
+            var ipep = new IPEndPoint(IPAddress.Broadcast, 12345);
+            var ipep6 = new IPEndPoint(IPAddress.IPv6Loopback, 12345);
+            ndw.Put(ipep);
+            ndw.Put(ipep6);
+
+            var ndr = new NetDataReader(ndw);
+            var readIpep = ndr.GetIPEndPoint();
+            var readIpep6 = ndr.GetIPEndPoint();
+
+            Assert.AreEqual(ipep, readIpep);
+            Assert.AreEqual(ipep6, readIpep6);
+            Assert.IsTrue(ndr.AvailableBytes == 0);
         }
     }
 }

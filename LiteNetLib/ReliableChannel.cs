@@ -10,10 +10,7 @@ namespace LiteNetLib
             private long _timeStamp;
             private bool _isSent;
 
-            public override string ToString()
-            {
-                return _packet == null ? "Empty" : _packet.Sequence.ToString();
-            }
+            public override string ToString() => _packet == null ? "Empty" : _packet.Sequence.ToString();
 
             public void Init(NetPacket packet)
             {
@@ -22,7 +19,7 @@ namespace LiteNetLib
             }
 
             //Returns true if there is a pending packet inside
-            public bool TrySend(long currentTime, NetPeer peer)
+            public bool TrySend(long currentTime, LiteNetPeer peer)
             {
                 if (_packet == null)
                     return false;
@@ -41,7 +38,7 @@ namespace LiteNetLib
                 return true;
             }
 
-            public bool Clear(NetPeer peer)
+            public bool Clear(LiteNetPeer peer)
             {
                 if (_packet != null)
                 {
@@ -71,7 +68,7 @@ namespace LiteNetLib
         private const int BitsInByte = 8;
         private readonly byte _id;
 
-        public ReliableChannel(NetPeer peer, bool ordered, byte id) : base(peer)
+        public ReliableChannel(LiteNetPeer peer, bool ordered, byte id) : base(peer)
         {
             _id = id;
             _windowSize = NetConstants.DefaultWindowSize;
@@ -165,7 +162,7 @@ namespace LiteNetLib
             }
         }
 
-        protected override bool SendNextPackets()
+        public override bool SendNextPackets()
         {
             if (_mustSendAcks)
             {

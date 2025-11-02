@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -29,22 +30,13 @@ namespace LiteNetLib.Utils
             get => _position;
         }
 
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
-        public ReadOnlySpan<byte> AsReadOnlySpan()
-        {
-            return new ReadOnlySpan<byte>(_data, 0, _position);
-        }
-#endif
+        public ReadOnlySpan<byte> AsReadOnlySpan() => new ReadOnlySpan<byte>(_data, 0, _position);
 
         public static readonly ThreadLocal<UTF8Encoding> uTF8Encoding = new ThreadLocal<UTF8Encoding>(() => new UTF8Encoding(false, true));
 
-        public NetDataWriter() : this(true, InitialSize)
-        {
-        }
+        public NetDataWriter() : this(true, InitialSize) { }
 
-        public NetDataWriter(bool autoResize) : this(autoResize, InitialSize)
-        {
-        }
+        public NetDataWriter(bool autoResize) : this(autoResize, InitialSize) { }
 
         public NetDataWriter(bool autoResize, int initialSize)
         {
@@ -81,7 +73,6 @@ namespace LiteNetLib.Utils
             return netDataWriter;
         }
 
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
         /// <summary>
         /// Creates NetDataWriter from the given <paramref name="bytes"/>.
         /// </summary>
@@ -91,7 +82,6 @@ namespace LiteNetLib.Utils
             netDataWriter.Put(bytes);
             return netDataWriter;
         }
-#endif
 
         public static NetDataWriter FromString(string value)
         {
@@ -124,10 +114,7 @@ namespace LiteNetLib.Utils
             _position = 0;
         }
 
-        public void Reset()
-        {
-            _position = 0;
-        }
+        public void Reset() => _position = 0;
 
         public byte[] CopyData()
         {
@@ -196,10 +183,7 @@ namespace LiteNetLib.Utils
             _position += 4;
         }
 
-        public void Put(char value)
-        {
-            Put((ushort)value);
-        }
+        public void Put(char value) => Put((ushort)value);
 
         public void Put(ushort value)
         {
@@ -235,14 +219,10 @@ namespace LiteNetLib.Utils
 
         public void Put(Guid value)
         {
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
             if (_autoResize)
                 ResizeIfNeed(_position + 16);
             value.TryWriteBytes(_data.AsSpan(_position));
             _position += 16;
-#else
-            PutBytesWithLength(value.ToByteArray());
-#endif
         }
 
         public void Put(byte[] data, int offset, int length)
@@ -261,7 +241,6 @@ namespace LiteNetLib.Utils
             _position += data.Length;
         }
 
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
         public void Put(ReadOnlySpan<byte> data)
         {
             if (_autoResize)
@@ -269,7 +248,6 @@ namespace LiteNetLib.Utils
             data.CopyTo(_data.AsSpan(_position));
             _position += data.Length;
         }
-#endif
 
         public void PutSBytesWithLength(sbyte[] data, int offset, ushort length)
         {
@@ -280,10 +258,7 @@ namespace LiteNetLib.Utils
             _position += 2 + length;
         }
 
-        public void PutSBytesWithLength(sbyte[] data)
-        {
-            PutArray(data, 1);
-        }
+        public void PutSBytesWithLength(sbyte[] data) => PutArray(data, 1);
 
         public void PutBytesWithLength(byte[] data, int offset, ushort length)
         {
@@ -294,15 +269,9 @@ namespace LiteNetLib.Utils
             _position += 2 + length;
         }
 
-        public void PutBytesWithLength(byte[] data)
-        {
-            PutArray(data, 1);
-        }
+        public void PutBytesWithLength(byte[] data) => PutArray(data, 1);
 
-        public void Put(bool value)
-        {
-            Put((byte)(value ? 1 : 0));
-        }
+        public void Put(bool value) => Put((byte)(value ? 1 : 0));
 
         public void PutArray(Array arr, int sz)
         {
@@ -316,50 +285,15 @@ namespace LiteNetLib.Utils
             _position += sz + 2;
         }
 
-        public void PutArray(float[] value)
-        {
-            PutArray(value, 4);
-        }
-
-        public void PutArray(double[] value)
-        {
-            PutArray(value, 8);
-        }
-
-        public void PutArray(long[] value)
-        {
-            PutArray(value, 8);
-        }
-
-        public void PutArray(ulong[] value)
-        {
-            PutArray(value, 8);
-        }
-
-        public void PutArray(int[] value)
-        {
-            PutArray(value, 4);
-        }
-
-        public void PutArray(uint[] value)
-        {
-            PutArray(value, 4);
-        }
-
-        public void PutArray(ushort[] value)
-        {
-            PutArray(value, 2);
-        }
-
-        public void PutArray(short[] value)
-        {
-            PutArray(value, 2);
-        }
-
-        public void PutArray(bool[] value)
-        {
-            PutArray(value, 1);
-        }
+        public void PutArray(float[] value) => PutArray(value, 4);
+        public void PutArray(double[] value) => PutArray(value, 8);
+        public void PutArray(long[] value) => PutArray(value, 8);
+        public void PutArray(ulong[] value) => PutArray(value, 8);
+        public void PutArray(int[] value) => PutArray(value, 4);
+        public void PutArray(uint[] value) => PutArray(value, 4);
+        public void PutArray(ushort[] value) => PutArray(value, 2);
+        public void PutArray(short[] value) => PutArray(value, 2);
+        public void PutArray(bool[] value) => PutArray(value, 1);
 
         public void PutArray(string[] value)
         {
@@ -387,8 +321,21 @@ namespace LiteNetLib.Utils
 
         public void Put(IPEndPoint endPoint)
         {
-            Put(endPoint.Address.ToString());
-            Put(endPoint.Port);
+            if (endPoint.AddressFamily == AddressFamily.InterNetwork)
+            {
+                Put((byte)0);
+            }
+            else if (endPoint.AddressFamily == AddressFamily.InterNetworkV6)
+            {
+                Put((byte)1);
+            }
+            else
+            {
+                throw new ArgumentException("Unsupported address family: " + endPoint.AddressFamily);
+            }
+
+            Put(endPoint.Address.GetAddressBytes());
+            Put((ushort)endPoint.Port);
         }
 
         public void PutLargeString(string value)
@@ -411,15 +358,10 @@ namespace LiteNetLib.Utils
             _position += size;
         }
 
-        public void Put(string value)
-        {
-            Put(value, 0);
-        }
-
         /// <summary>
         /// Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
         /// </summary>
-        public void Put(string value, int maxLength)
+        public void Put(string value, int maxLength = 0)
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -441,9 +383,6 @@ namespace LiteNetLib.Utils
             _position += size;
         }
 
-        public void Put<T>(T obj) where T : INetSerializable
-        {
-            obj.Serialize(this);
-        }
+        public void Put<T>(T obj) where T : INetSerializable => obj.Serialize(this);
     }
 }

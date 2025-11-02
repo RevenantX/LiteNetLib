@@ -1,15 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
 
   <head>
     <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Class NetDataReader
- </title>
+      <title>Class NetDataReader </title>
       <meta name="viewport" content="width=device-width">
-      <meta name="title" content="Class NetDataReader
- ">
+      <meta name="title" content="Class NetDataReader ">
+    
     
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
@@ -71,13 +70,12 @@
 
 
 
-  <h1 id="LiteNetLib_Utils_NetDataReader" data-uid="LiteNetLib.Utils.NetDataReader" class="text-break">Class NetDataReader
-</h1>
+  <h1 id="LiteNetLib_Utils_NetDataReader" data-uid="LiteNetLib.Utils.NetDataReader" class="text-break">Class NetDataReader</h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level0"><span class="xref">object</span></div>
     <div class="level1"><span class="xref">NetDataReader</span></div>
       <div class="level2"><a class="xref" href="LiteNetLib.NetPacketReader.html">NetPacketReader</a></div>
   </div>
@@ -224,6 +222,30 @@
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">protected int _dataSize</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4 id="LiteNetLib_Utils_NetDataReader__offset" data-uid="LiteNetLib.Utils.NetDataReader._offset">_offset</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected int _offset</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-condensed">
@@ -589,6 +611,33 @@
 
 
   <a id="LiteNetLib_Utils_NetDataReader_Get_" data-uid="LiteNetLib.Utils.NetDataReader.Get*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_Get_System_Guid__" data-uid="LiteNetLib.Utils.NetDataReader.Get(System.Guid@)">Get(out Guid)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Get(out Guid result)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></td>
+        <td><span class="parametername">result</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_Get_" data-uid="LiteNetLib.Utils.NetDataReader.Get*"></a>
   <h4 id="LiteNetLib_Utils_NetDataReader_Get_System_Int16__" data-uid="LiteNetLib.Utils.NetDataReader.Get(System.Int16@)">Get(out short)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
@@ -884,6 +933,103 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></td>
         <td><span class="parametername">result</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_GetArray_" data-uid="LiteNetLib.Utils.NetDataReader.GetArray*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetArray__1" data-uid="LiteNetLib.Utils.NetDataReader.GetArray``1">GetArray&lt;T&gt;()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T[] GetArray&lt;T&gt;() where T : INetSerializable, new()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>T[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_GetArray_" data-uid="LiteNetLib.Utils.NetDataReader.GetArray*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetArray__1_System_Func___0__" data-uid="LiteNetLib.Utils.NetDataReader.GetArray``1(System.Func{``0})">GetArray&lt;T&gt;(Func&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T[] GetArray&lt;T&gt;(Func&lt;T&gt; constructor) where T : class, INetSerializable</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
+        <td><span class="parametername">constructor</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>T[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -1283,6 +1429,31 @@
   </table>
 
 
+  <a id="LiteNetLib_Utils_NetDataReader_GetGuid_" data-uid="LiteNetLib.Utils.NetDataReader.GetGuid*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetGuid" data-uid="LiteNetLib.Utils.NetDataReader.GetGuid">GetGuid()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Guid GetGuid()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="LiteNetLib_Utils_NetDataReader_GetInt_" data-uid="LiteNetLib.Utils.NetDataReader.GetInt*"></a>
   <h4 id="LiteNetLib_Utils_NetDataReader_GetInt" data-uid="LiteNetLib.Utils.NetDataReader.GetInt">GetInt()</h4>
   <div class="markdown level1 summary"></div>
@@ -1327,6 +1498,31 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_GetLargeString_" data-uid="LiteNetLib.Utils.NetDataReader.GetLargeString*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetLargeString" data-uid="LiteNetLib.Utils.NetDataReader.GetLargeString">GetLargeString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GetLargeString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1427,6 +1623,31 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_GetRemainingBytesMemory_" data-uid="LiteNetLib.Utils.NetDataReader.GetRemainingBytesMemory*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_GetRemainingBytesMemory" data-uid="LiteNetLib.Utils.NetDataReader.GetRemainingBytesMemory">GetRemainingBytesMemory()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ReadOnlyMemory&lt;byte&gt; GetRemainingBytesMemory()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlymemory-1">ReadOnlyMemory</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>

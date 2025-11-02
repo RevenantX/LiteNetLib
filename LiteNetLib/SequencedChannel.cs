@@ -13,7 +13,7 @@ namespace LiteNetLib
         private readonly byte _id;
         private long _lastPacketSendTime;
 
-        public SequencedChannel(NetPeer peer, bool reliable, byte id) : base(peer)
+        public SequencedChannel(LiteNetPeer peer, bool reliable, byte id) : base(peer)
         {
             _id = id;
             _reliable = reliable;
@@ -21,7 +21,7 @@ namespace LiteNetLib
                 _ackPacket = new NetPacket(PacketProperty.Ack, 0) {ChannelId = id};
         }
 
-        protected override bool SendNextPackets()
+        public override bool SendNextPackets()
         {
             if (_reliable && OutgoingQueue.Count == 0)
             {

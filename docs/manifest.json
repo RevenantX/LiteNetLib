@@ -1,5 +1,5 @@
 {
-  "source_base_path": "E:/Projects/LiteNetLib/docfx_project",
+  "source_base_path": "/home/revenantx/Projects/LiteNetLib/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -10,7 +10,11 @@
           "relative_path": "api/LiteNetLib.ConnectionRequest.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.ConnectionRequest",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -20,7 +24,11 @@
           "relative_path": "api/LiteNetLib.ConnectionState.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.ConnectionState",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.ConnectionState.yml\" sourcestartlinenumber=\"1\">Peer connection state</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -30,7 +38,11 @@
           "relative_path": "api/LiteNetLib.DeliveryMethod.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.DeliveryMethod",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.DeliveryMethod.yml\" sourcestartlinenumber=\"1\">Sending method type</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -40,7 +52,11 @@
           "relative_path": "api/LiteNetLib.DisconnectInfo.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.DisconnectInfo",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.DisconnectInfo.yml\" sourcestartlinenumber=\"1\">Additional information about disconnection</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -50,7 +66,25 @@
           "relative_path": "api/LiteNetLib.DisconnectReason.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.DisconnectReason",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.DisconnectReason.yml\" sourcestartlinenumber=\"1\">Disconnect reason that you receive in OnPeerDisconnected event</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.EventBasedLiteNetListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.EventBasedLiteNetListener.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.EventBasedLiteNetListener",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.EventBasedLiteNetListener.yml\" sourcestartlinenumber=\"1\">Simple event based listener for simple setups and benchmarks</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -60,7 +94,11 @@
           "relative_path": "api/LiteNetLib.EventBasedNatPunchListener.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.EventBasedNatPunchListener",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -70,17 +108,25 @@
           "relative_path": "api/LiteNetLib.EventBasedNetListener.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.EventBasedNetListener",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.EventBasedNetListener.yml\" sourcestartlinenumber=\"1\">Simple event based listener for simple setups and benchmarks</p>\n"
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.IDeliveryEventListener.yml",
+      "source_relative_path": "api/LiteNetLib.ILiteNetEventListener.yml",
       "output": {
         ".html": {
-          "relative_path": "api/LiteNetLib.IDeliveryEventListener.html"
+          "relative_path": "api/LiteNetLib.ILiteNetEventListener.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.ILiteNetEventListener",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.ILiteNetEventListener.yml\" sourcestartlinenumber=\"1\">Interface for implementing own ILiteNetEventListener. This is a bit faster than use EventBasedListener</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -90,7 +136,11 @@
           "relative_path": "api/LiteNetLib.INatPunchListener.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.INatPunchListener",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -100,7 +150,11 @@
           "relative_path": "api/LiteNetLib.INetEventListener.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.INetEventListener",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.INetEventListener.yml\" sourcestartlinenumber=\"1\">Interface for implementing own INetEventListener. This is a bit faster than use EventBasedListener</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -110,37 +164,11 @@
           "relative_path": "api/LiteNetLib.INetLogger.html"
         }
       },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.INtpEventListener.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/LiteNetLib.INtpEventListener.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.IPeerAddressChangedListener.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/LiteNetLib.IPeerAddressChangedListener.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.IPv6Mode.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/LiteNetLib.IPv6Mode.html"
-        }
-      },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.INetLogger",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.INetLogger.yml\" sourcestartlinenumber=\"1\">Interface to implement for your own logger</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -150,7 +178,11 @@
           "relative_path": "api/LiteNetLib.InvalidPacketException.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.InvalidPacketException",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -160,7 +192,11 @@
           "relative_path": "api/LiteNetLib.Layers.Crc32cLayer.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Layers.Crc32cLayer",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -170,7 +206,11 @@
           "relative_path": "api/LiteNetLib.Layers.PacketLayerBase.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Layers.PacketLayerBase",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -180,7 +220,11 @@
           "relative_path": "api/LiteNetLib.Layers.XorEncryptLayer.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Layers.XorEncryptLayer",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -190,7 +234,53 @@
           "relative_path": "api/LiteNetLib.Layers.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Layers",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.LiteNetManager.NetPeerEnumerator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.LiteNetManager.NetPeerEnumerator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.LiteNetManager.NetPeerEnumerator",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.LiteNetManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.LiteNetManager.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.LiteNetManager",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.LiteNetManager.yml\" sourcestartlinenumber=\"1\">Main class for all network operations. Can be used as client and/or server.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.LiteNetPeer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.LiteNetPeer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.LiteNetPeer",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.LiteNetPeer.yml\" sourcestartlinenumber=\"1\">Network peer. Main purpose is sending messages to specific peer.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -200,7 +290,11 @@
           "relative_path": "api/LiteNetLib.LocalAddrType.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.LocalAddrType",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.LocalAddrType.yml\" sourcestartlinenumber=\"1\">Address type that you want to receive from NetUtils.GetLocalIp method</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -210,7 +304,11 @@
           "relative_path": "api/LiteNetLib.NatAddressType.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NatAddressType",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -220,7 +318,11 @@
           "relative_path": "api/LiteNetLib.NatPunchModule.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NatPunchModule",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NatPunchModule.yml\" sourcestartlinenumber=\"1\">Module for UDP NAT Hole punching operations. Can be accessed from NetManager</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -230,7 +332,11 @@
           "relative_path": "api/LiteNetLib.NetConstants.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetConstants",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetConstants.yml\" sourcestartlinenumber=\"1\">Network constants. Can be tuned from sources for your purposes.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -240,7 +346,39 @@
           "relative_path": "api/LiteNetLib.NetDebug.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetDebug",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetDebug.yml\" sourcestartlinenumber=\"1\">Static class for defining your own LiteNetLib logger instead of Console.WriteLine\nor Debug.Log if compiled with UNITY flag</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetEvent.EType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetEvent.EType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetEvent.EType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetEvent.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetEvent",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetEvent.yml\" sourcestartlinenumber=\"1\">Internally used event type</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -250,17 +388,11 @@
           "relative_path": "api/LiteNetLib.NetLogLevel.html"
         }
       },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/LiteNetLib.NetManager.NetPeerEnumerator.html"
-        }
-      },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetLogLevel",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -270,7 +402,11 @@
           "relative_path": "api/LiteNetLib.NetManager.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetManager",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetManager.yml\" sourcestartlinenumber=\"1\">More feature rich network manager with adjustable channels count</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -280,7 +416,11 @@
           "relative_path": "api/LiteNetLib.NetPacketReader.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetPacketReader",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -290,7 +430,11 @@
           "relative_path": "api/LiteNetLib.NetPeer.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetPeer",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetPeer.yml\" sourcestartlinenumber=\"1\">Improved LiteNetPeer with full multi-channel support</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -300,7 +444,11 @@
           "relative_path": "api/LiteNetLib.NetStatistics.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetStatistics",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -310,7 +458,11 @@
           "relative_path": "api/LiteNetLib.NetUtils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetUtils",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetUtils.yml\" sourcestartlinenumber=\"1\">Some specific network utilities</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -320,7 +472,11 @@
           "relative_path": "api/LiteNetLib.PooledPacket.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.PooledPacket",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -330,7 +486,11 @@
           "relative_path": "api/LiteNetLib.TooBigPacketException.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.TooBigPacketException",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -340,7 +500,11 @@
           "relative_path": "api/LiteNetLib.UnconnectedMessageType.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.UnconnectedMessageType",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.UnconnectedMessageType.yml\" sourcestartlinenumber=\"1\">Type of message that you receive in OnNetworkReceiveUnconnected event</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -350,7 +514,11 @@
           "relative_path": "api/LiteNetLib.Utils.CRC32C.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.CRC32C",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -360,7 +528,11 @@
           "relative_path": "api/LiteNetLib.Utils.FastBitConverter.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.FastBitConverter",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -370,7 +542,11 @@
           "relative_path": "api/LiteNetLib.Utils.INetSerializable.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.INetSerializable",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -380,7 +556,11 @@
           "relative_path": "api/LiteNetLib.Utils.InvalidTypeException.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.InvalidTypeException",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -390,7 +570,11 @@
           "relative_path": "api/LiteNetLib.Utils.NetDataReader.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.NetDataReader",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -400,7 +584,11 @@
           "relative_path": "api/LiteNetLib.Utils.NetDataWriter.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.NetDataWriter",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -410,7 +598,11 @@
           "relative_path": "api/LiteNetLib.Utils.NetPacketProcessor.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.NetPacketProcessor",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -420,7 +612,11 @@
           "relative_path": "api/LiteNetLib.Utils.NetSerializer.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.NetSerializer",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -430,7 +626,11 @@
           "relative_path": "api/LiteNetLib.Utils.NtpLeapIndicator.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.NtpLeapIndicator",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.Utils.NtpLeapIndicator.yml\" sourcestartlinenumber=\"1\">Represents leap second warning from the server that instructs the client to add or remove leap second.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -440,7 +640,11 @@
           "relative_path": "api/LiteNetLib.Utils.NtpMode.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.NtpMode",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.Utils.NtpMode.yml\" sourcestartlinenumber=\"1\">Describes SNTP packet mode, i.e. client or server.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -450,7 +654,11 @@
           "relative_path": "api/LiteNetLib.Utils.NtpPacket.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.NtpPacket",
+      "Summary": "<p sourcefile=\"api/LiteNetLib.Utils.NtpPacket.yml\" sourcestartlinenumber=\"1\">Represents RFC4330 SNTP packet used for communication to and from a network time server.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -460,7 +668,11 @@
           "relative_path": "api/LiteNetLib.Utils.ParseException.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.ParseException",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -470,7 +682,11 @@
           "relative_path": "api/LiteNetLib.Utils.PreserveAttribute.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils.PreserveAttribute",
+      "Summary": "<p>PreserveAttribute prevents byte code stripping from removing a class, method, field, or property.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -480,7 +696,11 @@
           "relative_path": "api/LiteNetLib.Utils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.Utils",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -490,7 +710,11 @@
           "relative_path": "api/LiteNetLib.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib",
+      "Summary": null
     },
     {
       "type": "Conceptual",

@@ -25,10 +25,8 @@ namespace LiteNetLib
     {
         private static readonly NetworkSorter NetworkSorter = new NetworkSorter();
 
-        public static IPEndPoint MakeEndPoint(string hostStr, int port)
-        {
-            return new IPEndPoint(ResolveAddress(hostStr), port);
-        }
+        public static IPEndPoint MakeEndPoint(string hostStr, int port) =>
+            new IPEndPoint(ResolveAddress(hostStr), port);
 
         public static IPAddress ResolveAddress(string hostStr)
         {
@@ -37,7 +35,7 @@ namespace LiteNetLib
 
             if (!IPAddress.TryParse(hostStr, out var ipAddress))
             {
-                if (NetManager.IPv6Support)
+                if (LiteNetManager.IPv6Support)
                     ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
                 if (ipAddress == null)
                     ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetwork);
@@ -158,7 +156,7 @@ namespace LiteNetLib
         // ===========================================
         internal static void PrintInterfaceInfos()
         {
-            NetDebug.WriteForce(NetLogLevel.Info, $"IPv6Support: { NetManager.IPv6Support}");
+            NetDebug.WriteForce(NetLogLevel.Info, $"IPv6Support: { LiteNetManager.IPv6Support}");
             try
             {
                 foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
@@ -181,10 +179,8 @@ namespace LiteNetLib
             }
         }
 
-        internal static int RelativeSequenceNumber(int number, int expected)
-        {
-            return (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
-        }
+        internal static int RelativeSequenceNumber(int number, int expected) =>
+            (number - expected + NetConstants.MaxSequence + NetConstants.HalfMaxSequence) % NetConstants.MaxSequence - NetConstants.HalfMaxSequence;
 
         internal static T[] AllocatePinnedUninitializedArray<T>(int count) where T : unmanaged
         {

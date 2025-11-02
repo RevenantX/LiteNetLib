@@ -1,6 +1,6 @@
 # LiteNetLib
 
-Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework)
+Lite reliable UDP library for .NET Standard 2.1 (Mono, .NET)
 
 [![Made in Ukraine](https://img.shields.io/badge/made_in-ukraine-ffd700.svg?labelColor=0057b7)](https://stand-with-ukraine.pp.ua)
 
@@ -56,7 +56,7 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
   * Lumin OS (Magic Leap)
   * MonoGame
   * Godot
-  * Unity 2018.3 (Desktop platforms, Android, iOS, Switch)
+  * Unity 2021.2 (Desktop platforms, Android, iOS, Switch)
   
 ## Support developer
 * [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/revx)
@@ -68,15 +68,15 @@ Lite reliable UDP library for .NET Standard 2.0 (Mono, .NET Core, .NET Framework
 * Bitcoin: `bc1q269ecs8r5vnrum5qr5j98sdglhnxlulv0f6egd`
 
 ## Unity notes!!!
-* Minimal supported Unity is 2018.3. For older Unity versions use [0.9.x library](https://github.com/RevenantX/LiteNetLib/tree/0.9) versions
+* Minimal supported Unity is 2021.2. For older Unity versions use [0.9.x library](https://github.com/RevenantX/LiteNetLib/tree/0.9) versions
 * Always use library sources or [OpenUPM package](https://openupm.com/packages/com.revenantx.litenetlib/) instead of precompiled DLL files ( because there are platform specific #ifdefs and workarounds for unity bugs )
 
 ## Usage samples
 
 ### Client
 ```csharp
-EventBasedNetListener listener = new EventBasedNetListener();
-NetManager client = new NetManager(listener);
+var listener = new EventBasedNetListener();
+var client = new NetManager(listener);
 client.Start();
 client.Connect("localhost" /* host IP or name */, 9050 /* port */, "SomeConnectionKey" /* text key or NetDataWriter */);
 listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod, channel) =>
@@ -95,8 +95,8 @@ client.Stop();
 ```
 ### Server
 ```csharp
-EventBasedNetListener listener = new EventBasedNetListener();
-NetManager server = new NetManager(listener);
+var listener = new EventBasedNetListener();
+var server = new NetManager(listener);
 server.Start(9050 /* port */);
 
 listener.ConnectionRequestEvent += request =>
@@ -110,7 +110,7 @@ listener.ConnectionRequestEvent += request =>
 listener.PeerConnectedEvent += peer =>
 {
     Console.WriteLine("We got connection: {0}", peer);  // Show peer IP
-    NetDataWriter writer = new NetDataWriter();         // Create writer class
+    var writer = new NetDataWriter();         // Create writer class
     writer.Put("Hello client!");                        // Put some string
     peer.Send(writer, DeliveryMethod.ReliableOrdered);  // Send with reliability
 };

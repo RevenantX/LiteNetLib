@@ -12,15 +12,6 @@ using NUnit.Framework;
 
 namespace LiteNetLib.Tests
 {
-    class LibErrorChecker : INetLogger
-    {
-        public void WriteNet(NetLogLevel level, string str, params object[] args)
-        {
-            if(level == NetLogLevel.Error || level == NetLogLevel.Warning)
-                Assert.Fail(str, args);
-        }
-    }
-
     [TestFixture]
     [Category("Communication")]
     public class CommunicationTest
@@ -41,7 +32,7 @@ namespace LiteNetLib.Tests
 
         private const int DefaultPort = 9050;
         private const string DefaultAppKey = "test_server";
-        private static readonly byte[] DefaultAppKeyBytes = new byte[] { 12, 0, 116, 101, 115, 116, 95, 115, 101, 114, 118, 101, 114 };
+        private static readonly byte[] DefaultAppKeyBytes = [12, 0, 116, 101, 115, 116, 95, 115, 101, 114, 118, 101, 114];
 
         public NetManagerStack ManagerStack { get; set; }
 
@@ -82,7 +73,6 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client2.ConnectedPeersCount);
         }
 
-#if NET5_0_OR_GREATER
         [Test, Timeout(TestTimeout)]
         public void P2PConnectWithSpan()
         {
@@ -104,7 +94,6 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client1.ConnectedPeersCount);
             Assert.AreEqual(1, client2.ConnectedPeersCount);
         }
-#endif
 
         [Test, Timeout(TestTimeout)]
         public void ConnectionByIpV4Unsynced()

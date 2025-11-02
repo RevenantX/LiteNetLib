@@ -6,14 +6,14 @@ namespace LiteNetLib
 {
     public class PausedSocketFix
     {
-        private readonly NetManager _netManager;
+        private readonly LiteNetManager _netManager;
         private readonly IPAddress _ipv4;
         private readonly IPAddress _ipv6;
         private readonly int _port;
         private readonly bool _manualMode;
         private bool _initialized;
 
-        public PausedSocketFix(NetManager netManager, IPAddress ipv4, IPAddress ipv6, int port, bool manualMode)
+        public PausedSocketFix(LiteNetManager netManager, IPAddress ipv4, IPAddress ipv6, int port, bool manualMode)
         {
             _netManager = netManager;
             _ipv4 = ipv4;

@@ -14,7 +14,7 @@ namespace LiteNetLib
 
     public class ConnectionRequest
     {
-        private readonly NetManager _listener;
+        private readonly LiteNetManager _listener;
         private int _used;
 
         public NetDataReader Data => InternalPacket.Data;
@@ -37,19 +37,17 @@ namespace LiteNetLib
             InternalPacket = connectRequest;
         }
 
-        private bool TryActivate()
-        {
-            return Interlocked.CompareExchange(ref _used, 1, 0) == 0;
-        }
+        private bool TryActivate() =>
+            Interlocked.CompareExchange(ref _used, 1, 0) == 0;
 
-        internal ConnectionRequest(IPEndPoint remoteEndPoint, NetConnectRequestPacket requestPacket, NetManager listener)
+        internal ConnectionRequest(IPEndPoint remoteEndPoint, NetConnectRequestPacket requestPacket, LiteNetManager listener)
         {
             InternalPacket = requestPacket;
             RemoteEndPoint = remoteEndPoint;
             _listener = listener;
         }
 
-        public NetPeer AcceptIfKey(string key)
+        public LiteNetPeer AcceptIfKey(string key)
         {
             if (!TryActivate())
                 return null;
@@ -74,7 +72,7 @@ namespace LiteNetLib
         /// Accept connection and get new NetPeer as result
         /// </summary>
         /// <returns>Connected NetPeer</returns>
-        public NetPeer Accept()
+        public LiteNetPeer Accept()
         {
             if (!TryActivate())
                 return null;
@@ -90,45 +88,28 @@ namespace LiteNetLib
             _listener.OnConnectionSolved(this, rejectData, start, length);
         }
 
-        public void Reject(byte[] rejectData, int start, int length)
-        {
+        public void Reject(byte[] rejectData, int start, int length) =>
             Reject(rejectData, start, length, false);
-        }
 
-
-        public void RejectForce(byte[] rejectData, int start, int length)
-        {
+        public void RejectForce(byte[] rejectData, int start, int length) =>
             Reject(rejectData, start, length, true);
-        }
 
-        public void RejectForce()
-        {
+        public void RejectForce() =>
             Reject(null, 0, 0, true);
-        }
 
-        public void RejectForce(byte[] rejectData)
-        {
+        public void RejectForce(byte[] rejectData) =>
             Reject(rejectData, 0, rejectData.Length, true);
-        }
 
-        public void RejectForce(NetDataWriter rejectData)
-        {
+        public void RejectForce(NetDataWriter rejectData) =>
             Reject(rejectData.Data, 0, rejectData.Length, true);
-        }
 
-        public void Reject()
-        {
+        public void Reject() =>
             Reject(null, 0, 0, false);
-        }
 
-        public void Reject(byte[] rejectData)
-        {
+        public void Reject(byte[] rejectData) =>
             Reject(rejectData, 0, rejectData.Length, false);
-        }
 
-        public void Reject(NetDataWriter rejectData)
-        {
+        public void Reject(NetDataWriter rejectData) =>
             Reject(rejectData.Data, 0, rejectData.Length, false);
-        }
     }
 }

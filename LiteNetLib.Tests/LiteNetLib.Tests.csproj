@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net7.0;net6.0;</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net7.0;net6.0;net471</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net9.0</TargetFrameworks>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
@@ -19,10 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LiteNetLib\LiteNetLib.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="TestUtility\" />
   </ItemGroup>
 
 </Project>
