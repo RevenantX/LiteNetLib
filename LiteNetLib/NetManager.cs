@@ -7,6 +7,9 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    /// <summary>
+    /// More feature rich network manager with adjustable channels count
+    /// </summary>
     public class NetManager : LiteNetManager
     {
         private readonly INetEventListener _netEventListener;

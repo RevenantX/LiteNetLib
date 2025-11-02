@@ -476,7 +476,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.NetManager",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetManager.yml\" sourcestartlinenumber=\"1\">More feature rich network manager with adjustable channels count</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -504,7 +504,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.NetPeer",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetPeer.yml\" sourcestartlinenumber=\"1\">Improved LiteNetPeer with full multi-channel support</p>\n"
     },
     {
       "type": "ManagedReference",

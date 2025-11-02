@@ -6,6 +6,9 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    /// <summary>
+    /// Improved LiteNetPeer with full multi-channel support
+    /// </summary>
     public class NetPeer : LiteNetPeer
     {
         private readonly ConcurrentQueue<BaseChannel> _channelSendQueue = new ConcurrentQueue<BaseChannel>();

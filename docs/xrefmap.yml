@@ -5533,6 +5533,12 @@ references:
   commentId: F:LiteNetLib.Utils.NetDataReader._dataSize
   fullName: LiteNetLib.Utils.NetDataReader._dataSize
   nameWithType: NetDataReader._dataSize
+- uid: LiteNetLib.Utils.NetDataReader._offset
+  name: _offset
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__offset
+  commentId: F:LiteNetLib.Utils.NetDataReader._offset
+  fullName: LiteNetLib.Utils.NetDataReader._offset
+  nameWithType: NetDataReader._offset
 - uid: LiteNetLib.Utils.NetDataReader._position
   name: _position
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__position
