@@ -96,19 +96,14 @@ namespace LiteNetLib
             return false;
         }
 
-        private void ManualReceive(Socket socket, EndPoint bufferEndPoint, int maxReceive)
+        private void ManualReceive(Socket socket, EndPoint bufferEndPoint)
         {
             //Reading data
             try
             {
-                int packetsReceived = 0;
-                while (socket.Available > 0)
-                {
-                    ReceiveFrom(socket, ref bufferEndPoint);
-                    packetsReceived++;
-                    if (packetsReceived == maxReceive)
-                        break;
-                }
+                int available = socket.Available;
+                while (available > 0)
+                    available -= ReceiveFrom(socket, ref bufferEndPoint);
             }
             catch (SocketException ex)
             {
@@ -243,7 +238,7 @@ namespace LiteNetLib
             }
         }
 
-        private void ReceiveFrom(Socket s, ref EndPoint bufferEndPoint)
+        private int ReceiveFrom(Socket s, ref EndPoint bufferEndPoint)
         {
             var packet = PoolGetPacket(NetConstants.MaxPacketSize);
 #if NET8_0_OR_GREATER
@@ -254,6 +249,7 @@ namespace LiteNetLib
             packet.Size = s.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None, ref bufferEndPoint);
             OnMessageReceived(packet, (IPEndPoint)bufferEndPoint);
 #endif
+            return packet.Size;
         }
 
         private void ReceiveLogic()

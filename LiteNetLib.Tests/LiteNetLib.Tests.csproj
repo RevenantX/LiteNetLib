@@ -21,8 +21,4 @@
     <ProjectReference Include="..\LiteNetLib\LiteNetLib.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestUtility\" />
-  </ItemGroup>
-
 </Project>

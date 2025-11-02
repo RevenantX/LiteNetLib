@@ -14,14 +14,14 @@ namespace LiteNetLib.Tests
 {
     [TestFixture]
     [Category("Communication")]
-    public class CommunicationTest
+    public class LiteCommunicationTest
     {
         const int TestTimeout = 4000;
         [SetUp]
         public void Init()
         {
             NetDebug.Logger = new LibErrorChecker();
-            ManagerStack = new NetManagerStack(DefaultAppKey, DefaultPort);
+            ManagerStack = new LiteNetManagerStack(DefaultAppKey, DefaultPort);
         }
 
         [TearDown]
@@ -34,7 +34,7 @@ namespace LiteNetLib.Tests
         private const string DefaultAppKey = "test_server";
         private static readonly byte[] DefaultAppKeyBytes = [12, 0, 116, 101, 115, 116, 95, 115, 101, 114, 118, 101, 114];
 
-        public NetManagerStack ManagerStack { get; set; }
+        public LiteNetManagerStack ManagerStack { get; set; }
 
         [Test, Timeout(TestTimeout)]
         public void ConnectionByIpV4()
@@ -134,7 +134,7 @@ namespace LiteNetLib.Tests
                 arr[7000] = 32;
                 arr[12499] = 200;
                 arr[testSize - 1] = 254;
-                peer.SendWithDeliveryEvent(arr, 0, DeliveryMethod.ReliableUnordered, testData);
+                peer.SendWithDeliveryEvent(arr, DeliveryMethod.ReliableUnordered, testData);
             };
             ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, channel, method) =>
             {
@@ -190,7 +190,7 @@ namespace LiteNetLib.Tests
         [Test, Timeout(10000)]
         public void ConnectionFailedTest()
         {
-            NetManager client = ManagerStack.Client(1);
+            var client = ManagerStack.Client(1);
 
             var result = false;
             DisconnectInfo disconnectInfo = default;
@@ -216,13 +216,13 @@ namespace LiteNetLib.Tests
         [Test, Timeout(10000)]
         public void NetPeerDisconnectTimeout()
         {
-            NetManager client = ManagerStack.Client(1);
-            NetManager server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
+            var server = ManagerStack.Server(1);
 
             //Default 5 sec timeout for local network is too mach, set 1 for test
             server.DisconnectTimeout = 1000;
 
-            NetPeer clientServerPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+            var clientServerPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
             while (clientServerPeer.ConnectionState != ConnectionState.Connected)
             {
@@ -357,11 +357,11 @@ namespace LiteNetLib.Tests
         [Test, Timeout(10000)]
         public void NetPeerDisconnectAll()
         {
-            NetManager client = ManagerStack.Client(1);
-            NetManager client2 = ManagerStack.Client(2);
-            NetManager server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
+            var client2 = ManagerStack.Client(2);
+            var server = ManagerStack.Server(1);
 
-            NetPeer clientServerPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+            var clientServerPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             client2.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
             while (clientServerPeer.ConnectionState != ConnectionState.Connected)
@@ -404,8 +404,8 @@ namespace LiteNetLib.Tests
         [Test, Timeout(TestTimeout)]
         public void DisconnectFromServerTest()
         {
-            NetManager server = ManagerStack.Server(1);
-            NetManager client = ManagerStack.Client(1);
+            var server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
             var clientDisconnected = false;
             var serverDisconnected = false;
             ManagerStack.ClientListener(1).PeerDisconnectedEvent += (peer, info) => { clientDisconnected = true; };
@@ -461,7 +461,7 @@ namespace LiteNetLib.Tests
         [Test, Timeout(5000)]
         public void ConnectAfterDisconnectWithSamePort()
         {
-            NetManager server = ManagerStack.Server(1);
+            var server = ManagerStack.Server(1);
 
             EventBasedNetListener listener = new EventBasedNetListener();
             NetManager client = new NetManager(listener, new Crc32cLayer());
@@ -498,8 +498,8 @@ namespace LiteNetLib.Tests
         [Test, Timeout(TestTimeout)]
         public void DisconnectFromClientTest()
         {
-            NetManager server = ManagerStack.Server(1);
-            NetManager client = ManagerStack.Client(1);
+            var server = ManagerStack.Server(1);
+            var client = ManagerStack.Client(1);
             var clientDisconnected = false;
             var serverDisconnected = false;
 
@@ -515,7 +515,7 @@ namespace LiteNetLib.Tests
                 serverDisconnected = true;
             };
 
-            NetPeer serverPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
+            var serverPeer = client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             while (server.ConnectedPeersCount != 1)
             {
                 Thread.Sleep(15);
@@ -536,60 +536,6 @@ namespace LiteNetLib.Tests
             Assert.True(serverDisconnected);
             Assert.AreEqual(0, server.ConnectedPeersCount);
             Assert.AreEqual(0, client.ConnectedPeersCount);
-        }
-
-        [Test, Timeout(10000)]
-        public void ChannelsTest()
-        {
-            const int channelsCount = 64;
-            var server = ManagerStack.Server(1);
-            var client = ManagerStack.Client(1);
-            server.ChannelsCount = channelsCount;
-            client.ChannelsCount = channelsCount;
-
-            NetDataWriter writer = new NetDataWriter();
-            var methods = new[]
-            {
-                DeliveryMethod.Unreliable,
-                DeliveryMethod.Sequenced,
-                DeliveryMethod.ReliableOrdered,
-                DeliveryMethod.ReliableSequenced,
-                DeliveryMethod.ReliableUnordered
-            };
-
-            int messagesReceived = 0;
-            ManagerStack.ClientListener(1).PeerConnectedEvent += peer =>
-            {
-                for (int i = 0; i < channelsCount; i++)
-                {
-                    foreach (var deliveryMethod in methods)
-                    {
-                        writer.Reset();
-                        writer.Put((byte) deliveryMethod);
-                        if (deliveryMethod == DeliveryMethod.ReliableOrdered ||
-                            deliveryMethod == DeliveryMethod.ReliableUnordered)
-                            writer.Put(new byte[506]);
-                        peer.Send(writer, (byte) i, deliveryMethod);
-                    }
-                }
-            };
-            ManagerStack.ServerListener(1).NetworkReceiveEvent += (peer, reader, channel, method) =>
-            {
-                Assert.AreEqual((DeliveryMethod)reader.GetByte(), method);
-                messagesReceived++;
-            };
-            client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
-
-            while (messagesReceived != methods.Length*channelsCount)
-            {
-                server.PollEvents();
-                client.PollEvents();
-                Thread.Sleep(15);
-            }
-
-            Assert.AreEqual(methods.Length*channelsCount, messagesReceived);
-            Assert.AreEqual(1, server.ConnectedPeersCount);
-            Assert.AreEqual(1, client.ConnectedPeersCount);
         }
 
         [Test, Timeout(TestTimeout)]
