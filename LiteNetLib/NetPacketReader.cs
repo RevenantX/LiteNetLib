@@ -19,7 +19,10 @@ namespace LiteNetLib
             if (packet == null)
                 return;
             _packet = packet;
-            SetSource(packet.RawData, headerSize, packet.Size);
+            _data = packet.RawData;
+            _position = headerSize;
+            _offset = headerSize;
+            _dataSize = packet.Size;
         }
 
         internal void RecycleInternal()

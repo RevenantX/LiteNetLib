@@ -9,7 +9,7 @@ namespace LiteNetLib.Utils
         protected byte[] _data;
         protected int _position;
         protected int _dataSize;
-        private int _offset;
+        protected int _offset;
 
         public byte[] RawData
         {

@@ -84,8 +84,7 @@ namespace LiteNetLib
 
         public bool IsFragmented => (RawData[0] & 0x80) != 0;
 
-        public void MarkFragmented() =>
-            RawData[0] |= 0x80; //set first bit
+        public void MarkFragmented() => RawData[0] |= 0x80; //set first bit
 
         public byte ChannelId
         {
@@ -135,11 +134,9 @@ namespace LiteNetLib
             Size = size;
         }
 
-        public static int GetHeaderSize(PacketProperty property) =>
-            HeaderSizes[(int)property];
+        public static int GetHeaderSize(PacketProperty property) => HeaderSizes[(int)property];
 
-        public int GetHeaderSize() =>
-            HeaderSizes[RawData[0] & 0x1F];
+        public int GetHeaderSize() => HeaderSizes[RawData[0] & 0x1F];
 
         public bool Verify()
         {
@@ -151,8 +148,6 @@ namespace LiteNetLib
             return Size >= headerSize && (!fragmented || Size >= headerSize + NetConstants.FragmentHeaderSize);
         }
 
-        #if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
         public static implicit operator Span<byte>(NetPacket p) => new Span<byte>(p.RawData, 0, p.Size);
-        #endif
     }
 }
