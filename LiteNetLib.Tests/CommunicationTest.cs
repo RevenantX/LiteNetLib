@@ -82,7 +82,6 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client2.ConnectedPeersCount);
         }
 
-#if NET5_0_OR_GREATER
         [Test, Timeout(TestTimeout)]
         public void P2PConnectWithSpan()
         {
@@ -104,7 +103,6 @@ namespace LiteNetLib.Tests
             Assert.AreEqual(1, client1.ConnectedPeersCount);
             Assert.AreEqual(1, client2.ConnectedPeersCount);
         }
-#endif
 
         [Test, Timeout(TestTimeout)]
         public void ConnectionByIpV4Unsynced()

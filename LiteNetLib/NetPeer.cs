@@ -179,6 +179,9 @@ namespace LiteNetLib
         protected override void UpdateChannels()
         {
             //Pending send
+            if (_channelSendQueue.IsEmpty)
+                return;
+
             int count = _channelSendQueue.Count;
             while (count-- > 0)
             {

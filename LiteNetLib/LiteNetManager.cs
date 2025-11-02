@@ -257,11 +257,6 @@ namespace LiteNetLib
         public bool AllowPeerAddressChange = false;
 
         /// <summary>
-        /// Enable OnMessageDelivered events
-        /// </summary>
-        public bool EnableMessageDeliveryEvent = false;
-
-        /// <summary>
         /// Returns connected peers list (with internal cached list)
         /// </summary>
         public List<LiteNetPeer> ConnectedPeerList
@@ -301,11 +296,8 @@ namespace LiteNetLib
         internal void ConnectionLatencyUpdated(LiteNetPeer fromPeer, int latency) =>
             CreateEvent(NetEvent.EType.ConnectionLatencyUpdated, fromPeer, latency: latency);
 
-        internal void MessageDelivered(LiteNetPeer fromPeer, object userData)
-        {
-            if (EnableMessageDeliveryEvent)
-                CreateEvent(NetEvent.EType.MessageDelivered, fromPeer, userData: userData);
-        }
+        internal void MessageDelivered(LiteNetPeer fromPeer, object userData) =>
+            CreateEvent(NetEvent.EType.MessageDelivered, fromPeer, userData: userData);
 
         internal void DisconnectPeerForce(LiteNetPeer peer,
             DisconnectReason reason,
