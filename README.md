@@ -8,7 +8,7 @@ Lite reliable UDP library for .NET Standard 2.1 (Mono, .NET)
 
 **Discord chat**: [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
-[OLD BRANCH (and examples) for 0.9.x](https://github.com/RevenantX/LiteNetLib/tree/0.9)
+[OLD BRANCH (and examples) for 1.x](https://github.com/RevenantX/LiteNetLib/tree/1.x)
 
 [Little Game Example on Unity](https://github.com/RevenantX/NetGameExample)
 
@@ -122,3 +122,4 @@ while (!Console.KeyAvailable)
 }
 server.Stop();
 ```
+
