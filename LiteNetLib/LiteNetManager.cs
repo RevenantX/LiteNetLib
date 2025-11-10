@@ -285,7 +285,7 @@ namespace LiteNetLib
         /// <param name="listener">Network events listener (also can implement IDeliveryEventListener)</param>
         /// <param name="extraPacketLayer">Extra processing of packages, like CRC checksum or encryption. All connected NetManagers must have same layer.</param>
 #if UNITY_SOCKET_FIX
-        public NetManager(ILiteNetEventListener listener, PacketLayerBase extraPacketLayer = null, bool useSocketFix = true)
+        public LiteNetManager(ILiteNetEventListener listener, PacketLayerBase extraPacketLayer = null, bool useSocketFix = true)
         {
             _useSocketFix = useSocketFix;
 #else
