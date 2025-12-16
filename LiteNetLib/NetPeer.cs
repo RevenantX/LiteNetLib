@@ -558,7 +558,7 @@ namespace LiteNetLib
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
-        ///     Fragment count exceeded ushort.MaxValue<para/>
+        ///     Fragment count exceeded maximum allowed<para/>
         /// </exception>
         public void Send(byte[] data, DeliveryMethod deliveryMethod)
         {
@@ -573,7 +573,7 @@ namespace LiteNetLib
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
-        ///     Fragment count exceeded ushort.MaxValue<para/>
+        ///     Fragment count exceeded maximum allowed<para/>
         /// </exception>
         public void Send(NetDataWriter dataWriter, DeliveryMethod deliveryMethod)
         {
@@ -590,7 +590,7 @@ namespace LiteNetLib
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
-        ///     Fragment count exceeded ushort.MaxValue<para/>
+        ///     Fragment count exceeded maximum allowed<para/>
         /// </exception>
         public void Send(byte[] data, int start, int length, DeliveryMethod options)
         {
@@ -606,7 +606,7 @@ namespace LiteNetLib
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
-        ///     Fragment count exceeded ushort.MaxValue<para/>
+        ///     Fragment count exceeded maximum allowed<para/>
         /// </exception>
         public void Send(byte[] data, byte channelNumber, DeliveryMethod deliveryMethod)
         {
@@ -622,7 +622,7 @@ namespace LiteNetLib
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
-        ///     Fragment count exceeded ushort.MaxValue<para/>
+        ///     Fragment count exceeded maximum allowed<para/>
         /// </exception>
         public void Send(NetDataWriter dataWriter, byte channelNumber, DeliveryMethod deliveryMethod)
         {
@@ -640,7 +640,7 @@ namespace LiteNetLib
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
-        ///     Fragment count exceeded ushort.MaxValue<para/>
+        ///     Fragment count exceeded maximum allowed<para/>
         /// </exception>
         public void Send(byte[] data, int start, int length, byte channelNumber, DeliveryMethod deliveryMethod)
         {
@@ -696,8 +696,8 @@ namespace LiteNetLib
  packetDataSize: {packetDataSize}
  totalPackets: {totalPackets}");
 
-                if (totalPackets > ushort.MaxValue)
-                    throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + ushort.MaxValue);
+                if (totalPackets > NetManager.MaxFragmentsCount)
+                    throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + NetManager.MaxFragmentsCount);
 
                 ushort currentFragmentId = (ushort)Interlocked.Increment(ref _fragmentId);
 
@@ -763,7 +763,7 @@ namespace LiteNetLib
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
-        ///     Fragment count exceeded ushort.MaxValue<para/>
+        ///     Fragment count exceeded maximum allowed<para/>
         /// </exception>
         public void Send(ReadOnlySpan<byte> data, DeliveryMethod deliveryMethod)
         {
@@ -779,7 +779,7 @@ namespace LiteNetLib
         /// <exception cref="TooBigPacketException">
         ///     If size exceeds maximum limit:<para/>
         ///     MTU - headerSize bytes for Unreliable<para/>
-        ///     Fragment count exceeded ushort.MaxValue<para/>
+        ///     Fragment count exceeded maximum allowed<para/>
         /// </exception>
         public void Send(ReadOnlySpan<byte> data, byte channelNumber, DeliveryMethod deliveryMethod)
         {
@@ -827,8 +827,8 @@ namespace LiteNetLib
                 int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
                 int totalPackets = length / packetDataSize + (length % packetDataSize == 0 ? 0 : 1);
 
-                if (totalPackets > ushort.MaxValue)
-                    throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + ushort.MaxValue);
+                if (totalPackets > NetManager.MaxFragmentsCount)
+                    throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + NetManager.MaxFragmentsCount);
 
                 ushort currentFragmentId = (ushort)Interlocked.Increment(ref _fragmentId);
 
@@ -976,6 +976,14 @@ namespace LiteNetLib
                     {
                         NetManager.PoolRecycle(p);
                         //NetDebug.WriteError($"Holded fragments limit reached ({_holdedFragments.Count}/{(NetConstants.DefaultWindowSize / 2) * ChannelsCount * NetConstants.FragmentedChannelsCount}). Dropping fragment id: {packetFragId}");
+                        return;
+                    }
+
+                    //Check max fragments count
+                    if (p.FragmentsTotal > NetManager.MaxFragmentsCount)
+                    {
+                        NetManager.PoolRecycle(p);
+                        NetDebug.WriteError($"Fragments total {p.FragmentsTotal} exceeds MaxFragmentsCount {NetManager.MaxFragmentsCount}. Dropping fragment id: {packetFragId}");
                         return;
                     }
 

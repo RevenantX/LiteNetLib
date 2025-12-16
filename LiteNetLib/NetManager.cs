@@ -352,6 +352,12 @@ namespace LiteNetLib
         }
 
         /// <summary>
+        /// Max fragmented packets size for reliable channels - that equals to data of size fragments count * (MTU-reliable header size)
+        /// should be set on Clients and Servers
+        /// </summary>
+        public ushort MaxFragmentsCount = ushort.MaxValue;
+
+        /// <summary>
         /// Returns connected peers list (with internal cached list)
         /// </summary>
         public List<NetPeer> ConnectedPeerList
