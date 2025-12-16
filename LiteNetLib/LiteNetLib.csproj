@@ -26,6 +26,10 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(SimulateNetwork)'=='true'">
+    <DefineConstants>$(DefineConstants);SIMULATE_NETWORK</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>$(DefineConstants);LITENETLIB_UNSAFE</DefineConstants>

@@ -970,6 +970,15 @@ namespace LiteNetLib
                 byte packetChannelId = p.ChannelId;
                 if (!_holdedFragments.TryGetValue(packetFragId, out var incomingFragments))
                 {
+                    //Holded fragments limit reached
+                    if (_holdedFragments.Count >= NetConstants.MaxFragmentsInWindow * NetManager.ChannelsCount *
+                        NetConstants.FragmentedChannelsCount)
+                    {
+                        NetManager.PoolRecycle(p);
+                        //NetDebug.WriteError($"Holded fragments limit reached ({_holdedFragments.Count}/{(NetConstants.DefaultWindowSize / 2) * ChannelsCount * NetConstants.FragmentedChannelsCount}). Dropping fragment id: {packetFragId}");
+                        return;
+                    }
+
                     incomingFragments = new IncomingFragments
                     {
                         Fragments = new NetPacket[p.FragmentsTotal],
