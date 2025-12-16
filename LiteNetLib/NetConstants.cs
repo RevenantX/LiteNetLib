@@ -53,6 +53,8 @@
         internal const int ProtocolId = 13;
         internal const int MaxUdpHeaderSize = 68;
         internal const int ChannelTypeCount = 4;
+        internal const int FragmentedChannelsCount = 2;
+        internal const int MaxFragmentsInWindow = DefaultWindowSize / 2;
 
         internal static readonly int[] PossibleMtu =
         {
