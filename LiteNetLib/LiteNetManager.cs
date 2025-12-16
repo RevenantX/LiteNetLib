@@ -202,6 +202,11 @@ namespace LiteNetLib
         public bool EnableStatistics = false;
 
         /// <summary>
+        /// Max fragmented packets size for reliable channels - that equals to data of size fragments count * (MTU-reliable header size)
+        /// </summary>
+        public ushort MaxFragmentsCount = ushort.MaxValue;
+
+        /// <summary>
         /// NatPunchModule for NAT hole punching operations
         /// </summary>
         public NatPunchModule NatPunchModule => _natPunchModule.Value;

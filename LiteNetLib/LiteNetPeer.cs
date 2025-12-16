@@ -627,8 +627,8 @@ namespace LiteNetLib
                 int packetDataSize = packetFullSize - NetConstants.FragmentHeaderSize;
                 int totalPackets = length / packetDataSize + (length % packetDataSize == 0 ? 0 : 1);
 
-                if (totalPackets > ushort.MaxValue)
-                    throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + ushort.MaxValue);
+                if (totalPackets > NetManager.MaxFragmentsCount)
+                    throw new TooBigPacketException("Data was split in " + totalPackets + " fragments, which exceeds " + NetManager.MaxFragmentsCount);
 
                 ushort currentFragmentId = (ushort)Interlocked.Increment(ref _fragmentId);
 
@@ -760,6 +760,11 @@ namespace LiteNetLib
         {
             if (p.IsFragmented)
             {
+                if (p.FragmentsTotal > NetManager.MaxFragmentsCount)
+                {
+                    NetManager.PoolRecycle(p);
+                    return;
+                }
                 NetDebug.Write($"Fragment. Id: {p.FragmentId}, Part: {p.FragmentPart}, Total: {p.FragmentsTotal}");
                 //Get needed array from dictionary
                 ushort packetFragId = p.FragmentId;
