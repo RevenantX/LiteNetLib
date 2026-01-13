@@ -125,12 +125,12 @@ namespace LiteNetLib
         public int DisconnectTimeout = 5000;
 
         /// <summary>
-        /// Simulate packet loss by dropping random amount of packets. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
+        /// Simulate packet loss by dropping random amount of packets. (Works only in DEBUG builds and when SIMULATE_NETWORK is defined)
         /// </summary>
         public bool SimulatePacketLoss = false;
 
         /// <summary>
-        /// Simulate latency by holding packets for random time. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)
+        /// Simulate latency by holding packets for random time. (Works only in DEBUG builds and when SIMULATE_NETWORK is defined)
         /// </summary>
         public bool SimulateLatency = false;
 
