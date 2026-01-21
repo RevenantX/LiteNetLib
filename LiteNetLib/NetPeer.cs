@@ -975,6 +975,7 @@ namespace LiteNetLib
 
                 case PacketProperty.Ack:
                 case PacketProperty.Channeled:
+                case PacketProperty.ChanneledMerged:
                     if (packet.ChannelId > _channels.Length)
                     {
                         _packetPool.Recycle(packet);
@@ -1179,6 +1180,17 @@ namespace LiteNetLib
         {
             if (packet.UserData != null)
             {
+                var mergedUserData = packet.UserData as MergedPacketUserData;
+                if (mergedUserData != null)
+                {
+                    var items = mergedUserData.Items;
+                    for (int i = 0; i < items.Length; i++)
+                        NetManager.MessageDelivered(this, items[i]);
+                    packet.UserData = null;
+                    _packetPool.Recycle(packet);
+                    return;
+                }
+
                 if (packet.IsFragmented)
                 {
                     ushort fragCount;

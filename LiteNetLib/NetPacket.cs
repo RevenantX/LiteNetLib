@@ -23,6 +23,7 @@ namespace LiteNetLib
         PeerNotFound,
         InvalidProtocol,
         NatMessage,
+        ChanneledMerged,
         Empty
     }
 
@@ -39,6 +40,7 @@ namespace LiteNetLib
                 switch ((PacketProperty)i)
                 {
                     case PacketProperty.Channeled:
+                    case PacketProperty.ChanneledMerged:
                     case PacketProperty.Ack:
                         HeaderSizes[i] = NetConstants.ChanneledHeaderSize;
                         break;
