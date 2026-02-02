@@ -32,10 +32,7 @@ namespace LiteNetLib.Utils
 
         public ReadOnlySpan<byte> AsReadOnlySpan() => new ReadOnlySpan<byte>(_data, 0, _position);
 
-        [ThreadStatic]
-        private static UTF8Encoding Utf8EncodingInternal;
-
-        public static UTF8Encoding uTF8Encoding => Utf8EncodingInternal ??= new UTF8Encoding(false, true);
+        internal static readonly UTF8Encoding uTF8Encoding = new UTF8Encoding(false, true);
 
         public NetDataWriter() : this(true, InitialSize) { }
 
