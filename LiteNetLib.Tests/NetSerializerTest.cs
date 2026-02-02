@@ -202,22 +202,22 @@ namespace LiteNetLib.Tests
 
             _packetProcessor.ReadAllPackets(reader);
 
-            Assert.NotNull(readPackage);
-            Assert.IsTrue(AreSame(_samplePacket.EmptyString, readPackage.EmptyString));
-            Assert.AreEqual(_samplePacket.SomeFloat, readPackage.SomeFloat);
-            Assert.AreEqual(_samplePacket.SomeIntArray, readPackage.SomeIntArray);
-            Assert.IsTrue(AreSame(_samplePacket.SomeString, readPackage.SomeString));
-            Assert.AreEqual(_samplePacket.SomeGuid, readPackage.SomeGuid);
-            Assert.AreEqual(_samplePacket.SomeVector2, readPackage.SomeVector2);
-            Assert.AreEqual(_samplePacket.SomeVectors, readPackage.SomeVectors);
-            Assert.AreEqual(_samplePacket.SomeEnum, readPackage.SomeEnum);
-            Assert.AreEqual(_samplePacket.TestObj.Value, readPackage.TestObj.Value);
-            Assert.AreEqual(_samplePacket.TestArray, readPackage.TestArray);
-            Assert.AreEqual(_samplePacket.SomeByteArray, readPackage.SomeByteArray);
-            Assert.AreEqual(_samplePacket.SampleClassArray, readPackage.SampleClassArray);
-            Assert.AreEqual(0, readPackage.IgnoreMe); // expect 0 because it should be ignored
-            CollectionAssert.AreEqual(_samplePacket.SampleClassList, readPackage.SampleClassList);
-            CollectionAssert.AreEqual(_samplePacket.VectorList, readPackage.VectorList);
+            Assert.That(readPackage, Is.Not.Null);
+            Assert.That(AreSame(_samplePacket.EmptyString, readPackage.EmptyString), Is.True);
+            Assert.That(readPackage.SomeFloat, Is.EqualTo(_samplePacket.SomeFloat));
+            Assert.That(readPackage.SomeIntArray, Is.EqualTo(_samplePacket.SomeIntArray).AsCollection);
+            Assert.That(AreSame(_samplePacket.SomeString, readPackage.SomeString), Is.True);
+            Assert.That(readPackage.SomeGuid, Is.EqualTo(_samplePacket.SomeGuid));
+            Assert.That(readPackage.SomeVector2, Is.EqualTo(_samplePacket.SomeVector2));
+            Assert.That(readPackage.SomeVectors, Is.EqualTo(_samplePacket.SomeVectors).AsCollection);
+            Assert.That(readPackage.SomeEnum, Is.EqualTo(_samplePacket.SomeEnum));
+            Assert.That(readPackage.TestObj.Value, Is.EqualTo(_samplePacket.TestObj.Value));
+            Assert.That(readPackage.TestArray, Is.EqualTo(_samplePacket.TestArray).AsCollection);
+            Assert.That(readPackage.SomeByteArray, Is.EqualTo(_samplePacket.SomeByteArray).AsCollection);
+            Assert.That(readPackage.SampleClassArray, Is.EqualTo(_samplePacket.SampleClassArray).AsCollection);
+            Assert.That(readPackage.IgnoreMe, Is.EqualTo(0)); // expect 0 because it should be ignored
+            Assert.That(readPackage.SampleClassList, Is.EqualTo(_samplePacket.SampleClassList).AsCollection);
+            Assert.That(readPackage.VectorList, Is.EqualTo(_samplePacket.VectorList).AsCollection);
 
             //remove test
             _samplePacket.SampleClassList.RemoveAt(0);
@@ -229,8 +229,8 @@ namespace LiteNetLib.Tests
             reader.SetSource(writer);
             _packetProcessor.ReadAllPackets(reader);
 
-            Assert.AreEqual(_samplePacket.SampleClassArray, readPackage.SampleClassArray);
-            CollectionAssert.AreEqual(_samplePacket.SampleClassList, readPackage.SampleClassList);
+            Assert.That(readPackage.SampleClassArray, Is.EqualTo(_samplePacket.SampleClassArray).AsCollection);
+            Assert.That(readPackage.SampleClassList, Is.EqualTo(_samplePacket.SampleClassList).AsCollection);
 
             //add test
             _samplePacket.SampleClassList.Add(new SampleClass { Value = 152 });
@@ -243,8 +243,8 @@ namespace LiteNetLib.Tests
             reader.SetSource(writer);
             _packetProcessor.ReadAllPackets(reader);
 
-            Assert.AreEqual(_samplePacket.SampleClassArray, readPackage.SampleClassArray);
-            CollectionAssert.AreEqual(_samplePacket.SampleClassList, readPackage.SampleClassList);
+            Assert.That(readPackage.SampleClassArray, Is.EqualTo(_samplePacket.SampleClassArray).AsCollection);
+            Assert.That(readPackage.SampleClassList, Is.EqualTo(_samplePacket.SampleClassList).AsCollection);
         }
     }
 }

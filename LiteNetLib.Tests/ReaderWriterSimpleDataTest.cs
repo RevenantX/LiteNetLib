@@ -19,7 +19,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readBool = ndr.GetBool();
 
-            Assert.AreEqual(readBool, true);
+            Assert.That(readBool, Is.True);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readByte = ndr.GetByte();
 
-            Assert.AreEqual(readByte, (byte) 8);
+            Assert.That(readByte, Is.EqualTo((byte) 8));
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readDouble = ndr.GetDouble();
 
-            Assert.AreEqual(readDouble, 3.1415);
+            Assert.That(readDouble, Is.EqualTo(3.1415));
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readFloat = ndr.GetFloat();
 
-            Assert.AreEqual(readFloat, 3.1415f);
+            Assert.That(readFloat, Is.EqualTo(3.1415f));
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readInt = ndr.GetInt();
 
-            Assert.AreEqual(readInt, 32);
+            Assert.That(readInt, Is.EqualTo(32));
         }
 
         [Test]
@@ -166,7 +166,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readLong = ndr.GetLong();
 
-            Assert.AreEqual(readLong, 64L);
+            Assert.That(readLong, Is.EqualTo(64L));
         }
 
         [Test]
@@ -190,7 +190,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readNetEndPoint = ndr.GetIPEndPoint();
 
-            Assert.AreEqual(readNetEndPoint, NetUtils.MakeEndPoint("127.0.0.1", 7777));
+            Assert.That(readNetEndPoint, Is.EqualTo(NetUtils.MakeEndPoint("127.0.0.1", 7777)));
         }
 
         [Test]
@@ -202,7 +202,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readSByte = ndr.GetSByte();
 
-            Assert.AreEqual(readSByte, (sbyte) 8);
+            Assert.That(readSByte, Is.EqualTo((sbyte) 8));
         }
 
         [Test]
@@ -214,7 +214,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readShort = ndr.GetShort();
 
-            Assert.AreEqual(readShort, (short) 16);
+            Assert.That(readShort, Is.EqualTo((short) 16));
         }
 
         [Test]
@@ -240,7 +240,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readString = ndr.GetString(10);
 
-            Assert.AreEqual(readString, "String");
+            Assert.That(readString, Is.EqualTo("String"));
         }
 
         [Test]
@@ -264,7 +264,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readUInt = ndr.GetUInt();
 
-            Assert.AreEqual(readUInt, 34U);
+            Assert.That(readUInt, Is.EqualTo(34U));
         }
 
         [Test]
@@ -290,7 +290,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readULong = ndr.GetULong();
 
-            Assert.AreEqual(readULong, 64UL);
+            Assert.That(readULong, Is.EqualTo(64UL));
         }
 
         [Test]
@@ -316,7 +316,7 @@ namespace LiteNetLib.Tests
             var ndr = new NetDataReader(ndw);
             var readUShort = ndr.GetUShort();
 
-            Assert.AreEqual(readUShort, (ushort) 16);
+            Assert.That(readUShort, Is.EqualTo((ushort) 16));
         }
 
         [Test]
@@ -332,9 +332,9 @@ namespace LiteNetLib.Tests
             var readIpep = ndr.GetIPEndPoint();
             var readIpep6 = ndr.GetIPEndPoint();
 
-            Assert.AreEqual(ipep, readIpep);
-            Assert.AreEqual(ipep6, readIpep6);
-            Assert.IsTrue(ndr.AvailableBytes == 0);
+            Assert.That(readIpep, Is.EqualTo(ipep));
+            Assert.That(readIpep6, Is.EqualTo(ipep6));
+            Assert.That(ndr.AvailableBytes, Is.EqualTo(0));
         }
     }
 }
