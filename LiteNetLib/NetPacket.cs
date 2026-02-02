@@ -150,7 +150,5 @@ namespace LiteNetLib
             bool fragmented = (RawData[0] & 0x80) != 0;
             return Size >= headerSize && (!fragmented || Size >= headerSize + NetConstants.FragmentHeaderSize);
         }
-
-        public static implicit operator Span<byte>(NetPacket p) => new Span<byte>(p.RawData, 0, p.Size);
     }
 }
