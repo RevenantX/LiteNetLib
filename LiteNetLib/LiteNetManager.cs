@@ -81,7 +81,6 @@ namespace LiteNetLib
         private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>();
 
         private long _connectedPeersCount;
-        private readonly List<LiteNetPeer> _connectedPeerListCache = new List<LiteNetPeer>();
         private readonly PacketLayerBase _extraPacketLayer;
         private int _lastPeerId;
         private ConcurrentQueue<int> _peerIds = new ConcurrentQueue<int>();
@@ -264,18 +263,6 @@ namespace LiteNetLib
         /// Allows peer change it's ip (lte to wifi, wifi to lte, etc). Use only on server
         /// </summary>
         public bool AllowPeerAddressChange = false;
-
-        /// <summary>
-        /// Returns connected peers list (with internal cached list)
-        /// </summary>
-        public List<LiteNetPeer> ConnectedPeerList
-        {
-            get
-            {
-                GetPeersNonAlloc(_connectedPeerListCache, ConnectionState.Connected);
-                return _connectedPeerListCache;
-            }
-        }
 
         /// <summary>
         /// Returns connected peers count
@@ -1545,7 +1532,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="peers">List that will contain result</param>
         /// <param name="peerState">State of peers</param>
-        public void GetPeersNonAlloc(List<LiteNetPeer> peers, ConnectionState peerState)
+        public void GetPeers(List<LiteNetPeer> peers, ConnectionState peerState)
         {
             peers.Clear();
             _peersLock.EnterReadLock();
@@ -1556,6 +1543,13 @@ namespace LiteNetLib
             }
             _peersLock.ExitReadLock();
         }
+
+        /// <summary>
+        /// Get copy of connected peers (without allocations)
+        /// </summary>
+        /// <param name="peers">List that will contain result</param>
+        public void GetConnectedPeers(List<LiteNetPeer> peers) =>
+            GetPeers(peers, ConnectionState.Connected);
 
         /// <summary>
         /// Disconnect all peers without any additional data
