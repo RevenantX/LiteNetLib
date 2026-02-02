@@ -1405,19 +1405,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.LiteNetManager.Connect
   nameWithType: LiteNetManager.Connect
-- uid: LiteNetLib.LiteNetManager.ConnectedPeerList
-  name: ConnectedPeerList
-  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_ConnectedPeerList
-  commentId: P:LiteNetLib.LiteNetManager.ConnectedPeerList
-  fullName: LiteNetLib.LiteNetManager.ConnectedPeerList
-  nameWithType: LiteNetManager.ConnectedPeerList
-- uid: LiteNetLib.LiteNetManager.ConnectedPeerList*
-  name: ConnectedPeerList
-  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_ConnectedPeerList_
-  commentId: Overload:LiteNetLib.LiteNetManager.ConnectedPeerList
-  isSpec: "True"
-  fullName: LiteNetLib.LiteNetManager.ConnectedPeerList
-  nameWithType: LiteNetManager.ConnectedPeerList
 - uid: LiteNetLib.LiteNetManager.ConnectedPeersCount
   name: ConnectedPeersCount
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_ConnectedPeersCount
@@ -1614,6 +1601,22 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.LiteNetManager.FirstPeer
   nameWithType: LiteNetManager.FirstPeer
+- uid: LiteNetLib.LiteNetManager.GetConnectedPeers(System.Collections.Generic.List{LiteNetLib.LiteNetPeer})
+  name: GetConnectedPeers(List<LiteNetPeer>)
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_GetConnectedPeers_System_Collections_Generic_List_LiteNetLib_LiteNetPeer__
+  commentId: M:LiteNetLib.LiteNetManager.GetConnectedPeers(System.Collections.Generic.List{LiteNetLib.LiteNetPeer})
+  name.vb: GetConnectedPeers(List(Of LiteNetPeer))
+  fullName: LiteNetLib.LiteNetManager.GetConnectedPeers(System.Collections.Generic.List<LiteNetLib.LiteNetPeer>)
+  fullName.vb: LiteNetLib.LiteNetManager.GetConnectedPeers(System.Collections.Generic.List(Of LiteNetLib.LiteNetPeer))
+  nameWithType: LiteNetManager.GetConnectedPeers(List<LiteNetPeer>)
+  nameWithType.vb: LiteNetManager.GetConnectedPeers(List(Of LiteNetPeer))
+- uid: LiteNetLib.LiteNetManager.GetConnectedPeers*
+  name: GetConnectedPeers
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_GetConnectedPeers_
+  commentId: Overload:LiteNetLib.LiteNetManager.GetConnectedPeers
+  isSpec: "True"
+  fullName: LiteNetLib.LiteNetManager.GetConnectedPeers
+  nameWithType: LiteNetManager.GetConnectedPeers
 - uid: LiteNetLib.LiteNetManager.GetEnumerator
   name: GetEnumerator()
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_GetEnumerator
@@ -1643,6 +1646,22 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.LiteNetManager.GetPeerById
   nameWithType: LiteNetManager.GetPeerById
+- uid: LiteNetLib.LiteNetManager.GetPeers(System.Collections.Generic.List{LiteNetLib.LiteNetPeer},LiteNetLib.ConnectionState)
+  name: GetPeers(List<LiteNetPeer>, ConnectionState)
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_GetPeers_System_Collections_Generic_List_LiteNetLib_LiteNetPeer__LiteNetLib_ConnectionState_
+  commentId: M:LiteNetLib.LiteNetManager.GetPeers(System.Collections.Generic.List{LiteNetLib.LiteNetPeer},LiteNetLib.ConnectionState)
+  name.vb: GetPeers(List(Of LiteNetPeer), ConnectionState)
+  fullName: LiteNetLib.LiteNetManager.GetPeers(System.Collections.Generic.List<LiteNetLib.LiteNetPeer>, LiteNetLib.ConnectionState)
+  fullName.vb: LiteNetLib.LiteNetManager.GetPeers(System.Collections.Generic.List(Of LiteNetLib.LiteNetPeer), LiteNetLib.ConnectionState)
+  nameWithType: LiteNetManager.GetPeers(List<LiteNetPeer>, ConnectionState)
+  nameWithType.vb: LiteNetManager.GetPeers(List(Of LiteNetPeer), ConnectionState)
+- uid: LiteNetLib.LiteNetManager.GetPeers*
+  name: GetPeers
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_GetPeers_
+  commentId: Overload:LiteNetLib.LiteNetManager.GetPeers
+  isSpec: "True"
+  fullName: LiteNetLib.LiteNetManager.GetPeers
+  nameWithType: LiteNetManager.GetPeers
 - uid: LiteNetLib.LiteNetManager.GetPeersCount(LiteNetLib.ConnectionState)
   name: GetPeersCount(ConnectionState)
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_GetPeersCount_LiteNetLib_ConnectionState_
@@ -1656,22 +1675,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.LiteNetManager.GetPeersCount
   nameWithType: LiteNetManager.GetPeersCount
-- uid: LiteNetLib.LiteNetManager.GetPeersNonAlloc(System.Collections.Generic.List{LiteNetLib.LiteNetPeer},LiteNetLib.ConnectionState)
-  name: GetPeersNonAlloc(List<LiteNetPeer>, ConnectionState)
-  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_GetPeersNonAlloc_System_Collections_Generic_List_LiteNetLib_LiteNetPeer__LiteNetLib_ConnectionState_
-  commentId: M:LiteNetLib.LiteNetManager.GetPeersNonAlloc(System.Collections.Generic.List{LiteNetLib.LiteNetPeer},LiteNetLib.ConnectionState)
-  name.vb: GetPeersNonAlloc(List(Of LiteNetPeer), ConnectionState)
-  fullName: LiteNetLib.LiteNetManager.GetPeersNonAlloc(System.Collections.Generic.List<LiteNetLib.LiteNetPeer>, LiteNetLib.ConnectionState)
-  fullName.vb: LiteNetLib.LiteNetManager.GetPeersNonAlloc(System.Collections.Generic.List(Of LiteNetLib.LiteNetPeer), LiteNetLib.ConnectionState)
-  nameWithType: LiteNetManager.GetPeersNonAlloc(List<LiteNetPeer>, ConnectionState)
-  nameWithType.vb: LiteNetManager.GetPeersNonAlloc(List(Of LiteNetPeer), ConnectionState)
-- uid: LiteNetLib.LiteNetManager.GetPeersNonAlloc*
-  name: GetPeersNonAlloc
-  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_GetPeersNonAlloc_
-  commentId: Overload:LiteNetLib.LiteNetManager.GetPeersNonAlloc
-  isSpec: "True"
-  fullName: LiteNetLib.LiteNetManager.GetPeersNonAlloc
-  nameWithType: LiteNetManager.GetPeersNonAlloc
 - uid: LiteNetLib.LiteNetManager.IPv6Enabled
   name: IPv6Enabled
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_IPv6Enabled
@@ -1732,6 +1735,12 @@ references:
   commentId: F:LiteNetLib.LiteNetManager.MaxConnectAttempts
   fullName: LiteNetLib.LiteNetManager.MaxConnectAttempts
   nameWithType: LiteNetManager.MaxConnectAttempts
+- uid: LiteNetLib.LiteNetManager.MaxFragmentsCount
+  name: MaxFragmentsCount
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_MaxFragmentsCount
+  commentId: F:LiteNetLib.LiteNetManager.MaxFragmentsCount
+  fullName: LiteNetLib.LiteNetManager.MaxFragmentsCount
+  nameWithType: LiteNetManager.MaxFragmentsCount
 - uid: LiteNetLib.LiteNetManager.MtuDiscovery
   name: MtuDiscovery
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_MtuDiscovery
@@ -2541,6 +2550,18 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.LiteNetPeer.RemoteUtcTime
   nameWithType: LiteNetPeer.RemoteUtcTime
+- uid: LiteNetLib.LiteNetPeer.ResendFixedDelay
+  name: ResendFixedDelay
+  href: api/LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_ResendFixedDelay
+  commentId: F:LiteNetLib.LiteNetPeer.ResendFixedDelay
+  fullName: LiteNetLib.LiteNetPeer.ResendFixedDelay
+  nameWithType: LiteNetPeer.ResendFixedDelay
+- uid: LiteNetLib.LiteNetPeer.ResendRttMultiplier
+  name: ResendRttMultiplier
+  href: api/LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_ResendRttMultiplier
+  commentId: F:LiteNetLib.LiteNetPeer.ResendRttMultiplier
+  fullName: LiteNetLib.LiteNetPeer.ResendRttMultiplier
+  nameWithType: LiteNetPeer.ResendRttMultiplier
 - uid: LiteNetLib.LiteNetPeer.RoundTripTime
   name: RoundTripTime
   href: api/LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_RoundTripTime
@@ -4465,6 +4486,19 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.GetGuid
   nameWithType: NetDataReader.GetGuid
+- uid: LiteNetLib.Utils.NetDataReader.GetIPEndPoint
+  name: GetIPEndPoint()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetIPEndPoint
+  commentId: M:LiteNetLib.Utils.NetDataReader.GetIPEndPoint
+  fullName: LiteNetLib.Utils.NetDataReader.GetIPEndPoint()
+  nameWithType: NetDataReader.GetIPEndPoint()
+- uid: LiteNetLib.Utils.NetDataReader.GetIPEndPoint*
+  name: GetIPEndPoint
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetIPEndPoint_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.GetIPEndPoint
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.GetIPEndPoint
+  nameWithType: NetDataReader.GetIPEndPoint
 - uid: LiteNetLib.Utils.NetDataReader.GetInt
   name: GetInt()
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetInt
@@ -4530,19 +4564,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.GetLongArray
   nameWithType: NetDataReader.GetLongArray
-- uid: LiteNetLib.Utils.NetDataReader.GetNetEndPoint
-  name: GetNetEndPoint()
-  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetNetEndPoint
-  commentId: M:LiteNetLib.Utils.NetDataReader.GetNetEndPoint
-  fullName: LiteNetLib.Utils.NetDataReader.GetNetEndPoint()
-  nameWithType: NetDataReader.GetNetEndPoint()
-- uid: LiteNetLib.Utils.NetDataReader.GetNetEndPoint*
-  name: GetNetEndPoint
-  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetNetEndPoint_
-  commentId: Overload:LiteNetLib.Utils.NetDataReader.GetNetEndPoint
-  isSpec: "True"
-  fullName: LiteNetLib.Utils.NetDataReader.GetNetEndPoint
-  nameWithType: NetDataReader.GetNetEndPoint
 - uid: LiteNetLib.Utils.NetDataReader.GetRemainingBytes
   name: GetRemainingBytes()
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetRemainingBytes
@@ -5682,15 +5703,6 @@ references:
   fullName.vb: LiteNetLib.Utils.NetDataWriter.Put(Single)
   nameWithType: NetDataWriter.Put(float)
   nameWithType.vb: NetDataWriter.Put(Single)
-- uid: LiteNetLib.Utils.NetDataWriter.Put(System.String)
-  name: Put(string)
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_String_
-  commentId: M:LiteNetLib.Utils.NetDataWriter.Put(System.String)
-  name.vb: Put(String)
-  fullName: LiteNetLib.Utils.NetDataWriter.Put(string)
-  fullName.vb: LiteNetLib.Utils.NetDataWriter.Put(String)
-  nameWithType: NetDataWriter.Put(string)
-  nameWithType.vb: NetDataWriter.Put(String)
 - uid: LiteNetLib.Utils.NetDataWriter.Put(System.String,System.Int32)
   name: Put(string, int)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put_System_String_System_Int32_
@@ -5999,12 +6011,6 @@ references:
   commentId: F:LiteNetLib.Utils.NetDataWriter._position
   fullName: LiteNetLib.Utils.NetDataWriter._position
   nameWithType: NetDataWriter._position
-- uid: LiteNetLib.Utils.NetDataWriter.uTF8Encoding
-  name: uTF8Encoding
-  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_uTF8Encoding
-  commentId: F:LiteNetLib.Utils.NetDataWriter.uTF8Encoding
-  fullName: LiteNetLib.Utils.NetDataWriter.uTF8Encoding
-  nameWithType: NetDataWriter.uTF8Encoding
 - uid: LiteNetLib.Utils.NetPacketProcessor
   name: NetPacketProcessor
   href: api/LiteNetLib.Utils.NetPacketProcessor.html

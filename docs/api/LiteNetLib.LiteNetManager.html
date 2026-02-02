@@ -384,6 +384,31 @@ If the DontRoute flag is set to True, then data will be delivered on the local s
   </table>
 
 
+  <h4 id="LiteNetLib_LiteNetManager_MaxFragmentsCount" data-uid="LiteNetLib.LiteNetManager.MaxFragmentsCount">MaxFragmentsCount</h4>
+  <div class="markdown level1 summary"><p>Max fragmented packets size for reliable channels - that equals to data of size fragments count * (MTU-reliable header size)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ushort MaxFragmentsCount</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <h4 id="LiteNetLib_LiteNetManager_MtuDiscovery" data-uid="LiteNetLib.LiteNetManager.MtuDiscovery">MtuDiscovery</h4>
   <div class="markdown level1 summary"><p>Automatically discovery mtu starting from. Use at own risk because some routers can break MTU detection
 and connection in result</p>
@@ -960,32 +985,6 @@ use direct socket calls for send/receive to drastically increase speed and reduc
   </table>
   <h3 id="properties">Properties
 </h3>
-
-
-  <a id="LiteNetLib_LiteNetManager_ConnectedPeerList_" data-uid="LiteNetLib.LiteNetManager.ConnectedPeerList*"></a>
-  <h4 id="LiteNetLib_LiteNetManager_ConnectedPeerList" data-uid="LiteNetLib.LiteNetManager.ConnectedPeerList">ConnectedPeerList</h4>
-  <div class="markdown level1 summary"><p>Returns connected peers list (with internal cached list)</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;LiteNetPeer&gt; ConnectedPeerList { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="LiteNetLib.LiteNetPeer.html">LiteNetPeer</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
 
 
   <a id="LiteNetLib_LiteNetManager_ConnectedPeersCount_" data-uid="LiteNetLib.LiteNetManager.ConnectedPeersCount*"></a>
@@ -2004,6 +2003,35 @@ use direct socket calls for send/receive to drastically increase speed and reduc
   </table>
 
 
+  <a id="LiteNetLib_LiteNetManager_GetConnectedPeers_" data-uid="LiteNetLib.LiteNetManager.GetConnectedPeers*"></a>
+  <h4 id="LiteNetLib_LiteNetManager_GetConnectedPeers_System_Collections_Generic_List_LiteNetLib_LiteNetPeer__" data-uid="LiteNetLib.LiteNetManager.GetConnectedPeers(System.Collections.Generic.List{LiteNetLib.LiteNetPeer})">GetConnectedPeers(List&lt;LiteNetPeer&gt;)</h4>
+  <div class="markdown level1 summary"><p>Get copy of connected peers (without allocations)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetConnectedPeers(List&lt;LiteNetPeer&gt; peers)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="LiteNetLib.LiteNetPeer.html">LiteNetPeer</a>&gt;</td>
+        <td><span class="parametername">peers</span></td>
+        <td><p>List that will contain result</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="LiteNetLib_LiteNetManager_GetEnumerator_" data-uid="LiteNetLib.LiteNetManager.GetEnumerator*"></a>
   <h4 id="LiteNetLib_LiteNetManager_GetEnumerator" data-uid="LiteNetLib.LiteNetManager.GetEnumerator">GetEnumerator()</h4>
   <div class="markdown level1 summary"></div>
@@ -2074,6 +2102,41 @@ use direct socket calls for send/receive to drastically increase speed and reduc
   </table>
 
 
+  <a id="LiteNetLib_LiteNetManager_GetPeers_" data-uid="LiteNetLib.LiteNetManager.GetPeers*"></a>
+  <h4 id="LiteNetLib_LiteNetManager_GetPeers_System_Collections_Generic_List_LiteNetLib_LiteNetPeer__LiteNetLib_ConnectionState_" data-uid="LiteNetLib.LiteNetManager.GetPeers(System.Collections.Generic.List{LiteNetLib.LiteNetPeer},LiteNetLib.ConnectionState)">GetPeers(List&lt;LiteNetPeer&gt;, ConnectionState)</h4>
+  <div class="markdown level1 summary"><p>Get copy of peers (without allocations)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetPeers(List&lt;LiteNetPeer&gt; peers, ConnectionState peerState)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="LiteNetLib.LiteNetPeer.html">LiteNetPeer</a>&gt;</td>
+        <td><span class="parametername">peers</span></td>
+        <td><p>List that will contain result</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.ConnectionState.html">ConnectionState</a></td>
+        <td><span class="parametername">peerState</span></td>
+        <td><p>State of peers</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="LiteNetLib_LiteNetManager_GetPeersCount_" data-uid="LiteNetLib.LiteNetManager.GetPeersCount*"></a>
   <h4 id="LiteNetLib_LiteNetManager_GetPeersCount_LiteNetLib_ConnectionState_" data-uid="LiteNetLib.LiteNetManager.GetPeersCount(LiteNetLib.ConnectionState)">GetPeersCount(ConnectionState)</h4>
   <div class="markdown level1 summary"><p>Return peers count with connection state</p>
@@ -2113,41 +2176,6 @@ use direct socket calls for send/receive to drastically increase speed and reduc
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><p>peers count</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_LiteNetManager_GetPeersNonAlloc_" data-uid="LiteNetLib.LiteNetManager.GetPeersNonAlloc*"></a>
-  <h4 id="LiteNetLib_LiteNetManager_GetPeersNonAlloc_System_Collections_Generic_List_LiteNetLib_LiteNetPeer__LiteNetLib_ConnectionState_" data-uid="LiteNetLib.LiteNetManager.GetPeersNonAlloc(System.Collections.Generic.List{LiteNetLib.LiteNetPeer},LiteNetLib.ConnectionState)">GetPeersNonAlloc(List&lt;LiteNetPeer&gt;, ConnectionState)</h4>
-  <div class="markdown level1 summary"><p>Get copy of peers (without allocations)</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void GetPeersNonAlloc(List&lt;LiteNetPeer&gt; peers, ConnectionState peerState)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="LiteNetLib.LiteNetPeer.html">LiteNetPeer</a>&gt;</td>
-        <td><span class="parametername">peers</span></td>
-        <td><p>List that will contain result</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.ConnectionState.html">ConnectionState</a></td>
-        <td><span class="parametername">peerState</span></td>
-        <td><p>State of peers</p>
 </td>
       </tr>
     </tbody>
