@@ -7,6 +7,7 @@ namespace LiteNetLib
     {
         Unreliable,
         Channeled,
+        ReliableMerged,
         Ack,
         Ping,
         Pong,
@@ -22,12 +23,13 @@ namespace LiteNetLib
         PeerNotFound,
         InvalidProtocol,
         NatMessage,
-        Empty
+        Empty,
+        Total
     }
 
     internal sealed class NetPacket
     {
-        private static readonly int PropertiesCount = Enum.GetValues(typeof(PacketProperty)).Length;
+        private static readonly int PropertiesCount = (int)PacketProperty.Total;
         private static readonly int[] HeaderSizes;
 
         static NetPacket()
@@ -39,6 +41,7 @@ namespace LiteNetLib
                 {
                     case PacketProperty.Channeled:
                     case PacketProperty.Ack:
+                    case PacketProperty.ReliableMerged:
                         HeaderSizes[i] = NetConstants.ChanneledHeaderSize;
                         break;
                     case PacketProperty.Ping:
@@ -136,7 +139,7 @@ namespace LiteNetLib
 
         public static int GetHeaderSize(PacketProperty property) => HeaderSizes[(int)property];
 
-        public int GetHeaderSize() => HeaderSizes[RawData[0] & 0x1F];
+        public int HeaderSize => HeaderSizes[RawData[0] & 0x1F];
 
         public bool Verify()
         {

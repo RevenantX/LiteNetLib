@@ -1077,6 +1077,7 @@ namespace LiteNetLib
 
                 case PacketProperty.Ack:
                 case PacketProperty.Channeled:
+                case PacketProperty.ReliableMerged:
                     ProcessChanneled(packet);
                     break;
 
@@ -1260,7 +1261,13 @@ namespace LiteNetLib
         //For reliable channel
         internal void RecycleAndDeliver(NetPacket packet)
         {
-            if (packet.UserData != null)
+            if (packet.UserData is MergedPacketUserData mergedUserData)
+            {
+                for (int i = 0; i < mergedUserData.Items.Length; i++)
+                    NetManager.MessageDelivered(this, mergedUserData.Items[i]);
+                packet.UserData = null;
+            }
+            else if (packet.UserData != null)
             {
                 if (packet.IsFragmented)
                 {

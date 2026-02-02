@@ -1,9 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
+using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    internal sealed class MergedPacketUserData
+    {
+        public readonly object[] Items;
+
+        public MergedPacketUserData(object[] items)
+        {
+            Items = items;
+        }
+    }
+
     internal sealed class ReliableChannel : BaseChannel
     {
+        [ThreadStatic]
+        private static List<object> _mergedPacketUserDataList;
+        private const int MergeHeaderSize = 2;
+        private const int MergeSizeThreshold = 20;
+
         private struct PendingPacket
         {
             private NetPacket _packet;
@@ -93,6 +110,98 @@ namespace LiteNetLib
             _remoteSequence = 0;
             _remoteWindowStart = 0;
             _outgoingAcks = new NetPacket(PacketProperty.Ack, (_windowSize - 1) / BitsInByte + 2) {ChannelId = id};
+        }
+
+        private NetPacket GetNextOutgoingPacket()
+        {
+            int maxPayloadSize = Peer.Mtu - NetConstants.ChanneledHeaderSize;
+            NetPacket mergedPacket = null;
+            int mergePos = 0;
+
+            List<object> userDataList = null;
+
+            while (OutgoingQueue.Count > 0)
+            {
+                var packet = OutgoingQueue.Peek();
+                if (packet.IsFragmented)
+                    break;
+
+                int payloadSize = packet.Size - NetConstants.ChanneledHeaderSize;
+                int newSize = mergePos + MergeHeaderSize + payloadSize;
+                if (newSize + MergeSizeThreshold > maxPayloadSize && mergePos > 0)
+                    break;
+                if (newSize > maxPayloadSize)
+                    break;
+
+                if (mergedPacket == null)
+                {
+                    mergedPacket = Peer.NetManager.PoolGetPacket(Peer.Mtu);
+                    mergedPacket.Property = PacketProperty.ReliableMerged;
+                    userDataList = _mergedPacketUserDataList;
+                    if (userDataList == null)
+                    {
+                        userDataList = new List<object>();
+                        _mergedPacketUserDataList = userDataList;
+                    }
+                    else
+                    {
+                        userDataList.Clear();
+                    }
+                }
+
+                FastBitConverter.GetBytes(mergedPacket.RawData, NetConstants.ChanneledHeaderSize + mergePos, (ushort)payloadSize);
+                Buffer.BlockCopy(packet.RawData, NetConstants.ChanneledHeaderSize, mergedPacket.RawData, NetConstants.ChanneledHeaderSize + mergePos + MergeHeaderSize, payloadSize);
+                mergePos += payloadSize + MergeHeaderSize;
+
+                if (packet.UserData != null)
+                {
+                    userDataList.Add(packet.UserData);
+                    packet.UserData = null;
+                }
+
+                Peer.NetManager.PoolRecycle(OutgoingQueue.Dequeue());
+            }
+
+            if (mergedPacket == null)
+                return OutgoingQueue.Dequeue();
+
+            mergedPacket.Size = NetConstants.ChanneledHeaderSize + mergePos;
+            if (userDataList.Count > 0)
+                mergedPacket.UserData = new MergedPacketUserData(userDataList.ToArray());
+
+            return mergedPacket;
+        }
+
+        private void ProcessIncomingPacket(NetPacket packet)
+        {
+            if (packet.Property == PacketProperty.ReliableMerged)
+            {
+                //ProcessMerged
+                int pos = NetConstants.ChanneledHeaderSize;
+                while (pos + MergeHeaderSize <= packet.Size)
+                {
+                    ushort size = BitConverter.ToUInt16(packet.RawData, pos);
+                    pos += MergeHeaderSize;
+                    if (size == 0 || pos + size > packet.Size)
+                    {
+                        NetDebug.Write("[RR]Merged packet corrupted");
+                        break;
+                    }
+
+                    NetPacket mergedPacket = Peer.NetManager.PoolGetPacket(NetConstants.ChanneledHeaderSize + size);
+                    mergedPacket.Property = PacketProperty.Channeled;
+                    mergedPacket.ChannelId = packet.ChannelId;
+                    Buffer.BlockCopy(packet.RawData, pos, mergedPacket.RawData, NetConstants.ChanneledHeaderSize, size);
+                    pos += size;
+
+                    Peer.AddReliablePacket(_deliveryMethod, mergedPacket);
+                }
+                Peer.NetManager.PoolRecycle(packet);
+            }
+            else
+            {
+                Peer.AddReliablePacket(_deliveryMethod, packet);
+            }
         }
 
         //ProcessAck in packet
@@ -186,7 +295,7 @@ namespace LiteNetLib
                         if (relate >= _windowSize)
                             break;
 
-                        var netPacket = OutgoingQueue.Dequeue();
+                        var netPacket = GetNextOutgoingPacket();
                         netPacket.Sequence = (ushort) _localSeqence;
                         netPacket.ChannelId = _id;
                         _pendingPackets[_localSeqence % _windowSize].Init(netPacket);
@@ -292,7 +401,7 @@ namespace LiteNetLib
             if (seq == _remoteSequence)
             {
                 NetDebug.Write("[RR]ReliableInOrder packet succes");
-                Peer.AddReliablePacket(_deliveryMethod, packet);
+                ProcessIncomingPacket(packet);
                 _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
 
                 if (_ordered)
@@ -302,7 +411,7 @@ namespace LiteNetLib
                     {
                         //process holden packet
                         _receivedPackets[_remoteSequence % _windowSize] = null;
-                        Peer.AddReliablePacket(_deliveryMethod, p);
+                        ProcessIncomingPacket(p);
                         _remoteSequence = (_remoteSequence + 1) % NetConstants.MaxSequence;
                     }
                 }
@@ -326,7 +435,7 @@ namespace LiteNetLib
             else
             {
                 _earlyReceived[ackIdx] = true;
-                Peer.AddReliablePacket(_deliveryMethod, packet);
+                ProcessIncomingPacket(packet);
             }
             return true;
         }

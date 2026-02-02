@@ -369,7 +369,7 @@ namespace LiteNetLib
 
             evt.Next = null;
             evt.Type = type;
-            evt.DataReader.SetSource(readerSource, readerSource?.GetHeaderSize() ?? 0);
+            evt.DataReader.SetSource(readerSource, readerSource?.HeaderSize ?? 0);
             evt.Peer = peer;
             evt.RemoteEndPoint = remoteEndPoint;
             evt.Latency = latency;
