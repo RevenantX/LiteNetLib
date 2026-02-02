@@ -55,6 +55,8 @@ namespace LiteNetLib
                 return true;
             }
 
+            public bool IsEmpty => _packet == null;
+
             public bool Clear(LiteNetPeer peer)
             {
                 if (_packet != null)
@@ -238,7 +240,7 @@ namespace LiteNetLib
                     int rel = NetUtils.RelativeSequenceNumber(pendingSeq, ackWindowStart);
                     if (rel >= _windowSize)
                     {
-                        NetDebug.Write("[PA]REL: " + rel);
+                        //NetDebug.Write($"[PA]REL: {rel}");
                         break;
                     }
 
@@ -247,14 +249,14 @@ namespace LiteNetLib
                     int currentBit = pendingIdx % BitsInByte;
                     if ((acksData[currentByte] & (1 << currentBit)) == 0)
                     {
-                        if (Peer.NetManager.EnableStatistics)
+                        if (Peer.NetManager.EnableStatistics && !_pendingPackets[pendingIdx].IsEmpty)
                         {
                             Peer.Statistics.IncrementPacketLoss();
                             Peer.NetManager.Statistics.IncrementPacketLoss();
                         }
 
                         //Skip false ack
-                        NetDebug.Write($"[PA]False ack: {pendingSeq}");
+                        //NetDebug.Write($"[PA]False ack: {pendingSeq}");
                         continue;
                     }
 
