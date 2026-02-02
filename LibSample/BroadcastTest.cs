@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -58,11 +59,13 @@ namespace LibSample
         {
             public NetManager Server;
 
+            private readonly List<LiteNetPeer> _peersList = new List<LiteNetPeer>();
+
             public void OnPeerConnected(NetPeer peer)
             {
                 Console.WriteLine("[Server] Peer connected: " + peer);
-                var peers = Server.ConnectedPeerList;
-                foreach (var netPeer in peers)
+                Server.GetConnectedPeers(_peersList);
+                foreach (var netPeer in _peersList)
                 {
                     Console.WriteLine("ConnectedPeersList: id={0}, ep={1}", netPeer.Id, netPeer);
                 }
