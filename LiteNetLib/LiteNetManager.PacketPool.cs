@@ -2,7 +2,7 @@
 
 namespace LiteNetLib
 {
-    public partial class NetManager
+    public partial class LiteNetManager
     {
         private NetPacket _poolHead;
         private int _poolCount;

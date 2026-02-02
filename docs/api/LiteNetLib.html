@@ -1,15 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
 
   <head>
     <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Namespace LiteNetLib
- </title>
+      <title>Namespace LiteNetLib </title>
       <meta name="viewport" content="width=device-width">
-      <meta name="title" content="Namespace LiteNetLib
- ">
+      <meta name="title" content="Namespace LiteNetLib ">
+    
     
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
@@ -69,8 +68,7 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="LiteNetLib">
 
-  <h1 id="LiteNetLib" data-uid="LiteNetLib" class="text-break">Namespace LiteNetLib
-</h1>
+  <h1 id="LiteNetLib" data-uid="LiteNetLib" class="text-break">Namespace LiteNetLib</h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="markdown level0 remarks"></div>
@@ -79,12 +77,22 @@ Classes
 </h3>
       <h4><a class="xref" href="LiteNetLib.ConnectionRequest.html">ConnectionRequest</a></h4>
       <section></section>
+      <h4><a class="xref" href="LiteNetLib.EventBasedLiteNetListener.html">EventBasedLiteNetListener</a></h4>
+      <section><p>Simple event based listener for simple setups and benchmarks</p>
+</section>
       <h4><a class="xref" href="LiteNetLib.EventBasedNatPunchListener.html">EventBasedNatPunchListener</a></h4>
       <section></section>
       <h4><a class="xref" href="LiteNetLib.EventBasedNetListener.html">EventBasedNetListener</a></h4>
-      <section></section>
+      <section><p>Simple event based listener for simple setups and benchmarks</p>
+</section>
       <h4><a class="xref" href="LiteNetLib.InvalidPacketException.html">InvalidPacketException</a></h4>
       <section></section>
+      <h4><a class="xref" href="LiteNetLib.LiteNetManager.html">LiteNetManager</a></h4>
+      <section><p>Main class for all network operations. Can be used as client and/or server.</p>
+</section>
+      <h4><a class="xref" href="LiteNetLib.LiteNetPeer.html">LiteNetPeer</a></h4>
+      <section><p>Network peer. Main purpose is sending messages to specific peer.</p>
+</section>
       <h4><a class="xref" href="LiteNetLib.NatPunchModule.html">NatPunchModule</a></h4>
       <section><p>Module for UDP NAT Hole punching operations. Can be accessed from NetManager</p>
 </section>
@@ -95,13 +103,16 @@ Classes
       <section><p>Static class for defining your own LiteNetLib logger instead of Console.WriteLine
 or Debug.Log if compiled with UNITY flag</p>
 </section>
+      <h4><a class="xref" href="LiteNetLib.NetEvent.html">NetEvent</a></h4>
+      <section><p>Internally used event type</p>
+</section>
       <h4><a class="xref" href="LiteNetLib.NetManager.html">NetManager</a></h4>
-      <section><p>Main class for all network operations. Can be used as client and/or server.</p>
+      <section><p>More feature rich network manager with adjustable channels count</p>
 </section>
       <h4><a class="xref" href="LiteNetLib.NetPacketReader.html">NetPacketReader</a></h4>
       <section></section>
       <h4><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></h4>
-      <section><p>Network peer. Main purpose is sending messages to specific peer.</p>
+      <section><p>Improved LiteNetPeer with full multi-channel support</p>
 </section>
       <h4><a class="xref" href="LiteNetLib.NetStatistics.html">NetStatistics</a></h4>
       <section></section>
@@ -116,26 +127,24 @@ Structs
       <h4><a class="xref" href="LiteNetLib.DisconnectInfo.html">DisconnectInfo</a></h4>
       <section><p>Additional information about disconnection</p>
 </section>
-      <h4><a class="xref" href="LiteNetLib.NetManager.NetPeerEnumerator.html">NetManager.NetPeerEnumerator</a></h4>
+      <h4><a class="xref" href="LiteNetLib.LiteNetManager.NetPeerEnumerator.html">LiteNetManager.NetPeerEnumerator</a></h4>
       <section></section>
       <h4><a class="xref" href="LiteNetLib.PooledPacket.html">PooledPacket</a></h4>
       <section></section>
     <h3 id="interfaces">
 Interfaces
 </h3>
-      <h4><a class="xref" href="LiteNetLib.IDeliveryEventListener.html">IDeliveryEventListener</a></h4>
-      <section></section>
+      <h4><a class="xref" href="LiteNetLib.ILiteNetEventListener.html">ILiteNetEventListener</a></h4>
+      <section><p>Interface for implementing own ILiteNetEventListener. This is a bit faster than use EventBasedListener</p>
+</section>
       <h4><a class="xref" href="LiteNetLib.INatPunchListener.html">INatPunchListener</a></h4>
       <section></section>
       <h4><a class="xref" href="LiteNetLib.INetEventListener.html">INetEventListener</a></h4>
-      <section></section>
+      <section><p>Interface for implementing own INetEventListener. This is a bit faster than use EventBasedListener</p>
+</section>
       <h4><a class="xref" href="LiteNetLib.INetLogger.html">INetLogger</a></h4>
       <section><p>Interface to implement for your own logger</p>
 </section>
-      <h4><a class="xref" href="LiteNetLib.INtpEventListener.html">INtpEventListener</a></h4>
-      <section></section>
-      <h4><a class="xref" href="LiteNetLib.IPeerAddressChangedListener.html">IPeerAddressChangedListener</a></h4>
-      <section></section>
     <h3 id="enums">
 Enums
 </h3>
@@ -152,6 +161,8 @@ Enums
       <section><p>Address type that you want to receive from NetUtils.GetLocalIp method</p>
 </section>
       <h4><a class="xref" href="LiteNetLib.NatAddressType.html">NatAddressType</a></h4>
+      <section></section>
+      <h4><a class="xref" href="LiteNetLib.NetEvent.EType.html">NetEvent.EType</a></h4>
       <section></section>
       <h4><a class="xref" href="LiteNetLib.NetLogLevel.html">NetLogLevel</a></h4>
       <section></section>

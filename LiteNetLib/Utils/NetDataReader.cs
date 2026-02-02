@@ -9,7 +9,7 @@ namespace LiteNetLib.Utils
         protected byte[] _data;
         protected int _position;
         protected int _dataSize;
-        private int _offset;
+        protected int _offset;
 
         public byte[] RawData
         {
@@ -52,15 +52,9 @@ namespace LiteNetLib.Utils
             get => _dataSize - _position;
         }
 
-        public void SkipBytes(int count)
-        {
-            _position += count;
-        }
+        public void SkipBytes(int count) => _position += count;
 
-        public void SetPosition(int position)
-        {
-            _position = position;
-        }
+        public void SetPosition(int position) => _position = position;
 
         public void SetSource(NetDataWriter dataWriter)
         {
@@ -86,25 +80,13 @@ namespace LiteNetLib.Utils
             _dataSize = maxSize;
         }
 
-        public NetDataReader()
-        {
+        public NetDataReader() { }
 
-        }
+        public NetDataReader(NetDataWriter writer) => SetSource(writer);
 
-        public NetDataReader(NetDataWriter writer)
-        {
-            SetSource(writer);
-        }
+        public NetDataReader(byte[] source) => SetSource(source);
 
-        public NetDataReader(byte[] source)
-        {
-            SetSource(source);
-        }
-
-        public NetDataReader(byte[] source, int offset, int maxSize)
-        {
-            SetSource(source, offset, maxSize);
-        }
+        public NetDataReader(byte[] source, int offset, int maxSize) => SetSource(source, offset, maxSize);
 
         #region GetMethods
 
@@ -120,104 +102,45 @@ namespace LiteNetLib.Utils
             result.Deserialize(this);
         }
 
-        public void Get(out IPEndPoint result)
+        public void Get(out IPEndPoint result) => result = GetIPEndPoint();
+
+        public IPEndPoint GetIPEndPoint()
         {
-            result = GetNetEndPoint();
+            IPAddress address;
+            //IPv4
+            if (GetByte() == 0)
+            {
+                address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, 4));
+                _position += 4;
+            }
+            //IPv6
+            else
+            {
+                address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, 16));
+                _position += 16;
+            }
+            return new IPEndPoint(address, GetUShort());
         }
 
-        public void Get(out byte result)
-        {
-            result = GetByte();
-        }
+        public void Get(out byte result) => result = GetByte();
+        public void Get(out sbyte result) => result = (sbyte)GetByte();
+        public void Get(out bool result) => result = GetBool();
+        public void Get(out char result) => result = GetChar();
+        public void Get(out ushort result) => result = GetUShort();
+        public void Get(out short result) => result = GetShort();
+        public void Get(out ulong result) =>  result = GetULong();
+        public void Get(out long result) => result = GetLong();
+        public void Get(out uint result) => result = GetUInt();
+        public void Get(out int result) => result = GetInt();
+        public void Get(out double result) => result = GetDouble();
+        public void Get(out float result) =>  result = GetFloat();
+        public void Get(out string result) => result = GetString();
+        public void Get(out string result, int maxLength) => result = GetString(maxLength);
+        public void Get(out Guid result) => result = GetGuid();
 
-        public void Get(out sbyte result)
-        {
-            result = (sbyte)GetByte();
-        }
+        public byte GetByte() => _data[_position++];
 
-        public void Get(out bool result)
-        {
-            result = GetBool();
-        }
-
-        public void Get(out char result)
-        {
-            result = GetChar();
-        }
-
-        public void Get(out ushort result)
-        {
-            result = GetUShort();
-        }
-
-        public void Get(out short result)
-        {
-            result = GetShort();
-        }
-
-        public void Get(out ulong result)
-        {
-            result = GetULong();
-        }
-
-        public void Get(out long result)
-        {
-            result = GetLong();
-        }
-
-        public void Get(out uint result)
-        {
-            result = GetUInt();
-        }
-
-        public void Get(out int result)
-        {
-            result = GetInt();
-        }
-
-        public void Get(out double result)
-        {
-            result = GetDouble();
-        }
-
-        public void Get(out float result)
-        {
-            result = GetFloat();
-        }
-
-        public void Get(out string result)
-        {
-            result = GetString();
-        }
-
-        public void Get(out string result, int maxLength)
-        {
-            result = GetString(maxLength);
-        }
-        
-        public void Get(out Guid result)
-        {
-            result = GetGuid();
-        }
-
-        public IPEndPoint GetNetEndPoint()
-        {
-            string host = GetString(1000);
-            int port = GetInt();
-            return NetUtils.MakeEndPoint(host, port);
-        }
-
-        public byte GetByte()
-        {
-            byte res = _data[_position];
-            _position++;
-            return res;
-        }
-
-        public sbyte GetSByte()
-        {
-            return (sbyte)GetByte();
-        }
+        public sbyte GetSByte() => (sbyte)GetByte();
 
         public T[] GetArray<T>(ushort size)
         {
@@ -243,7 +166,7 @@ namespace LiteNetLib.Utils
             }
             return result;
         }
-        
+
         public T[] GetArray<T>(Func<T> constructor) where T : class, INetSerializable
         {
             ushort length = BitConverter.ToUInt16(_data, _position);
@@ -253,51 +176,16 @@ namespace LiteNetLib.Utils
                 Get(out result[i], constructor);
             return result;
         }
-        
-        public bool[] GetBoolArray()
-        {
-            return GetArray<bool>(1);
-        }
 
-        public ushort[] GetUShortArray()
-        {
-            return GetArray<ushort>(2);
-        }
-
-        public short[] GetShortArray()
-        {
-            return GetArray<short>(2);
-        }
-
-        public int[] GetIntArray()
-        {
-            return GetArray<int>(4);
-        }
-
-        public uint[] GetUIntArray()
-        {
-            return GetArray<uint>(4);
-        }
-
-        public float[] GetFloatArray()
-        {
-            return GetArray<float>(4);
-        }
-
-        public double[] GetDoubleArray()
-        {
-            return GetArray<double>(8);
-        }
-
-        public long[] GetLongArray()
-        {
-            return GetArray<long>(8);
-        }
-
-        public ulong[] GetULongArray()
-        {
-            return GetArray<ulong>(8);
-        }
+        public bool[] GetBoolArray() => GetArray<bool>(1);
+        public ushort[] GetUShortArray() => GetArray<ushort>(2);
+        public short[] GetShortArray() => GetArray<short>(2);
+        public int[] GetIntArray() => GetArray<int>(4);
+        public uint[] GetUIntArray() => GetArray<uint>(4);
+        public float[] GetFloatArray() => GetArray<float>(4);
+        public double[] GetDoubleArray() => GetArray<double>(8);
+        public long[] GetLongArray() => GetArray<long>(8);
+        public ulong[] GetULongArray() => GetArray<ulong>(8);
 
         public string[] GetStringArray()
         {
@@ -325,15 +213,8 @@ namespace LiteNetLib.Utils
             return arr;
         }
 
-        public bool GetBool()
-        {
-            return GetByte() == 1;
-        }
-
-        public char GetChar()
-        {
-            return (char)GetUShort();
-        }
+        public bool GetBool() => GetByte() == 1;
+        public char GetChar() => (char)GetUShort();
 
         public ushort GetUShort()
         {
@@ -400,11 +281,11 @@ namespace LiteNetLib.Utils
             ushort size = GetUShort();
             if (size == 0)
                 return string.Empty;
-            
+
             int actualSize = size - 1;
-            string result = maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(_data, _position, actualSize) > maxLength ?
+            string result = maxLength > 0 && NetDataWriter.uTF8Encoding.GetCharCount(_data, _position, actualSize) > maxLength ?
                 string.Empty :
-                NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, actualSize);
+                NetDataWriter.uTF8Encoding.GetString(_data, _position, actualSize);
             _position += actualSize;
             return result;
         }
@@ -414,9 +295,9 @@ namespace LiteNetLib.Utils
             ushort size = GetUShort();
             if (size == 0)
                 return string.Empty;
-            
+
             int actualSize = size - 1;
-            string result = NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, actualSize);
+            string result = NetDataWriter.uTF8Encoding.GetString(_data, _position, actualSize);
             _position += actualSize;
             return result;
         }
@@ -426,20 +307,16 @@ namespace LiteNetLib.Utils
             int size = GetInt();
             if (size <= 0)
                 return string.Empty;
-            string result = NetDataWriter.uTF8Encoding.Value.GetString(_data, _position, size);
+            string result = NetDataWriter.uTF8Encoding.GetString(_data, _position, size);
             _position += size;
             return result;
         }
-        
+
         public Guid GetGuid()
         {
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
-            var result =  new Guid(_data.AsSpan(_position, 16));
+            var result = new Guid(_data.AsSpan(_position, 16));
             _position += 16;
             return result;
-#else
-            return new Guid(GetBytesWithLength());
-#endif
         }
 
         public ArraySegment<byte> GetBytesSegment(int count)
@@ -470,19 +347,13 @@ namespace LiteNetLib.Utils
             return obj;
         }
 
-#if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<byte> GetRemainingBytesSpan()
-        {
-            return new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
-        }
-        
+        public ReadOnlySpan<byte> GetRemainingBytesSpan() =>
+            new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlyMemory<byte> GetRemainingBytesMemory()
-        {
-            return new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
-        }
-#endif
+        public ReadOnlyMemory<byte> GetRemainingBytesMemory() =>
+            new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
 
         public byte[] GetRemainingBytes()
         {
@@ -504,78 +375,24 @@ namespace LiteNetLib.Utils
             _position += count;
         }
 
-        public sbyte[] GetSBytesWithLength()
-        {
-            return GetArray<sbyte>(1);
-        }
-
-        public byte[] GetBytesWithLength()
-        {
-            return GetArray<byte>(1);
-        }
+        public sbyte[] GetSBytesWithLength() => GetArray<sbyte>(1);
+        public byte[] GetBytesWithLength() => GetArray<byte>(1);
         #endregion
 
         #region PeekMethods
 
-        public byte PeekByte()
-        {
-            return _data[_position];
-        }
-
-        public sbyte PeekSByte()
-        {
-            return (sbyte)_data[_position];
-        }
-
-        public bool PeekBool()
-        {
-            return _data[_position] == 1;
-        }
-
-        public char PeekChar()
-        {
-            return (char)PeekUShort();
-        }
-
-        public ushort PeekUShort()
-        {
-            return BitConverter.ToUInt16(_data, _position);
-        }
-
-        public short PeekShort()
-        {
-            return BitConverter.ToInt16(_data, _position);
-        }
-
-        public long PeekLong()
-        {
-            return BitConverter.ToInt64(_data, _position);
-        }
-
-        public ulong PeekULong()
-        {
-            return BitConverter.ToUInt64(_data, _position);
-        }
-
-        public int PeekInt()
-        {
-            return BitConverter.ToInt32(_data, _position);
-        }
-
-        public uint PeekUInt()
-        {
-            return BitConverter.ToUInt32(_data, _position);
-        }
-
-        public float PeekFloat()
-        {
-            return BitConverter.ToSingle(_data, _position);
-        }
-
-        public double PeekDouble()
-        {
-            return BitConverter.ToDouble(_data, _position);
-        }
+        public byte PeekByte() => _data[_position];
+        public sbyte PeekSByte() => (sbyte)_data[_position];
+        public bool PeekBool() => _data[_position] == 1;
+        public char PeekChar() => (char)PeekUShort();
+        public ushort PeekUShort() => BitConverter.ToUInt16(_data, _position);
+        public short PeekShort() => BitConverter.ToInt16(_data, _position);
+        public long PeekLong() => BitConverter.ToInt64(_data, _position);
+        public ulong PeekULong() => BitConverter.ToUInt64(_data, _position);
+        public int PeekInt() => BitConverter.ToInt32(_data, _position);
+        public uint PeekUInt() => BitConverter.ToUInt32(_data, _position);
+        public float PeekFloat() => BitConverter.ToSingle(_data, _position);
+        public double PeekDouble() => BitConverter.ToDouble(_data, _position);
 
         /// <summary>
         /// Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
@@ -585,11 +402,11 @@ namespace LiteNetLib.Utils
             ushort size = PeekUShort();
             if (size == 0)
                 return string.Empty;
-            
+
             int actualSize = size - 1;
-            return (maxLength > 0 && NetDataWriter.uTF8Encoding.Value.GetCharCount(_data, _position + 2, actualSize) > maxLength) ?
+            return (maxLength > 0 && NetDataWriter.uTF8Encoding.GetCharCount(_data, _position + 2, actualSize) > maxLength) ?
                 string.Empty :
-                NetDataWriter.uTF8Encoding.Value.GetString(_data, _position + 2, actualSize);
+                NetDataWriter.uTF8Encoding.GetString(_data, _position + 2, actualSize);
         }
 
         public string PeekString()
@@ -599,7 +416,7 @@ namespace LiteNetLib.Utils
                 return string.Empty;
 
             int actualSize = size - 1;
-            return NetDataWriter.uTF8Encoding.Value.GetString(_data, _position + 2, actualSize);
+            return NetDataWriter.uTF8Encoding.GetString(_data, _position + 2, actualSize);
         }
         #endregion
 

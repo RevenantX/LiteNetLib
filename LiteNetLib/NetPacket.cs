@@ -7,6 +7,7 @@ namespace LiteNetLib
     {
         Unreliable,
         Channeled,
+        ReliableMerged,
         Ack,
         Ping,
         Pong,
@@ -22,12 +23,13 @@ namespace LiteNetLib
         PeerNotFound,
         InvalidProtocol,
         NatMessage,
-        Empty
+        Empty,
+        Total
     }
 
     internal sealed class NetPacket
     {
-        private static readonly int PropertiesCount = Enum.GetValues(typeof(PacketProperty)).Length;
+        private static readonly int PropertiesCount = (int)PacketProperty.Total;
         private static readonly int[] HeaderSizes;
 
         static NetPacket()
@@ -39,6 +41,7 @@ namespace LiteNetLib
                 {
                     case PacketProperty.Channeled:
                     case PacketProperty.Ack:
+                    case PacketProperty.ReliableMerged:
                         HeaderSizes[i] = NetConstants.ChanneledHeaderSize;
                         break;
                     case PacketProperty.Ping:
@@ -84,10 +87,7 @@ namespace LiteNetLib
 
         public bool IsFragmented => (RawData[0] & 0x80) != 0;
 
-        public void MarkFragmented()
-        {
-            RawData[0] |= 0x80; //set first bit
-        }
+        public void MarkFragmented() => RawData[0] |= 0x80; //set first bit
 
         public byte ChannelId
         {
@@ -137,15 +137,9 @@ namespace LiteNetLib
             Size = size;
         }
 
-        public static int GetHeaderSize(PacketProperty property)
-        {
-            return HeaderSizes[(int)property];
-        }
+        public static int GetHeaderSize(PacketProperty property) => HeaderSizes[(int)property];
 
-        public int GetHeaderSize()
-        {
-            return HeaderSizes[RawData[0] & 0x1F];
-        }
+        public int HeaderSize => HeaderSizes[RawData[0] & 0x1F];
 
         public bool Verify()
         {
@@ -156,9 +150,5 @@ namespace LiteNetLib
             bool fragmented = (RawData[0] & 0x80) != 0;
             return Size >= headerSize && (!fragmented || Size >= headerSize + NetConstants.FragmentHeaderSize);
         }
-
-        #if LITENETLIB_SPANS || NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1 || NETCOREAPP3_1 || NET5_0 || NETSTANDARD2_1
-        public static implicit operator Span<byte>(NetPacket p) => new Span<byte>(p.RawData, 0, p.Size);
-        #endif
     }
 }

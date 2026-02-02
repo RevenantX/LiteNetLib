@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
 
@@ -8,6 +8,7 @@
       <title>LiteNetLib </title>
       <meta name="viewport" content="width=device-width">
       <meta name="title" content="LiteNetLib ">
+    
     
       <link rel="shortcut icon" href="favicon.ico">
       <link rel="stylesheet" href="styles/docfx.vendor.min.css">
@@ -193,13 +194,13 @@ server.Stop();
 </li>
 <li><strong>SimulatePacketLoss</strong>
 <ul>
-<li>simulate packet loss by dropping random amout of packets. (Works only in DEBUG mode)</li>
+<li>simulate packet loss by dropping random amout of packets. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)</li>
 <li>default value: <strong>false</strong></li>
 </ul>
 </li>
 <li><strong>SimulateLatency</strong>
 <ul>
-<li>simulate latency by holding packets for random time. (Works only in DEBUG mode)</li>
+<li>simulate latency by holding packets for random time. (Works only in DEBUG builds or when SIMULATE_NETWORK is defined)</li>
 <li>default value: <strong>false</strong></li>
 </ul>
 </li>

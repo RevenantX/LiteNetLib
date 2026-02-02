@@ -11,9 +11,9 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-    public partial class NetManager
+    public partial class LiteNetManager
     {
-        private Socket _udpSocketv4;
+        protected Socket _udpSocketv4;
         private Socket _udpSocketv6;
         private Thread _receiveThread;
         private IPEndPoint _bufferEndPointv4;
@@ -58,7 +58,7 @@ namespace LiteNetLib
             }
         }
 
-        static NetManager()
+        static LiteNetManager()
         {
 #if DISABLE_IPV6
             IPv6Support = false;
@@ -96,19 +96,14 @@ namespace LiteNetLib
             return false;
         }
 
-        private void ManualReceive(Socket socket, EndPoint bufferEndPoint, int maxReceive)
+        private void ManualReceive(Socket socket, EndPoint bufferEndPoint)
         {
             //Reading data
             try
             {
-                int packetsReceived = 0;
-                while (socket.Available > 0)
-                {
-                    ReceiveFrom(socket, ref bufferEndPoint);
-                    packetsReceived++;
-                    if (packetsReceived == maxReceive)
-                        break;
-                }
+                int available = socket.Available;
+                while (available > 0)
+                    available -= ReceiveFrom(socket, ref bufferEndPoint);
             }
             catch (SocketException ex)
             {
@@ -217,13 +212,7 @@ namespace LiteNetLib
                         (address[26] << 16) +
                         (address[25] << 8) +
                         (address[24])));
-#if NETCOREAPP || NETSTANDARD2_1 || NETSTANDARD2_1_OR_GREATER
                     tempEndPoint.Address = new IPAddress(new ReadOnlySpan<byte>(address, 8, 16), scope);
-#else
-                    byte[] addrBuffer = new byte[16];
-                    Buffer.BlockCopy(address, 8, addrBuffer, 0, 16);
-                    tempEndPoint.Address = new IPAddress(addrBuffer, scope);
-#endif
                 }
                 else //IPv4
                 {
@@ -249,17 +238,18 @@ namespace LiteNetLib
             }
         }
 
-        private void ReceiveFrom(Socket s, ref EndPoint bufferEndPoint)
+        private int ReceiveFrom(Socket s, ref EndPoint bufferEndPoint)
         {
             var packet = PoolGetPacket(NetConstants.MaxPacketSize);
 #if NET8_0_OR_GREATER
             var sockAddr = s.AddressFamily == AddressFamily.InterNetwork ? _sockAddrCacheV4 : _sockAddrCacheV6;
-            packet.Size = s.ReceiveFrom(packet, SocketFlags.None, sockAddr);
+            packet.Size = s.ReceiveFrom(new Span<byte>(packet.RawData, 0, NetConstants.MaxPacketSize), SocketFlags.None, sockAddr);
             OnMessageReceived(packet, TryGetPeer(sockAddr, out var peer) ? peer : (IPEndPoint)bufferEndPoint.Create(sockAddr));
 #else
             packet.Size = s.ReceiveFrom(packet.RawData, 0, NetConstants.MaxPacketSize, SocketFlags.None, ref bufferEndPoint);
             OnMessageReceived(packet, (IPEndPoint)bufferEndPoint);
 #endif
+            return packet.Size;
         }
 
         private void ReceiveLogic()
@@ -512,10 +502,8 @@ namespace LiteNetLib
             return result;
         }
 
-        internal int SendRaw(NetPacket packet, IPEndPoint remoteEndPoint)
-        {
-            return SendRaw(packet.RawData, 0, packet.Size, remoteEndPoint);
-        }
+        internal int SendRaw(NetPacket packet, IPEndPoint remoteEndPoint) =>
+            SendRaw(packet.RawData, 0, packet.Size, remoteEndPoint);
 
         internal int SendRaw(byte[] message, int start, int length, IPEndPoint remoteEndPoint)
         {
@@ -581,7 +569,7 @@ namespace LiteNetLib
             int result;
             try
             {
-                if (UseNativeSockets && remoteEndPoint is NetPeer peer)
+                if (UseNativeSockets && remoteEndPoint is LiteNetPeer peer)
                 {
                     unsafe
                     {
@@ -614,7 +602,7 @@ namespace LiteNetLib
 
                     case SocketError.HostUnreachable:
                     case SocketError.NetworkUnreachable:
-                        if (DisconnectOnUnreachable && remoteEndPoint is NetPeer peer)
+                        if (DisconnectOnUnreachable && remoteEndPoint is LiteNetPeer peer)
                         {
                             DisconnectPeerForce(
                                 peer,
@@ -655,15 +643,11 @@ namespace LiteNetLib
             return result;
         }
 
-        public bool SendBroadcast(NetDataWriter writer, int port)
-        {
-            return SendBroadcast(writer.Data, 0, writer.Length, port);
-        }
+        public bool SendBroadcast(NetDataWriter writer, int port) =>
+            SendBroadcast(writer.Data, 0, writer.Length, port);
 
-        public bool SendBroadcast(byte[] data, int port)
-        {
-            return SendBroadcast(data, 0, data.Length, port);
-        }
+        public bool SendBroadcast(byte[] data, int port) =>
+            SendBroadcast(data, 0, data.Length, port);
 
         public bool SendBroadcast(byte[] data, int start, int length, int port)
         {

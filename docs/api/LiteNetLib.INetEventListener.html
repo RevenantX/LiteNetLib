@@ -1,16 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
 
   <head>
     <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Interface INetEventListener
- </title>
+      <title>Interface INetEventListener </title>
       <meta name="viewport" content="width=device-width">
-      <meta name="title" content="Interface INetEventListener
- ">
+      <meta name="title" content="Interface INetEventListener ">
     
+    <meta name="description" content="Interface for implementing own INetEventListener. This is a bit faster than use EventBasedListener">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -71,9 +70,9 @@
 
 
 
-  <h1 id="LiteNetLib_INetEventListener" data-uid="LiteNetLib.INetEventListener" class="text-break">Interface INetEventListener
-</h1>
-  <div class="markdown level0 summary"></div>
+  <h1 id="LiteNetLib_INetEventListener" data-uid="LiteNetLib.INetEventListener" class="text-break">Interface INetEventListener</h1>
+  <div class="markdown level0 summary"><p>Interface for implementing own INetEventListener. This is a bit faster than use EventBasedListener</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
@@ -109,6 +108,39 @@
         <td><span class="parametername">request</span></td>
         <td><p>Request information (EndPoint, internal id, additional data)</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_INetEventListener_OnMessageDelivered_" data-uid="LiteNetLib.INetEventListener.OnMessageDelivered*"></a>
+  <h4 id="LiteNetLib_INetEventListener_OnMessageDelivered_LiteNetLib_NetPeer_System_Object_" data-uid="LiteNetLib.INetEventListener.OnMessageDelivered(LiteNetLib.NetPeer,System.Object)">OnMessageDelivered(NetPeer, object)</h4>
+  <div class="markdown level1 summary"><p>On reliable message delivered</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void OnMessageDelivered(NetPeer peer, object userData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">peer</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">object</span></td>
+        <td><span class="parametername">userData</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -266,6 +298,69 @@
         <td><a class="xref" href="LiteNetLib.UnconnectedMessageType.html">UnconnectedMessageType</a></td>
         <td><span class="parametername">messageType</span></td>
         <td><p>Message type (simple, discovery request or response)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_INetEventListener_OnNtpResponse_" data-uid="LiteNetLib.INetEventListener.OnNtpResponse*"></a>
+  <h4 id="LiteNetLib_INetEventListener_OnNtpResponse_LiteNetLib_Utils_NtpPacket_" data-uid="LiteNetLib.INetEventListener.OnNtpResponse(LiteNetLib.Utils.NtpPacket)">OnNtpResponse(NtpPacket)</h4>
+  <div class="markdown level1 summary"><p>Ntp response</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void OnNtpResponse(NtpPacket packet)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NtpPacket.html">NtpPacket</a></td>
+        <td><span class="parametername">packet</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_INetEventListener_OnPeerAddressChanged_" data-uid="LiteNetLib.INetEventListener.OnPeerAddressChanged*"></a>
+  <h4 id="LiteNetLib_INetEventListener_OnPeerAddressChanged_LiteNetLib_NetPeer_System_Net_IPEndPoint_" data-uid="LiteNetLib.INetEventListener.OnPeerAddressChanged(LiteNetLib.NetPeer,System.Net.IPEndPoint)">OnPeerAddressChanged(NetPeer, IPEndPoint)</h4>
+  <div class="markdown level1 summary"><p>Called when peer address changed (when AllowPeerAddressChange is enabled)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void OnPeerAddressChanged(NetPeer peer, IPEndPoint previousAddress)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><span class="parametername">peer</span></td>
+        <td><p>Peer that changed address (with new address)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
+        <td><span class="parametername">previousAddress</span></td>
+        <td><p>previous IP</p>
 </td>
       </tr>
     </tbody>

@@ -28,7 +28,7 @@ namespace LiteNetLib.Tests
             int length = packet.Length;
             _crc32Layer.ProcessInboundPacket(ref _dummyEndpoint, ref packet, ref length);
 
-            Assert.AreEqual(packet.Length - CRC32C.ChecksumSize, length);
+            Assert.That(length, Is.EqualTo(packet.Length - CRC32C.ChecksumSize));
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace LiteNetLib.Tests
             int length = packet.Length;
             _crc32Layer.ProcessInboundPacket(ref _dummyEndpoint, ref packet, ref length);
 
-            Assert.AreEqual(0, length);
+            Assert.That(length, Is.EqualTo(0));
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace LiteNetLib.Tests
 
             _crc32Layer.ProcessInboundPacket(ref _dummyEndpoint, ref packet, ref length);
 
-            Assert.AreEqual(0, length);
+            Assert.That(length, Is.EqualTo(0));
         }
 
         [Test]

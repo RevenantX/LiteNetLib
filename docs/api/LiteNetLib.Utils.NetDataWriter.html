@@ -1,15 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
 
   <head>
     <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Class NetDataWriter
- </title>
+      <title>Class NetDataWriter </title>
       <meta name="viewport" content="width=device-width">
-      <meta name="title" content="Class NetDataWriter
- ">
+      <meta name="title" content="Class NetDataWriter ">
+    
     
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
@@ -71,13 +70,12 @@
 
 
 
-  <h1 id="LiteNetLib_Utils_NetDataWriter" data-uid="LiteNetLib.Utils.NetDataWriter" class="text-break">Class NetDataWriter
-</h1>
+  <h1 id="LiteNetLib_Utils_NetDataWriter" data-uid="LiteNetLib.Utils.NetDataWriter" class="text-break">Class NetDataWriter</h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level0"><span class="xref">object</span></div>
     <div class="level1"><span class="xref">NetDataWriter</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a>.<a class="xref" href="LiteNetLib.Utils.html">Utils</a></h6>
@@ -161,30 +159,6 @@
 </h3>
 
 
-  <h4 id="LiteNetLib_Utils_NetDataWriter_StringBufferMaxLength" data-uid="LiteNetLib.Utils.NetDataWriter.StringBufferMaxLength">StringBufferMaxLength</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const int StringBufferMaxLength = 65535</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
   <h4 id="LiteNetLib_Utils_NetDataWriter__data" data-uid="LiteNetLib.Utils.NetDataWriter._data">_data</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
@@ -227,30 +201,6 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <h4 id="LiteNetLib_Utils_NetDataWriter_uTF8Encoding" data-uid="LiteNetLib.Utils.NetDataWriter.uTF8Encoding">uTF8Encoding</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly ThreadLocal&lt;UTF8Encoding&gt; uTF8Encoding</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.threadlocal-1">ThreadLocal</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.utf8encoding">UTF8Encoding</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -334,6 +284,31 @@
   </table>
   <h3 id="methods">Methods
 </h3>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_AsReadOnlySpan_" data-uid="LiteNetLib.Utils.NetDataWriter.AsReadOnlySpan*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_AsReadOnlySpan" data-uid="LiteNetLib.Utils.NetDataWriter.AsReadOnlySpan">AsReadOnlySpan()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ReadOnlySpan&lt;byte&gt; AsReadOnlySpan()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_CopyData_" data-uid="LiteNetLib.Utils.NetDataWriter.CopyData*"></a>
@@ -474,6 +449,49 @@
         <td><span class="parametername">length</span></td>
         <td><p>Length of array</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_FromBytes_" data-uid="LiteNetLib.Utils.NetDataWriter.FromBytes*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_FromBytes_System_Span_System_Byte__" data-uid="LiteNetLib.Utils.NetDataWriter.FromBytes(System.Span{System.Byte})">FromBytes(Span&lt;byte&gt;)</h4>
+  <div class="markdown level1 summary"><p>Creates NetDataWriter from the given <code class="paramref">bytes</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static NetDataWriter FromBytes(Span&lt;byte&gt; bytes)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">bytes</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -709,6 +727,33 @@
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Guid_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Guid)">Put(Guid)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Put(Guid value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Int16_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Int16)">Put(short)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
@@ -817,6 +862,33 @@
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_ReadOnlySpan_System_Byte__" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.ReadOnlySpan{System.Byte})">Put(ReadOnlySpan&lt;byte&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Put(ReadOnlySpan&lt;byte&gt; data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_SByte_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.SByte)">Put(sbyte)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
@@ -871,40 +943,13 @@
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
-  <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_String_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.String)">Put(string)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Put(string value)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_String_System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.String,System.Int32)">Put(string, int)</h4>
   <div class="markdown level1 summary"><p>Note that &quot;maxLength&quot; only limits the number of characters in a string, not its size in bytes.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Put(string value, int maxLength)</code></pre>
+    <pre><code class="lang-csharp hljs">public void Put(string value, int maxLength = 0)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -1345,6 +1390,48 @@
   </table>
 
 
+  <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray__1___0___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray``1(``0[])">PutArray&lt;T&gt;(T[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PutArray&lt;T&gt;(T[] value) where T : INetSerializable, new()</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>T[]</td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_" data-uid="LiteNetLib.Utils.NetDataWriter.PutBytesWithLength*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_System_Byte___" data-uid="LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[])">PutBytesWithLength(byte[])</h4>
   <div class="markdown level1 summary"></div>
@@ -1403,6 +1490,33 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
         <td><span class="parametername">length</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_PutLargeString_" data-uid="LiteNetLib.Utils.NetDataWriter.PutLargeString*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_PutLargeString_System_String_" data-uid="LiteNetLib.Utils.NetDataWriter.PutLargeString(System.String)">PutLargeString(string)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PutLargeString(string value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">value</span></td>
         <td></td>
       </tr>
     </tbody>
