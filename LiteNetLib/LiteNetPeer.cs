@@ -552,22 +552,6 @@ namespace LiteNetLib
             SendInternal(new ReadOnlySpan<byte>(data, start, length), 0, options, null);
 
         /// <summary>
-        /// Send data to peer
-        /// </summary>
-        /// <param name="data">Data</param>
-        /// <param name="start">Start of data</param>
-        /// <param name="length">Length of data</param>
-        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
-        /// <param name="deliveryMethod">Delivery method (reliable, unreliable, etc.)</param>
-        /// <exception cref="TooBigPacketException">
-        ///     If size exceeds maximum limit:<para/>
-        ///     MTU - headerSize bytes for Unreliable<para/>
-        ///     Fragment count exceeded ushort.MaxValue<para/>
-        /// </exception>
-        public void Send(byte[] data, int start, int length, byte channelNumber, DeliveryMethod deliveryMethod) =>
-            SendInternal(new ReadOnlySpan<byte>(data, start, length), channelNumber, deliveryMethod, null);
-
-        /// <summary>
         /// Send data to peer with delivery event called
         /// </summary>
         /// <param name="data">Data</param>
