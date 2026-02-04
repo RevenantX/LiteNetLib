@@ -163,9 +163,6 @@
       <a class="xref" href="LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_Send_System_Byte___System_Int32_System_Int32_LiteNetLib_DeliveryMethod_">LiteNetPeer.Send(byte[], int, int, DeliveryMethod)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_Send_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_">LiteNetPeer.Send(byte[], int, int, byte, DeliveryMethod)</a>
-    </div>
-    <div>
       <a class="xref" href="LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_SendWithDeliveryEvent_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_System_Object_">LiteNetPeer.SendWithDeliveryEvent(ReadOnlySpan&lt;byte&gt;, DeliveryMethod, object)</a>
     </div>
     <div>
@@ -446,6 +443,77 @@ Fragment count exceeded ushort.MaxValue<p></p>
         <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
         <td><span class="parametername">deliveryMethod</span></td>
         <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.TooBigPacketException.html">TooBigPacketException</a></td>
+        <td><p>If size exceeds maximum limit:<p></p>
+MTU - headerSize bytes for Unreliable<p></p>
+Fragment count exceeded ushort.MaxValue<p></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetPeer_Send_" data-uid="LiteNetLib.NetPeer.Send*"></a>
+  <h4 id="LiteNetLib_NetPeer_Send_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)">Send(byte[], int, int, byte, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to peer</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Send(byte[] data, int start, int length, byte channelNumber, DeliveryMethod deliveryMethod)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">start</span></td>
+        <td><p>Start of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">length</span></td>
+        <td><p>Length of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
+        <td><span class="parametername">channelNumber</span></td>
+        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">deliveryMethod</span></td>
+        <td><p>Delivery method (reliable, unreliable, etc.)</p>
 </td>
       </tr>
     </tbody>

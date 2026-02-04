@@ -2029,15 +2029,6 @@ references:
   fullName.vb: LiteNetLib.LiteNetManager.SendToAll(Byte(), Integer, Integer, LiteNetLib.DeliveryMethod, LiteNetLib.LiteNetPeer)
   nameWithType: LiteNetManager.SendToAll(byte[], int, int, DeliveryMethod, LiteNetPeer)
   nameWithType.vb: LiteNetManager.SendToAll(Byte(), Integer, Integer, DeliveryMethod, LiteNetPeer)
-- uid: LiteNetLib.LiteNetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name: SendToAll(byte[], int, int, byte, DeliveryMethod)
-  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.LiteNetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name.vb: SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod)
-  fullName: LiteNetLib.LiteNetManager.SendToAll(byte[], int, int, byte, LiteNetLib.DeliveryMethod)
-  fullName.vb: LiteNetLib.LiteNetManager.SendToAll(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod)
-  nameWithType: LiteNetManager.SendToAll(byte[], int, int, byte, DeliveryMethod)
-  nameWithType.vb: LiteNetManager.SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod)
 - uid: LiteNetLib.LiteNetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod)
   name: SendToAll(ReadOnlySpan<byte>, DeliveryMethod)
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_SendToAll_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_
@@ -2599,15 +2590,6 @@ references:
   fullName.vb: LiteNetLib.LiteNetPeer.Send(Byte(), Integer, Integer, LiteNetLib.DeliveryMethod)
   nameWithType: LiteNetPeer.Send(byte[], int, int, DeliveryMethod)
   nameWithType.vb: LiteNetPeer.Send(Byte(), Integer, Integer, DeliveryMethod)
-- uid: LiteNetLib.LiteNetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name: Send(byte[], int, int, byte, DeliveryMethod)
-  href: api/LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_Send_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.LiteNetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name.vb: Send(Byte(), Integer, Integer, Byte, DeliveryMethod)
-  fullName: LiteNetLib.LiteNetPeer.Send(byte[], int, int, byte, LiteNetLib.DeliveryMethod)
-  fullName.vb: LiteNetLib.LiteNetPeer.Send(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod)
-  nameWithType: LiteNetPeer.Send(byte[], int, int, byte, DeliveryMethod)
-  nameWithType.vb: LiteNetPeer.Send(Byte(), Integer, Integer, Byte, DeliveryMethod)
 - uid: LiteNetLib.LiteNetPeer.Send(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod)
   name: Send(ReadOnlySpan<byte>, DeliveryMethod)
   href: api/LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_Send_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_
@@ -3397,6 +3379,15 @@ references:
   fullName.vb: LiteNetLib.NetManager.SendToAll(Byte(), Byte, LiteNetLib.DeliveryMethod, LiteNetLib.LiteNetPeer)
   nameWithType: NetManager.SendToAll(byte[], byte, DeliveryMethod, LiteNetPeer)
   nameWithType.vb: NetManager.SendToAll(Byte(), Byte, DeliveryMethod, LiteNetPeer)
+- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name: SendToAll(byte[], int, int, byte, DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name.vb: SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(byte[], int, int, byte, LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(byte[], int, int, byte, DeliveryMethod)
+  nameWithType.vb: NetManager.SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod)
 - uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.LiteNetPeer)
   name: SendToAll(byte[], int, int, byte, DeliveryMethod, LiteNetPeer)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_LiteNetPeer_
@@ -3501,6 +3492,15 @@ references:
   fullName.vb: LiteNetLib.NetPeer.Send(Byte(), Byte, LiteNetLib.DeliveryMethod)
   nameWithType: NetPeer.Send(byte[], byte, DeliveryMethod)
   nameWithType.vb: NetPeer.Send(Byte(), Byte, DeliveryMethod)
+- uid: LiteNetLib.NetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name: Send(byte[], int, int, byte, DeliveryMethod)
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Send_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name.vb: Send(Byte(), Integer, Integer, Byte, DeliveryMethod)
+  fullName: LiteNetLib.NetPeer.Send(byte[], int, int, byte, LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetPeer.Send(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod)
+  nameWithType: NetPeer.Send(byte[], int, int, byte, DeliveryMethod)
+  nameWithType.vb: NetPeer.Send(Byte(), Integer, Integer, Byte, DeliveryMethod)
 - uid: LiteNetLib.NetPeer.Send(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod)
   name: Send(ReadOnlySpan<byte>, byte, DeliveryMethod)
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Send_System_ReadOnlySpan_System_Byte__System_Byte_LiteNetLib_DeliveryMethod_
