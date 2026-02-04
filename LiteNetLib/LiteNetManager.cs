@@ -1047,24 +1047,13 @@ namespace LiteNetLib
         /// <param name="start">Start of data</param>
         /// <param name="length">Length of data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void SendToAll(byte[] data, int start, int length, DeliveryMethod options) =>
-            SendToAll(data, start, length, 0, options);
-
-        /// <summary>
-        /// Send data to all connected peers
-        /// </summary>
-        /// <param name="data">Data</param>
-        /// <param name="start">Start of data</param>
-        /// <param name="length">Length of data</param>
-        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
-        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
+        public void SendToAll(byte[] data, int start, int length, DeliveryMethod options)
         {
             try
             {
                 _peersLock.EnterReadLock();
                 for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
-                    netPeer.Send(data, start, length, channelNumber, options);
+                    netPeer.Send(data, start, length, options);
             }
             finally
             {

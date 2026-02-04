@@ -249,9 +249,31 @@ namespace LiteNetLib
                 _peersLock.EnterReadLock();
                 for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
                 {
-                    if (!ReferenceEquals(netPeer, excludePeer))
-                        netPeer.Send(data, start, length, channelNumber, options);
+                    if (netPeer != excludePeer)
+                        ((NetPeer)netPeer).Send(data, start, length, channelNumber, options);
                 }
+            }
+            finally
+            {
+                _peersLock.ExitReadLock();
+            }
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="start">Start of data</param>
+        /// <param name="length">Length of data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
+        {
+            try
+            {
+                _peersLock.EnterReadLock();
+                for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                    ((NetPeer)netPeer).Send(data, start, length, channelNumber, options);
             }
             finally
             {
