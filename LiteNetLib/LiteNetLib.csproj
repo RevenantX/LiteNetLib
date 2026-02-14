@@ -10,11 +10,11 @@
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
-    <PackageVersion>2.0.1</PackageVersion>
+    <PackageVersion>2.0.2</PackageVersion>
     <Title>Lite reliable UDP library for Mono and .NET </Title>
     <IsTrimmable>true</IsTrimmable>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.2</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -33,14 +33,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>$(DefineConstants);LITENETLIB_UNSAFE</DefineConstants>
     <PackageTags>udp reliable-udp network</PackageTags>
-    <PackageReleaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/2.0.0</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/RevenantX/LiteNetLib/releases/tag/2.0.2</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/RevenantX/LiteNetLib</RepositoryUrl>
     <PackageProjectUrl>https://github.com/RevenantX/LiteNetLib</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Ruslan Pyrch</Authors>
-    <Copyright>Copyright 2025 Ruslan Pyrch</Copyright>
+    <Copyright>Copyright 2026 Ruslan Pyrch</Copyright>
     <Description>Lite reliable UDP library for .NET, Mono, and .NET Core</Description>
     <PackageIcon>LNL.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
