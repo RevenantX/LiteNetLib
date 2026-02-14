@@ -83,6 +83,7 @@
   <div class="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="LiteNetLib.LiteNetPeer.html">LiteNetPeer</a>&gt;</div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a>&gt;</div>
     <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
   </div>
   <div class="inheritedMembers">
@@ -172,9 +173,6 @@
       <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_MtuDiscovery">LiteNetManager.MtuDiscovery</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_FirstPeer">LiteNetManager.FirstPeer</a>
-    </div>
-    <div>
       <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_UseNativeSockets">LiteNetManager.UseNativeSockets</a>
     </div>
     <div>
@@ -200,9 +198,6 @@
     </div>
     <div>
       <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_SendToAll_System_Byte___System_Int32_System_Int32_LiteNetLib_DeliveryMethod_">LiteNetManager.SendToAll(byte[], int, int, DeliveryMethod)</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_">LiteNetManager.SendToAll(byte[], int, int, byte, DeliveryMethod)</a>
     </div>
     <div>
       <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_SendToAll_LiteNetLib_Utils_NetDataWriter_LiteNetLib_DeliveryMethod_LiteNetLib_LiteNetPeer_">LiteNetManager.SendToAll(NetDataWriter, DeliveryMethod, LiteNetPeer)</a>
@@ -298,9 +293,6 @@
       <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_DisconnectPeer_LiteNetLib_LiteNetPeer_System_Byte___System_Int32_System_Int32_">LiteNetManager.DisconnectPeer(LiteNetPeer, byte[], int, int)</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_GetEnumerator">LiteNetManager.GetEnumerator()</a>
-    </div>
-    <div>
       <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager__peersLock">LiteNetManager._peersLock</a>
     </div>
     <div>
@@ -356,7 +348,7 @@
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
   <h5 id="LiteNetLib_NetManager_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class NetManager : LiteNetManager, IEnumerable&lt;LiteNetPeer&gt;, IEnumerable</code></pre>
+    <pre><code class="lang-csharp hljs">public class NetManager : LiteNetManager, IEnumerable&lt;LiteNetPeer&gt;, IEnumerable&lt;NetPeer&gt;, IEnumerable</code></pre>
   </div>
   <h3 id="constructors">Constructors
 </h3>
@@ -416,6 +408,32 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_FirstPeer_" data-uid="LiteNetLib.NetManager.FirstPeer*"></a>
+  <h4 id="LiteNetLib_NetManager_FirstPeer" data-uid="LiteNetLib.NetManager.FirstPeer">FirstPeer</h4>
+  <div class="markdown level1 summary"><p>First peer. Useful for Client mode</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public NetPeer FirstPeer { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1021,6 +1039,95 @@
   <div><a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_CreateRejectPeer_System_Net_IPEndPoint_System_Int32_">LiteNetManager.CreateRejectPeer(IPEndPoint, int)</a></div>
 
 
+  <a id="LiteNetLib_NetManager_GetConnectedPeers_" data-uid="LiteNetLib.NetManager.GetConnectedPeers*"></a>
+  <h4 id="LiteNetLib_NetManager_GetConnectedPeers_System_Collections_Generic_List_LiteNetLib_NetPeer__" data-uid="LiteNetLib.NetManager.GetConnectedPeers(System.Collections.Generic.List{LiteNetLib.NetPeer})">GetConnectedPeers(List&lt;NetPeer&gt;)</h4>
+  <div class="markdown level1 summary"><p>Get copy of connected peers (without allocations)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetConnectedPeers(List&lt;NetPeer&gt; peers)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a>&gt;</td>
+        <td><span class="parametername">peers</span></td>
+        <td><p>List that will contain result</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_GetEnumerator_" data-uid="LiteNetLib.NetManager.GetEnumerator*"></a>
+  <h4 id="LiteNetLib_NetManager_GetEnumerator" data-uid="LiteNetLib.NetManager.GetEnumerator">GetEnumerator()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LiteNetManager.NetPeerEnumerator&lt;NetPeer&gt; GetEnumerator()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.LiteNetManager.html">LiteNetManager</a>.<a class="xref" href="LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html">NetPeerEnumerator</a>&lt;<a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_GetPeers_" data-uid="LiteNetLib.NetManager.GetPeers*"></a>
+  <h4 id="LiteNetLib_NetManager_GetPeers_System_Collections_Generic_List_LiteNetLib_NetPeer__LiteNetLib_ConnectionState_" data-uid="LiteNetLib.NetManager.GetPeers(System.Collections.Generic.List{LiteNetLib.NetPeer},LiteNetLib.ConnectionState)">GetPeers(List&lt;NetPeer&gt;, ConnectionState)</h4>
+  <div class="markdown level1 summary"><p>Get copy of peers (without allocations)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetPeers(List&lt;NetPeer&gt; peers, ConnectionState peerState)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a>&gt;</td>
+        <td><span class="parametername">peers</span></td>
+        <td><p>List that will contain result</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.ConnectionState.html">ConnectionState</a></td>
+        <td><span class="parametername">peerState</span></td>
+        <td><p>State of peers</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="LiteNetLib_NetManager_ProcessEvent_" data-uid="LiteNetLib.NetManager.ProcessEvent*"></a>
   <h4 id="LiteNetLib_NetManager_ProcessEvent_LiteNetLib_NetEvent_" data-uid="LiteNetLib.NetManager.ProcessEvent(LiteNetLib.NetEvent)">ProcessEvent(NetEvent)</h4>
   <div class="markdown level1 summary"></div>
@@ -1256,6 +1363,59 @@
 
 
   <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
+  <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)">SendToAll(byte[], int, int, byte, DeliveryMethod)</h4>
+  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">start</span></td>
+        <td><p>Start of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">length</span></td>
+        <td><p>Length of data</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
+        <td><span class="parametername">channelNumber</span></td>
+        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Send options (reliable, unreliable, etc.)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetManager_SendToAll_" data-uid="LiteNetLib.NetManager.SendToAll*"></a>
   <h4 id="LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_LiteNetPeer_" data-uid="LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.LiteNetPeer)">SendToAll(byte[], int, int, byte, DeliveryMethod, LiteNetPeer)</h4>
   <div class="markdown level1 summary"><p>Send data to all connected peers</p>
 </div>
@@ -1313,6 +1473,9 @@
     </tbody>
   </table>
   <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable&lt;T&gt;</a>
+  </div>
   <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable&lt;T&gt;</a>
   </div>

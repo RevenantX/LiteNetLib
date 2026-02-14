@@ -10,7 +10,7 @@ namespace LiteNetLib
     /// <summary>
     /// More feature rich network manager with adjustable channels count
     /// </summary>
-    public class NetManager : LiteNetManager
+    public class NetManager : LiteNetManager, IEnumerable<NetPeer>
     {
         private readonly INetEventListener _netEventListener;
         private byte _channelsCount = 1;
@@ -29,6 +29,35 @@ namespace LiteNetLib
                 _channelsCount = value;
             }
         }
+
+        /// <summary>
+        /// First peer. Useful for Client mode
+        /// </summary>
+        public new NetPeer FirstPeer => (NetPeer)_headPeer;
+
+        /// <summary>
+        /// Get copy of peers (without allocations)
+        /// </summary>
+        /// <param name="peers">List that will contain result</param>
+        /// <param name="peerState">State of peers</param>
+        public void GetPeers(List<NetPeer> peers, ConnectionState peerState)
+        {
+            peers.Clear();
+            _peersLock.EnterReadLock();
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+            {
+                if ((netPeer.ConnectionState & peerState) != 0)
+                    peers.Add((NetPeer)netPeer);
+            }
+            _peersLock.ExitReadLock();
+        }
+
+        /// <summary>
+        /// Get copy of connected peers (without allocations)
+        /// </summary>
+        /// <param name="peers">List that will contain result</param>
+        public void GetConnectedPeers(List<NetPeer> peers) =>
+            GetPeers(peers, ConnectionState.Connected);
 
         public NetManager(INetEventListener listener, PacketLayerBase extraPacketLayer = null) : base(null, extraPacketLayer) =>
             _netEventListener = listener;
@@ -249,9 +278,31 @@ namespace LiteNetLib
                 _peersLock.EnterReadLock();
                 for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
                 {
-                    if (!ReferenceEquals(netPeer, excludePeer))
-                        netPeer.Send(data, start, length, channelNumber, options);
+                    if (netPeer != excludePeer)
+                        ((NetPeer)netPeer).Send(data, start, length, channelNumber, options);
                 }
+            }
+            finally
+            {
+                _peersLock.ExitReadLock();
+            }
+        }
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="start">Start of data</param>
+        /// <param name="length">Length of data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
+        {
+            try
+            {
+                _peersLock.EnterReadLock();
+                for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                    ((NetPeer)netPeer).Send(data, start, length, channelNumber, options);
             }
             finally
             {
@@ -310,5 +361,11 @@ namespace LiteNetLib
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="LiteNetManager.Start()"/></exception>
         public new NetPeer Connect(IPEndPoint target, ReadOnlySpan<byte> connectionData) =>
             (NetPeer)base.Connect(target, connectionData);
+
+        public new NetPeerEnumerator<NetPeer> GetEnumerator() =>
+            new NetPeerEnumerator<NetPeer>((NetPeer)_headPeer);
+
+        IEnumerator<NetPeer> IEnumerable<NetPeer>.GetEnumerator() =>
+            new NetPeerEnumerator<NetPeer>((NetPeer)_headPeer);
     }
 }

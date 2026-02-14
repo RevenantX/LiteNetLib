@@ -2038,7 +2038,7 @@ use direct socket calls for send/receive to drastically increase speed and reduc
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LiteNetManager.NetPeerEnumerator GetEnumerator()</code></pre>
+    <pre><code class="lang-csharp hljs">public LiteNetManager.NetPeerEnumerator&lt;LiteNetPeer&gt; GetEnumerator()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-condensed">
@@ -2050,7 +2050,7 @@ use direct socket calls for send/receive to drastically increase speed and reduc
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LiteNetLib.LiteNetManager.html">LiteNetManager</a>.<a class="xref" href="LiteNetLib.LiteNetManager.NetPeerEnumerator.html">NetPeerEnumerator</a></td>
+        <td><a class="xref" href="LiteNetLib.LiteNetManager.html">LiteNetManager</a>.<a class="xref" href="LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html">NetPeerEnumerator</a>&lt;<a class="xref" href="LiteNetLib.LiteNetPeer.html">LiteNetPeer</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -2716,59 +2716,6 @@ In Manual mode it will call also socket Receive (which can be slow)</p>
         <td><a class="xref" href="LiteNetLib.LiteNetPeer.html">LiteNetPeer</a></td>
         <td><span class="parametername">excludePeer</span></td>
         <td><p>Excluded peer</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="LiteNetLib_LiteNetManager_SendToAll_" data-uid="LiteNetLib.LiteNetManager.SendToAll*"></a>
-  <h4 id="LiteNetLib_LiteNetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_" data-uid="LiteNetLib.LiteNetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)">SendToAll(byte[], int, int, byte, DeliveryMethod)</h4>
-  <div class="markdown level1 summary"><p>Send data to all connected peers</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
-        <td><span class="parametername">data</span></td>
-        <td><p>Data</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">start</span></td>
-        <td><p>Start of data</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">length</span></td>
-        <td><p>Length of data</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
-        <td><span class="parametername">channelNumber</span></td>
-        <td><p>Number of channel (from 0 to channelsCount - 1)</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LiteNetLib.DeliveryMethod.html">DeliveryMethod</a></td>
-        <td><span class="parametername">options</span></td>
-        <td><p>Send options (reliable, unreliable, etc.)</p>
 </td>
       </tr>
     </tbody>

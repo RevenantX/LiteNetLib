@@ -242,6 +242,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.LiteNetManager.NetPeerEnumerator<T>",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/LiteNetLib.LiteNetManager.NetPeerEnumerator.yml",
       "output": {
         ".html": {

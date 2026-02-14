@@ -19,12 +19,12 @@ namespace LiteNetLib
     /// </summary>
     public partial class LiteNetManager : IEnumerable<LiteNetPeer>
     {
-        public struct NetPeerEnumerator : IEnumerator<LiteNetPeer>
+        public struct NetPeerEnumerator<T> : IEnumerator<T> where T : LiteNetPeer
         {
-            private readonly LiteNetPeer _initialPeer;
-            private LiteNetPeer _p;
+            private readonly T _initialPeer;
+            private T _p;
 
-            public NetPeerEnumerator(LiteNetPeer p)
+            public NetPeerEnumerator(T p)
             {
                 _initialPeer = p;
                 _p = null;
@@ -34,14 +34,14 @@ namespace LiteNetLib
 
             public bool MoveNext()
             {
-                _p = _p == null ? _initialPeer : _p.NextPeer;
+                _p = _p == null ? _initialPeer : (T)_p.NextPeer;
                 return _p != null;
             }
 
             public void Reset() =>
                 throw new NotSupportedException();
 
-            public LiteNetPeer Current => _p;
+            public T Current => _p;
             object IEnumerator.Current => _p;
         }
 
@@ -1047,24 +1047,13 @@ namespace LiteNetLib
         /// <param name="start">Start of data</param>
         /// <param name="length">Length of data</param>
         /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void SendToAll(byte[] data, int start, int length, DeliveryMethod options) =>
-            SendToAll(data, start, length, 0, options);
-
-        /// <summary>
-        /// Send data to all connected peers
-        /// </summary>
-        /// <param name="data">Data</param>
-        /// <param name="start">Start of data</param>
-        /// <param name="length">Length of data</param>
-        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
-        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
-        public void SendToAll(byte[] data, int start, int length, byte channelNumber, DeliveryMethod options)
+        public void SendToAll(byte[] data, int start, int length, DeliveryMethod options)
         {
             try
             {
                 _peersLock.EnterReadLock();
                 for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
-                    netPeer.Send(data, start, length, channelNumber, options);
+                    netPeer.Send(data, start, length, options);
             }
             finally
             {
@@ -1632,13 +1621,13 @@ namespace LiteNetLib
                 null);
         }
 
-        public NetPeerEnumerator GetEnumerator() =>
-            new NetPeerEnumerator(_headPeer);
+        public NetPeerEnumerator<LiteNetPeer> GetEnumerator() =>
+            new NetPeerEnumerator<LiteNetPeer>(_headPeer);
 
         IEnumerator<LiteNetPeer> IEnumerable<LiteNetPeer>.GetEnumerator() =>
-            new NetPeerEnumerator(_headPeer);
+            new NetPeerEnumerator<LiteNetPeer>(_headPeer);
 
         IEnumerator IEnumerable.GetEnumerator() =>
-            new NetPeerEnumerator(_headPeer);
+            new NetPeerEnumerator<LiteNetPeer>(_headPeer);
     }
 }

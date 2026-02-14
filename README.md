@@ -68,7 +68,7 @@ Lite reliable UDP library for .NET Standard 2.1 (Mono, .NET)
 * Bitcoin: `bc1q269ecs8r5vnrum5qr5j98sdglhnxlulv0f6egd`
 
 ## Unity notes!!!
-* Minimal supported Unity is 2021.2. For older Unity versions use [0.9.x library](https://github.com/RevenantX/LiteNetLib/tree/0.9) versions
+* Minimal supported Unity is 2021.2. For older Unity versions use [1.x library](https://github.com/RevenantX/LiteNetLib/tree/1.x) versions
 * Always use library sources or [OpenUPM package](https://openupm.com/packages/com.revenantx.litenetlib/) instead of precompiled DLL files ( because there are platform specific #ifdefs and workarounds for unity bugs )
 
 ## Usage samples
@@ -122,5 +122,6 @@ while (!Console.KeyAvailable)
 }
 server.Stop();
 ```
+
 
 

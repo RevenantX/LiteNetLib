@@ -1849,6 +1849,102 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator.Reset
   nameWithType: LiteNetManager.NetPeerEnumerator.Reset
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1
+  name: LiteNetManager.NetPeerEnumerator<T>
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html
+  commentId: T:LiteNetLib.LiteNetManager.NetPeerEnumerator`1
+  name.vb: LiteNetManager.NetPeerEnumerator(Of T)
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T)
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T)
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.#ctor(`0)
+  name: NetPeerEnumerator(T)
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1__ctor__0_
+  commentId: M:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.#ctor(`0)
+  name.vb: New(T)
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.NetPeerEnumerator(T)
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).New(T)
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.NetPeerEnumerator(T)
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).New(T)
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.#ctor*
+  name: NetPeerEnumerator
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1__ctor_
+  commentId: Overload:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.NetPeerEnumerator
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).New
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.NetPeerEnumerator
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).New
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Current
+  name: Current
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1_Current
+  commentId: P:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Current
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.Current
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).Current
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.Current
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).Current
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Current*
+  name: Current
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1_Current_
+  commentId: Overload:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Current
+  isSpec: "True"
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.Current
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).Current
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.Current
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).Current
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Dispose
+  name: Dispose()
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1_Dispose
+  commentId: M:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Dispose
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.Dispose()
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).Dispose()
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.Dispose()
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).Dispose()
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Dispose*
+  name: Dispose
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1_Dispose_
+  commentId: Overload:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Dispose
+  isSpec: "True"
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.Dispose
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).Dispose
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.Dispose
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).Dispose
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.MoveNext
+  name: MoveNext()
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1_MoveNext
+  commentId: M:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.MoveNext
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.MoveNext()
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).MoveNext()
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.MoveNext()
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).MoveNext()
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.MoveNext*
+  name: MoveNext
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1_MoveNext_
+  commentId: Overload:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.MoveNext
+  isSpec: "True"
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.MoveNext
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).MoveNext
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.MoveNext
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).MoveNext
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Reset
+  name: Reset()
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1_Reset
+  commentId: M:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Reset
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.Reset()
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).Reset()
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.Reset()
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).Reset()
+- uid: LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Reset*
+  name: Reset
+  href: api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.html#LiteNetLib_LiteNetManager_NetPeerEnumerator_1_Reset_
+  commentId: Overload:LiteNetLib.LiteNetManager.NetPeerEnumerator`1.Reset
+  isSpec: "True"
+  fullName: LiteNetLib.LiteNetManager.NetPeerEnumerator<T>.Reset
+  fullName.vb: LiteNetLib.LiteNetManager.NetPeerEnumerator(Of T).Reset
+  nameWithType: LiteNetManager.NetPeerEnumerator<T>.Reset
+  nameWithType.vb: LiteNetManager.NetPeerEnumerator(Of T).Reset
 - uid: LiteNetLib.LiteNetManager.PacketPoolSize
   name: PacketPoolSize
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_PacketPoolSize
@@ -2029,15 +2125,6 @@ references:
   fullName.vb: LiteNetLib.LiteNetManager.SendToAll(Byte(), Integer, Integer, LiteNetLib.DeliveryMethod, LiteNetLib.LiteNetPeer)
   nameWithType: LiteNetManager.SendToAll(byte[], int, int, DeliveryMethod, LiteNetPeer)
   nameWithType.vb: LiteNetManager.SendToAll(Byte(), Integer, Integer, DeliveryMethod, LiteNetPeer)
-- uid: LiteNetLib.LiteNetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name: SendToAll(byte[], int, int, byte, DeliveryMethod)
-  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.LiteNetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name.vb: SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod)
-  fullName: LiteNetLib.LiteNetManager.SendToAll(byte[], int, int, byte, LiteNetLib.DeliveryMethod)
-  fullName.vb: LiteNetLib.LiteNetManager.SendToAll(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod)
-  nameWithType: LiteNetManager.SendToAll(byte[], int, int, byte, DeliveryMethod)
-  nameWithType.vb: LiteNetManager.SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod)
 - uid: LiteNetLib.LiteNetManager.SendToAll(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod)
   name: SendToAll(ReadOnlySpan<byte>, DeliveryMethod)
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_SendToAll_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_
@@ -2599,15 +2686,6 @@ references:
   fullName.vb: LiteNetLib.LiteNetPeer.Send(Byte(), Integer, Integer, LiteNetLib.DeliveryMethod)
   nameWithType: LiteNetPeer.Send(byte[], int, int, DeliveryMethod)
   nameWithType.vb: LiteNetPeer.Send(Byte(), Integer, Integer, DeliveryMethod)
-- uid: LiteNetLib.LiteNetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name: Send(byte[], int, int, byte, DeliveryMethod)
-  href: api/LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_Send_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
-  commentId: M:LiteNetLib.LiteNetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
-  name.vb: Send(Byte(), Integer, Integer, Byte, DeliveryMethod)
-  fullName: LiteNetLib.LiteNetPeer.Send(byte[], int, int, byte, LiteNetLib.DeliveryMethod)
-  fullName.vb: LiteNetLib.LiteNetPeer.Send(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod)
-  nameWithType: LiteNetPeer.Send(byte[], int, int, byte, DeliveryMethod)
-  nameWithType.vb: LiteNetPeer.Send(Byte(), Integer, Integer, Byte, DeliveryMethod)
 - uid: LiteNetLib.LiteNetPeer.Send(System.ReadOnlySpan{System.Byte},LiteNetLib.DeliveryMethod)
   name: Send(ReadOnlySpan<byte>, DeliveryMethod)
   href: api/LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_Send_System_ReadOnlySpan_System_Byte__LiteNetLib_DeliveryMethod_
@@ -3332,6 +3410,64 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.CreateRejectPeer
   nameWithType: NetManager.CreateRejectPeer
+- uid: LiteNetLib.NetManager.FirstPeer
+  name: FirstPeer
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_FirstPeer
+  commentId: P:LiteNetLib.NetManager.FirstPeer
+  fullName: LiteNetLib.NetManager.FirstPeer
+  nameWithType: NetManager.FirstPeer
+- uid: LiteNetLib.NetManager.FirstPeer*
+  name: FirstPeer
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_FirstPeer_
+  commentId: Overload:LiteNetLib.NetManager.FirstPeer
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.FirstPeer
+  nameWithType: NetManager.FirstPeer
+- uid: LiteNetLib.NetManager.GetConnectedPeers(System.Collections.Generic.List{LiteNetLib.NetPeer})
+  name: GetConnectedPeers(List<NetPeer>)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetConnectedPeers_System_Collections_Generic_List_LiteNetLib_NetPeer__
+  commentId: M:LiteNetLib.NetManager.GetConnectedPeers(System.Collections.Generic.List{LiteNetLib.NetPeer})
+  name.vb: GetConnectedPeers(List(Of NetPeer))
+  fullName: LiteNetLib.NetManager.GetConnectedPeers(System.Collections.Generic.List<LiteNetLib.NetPeer>)
+  fullName.vb: LiteNetLib.NetManager.GetConnectedPeers(System.Collections.Generic.List(Of LiteNetLib.NetPeer))
+  nameWithType: NetManager.GetConnectedPeers(List<NetPeer>)
+  nameWithType.vb: NetManager.GetConnectedPeers(List(Of NetPeer))
+- uid: LiteNetLib.NetManager.GetConnectedPeers*
+  name: GetConnectedPeers
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetConnectedPeers_
+  commentId: Overload:LiteNetLib.NetManager.GetConnectedPeers
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.GetConnectedPeers
+  nameWithType: NetManager.GetConnectedPeers
+- uid: LiteNetLib.NetManager.GetEnumerator
+  name: GetEnumerator()
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetEnumerator
+  commentId: M:LiteNetLib.NetManager.GetEnumerator
+  fullName: LiteNetLib.NetManager.GetEnumerator()
+  nameWithType: NetManager.GetEnumerator()
+- uid: LiteNetLib.NetManager.GetEnumerator*
+  name: GetEnumerator
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetEnumerator_
+  commentId: Overload:LiteNetLib.NetManager.GetEnumerator
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.GetEnumerator
+  nameWithType: NetManager.GetEnumerator
+- uid: LiteNetLib.NetManager.GetPeers(System.Collections.Generic.List{LiteNetLib.NetPeer},LiteNetLib.ConnectionState)
+  name: GetPeers(List<NetPeer>, ConnectionState)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetPeers_System_Collections_Generic_List_LiteNetLib_NetPeer__LiteNetLib_ConnectionState_
+  commentId: M:LiteNetLib.NetManager.GetPeers(System.Collections.Generic.List{LiteNetLib.NetPeer},LiteNetLib.ConnectionState)
+  name.vb: GetPeers(List(Of NetPeer), ConnectionState)
+  fullName: LiteNetLib.NetManager.GetPeers(System.Collections.Generic.List<LiteNetLib.NetPeer>, LiteNetLib.ConnectionState)
+  fullName.vb: LiteNetLib.NetManager.GetPeers(System.Collections.Generic.List(Of LiteNetLib.NetPeer), LiteNetLib.ConnectionState)
+  nameWithType: NetManager.GetPeers(List<NetPeer>, ConnectionState)
+  nameWithType.vb: NetManager.GetPeers(List(Of NetPeer), ConnectionState)
+- uid: LiteNetLib.NetManager.GetPeers*
+  name: GetPeers
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_GetPeers_
+  commentId: Overload:LiteNetLib.NetManager.GetPeers
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.GetPeers
+  nameWithType: NetManager.GetPeers
 - uid: LiteNetLib.NetManager.ProcessEvent(LiteNetLib.NetEvent)
   name: ProcessEvent(NetEvent)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_ProcessEvent_LiteNetLib_NetEvent_
@@ -3397,6 +3533,15 @@ references:
   fullName.vb: LiteNetLib.NetManager.SendToAll(Byte(), Byte, LiteNetLib.DeliveryMethod, LiteNetLib.LiteNetPeer)
   nameWithType: NetManager.SendToAll(byte[], byte, DeliveryMethod, LiteNetPeer)
   nameWithType.vb: NetManager.SendToAll(Byte(), Byte, DeliveryMethod, LiteNetPeer)
+- uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name: SendToAll(byte[], int, int, byte, DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name.vb: SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(byte[], int, int, byte, LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(byte[], int, int, byte, DeliveryMethod)
+  nameWithType.vb: NetManager.SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod)
 - uid: LiteNetLib.NetManager.SendToAll(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.LiteNetPeer)
   name: SendToAll(byte[], int, int, byte, DeliveryMethod, LiteNetPeer)
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_LiteNetPeer_
@@ -3501,6 +3646,15 @@ references:
   fullName.vb: LiteNetLib.NetPeer.Send(Byte(), Byte, LiteNetLib.DeliveryMethod)
   nameWithType: NetPeer.Send(byte[], byte, DeliveryMethod)
   nameWithType.vb: NetPeer.Send(Byte(), Byte, DeliveryMethod)
+- uid: LiteNetLib.NetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name: Send(byte[], int, int, byte, DeliveryMethod)
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Send_System_Byte___System_Int32_System_Int32_System_Byte_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetPeer.Send(System.Byte[],System.Int32,System.Int32,System.Byte,LiteNetLib.DeliveryMethod)
+  name.vb: Send(Byte(), Integer, Integer, Byte, DeliveryMethod)
+  fullName: LiteNetLib.NetPeer.Send(byte[], int, int, byte, LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetPeer.Send(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod)
+  nameWithType: NetPeer.Send(byte[], int, int, byte, DeliveryMethod)
+  nameWithType.vb: NetPeer.Send(Byte(), Integer, Integer, Byte, DeliveryMethod)
 - uid: LiteNetLib.NetPeer.Send(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod)
   name: Send(ReadOnlySpan<byte>, byte, DeliveryMethod)
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_Send_System_ReadOnlySpan_System_Byte__System_Byte_LiteNetLib_DeliveryMethod_
