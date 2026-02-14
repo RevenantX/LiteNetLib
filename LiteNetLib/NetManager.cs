@@ -30,6 +30,11 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// First peer. Useful for Client mode
+        /// </summary>
+        public new NetPeer FirstPeer => (NetPeer)_headPeer;
+
         public NetManager(INetEventListener listener, PacketLayerBase extraPacketLayer = null) : base(null, extraPacketLayer) =>
             _netEventListener = listener;
 
