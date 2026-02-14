@@ -10,7 +10,7 @@ namespace LiteNetLib
     /// <summary>
     /// More feature rich network manager with adjustable channels count
     /// </summary>
-    public class NetManager : LiteNetManager
+    public class NetManager : LiteNetManager, IEnumerable<NetPeer>
     {
         private readonly INetEventListener _netEventListener;
         private byte _channelsCount = 1;
@@ -34,6 +34,30 @@ namespace LiteNetLib
         /// First peer. Useful for Client mode
         /// </summary>
         public new NetPeer FirstPeer => (NetPeer)_headPeer;
+
+        /// <summary>
+        /// Get copy of peers (without allocations)
+        /// </summary>
+        /// <param name="peers">List that will contain result</param>
+        /// <param name="peerState">State of peers</param>
+        public void GetPeers(List<NetPeer> peers, ConnectionState peerState)
+        {
+            peers.Clear();
+            _peersLock.EnterReadLock();
+            for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+            {
+                if ((netPeer.ConnectionState & peerState) != 0)
+                    peers.Add((NetPeer)netPeer);
+            }
+            _peersLock.ExitReadLock();
+        }
+
+        /// <summary>
+        /// Get copy of connected peers (without allocations)
+        /// </summary>
+        /// <param name="peers">List that will contain result</param>
+        public void GetConnectedPeers(List<NetPeer> peers) =>
+            GetPeers(peers, ConnectionState.Connected);
 
         public NetManager(INetEventListener listener, PacketLayerBase extraPacketLayer = null) : base(null, extraPacketLayer) =>
             _netEventListener = listener;
@@ -337,5 +361,11 @@ namespace LiteNetLib
         /// <exception cref="InvalidOperationException">Manager is not running. Call <see cref="LiteNetManager.Start()"/></exception>
         public new NetPeer Connect(IPEndPoint target, ReadOnlySpan<byte> connectionData) =>
             (NetPeer)base.Connect(target, connectionData);
+
+        public new NetPeerEnumerator<NetPeer> GetEnumerator() =>
+            new NetPeerEnumerator<NetPeer>((NetPeer)_headPeer);
+
+        IEnumerator<NetPeer> IEnumerable<NetPeer>.GetEnumerator() =>
+            new NetPeerEnumerator<NetPeer>((NetPeer)_headPeer);
     }
 }
