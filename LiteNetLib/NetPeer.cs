@@ -26,7 +26,7 @@ namespace LiteNetLib
             _channels = new BaseChannel[netManager.ChannelsCount * NetConstants.ChannelTypeCount];
         }
 
-        internal NetPeer(NetManager netManager, ConnectionRequest request, int id) : base(netManager, request, id)
+        internal NetPeer(NetManager netManager, LiteConnectionRequest request, int id) : base(netManager, request, id)
         {
             _channels = new BaseChannel[netManager.ChannelsCount * NetConstants.ChannelTypeCount];
         }

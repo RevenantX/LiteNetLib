@@ -129,12 +129,16 @@ namespace LiteNetLib
             new NetPeer(this, remoteEndPoint, id, connectNum, connectData);
 
         //accept
-        protected override LiteNetPeer CreateIncomingPeer(ConnectionRequest request, int id) =>
+        protected override LiteNetPeer CreateIncomingPeer(LiteConnectionRequest request, int id) =>
             new NetPeer(this, request, id);
 
         //reject
         protected override LiteNetPeer CreateRejectPeer(IPEndPoint remoteEndPoint, int id) =>
             new NetPeer(this, remoteEndPoint, id);
+
+        //connection request when you use Accept for getting NetPeer instead of LiteNetPeer
+        protected override LiteConnectionRequest CreateConnectionRequest(IPEndPoint remoteEndPoint, NetConnectRequestPacket requestPacket) =>
+            new ConnectionRequest(remoteEndPoint, requestPacket, this);
 
         protected override void ProcessEvent(NetEvent evt)
         {
@@ -171,7 +175,7 @@ namespace LiteNetLib
                     _netEventListener.OnNetworkLatencyUpdate(netPeer, evt.Latency);
                     break;
                 case NetEvent.EType.ConnectionRequest:
-                    _netEventListener.OnConnectionRequest(evt.ConnectionRequest);
+                    _netEventListener.OnConnectionRequest((ConnectionRequest)evt.ConnectionRequest);
                     break;
                 case NetEvent.EType.MessageDelivered:
                     _netEventListener.OnMessageDelivered(netPeer, evt.UserData);

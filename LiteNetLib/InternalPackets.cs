@@ -4,7 +4,7 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
-   internal sealed class NetConnectRequestPacket
+    public sealed class NetConnectRequestPacket
     {
         public const int HeaderSize = 18;
         public readonly long ConnectionTime;
@@ -22,10 +22,10 @@ namespace LiteNetLib
             PeerId = localId;
         }
 
-        public static int GetProtocolId(NetPacket packet) =>
+        internal static int GetProtocolId(NetPacket packet) =>
             BitConverter.ToInt32(packet.RawData, 1);
 
-        public static NetConnectRequestPacket FromData(NetPacket packet)
+        internal static NetConnectRequestPacket FromData(NetPacket packet)
         {
             if (packet.ConnectionNumber >= NetConstants.MaxConnectionNumber)
                 return null;
@@ -51,7 +51,7 @@ namespace LiteNetLib
             return new NetConnectRequestPacket(connectionTime, packet.ConnectionNumber, peerId, addressBytes, reader);
         }
 
-        public static NetPacket Make(ReadOnlySpan<byte> connectData, SocketAddress addressBytes, long connectTime, int localId)
+        internal static NetPacket Make(ReadOnlySpan<byte> connectData, SocketAddress addressBytes, long connectTime, int localId)
         {
             //Make initial packet
             var packet = new NetPacket(PacketProperty.ConnectRequest, connectData.Length+addressBytes.Size);

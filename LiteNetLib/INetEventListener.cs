@@ -202,7 +202,7 @@ namespace LiteNetLib
         /// On peer connection requested
         /// </summary>
         /// <param name="request">Request information (EndPoint, internal id, additional data)</param>
-        void OnConnectionRequest(ConnectionRequest request);
+        void OnConnectionRequest(LiteConnectionRequest request);
 
         /// <summary>
         /// Called when peer address changed (when AllowPeerAddressChange is enabled)
@@ -299,7 +299,7 @@ namespace LiteNetLib
         public delegate void OnNetworkReceive(LiteNetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod);
         public delegate void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType);
         public delegate void OnNetworkLatencyUpdate(LiteNetPeer peer, int latency);
-        public delegate void OnConnectionRequest(ConnectionRequest request);
+        public delegate void OnConnectionRequest(LiteConnectionRequest request);
         public delegate void OnDeliveryEvent(LiteNetPeer peer, object userData);
         public delegate void OnPeerAddressChangedEvent(LiteNetPeer peer, IPEndPoint previousAddress);
 
@@ -341,7 +341,7 @@ namespace LiteNetLib
         void ILiteNetEventListener.OnNetworkLatencyUpdate(LiteNetPeer peer, int latency) =>
             NetworkLatencyUpdateEvent?.Invoke(peer, latency);
 
-        void ILiteNetEventListener.OnConnectionRequest(ConnectionRequest request) =>
+        void ILiteNetEventListener.OnConnectionRequest(LiteConnectionRequest request) =>
             ConnectionRequestEvent?.Invoke(request);
 
         void ILiteNetEventListener.OnMessageDelivered(LiteNetPeer peer, object userData) =>

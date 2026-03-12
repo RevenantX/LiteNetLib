@@ -12,7 +12,7 @@ namespace LiteNetLib
         RejectForce
     }
 
-    public class ConnectionRequest
+    public class LiteConnectionRequest
     {
         private readonly LiteNetManager _listener;
         private int _used;
@@ -40,7 +40,7 @@ namespace LiteNetLib
         private bool TryActivate() =>
             Interlocked.CompareExchange(ref _used, 1, 0) == 0;
 
-        internal ConnectionRequest(IPEndPoint remoteEndPoint, NetConnectRequestPacket requestPacket, LiteNetManager listener)
+        internal LiteConnectionRequest(IPEndPoint remoteEndPoint, NetConnectRequestPacket requestPacket, LiteNetManager listener)
         {
             InternalPacket = requestPacket;
             RemoteEndPoint = remoteEndPoint;
@@ -111,5 +111,16 @@ namespace LiteNetLib
 
         public void Reject(NetDataWriter rejectData) =>
             Reject(rejectData.Data, 0, rejectData.Length, false);
+    }
+
+    public class ConnectionRequest : LiteConnectionRequest
+    {
+        internal ConnectionRequest(IPEndPoint remoteEndPoint, NetConnectRequestPacket requestPacket, LiteNetManager listener) : base(remoteEndPoint, requestPacket, listener)
+        {
+        }
+
+        public new NetPeer AcceptIfKey(string key) => (NetPeer)base.AcceptIfKey(key);
+
+        public new NetPeer Accept() => (NetPeer)base.Accept();
     }
 }
