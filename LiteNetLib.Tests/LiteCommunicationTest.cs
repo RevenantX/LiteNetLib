@@ -30,7 +30,9 @@ namespace LiteNetLib.Tests
             ManagerStack?.Dispose();
         }
 
-        private const int DefaultPort = 9050;
+        private static readonly int DefaultPort = TestPorts.ForFramework(9050);
+        private static readonly int ReconnectPort = TestPorts.ForFramework(10123);
+        private static readonly int ReuseClientPort = TestPorts.ForFramework(9049);
         private const string DefaultAppKey = "test_server";
         private static readonly byte[] DefaultAppKeyBytes = [12, 0, 116, 101, 115, 116, 95, 115, 101, 114, 118, 101, 114];
 
@@ -270,7 +272,7 @@ namespace LiteNetLib.Tests
             };
 
             client.Stop();
-            client.Start(10123);
+            client.Start(ReconnectPort);
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
             while (connectCount < 2)
@@ -279,7 +281,7 @@ namespace LiteNetLib.Tests
                 {
                     client.Stop();
                     Thread.Sleep(500);
-                    client.Start(10123);
+                    client.Start(ReconnectPort);
                     client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
                     reconnected = true;
                 }
@@ -465,7 +467,7 @@ namespace LiteNetLib.Tests
 
             var listener = new EventBasedLiteNetListener();
             var client = new LiteNetManager(listener, new Crc32cLayer());
-            Assert.That(client.Start(9049), Is.True);
+            Assert.That(client.Start(ReuseClientPort), Is.True);
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
             while (server.ConnectedPeersCount != 1)
             {
@@ -479,7 +481,7 @@ namespace LiteNetLib.Tests
             {
                 connected = true;
             };
-            Assert.That(client.Start(9049), Is.True);
+            Assert.That(client.Start(ReuseClientPort), Is.True);
             client.Connect("127.0.0.1", DefaultPort, DefaultAppKey);
 
             while (!connected)
