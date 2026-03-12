@@ -78,7 +78,7 @@ namespace LiteNetLib
         private NetEvent _netEventPoolHead;
         private readonly ILiteNetEventListener _netEventListener;
 
-        private readonly Dictionary<IPEndPoint, ConnectionRequest> _requestsDict = new Dictionary<IPEndPoint, ConnectionRequest>();
+        private readonly Dictionary<IPEndPoint, LiteConnectionRequest> _requestsDict = new Dictionary<IPEndPoint, LiteConnectionRequest>();
 
         private long _connectedPeersCount;
         private readonly PacketLayerBase _extraPacketLayer;
@@ -331,7 +331,7 @@ namespace LiteNetLib
             SocketError errorCode = 0,
             int latency = 0,
             DisconnectReason disconnectReason = DisconnectReason.ConnectionFailed,
-            ConnectionRequest connectionRequest = null,
+            LiteConnectionRequest connectionRequest = null,
             DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable,
             byte channelNumber = 0,
             NetPacket readerSource = null,
@@ -589,14 +589,17 @@ namespace LiteNetLib
             new LiteNetPeer(this, remoteEndPoint, id, connectNum, connectData);
 
         //accept
-        protected virtual LiteNetPeer CreateIncomingPeer(ConnectionRequest request, int id) =>
+        protected virtual LiteNetPeer CreateIncomingPeer(LiteConnectionRequest request, int id) =>
             new LiteNetPeer(this, request, id);
 
         //reject
         protected virtual LiteNetPeer CreateRejectPeer(IPEndPoint remoteEndPoint, int id) =>
             new LiteNetPeer(this, remoteEndPoint, id);
 
-        internal LiteNetPeer OnConnectionSolved(ConnectionRequest request, byte[] rejectData, int start, int length)
+        protected virtual LiteConnectionRequest CreateConnectionRequest(IPEndPoint remoteEndPoint, NetConnectRequestPacket requestPacket) =>
+            new LiteConnectionRequest(remoteEndPoint, requestPacket, this);
+
+        internal LiteNetPeer OnConnectionSolved(LiteConnectionRequest request, byte[] rejectData, int start, int length)
         {
             LiteNetPeer netPeer = null;
 
@@ -688,7 +691,7 @@ namespace LiteNetLib
                 NetDebug.Write($"ConnectRequest Id: {connRequest.ConnectionTime}, EP: {remoteEndPoint}");
             }
 
-            ConnectionRequest req;
+            LiteConnectionRequest req;
             lock (_requestsDict)
             {
                 if (_requestsDict.TryGetValue(remoteEndPoint, out req))
@@ -696,7 +699,7 @@ namespace LiteNetLib
                     req.UpdateRequest(connRequest);
                     return;
                 }
-                req = new ConnectionRequest(remoteEndPoint, connRequest, this);
+                req = CreateConnectionRequest(remoteEndPoint, connRequest);
                 _requestsDict.Add(remoteEndPoint, req);
             }
             NetDebug.Write($"[NM] Creating request event: {connRequest.ConnectionTime}");

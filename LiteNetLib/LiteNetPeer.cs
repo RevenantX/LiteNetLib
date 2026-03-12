@@ -404,7 +404,7 @@ namespace LiteNetLib
         }
 
         //"Accept" incoming constructor
-        internal LiteNetPeer(LiteNetManager netManager, ConnectionRequest request, int id)
+        internal LiteNetPeer(LiteNetManager netManager, LiteConnectionRequest request, int id)
             : this(netManager, request.RemoteEndPoint, id)
         {
             _connectTime = request.InternalPacket.ConnectionTime;

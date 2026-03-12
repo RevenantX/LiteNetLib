@@ -31,7 +31,7 @@ namespace LiteNetLib
         public int Latency;
         public SocketError ErrorCode;
         public DisconnectReason DisconnectReason;
-        public ConnectionRequest ConnectionRequest;
+        public LiteConnectionRequest ConnectionRequest;
         public DeliveryMethod DeliveryMethod;
         public byte ChannelNumber;
         public readonly NetPacketReader DataReader;
