@@ -100,12 +100,75 @@ namespace LiteNetLib
         //Fragment
         private class IncomingFragments
         {
-            public NetPacket[] Fragments;
+            // Fragments with TotalFragments <= threshold use a fixed array (faster)
+            // Larger sets use a dictionary to avoid large upfront allocations
+            private const int ArrayThreshold = 64;
+
+            private readonly NetPacket[] _array;
+            private readonly Dictionary<ushort, NetPacket> _dict;
+
+            public readonly ushort TotalFragments;
+            public readonly byte ChannelId;
             public int ReceivedCount;
             public int TotalSize;
-            public byte ChannelId;
+            public float LastReceivedTime;
+
+            public IncomingFragments(ushort totalFragments, byte channelId, float now)
+            {
+                TotalFragments = totalFragments;
+                ChannelId = channelId;
+                LastReceivedTime = now;
+                if (totalFragments <= ArrayThreshold)
+                    _array = new NetPacket[totalFragments];
+                else
+                    _dict = new Dictionary<ushort, NetPacket>();
+            }
+
+            public bool Contains(ushort part) =>
+                _array != null ? _array[part] != null : _dict.ContainsKey(part);
+
+            public bool TryGet(ushort part, out NetPacket packet)
+            {
+                if (_array != null)
+                {
+                    packet = _array[part];
+                    return packet != null;
+                }
+                return _dict.TryGetValue(part, out packet);
+            }
+
+            public void Set(ushort part, NetPacket packet)
+            {
+                if (_array != null)
+                    _array[part] = packet;
+                else
+                    _dict[part] = packet;
+            }
+
+            public void Remove(ushort part)
+            {
+                if (_array != null)
+                    _array[part] = null;
+                else
+                    _dict.Remove(part);
+            }
+
+            public void RecycleAll(LiteNetManager netManager)
+            {
+                if (_array != null)
+                {
+                    foreach (var p in _array)
+                        if (p != null) netManager.PoolRecycle(p);
+                }
+                else
+                {
+                    foreach (var p in _dict.Values)
+                        netManager.PoolRecycle(p);
+                }
+            }
         }
         private int _fragmentId;
+        private float _updateTime;
         private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
         private readonly Dictionary<ushort, ushort> _deliveredFragments;
 
@@ -754,81 +817,90 @@ namespace LiteNetLib
         {
             if (p.IsFragmented)
             {
-                if (p.FragmentsTotal > NetManager.MaxFragmentsCount)
+                if (p.FragmentsTotal == 0 || p.FragmentsTotal > NetManager.MaxFragmentsCount)
                 {
                     NetManager.PoolRecycle(p);
+                    NetDebug.WriteError($"Invalid FragmentsTotal: {p.FragmentsTotal}");
                     return;
                 }
+
+                if (p.FragmentPart >= p.FragmentsTotal)
+                {
+                    NetManager.PoolRecycle(p);
+                    NetDebug.WriteError($"FragmentPart {p.FragmentPart} >= FragmentsTotal {p.FragmentsTotal}");
+                    return;
+                }
+
                 NetDebug.Write($"Fragment. Id: {p.FragmentId}, Part: {p.FragmentPart}, Total: {p.FragmentsTotal}");
-                //Get needed array from dictionary
+
                 ushort packetFragId = p.FragmentId;
                 byte packetChannelId = p.ChannelId;
+
                 if (!_holdedFragments.TryGetValue(packetFragId, out var incomingFragments))
                 {
-                    //Holded fragments limit reached
                     if (_holdedFragments.Count >= NetConstants.MaxFragmentsInWindow * ChannelsCount * NetConstants.FragmentedChannelsCount)
                     {
                         NetManager.PoolRecycle(p);
-                        //NetDebug.WriteError($"Holded fragments limit reached ({_holdedFragments.Count}/{(NetConstants.DefaultWindowSize / 2) * ChannelsCount * NetConstants.FragmentedChannelsCount}). Dropping fragment id: {packetFragId}");
                         return;
                     }
 
-                    incomingFragments = new IncomingFragments
-                    {
-                        Fragments = new NetPacket[p.FragmentsTotal],
-                        ChannelId = p.ChannelId
-                    };
+                    incomingFragments = new IncomingFragments(p.FragmentsTotal, p.ChannelId, _updateTime);
                     _holdedFragments.Add(packetFragId, incomingFragments);
                 }
-
-                //Cache
-                var fragments = incomingFragments.Fragments;
-
-                //Error check
-                if (p.FragmentPart >= fragments.Length ||
-                    fragments[p.FragmentPart] != null ||
-                    p.ChannelId != incomingFragments.ChannelId)
+                else if (p.FragmentsTotal != incomingFragments.TotalFragments || p.ChannelId != incomingFragments.ChannelId)
                 {
                     NetManager.PoolRecycle(p);
-                    NetDebug.WriteError("Invalid fragment packet");
+                    NetDebug.WriteError("Fragment metadata mismatch");
                     return;
                 }
-                //Fill array
-                fragments[p.FragmentPart] = p;
 
-                //Increase received fragments count
+                if (incomingFragments.Contains(p.FragmentPart))
+                {
+                    NetManager.PoolRecycle(p);
+                    return;
+                }
+
+                incomingFragments.Set(p.FragmentPart, p);
                 incomingFragments.ReceivedCount++;
-
-                //Increase total size
                 incomingFragments.TotalSize += p.Size - NetConstants.FragmentedHeaderTotalSize;
+                incomingFragments.LastReceivedTime = _updateTime;
 
-                //Check for finish
-                if (incomingFragments.ReceivedCount != fragments.Length)
+                if (incomingFragments.ReceivedCount != incomingFragments.TotalFragments)
                     return;
 
-                //just simple packet
                 NetPacket resultingPacket = NetManager.PoolGetPacket(incomingFragments.TotalSize);
 
-                int pos = 0;
-                for (int i = 0; i < incomingFragments.ReceivedCount; i++)
+                void AbortReassembly(string error)
                 {
-                    var fragment = fragments[i];
+                    _holdedFragments.Remove(packetFragId);
+                    incomingFragments.RecycleAll(NetManager);
+                    NetManager.PoolRecycle(resultingPacket);
+                    NetDebug.WriteError(error);
+                }
+
+                int pos = 0;
+                for (ushort i = 0; i < incomingFragments.TotalFragments; i++)
+                {
+                    if (!incomingFragments.TryGet(i, out var fragment))
+                    {
+                        AbortReassembly($"Fragment {i} missing during reassembly");
+                        return;
+                    }
+
                     int writtenSize = fragment.Size - NetConstants.FragmentedHeaderTotalSize;
 
-                    if (pos+writtenSize > resultingPacket.RawData.Length)
+                    if (pos + writtenSize > resultingPacket.RawData.Length)
                     {
-                        _holdedFragments.Remove(packetFragId);
-                        NetDebug.WriteError($"Fragment error pos: {pos + writtenSize} >= resultPacketSize: {resultingPacket.RawData.Length} , totalSize: {incomingFragments.TotalSize}");
-                        return;
-                    }
-                    if (fragment.Size > fragment.RawData.Length)
-                    {
-                        _holdedFragments.Remove(packetFragId);
-                        NetDebug.WriteError($"Fragment error size: {fragment.Size} > fragment.RawData.Length: {fragment.RawData.Length}");
+                        AbortReassembly($"Fragment error pos: {pos + writtenSize} >= resultPacketSize: {resultingPacket.RawData.Length}");
                         return;
                     }
 
-                    //Create resulting big packet
+                    if (fragment.Size > fragment.RawData.Length)
+                    {
+                        AbortReassembly($"Fragment error size: {fragment.Size} > fragment.RawData.Length: {fragment.RawData.Length}");
+                        return;
+                    }
+
                     Buffer.BlockCopy(
                         fragment.RawData,
                         NetConstants.FragmentedHeaderTotalSize,
@@ -837,15 +909,11 @@ namespace LiteNetLib
                         writtenSize);
                     pos += writtenSize;
 
-                    //Free memory
                     NetManager.PoolRecycle(fragment);
-                    fragments[i] = null;
+                    incomingFragments.Remove(i);
                 }
 
-                //Clear memory
                 _holdedFragments.Remove(packetFragId);
-
-                //Send to process
                 NetManager.CreateReceiveEvent(resultingPacket, method, (byte)(packetChannelId / NetConstants.ChannelTypeCount), 0, this);
             }
             else //Just simple packet
@@ -1154,6 +1222,8 @@ namespace LiteNetLib
 
         internal void Update(float deltaTime)
         {
+            _updateTime += deltaTime;
+
             Interlocked.Exchange(ref _timeSinceLastPacket, _timeSinceLastPacket + deltaTime);
             switch (_connectionState)
             {
@@ -1229,6 +1299,28 @@ namespace LiteNetLib
             }
 
             UpdateMtuLogic(deltaTime);
+
+            if (_holdedFragments.Count > 0)
+            {
+                List<ushort> expired = null;
+                foreach (var kv in _holdedFragments)
+                {
+                    if (_updateTime - kv.Value.LastReceivedTime > NetManager.FragmentTimeout)
+                    {
+                        expired ??= new List<ushort>();
+                        expired.Add(kv.Key);
+                    }
+                }
+
+                if (expired != null)
+                {
+                    foreach (ushort fragId in expired)
+                    {
+                        if (_holdedFragments.Remove(fragId, out var fragments))
+                            fragments.RecycleAll(NetManager);
+                    }
+                }
+            }
 
             UpdateChannels();
 

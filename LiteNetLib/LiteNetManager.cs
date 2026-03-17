@@ -206,6 +206,11 @@ namespace LiteNetLib
         public ushort MaxFragmentsCount = ushort.MaxValue;
 
         /// <summary>
+        /// Fragmented packet timeout
+        /// </summary>
+        public ushort FragmentTimeout = 3000;
+
+        /// <summary>
         /// NatPunchModule for NAT hole punching operations
         /// </summary>
         public NatPunchModule NatPunchModule => _natPunchModule.Value;
