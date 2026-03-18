@@ -111,13 +111,11 @@ namespace LiteNetLib
             public readonly byte ChannelId;
             public int ReceivedCount;
             public int TotalSize;
-            public float LastReceivedTime;
 
-            public IncomingFragments(ushort totalFragments, byte channelId, float now)
+            public IncomingFragments(ushort totalFragments, byte channelId)
             {
                 TotalFragments = totalFragments;
                 ChannelId = channelId;
-                LastReceivedTime = now;
                 if (totalFragments <= ArrayThreshold)
                     _array = new NetPacket[totalFragments];
                 else
@@ -168,7 +166,6 @@ namespace LiteNetLib
             }
         }
         private int _fragmentId;
-        private float _updateTime;
         private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
         private readonly Dictionary<ushort, ushort> _deliveredFragments;
 
@@ -844,7 +841,7 @@ namespace LiteNetLib
                         return;
                     }
 
-                    incomingFragments = new IncomingFragments(p.FragmentsTotal, p.ChannelId, _updateTime);
+                    incomingFragments = new IncomingFragments(p.FragmentsTotal, p.ChannelId);
                     _holdedFragments.Add(packetFragId, incomingFragments);
                 }
                 else if (p.FragmentsTotal != incomingFragments.TotalFragments || p.ChannelId != incomingFragments.ChannelId)
@@ -863,7 +860,6 @@ namespace LiteNetLib
                 incomingFragments.Set(p.FragmentPart, p);
                 incomingFragments.ReceivedCount++;
                 incomingFragments.TotalSize += p.Size - NetConstants.FragmentedHeaderTotalSize;
-                incomingFragments.LastReceivedTime = _updateTime;
 
                 if (incomingFragments.ReceivedCount != incomingFragments.TotalFragments)
                     return;
@@ -1222,8 +1218,6 @@ namespace LiteNetLib
 
         internal void Update(float deltaTime)
         {
-            _updateTime += deltaTime;
-
             Interlocked.Exchange(ref _timeSinceLastPacket, _timeSinceLastPacket + deltaTime);
             switch (_connectionState)
             {
@@ -1299,28 +1293,6 @@ namespace LiteNetLib
             }
 
             UpdateMtuLogic(deltaTime);
-
-            if (_holdedFragments.Count > 0)
-            {
-                List<ushort> expired = null;
-                foreach (var kv in _holdedFragments)
-                {
-                    if (_updateTime - kv.Value.LastReceivedTime > NetManager.FragmentTimeout)
-                    {
-                        expired ??= new List<ushort>();
-                        expired.Add(kv.Key);
-                    }
-                }
-
-                if (expired != null)
-                {
-                    foreach (ushort fragId in expired)
-                    {
-                        if (_holdedFragments.Remove(fragId, out var fragments))
-                            fragments.RecycleAll(NetManager);
-                    }
-                }
-            }
 
             UpdateChannels();
 
