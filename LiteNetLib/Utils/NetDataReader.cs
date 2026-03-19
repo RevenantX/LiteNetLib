@@ -533,10 +533,17 @@ namespace LiteNetLib.Utils
         #region Helpers
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private unsafe T ReadUnmanaged<T>() where T : unmanaged
+        {
+            fixed (byte* ptr = &_data[_position])
+                return *(T*)ptr;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe T PeekUnmanaged<T>() where T : unmanaged
         {
             EnsureAvailable(sizeof(T));
-            return Unsafe.ReadUnaligned<T>(ref _data[_position]);
+            return ReadUnmanaged<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -545,7 +552,7 @@ namespace LiteNetLib.Utils
             int size = sizeof(T);
             EnsureAvailable(size);
 
-            T value = Unsafe.ReadUnaligned<T>(ref _data[_position]);
+            T value = ReadUnmanaged<T>();
             _position += size;
             return value;
         }
@@ -556,7 +563,7 @@ namespace LiteNetLib.Utils
             int size = sizeof(T);
             if (size <= AvailableBytes)
             {
-                result = Unsafe.ReadUnaligned<T>(ref _data[_position]);
+                result = ReadUnmanaged<T>();
                 _position += size;
                 return true;
             }
