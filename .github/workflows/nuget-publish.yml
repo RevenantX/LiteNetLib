@@ -1,0 +1,90 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build LiteNetLib
+        run: dotnet build LiteNetLib/LiteNetLib.csproj --configuration Release
+
+      - name: Check version and pack if changed
+        id: check-pack
+        run: |
+          echo "Checking for version changes..."
+
+          PROJECT_PATH="LiteNetLib/LiteNetLib.csproj"
+          PACKAGE_NAME="litenetlib"
+
+          # Extract version from project file
+          LOCAL_VERSION=$(grep -o '<Version>[^<]*</Version>' "$PROJECT_PATH" | sed 's/<Version>\(.*\)<\/Version>/\1/')
+
+          if [ -z "$LOCAL_VERSION" ]; then
+            echo "No <Version> tag found in $PROJECT_PATH"
+            echo "has_packages=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Get the latest version from NuGet.org
+          echo "Checking NuGet.org for $PACKAGE_NAME..."
+          NUGET_VERSION=$(curl -s "https://api.nuget.org/v3-flatcontainer/$PACKAGE_NAME/index.json" | grep -o '"[^"]*"' | sed 's/"//g' | sort -V | tail -n 1)
+
+          echo "Local version: $LOCAL_VERSION"
+          echo "NuGet version: $NUGET_VERSION"
+
+          # Compare versions
+          if [ "$LOCAL_VERSION" != "$NUGET_VERSION" ]; then
+            echo "Version changed - will pack and publish"
+            mkdir -p ./nupkgs
+            dotnet pack "$PROJECT_PATH" --configuration Release --no-build --output ./nupkgs
+            echo "has_packages=true" >> $GITHUB_OUTPUT
+          else
+            echo "Version unchanged - skipping"
+            echo "has_packages=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push to NuGet.org
+        if: steps.check-pack.outputs.has_packages == 'true'
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          echo "Publishing to NuGet.org..."
+          for package in ./nupkgs/*.nupkg; do
+            if [ -f "$package" ]; then
+              echo "Publishing $package..."
+              dotnet nuget push "$package" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate || {
+                echo "Failed to publish $package"
+                exit 1
+              }
+            fi
+          done
+
+      - name: Upload package as artifact
+        if: steps.check-pack.outputs.has_packages == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: ./nupkgs/*.nupkg
+          retention-days: 7
+
+      - name: No package to publish
+        if: steps.check-pack.outputs.has_packages == 'false'
+        run: echo "Version unchanged - nothing to publish"
