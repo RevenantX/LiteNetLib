@@ -166,8 +166,9 @@ namespace LiteNetLib.Utils
             T[] result = new T[length];
             for (int i = 0; i < length; i++)
             {
-                result[i] = new T();
-                result[i].Deserialize(this);
+                var item = new T();
+                item.Deserialize(this);
+                result[i] = item;
             }
 
             return result;
@@ -539,9 +540,8 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe T PeekUnmanaged<T>() where T : unmanaged
         {
-            int size = sizeof(T);
-            EnsureAvailable(size);
-            return MemoryMarshal.Read<T>(_data.AsSpan(_position));
+            EnsureAvailable(sizeof(T));
+            return Unsafe.ReadUnaligned<T>(ref _data[_position]);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -550,7 +550,7 @@ namespace LiteNetLib.Utils
             int size = sizeof(T);
             EnsureAvailable(size);
 
-            T value = MemoryMarshal.Read<T>(_data.AsSpan(_position));
+            T value = Unsafe.ReadUnaligned<T>(ref _data[_position]);
             _position += size;
             return value;
         }
@@ -558,9 +558,11 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe bool TryGetUnmanaged<T>(out T result) where T : unmanaged
         {
-            if (MemoryMarshal.TryRead(_data.AsSpan(_position, AvailableBytes), out result))
+            int size = sizeof(T);
+            if (size <= AvailableBytes)
             {
-                _position += sizeof(T);
+                result = Unsafe.ReadUnaligned<T>(ref _data[_position]);
+                _position += size;
                 return true;
             }
 

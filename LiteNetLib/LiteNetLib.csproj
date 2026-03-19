@@ -47,6 +47,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\LNL.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
