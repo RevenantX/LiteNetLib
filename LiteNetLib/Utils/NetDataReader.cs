@@ -102,11 +102,6 @@ namespace LiteNetLib.Utils
 
         public void SetSource(byte[] source, int offset, int endOffset)
         {
-            if ((uint)offset > (uint)source.Length)
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            if ((uint)endOffset > (uint)source.Length || endOffset < offset)
-                throw new ArgumentOutOfRangeException(nameof(endOffset));
-
             _data = source;
             _position = offset;
             _offset = offset;
