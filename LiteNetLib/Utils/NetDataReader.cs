@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace LiteNetLib.Utils
 {
@@ -10,6 +11,9 @@ namespace LiteNetLib.Utils
         protected int _position;
         protected int _dataSize;
         protected int _offset;
+
+        private const int IPv4Size = 4;
+        private const int IPv6Size = 16;
 
         public byte[] RawData
         {
@@ -55,14 +59,30 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureAvailable(int count)
         {
-            if (count < 0 || count > AvailableBytes)
-                throw new InvalidOperationException(
-                    $"Not enough data to read {count} byte(s). Position={_position}, DataSize={_dataSize}");
+            if ((uint)count > (uint)AvailableBytes)
+                ThrowNotEnoughData(count);
         }
 
-        public void SkipBytes(int count) => _position += count;
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void ThrowNotEnoughData(int count)
+        {
+            throw new InvalidOperationException(
+                $"Not enough data to read {count} byte(s). Position={_position}, DataSize={_dataSize}");
+        }
 
-        public void SetPosition(int position) => _position = position;
+        public void SkipBytes(int count)
+        {
+            EnsureAvailable(count);
+            _position += count;
+        }
+
+        public void SetPosition(int position)
+        {
+            if ((uint)position > (uint)_dataSize)
+                throw new ArgumentOutOfRangeException(nameof(position));
+
+            _position = position;
+        }
 
         public void SetSource(NetDataWriter dataWriter)
         {
@@ -80,12 +100,17 @@ namespace LiteNetLib.Utils
             _dataSize = source.Length;
         }
 
-        public void SetSource(byte[] source, int offset, int maxSize)
+        public void SetSource(byte[] source, int offset, int endOffset)
         {
+            if ((uint)offset > (uint)source.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if ((uint)endOffset > (uint)source.Length || endOffset < offset)
+                throw new ArgumentOutOfRangeException(nameof(endOffset));
+
             _data = source;
             _position = offset;
             _offset = offset;
-            _dataSize = maxSize;
+            _dataSize = endOffset;
         }
 
         public NetDataReader() { }
@@ -94,196 +119,139 @@ namespace LiteNetLib.Utils
 
         public NetDataReader(byte[] source) => SetSource(source);
 
-        public NetDataReader(byte[] source, int offset, int maxSize) => SetSource(source, offset, maxSize);
+        public NetDataReader(byte[] source, int offset, int endOffset) => SetSource(source, offset, endOffset);
 
         #region GetMethods
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Get<T>(out T result) where T : struct, INetSerializable
+            => result = Get<T>();
+
+        public T Get<T>() where T : struct, INetSerializable
         {
-            result = default(T);
-            result.Deserialize(this);
+            var obj = default(T);
+            obj.Deserialize(this);
+            return obj;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Get<T>(out T result, Func<T> constructor) where T : class, INetSerializable
+            => result = Get(constructor);
+
+        public T Get<T>(Func<T> constructor) where T : class, INetSerializable
         {
-            result = constructor();
-            result.Deserialize(this);
+            var obj = constructor();
+            obj.Deserialize(this);
+            return obj;
         }
 
         public void Get(out IPEndPoint result) => result = GetIPEndPoint();
 
         public IPEndPoint GetIPEndPoint()
         {
-            IPAddress address;
-            //IPv4
-            if (GetByte() == 0)
-            {
-                EnsureAvailable(4);
-                address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, 4));
-                _position += 4;
-            }
-            //IPv6
-            else
-            {
-                EnsureAvailable(16);
-                address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, 16));
-                _position += 16;
-            }
+            bool isIPv4 = GetByte() == 0;
+
+            int size = isIPv4 ? IPv4Size : IPv6Size;
+            EnsureAvailable(size);
+
+            IPAddress address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, size));
+            _position += size;
             return new IPEndPoint(address, GetUShort());
-        }
-
-        public void Get(out byte result) => result = GetByte();
-        public void Get(out sbyte result) => result = (sbyte)GetByte();
-        public void Get(out bool result) => result = GetBool();
-        public void Get(out char result) => result = GetChar();
-        public void Get(out ushort result) => result = GetUShort();
-        public void Get(out short result) => result = GetShort();
-        public void Get(out ulong result) => result = GetULong();
-        public void Get(out long result) => result = GetLong();
-        public void Get(out uint result) => result = GetUInt();
-        public void Get(out int result) => result = GetInt();
-        public void Get(out double result) => result = GetDouble();
-        public void Get(out float result) => result = GetFloat();
-        public void Get(out string result) => result = GetString();
-        public void Get(out string result, int maxLength) => result = GetString(maxLength);
-        public void Get(out Guid result) => result = GetGuid();
-
-        public byte GetByte() => _data[_position++];
-
-        public sbyte GetSByte() => (sbyte)GetByte();
-
-        public T[] GetArray<T>(ushort size)
-        {
-            ushort length = BitConverter.ToUInt16(_data, _position);
-            _position += 2;
-
-            int byteLength = checked(length * size);
-            EnsureAvailable(byteLength);
-
-            T[] result = new T[length];
-            if (byteLength > 0)
-                Buffer.BlockCopy(_data, _position, result, 0, byteLength);
-
-            _position += byteLength;
-            return result;
         }
 
         public T[] GetArray<T>() where T : INetSerializable, new()
         {
-            ushort length = BitConverter.ToUInt16(_data, _position);
-            _position += 2;
+            ushort length = GetUShort();
+
             T[] result = new T[length];
             for (int i = 0; i < length; i++)
             {
-                var item = new T();
-                item.Deserialize(this);
-                result[i] = item;
+                result[i] = new T();
+                result[i].Deserialize(this);
             }
+
             return result;
         }
 
         public T[] GetArray<T>(Func<T> constructor) where T : class, INetSerializable
         {
-            ushort length = BitConverter.ToUInt16(_data, _position);
-            _position += 2;
+            ushort length = GetUShort();
+
             T[] result = new T[length];
             for (int i = 0; i < length; i++)
+            {
                 Get(out result[i], constructor);
+            }
+
             return result;
-        }
-
-        public bool[] GetBoolArray() => GetArray<bool>(1);
-        public ushort[] GetUShortArray() => GetArray<ushort>(2);
-        public short[] GetShortArray() => GetArray<short>(2);
-        public int[] GetIntArray() => GetArray<int>(4);
-        public uint[] GetUIntArray() => GetArray<uint>(4);
-        public float[] GetFloatArray() => GetArray<float>(4);
-        public double[] GetDoubleArray() => GetArray<double>(8);
-        public long[] GetLongArray() => GetArray<long>(8);
-        public ulong[] GetULongArray() => GetArray<ulong>(8);
-
-        public string[] GetStringArray()
-        {
-            ushort length = GetUShort();
-            string[] arr = new string[length];
-            for (int i = 0; i < length; i++)
-            {
-                arr[i] = GetString();
-            }
-            return arr;
-        }
-
-        /// <summary>
-        /// Note that "maxStringLength" only limits the number of characters in a string, not its size in bytes.
-        /// Strings that exceed this parameter are returned as empty
-        /// </summary>
-        public string[] GetStringArray(int maxStringLength)
-        {
-            ushort length = GetUShort();
-            string[] arr = new string[length];
-            for (int i = 0; i < length; i++)
-            {
-                arr[i] = GetString(maxStringLength);
-            }
-            return arr;
         }
 
         public bool GetBool() => GetByte() == 1;
-        public char GetChar() => (char)GetUShort();
+        public void Get(out bool result) => result = GetBool();
+        public bool[] GetBoolArray() => GetUnmanagedArray<bool>();
 
-        public ushort GetUShort()
-        {
-            ushort result = BitConverter.ToUInt16(_data, _position);
-            _position += 2;
-            return result;
-        }
+        public byte GetByte() => GetUnmanaged<byte>();
+        public void Get(out byte result) => result = GetByte();
+        public byte[] GetBytesWithLength() => GetUnmanagedArray<byte>();
 
-        public short GetShort()
-        {
-            short result = BitConverter.ToInt16(_data, _position);
-            _position += 2;
-            return result;
-        }
+        public sbyte GetSByte() => GetUnmanaged<sbyte>();
+        public void Get(out sbyte result) => result = GetSByte();
+        public sbyte[] GetSBytesWithLength() => GetUnmanagedArray<sbyte>();
 
-        public long GetLong()
-        {
-            long result = BitConverter.ToInt64(_data, _position);
-            _position += 8;
-            return result;
-        }
+        public char GetChar() => GetUnmanaged<char>();
+        public void Get(out char result) => result = GetChar();
+        public char[] GetCharArray() => GetUnmanagedArray<char>();
 
-        public ulong GetULong()
-        {
-            ulong result = BitConverter.ToUInt64(_data, _position);
-            _position += 8;
-            return result;
-        }
+        public short GetShort() => GetUnmanaged<short>();
+        public void Get(out short result) => result = GetShort();
+        public short[] GetShortArray() => GetUnmanagedArray<short>();
 
-        public int GetInt()
-        {
-            int result = BitConverter.ToInt32(_data, _position);
-            _position += 4;
-            return result;
-        }
+        public ushort GetUShort() => GetUnmanaged<ushort>();
+        public void Get(out ushort result) => result = GetUShort();
+        public ushort[] GetUShortArray() => GetUnmanagedArray<ushort>();
 
-        public uint GetUInt()
-        {
-            uint result = BitConverter.ToUInt32(_data, _position);
-            _position += 4;
-            return result;
-        }
+        public int GetInt() => GetUnmanaged<int>();
+        public void Get(out int result) => result = GetInt();
+        public int[] GetIntArray() => GetUnmanagedArray<int>();
 
-        public float GetFloat()
-        {
-            float result = BitConverter.ToSingle(_data, _position);
-            _position += 4;
-            return result;
-        }
+        public uint GetUInt() => GetUnmanaged<uint>();
+        public void Get(out uint result) => result = GetUInt();
+        public uint[] GetUIntArray() => GetUnmanagedArray<uint>();
 
-        public double GetDouble()
+        public float GetFloat() => GetUnmanaged<float>();
+        public void Get(out float result) => result = GetFloat();
+        public float[] GetFloatArray() => GetUnmanagedArray<float>();
+
+        public long GetLong() => GetUnmanaged<long>();
+        public void Get(out long result) => result = GetLong();
+        public long[] GetLongArray() => GetUnmanagedArray<long>();
+
+        public ulong GetULong() => GetUnmanaged<ulong>();
+        public void Get(out ulong result) => result = GetULong();
+        public ulong[] GetULongArray() => GetUnmanagedArray<ulong>();
+
+        public double GetDouble() => GetUnmanaged<double>();
+        public void Get(out double result) => result = GetDouble();
+        public double[] GetDoubleArray() => GetUnmanagedArray<double>();
+
+        public Guid GetGuid() => GetUnmanaged<Guid>();
+        public void Get(out Guid result) => result = GetGuid();
+        public Guid[] GetGuidArray() => GetUnmanagedArray<Guid>();
+
+        public void Get(out string result) => result = GetString();
+        public void Get(out string result, int maxLength) => result = GetString(maxLength);
+
+        public string GetString()
         {
-            double result = BitConverter.ToDouble(_data, _position);
-            _position += 8;
+            ushort size = GetUShort();
+            if (size == 0)
+                return string.Empty;
+
+            int actualSize = size - 1;
+            EnsureAvailable(actualSize);
+
+            string result = NetDataWriter.uTF8Encoding.GetString(_data, _position, actualSize);
+            _position += actualSize;
             return result;
         }
 
@@ -309,17 +277,35 @@ namespace LiteNetLib.Utils
             return result;
         }
 
-        public string GetString()
+        public string[] GetStringArray()
         {
-            ushort size = GetUShort();
-            if (size == 0)
-                return string.Empty;
+            ushort length = GetUShort();
+            EnsureAvailable(checked(length * sizeof(ushort))); // 2 bytes (ushort) for string length
 
-            int actualSize = size - 1;
-            EnsureAvailable(actualSize);
+            string[] result = new string[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = GetString();
+            }
 
-            string result = NetDataWriter.uTF8Encoding.GetString(_data, _position, actualSize);
-            _position += actualSize;
+            return result;
+        }
+
+        /// <summary>
+        /// Note that "maxStringLength" only limits the number of characters in a string, not its size in bytes.
+        /// Strings that exceed this parameter are returned as empty
+        /// </summary>
+        public string[] GetStringArray(int maxStringLength)
+        {
+            ushort length = GetUShort();
+            EnsureAvailable(checked(length * sizeof(ushort))); // 2 bytes (ushort) for string length
+
+            string[] result = new string[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = GetString(maxStringLength);
+            }
+
             return result;
         }
 
@@ -333,14 +319,6 @@ namespace LiteNetLib.Utils
 
             string result = NetDataWriter.uTF8Encoding.GetString(_data, _position, size);
             _position += size;
-            return result;
-        }
-
-        public Guid GetGuid()
-        {
-            EnsureAvailable(16);
-            var result = new Guid(_data.AsSpan(_position, 16));
-            _position += 16;
             return result;
         }
 
@@ -359,68 +337,64 @@ namespace LiteNetLib.Utils
             return segment;
         }
 
-        public T Get<T>() where T : struct, INetSerializable
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlySpan<byte> GetRemainingBytesSpan()
         {
-            var obj = default(T);
-            obj.Deserialize(this);
-            return obj;
-        }
-
-        public T Get<T>(Func<T> constructor) where T : class, INetSerializable
-        {
-            var obj = constructor();
-            obj.Deserialize(this);
-            return obj;
+            ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(_data, _position, AvailableBytes);
+            _position = _dataSize;
+            return span;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<byte> GetRemainingBytesSpan() =>
-            new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlyMemory<byte> GetRemainingBytesMemory() =>
-            new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
+        public ReadOnlyMemory<byte> GetRemainingBytesMemory()
+        {
+            ReadOnlyMemory<byte> memory = new ReadOnlyMemory<byte>(_data, _position, AvailableBytes);
+            _position = _dataSize;
+            return memory;
+        }
 
         public byte[] GetRemainingBytes()
         {
-            byte[] outgoingData = new byte[AvailableBytes];
-            Buffer.BlockCopy(_data, _position, outgoingData, 0, AvailableBytes);
+            byte[] result = _data.AsSpan(_position, AvailableBytes).ToArray();
             _position = _dataSize;
-            return outgoingData;
+            return result;
         }
 
         public void GetBytes(byte[] destination, int start, int count)
         {
             EnsureAvailable(count);
-            Buffer.BlockCopy(_data, _position, destination, start, count);
+            _data.AsSpan(_position, count).CopyTo(destination.AsSpan(start, count));
             _position += count;
         }
 
         public void GetBytes(byte[] destination, int count)
         {
             EnsureAvailable(count);
-            Buffer.BlockCopy(_data, _position, destination, 0, count);
+            _data.AsSpan(_position, count).CopyTo(destination.AsSpan(0, count));
             _position += count;
         }
 
-        public sbyte[] GetSBytesWithLength() => GetArray<sbyte>(1);
-        public byte[] GetBytesWithLength() => GetArray<byte>(1);
         #endregion
 
         #region PeekMethods
 
-        public byte PeekByte() => _data[_position];
-        public sbyte PeekSByte() => (sbyte)_data[_position];
-        public bool PeekBool() => _data[_position] == 1;
-        public char PeekChar() => (char)PeekUShort();
-        public ushort PeekUShort() => BitConverter.ToUInt16(_data, _position);
-        public short PeekShort() => BitConverter.ToInt16(_data, _position);
-        public long PeekLong() => BitConverter.ToInt64(_data, _position);
-        public ulong PeekULong() => BitConverter.ToUInt64(_data, _position);
-        public int PeekInt() => BitConverter.ToInt32(_data, _position);
-        public uint PeekUInt() => BitConverter.ToUInt32(_data, _position);
-        public float PeekFloat() => BitConverter.ToSingle(_data, _position);
-        public double PeekDouble() => BitConverter.ToDouble(_data, _position);
+        public bool PeekBool() => PeekByte() == 1;
+        public byte PeekByte() => PeekUnmanaged<byte>();
+        public sbyte PeekSByte() => PeekUnmanaged<sbyte>();
+
+        public char PeekChar() => PeekUnmanaged<char>();
+        public short PeekShort() => PeekUnmanaged<short>();
+        public ushort PeekUShort() => PeekUnmanaged<ushort>();
+
+        public int PeekInt() => PeekUnmanaged<int>();
+        public uint PeekUInt() => PeekUnmanaged<uint>();
+        public float PeekFloat() => PeekUnmanaged<float>();
+
+        public long PeekLong() => PeekUnmanaged<long>();
+        public ulong PeekULong() => PeekUnmanaged<ulong>();
+        public double PeekDouble() => PeekUnmanaged<double>();
+
+        public Guid PeekGuid() => PeekUnmanaged<Guid>();
 
         /// <summary>
         /// Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
@@ -432,9 +406,12 @@ namespace LiteNetLib.Utils
                 return string.Empty;
 
             int actualSize = size - 1;
-            return (maxLength > 0 && NetDataWriter.uTF8Encoding.GetCharCount(_data, _position + 2, actualSize) > maxLength)
+            EnsureAvailable(sizeof(ushort) + actualSize);
+
+            return maxLength > 0 &&
+                   NetDataWriter.uTF8Encoding.GetCharCount(_data, _position + sizeof(ushort), actualSize) > maxLength
                 ? string.Empty
-                : NetDataWriter.uTF8Encoding.GetString(_data, _position + 2, actualSize);
+                : NetDataWriter.uTF8Encoding.GetString(_data, _position + sizeof(ushort), actualSize);
         }
 
         public string PeekString()
@@ -444,195 +421,172 @@ namespace LiteNetLib.Utils
                 return string.Empty;
 
             int actualSize = size - 1;
-            return NetDataWriter.uTF8Encoding.GetString(_data, _position + 2, actualSize);
+            EnsureAvailable(sizeof(ushort) + actualSize);
+
+            return NetDataWriter.uTF8Encoding.GetString(_data, _position + sizeof(ushort), actualSize);
         }
+
         #endregion
 
         #region TryGetMethods
-        public bool TryGetByte(out byte result)
-        {
-            if (AvailableBytes >= 1)
-            {
-                result = GetByte();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
-
-        public bool TryGetSByte(out sbyte result)
-        {
-            if (AvailableBytes >= 1)
-            {
-                result = GetSByte();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
 
         public bool TryGetBool(out bool result)
         {
-            if (AvailableBytes >= 1)
+            if (!TryGetByte(out byte value))
             {
-                result = GetBool();
-                return true;
-            }
-            result = false;
-            return false;
-        }
-
-        public bool TryGetChar(out char result)
-        {
-            if (!TryGetUShort(out ushort uShortValue))
-            {
-                result = '\0';
+                result = default;
                 return false;
             }
-            result = (char)uShortValue;
+
+            result = value == 1;
             return true;
         }
 
-        public bool TryGetShort(out short result)
-        {
-            if (AvailableBytes >= 2)
-            {
-                result = GetShort();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetByte(out byte result) => TryGetUnmanaged(out result);
+        public bool TryGetSByte(out sbyte result) => TryGetUnmanaged(out result);
 
-        public bool TryGetUShort(out ushort result)
-        {
-            if (AvailableBytes >= 2)
-            {
-                result = GetUShort();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetChar(out char result) => TryGetUnmanaged(out result);
+        public bool TryGetShort(out short result) => TryGetUnmanaged(out result);
+        public bool TryGetUShort(out ushort result) => TryGetUnmanaged(out result);
 
-        public bool TryGetInt(out int result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                result = GetInt();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetInt(out int result) => TryGetUnmanaged(out result);
+        public bool TryGetUInt(out uint result) => TryGetUnmanaged(out result);
+        public bool TryGetFloat(out float result) => TryGetUnmanaged(out result);
 
-        public bool TryGetUInt(out uint result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                result = GetUInt();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetLong(out long result) => TryGetUnmanaged(out result);
+        public bool TryGetULong(out ulong result) => TryGetUnmanaged(out result);
+        public bool TryGetDouble(out double result) => TryGetUnmanaged(out result);
 
-        public bool TryGetLong(out long result)
-        {
-            if (AvailableBytes >= 8)
-            {
-                result = GetLong();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
-
-        public bool TryGetULong(out ulong result)
-        {
-            if (AvailableBytes >= 8)
-            {
-                result = GetULong();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
-
-        public bool TryGetFloat(out float result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                result = GetFloat();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
-
-        public bool TryGetDouble(out double result)
-        {
-            if (AvailableBytes >= 8)
-            {
-                result = GetDouble();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetGuid(out Guid result) => TryGetUnmanaged(out result);
 
         public bool TryGetString(out string result)
         {
-            if (AvailableBytes >= 2)
-            {
-                ushort strSize = PeekUShort();
-                int actualSize = strSize == 0 ? 0 : strSize - 1;
-
-                if (AvailableBytes >= 2 + actualSize)
-                {
-                    result = GetString();
-                    return true;
-                }
-            }
-            result = null;
-            return false;
-        }
-
-        public bool TryGetStringArray(out string[] result)
-        {
-            if (!TryGetUShort(out ushort strArrayLength))
+            if (AvailableBytes < sizeof(ushort))
             {
                 result = null;
                 return false;
             }
 
-            result = new string[strArrayLength];
-            for (int i = 0; i < strArrayLength; i++)
+            ushort size = PeekUShort();
+            int actualSize = size == 0 ? 0 : size - 1;
+
+            if (AvailableBytes < sizeof(ushort) + actualSize)
             {
-                if (!TryGetString(out result[i]))
+                result = null;
+                return false;
+            }
+
+            result = GetString();
+            return true;
+        }
+
+        public bool TryGetStringArray(out string[] result)
+        {
+            if (AvailableBytes < sizeof(ushort))
+            {
+                result = null;
+                return false;
+            }
+
+            int startPosition = _position;
+
+            ushort length = PeekUShort();
+            if (AvailableBytes < sizeof(ushort) + checked(length * sizeof(ushort)))
+            {
+                result = null;
+                return false;
+            }
+            _position += sizeof(ushort);
+
+            string[] values = new string[length];
+            for (int i = 0; i < length; i++)
+            {
+                if (!TryGetString(out values[i]))
                 {
+                    _position = startPosition;
                     result = null;
                     return false;
                 }
             }
 
+            result = values;
             return true;
         }
 
         public bool TryGetBytesWithLength(out byte[] result)
         {
-            if (AvailableBytes >= 2)
+            if (AvailableBytes < sizeof(ushort))
             {
-                ushort length = PeekUShort();
-                if (AvailableBytes >= 2 + length)
-                {
-                    result = GetBytesWithLength();
-                    return true;
-                }
+                result = null;
+                return false;
             }
-            result = null;
+
+            ushort length = PeekUShort();
+            if (AvailableBytes < sizeof(ushort) + length)
+            {
+                result = null;
+                return false;
+            }
+
+            result = GetBytesWithLength();
+            return true;
+        }
+
+        #endregion
+
+        #region Helpers
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private unsafe T PeekUnmanaged<T>() where T : unmanaged
+        {
+            int size = sizeof(T);
+            EnsureAvailable(size);
+            return MemoryMarshal.Read<T>(_data.AsSpan(_position));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private unsafe T GetUnmanaged<T>() where T : unmanaged
+        {
+            int size = sizeof(T);
+            EnsureAvailable(size);
+
+            T value = MemoryMarshal.Read<T>(_data.AsSpan(_position));
+            _position += size;
+            return value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private unsafe bool TryGetUnmanaged<T>(out T result) where T : unmanaged
+        {
+            if (MemoryMarshal.TryRead(_data.AsSpan(_position, AvailableBytes), out result))
+            {
+                _position += sizeof(T);
+                return true;
+            }
+
+            result = default;
             return false;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private unsafe T[] GetUnmanagedArray<T>() where T : unmanaged
+        {
+            ushort length = GetUShort();
+
+            int byteLength = checked(length * sizeof(T));
+            EnsureAvailable(byteLength);
+
+            T[] result = new T[length];
+            if (byteLength != 0)
+            {
+                MemoryMarshal.Cast<byte, T>(_data.AsSpan(_position, byteLength))
+                    .CopyTo(result.AsSpan());
+            }
+
+            _position += byteLength;
+            return result;
+        }
+
         #endregion
 
         public void Clear()
