@@ -14,7 +14,9 @@ namespace LiteNetLib.Utils
             int size = sizeof(T);
             if (bytes.Length < startIndex + size)
                 ThrowIndexOutOfRangeException();
-#if NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER
+#if NET8_0_OR_GREATER
+            Unsafe.WriteUnaligned(ref bytes[startIndex], value);
+#elif NETCOREAPP3_1 || NET5_0 || NETCOREAPP3_0_OR_GREATER
             Unsafe.As<byte, T>(ref bytes[startIndex]) = value;
 #else
             fixed (byte* ptr = &bytes[startIndex])
