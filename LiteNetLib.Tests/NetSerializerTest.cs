@@ -23,15 +23,18 @@ namespace LiteNetLib.Tests
                 SomeGuid = Guid.NewGuid(),
                 SomeVector2 = new SomeVector2(4, 5),
                 SomeVectors = new[] { new SomeVector2(1, 2), new SomeVector2(3, 4) },
+                SomeFastVector3 = new SomeFastVector3(0.21f, 100.25f, -400.0f),
+                SomeFastVectors = new[] { new SomeFastVector3(1.0f, 2.0f, 3.0f), new SomeFastVector3(4.0f, 5.0f, 6.0f) },
                 SomeEnum = TestEnum.B,
                 SomeByteArray = new byte[] { 255, 1, 0 },
                 TestObj = new SampleNetSerializable { Value = 5 },
                 TestArray = new[] { new SampleNetSerializable { Value = 6 }, new SampleNetSerializable { Value = 15 } },
                 SampleClassArray = new[]
-                    { FillTestArray(new SampleClass { Value = 6 }), FillTestArray(new SampleClass { Value = 15 }) },
+                    { FillTestArray(new SampleClass { Value = 6, TestEnum = TestEnum.C }), FillTestArray(new SampleClass { Value = 15, TestEnum = TestEnum.B }) },
                 SampleClassList = new List<SampleClass>
                     { FillTestArray(new SampleClass { Value = 1 }), FillTestArray(new SampleClass { Value = 5 }) },
                 VectorList = new List<SomeVector2> { new SomeVector2(-1, -2), new SomeVector2(700, 800) },
+                FastVectorList = new List<SomeFastVector3> { new SomeFastVector3(-100.0f, -200.0f, -300.0f), new SomeFastVector3(100.0f, 200.0f, 300.0f) },
                 IgnoreMe = 1337
             };
 
@@ -39,6 +42,7 @@ namespace LiteNetLib.Tests
             _packetProcessor.RegisterNestedType<SampleNetSerializable>();
             _packetProcessor.RegisterNestedType(() => new SampleClass());
             _packetProcessor.RegisterNestedType(SomeVector2.Serialize, SomeVector2.Deserialize);
+            _packetProcessor.RegisterNestedType(SomeFastVector3.Serialize, SomeFastVector3.Deserialize);
         }
 
         private SamplePacket _samplePacket;
@@ -70,6 +74,30 @@ namespace LiteNetLib.Tests
             }
         }
 
+        private readonly struct SomeFastVector3
+        {
+            public readonly float X;
+            public readonly float Y;
+            public readonly float Z;
+
+            public SomeFastVector3(float x, float y, float z)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+            }
+
+            public static void Serialize(NetDataWriter writer, SomeFastVector3 vector)
+            {
+                writer.PutUnmanaged(vector);
+            }
+
+            public static SomeFastVector3 Deserialize(NetDataReader reader)
+            {
+                return reader.GetUnmanaged<SomeFastVector3>();
+            }
+        }
+
         private struct SampleNetSerializable : INetSerializable
         {
             public int Value;
@@ -89,24 +117,27 @@ namespace LiteNetLib.Tests
         {
             public int Value;
             public ChildClass[] TestArray = Array.Empty<ChildClass>();
+            public TestEnum TestEnum;
 
             public void Serialize(NetDataWriter writer)
             {
                 writer.Put(Value);
                 writer.PutArray(TestArray);
+                writer.PutEnum(TestEnum);
             }
 
             public void Deserialize(NetDataReader reader)
             {
                 Value = reader.GetInt();
                 TestArray = reader.GetArray<ChildClass>();
+                TestEnum = reader.GetEnum<TestEnum>();
             }
 
             public override bool Equals(object obj)
             {
                 var other = (SampleClass)obj;
                 return other.Value == Value && (TestArray is null && other.TestArray is null || TestArray != null &&
-                    other.TestArray != null && TestArray.SequenceEqual(other.TestArray));
+                    other.TestArray != null && TestArray.SequenceEqual(other.TestArray)) && other.TestEnum == TestEnum;
             }
 
             public override int GetHashCode()
@@ -157,12 +188,15 @@ namespace LiteNetLib.Tests
             public Guid SomeGuid { get; set; }
             public SomeVector2 SomeVector2 { get; set; }
             public SomeVector2[] SomeVectors { get; set; }
+            public SomeFastVector3 SomeFastVector3 { get; set; }
+            public SomeFastVector3[] SomeFastVectors { get; set; }
             public TestEnum SomeEnum { get; set; }
             public SampleNetSerializable TestObj { get; set; }
             public SampleNetSerializable[] TestArray { get; set; }
             public SampleClass[] SampleClassArray { get; set; }
             public List<SampleClass> SampleClassList { get; set; }
             public List<SomeVector2> VectorList { get; set; }
+            public List<SomeFastVector3> FastVectorList { get; set; }
             [IgnoreDataMember]
             public int IgnoreMe { get; set; }
         }
@@ -210,6 +244,8 @@ namespace LiteNetLib.Tests
             Assert.That(readPackage.SomeGuid, Is.EqualTo(_samplePacket.SomeGuid));
             Assert.That(readPackage.SomeVector2, Is.EqualTo(_samplePacket.SomeVector2));
             Assert.That(readPackage.SomeVectors, Is.EqualTo(_samplePacket.SomeVectors).AsCollection);
+            Assert.That(readPackage.SomeFastVector3, Is.EqualTo(_samplePacket.SomeFastVector3));
+            Assert.That(readPackage.SomeFastVectors, Is.EqualTo(_samplePacket.SomeFastVectors).AsCollection);
             Assert.That(readPackage.SomeEnum, Is.EqualTo(_samplePacket.SomeEnum));
             Assert.That(readPackage.TestObj.Value, Is.EqualTo(_samplePacket.TestObj.Value));
             Assert.That(readPackage.TestArray, Is.EqualTo(_samplePacket.TestArray).AsCollection);
@@ -218,11 +254,13 @@ namespace LiteNetLib.Tests
             Assert.That(readPackage.IgnoreMe, Is.EqualTo(0)); // expect 0 because it should be ignored
             Assert.That(readPackage.SampleClassList, Is.EqualTo(_samplePacket.SampleClassList).AsCollection);
             Assert.That(readPackage.VectorList, Is.EqualTo(_samplePacket.VectorList).AsCollection);
+            Assert.That(readPackage.FastVectorList, Is.EqualTo(_samplePacket.FastVectorList).AsCollection);
 
             //remove test
             _samplePacket.SampleClassList.RemoveAt(0);
             _samplePacket.SampleClassArray = new []{new SampleClass {Value = 1}};
             _samplePacket.VectorList.RemoveAt(0);
+            _samplePacket.FastVectorList.RemoveAt(0);
 
             writer.Reset();
             _packetProcessor.Write(writer, _samplePacket);
@@ -237,6 +275,7 @@ namespace LiteNetLib.Tests
             _samplePacket.SampleClassList.Add(new SampleClass { Value = 154 });
             _samplePacket.SampleClassArray = new[] { new SampleClass { Value = 1 }, new SampleClass { Value = 2 }, new SampleClass { Value = 3 } };
             _samplePacket.VectorList.Add(new SomeVector2(500,600));
+            _samplePacket.FastVectorList.Add(new SomeFastVector3(500.0f, 600.0f, 700.0f));
 
             writer.Reset();
             _packetProcessor.Write(writer, _samplePacket);
