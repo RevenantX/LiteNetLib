@@ -14,7 +14,7 @@ namespace LiteNetLib.Utils
         protected int _offset;
 
         /// <summary>
-        /// Gets the internal <see langword="byte"/> array containing the raw network data.
+        /// Gets the internal <see cref="byte"/> array containing the raw network data.
         /// </summary>
         public byte[] RawData
         {
@@ -77,7 +77,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Gets the number of <see langword="byte"/>s remaining to be read.
+        /// Gets the number of <see cref="byte"/>s remaining to be read.
         /// </summary>
         public int AvailableBytes
         {
@@ -86,9 +86,9 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Verifies that the buffer has at least <paramref name="count"/> <see langword="byte"/>s available to read.
+        /// Verifies that the buffer has at least <paramref name="count"/> <see cref="byte"/>s available to read.
         /// </summary>
-        /// <param name="count">The number of <see langword="byte"/>s required.</param>
+        /// <param name="count">The number of <see cref="byte"/>s required.</param>
         /// <exception cref="InvalidOperationException">Thrown if <paramref name="count"/> exceeds <see cref="AvailableBytes"/> or is negative.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureAvailable(int count)
@@ -101,7 +101,7 @@ namespace LiteNetLib.Utils
         /// <summary>
         /// Advances the <see cref="Position"/> by the specified <paramref name="count"/>.
         /// </summary>
-        /// <param name="count">The number of <see langword="byte"/>s to skip.</param>
+        /// <param name="count">The number of <see cref="byte"/>s to skip.</param>
         public void SkipBytes(int count) => _position += count;
 
         /// <summary>
@@ -123,9 +123,9 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Reinitializes the reader using a <see langword="byte"/> array.
+        /// Reinitializes the reader using a <see cref="byte"/> array.
         /// </summary>
-        /// <param name="source">The source <see langword="byte"/> array.</param>
+        /// <param name="source">The source <see cref="byte"/> array.</param>
         public void SetSource(byte[] source)
         {
             _data = source;
@@ -135,11 +135,11 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Reinitializes the reader using a segment of a <see langword="byte"/> array.
+        /// Reinitializes the reader using a segment of a <see cref="byte"/> array.
         /// </summary>
-        /// <param name="source">The source <see langword="byte"/> array.</param>
+        /// <param name="source">The source <see cref="byte"/> array.</param>
         /// <param name="offset">The starting index for reading.</param>
-        /// <param name="maxSize">The total number of <see langword="byte"/>s available to read from the <paramref name="source"/>.</param>
+        /// <param name="maxSize">The total number of <see cref="byte"/>s available to read from the <paramref name="source"/>.</param>
         public void SetSource(byte[] source, int offset, int maxSize)
         {
             _data = source;
@@ -192,8 +192,8 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <returns>The deserialized <see cref="IPEndPoint"/>.</returns>
         /// <remarks>
-        /// Reads a <see langword="byte"/> to determine the <see cref="AddressFamily"/> (0 for IPv4, 1 for IPv6),
-        /// followed by the address bytes and a 2-byte <see langword="ushort"/> port.
+        /// Reads a <see cref="byte"/> to determine the <see cref="AddressFamily"/> (0 for IPv4, 1 for IPv6),
+        /// followed by the address bytes and a 2-byte <see cref="ushort"/> port.
         /// </remarks>
         public IPEndPoint GetIPEndPoint()
         {
@@ -215,59 +215,59 @@ namespace LiteNetLib.Utils
             return new IPEndPoint(address, GetUShort());
         }
 
-        /// <summary>Reads a <see langword="byte"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="byte"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out byte result) => result = GetByte();
 
-        /// <summary>Reads an <see langword="sbyte"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads an <see cref="sbyte"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out sbyte result) => result = (sbyte)GetByte();
 
-        /// <summary>Reads a <see langword="bool"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="bool"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out bool result) => result = GetBool();
 
-        /// <summary>Reads a <see langword="char"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="char"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out char result) => result = GetChar();
 
-        /// <summary>Reads a <see langword="ushort"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="ushort"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out ushort result) => result = GetUShort();
 
-        /// <summary>Reads a <see langword="short"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="short"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out short result) => result = GetShort();
 
-        /// <summary>Reads a <see langword="ulong"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="ulong"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out ulong result) => result = GetULong();
 
-        /// <summary>Reads a <see langword="long"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="long"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out long result) => result = GetLong();
 
-        /// <summary>Reads a <see langword="uint"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="uint"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out uint result) => result = GetUInt();
 
-        /// <summary>Reads an <see langword="int"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads an <see cref="int"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out int result) => result = GetInt();
 
-        /// <summary>Reads a <see langword="double"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="double"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out double result) => result = GetDouble();
 
-        /// <summary>Reads a <see langword="float"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="float"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out float result) => result = GetFloat();
 
-        /// <summary>Reads a <see langword="string"/> and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="string"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out string result) => result = GetString();
 
-        /// <summary>Reads a <see langword="string"/> with a length limit and assigns it to <paramref name="result"/>.</summary>
+        /// <summary>Reads a <see cref="string"/> with a length limit and assigns it to <paramref name="result"/>.</summary>
         public void Get(out string result, int maxLength) => result = GetString(maxLength);
 
         /// <summary>Reads a <see cref="Guid"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out Guid result) => result = GetGuid();
 
-        /// <summary>Reads the next <see langword="byte"/> from the buffer.</summary>
+        /// <summary>Reads the next <see cref="byte"/> from the buffer.</summary>
         public byte GetByte() => _data[_position++];
 
-        /// <summary>Reads the next <see langword="sbyte"/> from the buffer.</summary>
+        /// <summary>Reads the next <see cref="sbyte"/> from the buffer.</summary>
         public sbyte GetSByte() => (sbyte)GetByte();
 
         /// <summary>
-        /// Reads an array of unmanaged values prefixed by a <see langword="ushort"/> length.
+        /// Reads an array of unmanaged values prefixed by a <see cref="ushort"/> length.
         /// </summary>
         /// <typeparam name="T">An unmanaged type.</typeparam>
         /// <returns>A new array of type <typeparamref name="T"/>.</returns>
@@ -286,7 +286,7 @@ namespace LiteNetLib.Utils
         /// Reads an array of values by performing a direct memory copy.
         /// </summary>
         /// <typeparam name="T">The element type.</typeparam>
-        /// <param name="size">The size of a single element in <see langword="byte"/>s.</param>
+        /// <param name="size">The size of a single element in <see cref="byte"/>s.</param>
         /// <returns>A new array of type <typeparamref name="T"/>.</returns>
         public T[] GetArray<T>(ushort size)
         {
@@ -336,39 +336,39 @@ namespace LiteNetLib.Utils
             return result;
         }
 
-        /// <summary>Reads an array of <see langword="bool"/> values.</summary>
+        /// <summary>Reads an array of <see cref="bool"/> values.</summary>
         public bool[] GetBoolArray() => GetUnmanagedArray<bool>();
 
-        /// <summary>Reads an array of <see langword="ushort"/> values.</summary>
+        /// <summary>Reads an array of <see cref="ushort"/> values.</summary>
         public ushort[] GetUShortArray() => GetUnmanagedArray<ushort>();
 
-        /// <summary>Reads an array of <see langword="short"/> values.</summary>
+        /// <summary>Reads an array of <see cref="short"/> values.</summary>
         public short[] GetShortArray() => GetUnmanagedArray<short>();
 
-        /// <summary>Reads an array of <see langword="int"/> values.</summary>
+        /// <summary>Reads an array of <see cref="int"/> values.</summary>
         public int[] GetIntArray() => GetUnmanagedArray<int>();
 
-        /// <summary>Reads an array of <see langword="uint"/> values.</summary>
+        /// <summary>Reads an array of <see cref="uint"/> values.</summary>
         public uint[] GetUIntArray() => GetUnmanagedArray<uint>();
 
-        /// <summary>Reads an array of <see langword="float"/> values.</summary>
+        /// <summary>Reads an array of <see cref="float"/> values.</summary>
         public float[] GetFloatArray() => GetUnmanagedArray<float>();
 
-        /// <summary>Reads an array of <see langword="double"/> values.</summary>
+        /// <summary>Reads an array of <see cref="double"/> values.</summary>
         public double[] GetDoubleArray() => GetUnmanagedArray<double>();
 
-        /// <summary>Reads an array of <see langword="long"/> values.</summary>
+        /// <summary>Reads an array of <see cref="long"/> values.</summary>
         public long[] GetLongArray() => GetUnmanagedArray<long>();
 
-        /// <summary>Reads an array of <see langword="ulong"/> values.</summary>
+        /// <summary>Reads an array of <see cref="ulong"/> values.</summary>
         public ulong[] GetULongArray() => GetUnmanagedArray<ulong>();
 
         /// <summary>
-        /// Reads an array of <see langword="string"/> values.
+        /// Reads an array of <see cref="string"/> values.
         /// </summary>
-        /// <returns>A new <see langword="string"/> array.</returns>
+        /// <returns>A new <see cref="string"/> array.</returns>
         /// <remarks>
-        /// Reads a 2-byte <see langword="ushort"/> length header followed by each <see langword="string"/> element.
+        /// Reads a 2-byte <see cref="ushort"/> length header followed by each <see cref="string"/> element.
         /// </remarks>
         public string[] GetStringArray()
         {
@@ -382,10 +382,10 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Reads an array of <see langword="string"/> values with a maximum character limit per element.
+        /// Reads an array of <see cref="string"/> values with a maximum character limit per element.
         /// </summary>
-        /// <param name="maxStringLength">The maximum number of characters allowed per <see langword="string"/>.</param>
-        /// <returns>A new <see langword="string"/> array.</returns>
+        /// <param name="maxStringLength">The maximum number of characters allowed per <see cref="string"/>.</param>
+        /// <returns>A new <see cref="string"/> array.</returns>
         /// <remarks>
         /// Strings exceeding <paramref name="maxStringLength"/> are returned as <see cref="string.Empty"/>.
         /// </remarks>
@@ -400,44 +400,44 @@ namespace LiteNetLib.Utils
             return arr;
         }
 
-        /// <summary>Reads a <see langword="bool"/> value from the current position.</summary>
+        /// <summary>Reads a <see cref="bool"/> value from the current position.</summary>
         /// <returns><see langword="true"/> if the byte is 1; otherwise, <see langword="false"/>.</returns>
         public bool GetBool() => GetByte() == 1;
 
-        /// <summary>Reads a <see langword="char"/> value as a 2-byte <see langword="ushort"/>.</summary>
+        /// <summary>Reads a <see cref="char"/> value as a 2-byte <see cref="ushort"/>.</summary>
         public char GetChar() => (char)GetUShort();
 
-        /// <summary>Reads a <see langword="ushort"/> value using unmanaged memory access.</summary>
+        /// <summary>Reads a <see cref="ushort"/> value using unmanaged memory access.</summary>
         public ushort GetUShort() => GetUnmanaged<ushort>();
 
-        /// <summary>Reads a <see langword="short"/> value using unmanaged memory access.</summary>
+        /// <summary>Reads a <see cref="short"/> value using unmanaged memory access.</summary>
         public short GetShort() => GetUnmanaged<short>();
 
-        /// <summary>Reads a <see langword="long"/> value using unmanaged memory access.</summary>
+        /// <summary>Reads a <see cref="long"/> value using unmanaged memory access.</summary>
         public long GetLong() => GetUnmanaged<long>();
 
-        /// <summary>Reads a <see langword="ulong"/> value using unmanaged memory access.</summary>
+        /// <summary>Reads a <see cref="ulong"/> value using unmanaged memory access.</summary>
         public ulong GetULong() => GetUnmanaged<ulong>();
 
-        /// <summary>Reads an <see langword="int"/> value using unmanaged memory access.</summary>
+        /// <summary>Reads an <see cref="int"/> value using unmanaged memory access.</summary>
         public int GetInt() => GetUnmanaged<int>();
 
-        /// <summary>Reads a <see langword="uint"/> value using unmanaged memory access.</summary>
+        /// <summary>Reads a <see cref="uint"/> value using unmanaged memory access.</summary>
         public uint GetUInt() => GetUnmanaged<uint>();
 
-        /// <summary>Reads a <see langword="float"/> value using unmanaged memory access.</summary>
+        /// <summary>Reads a <see cref="float"/> value using unmanaged memory access.</summary>
         public float GetFloat() => GetUnmanaged<float>();
 
-        /// <summary>Reads a <see langword="double"/> value using unmanaged memory access.</summary>
+        /// <summary>Reads a <see cref="double"/> value using unmanaged memory access.</summary>
         public double GetDouble() => GetUnmanaged<double>();
 
         /// <summary>
-        /// Reads a <see langword="string"/> with a maximum character limit.
+        /// Reads a <see cref="string"/> with a maximum character limit.
         /// </summary>
         /// <param name="maxLength">The maximum allowed character count.</param>
-        /// <returns>The deserialized <see langword="string"/>, or <see cref="string.Empty"/> if the character count exceeds <paramref name="maxLength"/>.</returns>
+        /// <returns>The deserialized <see cref="string"/>, or <see cref="string.Empty"/> if the character count exceeds <paramref name="maxLength"/>.</returns>
         /// <remarks>
-        /// Note that <paramref name="maxLength"/> limits the number of characters, not the total size in <see langword="byte"/>s.
+        /// Note that <paramref name="maxLength"/> limits the number of characters, not the total size in <see cref="byte"/>s.
         /// </remarks>
         public string GetString(int maxLength)
         {
@@ -458,9 +458,9 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Reads a <see langword="string"/> from the current position.
+        /// Reads a <see cref="string"/> from the current position.
         /// </summary>
-        /// <returns>The deserialized <see langword="string"/>.</returns>
+        /// <returns>The deserialized <see cref="string"/>.</returns>
         public string GetString()
         {
             ushort size = GetUShort();
@@ -476,9 +476,9 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Reads a <see langword="string"/> prefixed with a 4-byte <see langword="int"/> length header.
+        /// Reads a <see cref="string"/> prefixed with a 4-byte <see cref="int"/> length header.
         /// </summary>
-        /// <returns>The deserialized <see langword="string"/>.</returns>
+        /// <returns>The deserialized <see cref="string"/>.</returns>
         public string GetLargeString()
         {
             int size = GetInt();
@@ -505,9 +505,9 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Gets an <see cref="ArraySegment{T}"/> of <see langword="byte"/>s from the current position.
+        /// Gets an <see cref="ArraySegment{T}"/> of <see cref="byte"/>s from the current position.
         /// </summary>
-        /// <param name="count">The number of <see langword="byte"/>s to include in the segment.</param>
+        /// <param name="count">The number of <see cref="byte"/>s to include in the segment.</param>
         /// <returns>An <see cref="ArraySegment{T}"/> wrapping the internal buffer.</returns>
         public ArraySegment<byte> GetBytesSegment(int count)
         {
@@ -518,7 +518,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Gets an <see cref="ArraySegment{T}"/> containing all remaining <see langword="byte"/>s.
+        /// Gets an <see cref="ArraySegment{T}"/> containing all remaining <see cref="byte"/>s.
         /// </summary>
         /// <returns>An <see cref="ArraySegment{T}"/> from the current position to the end of the data.</returns>
         public ArraySegment<byte> GetRemainingBytesSegment()
@@ -554,7 +554,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Returns a <see cref="ReadOnlySpan{T}"/> of <see langword="byte"/>s containing all remaining data.
+        /// Returns a <see cref="ReadOnlySpan{T}"/> of <see cref="byte"/>s containing all remaining data.
         /// </summary>
         /// <returns>A <see cref="ReadOnlySpan{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -562,7 +562,7 @@ namespace LiteNetLib.Utils
             new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
 
         /// <summary>
-        /// Returns a <see cref="ReadOnlyMemory{T}"/> of <see langword="byte"/>s containing all remaining data.
+        /// Returns a <see cref="ReadOnlyMemory{T}"/> of <see cref="byte"/>s containing all remaining data.
         /// </summary>
         /// <returns>A <see cref="ReadOnlyMemory{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -570,9 +570,9 @@ namespace LiteNetLib.Utils
             new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
 
         /// <summary>
-        /// Reads all remaining <see langword="byte"/>s and returns them as a new array.
+        /// Reads all remaining <see cref="byte"/>s and returns them as a new array.
         /// </summary>
-        /// <returns>A new <see langword="byte"/> array containing the remaining data.</returns>
+        /// <returns>A new <see cref="byte"/> array containing the remaining data.</returns>
         /// <remarks>
         /// This method performs a heap allocation and advances the <see cref="Position"/> to the end of the data.
         /// </remarks>
@@ -585,11 +585,11 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Copies a specified number of <see langword="byte"/>s into a destination array at a specific offset.
+        /// Copies a specified number of <see cref="byte"/>s into a destination array at a specific offset.
         /// </summary>
         /// <param name="destination">The array to copy data into.</param>
         /// <param name="start">The starting index in the <paramref name="destination"/> array.</param>
-        /// <param name="count">The number of <see langword="byte"/>s to read.</param>
+        /// <param name="count">The number of <see cref="byte"/>s to read.</param>
         public void GetBytes(byte[] destination, int start, int count)
         {
             EnsureAvailable(count);
@@ -598,10 +598,10 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Copies a specified number of <see langword="byte"/>s into a destination array starting at index 0.
+        /// Copies a specified number of <see cref="byte"/>s into a destination array starting at index 0.
         /// </summary>
         /// <param name="destination">The array to copy data into.</param>
-        /// <param name="count">The number of <see langword="byte"/>s to read.</param>
+        /// <param name="count">The number of <see cref="byte"/>s to read.</param>
         public void GetBytes(byte[] destination, int count)
         {
             EnsureAvailable(count);
@@ -610,15 +610,15 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Reads an <see langword="sbyte"/> array prefixed with its <see langword="ushort"/> length.
+        /// Reads an <see cref="sbyte"/> array prefixed with its <see cref="ushort"/> length.
         /// </summary>
-        /// <returns>A new <see langword="sbyte"/> array.</returns>
+        /// <returns>A new <see cref="sbyte"/> array.</returns>
         public sbyte[] GetSBytesWithLength() => GetUnmanagedArray<sbyte>();
 
         /// <summary>
-        /// Reads a <see langword="byte"/> array prefixed with its <see langword="ushort"/> length.
+        /// Reads a <see cref="byte"/> array prefixed with its <see cref="ushort"/> length.
         /// </summary>
-        /// <returns>A new <see langword="byte"/> array.</returns>
+        /// <returns>A new <see cref="byte"/> array.</returns>
         public byte[] GetBytesWithLength() => GetUnmanagedArray<byte>();
 
         /// <summary>
@@ -702,44 +702,44 @@ namespace LiteNetLib.Utils
 
         #region PeekMethods
 
-        /// <summary>Reads the <see langword="byte"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="byte"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public byte PeekByte() => _data[_position];
 
-        /// <summary>Reads the <see langword="sbyte"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="sbyte"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public sbyte PeekSByte() => (sbyte)_data[_position];
 
-        /// <summary>Reads the <see langword="bool"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="bool"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public bool PeekBool() => _data[_position] == 1;
 
-        /// <summary>Reads the <see langword="char"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="char"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public char PeekChar() => PeekUnmanaged<char>();
 
-        /// <summary>Reads the <see langword="ushort"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="ushort"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public ushort PeekUShort() => PeekUnmanaged<ushort>();
 
-        /// <summary>Reads the <see langword="short"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="short"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public short PeekShort() => PeekUnmanaged<short>();
 
-        /// <summary>Reads the <see langword="long"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="long"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public long PeekLong() => PeekUnmanaged<long>();
 
-        /// <summary>Reads the <see langword="ulong"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="ulong"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public ulong PeekULong() => PeekUnmanaged<ulong>();
 
-        /// <summary>Reads the <see langword="int"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="int"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public int PeekInt() => PeekUnmanaged<int>();
 
-        /// <summary>Reads the <see langword="uint"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="uint"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public uint PeekUInt() => PeekUnmanaged<uint>();
 
-        /// <summary>Reads the <see langword="float"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="float"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public float PeekFloat() => PeekUnmanaged<float>();
 
-        /// <summary>Reads the <see langword="double"/> at the current position without advancing the <see cref="Position"/>.</summary>
+        /// <summary>Reads the <see cref="double"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public double PeekDouble() => PeekUnmanaged<double>();
 
         /// <summary>
-        /// Reads a <see langword="string"/> with a character limit without advancing the <see cref="Position"/>.
+        /// Reads a <see cref="string"/> with a character limit without advancing the <see cref="Position"/>.
         /// </summary>
         /// <param name="maxLength">Maximum allowed character count.</param>
         /// <remarks>Strings exceeding <paramref name="maxLength"/> are returned as <see cref="string.Empty"/>.</remarks>
@@ -756,7 +756,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Reads a <see langword="string"/> without advancing the <see cref="Position"/>.
+        /// Reads a <see cref="string"/> without advancing the <see cref="Position"/>.
         /// </summary>
         public string PeekString()
         {
@@ -790,8 +790,8 @@ namespace LiteNetLib.Utils
         #endregion
 
         #region TryGetMethods
-        /// <summary>Attempts to read a <see langword="byte"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="byte"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read a <see cref="byte"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="byte"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetByte(out byte result)
         {
@@ -804,8 +804,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read an <see langword="sbyte"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="sbyte"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read an <see cref="sbyte"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="sbyte"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetSByte(out sbyte result)
         {
@@ -818,8 +818,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="bool"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="bool"/>, or <see langword="false"/> if failed.</param>
+        /// <summary>Attempts to read a <see cref="bool"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="bool"/>, or <see langword="false"/> if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetBool(out bool result)
         {
@@ -832,8 +832,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="char"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="char"/>, or '\0' if failed.</param>
+        /// <summary>Attempts to read a <see cref="char"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="char"/>, or '\0' if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetChar(out char result)
         {
@@ -846,8 +846,8 @@ namespace LiteNetLib.Utils
             return true;
         }
 
-        /// <summary>Attempts to read a <see langword="short"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="short"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read a <see cref="short"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="short"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetShort(out short result)
         {
@@ -860,8 +860,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="ushort"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="ushort"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read a <see cref="ushort"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="ushort"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetUShort(out ushort result)
         {
@@ -874,8 +874,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read an <see langword="int"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="int"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read an <see cref="int"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="int"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetInt(out int result)
         {
@@ -888,8 +888,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="uint"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="uint"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read a <see cref="uint"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="uint"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetUInt(out uint result)
         {
@@ -902,8 +902,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="long"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="long"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read a <see cref="long"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="long"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetLong(out long result)
         {
@@ -916,8 +916,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="ulong"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="ulong"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read a <see cref="ulong"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="ulong"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetULong(out ulong result)
         {
@@ -930,8 +930,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="float"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="float"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read a <see cref="float"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="float"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetFloat(out float result)
         {
@@ -944,8 +944,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="double"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="double"/>, or 0 if failed.</param>
+        /// <summary>Attempts to read a <see cref="double"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="double"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetDouble(out double result)
         {
@@ -958,8 +958,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="string"/> without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="string"/>, or <see langword="null"/> if failed.</param>
+        /// <summary>Attempts to read a <see cref="string"/> without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="string"/>, or <see langword="null"/> if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetString(out string result)
         {
@@ -978,8 +978,8 @@ namespace LiteNetLib.Utils
             return false;
         }
 
-        /// <summary>Attempts to read a <see langword="string"/> array without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="string"/> array, or <see langword="null"/> if failed.</param>
+        /// <summary>Attempts to read a <see cref="string"/> array without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="string"/> array, or <see langword="null"/> if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetStringArray(out string[] result)
         {
@@ -1002,8 +1002,8 @@ namespace LiteNetLib.Utils
             return true;
         }
 
-        /// <summary>Attempts to read a <see langword="byte"/> array with a length header without throwing an exception.</summary>
-        /// <param name="result">The deserialized <see langword="byte"/> array, or <see langword="null"/> if failed.</param>
+        /// <summary>Attempts to read a <see cref="byte"/> array with a length header without throwing an exception.</summary>
+        /// <param name="result">The deserialized <see cref="byte"/> array, or <see langword="null"/> if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetBytesWithLength(out byte[] result)
         {

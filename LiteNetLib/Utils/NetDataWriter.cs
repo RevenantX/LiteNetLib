@@ -15,7 +15,7 @@ namespace LiteNetLib.Utils
         private readonly bool _autoResize;
 
         /// <summary>
-        /// Gets the total capacity of the internal <see langword="byte"/> buffer.
+        /// Gets the total capacity of the internal <see cref="byte"/> buffer.
         /// </summary>
         /// <value>The length of the underlying <see cref="_data"/> array.</value>
         public int Capacity
@@ -25,7 +25,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Gets the underlying <see langword="byte"/> array used by this writer.
+        /// Gets the underlying <see cref="byte"/> array used by this writer.
         /// </summary>
         /// <value>The internal <see cref="_data"/> array.</value>
         /// <remarks>
@@ -38,7 +38,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Gets the current number of <see langword="byte"/>s written to the buffer.
+        /// Gets the current number of <see cref="byte"/>s written to the buffer.
         /// </summary>
         /// <value>The current <see cref="_position"/>.</value>
         public int Length
@@ -109,10 +109,10 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Creates a new <see cref="NetDataWriter"/> and serializes a <see langword="string"/> into it.
+        /// Creates a new <see cref="NetDataWriter"/> and serializes a <see cref="string"/> into it.
         /// </summary>
-        /// <param name="value">The <see langword="string"/> to serialize.</param>
-        /// <returns>A new <see cref="NetDataWriter"/> instance containing the serialized <see langword="string"/>.</returns>
+        /// <param name="value">The <see cref="string"/> to serialize.</param>
+        /// <returns>A new <see cref="NetDataWriter"/> instance containing the serialized <see cref="string"/>.</returns>
         public static NetDataWriter FromString(string value)
         {
             var netDataWriter = new NetDataWriter();
@@ -138,9 +138,9 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Ensures the internal buffer can accommodate <paramref name="additionalSize"/> more <see langword="byte"/>s.
+        /// Ensures the internal buffer can accommodate <paramref name="additionalSize"/> more <see cref="byte"/>s.
         /// </summary>
-        /// <param name="additionalSize">The number of additional <see langword="byte"/>s to fit.</param>
+        /// <param name="additionalSize">The number of additional <see cref="byte"/>s to fit.</param>
         /// <remarks>
         /// This checks against the current <see cref="_position"/>. If the capacity is insufficient,
         /// the buffer grows to either the required size or doubles its current size.
@@ -160,7 +160,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="size">The minimum capacity required for the internal buffer.</param>
         /// <remarks>
-        /// If the current buffer is smaller than <paramref name="size"/>, <see cref="ResizeIfNeed(int)"/> will allocate a larger <see langword="byte"/> array.
+        /// If the current buffer is smaller than <paramref name="size"/>, <see cref="ResizeIfNeed(int)"/> will allocate a larger <see cref="byte"/> array.
         /// </remarks>
         public void Reset(int size)
         {
@@ -174,9 +174,9 @@ namespace LiteNetLib.Utils
         public void Reset() => _position = 0;
 
         /// <summary>
-        /// Creates a <see langword="byte"/> array containing the current data from the internal buffer.
+        /// Creates a <see cref="byte"/> array containing the current data from the internal buffer.
         /// </summary>
-        /// <returns>A new <see langword="byte"/> array of length <see cref="_position"/>.</returns>
+        /// <returns>A new <see cref="byte"/> array of length <see cref="_position"/>.</returns>
         /// <remarks>
         /// This method performs a heap allocation and copies the data using <see cref="Buffer.BlockCopy(Array, int, Array, int, int)"/>.
         /// </remarks>
@@ -278,18 +278,18 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serializes a segment of a <see langword="byte"/> array.
+        /// Serializes a segment of a <see cref="byte"/> array.
         /// </summary>
         /// <param name="data">The source array.</param>
         /// <param name="offset">The starting index in the source array.</param>
-        /// <param name="length">The number of <see langword="byte"/>s to write.</param>
+        /// <param name="length">The number of <see cref="byte"/>s to write.</param>
         public void Put(byte[] data, int offset, int length)
         {
             Put(data.AsSpan(offset, length));
         }
 
         /// <summary>
-        /// Serializes an entire <see langword="byte"/> array.
+        /// Serializes an entire <see cref="byte"/> array.
         /// </summary>
         /// <param name="data">The source array.</param>
         public void Put(byte[] data)
@@ -310,9 +310,9 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serializes a segment of an <see langword="sbyte"/> array prefixed with its <see langword="ushort"/> length.
+        /// Serializes a segment of an <see cref="sbyte"/> array prefixed with its <see cref="ushort"/> length.
         /// </summary>
-        /// <param name="data">The source <see langword="sbyte"/> array.</param>
+        /// <param name="data">The source <see cref="sbyte"/> array.</param>
         /// <param name="offset">The starting index in the source array.</param>
         /// <param name="length">The number of elements to write.</param>
         public void PutSBytesWithLength(sbyte[] data, int offset, ushort length)
@@ -343,17 +343,17 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serializes an <see langword="sbyte"/> array prefixed with its <see langword="ushort"/> length.
+        /// Serializes an <see cref="sbyte"/> array prefixed with its <see cref="ushort"/> length.
         /// </summary>
         /// <param name="data">The source array.</param>
         public void PutSBytesWithLength(sbyte[] data) => PutArray(data, 1);
 
         /// <summary>
-        /// Serializes a segment of a <see langword="byte"/> array prefixed with its <see langword="ushort"/> length.
+        /// Serializes a segment of a <see cref="byte"/> array prefixed with its <see cref="ushort"/> length.
         /// </summary>
-        /// <param name="data">The source <see langword="byte"/> array.</param>
+        /// <param name="data">The source <see cref="byte"/> array.</param>
         /// <param name="offset">The starting index in the source array.</param>
-        /// <param name="length">The number of <see langword="byte"/>s to write.</param>
+        /// <param name="length">The number of <see cref="byte"/>s to write.</param>
         public void PutBytesWithLength(byte[] data, int offset, ushort length)
         {
             if (_autoResize)
@@ -379,22 +379,22 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serializes a <see langword="byte"/> array prefixed with its <see langword="ushort"/> length.
+        /// Serializes a <see cref="byte"/> array prefixed with its <see cref="ushort"/> length.
         /// </summary>
         /// <param name="data">The source array.</param>
         public void PutBytesWithLength(byte[] data) => PutArray(data, 1);
 
         /// <summary>
-        /// Serializes a <see langword="bool"/> value as a single <see langword="byte"/>.
+        /// Serializes a <see cref="bool"/> value as a single <see cref="byte"/>.
         /// </summary>
-        /// <param name="value">The <see langword="bool"/> value to write.</param>
+        /// <param name="value">The <see cref="bool"/> value to write.</param>
         public void Put(bool value) => Put((byte)(value ? 1 : 0));
 
         /// <summary>
-        /// Serializes an <see cref="Array"/> prefixed with a 2-byte <see langword="ushort"/> length.
+        /// Serializes an <see cref="Array"/> prefixed with a 2-byte <see cref="ushort"/> length.
         /// </summary>
         /// <param name="arr">The source array to serialize.</param>
-        /// <param name="sz">The size of a single element in <see langword="byte"/>s.</param>
+        /// <param name="sz">The size of a single element in <see cref="byte"/>s.</param>
         /// <remarks>
         /// If the array is <see langword="null"/>, a length of 0 is written. <br/>
         /// The total payload size is calculated as <c>length * sz</c>.
@@ -488,11 +488,11 @@ namespace LiteNetLib.Utils
         public void PutArray(bool[] value) => PutUnmanagedArray(value);
 
         /// <summary>
-        /// Serializes an array of <see langword="string"/> values.
+        /// Serializes an array of <see cref="string"/> values.
         /// </summary>
-        /// <param name="value">The array of <see langword="string"/> elements to write.</param>
+        /// <param name="value">The array of <see cref="string"/> elements to write.</param>
         /// <remarks>
-        /// Writes a 2-byte <see langword="ushort"/> length header followed by each <see langword="string"/> element.
+        /// Writes a 2-byte <see cref="ushort"/> length header followed by each <see cref="string"/> element.
         /// </remarks>
         public void PutArray(string[] value)
         {
@@ -503,10 +503,10 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serializes an array of <see langword="string"/> values with a maximum length constraint per element.
+        /// Serializes an array of <see cref="string"/> values with a maximum length constraint per element.
         /// </summary>
-        /// <param name="value">The array of <see langword="string"/> elements to write.</param>
-        /// <param name="strMaxLength">The maximum allowed length for each individual <see langword="string"/>.</param>
+        /// <param name="value">The array of <see cref="string"/> elements to write.</param>
+        /// <param name="strMaxLength">The maximum allowed length for each individual <see cref="string"/>.</param>
         public void PutArray(string[] value, int strMaxLength)
         {
             ushort strArrayLength = value == null ? (ushort)0 : (ushort)value.Length;
@@ -534,7 +534,7 @@ namespace LiteNetLib.Utils
         /// <param name="endPoint">The network endpoint to write.</param>
         /// <exception cref="ArgumentException">Thrown when the <see cref="AddressFamily"/> is not <see cref="AddressFamily.InterNetwork"/> or <see cref="AddressFamily.InterNetworkV6"/>.</exception>
         /// <remarks>
-        /// Writes a <see langword="byte"/> (0 for IPv4, 1 for IPv6), followed by the address bytes and a 2-byte <see langword="ushort"/> port.
+        /// Writes a <see cref="byte"/> (0 for IPv4, 1 for IPv6), followed by the address bytes and a 2-byte <see cref="ushort"/> port.
         /// </remarks>
         public void Put(IPEndPoint endPoint)
         {
@@ -556,11 +556,11 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serializes a <see langword="string"/> using a 4-byte <see langword="int"/> length header.
+        /// Serializes a <see cref="string"/> using a 4-byte <see cref="int"/> length header.
         /// </summary>
-        /// <param name="value">The <see langword="string"/> to write.</param>
+        /// <param name="value">The <see cref="string"/> to write.</param>
         /// <remarks>
-        /// Recommended for strings that may exceed the 65535 byte limit of standard <see langword="ushort"/> length headers. <br/>
+        /// Recommended for strings that may exceed the 65535 byte limit of standard <see cref="ushort"/> length headers. <br/>
         /// Uses <see cref="Encoding.UTF8"/>.
         /// </remarks>
         public void PutLargeString(string value)
@@ -584,8 +584,17 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+        /// Serializes a string using a 2-byte <see cref="float"/> length header.
         /// </summary>
+        /// <param name="value">The string to write to the buffer.</param>
+        /// <param name="maxLength">
+        /// The maximum number of characters to write. If the string is longer, it will be truncated. <br/>
+        /// A value of 0 indicates no limit.
+        /// </param>
+        /// <remarks>
+        /// Note that <paramref name="maxLength"/> limits the number of characters, not the total size in <see cref="byte"/>s. <br/>
+        /// Uses <see cref="Encoding.UTF8"/>.
+        /// </remarks>
         public void Put(string value, int maxLength = 0)
         {
             if (string.IsNullOrEmpty(value))
