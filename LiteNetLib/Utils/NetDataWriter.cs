@@ -318,9 +318,7 @@ namespace LiteNetLib.Utils
         public void PutSBytesWithLength(sbyte[] data, int offset, ushort length)
         {
             if (_autoResize)
-            {
                 ResizeIfNeed(_position + 2 + length);
-            }
 
             FastBitConverter.GetBytes(_data, _position, length);
             _position += 2;
@@ -350,9 +348,7 @@ namespace LiteNetLib.Utils
         public void PutBytesWithLength(byte[] data, int offset, ushort length)
         {
             if (_autoResize)
-            {
                 ResizeIfNeed(_position + 2 + length);
-            }
 
             FastBitConverter.GetBytes(_data, _position, length);
             _position += 2;
@@ -422,9 +418,7 @@ namespace LiteNetLib.Utils
             var byteLength = length * sizeof(T);
 
             if (_autoResize)
-            {
                 ResizeIfNeed(_position + byteLength + 2);
-            }
 
             FastBitConverter.GetBytes(_data, _position, length);
             _position += 2;
@@ -607,9 +601,7 @@ namespace LiteNetLib.Utils
         {
             int size = sizeof(T);
             if (_autoResize)
-            {
                 ResizeIfNeed(_position + size);
-            }
             FastBitConverter.GetBytes(_data, _position, value);
             _position += size;
         }
