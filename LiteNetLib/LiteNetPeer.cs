@@ -698,6 +698,17 @@ namespace LiteNetLib
 
         }
 
+        /// <summary>
+        /// Internally handles the shutdown process for this peer.
+        /// </summary>
+        /// <param name="data">Optional data to include in the disconnect packet.</param>
+        /// <param name="start">Offset in the <paramref name="data"/> array.</param>
+        /// <param name="length">Length of the data to send.</param>
+        /// <param name="force">
+        /// If <see langword="true"/>, immediately sets state to Disconnected without sending a notification.
+        /// If <see langword="false"/>, sends a single unreliable disconnect packet and sets state to ShutdownRequested.
+        /// </param>
+        /// <returns>A <see cref="ShutdownResult"/> indicating the state change transition.</returns>
         internal ShutdownResult Shutdown(byte[] data, int start, int length, bool force)
         {
             lock (_shutdownLock)

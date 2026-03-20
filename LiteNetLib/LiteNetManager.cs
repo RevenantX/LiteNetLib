@@ -301,6 +301,21 @@ namespace LiteNetLib
             NetPacket eventData) =>
             DisconnectPeer(peer, reason, socketErrorCode, true, null, 0, 0, eventData);
 
+        /// <summary>
+        /// Disconnects a peer and handles internal state cleanup.
+        /// </summary>
+        /// <param name="peer">The peer to disconnect.</param>
+        /// <param name="reason">The reason for disconnection provided to the event listener.</param>
+        /// <param name="socketErrorCode">The error code from the underlying socket, if any.</param>
+        /// <param name="force">
+        /// If <see langword="true"/>, immediately sets state to Disconnected without sending a notification.
+        /// If <see langword="false"/>, sends a single unreliable disconnect packet and sets state to ShutdownRequested. <br/>
+        /// Queued reliable packets are not guaranteed to be delivered before the state change.
+        /// </param>
+        /// <param name="data">Optional custom data to include in the disconnect packet.</param>
+        /// <param name="start">Offset in the <paramref name="data"/> array.</param>
+        /// <param name="count">Number of bytes to send from the <paramref name="data"/> array.</param>
+        /// <param name="eventData">Internal packet data associated with the disconnect event.</param>
         private void DisconnectPeer(
             LiteNetPeer peer,
             DisconnectReason reason,
