@@ -301,6 +301,21 @@ namespace LiteNetLib
             NetPacket eventData) =>
             DisconnectPeer(peer, reason, socketErrorCode, true, null, 0, 0, eventData);
 
+        /// <summary>
+        /// Disconnects a peer and handles internal state cleanup.
+        /// </summary>
+        /// <param name="peer">The peer to disconnect.</param>
+        /// <param name="reason">The reason for disconnection provided to the event listener.</param>
+        /// <param name="socketErrorCode">The error code from the underlying socket, if any.</param>
+        /// <param name="force">
+        /// If <see langword="true"/>, immediately sets state to <see cref="ConnectionState.Disconnected"/> without sending a notification. <br/>
+        /// If <see langword="false"/>, sends a single unreliable disconnect packet and sets state to <see cref="ConnectionState.ShutdownRequested"/>.
+        /// Peer will linger until <see cref="DisconnectTimeout"/> to ignore late-arriving packets from the old session.
+        /// </param>
+        /// <param name="data">Optional custom data to include in the disconnect packet.</param>
+        /// <param name="start">Offset in the <paramref name="data"/> array.</param>
+        /// <param name="count">Number of bytes to send from the <paramref name="data"/> array.</param>
+        /// <param name="eventData">Internal packet data associated with the disconnect event.</param>
         private void DisconnectPeer(
             LiteNetPeer peer,
             DisconnectReason reason,
@@ -562,9 +577,12 @@ namespace LiteNetLib
 
 
         /// <summary>
-        /// Update and send logic. Use this only when NetManager started in manual mode
+        /// Updates internal peer states, handles timeouts, and processes NTP requests.
         /// </summary>
-        /// <param name="elapsedMilliseconds">elapsed milliseconds since last update call</param>
+        /// <param name="elapsedMilliseconds">Time passed since the last update frame.</param>
+        /// <remarks>
+        /// Must be called continuously from the main loop if <see cref="_manualMode"/> was set to <see langword="true"/>.
+        /// </remarks>
         public void ManualUpdate(float elapsedMilliseconds)
         {
             if (!_manualMode)
@@ -1278,9 +1296,11 @@ namespace LiteNetLib
             _updateTriggerEvent.Set();
 
         /// <summary>
-        /// Receive" pending events. Call this in game update code
-        /// In Manual mode it will call also socket Receive (which can be slow)
+        /// Reads data from the UDP sockets and processes pending events immediately.
         /// </summary>
+        /// <remarks>
+        /// Must be called continuously from the main loop if <see cref="_manualMode"/> was set to <see langword="true"/>.
+        /// </remarks>
         public void PollEvents()
         {
             if (_manualMode)
