@@ -322,14 +322,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + 2 + length);
             }
 
-#if NET8_0_OR_GREATER
-            Unsafe.WriteUnaligned(ref _data[_position], length);
-#else
-            fixed (byte* ptr = &_data[_position])
-            {
-                *(ushort*)ptr = length;
-            }
-#endif
+            FastBitConverter.GetBytes(_data, _position, length);
             _position += 2;
 
             if (length > 0)
@@ -361,14 +354,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + 2 + length);
             }
 
-#if NET8_0_OR_GREATER
-            Unsafe.WriteUnaligned(ref _data[_position], length);
-#else
-            fixed (byte* ptr = &_data[_position])
-            {
-                *(ushort*)ptr = length;
-            }
-#endif
+            FastBitConverter.GetBytes(_data, _position, length);
             _position += 2;
 
             if (length > 0)
@@ -440,14 +426,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + byteLength + 2);
             }
 
-#if NET8_0_OR_GREATER
-            Unsafe.WriteUnaligned(ref _data[_position], length);
-#else
-            fixed (byte* ptr = &_data[_position])
-            {
-                *(ushort*)ptr = length;
-            }
-#endif
+            FastBitConverter.GetBytes(_data, _position, length);
             _position += 2;
 
             if (length > 0)
@@ -631,16 +610,7 @@ namespace LiteNetLib.Utils
             {
                 ResizeIfNeed(_position + size);
             }
-
-#if NET8_0_OR_GREATER
-            Unsafe.WriteUnaligned(ref _data[_position], value);
-#else
-            fixed (byte* ptr = &_data[_position])
-            {
-                *(T*)ptr = value;
-            }
-#endif
-
+            FastBitConverter.GetBytes(_data, _position, value);
             _position += size;
         }
 
@@ -680,14 +650,7 @@ namespace LiteNetLib.Utils
                 ResizeIfNeed(_position + size);
             }
 
-#if NET8_0_OR_GREATER
-            Unsafe.WriteUnaligned(ref _data[_position], value);
-#else
-            fixed (byte* ptr = &_data[_position])
-            {
-                *(T*)ptr = value;
-            }
-#endif
+            FastBitConverter.GetBytes(_data, _position, value);
             _position += size;
         }
 
