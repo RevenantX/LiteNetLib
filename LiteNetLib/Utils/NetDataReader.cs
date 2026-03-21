@@ -680,7 +680,9 @@ namespace LiteNetLib.Utils
         /// <returns>The enum value read from the buffer.</returns>
         public T GetEnum<T>() where T : unmanaged, Enum
         {
-            var span = GetSpan(sizeof(T));
+            int size = sizeof(T);
+            ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(_data, _position, size);
+            _position += size;
 #if NET8_0_OR_GREATER
             return Unsafe.ReadUnaligned<T>(ref MemoryMarshal.GetReference(span));
 #else
@@ -689,13 +691,6 @@ namespace LiteNetLib.Utils
                 return *(T*)ptr;
             }
 #endif
-        }
-
-        public ReadOnlySpan<byte> GetSpan(int length)
-        {
-            ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(_data, _position, length);
-            _position += length;
-            return span;
         }
 
         #endregion
