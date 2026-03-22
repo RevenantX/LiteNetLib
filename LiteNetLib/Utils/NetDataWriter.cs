@@ -7,7 +7,7 @@ using System.Text;
 
 namespace LiteNetLib.Utils
 {
-    public unsafe class NetDataWriter
+    public class NetDataWriter
     {
         protected byte[] _data;
         protected int _position;
@@ -412,7 +412,7 @@ namespace LiteNetLib.Utils
         /// Writes a 2-byte <see cref="ushort"/> length header followed by the raw binary data. <br/>
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void PutSpan<T>(Span<T> span) where T : unmanaged
+        public unsafe void PutSpan<T>(Span<T> span) where T : unmanaged
         {
             var length = (ushort)span.Length;
             var byteLength = length * sizeof(T);
@@ -597,7 +597,7 @@ namespace LiteNetLib.Utils
         /// <typeparam name="T">An unmanaged value type to write into the buffer.</typeparam>
         /// <param name="value">The value to write into the buffer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void PutUnmanaged<T>(T value) where T : unmanaged
+        public unsafe void PutUnmanaged<T>(T value) where T : unmanaged
         {
             int size = sizeof(T);
             if (_autoResize)
@@ -608,7 +608,7 @@ namespace LiteNetLib.Utils
 
         /// <summary>
         /// Writes a nullable value of type <typeparamref name="T"/> into the internal byte buffer at the current position,
-        /// first writing a <see cref="bool"/> indicating whether the value is present, 
+        /// first writing a <see cref="bool"/> indicating whether the value is present,
         /// and then writing the value itself if it exists. <br/> Advances the position by 1 byte for the presence flag plus
         /// the size of <typeparamref name="T"/> if the value is present.
         /// </summary>
@@ -634,7 +634,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <typeparam name="T">An unmanaged enum type to write.</typeparam>
         /// <param name="value">The enum value to write.</param>
-        public void PutEnum<T>(T value) where T : unmanaged, Enum
+        public unsafe void PutEnum<T>(T value) where T : unmanaged, Enum
         {
             var size = sizeof(T);
             if (_autoResize)

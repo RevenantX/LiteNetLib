@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace LiteNetLib.Utils
 {
-    public unsafe class NetDataReader
+    public class NetDataReader
     {
         protected byte[] _data;
         protected int _position;
@@ -271,7 +271,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <typeparam name="T">An unmanaged type.</typeparam>
         /// <returns>A new array of type <typeparamref name="T"/>.</returns>
-        public T[] GetUnmanagedArray<T>() where T : unmanaged
+        public unsafe T[] GetUnmanagedArray<T>() where T : unmanaged
         {
             ushort length = GetUShort();
             int byteLength = length * sizeof(T);
@@ -629,7 +629,7 @@ namespace LiteNetLib.Utils
         /// <returns>The value of type <typeparamref name="T"/> read from the buffer.</returns>
         /// <exception cref="IndexOutOfRangeException"></exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetUnmanaged<T>() where T : unmanaged
+        public unsafe T GetUnmanaged<T>() where T : unmanaged
         {
             var size = sizeof(T);
             EnsureAvailable(size);
@@ -678,7 +678,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <typeparam name="T">An unmanaged enum type to read.</typeparam>
         /// <returns>The enum value read from the buffer.</returns>
-        public T GetEnum<T>() where T : unmanaged, Enum
+        public unsafe T GetEnum<T>() where T : unmanaged, Enum
         {
             int size = sizeof(T);
             ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(_data, _position, size);
