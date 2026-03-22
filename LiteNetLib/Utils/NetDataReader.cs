@@ -558,16 +558,24 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <returns>A <see cref="ReadOnlySpan{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<byte> GetRemainingBytesSpan() =>
-            new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
+        public ReadOnlySpan<byte> GetRemainingBytesSpan()
+        {
+            var result = new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
+            _position = _dataSize;
+            return result;
+        }
 
         /// <summary>
         /// Returns a <see cref="ReadOnlyMemory{T}"/> of <see cref="byte"/>s containing all remaining data.
         /// </summary>
         /// <returns>A <see cref="ReadOnlyMemory{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlyMemory<byte> GetRemainingBytesMemory() =>
-            new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
+        public ReadOnlyMemory<byte> GetRemainingBytesMemory()
+        {
+            var result = new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
+            _position = _dataSize;
+            return result;
+        }
 
         /// <summary>
         /// Reads all remaining <see cref="byte"/>s and returns them as a new array.
@@ -578,8 +586,9 @@ namespace LiteNetLib.Utils
         /// </remarks>
         public byte[] GetRemainingBytes()
         {
-            byte[] outgoingData = new byte[AvailableBytes];
-            Buffer.BlockCopy(_data, _position, outgoingData, 0, AvailableBytes);
+            int size = _dataSize - _position;
+            byte[] outgoingData = new byte[size];
+            Buffer.BlockCopy(_data, _position, outgoingData, 0, size);
             _position = _dataSize;
             return outgoingData;
         }
