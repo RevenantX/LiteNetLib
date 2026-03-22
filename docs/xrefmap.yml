@@ -42,108 +42,6 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.ConnectionRequest.AcceptIfKey
   nameWithType: ConnectionRequest.AcceptIfKey
-- uid: LiteNetLib.ConnectionRequest.Data
-  name: Data
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Data
-  commentId: P:LiteNetLib.ConnectionRequest.Data
-  fullName: LiteNetLib.ConnectionRequest.Data
-  nameWithType: ConnectionRequest.Data
-- uid: LiteNetLib.ConnectionRequest.Data*
-  name: Data
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Data_
-  commentId: Overload:LiteNetLib.ConnectionRequest.Data
-  isSpec: "True"
-  fullName: LiteNetLib.ConnectionRequest.Data
-  nameWithType: ConnectionRequest.Data
-- uid: LiteNetLib.ConnectionRequest.Reject
-  name: Reject()
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject
-  commentId: M:LiteNetLib.ConnectionRequest.Reject
-  fullName: LiteNetLib.ConnectionRequest.Reject()
-  nameWithType: ConnectionRequest.Reject()
-- uid: LiteNetLib.ConnectionRequest.Reject(LiteNetLib.Utils.NetDataWriter)
-  name: Reject(NetDataWriter)
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_LiteNetLib_Utils_NetDataWriter_
-  commentId: M:LiteNetLib.ConnectionRequest.Reject(LiteNetLib.Utils.NetDataWriter)
-  fullName: LiteNetLib.ConnectionRequest.Reject(LiteNetLib.Utils.NetDataWriter)
-  nameWithType: ConnectionRequest.Reject(NetDataWriter)
-- uid: LiteNetLib.ConnectionRequest.Reject(System.Byte[])
-  name: Reject(byte[])
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_System_Byte___
-  commentId: M:LiteNetLib.ConnectionRequest.Reject(System.Byte[])
-  name.vb: Reject(Byte())
-  fullName: LiteNetLib.ConnectionRequest.Reject(byte[])
-  fullName.vb: LiteNetLib.ConnectionRequest.Reject(Byte())
-  nameWithType: ConnectionRequest.Reject(byte[])
-  nameWithType.vb: ConnectionRequest.Reject(Byte())
-- uid: LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)
-  name: Reject(byte[], int, int)
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_
-  commentId: M:LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)
-  name.vb: Reject(Byte(), Integer, Integer)
-  fullName: LiteNetLib.ConnectionRequest.Reject(byte[], int, int)
-  fullName.vb: LiteNetLib.ConnectionRequest.Reject(Byte(), Integer, Integer)
-  nameWithType: ConnectionRequest.Reject(byte[], int, int)
-  nameWithType.vb: ConnectionRequest.Reject(Byte(), Integer, Integer)
-- uid: LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32,System.Boolean)
-  name: Reject(byte[], int, int, bool)
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_System_Boolean_
-  commentId: M:LiteNetLib.ConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32,System.Boolean)
-  name.vb: Reject(Byte(), Integer, Integer, Boolean)
-  fullName: LiteNetLib.ConnectionRequest.Reject(byte[], int, int, bool)
-  fullName.vb: LiteNetLib.ConnectionRequest.Reject(Byte(), Integer, Integer, Boolean)
-  nameWithType: ConnectionRequest.Reject(byte[], int, int, bool)
-  nameWithType.vb: ConnectionRequest.Reject(Byte(), Integer, Integer, Boolean)
-- uid: LiteNetLib.ConnectionRequest.Reject*
-  name: Reject
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_Reject_
-  commentId: Overload:LiteNetLib.ConnectionRequest.Reject
-  isSpec: "True"
-  fullName: LiteNetLib.ConnectionRequest.Reject
-  nameWithType: ConnectionRequest.Reject
-- uid: LiteNetLib.ConnectionRequest.RejectForce
-  name: RejectForce()
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RejectForce
-  commentId: M:LiteNetLib.ConnectionRequest.RejectForce
-  fullName: LiteNetLib.ConnectionRequest.RejectForce()
-  nameWithType: ConnectionRequest.RejectForce()
-- uid: LiteNetLib.ConnectionRequest.RejectForce(LiteNetLib.Utils.NetDataWriter)
-  name: RejectForce(NetDataWriter)
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RejectForce_LiteNetLib_Utils_NetDataWriter_
-  commentId: M:LiteNetLib.ConnectionRequest.RejectForce(LiteNetLib.Utils.NetDataWriter)
-  fullName: LiteNetLib.ConnectionRequest.RejectForce(LiteNetLib.Utils.NetDataWriter)
-  nameWithType: ConnectionRequest.RejectForce(NetDataWriter)
-- uid: LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])
-  name: RejectForce(byte[])
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RejectForce_System_Byte___
-  commentId: M:LiteNetLib.ConnectionRequest.RejectForce(System.Byte[])
-  name.vb: RejectForce(Byte())
-  fullName: LiteNetLib.ConnectionRequest.RejectForce(byte[])
-  fullName.vb: LiteNetLib.ConnectionRequest.RejectForce(Byte())
-  nameWithType: ConnectionRequest.RejectForce(byte[])
-  nameWithType.vb: ConnectionRequest.RejectForce(Byte())
-- uid: LiteNetLib.ConnectionRequest.RejectForce(System.Byte[],System.Int32,System.Int32)
-  name: RejectForce(byte[], int, int)
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RejectForce_System_Byte___System_Int32_System_Int32_
-  commentId: M:LiteNetLib.ConnectionRequest.RejectForce(System.Byte[],System.Int32,System.Int32)
-  name.vb: RejectForce(Byte(), Integer, Integer)
-  fullName: LiteNetLib.ConnectionRequest.RejectForce(byte[], int, int)
-  fullName.vb: LiteNetLib.ConnectionRequest.RejectForce(Byte(), Integer, Integer)
-  nameWithType: ConnectionRequest.RejectForce(byte[], int, int)
-  nameWithType.vb: ConnectionRequest.RejectForce(Byte(), Integer, Integer)
-- uid: LiteNetLib.ConnectionRequest.RejectForce*
-  name: RejectForce
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RejectForce_
-  commentId: Overload:LiteNetLib.ConnectionRequest.RejectForce
-  isSpec: "True"
-  fullName: LiteNetLib.ConnectionRequest.RejectForce
-  nameWithType: ConnectionRequest.RejectForce
-- uid: LiteNetLib.ConnectionRequest.RemoteEndPoint
-  name: RemoteEndPoint
-  href: api/LiteNetLib.ConnectionRequest.html#LiteNetLib_ConnectionRequest_RemoteEndPoint
-  commentId: F:LiteNetLib.ConnectionRequest.RemoteEndPoint
-  fullName: LiteNetLib.ConnectionRequest.RemoteEndPoint
-  nameWithType: ConnectionRequest.RemoteEndPoint
 - uid: LiteNetLib.ConnectionState
   name: ConnectionState
   href: api/LiteNetLib.ConnectionState.html
@@ -721,12 +619,12 @@ references:
   commentId: T:LiteNetLib.ILiteNetEventListener
   fullName: LiteNetLib.ILiteNetEventListener
   nameWithType: ILiteNetEventListener
-- uid: LiteNetLib.ILiteNetEventListener.OnConnectionRequest(LiteNetLib.ConnectionRequest)
-  name: OnConnectionRequest(ConnectionRequest)
-  href: api/LiteNetLib.ILiteNetEventListener.html#LiteNetLib_ILiteNetEventListener_OnConnectionRequest_LiteNetLib_ConnectionRequest_
-  commentId: M:LiteNetLib.ILiteNetEventListener.OnConnectionRequest(LiteNetLib.ConnectionRequest)
-  fullName: LiteNetLib.ILiteNetEventListener.OnConnectionRequest(LiteNetLib.ConnectionRequest)
-  nameWithType: ILiteNetEventListener.OnConnectionRequest(ConnectionRequest)
+- uid: LiteNetLib.ILiteNetEventListener.OnConnectionRequest(LiteNetLib.LiteConnectionRequest)
+  name: OnConnectionRequest(LiteConnectionRequest)
+  href: api/LiteNetLib.ILiteNetEventListener.html#LiteNetLib_ILiteNetEventListener_OnConnectionRequest_LiteNetLib_LiteConnectionRequest_
+  commentId: M:LiteNetLib.ILiteNetEventListener.OnConnectionRequest(LiteNetLib.LiteConnectionRequest)
+  fullName: LiteNetLib.ILiteNetEventListener.OnConnectionRequest(LiteNetLib.LiteConnectionRequest)
+  nameWithType: ILiteNetEventListener.OnConnectionRequest(LiteConnectionRequest)
 - uid: LiteNetLib.ILiteNetEventListener.OnConnectionRequest*
   name: OnConnectionRequest
   href: api/LiteNetLib.ILiteNetEventListener.html#LiteNetLib_ILiteNetEventListener_OnConnectionRequest_
@@ -1300,6 +1198,143 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Layers.XorEncryptLayer.SetKey
   nameWithType: XorEncryptLayer.SetKey
+- uid: LiteNetLib.LiteConnectionRequest
+  name: LiteConnectionRequest
+  href: api/LiteNetLib.LiteConnectionRequest.html
+  commentId: T:LiteNetLib.LiteConnectionRequest
+  fullName: LiteNetLib.LiteConnectionRequest
+  nameWithType: LiteConnectionRequest
+- uid: LiteNetLib.LiteConnectionRequest.Accept
+  name: Accept()
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Accept
+  commentId: M:LiteNetLib.LiteConnectionRequest.Accept
+  fullName: LiteNetLib.LiteConnectionRequest.Accept()
+  nameWithType: LiteConnectionRequest.Accept()
+- uid: LiteNetLib.LiteConnectionRequest.Accept*
+  name: Accept
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Accept_
+  commentId: Overload:LiteNetLib.LiteConnectionRequest.Accept
+  isSpec: "True"
+  fullName: LiteNetLib.LiteConnectionRequest.Accept
+  nameWithType: LiteConnectionRequest.Accept
+- uid: LiteNetLib.LiteConnectionRequest.AcceptIfKey(System.String)
+  name: AcceptIfKey(string)
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_AcceptIfKey_System_String_
+  commentId: M:LiteNetLib.LiteConnectionRequest.AcceptIfKey(System.String)
+  name.vb: AcceptIfKey(String)
+  fullName: LiteNetLib.LiteConnectionRequest.AcceptIfKey(string)
+  fullName.vb: LiteNetLib.LiteConnectionRequest.AcceptIfKey(String)
+  nameWithType: LiteConnectionRequest.AcceptIfKey(string)
+  nameWithType.vb: LiteConnectionRequest.AcceptIfKey(String)
+- uid: LiteNetLib.LiteConnectionRequest.AcceptIfKey*
+  name: AcceptIfKey
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_AcceptIfKey_
+  commentId: Overload:LiteNetLib.LiteConnectionRequest.AcceptIfKey
+  isSpec: "True"
+  fullName: LiteNetLib.LiteConnectionRequest.AcceptIfKey
+  nameWithType: LiteConnectionRequest.AcceptIfKey
+- uid: LiteNetLib.LiteConnectionRequest.Data
+  name: Data
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Data
+  commentId: P:LiteNetLib.LiteConnectionRequest.Data
+  fullName: LiteNetLib.LiteConnectionRequest.Data
+  nameWithType: LiteConnectionRequest.Data
+- uid: LiteNetLib.LiteConnectionRequest.Data*
+  name: Data
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Data_
+  commentId: Overload:LiteNetLib.LiteConnectionRequest.Data
+  isSpec: "True"
+  fullName: LiteNetLib.LiteConnectionRequest.Data
+  nameWithType: LiteConnectionRequest.Data
+- uid: LiteNetLib.LiteConnectionRequest.Reject
+  name: Reject()
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject
+  commentId: M:LiteNetLib.LiteConnectionRequest.Reject
+  fullName: LiteNetLib.LiteConnectionRequest.Reject()
+  nameWithType: LiteConnectionRequest.Reject()
+- uid: LiteNetLib.LiteConnectionRequest.Reject(LiteNetLib.Utils.NetDataWriter)
+  name: Reject(NetDataWriter)
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_LiteNetLib_Utils_NetDataWriter_
+  commentId: M:LiteNetLib.LiteConnectionRequest.Reject(LiteNetLib.Utils.NetDataWriter)
+  fullName: LiteNetLib.LiteConnectionRequest.Reject(LiteNetLib.Utils.NetDataWriter)
+  nameWithType: LiteConnectionRequest.Reject(NetDataWriter)
+- uid: LiteNetLib.LiteConnectionRequest.Reject(System.Byte[])
+  name: Reject(byte[])
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_System_Byte___
+  commentId: M:LiteNetLib.LiteConnectionRequest.Reject(System.Byte[])
+  name.vb: Reject(Byte())
+  fullName: LiteNetLib.LiteConnectionRequest.Reject(byte[])
+  fullName.vb: LiteNetLib.LiteConnectionRequest.Reject(Byte())
+  nameWithType: LiteConnectionRequest.Reject(byte[])
+  nameWithType.vb: LiteConnectionRequest.Reject(Byte())
+- uid: LiteNetLib.LiteConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)
+  name: Reject(byte[], int, int)
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_
+  commentId: M:LiteNetLib.LiteConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)
+  name.vb: Reject(Byte(), Integer, Integer)
+  fullName: LiteNetLib.LiteConnectionRequest.Reject(byte[], int, int)
+  fullName.vb: LiteNetLib.LiteConnectionRequest.Reject(Byte(), Integer, Integer)
+  nameWithType: LiteConnectionRequest.Reject(byte[], int, int)
+  nameWithType.vb: LiteConnectionRequest.Reject(Byte(), Integer, Integer)
+- uid: LiteNetLib.LiteConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32,System.Boolean)
+  name: Reject(byte[], int, int, bool)
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_System_Boolean_
+  commentId: M:LiteNetLib.LiteConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32,System.Boolean)
+  name.vb: Reject(Byte(), Integer, Integer, Boolean)
+  fullName: LiteNetLib.LiteConnectionRequest.Reject(byte[], int, int, bool)
+  fullName.vb: LiteNetLib.LiteConnectionRequest.Reject(Byte(), Integer, Integer, Boolean)
+  nameWithType: LiteConnectionRequest.Reject(byte[], int, int, bool)
+  nameWithType.vb: LiteConnectionRequest.Reject(Byte(), Integer, Integer, Boolean)
+- uid: LiteNetLib.LiteConnectionRequest.Reject*
+  name: Reject
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_
+  commentId: Overload:LiteNetLib.LiteConnectionRequest.Reject
+  isSpec: "True"
+  fullName: LiteNetLib.LiteConnectionRequest.Reject
+  nameWithType: LiteConnectionRequest.Reject
+- uid: LiteNetLib.LiteConnectionRequest.RejectForce
+  name: RejectForce()
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce
+  commentId: M:LiteNetLib.LiteConnectionRequest.RejectForce
+  fullName: LiteNetLib.LiteConnectionRequest.RejectForce()
+  nameWithType: LiteConnectionRequest.RejectForce()
+- uid: LiteNetLib.LiteConnectionRequest.RejectForce(LiteNetLib.Utils.NetDataWriter)
+  name: RejectForce(NetDataWriter)
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce_LiteNetLib_Utils_NetDataWriter_
+  commentId: M:LiteNetLib.LiteConnectionRequest.RejectForce(LiteNetLib.Utils.NetDataWriter)
+  fullName: LiteNetLib.LiteConnectionRequest.RejectForce(LiteNetLib.Utils.NetDataWriter)
+  nameWithType: LiteConnectionRequest.RejectForce(NetDataWriter)
+- uid: LiteNetLib.LiteConnectionRequest.RejectForce(System.Byte[])
+  name: RejectForce(byte[])
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce_System_Byte___
+  commentId: M:LiteNetLib.LiteConnectionRequest.RejectForce(System.Byte[])
+  name.vb: RejectForce(Byte())
+  fullName: LiteNetLib.LiteConnectionRequest.RejectForce(byte[])
+  fullName.vb: LiteNetLib.LiteConnectionRequest.RejectForce(Byte())
+  nameWithType: LiteConnectionRequest.RejectForce(byte[])
+  nameWithType.vb: LiteConnectionRequest.RejectForce(Byte())
+- uid: LiteNetLib.LiteConnectionRequest.RejectForce(System.Byte[],System.Int32,System.Int32)
+  name: RejectForce(byte[], int, int)
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce_System_Byte___System_Int32_System_Int32_
+  commentId: M:LiteNetLib.LiteConnectionRequest.RejectForce(System.Byte[],System.Int32,System.Int32)
+  name.vb: RejectForce(Byte(), Integer, Integer)
+  fullName: LiteNetLib.LiteConnectionRequest.RejectForce(byte[], int, int)
+  fullName.vb: LiteNetLib.LiteConnectionRequest.RejectForce(Byte(), Integer, Integer)
+  nameWithType: LiteConnectionRequest.RejectForce(byte[], int, int)
+  nameWithType.vb: LiteConnectionRequest.RejectForce(Byte(), Integer, Integer)
+- uid: LiteNetLib.LiteConnectionRequest.RejectForce*
+  name: RejectForce
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce_
+  commentId: Overload:LiteNetLib.LiteConnectionRequest.RejectForce
+  isSpec: "True"
+  fullName: LiteNetLib.LiteConnectionRequest.RejectForce
+  nameWithType: LiteConnectionRequest.RejectForce
+- uid: LiteNetLib.LiteConnectionRequest.RemoteEndPoint
+  name: RemoteEndPoint
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RemoteEndPoint
+  commentId: F:LiteNetLib.LiteConnectionRequest.RemoteEndPoint
+  fullName: LiteNetLib.LiteConnectionRequest.RemoteEndPoint
+  nameWithType: LiteConnectionRequest.RemoteEndPoint
 - uid: LiteNetLib.LiteNetManager
   name: LiteNetManager
   href: api/LiteNetLib.LiteNetManager.html
@@ -1431,15 +1466,28 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.LiteNetManager.ContainsPeer
   nameWithType: LiteNetManager.ContainsPeer
-- uid: LiteNetLib.LiteNetManager.CreateIncomingPeer(LiteNetLib.ConnectionRequest,System.Int32)
-  name: CreateIncomingPeer(ConnectionRequest, int)
-  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_CreateIncomingPeer_LiteNetLib_ConnectionRequest_System_Int32_
-  commentId: M:LiteNetLib.LiteNetManager.CreateIncomingPeer(LiteNetLib.ConnectionRequest,System.Int32)
-  name.vb: CreateIncomingPeer(ConnectionRequest, Integer)
-  fullName: LiteNetLib.LiteNetManager.CreateIncomingPeer(LiteNetLib.ConnectionRequest, int)
-  fullName.vb: LiteNetLib.LiteNetManager.CreateIncomingPeer(LiteNetLib.ConnectionRequest, Integer)
-  nameWithType: LiteNetManager.CreateIncomingPeer(ConnectionRequest, int)
-  nameWithType.vb: LiteNetManager.CreateIncomingPeer(ConnectionRequest, Integer)
+- uid: LiteNetLib.LiteNetManager.CreateConnectionRequest(System.Net.IPEndPoint,LiteNetLib.NetConnectRequestPacket)
+  name: CreateConnectionRequest(IPEndPoint, NetConnectRequestPacket)
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_CreateConnectionRequest_System_Net_IPEndPoint_LiteNetLib_NetConnectRequestPacket_
+  commentId: M:LiteNetLib.LiteNetManager.CreateConnectionRequest(System.Net.IPEndPoint,LiteNetLib.NetConnectRequestPacket)
+  fullName: LiteNetLib.LiteNetManager.CreateConnectionRequest(System.Net.IPEndPoint, LiteNetLib.NetConnectRequestPacket)
+  nameWithType: LiteNetManager.CreateConnectionRequest(IPEndPoint, NetConnectRequestPacket)
+- uid: LiteNetLib.LiteNetManager.CreateConnectionRequest*
+  name: CreateConnectionRequest
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_CreateConnectionRequest_
+  commentId: Overload:LiteNetLib.LiteNetManager.CreateConnectionRequest
+  isSpec: "True"
+  fullName: LiteNetLib.LiteNetManager.CreateConnectionRequest
+  nameWithType: LiteNetManager.CreateConnectionRequest
+- uid: LiteNetLib.LiteNetManager.CreateIncomingPeer(LiteNetLib.LiteConnectionRequest,System.Int32)
+  name: CreateIncomingPeer(LiteConnectionRequest, int)
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_CreateIncomingPeer_LiteNetLib_LiteConnectionRequest_System_Int32_
+  commentId: M:LiteNetLib.LiteNetManager.CreateIncomingPeer(LiteNetLib.LiteConnectionRequest,System.Int32)
+  name.vb: CreateIncomingPeer(LiteConnectionRequest, Integer)
+  fullName: LiteNetLib.LiteNetManager.CreateIncomingPeer(LiteNetLib.LiteConnectionRequest, int)
+  fullName.vb: LiteNetLib.LiteNetManager.CreateIncomingPeer(LiteNetLib.LiteConnectionRequest, Integer)
+  nameWithType: LiteNetManager.CreateIncomingPeer(LiteConnectionRequest, int)
+  nameWithType.vb: LiteNetManager.CreateIncomingPeer(LiteConnectionRequest, Integer)
 - uid: LiteNetLib.LiteNetManager.CreateIncomingPeer*
   name: CreateIncomingPeer
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_CreateIncomingPeer_
@@ -2955,6 +3003,48 @@ references:
   commentId: F:LiteNetLib.NatPunchModule.UnsyncedEvents
   fullName: LiteNetLib.NatPunchModule.UnsyncedEvents
   nameWithType: NatPunchModule.UnsyncedEvents
+- uid: LiteNetLib.NetConnectRequestPacket
+  name: NetConnectRequestPacket
+  href: api/LiteNetLib.NetConnectRequestPacket.html
+  commentId: T:LiteNetLib.NetConnectRequestPacket
+  fullName: LiteNetLib.NetConnectRequestPacket
+  nameWithType: NetConnectRequestPacket
+- uid: LiteNetLib.NetConnectRequestPacket.ConnectionNumber
+  name: ConnectionNumber
+  href: api/LiteNetLib.NetConnectRequestPacket.html#LiteNetLib_NetConnectRequestPacket_ConnectionNumber
+  commentId: F:LiteNetLib.NetConnectRequestPacket.ConnectionNumber
+  fullName: LiteNetLib.NetConnectRequestPacket.ConnectionNumber
+  nameWithType: NetConnectRequestPacket.ConnectionNumber
+- uid: LiteNetLib.NetConnectRequestPacket.ConnectionTime
+  name: ConnectionTime
+  href: api/LiteNetLib.NetConnectRequestPacket.html#LiteNetLib_NetConnectRequestPacket_ConnectionTime
+  commentId: F:LiteNetLib.NetConnectRequestPacket.ConnectionTime
+  fullName: LiteNetLib.NetConnectRequestPacket.ConnectionTime
+  nameWithType: NetConnectRequestPacket.ConnectionTime
+- uid: LiteNetLib.NetConnectRequestPacket.Data
+  name: Data
+  href: api/LiteNetLib.NetConnectRequestPacket.html#LiteNetLib_NetConnectRequestPacket_Data
+  commentId: F:LiteNetLib.NetConnectRequestPacket.Data
+  fullName: LiteNetLib.NetConnectRequestPacket.Data
+  nameWithType: NetConnectRequestPacket.Data
+- uid: LiteNetLib.NetConnectRequestPacket.HeaderSize
+  name: HeaderSize
+  href: api/LiteNetLib.NetConnectRequestPacket.html#LiteNetLib_NetConnectRequestPacket_HeaderSize
+  commentId: F:LiteNetLib.NetConnectRequestPacket.HeaderSize
+  fullName: LiteNetLib.NetConnectRequestPacket.HeaderSize
+  nameWithType: NetConnectRequestPacket.HeaderSize
+- uid: LiteNetLib.NetConnectRequestPacket.PeerId
+  name: PeerId
+  href: api/LiteNetLib.NetConnectRequestPacket.html#LiteNetLib_NetConnectRequestPacket_PeerId
+  commentId: F:LiteNetLib.NetConnectRequestPacket.PeerId
+  fullName: LiteNetLib.NetConnectRequestPacket.PeerId
+  nameWithType: NetConnectRequestPacket.PeerId
+- uid: LiteNetLib.NetConnectRequestPacket.TargetAddress
+  name: TargetAddress
+  href: api/LiteNetLib.NetConnectRequestPacket.html#LiteNetLib_NetConnectRequestPacket_TargetAddress
+  commentId: F:LiteNetLib.NetConnectRequestPacket.TargetAddress
+  fullName: LiteNetLib.NetConnectRequestPacket.TargetAddress
+  nameWithType: NetConnectRequestPacket.TargetAddress
 - uid: LiteNetLib.NetConstants
   name: NetConstants
   href: api/LiteNetLib.NetConstants.html
@@ -3331,15 +3421,28 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetManager.Connect
   nameWithType: NetManager.Connect
-- uid: LiteNetLib.NetManager.CreateIncomingPeer(LiteNetLib.ConnectionRequest,System.Int32)
-  name: CreateIncomingPeer(ConnectionRequest, int)
-  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateIncomingPeer_LiteNetLib_ConnectionRequest_System_Int32_
-  commentId: M:LiteNetLib.NetManager.CreateIncomingPeer(LiteNetLib.ConnectionRequest,System.Int32)
-  name.vb: CreateIncomingPeer(ConnectionRequest, Integer)
-  fullName: LiteNetLib.NetManager.CreateIncomingPeer(LiteNetLib.ConnectionRequest, int)
-  fullName.vb: LiteNetLib.NetManager.CreateIncomingPeer(LiteNetLib.ConnectionRequest, Integer)
-  nameWithType: NetManager.CreateIncomingPeer(ConnectionRequest, int)
-  nameWithType.vb: NetManager.CreateIncomingPeer(ConnectionRequest, Integer)
+- uid: LiteNetLib.NetManager.CreateConnectionRequest(System.Net.IPEndPoint,LiteNetLib.NetConnectRequestPacket)
+  name: CreateConnectionRequest(IPEndPoint, NetConnectRequestPacket)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateConnectionRequest_System_Net_IPEndPoint_LiteNetLib_NetConnectRequestPacket_
+  commentId: M:LiteNetLib.NetManager.CreateConnectionRequest(System.Net.IPEndPoint,LiteNetLib.NetConnectRequestPacket)
+  fullName: LiteNetLib.NetManager.CreateConnectionRequest(System.Net.IPEndPoint, LiteNetLib.NetConnectRequestPacket)
+  nameWithType: NetManager.CreateConnectionRequest(IPEndPoint, NetConnectRequestPacket)
+- uid: LiteNetLib.NetManager.CreateConnectionRequest*
+  name: CreateConnectionRequest
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateConnectionRequest_
+  commentId: Overload:LiteNetLib.NetManager.CreateConnectionRequest
+  isSpec: "True"
+  fullName: LiteNetLib.NetManager.CreateConnectionRequest
+  nameWithType: NetManager.CreateConnectionRequest
+- uid: LiteNetLib.NetManager.CreateIncomingPeer(LiteNetLib.LiteConnectionRequest,System.Int32)
+  name: CreateIncomingPeer(LiteConnectionRequest, int)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateIncomingPeer_LiteNetLib_LiteConnectionRequest_System_Int32_
+  commentId: M:LiteNetLib.NetManager.CreateIncomingPeer(LiteNetLib.LiteConnectionRequest,System.Int32)
+  name.vb: CreateIncomingPeer(LiteConnectionRequest, Integer)
+  fullName: LiteNetLib.NetManager.CreateIncomingPeer(LiteNetLib.LiteConnectionRequest, int)
+  fullName.vb: LiteNetLib.NetManager.CreateIncomingPeer(LiteNetLib.LiteConnectionRequest, Integer)
+  nameWithType: NetManager.CreateIncomingPeer(LiteConnectionRequest, int)
+  nameWithType.vb: NetManager.CreateIncomingPeer(LiteConnectionRequest, Integer)
 - uid: LiteNetLib.NetManager.CreateIncomingPeer*
   name: CreateIncomingPeer
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_CreateIncomingPeer_
@@ -4601,6 +4704,22 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.GetDoubleArray
   nameWithType: NetDataReader.GetDoubleArray
+- uid: LiteNetLib.Utils.NetDataReader.GetEnum*
+  name: GetEnum
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetEnum_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.GetEnum
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.GetEnum
+  nameWithType: NetDataReader.GetEnum
+- uid: LiteNetLib.Utils.NetDataReader.GetEnum``1
+  name: GetEnum<T>()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetEnum__1
+  commentId: M:LiteNetLib.Utils.NetDataReader.GetEnum``1
+  name.vb: GetEnum(Of T)()
+  fullName: LiteNetLib.Utils.NetDataReader.GetEnum<T>()
+  fullName.vb: LiteNetLib.Utils.NetDataReader.GetEnum(Of T)()
+  nameWithType: NetDataReader.GetEnum<T>()
+  nameWithType.vb: NetDataReader.GetEnum(Of T)()
 - uid: LiteNetLib.Utils.NetDataReader.GetFloat
   name: GetFloat()
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetFloat
@@ -4718,6 +4837,22 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.GetLongArray
   nameWithType: NetDataReader.GetLongArray
+- uid: LiteNetLib.Utils.NetDataReader.GetNullableUnmanaged*
+  name: GetNullableUnmanaged
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetNullableUnmanaged_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.GetNullableUnmanaged
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.GetNullableUnmanaged
+  nameWithType: NetDataReader.GetNullableUnmanaged
+- uid: LiteNetLib.Utils.NetDataReader.GetNullableUnmanaged``1
+  name: GetNullableUnmanaged<T>()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetNullableUnmanaged__1
+  commentId: M:LiteNetLib.Utils.NetDataReader.GetNullableUnmanaged``1
+  name.vb: GetNullableUnmanaged(Of T)()
+  fullName: LiteNetLib.Utils.NetDataReader.GetNullableUnmanaged<T>()
+  fullName.vb: LiteNetLib.Utils.NetDataReader.GetNullableUnmanaged(Of T)()
+  nameWithType: NetDataReader.GetNullableUnmanaged<T>()
+  nameWithType.vb: NetDataReader.GetNullableUnmanaged(Of T)()
 - uid: LiteNetLib.Utils.NetDataReader.GetRemainingBytes
   name: GetRemainingBytes()
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetRemainingBytes
@@ -4944,6 +5079,38 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.GetUShortArray
   nameWithType: NetDataReader.GetUShortArray
+- uid: LiteNetLib.Utils.NetDataReader.GetUnmanaged*
+  name: GetUnmanaged
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetUnmanaged_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.GetUnmanaged
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.GetUnmanaged
+  nameWithType: NetDataReader.GetUnmanaged
+- uid: LiteNetLib.Utils.NetDataReader.GetUnmanagedArray*
+  name: GetUnmanagedArray
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetUnmanagedArray_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.GetUnmanagedArray
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.GetUnmanagedArray
+  nameWithType: NetDataReader.GetUnmanagedArray
+- uid: LiteNetLib.Utils.NetDataReader.GetUnmanagedArray``1
+  name: GetUnmanagedArray<T>()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetUnmanagedArray__1
+  commentId: M:LiteNetLib.Utils.NetDataReader.GetUnmanagedArray``1
+  name.vb: GetUnmanagedArray(Of T)()
+  fullName: LiteNetLib.Utils.NetDataReader.GetUnmanagedArray<T>()
+  fullName.vb: LiteNetLib.Utils.NetDataReader.GetUnmanagedArray(Of T)()
+  nameWithType: NetDataReader.GetUnmanagedArray<T>()
+  nameWithType.vb: NetDataReader.GetUnmanagedArray(Of T)()
+- uid: LiteNetLib.Utils.NetDataReader.GetUnmanaged``1
+  name: GetUnmanaged<T>()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_GetUnmanaged__1
+  commentId: M:LiteNetLib.Utils.NetDataReader.GetUnmanaged``1
+  name.vb: GetUnmanaged(Of T)()
+  fullName: LiteNetLib.Utils.NetDataReader.GetUnmanaged<T>()
+  fullName.vb: LiteNetLib.Utils.NetDataReader.GetUnmanaged(Of T)()
+  nameWithType: NetDataReader.GetUnmanaged<T>()
+  nameWithType.vb: NetDataReader.GetUnmanaged(Of T)()
 - uid: LiteNetLib.Utils.NetDataReader.Get``1
   name: Get<T>()
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Get__1
@@ -5171,6 +5338,22 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.PeekUShort
   nameWithType: NetDataReader.PeekUShort
+- uid: LiteNetLib.Utils.NetDataReader.PeekUnmanaged*
+  name: PeekUnmanaged
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekUnmanaged_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.PeekUnmanaged
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.PeekUnmanaged
+  nameWithType: NetDataReader.PeekUnmanaged
+- uid: LiteNetLib.Utils.NetDataReader.PeekUnmanaged``1
+  name: PeekUnmanaged<T>()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekUnmanaged__1
+  commentId: M:LiteNetLib.Utils.NetDataReader.PeekUnmanaged``1
+  name.vb: PeekUnmanaged(Of T)()
+  fullName: LiteNetLib.Utils.NetDataReader.PeekUnmanaged<T>()
+  fullName.vb: LiteNetLib.Utils.NetDataReader.PeekUnmanaged(Of T)()
+  nameWithType: NetDataReader.PeekUnmanaged<T>()
+  nameWithType.vb: NetDataReader.PeekUnmanaged(Of T)()
 - uid: LiteNetLib.Utils.NetDataReader.Position
   name: Position
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Position
@@ -6049,6 +6232,22 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataWriter.PutBytesWithLength
   nameWithType: NetDataWriter.PutBytesWithLength
+- uid: LiteNetLib.Utils.NetDataWriter.PutEnum*
+  name: PutEnum
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutEnum_
+  commentId: Overload:LiteNetLib.Utils.NetDataWriter.PutEnum
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataWriter.PutEnum
+  nameWithType: NetDataWriter.PutEnum
+- uid: LiteNetLib.Utils.NetDataWriter.PutEnum``1(``0)
+  name: PutEnum<T>(T)
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutEnum__1___0_
+  commentId: M:LiteNetLib.Utils.NetDataWriter.PutEnum``1(``0)
+  name.vb: PutEnum(Of T)(T)
+  fullName: LiteNetLib.Utils.NetDataWriter.PutEnum<T>(T)
+  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutEnum(Of T)(T)
+  nameWithType: NetDataWriter.PutEnum<T>(T)
+  nameWithType.vb: NetDataWriter.PutEnum(Of T)(T)
 - uid: LiteNetLib.Utils.NetDataWriter.PutLargeString(System.String)
   name: PutLargeString(string)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutLargeString_System_String_
@@ -6065,6 +6264,22 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataWriter.PutLargeString
   nameWithType: NetDataWriter.PutLargeString
+- uid: LiteNetLib.Utils.NetDataWriter.PutNullableUnmanaged*
+  name: PutNullableUnmanaged
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutNullableUnmanaged_
+  commentId: Overload:LiteNetLib.Utils.NetDataWriter.PutNullableUnmanaged
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataWriter.PutNullableUnmanaged
+  nameWithType: NetDataWriter.PutNullableUnmanaged
+- uid: LiteNetLib.Utils.NetDataWriter.PutNullableUnmanaged``1(System.Nullable{``0})
+  name: PutNullableUnmanaged<T>(T?)
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutNullableUnmanaged__1_System_Nullable___0__
+  commentId: M:LiteNetLib.Utils.NetDataWriter.PutNullableUnmanaged``1(System.Nullable{``0})
+  name.vb: PutNullableUnmanaged(Of T)(T?)
+  fullName: LiteNetLib.Utils.NetDataWriter.PutNullableUnmanaged<T>(T?)
+  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutNullableUnmanaged(Of T)(T?)
+  nameWithType: NetDataWriter.PutNullableUnmanaged<T>(T?)
+  nameWithType.vb: NetDataWriter.PutNullableUnmanaged(Of T)(T?)
 - uid: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[])
   name: PutSBytesWithLength(sbyte[])
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutSBytesWithLength_System_SByte___
@@ -6090,6 +6305,54 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength
   nameWithType: NetDataWriter.PutSBytesWithLength
+- uid: LiteNetLib.Utils.NetDataWriter.PutSpan*
+  name: PutSpan
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutSpan_
+  commentId: Overload:LiteNetLib.Utils.NetDataWriter.PutSpan
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataWriter.PutSpan
+  nameWithType: NetDataWriter.PutSpan
+- uid: LiteNetLib.Utils.NetDataWriter.PutSpan``1(System.Span{``0})
+  name: PutSpan<T>(Span<T>)
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutSpan__1_System_Span___0__
+  commentId: M:LiteNetLib.Utils.NetDataWriter.PutSpan``1(System.Span{``0})
+  name.vb: PutSpan(Of T)(Span(Of T))
+  fullName: LiteNetLib.Utils.NetDataWriter.PutSpan<T>(System.Span<T>)
+  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutSpan(Of T)(System.Span(Of T))
+  nameWithType: NetDataWriter.PutSpan<T>(Span<T>)
+  nameWithType.vb: NetDataWriter.PutSpan(Of T)(Span(Of T))
+- uid: LiteNetLib.Utils.NetDataWriter.PutUnmanaged*
+  name: PutUnmanaged
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutUnmanaged_
+  commentId: Overload:LiteNetLib.Utils.NetDataWriter.PutUnmanaged
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataWriter.PutUnmanaged
+  nameWithType: NetDataWriter.PutUnmanaged
+- uid: LiteNetLib.Utils.NetDataWriter.PutUnmanagedArray*
+  name: PutUnmanagedArray
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutUnmanagedArray_
+  commentId: Overload:LiteNetLib.Utils.NetDataWriter.PutUnmanagedArray
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataWriter.PutUnmanagedArray
+  nameWithType: NetDataWriter.PutUnmanagedArray
+- uid: LiteNetLib.Utils.NetDataWriter.PutUnmanagedArray``1(``0[])
+  name: PutUnmanagedArray<T>(T[])
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutUnmanagedArray__1___0___
+  commentId: M:LiteNetLib.Utils.NetDataWriter.PutUnmanagedArray``1(``0[])
+  name.vb: PutUnmanagedArray(Of T)(T())
+  fullName: LiteNetLib.Utils.NetDataWriter.PutUnmanagedArray<T>(T[])
+  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutUnmanagedArray(Of T)(T())
+  nameWithType: NetDataWriter.PutUnmanagedArray<T>(T[])
+  nameWithType.vb: NetDataWriter.PutUnmanagedArray(Of T)(T())
+- uid: LiteNetLib.Utils.NetDataWriter.PutUnmanaged``1(``0)
+  name: PutUnmanaged<T>(T)
+  href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_PutUnmanaged__1___0_
+  commentId: M:LiteNetLib.Utils.NetDataWriter.PutUnmanaged``1(``0)
+  name.vb: PutUnmanaged(Of T)(T)
+  fullName: LiteNetLib.Utils.NetDataWriter.PutUnmanaged<T>(T)
+  fullName.vb: LiteNetLib.Utils.NetDataWriter.PutUnmanaged(Of T)(T)
+  nameWithType: NetDataWriter.PutUnmanaged<T>(T)
+  nameWithType.vb: NetDataWriter.PutUnmanaged(Of T)(T)
 - uid: LiteNetLib.Utils.NetDataWriter.Put``1(``0)
   name: Put<T>(T)
   href: api/LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_Put__1___0_
