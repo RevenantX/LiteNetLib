@@ -211,7 +211,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Capacity_" data-uid="LiteNetLib.Utils.NetDataWriter.Capacity*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Capacity" data-uid="LiteNetLib.Utils.NetDataWriter.Capacity">Capacity</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the total capacity of the internal <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -228,7 +229,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td></td>
+        <td><p>The length of the underlying <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__data">_data</a> array.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -236,7 +238,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Data_" data-uid="LiteNetLib.Utils.NetDataWriter.Data*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Data" data-uid="LiteNetLib.Utils.NetDataWriter.Data">Data</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the underlying <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array used by this writer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -253,15 +256,20 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
-        <td></td>
+        <td><p>The internal <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__data">_data</a> array.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_Data_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Accessing this directly allows for external manipulation but bypasses bounds checking.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_Length_" data-uid="LiteNetLib.Utils.NetDataWriter.Length*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Length" data-uid="LiteNetLib.Utils.NetDataWriter.Length">Length</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the current number of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s written to the buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -278,7 +286,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td></td>
+        <td><p>The current <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__position">_position</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -288,7 +297,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_AsReadOnlySpan_" data-uid="LiteNetLib.Utils.NetDataWriter.AsReadOnlySpan*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_AsReadOnlySpan" data-uid="LiteNetLib.Utils.NetDataWriter.AsReadOnlySpan">AsReadOnlySpan()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan&lt;T&gt;</a> representing the currently used portion of the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -305,15 +315,21 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
-        <td></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan&lt;T&gt;</a> from index 0 to <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__position">_position</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_AsReadOnlySpan_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Provides a high-performance, zero-allocation view of the data.
+The span becomes invalid if the internal buffer is resized or if <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__position">_position</a> changes.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_CopyData_" data-uid="LiteNetLib.Utils.NetDataWriter.CopyData*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_CopyData" data-uid="LiteNetLib.Utils.NetDataWriter.CopyData">CopyData()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Creates a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array containing the current data from the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -330,15 +346,20 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
-        <td></td>
+        <td><p>A new <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array of length <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__position">_position</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_CopyData_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method performs a heap allocation and copies the data using <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.buffer.blockcopy">BlockCopy(Array, int, Array, int, int)</a>.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_EnsureFit_" data-uid="LiteNetLib.Utils.NetDataWriter.EnsureFit*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_EnsureFit_System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.EnsureFit(System.Int32)">EnsureFit(int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Ensures the internal buffer can accommodate <code class="paramref">additionalSize</code> more <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -357,10 +378,15 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">additionalSize</span></td>
-        <td></td>
+        <td><p>The number of additional <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s to fit.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_EnsureFit_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This checks against the current <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__position">_position</a>. If the capacity is insufficient,
+the buffer grows to either the required size or doubles its current size.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_FromBytes_" data-uid="LiteNetLib.Utils.NetDataWriter.FromBytes*"></a>
@@ -514,7 +540,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_FromString_" data-uid="LiteNetLib.Utils.NetDataWriter.FromString*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_FromString_System_String_" data-uid="LiteNetLib.Utils.NetDataWriter.FromString(System.String)">FromString(string)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Creates a new <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a> and serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> into it.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -533,7 +560,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> to serialize.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -548,7 +576,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
-        <td></td>
+        <td><p>A new <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a> instance containing the serialized <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -556,7 +585,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Boolean_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Boolean)">Put(bool)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a> value as a single <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -575,7 +605,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -583,7 +614,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Byte_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Byte)">Put(byte)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -602,7 +634,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -610,7 +643,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Byte___" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Byte[])">Put(byte[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an entire <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -629,7 +663,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">data</span></td>
-        <td></td>
+        <td><p>The source array.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -637,7 +672,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Byte[],System.Int32,System.Int32)">Put(byte[], int, int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a segment of a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -656,17 +692,20 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">data</span></td>
-        <td></td>
+        <td><p>The source array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">offset</span></td>
-        <td></td>
+        <td><p>The starting index in the source array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">length</span></td>
-        <td></td>
+        <td><p>The number of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -674,7 +713,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Char_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Char)">Put(char)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a> value as a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -693,7 +733,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -701,7 +742,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Double_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Double)">Put(double)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -720,7 +762,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -728,7 +771,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Guid_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Guid)">Put(Guid)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -747,7 +791,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -755,7 +800,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Int16_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Int16)">Put(short)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -774,7 +820,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -782,7 +829,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Int32)">Put(int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -801,7 +849,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -809,7 +858,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Int64_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Int64)">Put(long)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -828,7 +878,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -836,7 +887,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Net_IPEndPoint_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Net.IPEndPoint)">Put(IPEndPoint)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -855,7 +907,27 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td><span class="parametername">endPoint</span></td>
-        <td></td>
+        <td><p>The network endpoint to write.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_Put_System_Net_IPEndPoint__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Writes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> (0 for IPv4, 1 for IPv6), followed by the address bytes and a 2-byte <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> port.</p>
+</div>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
+        <td><p>Thrown when the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.addressfamily">AddressFamily</a> is not <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.addressfamily#system-net-sockets-addressfamily-internetwork">InterNetwork</a> or <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.addressfamily#system-net-sockets-addressfamily-internetworkv6">InterNetworkV6</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -863,7 +935,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_ReadOnlySpan_System_Byte__" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.ReadOnlySpan{System.Byte})">Put(ReadOnlySpan&lt;byte&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan&lt;T&gt;</a> of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -882,7 +955,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
         <td><span class="parametername">data</span></td>
-        <td></td>
+        <td><p>The span of data to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -890,7 +964,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_SByte_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.SByte)">Put(sbyte)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -909,7 +984,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -917,7 +993,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_Single_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.Single)">Put(float)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -936,7 +1013,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -944,7 +1022,7 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_String_System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.String,System.Int32)">Put(string, int)</h4>
-  <div class="markdown level1 summary"><p>Note that &quot;maxLength&quot; only limits the number of characters in a string, not its size in bytes.</p>
+  <div class="markdown level1 summary"><p>Serializes a string using a 2-byte <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a> length header.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -964,20 +1042,28 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The string to write to the buffer.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">maxLength</span></td>
-        <td></td>
+        <td><p>The maximum number of characters to write. If the string is longer, it will be truncated. <br>
+A value of 0 indicates no limit.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_Put_System_String_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Note that <code class="paramref">maxLength</code> limits the number of characters, not the total size in <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s. <br>
+Uses <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding.utf8">UTF8</a>.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_UInt16_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.UInt16)">Put(ushort)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -996,7 +1082,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1004,7 +1091,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_UInt32_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.UInt32)">Put(uint)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1023,7 +1111,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1031,7 +1120,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put_System_UInt64_" data-uid="LiteNetLib.Utils.NetDataWriter.Put(System.UInt64)">Put(ulong)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a> value.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1050,7 +1140,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a> value to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1058,7 +1149,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_Array_System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.Array,System.Int32)">PutArray(Array, int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.array">Array</a> prefixed with a 2-byte <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> length.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1077,20 +1169,27 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.array">Array</a></td>
         <td><span class="parametername">arr</span></td>
-        <td></td>
+        <td><p>The source array to serialize.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">sz</span></td>
-        <td></td>
+        <td><p>The size of a single element in <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_Array_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If the array is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, a length of 0 is written. <br>
+The total payload size is calculated as <code>length * sz</code>.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_Boolean___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.Boolean[])">PutArray(bool[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1117,7 +1216,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_Double___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.Double[])">PutArray(double[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1144,7 +1244,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_Int16___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.Int16[])">PutArray(short[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1171,7 +1272,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_Int32___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.Int32[])">PutArray(int[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1198,7 +1300,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_Int64___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.Int64[])">PutArray(long[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1225,7 +1328,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_Single___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.Single[])">PutArray(float[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1252,7 +1356,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_String___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.String[])">PutArray(string[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> values.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1271,15 +1376,20 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The array of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> elements to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_String____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Writes a 2-byte <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> length header followed by each <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> element.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_String___System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.String[],System.Int32)">PutArray(string[], int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> values with a maximum length constraint per element.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1298,12 +1408,14 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The array of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> elements to write.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">strMaxLength</span></td>
-        <td></td>
+        <td><p>The maximum allowed length for each individual <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1311,7 +1423,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_UInt16___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.UInt16[])">PutArray(ushort[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1338,7 +1451,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_UInt32___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.UInt32[])">PutArray(uint[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1365,7 +1479,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray_System_UInt64___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray(System.UInt64[])">PutArray(ulong[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values to the internal buffer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1392,7 +1507,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutArray__1___0___" data-uid="LiteNetLib.Utils.NetDataWriter.PutArray``1(``0[])">PutArray&lt;T&gt;(T[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an array of objects implementing <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1411,7 +1527,8 @@
       <tr>
         <td>T[]</td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The array of objects to serialize.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1426,7 +1543,8 @@
     <tbody>
       <tr>
         <td><span class="parametername">T</span></td>
-        <td></td>
+        <td><p>A type that implements <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a> and has a parameterless constructor.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1434,7 +1552,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_" data-uid="LiteNetLib.Utils.NetDataWriter.PutBytesWithLength*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_System_Byte___" data-uid="LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[])">PutBytesWithLength(byte[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array prefixed with its <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> length.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1453,7 +1572,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">data</span></td>
-        <td></td>
+        <td><p>The source array.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1461,7 +1581,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_" data-uid="LiteNetLib.Utils.NetDataWriter.PutBytesWithLength*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutBytesWithLength_System_Byte___System_Int32_System_UInt16_" data-uid="LiteNetLib.Utils.NetDataWriter.PutBytesWithLength(System.Byte[],System.Int32,System.UInt16)">PutBytesWithLength(byte[], int, ushort)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a segment of a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array prefixed with its <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> length.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1480,17 +1601,67 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">data</span></td>
-        <td></td>
+        <td><p>The source <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">offset</span></td>
-        <td></td>
+        <td><p>The starting index in the source array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
         <td><span class="parametername">length</span></td>
-        <td></td>
+        <td><p>The number of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s to write.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_PutEnum_" data-uid="LiteNetLib.Utils.NetDataWriter.PutEnum*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_PutEnum__1___0_" data-uid="LiteNetLib.Utils.NetDataWriter.PutEnum``1(``0)">PutEnum&lt;T&gt;(T)</h4>
+  <div class="markdown level1 summary"><p>Writes an enum value of type <code class="typeparamref">T</code> to the internal data buffer at the current position. <br>
+Automatically resizes the buffer if <span class="xref">LiteNetLib.Utils.NetDataWriter._autoResize</span> is enabled.
+Advances the position by the size of <code class="typeparamref">T</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PutEnum&lt;T&gt;(T value) where T : unmanaged, Enum</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The enum value to write.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>An unmanaged enum type to write.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1498,7 +1669,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutLargeString_" data-uid="LiteNetLib.Utils.NetDataWriter.PutLargeString*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutLargeString_System_String_" data-uid="LiteNetLib.Utils.NetDataWriter.PutLargeString(System.String)">PutLargeString(string)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> using a 4-byte <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> length header.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1517,7 +1689,60 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> to write.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_PutLargeString_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Recommended for strings that may exceed the 65535 byte limit of standard <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> length headers. <br>
+Uses <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding.utf8">UTF8</a>.</p>
+</div>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_PutNullableUnmanaged_" data-uid="LiteNetLib.Utils.NetDataWriter.PutNullableUnmanaged*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_PutNullableUnmanaged__1_System_Nullable___0__" data-uid="LiteNetLib.Utils.NetDataWriter.PutNullableUnmanaged``1(System.Nullable{``0})">PutNullableUnmanaged&lt;T&gt;(T?)</h4>
+  <div class="markdown level1 summary"><p>Writes a nullable value of type <code class="typeparamref">T</code> into the internal byte buffer at the current position,
+first writing a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a> indicating whether the value is present,
+and then writing the value itself if it exists. <br> Advances the position by 1 byte for the presence flag plus
+the size of <code class="typeparamref">T</code> if the value is present.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PutNullableUnmanaged&lt;T&gt;(T? value) where T : unmanaged</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>T?</td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The nullable value to write into the buffer. If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, only a <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> flag is written.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>An unmanaged value type to write into the buffer.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1525,7 +1750,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutSBytesWithLength_" data-uid="LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutSBytesWithLength_System_SByte___" data-uid="LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[])">PutSBytesWithLength(sbyte[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a> array prefixed with its <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> length.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1544,7 +1770,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a>[]</td>
         <td><span class="parametername">data</span></td>
-        <td></td>
+        <td><p>The source array.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1552,7 +1779,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_PutSBytesWithLength_" data-uid="LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_PutSBytesWithLength_System_SByte___System_Int32_System_UInt16_" data-uid="LiteNetLib.Utils.NetDataWriter.PutSBytesWithLength(System.SByte[],System.Int32,System.UInt16)">PutSBytesWithLength(sbyte[], int, ushort)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes a segment of an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a> array prefixed with its <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> length.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1571,17 +1799,159 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a>[]</td>
         <td><span class="parametername">data</span></td>
-        <td></td>
+        <td><p>The source <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a> array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">offset</span></td>
-        <td></td>
+        <td><p>The starting index in the source array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
         <td><span class="parametername">length</span></td>
-        <td></td>
+        <td><p>The number of elements to write.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_PutSpan_" data-uid="LiteNetLib.Utils.NetDataWriter.PutSpan*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_PutSpan__1_System_Span___0__" data-uid="LiteNetLib.Utils.NetDataWriter.PutSpan``1(System.Span{``0})">PutSpan&lt;T&gt;(Span&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"><p>Serializes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span&lt;T&gt;</a> of unmanaged values to the internal buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PutSpan&lt;T&gt;(Span&lt;T&gt; span) where T : unmanaged</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.span-1">Span</a>&lt;T&gt;</td>
+        <td><span class="parametername">span</span></td>
+        <td><p>The span of data to write.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The unmanaged type of the span elements.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_PutSpan__1_System_Span___0___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Writes a 2-byte <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a> length header followed by the raw binary data. <br></p>
+</div>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_PutUnmanagedArray_" data-uid="LiteNetLib.Utils.NetDataWriter.PutUnmanagedArray*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_PutUnmanagedArray__1___0___" data-uid="LiteNetLib.Utils.NetDataWriter.PutUnmanagedArray``1(``0[])">PutUnmanagedArray&lt;T&gt;(T[])</h4>
+  <div class="markdown level1 summary"><p>Serializes an array of unmanaged values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PutUnmanagedArray&lt;T&gt;(T[] arr) where T : unmanaged</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>T[]</td>
+        <td><span class="parametername">arr</span></td>
+        <td><p>The array to serialize.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The unmanaged type of the array elements.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataWriter_PutUnmanaged_" data-uid="LiteNetLib.Utils.NetDataWriter.PutUnmanaged*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataWriter_PutUnmanaged__1___0_" data-uid="LiteNetLib.Utils.NetDataWriter.PutUnmanaged``1(``0)">PutUnmanaged&lt;T&gt;(T)</h4>
+  <div class="markdown level1 summary"><p>Writes a value of type <code class="typeparamref">T</code> into the internal byte buffer at the current position,
+advancing the position by the size of <code class="typeparamref">T</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PutUnmanaged&lt;T&gt;(T value) where T : unmanaged</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The value to write into the buffer.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>An unmanaged value type to write into the buffer.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1589,7 +1959,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Put_" data-uid="LiteNetLib.Utils.NetDataWriter.Put*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Put__1___0_" data-uid="LiteNetLib.Utils.NetDataWriter.Put``1(``0)">Put&lt;T&gt;(T)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes an object implementing <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1608,7 +1979,8 @@
       <tr>
         <td><span class="xref">T</span></td>
         <td><span class="parametername">obj</span></td>
-        <td></td>
+        <td><p>The object instance to serialize.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1623,15 +1995,20 @@
     <tbody>
       <tr>
         <td><span class="parametername">T</span></td>
-        <td></td>
+        <td><p>A type that implements the <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a> interface.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_Put__1___0__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method calls the <a class="xref" href="LiteNetLib.Utils.INetSerializable.html#LiteNetLib_Utils_INetSerializable_Serialize_LiteNetLib_Utils_NetDataWriter_">Serialize(NetDataWriter)</a> method on the provided <code class="paramref">obj</code>.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_Reset_" data-uid="LiteNetLib.Utils.NetDataWriter.Reset*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Reset" data-uid="LiteNetLib.Utils.NetDataWriter.Reset">Reset()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resets the <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__position">_position</a> to 0, effectively clearing the buffer for reuse.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1641,7 +2018,8 @@
 
   <a id="LiteNetLib_Utils_NetDataWriter_Reset_" data-uid="LiteNetLib.Utils.NetDataWriter.Reset*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_Reset_System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.Reset(System.Int32)">Reset(int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resets the <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter__position">_position</a> to 0 and ensures the internal buffer has at least the specified <code class="paramref">size</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1660,15 +2038,20 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">size</span></td>
-        <td></td>
+        <td><p>The minimum capacity required for the internal buffer.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_Reset_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If the current buffer is smaller than <code class="paramref">size</code>, <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html#LiteNetLib_Utils_NetDataWriter_ResizeIfNeed_System_Int32_">ResizeIfNeed(int)</a> will allocate a larger <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_ResizeIfNeed_" data-uid="LiteNetLib.Utils.NetDataWriter.ResizeIfNeed*"></a>
   <h4 id="LiteNetLib_Utils_NetDataWriter_ResizeIfNeed_System_Int32_" data-uid="LiteNetLib.Utils.NetDataWriter.ResizeIfNeed(System.Int32)">ResizeIfNeed(int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Ensures the internal buffer is at least <code class="paramref">newSize</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1687,10 +2070,15 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">newSize</span></td>
-        <td></td>
+        <td><p>The required minimum size of the buffer.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetDataWriter_ResizeIfNeed_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If an allocation is necessary, the buffer grows to either <code class="paramref">newSize</code>
+or doubles its current size, whichever is larger.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetDataWriter_SetPosition_" data-uid="LiteNetLib.Utils.NetDataWriter.SetPosition*"></a>
