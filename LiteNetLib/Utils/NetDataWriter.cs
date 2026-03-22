@@ -511,20 +511,35 @@ namespace LiteNetLib.Utils
         /// </remarks>
         public void Put(IPEndPoint endPoint)
         {
+            int addressSize;
+            byte familyFlag;
+
             if (endPoint.AddressFamily == AddressFamily.InterNetwork)
             {
-                Put((byte)0);
+                addressSize = 4;
+                familyFlag = 0;
             }
             else if (endPoint.AddressFamily == AddressFamily.InterNetworkV6)
             {
-                Put((byte)1);
+                addressSize = 16;
+                familyFlag = 1;
             }
             else
             {
-                throw new ArgumentException("Unsupported address family: " + endPoint.AddressFamily);
+                throw new ArgumentException($"Unsupported address family: {endPoint.AddressFamily}");
             }
 
-            Put(endPoint.Address.GetAddressBytes());
+            if (_autoResize)
+                ResizeIfNeed(_position + 1 + addressSize + 2);
+
+            _data[_position++] = familyFlag;
+
+            Span<byte> destination = _data.AsSpan(_position, addressSize);
+            if (!endPoint.Address.TryWriteBytes(destination, out int written))
+                throw new ArgumentException("Failed to write IP bytes.");
+
+            _position += written;
+
             Put((ushort)endPoint.Port);
         }
 
