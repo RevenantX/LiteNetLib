@@ -325,7 +325,11 @@ namespace LiteNetLib
         /// <param name="addressIPv4">bind to specific ipv4 address</param>
         /// <param name="addressIPv6">bind to specific ipv6 address</param>
         /// <param name="port">port to listen</param>
-        /// <param name="manualMode">mode of library</param>
+        /// <param name="manualMode">
+        /// When <see langword="true"/>, disables internal background threads. <br/>
+        /// You must manually call <see cref="PollEvents"/> and <see cref="ManualUpdate"/>. <br/> <br/>
+        /// Can be used when e.g. 10,000 instances are running on the same machine, reducing the amount of threads used.
+        /// </param>
         public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool manualMode)
         {
             if (IsRunning && NotConnected == false)

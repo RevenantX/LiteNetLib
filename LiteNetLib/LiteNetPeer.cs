@@ -698,6 +698,18 @@ namespace LiteNetLib
 
         }
 
+        /// <summary>
+        /// Internally handles the shutdown process for this peer.
+        /// </summary>
+        /// <param name="data">Optional data to include in the unreliable disconnect packet.</param>
+        /// <param name="start">Offset in the <paramref name="data"/> array.</param>
+        /// <param name="length">Length of the data to send.</param>
+        /// <param name="force">
+        /// If <see langword="true"/>, immediately sets state to <see cref="ConnectionState.Disconnected"/> without sending a notification. <br/>
+        /// If <see langword="false"/>, sends unreliable disconnect packets until a timeout occurs and sets state to <see cref="ConnectionState.ShutdownRequested"/>
+        /// Queued reliable packets are bypassed and dropped immediately.
+        /// </param>
+        /// <returns>A <see cref="ShutdownResult"/> indicating the state change transition.</returns>
         internal ShutdownResult Shutdown(byte[] data, int start, int length, bool force)
         {
             lock (_shutdownLock)
@@ -929,6 +941,15 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Evaluates incoming connection requests against the current peer state to supply Reconnect Protection.
+        /// </summary>
+        /// <param name="connRequest">The incoming connection request packet.</param>
+        /// <returns>A <see cref="ConnectRequestResult"/> directing how the manager should handle the request.</returns>
+        /// <remarks>
+        /// If the state is <see cref="ConnectionState.ShutdownRequested"/>, the peer lingers to ignore older connection requests
+        /// (where the packet timestamp is smaller than internal <see cref="_connectTime"/>), ensuring older connections are ignored.
+        /// </remarks>
         internal ConnectRequestResult ProcessConnectRequest(NetConnectRequestPacket connRequest)
         {
             //current or new request
