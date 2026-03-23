@@ -328,8 +328,7 @@ namespace LiteNetLib
         /// <param name="manualMode">
         /// When <see langword="true"/>, disables internal background threads. <br/>
         /// You must manually call <see cref="PollEvents"/> and <see cref="ManualUpdate"/>. <br/> <br/>
-        /// Recommended for single-threaded environments like Unity or for
-        /// reducing multi-threading overhead and synchronization issues.
+        /// Can be used when e.g. 10,000 instances are running on the same machine, reducing the amount of threads used.
         /// </param>
         public bool Start(IPAddress addressIPv4, IPAddress addressIPv6, int port, bool manualMode)
         {

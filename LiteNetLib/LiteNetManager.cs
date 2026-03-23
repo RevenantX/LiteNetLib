@@ -309,7 +309,7 @@ namespace LiteNetLib
         /// <param name="socketErrorCode">The error code from the underlying socket, if any.</param>
         /// <param name="force">
         /// If <see langword="true"/>, immediately sets state to <see cref="ConnectionState.Disconnected"/> without sending a notification. <br/>
-        /// If <see langword="false"/>, sends a single unreliable disconnect packet and sets state to <see cref="ConnectionState.ShutdownRequested"/>.
+        /// If <see langword="false"/>, sends unreliable disconnect packets until <see cref="DisconnectTimeout"/> and sets state to <see cref="ConnectionState.ShutdownRequested"/>.
         /// Peer will linger until <see cref="DisconnectTimeout"/> to ignore late-arriving packets from the old session.
         /// </param>
         /// <param name="data">Optional custom data to include in the disconnect packet.</param>
@@ -577,7 +577,7 @@ namespace LiteNetLib
 
 
         /// <summary>
-        /// Updates internal peer states, handles timeouts, and processes NTP requests.
+        /// Updates internal peer states, handles timeouts, processes NTP requests and sends buffered packets.
         /// </summary>
         /// <param name="elapsedMilliseconds">Time passed since the last update frame.</param>
         /// <remarks>
@@ -1296,10 +1296,10 @@ namespace LiteNetLib
             _updateTriggerEvent.Set();
 
         /// <summary>
-        /// Reads data from the UDP sockets and processes pending events immediately.
+        /// Synchronizes arrived events from the background thread to your main-thread/<see cref="INetEventListener"/>
         /// </summary>
         /// <remarks>
-        /// Must be called continuously from the main loop if <see cref="_manualMode"/> was set to <see langword="true"/>.
+        /// Must be called continuously from the main loop if <see cref="_manualMode"/> was set to <see langword="true"/> to receive data from the UDP sockets.
         /// </remarks>
         public void PollEvents()
         {

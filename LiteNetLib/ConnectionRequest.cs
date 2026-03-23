@@ -88,7 +88,7 @@ namespace LiteNetLib
         /// <param name="length">Length of the data to be sent from the <paramref name="rejectData"/> array.</param>
         /// <param name="force">
         /// If <see langword="true"/>, sends a single raw packet and immediately removes the request. <br/>
-        /// If <see langword="false"/>, creates a temporary peer that sends a single rejection packet and lingers in memory until a timeout occurs to handle late-arriving packets.
+        /// If <see langword="false"/>, creates a temporary peer that sends rejection packets and lingers in memory until a timeout occurs to handle late-arriving packets.
         /// </param>
         public void Reject(byte[] rejectData, int start, int length, bool force)
         {

@@ -706,7 +706,7 @@ namespace LiteNetLib
         /// <param name="length">Length of the data to send.</param>
         /// <param name="force">
         /// If <see langword="true"/>, immediately sets state to <see cref="ConnectionState.Disconnected"/> without sending a notification. <br/>
-        /// If <see langword="false"/>, sends a single unreliable disconnect packet and sets state to <see cref="ConnectionState.ShutdownRequested"/>
+        /// If <see langword="false"/>, sends unreliable disconnect packets until a timeout occurs and sets state to <see cref="ConnectionState.ShutdownRequested"/>
         /// Queued reliable packets are bypassed and dropped immediately.
         /// </param>
         /// <returns>A <see cref="ShutdownResult"/> indicating the state change transition.</returns>
@@ -948,7 +948,7 @@ namespace LiteNetLib
         /// <returns>A <see cref="ConnectRequestResult"/> directing how the manager should handle the request.</returns>
         /// <remarks>
         /// If the state is <see cref="ConnectionState.ShutdownRequested"/>, the peer lingers to ignore older connection requests
-        /// (where the packet timestamp is smaller than internal <see cref="_connectTime"/>), ensuring delayed or stale packets are dropped.
+        /// (where the packet timestamp is smaller than internal <see cref="_connectTime"/>), ensuring older connections are ignored.
         /// </remarks>
         internal ConnectRequestResult ProcessConnectRequest(NetConnectRequestPacket connRequest)
         {
