@@ -118,7 +118,7 @@ namespace LiteNetLib
             Reject(rejectData, start, length, true);
 
         /// <summary>
-        /// Rejects the connection immediately without reliability and without additional data.
+        /// Rejects the connection immediately without sending any packet.
         /// </summary>
         public void RejectForce() =>
             Reject(null, 0, 0, true);
@@ -138,7 +138,7 @@ namespace LiteNetLib
             Reject(rejectData.Data, 0, rejectData.Length, true);
 
         /// <summary>
-        /// Rejects the connection reliably without additional data.
+        /// Rejects the connection without sending any packet.
         /// </summary>
         public void Reject() =>
             Reject(null, 0, 0, false);
