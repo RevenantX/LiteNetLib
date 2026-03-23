@@ -778,7 +778,7 @@ namespace LiteNetLib.Utils
         /// <typeparam name="T">An unmanaged value type.</typeparam>
         /// <returns>The value read from the buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T PeekUnmanaged<T>() where T : unmanaged
+        public unsafe T PeekUnmanaged<T>() where T : unmanaged
         {
 #if NET8_0_OR_GREATER
             return Unsafe.ReadUnaligned<T>(ref _data[_position]);
