@@ -87,7 +87,7 @@ namespace LiteNetLib
         /// <param name="start">Offset in the <paramref name="rejectData"/> array.</param>
         /// <param name="length">Length of the data to be sent from the <paramref name="rejectData"/> array.</param>
         /// <param name="force">
-        /// If <see langword="true"/>, sends a single raw packet and immediately removes the request. <br/>
+        /// If <see langword="true"/>, rejects the connection immediately without sending any packet. <br/>
         /// If <see langword="false"/>, creates a temporary peer that sends rejection packets and lingers in memory until a timeout occurs to handle late-arriving packets.
         /// </param>
         public void Reject(byte[] rejectData, int start, int length, bool force)
@@ -138,7 +138,7 @@ namespace LiteNetLib
             Reject(rejectData.Data, 0, rejectData.Length, true);
 
         /// <summary>
-        /// Rejects the connection without sending any packet.
+        /// Rejects the connection reliably without additional data.
         /// </summary>
         public void Reject() =>
             Reject(null, 0, 0, false);
