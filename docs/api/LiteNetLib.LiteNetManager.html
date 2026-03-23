@@ -2231,7 +2231,7 @@ use direct socket calls for send/receive to drastically increase speed and reduc
 
   <a id="LiteNetLib_LiteNetManager_ManualUpdate_" data-uid="LiteNetLib.LiteNetManager.ManualUpdate*"></a>
   <h4 id="LiteNetLib_LiteNetManager_ManualUpdate_System_Single_" data-uid="LiteNetLib.LiteNetManager.ManualUpdate(System.Single)">ManualUpdate(float)</h4>
-  <div class="markdown level1 summary"><p>Update and send logic. Use this only when NetManager started in manual mode</p>
+  <div class="markdown level1 summary"><p>Updates internal peer states, handles timeouts, processes NTP requests and sends buffered packets.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -2251,23 +2251,28 @@ use direct socket calls for send/receive to drastically increase speed and reduc
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
         <td><span class="parametername">elapsedMilliseconds</span></td>
-        <td><p>elapsed milliseconds since last update call</p>
+        <td><p>Time passed since the last update frame.</p>
 </td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_LiteNetManager_ManualUpdate_System_Single__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Must be called continuously from the main loop if <span class="xref">LiteNetLib.LiteNetManager._manualMode</span> was set to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
+</div>
 
 
   <a id="LiteNetLib_LiteNetManager_PollEvents_" data-uid="LiteNetLib.LiteNetManager.PollEvents*"></a>
   <h4 id="LiteNetLib_LiteNetManager_PollEvents" data-uid="LiteNetLib.LiteNetManager.PollEvents">PollEvents()</h4>
-  <div class="markdown level1 summary"><p>Receive&quot; pending events. Call this in game update code
-In Manual mode it will call also socket Receive (which can be slow)</p>
+  <div class="markdown level1 summary"><p>Synchronizes arrived events from the background thread to your main-thread/<a class="xref" href="LiteNetLib.INetEventListener.html">INetEventListener</a></p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void PollEvents()</code></pre>
   </div>
+  <h5 id="LiteNetLib_LiteNetManager_PollEvents_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Must be called continuously from the main loop if <span class="xref">LiteNetLib.LiteNetManager._manualMode</span> was set to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> to receive data from the UDP sockets.</p>
+</div>
 
 
   <a id="LiteNetLib_LiteNetManager_ProcessEvent_" data-uid="LiteNetLib.LiteNetManager.ProcessEvent*"></a>
@@ -3286,7 +3291,9 @@ much faster to just cache the IPEndPoint.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><span class="parametername">manualMode</span></td>
-        <td><p>mode of library</p>
+        <td><p>When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>, disables internal background threads. <br>
+You must manually call <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_PollEvents">PollEvents()</a> and <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_ManualUpdate_System_Single_">ManualUpdate(float)</a>. <br> <br>
+Can be used when e.g. 10,000 instances are running on the same machine, reducing the amount of threads used.</p>
 </td>
       </tr>
     </tbody>

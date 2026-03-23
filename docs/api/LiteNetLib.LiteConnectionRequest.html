@@ -213,7 +213,8 @@
 
   <a id="LiteNetLib_LiteConnectionRequest_Reject_" data-uid="LiteNetLib.LiteConnectionRequest.Reject*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_Reject" data-uid="LiteNetLib.LiteConnectionRequest.Reject">Reject()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Rejects the connection reliably without additional data.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -223,7 +224,8 @@
 
   <a id="LiteNetLib_LiteConnectionRequest_Reject_" data-uid="LiteNetLib.LiteConnectionRequest.Reject*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_Reject_LiteNetLib_Utils_NetDataWriter_" data-uid="LiteNetLib.LiteConnectionRequest.Reject(LiteNetLib.Utils.NetDataWriter)">Reject(NetDataWriter)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Rejects the connection reliably using data from a <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -242,7 +244,8 @@
       <tr>
         <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
         <td><span class="parametername">rejectData</span></td>
-        <td></td>
+        <td><p>Writer containing the data to send.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -250,7 +253,8 @@
 
   <a id="LiteNetLib_LiteConnectionRequest_Reject_" data-uid="LiteNetLib.LiteConnectionRequest.Reject*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_Reject_System_Byte___" data-uid="LiteNetLib.LiteConnectionRequest.Reject(System.Byte[])">Reject(byte[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Rejects the connection reliably.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -269,7 +273,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">rejectData</span></td>
-        <td></td>
+        <td><p>Data to send with the rejection.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -277,7 +282,8 @@
 
   <a id="LiteNetLib_LiteConnectionRequest_Reject_" data-uid="LiteNetLib.LiteConnectionRequest.Reject*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.LiteConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32)">Reject(byte[], int, int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Rejects the connection reliably. Creates a temporary peer to handle packet loss.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -296,17 +302,20 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">rejectData</span></td>
-        <td></td>
+        <td><p>Data to send with the rejection.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">start</span></td>
-        <td></td>
+        <td><p>Offset in the <code class="paramref">rejectData</code> array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">length</span></td>
-        <td></td>
+        <td><p>Length of the data to be sent.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -314,7 +323,8 @@
 
   <a id="LiteNetLib_LiteConnectionRequest_Reject_" data-uid="LiteNetLib.LiteConnectionRequest.Reject*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_System_Boolean_" data-uid="LiteNetLib.LiteConnectionRequest.Reject(System.Byte[],System.Int32,System.Int32,System.Boolean)">Reject(byte[], int, int, bool)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Rejects the connection request.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -333,22 +343,27 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">rejectData</span></td>
-        <td></td>
+        <td><p>Optional user data to send along with the rejection packet.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">start</span></td>
-        <td></td>
+        <td><p>Offset in the <code class="paramref">rejectData</code> array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">length</span></td>
-        <td></td>
+        <td><p>Length of the data to be sent from the <code class="paramref">rejectData</code> array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><span class="parametername">force</span></td>
-        <td></td>
+        <td><p>If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>, immediately removes the request, if <code class="paramref">rejectData</code> is not <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> a reject packet is also sent. <br>
+If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>, creates a temporary peer that sends rejection packets and lingers in memory until a timeout occurs to handle late-arriving packets.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -356,7 +371,8 @@
 
   <a id="LiteNetLib_LiteConnectionRequest_RejectForce_" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_RejectForce" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce">RejectForce()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Rejects the connection immediately without sending any packet.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -366,7 +382,8 @@
 
   <a id="LiteNetLib_LiteConnectionRequest_RejectForce_" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_RejectForce_LiteNetLib_Utils_NetDataWriter_" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce(LiteNetLib.Utils.NetDataWriter)">RejectForce(NetDataWriter)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Rejects the connection immediately without reliability using data from a <a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -385,7 +402,8 @@
       <tr>
         <td><a class="xref" href="LiteNetLib.Utils.NetDataWriter.html">NetDataWriter</a></td>
         <td><span class="parametername">rejectData</span></td>
-        <td></td>
+        <td><p>Writer containing the data to send.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -393,7 +411,8 @@
 
   <a id="LiteNetLib_LiteConnectionRequest_RejectForce_" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_RejectForce_System_Byte___" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce(System.Byte[])">RejectForce(byte[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Rejects the connection immediately without reliability.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -412,7 +431,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">rejectData</span></td>
-        <td></td>
+        <td><p>Data to send with the rejection.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -420,7 +440,9 @@
 
   <a id="LiteNetLib_LiteConnectionRequest_RejectForce_" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_RejectForce_System_Byte___System_Int32_System_Int32_" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce(System.Byte[],System.Int32,System.Int32)">RejectForce(byte[], int, int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Rejects the connection immediately without reliability.
+Minimizes resource usage by not creating an internal peer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -439,17 +461,20 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td><span class="parametername">rejectData</span></td>
-        <td></td>
+        <td><p>Data to send with the rejection.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">start</span></td>
-        <td></td>
+        <td><p>Offset in the <code class="paramref">rejectData</code> array.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">length</span></td>
-        <td></td>
+        <td><p>Length of the data to be sent.</p>
+</td>
       </tr>
     </tbody>
   </table>
