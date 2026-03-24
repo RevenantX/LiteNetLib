@@ -606,10 +606,13 @@ namespace LiteNetLib.Utils
         public byte[] GetRemainingBytes()
         {
             int size = _dataSize - _position;
-            byte[] outgoingData = new byte[size];
-            Buffer.BlockCopy(_data, _position, outgoingData, 0, size);
+            if (size == 0)
+                return Array.Empty<byte>();
+
+            byte[] result = new byte[size];
+            Buffer.BlockCopy(_data, _position, result, 0, size);
             _position = _dataSize;
-            return outgoingData;
+            return result;
         }
 
         /// <summary>
