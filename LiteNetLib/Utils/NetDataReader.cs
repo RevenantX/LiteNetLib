@@ -906,19 +906,23 @@ namespace LiteNetLib.Utils
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetString(out string result)
         {
-            if (AvailableBytes >= 2)
+            if (AvailableBytes < sizeof(ushort))
             {
-                ushort strSize = PeekUShort();
-                int actualSize = strSize == 0 ? 0 : strSize - 1;
-
-                if (AvailableBytes >= 2 + actualSize)
-                {
-                    result = GetString();
-                    return true;
-                }
+                result = null;
+                return false;
             }
-            result = null;
-            return false;
+
+            ushort size = PeekUShort();
+            int actualSize = size == 0 ? 0 : size - 1;
+
+            if (AvailableBytes < sizeof(ushort) + actualSize)
+            {
+                result = null;
+                return false;
+            }
+
+            result = GetString();
+            return true;
         }
 
         /// <summary>Attempts to read a <see cref="string"/> array without throwing an exception.</summary>
