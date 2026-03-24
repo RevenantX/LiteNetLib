@@ -15,6 +15,7 @@ namespace LiteNetLib.Utils
 
         private const int IPv4Size = 4;
         private const int IPv6Size = 16;
+        private const int GuidSize = 16;
 
         /// <summary>
         /// Gets the internal <see cref="byte"/> array containing the raw network data.
@@ -511,9 +512,9 @@ namespace LiteNetLib.Utils
         /// <returns>The deserialized <see cref="Guid"/>.</returns>
         public Guid GetGuid()
         {
-            EnsureAvailable(16);
-            var result = new Guid(_data.AsSpan(_position, 16));
-            _position += 16;
+            EnsureAvailable(GuidSize);
+            var result = new Guid(_data.AsSpan(_position, GuidSize));
+            _position += GuidSize;
             return result;
         }
 
