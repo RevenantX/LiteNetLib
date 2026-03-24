@@ -13,6 +13,9 @@ namespace LiteNetLib.Utils
         protected int _dataSize;
         protected int _offset;
 
+        private const int IPv4Size = 4;
+        private const int IPv6Size = 16;
+
         /// <summary>
         /// Gets the internal <see cref="byte"/> array containing the raw network data.
         /// </summary>
@@ -209,21 +212,13 @@ namespace LiteNetLib.Utils
         /// </remarks>
         public IPEndPoint GetIPEndPoint()
         {
-            IPAddress address;
-            //IPv4
-            if (GetByte() == 0)
-            {
-                EnsureAvailable(4);
-                address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, 4));
-                _position += 4;
-            }
-            //IPv6
-            else
-            {
-                EnsureAvailable(16);
-                address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, 16));
-                _position += 16;
-            }
+            bool isIPv4 = GetByte() == 0;
+
+            int size = isIPv4 ? IPv4Size : IPv6Size;
+            EnsureAvailable(size);
+
+            IPAddress address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, size));
+            _position += size;
             return new IPEndPoint(address, GetUShort());
         }
 
