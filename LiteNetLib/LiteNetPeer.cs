@@ -791,7 +791,6 @@ namespace LiteNetLib
                 }
 
                 NetDebug.Write($"Fragment. Id: {p.FragmentId}, Part: {p.FragmentPart}, Total: {p.FragmentsTotal}");
-
                 //Get needed array from dictionary
                 ushort packetFragId = p.FragmentId;
                 byte packetChannelId = p.ChannelId;
@@ -822,6 +821,7 @@ namespace LiteNetLib
                 if (fragments[p.FragmentPart] != null)
                 {
                     NetManager.PoolRecycle(p);
+                    NetDebug.WriteError("Invalid fragment packet");
                     return;
                 }
 
