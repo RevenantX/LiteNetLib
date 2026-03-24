@@ -285,7 +285,9 @@ namespace LiteNetLib.Utils
         public unsafe T[] GetUnmanagedArray<T>() where T : unmanaged
         {
             ushort length = GetUShort();
-            int byteLength = length * sizeof(T);
+            int byteLength = checked(length * sizeof(T));
+            EnsureAvailable(byteLength);
+
             ReadOnlySpan<byte> slice = _data.AsSpan(_position, byteLength);
             T[] result = MemoryMarshal.Cast<byte, T>(slice)
                 .ToArray();
