@@ -93,9 +93,21 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureAvailable(int count)
         {
-            if (count < 0 || count > AvailableBytes)
-                throw new InvalidOperationException(
-                    $"Not enough data to read {count} byte(s). Position={_position}, DataSize={_dataSize}");
+            int available = _dataSize - _position;
+            if ((uint)count > (uint)available)
+                ThrowNotEnoughData(count);
+        }
+
+        /// <summary>
+        /// Throws an <see cref="InvalidOperationException"/> indicating that there is not enough data to read.
+        /// </summary>
+        /// <param name="count">The number of bytes that were attempted to be read.</param>
+        /// <exception cref="InvalidOperationException">Always thrown.</exception>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void ThrowNotEnoughData(int count)
+        {
+            throw new InvalidOperationException(
+                $"Not enough data to read {count} byte(s). Position={_position}, DataSize={_dataSize}");
         }
 
         /// <summary>
