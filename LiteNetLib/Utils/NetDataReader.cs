@@ -547,9 +547,8 @@ namespace LiteNetLib.Utils
         /// <returns>The deserialized <see langword="struct"/>.</returns>
         public T Get<T>() where T : struct, INetSerializable
         {
-            var obj = default(T);
-            obj.Deserialize(this);
-            return obj;
+            Get(out T result);
+            return result;
         }
 
         /// <summary>
@@ -560,9 +559,8 @@ namespace LiteNetLib.Utils
         /// <returns>A new instance of <typeparamref name="T"/>.</returns>
         public T Get<T>(Func<T> constructor) where T : class, INetSerializable
         {
-            var obj = constructor();
-            obj.Deserialize(this);
-            return obj;
+            Get(out T result, constructor);
+            return result;
         }
 
         /// <summary>
