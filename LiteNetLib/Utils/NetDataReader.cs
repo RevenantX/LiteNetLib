@@ -579,7 +579,7 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<byte> GetRemainingBytesSpan()
         {
-            var result = new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
+            var result = new ReadOnlySpan<byte>(_data, _position, AvailableBytes);
             _position = _dataSize;
             return result;
         }
@@ -591,7 +591,7 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlyMemory<byte> GetRemainingBytesMemory()
         {
-            var result = new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
+            var result = new ReadOnlyMemory<byte>(_data, _position, AvailableBytes);
             _position = _dataSize;
             return result;
         }
