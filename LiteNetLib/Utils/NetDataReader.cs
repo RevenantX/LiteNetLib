@@ -709,20 +709,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <typeparam name="T">An unmanaged enum type to read.</typeparam>
         /// <returns>The enum value read from the buffer.</returns>
-        public unsafe T GetEnum<T>() where T : unmanaged, Enum
-        {
-            int size = sizeof(T);
-            ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(_data, _position, size);
-            _position += size;
-#if NET8_0_OR_GREATER
-            return Unsafe.ReadUnaligned<T>(ref MemoryMarshal.GetReference(span));
-#else
-            fixed (byte* ptr = span)
-            {
-                return *(T*)ptr;
-            }
-#endif
-        }
+        public unsafe T GetEnum<T>() where T : unmanaged, Enum => GetUnmanaged<T>();
 
         #endregion
 
