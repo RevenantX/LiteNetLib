@@ -268,16 +268,6 @@ namespace LiteNetLib.Utils
         /// <summary>Reads a <see cref="Guid"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out Guid result) => result = GetGuid();
 
-        /// <summary>Reads the next <see cref="byte"/> from the buffer.</summary>
-        public byte GetByte()
-        {
-            EnsureAvailable(1);
-            return _data[_position++];
-        }
-
-        /// <summary>Reads the next <see cref="sbyte"/> from the buffer.</summary>
-        public sbyte GetSByte() => (sbyte)GetByte();
-
         /// <summary>
         /// Reads an array of unmanaged values prefixed by a <see cref="ushort"/> length.
         /// </summary>
@@ -420,6 +410,16 @@ namespace LiteNetLib.Utils
 
             return result;
         }
+
+        /// <summary>Reads the next <see cref="byte"/> from the buffer.</summary>
+        public byte GetByte()
+        {
+            EnsureAvailable(1);
+            return _data[_position++];
+        }
+
+        /// <summary>Reads the next <see cref="sbyte"/> from the buffer.</summary>
+        public sbyte GetSByte() => (sbyte)GetByte();
 
         /// <summary>Reads a <see cref="bool"/> value from the current position.</summary>
         /// <returns><see langword="true"/> if the byte is 1; otherwise, <see langword="false"/>.</returns>
