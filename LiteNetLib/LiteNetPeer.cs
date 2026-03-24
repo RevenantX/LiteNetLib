@@ -797,6 +797,7 @@ namespace LiteNetLib
 
                 if (!_holdedFragments.TryGetValue(packetFragId, out var incomingFragments))
                 {
+                    //Holded fragments limit reached
                     if (_holdedFragments.Count >= NetConstants.MaxFragmentsInWindow * ChannelsCount * NetConstants.FragmentedChannelsCount)
                     {
                         NetManager.PoolRecycle(p);
@@ -813,21 +814,30 @@ namespace LiteNetLib
                     return;
                 }
 
-                NetPacket[] fragments = incomingFragments.Fragments;
+                //Cache
+                var fragments = incomingFragments.Fragments;
 
+                //Error check
                 if (fragments[p.FragmentPart] != null)
                 {
                     NetManager.PoolRecycle(p);
                     return;
                 }
 
+                //Fill array
                 fragments[p.FragmentPart] = p;
+
+                //Increase received fragments count
                 incomingFragments.ReceivedCount++;
+
+                //Increase total size
                 incomingFragments.TotalSize += p.Size - NetConstants.FragmentedHeaderTotalSize;
 
+                //Check for finish
                 if (incomingFragments.ReceivedCount != incomingFragments.TotalFragments)
                     return;
 
+                //Just simple packet
                 NetPacket resultingPacket = NetManager.PoolGetPacket(incomingFragments.TotalSize);
 
                 void AbortReassembly(string error)
@@ -861,6 +871,7 @@ namespace LiteNetLib
                         return;
                     }
 
+                    //Create resulting big packet
                     Buffer.BlockCopy(
                         fragment.RawData,
                         NetConstants.FragmentedHeaderTotalSize,
@@ -870,11 +881,15 @@ namespace LiteNetLib
 
                     pos += writtenSize;
 
+                    //Free memory
                     NetManager.PoolRecycle(fragment);
                     fragments[i] = null;
                 }
 
+                //Clear memory
                 _holdedFragments.Remove(packetFragId);
+
+                //Send to process
                 NetManager.CreateReceiveEvent(resultingPacket, method, (byte)(packetChannelId / NetConstants.ChannelTypeCount), 0, this);
             }
             else //Just simple packet
