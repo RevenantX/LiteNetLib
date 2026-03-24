@@ -864,114 +864,42 @@ namespace LiteNetLib.Utils
         /// <summary>Attempts to read a <see cref="short"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="short"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetShort(out short result)
-        {
-            if (AvailableBytes >= 2)
-            {
-                result = GetShort();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetShort(out short result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="ushort"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="ushort"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetUShort(out ushort result)
-        {
-            if (AvailableBytes >= 2)
-            {
-                result = GetUShort();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetUShort(out ushort result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read an <see cref="int"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="int"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetInt(out int result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                result = GetInt();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetInt(out int result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="uint"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="uint"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetUInt(out uint result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                result = GetUInt();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetUInt(out uint result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="long"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="long"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetLong(out long result)
-        {
-            if (AvailableBytes >= 8)
-            {
-                result = GetLong();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetLong(out long result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="ulong"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="ulong"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetULong(out ulong result)
-        {
-            if (AvailableBytes >= 8)
-            {
-                result = GetULong();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetULong(out ulong result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="float"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="float"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetFloat(out float result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                result = GetFloat();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetFloat(out float result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="double"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="double"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetDouble(out double result)
-        {
-            if (AvailableBytes >= 8)
-            {
-                result = GetDouble();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetDouble(out double result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="string"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="string"/>, or <see langword="null"/> if failed.</param>
@@ -1033,6 +961,36 @@ namespace LiteNetLib.Utils
             }
             result = null;
             return false;
+        }
+
+        /// <summary>
+        /// Attempts to read a value of type <typeparamref name="T"/> from the internal byte buffer at the current position,
+        /// advancing the position by the size of <typeparamref name="T"/> if successful.
+        /// </summary>
+        /// <typeparam name="T">An unmanaged value type to read from the buffer.</typeparam>
+        /// <param name="result">When this method returns, contains the value read from the buffer, or the default value if the read failed.</param>
+        /// <returns><see langword="true"/> if enough data was available to read the value; otherwise, <see langword="false"/>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe bool TryGetUnmanaged<T>(out T result) where T : unmanaged
+        {
+            int size = sizeof(T);
+            if (AvailableBytes < size)
+            {
+                result = default;
+                return false;
+            }
+
+#if NET8_0_OR_GREATER
+            result = Unsafe.ReadUnaligned<T>(ref _data[_position]);
+#else
+            fixed (byte* ptr = &_data[_position])
+            {
+                result = *(T*)ptr;
+            }
+#endif
+
+            _position += size;
+            return true;
         }
 
         #endregion
