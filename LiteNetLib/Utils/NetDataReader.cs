@@ -268,7 +268,11 @@ namespace LiteNetLib.Utils
         public void Get(out Guid result) => result = GetGuid();
 
         /// <summary>Reads the next <see cref="byte"/> from the buffer.</summary>
-        public byte GetByte() => _data[_position++];
+        public byte GetByte()
+        {
+            EnsureAvailable(1);
+            return _data[_position++];
+        }
 
         /// <summary>Reads the next <see cref="sbyte"/> from the buffer.</summary>
         public sbyte GetSByte() => (sbyte)GetByte();
