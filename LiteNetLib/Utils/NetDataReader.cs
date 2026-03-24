@@ -286,6 +286,7 @@ namespace LiteNetLib.Utils
         public unsafe T[] GetUnmanagedArray<T>() where T : unmanaged
         {
             ushort length = GetUShort();
+
             int byteLength = checked(length * sizeof(T));
             EnsureAvailable(byteLength);
 
