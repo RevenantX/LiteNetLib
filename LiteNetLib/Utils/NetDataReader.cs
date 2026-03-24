@@ -719,13 +719,13 @@ namespace LiteNetLib.Utils
         public byte PeekByte() => _data[_position];
 
         /// <summary>Reads the <see cref="sbyte"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public sbyte PeekSByte() => (sbyte)_data[_position];
+        public sbyte PeekSByte() => (sbyte)PeekByte();
 
         /// <summary>Reads the <see cref="bool"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public bool PeekBool() => _data[_position] == 1;
+        public bool PeekBool() => PeekByte() == 1;
 
         /// <summary>Reads the <see cref="char"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public char PeekChar() => PeekUnmanaged<char>();
+        public char PeekChar() => (char)PeekUShort();
 
         /// <summary>Reads the <see cref="ushort"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public ushort PeekUShort() => PeekUnmanaged<ushort>();
