@@ -930,22 +930,34 @@ namespace LiteNetLib.Utils
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetStringArray(out string[] result)
         {
-            if (!TryGetUShort(out ushort strArrayLength))
+            if (AvailableBytes < sizeof(ushort))
             {
                 result = null;
                 return false;
             }
 
-            result = new string[strArrayLength];
-            for (int i = 0; i < strArrayLength; i++)
+            int startPosition = _position;
+
+            ushort length = GetUShort();
+            if (AvailableBytes < checked(length * sizeof(ushort))) // 2 bytes (ushort) for string length
             {
-                if (!TryGetString(out result[i]))
+                _position = startPosition; // Roll back to the original position
+                result = null;
+                return false;
+            }
+
+            string[] values = new string[length];
+            for (int i = 0; i < length; i++)
+            {
+                if (!TryGetString(out values[i]))
                 {
+                    _position = startPosition; // Roll back to the original position
                     result = null;
                     return false;
                 }
             }
 
+            result = values;
             return true;
         }
 
