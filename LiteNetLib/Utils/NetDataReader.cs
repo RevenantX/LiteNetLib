@@ -800,9 +800,11 @@ namespace LiteNetLib.Utils
             return value;
 #endif
         }
+
         #endregion
 
         #region TryGetMethods
+
         /// <summary>Attempts to read a <see cref="byte"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="byte"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
@@ -1032,6 +1034,7 @@ namespace LiteNetLib.Utils
             result = null;
             return false;
         }
+
         #endregion
 
         /// <summary>Clears the reader state and releases the reference to the internal buffer.</summary>
