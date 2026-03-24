@@ -14,6 +14,10 @@ namespace LiteNetLib.Utils
         private const int InitialSize = 64;
         private readonly bool _autoResize;
 
+        private const int IPv4Size = 4;
+        private const int IPv6Size = 16;
+        private const int GuidSize = 16;
+
         /// <summary>
         /// Gets the total capacity of the internal <see cref="byte"/> buffer.
         /// </summary>
@@ -272,9 +276,9 @@ namespace LiteNetLib.Utils
         public void Put(Guid value)
         {
             if (_autoResize)
-                ResizeIfNeed(_position + 16);
+                ResizeIfNeed(_position + GuidSize);
             value.TryWriteBytes(_data.AsSpan(_position));
-            _position += 16;
+            _position += GuidSize;
         }
 
         /// <summary>
@@ -516,12 +520,12 @@ namespace LiteNetLib.Utils
 
             if (endPoint.AddressFamily == AddressFamily.InterNetwork)
             {
-                addressSize = 4;
+                addressSize = IPv4Size;
                 familyFlag = 0;
             }
             else if (endPoint.AddressFamily == AddressFamily.InterNetworkV6)
             {
-                addressSize = 16;
+                addressSize = IPv6Size;
                 familyFlag = 1;
             }
             else
