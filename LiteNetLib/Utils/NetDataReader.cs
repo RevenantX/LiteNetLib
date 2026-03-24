@@ -182,7 +182,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Deserializes a <see cre="class"/> that implements <see cref="INetSerializable"/> using a provided constructor.
+        /// Deserializes a <see langword="class"/> that implements <see cref="INetSerializable"/> using a provided constructor.
         /// </summary>
         /// <typeparam name="T">A <see langword="class"/> type implementing <see cref="INetSerializable"/>.</typeparam>
         /// <param name="result">The deserialized <see langword="class"/> instance output.</param>
