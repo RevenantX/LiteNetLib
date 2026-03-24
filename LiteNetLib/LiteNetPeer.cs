@@ -791,11 +791,10 @@ namespace LiteNetLib
                 }
 
                 NetDebug.Write($"Fragment. Id: {p.FragmentId}, Part: {p.FragmentPart}, Total: {p.FragmentsTotal}");
-                //Get needed array from dictionary
 
+                //Get needed array from dictionary
                 ushort packetFragId = p.FragmentId;
                 byte packetChannelId = p.ChannelId;
-
                 if (!_holdedFragments.TryGetValue(packetFragId, out var incomingFragments))
                 {
                     //Holded fragments limit reached
