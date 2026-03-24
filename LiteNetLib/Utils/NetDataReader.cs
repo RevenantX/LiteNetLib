@@ -388,12 +388,15 @@ namespace LiteNetLib.Utils
         public string[] GetStringArray()
         {
             ushort length = GetUShort();
-            string[] arr = new string[length];
+            EnsureAvailable(checked(length * sizeof(ushort))); // 2 bytes (ushort) for string length
+
+            string[] result = new string[length];
             for (int i = 0; i < length; i++)
             {
-                arr[i] = GetString();
+                result[i] = GetString();
             }
-            return arr;
+
+            return result;
         }
 
         /// <summary>
@@ -407,12 +410,15 @@ namespace LiteNetLib.Utils
         public string[] GetStringArray(int maxStringLength)
         {
             ushort length = GetUShort();
-            string[] arr = new string[length];
+            EnsureAvailable(checked(length * sizeof(ushort))); // 2 bytes (ushort) for string length
+
+            string[] result = new string[length];
             for (int i = 0; i < length; i++)
             {
-                arr[i] = GetString(maxStringLength);
+                result[i] = GetString(maxStringLength);
             }
-            return arr;
+
+            return result;
         }
 
         /// <summary>Reads a <see cref="bool"/> value from the current position.</summary>
