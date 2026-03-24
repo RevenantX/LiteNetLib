@@ -98,17 +98,12 @@ namespace LiteNetLib
         private readonly object _mtuMutex = new object();
 
         //Fragment
-        private class IncomingFragments
+        private sealed class IncomingFragments
         {
-            // Fragments with TotalFragments <= threshold use a fixed array (faster)
-            // Larger sets use a dictionary to avoid large upfront allocations
-            private const int ArrayThreshold = 64;
-
-            private readonly NetPacket[] _array;
-            private readonly Dictionary<ushort, NetPacket> _dict;
-
+            public readonly NetPacket[] Fragments;
             public readonly ushort TotalFragments;
             public readonly byte ChannelId;
+
             public int ReceivedCount;
             public int TotalSize;
 
@@ -116,52 +111,19 @@ namespace LiteNetLib
             {
                 TotalFragments = totalFragments;
                 ChannelId = channelId;
-                if (totalFragments <= ArrayThreshold)
-                    _array = new NetPacket[totalFragments];
-                else
-                    _dict = new Dictionary<ushort, NetPacket>();
-            }
-
-            public bool Contains(ushort part) =>
-                _array != null ? _array[part] != null : _dict.ContainsKey(part);
-
-            public bool TryGet(ushort part, out NetPacket packet)
-            {
-                if (_array != null)
-                {
-                    packet = _array[part];
-                    return packet != null;
-                }
-                return _dict.TryGetValue(part, out packet);
-            }
-
-            public void Set(ushort part, NetPacket packet)
-            {
-                if (_array != null)
-                    _array[part] = packet;
-                else
-                    _dict[part] = packet;
-            }
-
-            public void Remove(ushort part)
-            {
-                if (_array != null)
-                    _array[part] = null;
-                else
-                    _dict.Remove(part);
+                Fragments = new NetPacket[totalFragments];
             }
 
             public void RecycleAll(LiteNetManager netManager)
             {
-                if (_array != null)
+                for (int i = 0; i < Fragments.Length; i++)
                 {
-                    foreach (var p in _array)
-                        if (p != null) netManager.PoolRecycle(p);
-                }
-                else
-                {
-                    foreach (var p in _dict.Values)
-                        netManager.PoolRecycle(p);
+                    NetPacket packet = Fragments[i];
+                    if (packet != null)
+                    {
+                        netManager.PoolRecycle(packet);
+                        Fragments[i] = null;
+                    }
                 }
             }
         }
@@ -851,13 +813,15 @@ namespace LiteNetLib
                     return;
                 }
 
-                if (incomingFragments.Contains(p.FragmentPart))
+                NetPacket[] fragments = incomingFragments.Fragments;
+
+                if (fragments[p.FragmentPart] != null)
                 {
                     NetManager.PoolRecycle(p);
                     return;
                 }
 
-                incomingFragments.Set(p.FragmentPart, p);
+                fragments[p.FragmentPart] = p;
                 incomingFragments.ReceivedCount++;
                 incomingFragments.TotalSize += p.Size - NetConstants.FragmentedHeaderTotalSize;
 
@@ -877,17 +841,10 @@ namespace LiteNetLib
                 int pos = 0;
                 for (ushort i = 0; i < incomingFragments.TotalFragments; i++)
                 {
-                    if (!incomingFragments.TryGet(i, out var fragment))
+                    NetPacket fragment = fragments[i];
+                    if (fragment == null)
                     {
                         AbortReassembly($"Fragment {i} missing during reassembly");
-                        return;
-                    }
-
-                    int writtenSize = fragment.Size - NetConstants.FragmentedHeaderTotalSize;
-
-                    if (pos + writtenSize > resultingPacket.RawData.Length)
-                    {
-                        AbortReassembly($"Fragment error pos: {pos + writtenSize} >= resultPacketSize: {resultingPacket.RawData.Length}");
                         return;
                     }
 
@@ -897,16 +854,24 @@ namespace LiteNetLib
                         return;
                     }
 
+                    int writtenSize = fragment.Size - NetConstants.FragmentedHeaderTotalSize;
+                    if (pos + writtenSize > resultingPacket.RawData.Length)
+                    {
+                        AbortReassembly($"Fragment error pos: {pos + writtenSize} >= resultPacketSize: {resultingPacket.RawData.Length}");
+                        return;
+                    }
+
                     Buffer.BlockCopy(
                         fragment.RawData,
                         NetConstants.FragmentedHeaderTotalSize,
                         resultingPacket.RawData,
                         pos,
                         writtenSize);
+
                     pos += writtenSize;
 
                     NetManager.PoolRecycle(fragment);
-                    incomingFragments.Remove(i);
+                    fragments[i] = null;
                 }
 
                 _holdedFragments.Remove(packetFragId);
