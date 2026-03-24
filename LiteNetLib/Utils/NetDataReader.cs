@@ -227,7 +227,7 @@ namespace LiteNetLib.Utils
         public void Get(out byte result) => result = GetByte();
 
         /// <summary>Reads an <see cref="sbyte"/> and assigns it to <paramref name="result"/>.</summary>
-        public void Get(out sbyte result) => result = (sbyte)GetByte();
+        public void Get(out sbyte result) => result = GetSByte();
 
         /// <summary>Reads a <see cref="bool"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out bool result) => result = GetBool();
