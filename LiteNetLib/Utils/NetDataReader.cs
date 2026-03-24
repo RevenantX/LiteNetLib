@@ -954,17 +954,21 @@ namespace LiteNetLib.Utils
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetBytesWithLength(out byte[] result)
         {
-            if (AvailableBytes >= 2)
+            if (AvailableBytes < sizeof(ushort))
             {
-                ushort length = PeekUShort();
-                if (AvailableBytes >= 2 + length)
-                {
-                    result = GetBytesWithLength();
-                    return true;
-                }
+                result = null;
+                return false;
             }
-            result = null;
-            return false;
+
+            ushort length = PeekUShort();
+            if (AvailableBytes < sizeof(ushort) + length)
+            {
+                result = null;
+                return false;
+            }
+
+            result = GetBytesWithLength();
+            return true;
         }
 
         /// <summary>
