@@ -1095,7 +1095,7 @@ namespace LiteNetLib
                             break;
 
                         pos += 2;
-                        if (packet.RawData.Length - pos < size)
+                        if (packet.Size - pos < size)
                             break;
 
                         NetPacket mergedPacket = NetManager.PoolGetPacket(size);
