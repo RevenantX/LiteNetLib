@@ -269,6 +269,14 @@ namespace LiteNetLib
         /// </summary>
         public int ConnectedPeersCount => (int)Interlocked.Read(ref _connectedPeersCount);
 
+        /// <summary>
+        /// Gets the additional size in bytes required by the active <see cref="PacketLayerBase"/>.
+        /// </summary>
+        /// <remarks>
+        /// This value is used by <see cref="NetManager"/> to calculate the available MTU for user data. <br/>
+        /// If a packet layer is active (e.g., for encryption or CRC), this returns the overhead added to every packet.
+        /// Returns 0 if no packet layer is assigned.
+        /// </remarks>
         public int ExtraPacketSizeForLayer => _extraPacketLayer?.ExtraPacketSizeForLayer ?? 0;
 
         /// <summary>

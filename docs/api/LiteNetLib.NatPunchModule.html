@@ -90,7 +90,8 @@
 
 
   <h4 id="LiteNetLib_NatPunchModule_MaxTokenLength" data-uid="LiteNetLib.NatPunchModule.MaxTokenLength">MaxTokenLength</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Maximum allowed length for the NAT introduction token string.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -142,7 +143,8 @@
 
   <a id="LiteNetLib_NatPunchModule_Init_" data-uid="LiteNetLib.NatPunchModule.Init*"></a>
   <h4 id="LiteNetLib_NatPunchModule_Init_LiteNetLib_INatPunchListener_" data-uid="LiteNetLib.NatPunchModule.Init(LiteNetLib.INatPunchListener)">Init(INatPunchListener)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes the NAT punch module with a listener to handle punchthrough events.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -161,7 +163,8 @@
       <tr>
         <td><a class="xref" href="LiteNetLib.INatPunchListener.html">INatPunchListener</a></td>
         <td><span class="parametername">listener</span></td>
-        <td></td>
+        <td><p>The listener implementation that will receive NAT events.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -169,7 +172,8 @@
 
   <a id="LiteNetLib_NatPunchModule_NatIntroduce_" data-uid="LiteNetLib.NatPunchModule.NatIntroduce*"></a>
   <h4 id="LiteNetLib_NatPunchModule_NatIntroduce_System_Net_IPEndPoint_System_Net_IPEndPoint_System_Net_IPEndPoint_System_Net_IPEndPoint_System_String_" data-uid="LiteNetLib.NatPunchModule.NatIntroduce(System.Net.IPEndPoint,System.Net.IPEndPoint,System.Net.IPEndPoint,System.Net.IPEndPoint,System.String)">NatIntroduce(IPEndPoint, IPEndPoint, IPEndPoint, IPEndPoint, string)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Sends NAT introduction packets to both the host and the client to facilitate punchthrough.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -188,45 +192,58 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td><span class="parametername">hostInternal</span></td>
-        <td></td>
+        <td><p>Internal (LAN) endpoint of the host.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td><span class="parametername">hostExternal</span></td>
-        <td></td>
+        <td><p>External (WAN) endpoint of the host.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td><span class="parametername">clientInternal</span></td>
-        <td></td>
+        <td><p>Internal (LAN) endpoint of the client.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td><span class="parametername">clientExternal</span></td>
-        <td></td>
+        <td><p>External (WAN) endpoint of the client.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">additionalInfo</span></td>
-        <td></td>
+        <td><p>Custom token or data to include in the introduction.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_NatPunchModule_NatIntroduce_System_Net_IPEndPoint_System_Net_IPEndPoint_System_Net_IPEndPoint_System_Net_IPEndPoint_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is typically called by a mediator (e.g. a master server).</p>
+</div>
 
 
   <a id="LiteNetLib_NatPunchModule_PollEvents_" data-uid="LiteNetLib.NatPunchModule.PollEvents*"></a>
   <h4 id="LiteNetLib_NatPunchModule_PollEvents" data-uid="LiteNetLib.NatPunchModule.PollEvents">PollEvents()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Triggers queued NAT punchthrough events (Success or Request) on the provided <a class="xref" href="LiteNetLib.INatPunchListener.html">INatPunchListener</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void PollEvents()</code></pre>
   </div>
+  <h5 id="LiteNetLib_NatPunchModule_PollEvents_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This should be called from the main thread if <a class="xref" href="LiteNetLib.NatPunchModule.html#LiteNetLib_NatPunchModule_UnsyncedEvents">UnsyncedEvents</a> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</div>
 
 
   <a id="LiteNetLib_NatPunchModule_SendNatIntroduceRequest_" data-uid="LiteNetLib.NatPunchModule.SendNatIntroduceRequest*"></a>
   <h4 id="LiteNetLib_NatPunchModule_SendNatIntroduceRequest_System_Net_IPEndPoint_System_String_" data-uid="LiteNetLib.NatPunchModule.SendNatIntroduceRequest(System.Net.IPEndPoint,System.String)">SendNatIntroduceRequest(IPEndPoint, string)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Sends a request to the Master Server to introduce this peer to another peer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -245,12 +262,14 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
         <td><span class="parametername">masterServerEndPoint</span></td>
-        <td></td>
+        <td><p>The endpoint of the Master Server.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">additionalInfo</span></td>
-        <td></td>
+        <td><p>Custom token to identify the connection or room.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -258,7 +277,8 @@
 
   <a id="LiteNetLib_NatPunchModule_SendNatIntroduceRequest_" data-uid="LiteNetLib.NatPunchModule.SendNatIntroduceRequest*"></a>
   <h4 id="LiteNetLib_NatPunchModule_SendNatIntroduceRequest_System_String_System_Int32_System_String_" data-uid="LiteNetLib.NatPunchModule.SendNatIntroduceRequest(System.String,System.Int32,System.String)">SendNatIntroduceRequest(string, int, string)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Sends a request to the Master Server to introduce this peer to another peer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -277,17 +297,20 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">host</span></td>
-        <td></td>
+        <td><p>The hostname or IP of the Master Server.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">port</span></td>
-        <td></td>
+        <td><p>The port of the Master Server.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">additionalInfo</span></td>
-        <td></td>
+        <td><p>Custom token to identify the connection or room.</p>
+</td>
       </tr>
     </tbody>
   </table>

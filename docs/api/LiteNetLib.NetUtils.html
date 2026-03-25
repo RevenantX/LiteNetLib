@@ -216,7 +216,8 @@
 
   <a id="LiteNetLib_NetUtils_MakeEndPoint_" data-uid="LiteNetLib.NetUtils.MakeEndPoint*"></a>
   <h4 id="LiteNetLib_NetUtils_MakeEndPoint_System_String_System_Int32_" data-uid="LiteNetLib.NetUtils.MakeEndPoint(System.String,System.Int32)">MakeEndPoint(string, int)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Creates an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a> from a host string and a port.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -235,12 +236,14 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">hostStr</span></td>
-        <td></td>
+        <td><p>The host name or IP address string to resolve.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">port</span></td>
-        <td></td>
+        <td><p>The port number for the endpoint.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -255,7 +258,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a></td>
-        <td></td>
+        <td><p>A new <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a> instance.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -263,7 +267,8 @@
 
   <a id="LiteNetLib_NetUtils_ResolveAddress_" data-uid="LiteNetLib.NetUtils.ResolveAddress*"></a>
   <h4 id="LiteNetLib_NetUtils_ResolveAddress_System_String_" data-uid="LiteNetLib.NetUtils.ResolveAddress(System.String)">ResolveAddress(string)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resolves a host string into an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipaddress">IPAddress</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -282,7 +287,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">hostStr</span></td>
-        <td></td>
+        <td><p>The host name or IP address string (e.g., &quot;127.0.0.1&quot;, &quot;localhost&quot;, or &quot;google.com&quot;).</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -297,7 +303,28 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipaddress">IPAddress</a></td>
-        <td></td>
+        <td><p>The resolved <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipaddress">IPAddress</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LiteNetLib_NetUtils_ResolveAddress_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method handles &quot;localhost&quot; specifically, attempts to parse the string as a direct IP,
+and falls back to DNS resolution. It prioritizes IPv6 if <a class="xref" href="LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_IPv6Support">IPv6Support</a> is enabled.</p>
+</div>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
+        <td><p>Thrown when the address cannot be resolved or is invalid.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -305,7 +332,8 @@
 
   <a id="LiteNetLib_NetUtils_ResolveAddress_" data-uid="LiteNetLib.NetUtils.ResolveAddress*"></a>
   <h4 id="LiteNetLib_NetUtils_ResolveAddress_System_String_System_Net_Sockets_AddressFamily_" data-uid="LiteNetLib.NetUtils.ResolveAddress(System.String,System.Net.Sockets.AddressFamily)">ResolveAddress(string, AddressFamily)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resolves a host string using DNS for a specific <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.addressfamily">AddressFamily</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -324,12 +352,14 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
         <td><span class="parametername">hostStr</span></td>
-        <td></td>
+        <td><p>The host name to resolve via DNS.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.addressfamily">AddressFamily</a></td>
         <td><span class="parametername">addressFamily</span></td>
-        <td></td>
+        <td><p>The preferred address family (e.g., <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.addressfamily#system-net-sockets-addressfamily-internetwork">InterNetwork</a> or <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.sockets.addressfamily#system-net-sockets-addressfamily-internetworkv6">InterNetworkV6</a>).</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -344,7 +374,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipaddress">IPAddress</a></td>
-        <td></td>
+        <td><p>The first <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipaddress">IPAddress</a> matching the family, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if no match is found.</p>
+</td>
       </tr>
     </tbody>
   </table>

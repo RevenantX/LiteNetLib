@@ -90,7 +90,9 @@
 
 
   <h4 id="LiteNetLib_NetConstants_ChanneledHeaderSize" data-uid="LiteNetLib.NetConstants.ChanneledHeaderSize">ChanneledHeaderSize</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Size of the header for sequenced or reliable messages in <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s. <br>
+Includes <a class="xref" href="LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_HeaderSize">HeaderSize</a>, Sequence, and ChannelId.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -114,7 +116,8 @@
 
 
   <h4 id="LiteNetLib_NetConstants_DefaultWindowSize" data-uid="LiteNetLib.NetConstants.DefaultWindowSize">DefaultWindowSize</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Default window size for reliable channels (number of packets).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -138,7 +141,9 @@
 
 
   <h4 id="LiteNetLib_NetConstants_FragmentHeaderSize" data-uid="LiteNetLib.NetConstants.FragmentHeaderSize">FragmentHeaderSize</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Additional header size required for fragmented packets in <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s. <br>
+Includes FragmentId, FragmentPart, and FragmentsTotal.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -162,7 +167,9 @@
 
 
   <h4 id="LiteNetLib_NetConstants_FragmentedHeaderTotalSize" data-uid="LiteNetLib.NetConstants.FragmentedHeaderTotalSize">FragmentedHeaderTotalSize</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Total header size for a fragmented channeled packet in <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s. <br>
+Combines <a class="xref" href="LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_ChanneledHeaderSize">ChanneledHeaderSize</a> and <a class="xref" href="LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_FragmentHeaderSize">FragmentHeaderSize</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -186,7 +193,8 @@
 
 
   <h4 id="LiteNetLib_NetConstants_HalfMaxSequence" data-uid="LiteNetLib.NetConstants.HalfMaxSequence">HalfMaxSequence</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Half of the <a class="xref" href="LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_MaxSequence">MaxSequence</a>, used for sequence comparison and wrap-around logic.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -210,7 +218,8 @@
 
 
   <h4 id="LiteNetLib_NetConstants_HeaderSize" data-uid="LiteNetLib.NetConstants.HeaderSize">HeaderSize</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Size of the base packet header (PacketProperty) in <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -234,7 +243,8 @@
 
 
   <h4 id="LiteNetLib_NetConstants_InitialMtu" data-uid="LiteNetLib.NetConstants.InitialMtu">InitialMtu</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The starting Maximum Transmission Unit (MTU) used for new connections before path MTU discovery.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -258,7 +268,8 @@
 
 
   <h4 id="LiteNetLib_NetConstants_MaxConnectionNumber" data-uid="LiteNetLib.NetConstants.MaxConnectionNumber">MaxConnectionNumber</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Maximum possible value for <span class="xref">LiteNetLib.NetPacket.ConnectionNumber</span>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -279,10 +290,16 @@
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_NetConstants_MaxConnectionNumber_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This value is used to distinguish between different connection instances from the same <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.ipendpoint">IPEndPoint</a>. <br>
+It allows the receiver to identify and discard packets belonging to previous connection attempts that may arrive
+late due to network jitter, even if they originate from the same address and port. <br></p>
+</div>
 
 
   <h4 id="LiteNetLib_NetConstants_MaxPacketSize" data-uid="LiteNetLib.NetConstants.MaxPacketSize">MaxPacketSize</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Maximum possible packet size allowed by the library based on the largest supported MTU.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -306,7 +323,8 @@
 
 
   <h4 id="LiteNetLib_NetConstants_MaxSequence" data-uid="LiteNetLib.NetConstants.MaxSequence">MaxSequence</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Maximum possible sequence number before wrapping back to zero.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -330,7 +348,9 @@
 
 
   <h4 id="LiteNetLib_NetConstants_MaxUnreliableDataSize" data-uid="LiteNetLib.NetConstants.MaxUnreliableDataSize">MaxUnreliableDataSize</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Maximum payload size for a single unreliable packet in <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s. <br>
+Calculated as <a class="xref" href="LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_MaxPacketSize">MaxPacketSize</a> - <a class="xref" href="LiteNetLib.NetConstants.html#LiteNetLib_NetConstants_HeaderSize">HeaderSize</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -354,7 +374,9 @@
 
 
   <h4 id="LiteNetLib_NetConstants_SocketBufferSize" data-uid="LiteNetLib.NetConstants.SocketBufferSize">SocketBufferSize</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Size of the underlying UDP socket receive and send buffers in bytes. <br>
+Default is 1MB.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -378,7 +400,8 @@
 
 
   <h4 id="LiteNetLib_NetConstants_SocketTTL" data-uid="LiteNetLib.NetConstants.SocketTTL">SocketTTL</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Time To Live (TTL) for the UDP packets.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">

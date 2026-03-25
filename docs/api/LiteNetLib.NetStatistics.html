@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width">
       <meta name="title" content="Class NetStatistics ">
     
-    
+    <meta name="description" content="Thread-safe counter for network statistics including sent/received packets, bytes, and packet loss.">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -71,7 +71,8 @@
 
 
   <h1 id="LiteNetLib_NetStatistics" data-uid="LiteNetLib.NetStatistics" class="text-break">Class NetStatistics</h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Thread-safe counter for network statistics including sent/received packets, bytes, and packet loss.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -90,7 +91,8 @@
 
   <a id="LiteNetLib_NetStatistics_BytesReceived_" data-uid="LiteNetLib.NetStatistics.BytesReceived*"></a>
   <h4 id="LiteNetLib_NetStatistics_BytesReceived" data-uid="LiteNetLib.NetStatistics.BytesReceived">BytesReceived</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Total number of bytes received.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -115,7 +117,8 @@
 
   <a id="LiteNetLib_NetStatistics_BytesSent_" data-uid="LiteNetLib.NetStatistics.BytesSent*"></a>
   <h4 id="LiteNetLib_NetStatistics_BytesSent" data-uid="LiteNetLib.NetStatistics.BytesSent">BytesSent</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Total number of bytes sent.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -140,7 +143,8 @@
 
   <a id="LiteNetLib_NetStatistics_PacketLoss_" data-uid="LiteNetLib.NetStatistics.PacketLoss*"></a>
   <h4 id="LiteNetLib_NetStatistics_PacketLoss" data-uid="LiteNetLib.NetStatistics.PacketLoss">PacketLoss</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Total number of packets lost during transmission.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -165,7 +169,9 @@
 
   <a id="LiteNetLib_NetStatistics_PacketLossPercent_" data-uid="LiteNetLib.NetStatistics.PacketLossPercent*"></a>
   <h4 id="LiteNetLib_NetStatistics_PacketLossPercent" data-uid="LiteNetLib.NetStatistics.PacketLossPercent">PacketLossPercent</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Percentage of sent packets that were lost.
+Calculated as (PacketLoss * 100) / PacketsSent.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -190,7 +196,8 @@
 
   <a id="LiteNetLib_NetStatistics_PacketsReceived_" data-uid="LiteNetLib.NetStatistics.PacketsReceived*"></a>
   <h4 id="LiteNetLib_NetStatistics_PacketsReceived" data-uid="LiteNetLib.NetStatistics.PacketsReceived">PacketsReceived</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Total number of packets received.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -215,7 +222,8 @@
 
   <a id="LiteNetLib_NetStatistics_PacketsSent_" data-uid="LiteNetLib.NetStatistics.PacketsSent*"></a>
   <h4 id="LiteNetLib_NetStatistics_PacketsSent" data-uid="LiteNetLib.NetStatistics.PacketsSent">PacketsSent</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Total number of packets sent.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -242,7 +250,8 @@
 
   <a id="LiteNetLib_NetStatistics_AddBytesReceived_" data-uid="LiteNetLib.NetStatistics.AddBytesReceived*"></a>
   <h4 id="LiteNetLib_NetStatistics_AddBytesReceived_System_Int64_" data-uid="LiteNetLib.NetStatistics.AddBytesReceived(System.Int64)">AddBytesReceived(long)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a specific amount to the total bytes received.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -261,7 +270,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
         <td><span class="parametername">bytesReceived</span></td>
-        <td></td>
+        <td><p>Number of bytes to add.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -269,7 +279,8 @@
 
   <a id="LiteNetLib_NetStatistics_AddBytesSent_" data-uid="LiteNetLib.NetStatistics.AddBytesSent*"></a>
   <h4 id="LiteNetLib_NetStatistics_AddBytesSent_System_Int64_" data-uid="LiteNetLib.NetStatistics.AddBytesSent(System.Int64)">AddBytesSent(long)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a specific amount to the total bytes sent.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -288,7 +299,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
         <td><span class="parametername">bytesSent</span></td>
-        <td></td>
+        <td><p>Number of bytes to add.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -296,7 +308,8 @@
 
   <a id="LiteNetLib_NetStatistics_AddPacketLoss_" data-uid="LiteNetLib.NetStatistics.AddPacketLoss*"></a>
   <h4 id="LiteNetLib_NetStatistics_AddPacketLoss_System_Int64_" data-uid="LiteNetLib.NetStatistics.AddPacketLoss(System.Int64)">AddPacketLoss(long)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a specific amount to the total packet loss count.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -315,7 +328,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
         <td><span class="parametername">packetLoss</span></td>
-        <td></td>
+        <td><p>Number of lost packets to add.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -323,7 +337,8 @@
 
   <a id="LiteNetLib_NetStatistics_IncrementPacketLoss_" data-uid="LiteNetLib.NetStatistics.IncrementPacketLoss*"></a>
   <h4 id="LiteNetLib_NetStatistics_IncrementPacketLoss" data-uid="LiteNetLib.NetStatistics.IncrementPacketLoss">IncrementPacketLoss()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Increments the count of lost packets by one.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -333,7 +348,8 @@
 
   <a id="LiteNetLib_NetStatistics_IncrementPacketsReceived_" data-uid="LiteNetLib.NetStatistics.IncrementPacketsReceived*"></a>
   <h4 id="LiteNetLib_NetStatistics_IncrementPacketsReceived" data-uid="LiteNetLib.NetStatistics.IncrementPacketsReceived">IncrementPacketsReceived()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Increments the count of received packets by one.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -343,7 +359,8 @@
 
   <a id="LiteNetLib_NetStatistics_IncrementPacketsSent_" data-uid="LiteNetLib.NetStatistics.IncrementPacketsSent*"></a>
   <h4 id="LiteNetLib_NetStatistics_IncrementPacketsSent" data-uid="LiteNetLib.NetStatistics.IncrementPacketsSent">IncrementPacketsSent()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Increments the count of sent packets by one.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -353,7 +370,8 @@
 
   <a id="LiteNetLib_NetStatistics_Reset_" data-uid="LiteNetLib.NetStatistics.Reset*"></a>
   <h4 id="LiteNetLib_NetStatistics_Reset" data-uid="LiteNetLib.NetStatistics.Reset">Reset()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resets all statistical counters to zero.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -363,7 +381,7 @@
 
   <a id="LiteNetLib_NetStatistics_ToString_" data-uid="LiteNetLib.NetStatistics.ToString*"></a>
   <h4 id="LiteNetLib_NetStatistics_ToString" data-uid="LiteNetLib.NetStatistics.ToString">ToString()</h4>
-  <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
+  <div class="markdown level1 summary"><p>Returns a string representation of the current network statistics.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -381,7 +399,7 @@
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><p>A string that represents the current object.</p>
+        <td><p>A formatted string containing bytes received/sent, packets received/sent, and loss information.</p>
 </td>
       </tr>
     </tbody>

@@ -118,7 +118,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="id">id of peer</param>
         /// <param name="peer">resulting peer</param>
-        /// <returns>True if peer with id exist, otherwise false</returns>
+        /// <returns><see langword="true"/> if peer with id exist; otherwise <see langword="false"/></returns>
         public bool TryGetPeerById(int id, out LiteNetPeer peer)
         {
             peer = GetPeerById(id);

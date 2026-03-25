@@ -224,37 +224,127 @@ namespace LiteNetLib
     /// </summary>
     public class EventBasedNetListener : INetEventListener
     {
+        /// <summary>
+        /// Delegate for the event that occurs when a new peer has successfully connected.
+        /// </summary>
+        /// <param name="peer">The connected peer.</param>
         public delegate void OnPeerConnected(NetPeer peer);
+        /// <summary>
+        /// Delegate for the event that occurs when a peer disconnects or the connection is lost.
+        /// </summary>
+        /// <param name="peer">The disconnected peer.</param>
+        /// <param name="disconnectInfo">Information regarding the reason and data associated with the disconnection.</param>
         public delegate void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
+        /// <summary>
+        /// Delegate for the event that occurs when a network error is detected in the underlying socket.
+        /// </summary>
+        /// <param name="endPoint">The endpoint associated with the error.</param>
+        /// <param name="socketError">The specific socket error code.</param>
         public delegate void OnNetworkError(IPEndPoint endPoint, SocketError socketError);
+        /// <summary>
+        /// Delegate for the event that occurs when data is received from a connected peer.
+        /// </summary>
+        /// <param name="peer">The peer that sent the data.</param>
+        /// <param name="reader">The reader containing the received payload.</param>
+        /// <param name="channel">The channel on which the data was received.</param>
+        /// <param name="deliveryMethod">The delivery method used for this packet.</param>
         public delegate void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channel, DeliveryMethod deliveryMethod);
+        /// <summary>
+        /// Delegate for the event that occurs when a message is received from an unconnected endpoint.
+        /// </summary>
+        /// <param name="remoteEndPoint">The endpoint that sent the message.</param>
+        /// <param name="reader">The reader containing the received payload.</param>
+        /// <param name="messageType">The type of unconnected message (e.g., Discovery or UnconnectedData).</param>
         public delegate void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType);
+        /// <summary>
+        /// Delegate for the event that occurs when the round-trip time (RTT) to a peer is updated.
+        /// </summary>
+        /// <param name="peer">The peer whose latency was updated.</param>
+        /// <param name="latency">The new latency value in milliseconds.</param>
         public delegate void OnNetworkLatencyUpdate(NetPeer peer, int latency);
+        /// <summary>
+        /// Delegate for the event that occurs when a new connection request is received.
+        /// </summary>
+        /// <param name="request">The connection request object used to accept or reject the connection.</param>
         public delegate void OnConnectionRequest(ConnectionRequest request);
+        /// <summary>
+        /// Delegate for the event that occurs when a reliable packet is successfully delivered or acknowledged.
+        /// </summary>
+        /// <param name="peer">The peer that received the packet.</param>
+        /// <param name="userData">The custom user data that was attached to the sent packet.</param>
         public delegate void OnDeliveryEvent(NetPeer peer, object userData);
+        /// <summary>
+        /// Delegate for the event that occurs when an NTP response is received from a time server.
+        /// </summary>
+        /// <param name="packet">The NTP packet containing time information.</param>
         public delegate void OnNtpResponseEvent(NtpPacket packet);
+        /// <summary>
+        /// Delegate for the event that occurs when a peer's remote address changes (roaming).
+        /// </summary>
+        /// <param name="peer">The peer whose address changed.</param>
+        /// <param name="previousAddress">The previous IP endpoint of the peer.</param>
         public delegate void OnPeerAddressChangedEvent(NetPeer peer, IPEndPoint previousAddress);
 
+        /// <summary>
+        /// Occurs when a new peer has successfully connected.
+        /// </summary>
         public event OnPeerConnected PeerConnectedEvent;
+        /// <summary>
+        /// Occurs when a peer disconnects or the connection is lost.
+        /// </summary>
         public event OnPeerDisconnected PeerDisconnectedEvent;
+        /// <summary>
+        /// Occurs when a network error is detected in the underlying socket.
+        /// </summary>
         public event OnNetworkError NetworkErrorEvent;
+        /// <summary>
+        /// Occurs when data is received from a connected peer.
+        /// </summary>
         public event OnNetworkReceive NetworkReceiveEvent;
+        /// <summary>
+        /// Occurs when a message is received from an unconnected endpoint.
+        /// </summary>
         public event OnNetworkReceiveUnconnected NetworkReceiveUnconnectedEvent;
+        /// <summary>
+        /// Occurs when the round-trip time (RTT) to a peer is updated.
+        /// </summary>
         public event OnNetworkLatencyUpdate NetworkLatencyUpdateEvent;
+        /// <summary>
+        /// Occurs when a new connection request is received.
+        /// </summary>
         public event OnConnectionRequest ConnectionRequestEvent;
+        /// <summary>
+        /// Occurs when a reliable packet is successfully delivered or acknowledged.
+        /// </summary>
         public event OnDeliveryEvent DeliveryEvent;
+        /// <summary>
+        /// Occurs when an NTP response is received.
+        /// </summary>
         public event OnNtpResponseEvent NtpResponseEvent;
+        /// <summary>
+        /// Occurs when a peer's remote address changes.
+        /// </summary>
         public event OnPeerAddressChangedEvent PeerAddressChangedEvent;
 
-        public void ClearPeerConnectedEvent() =>  PeerConnectedEvent = null;
+        /// <summary> Clears all subscribers from <see cref="PeerConnectedEvent"/>. </summary>
+        public void ClearPeerConnectedEvent() => PeerConnectedEvent = null;
+        /// <summary> Clears all subscribers from <see cref="PeerDisconnectedEvent"/>. </summary>
         public void ClearPeerDisconnectedEvent() => PeerDisconnectedEvent = null;
+        /// <summary> Clears all subscribers from <see cref="NetworkErrorEvent"/>. </summary>
         public void ClearNetworkErrorEvent() => NetworkErrorEvent = null;
+        /// <summary> Clears all subscribers from <see cref="NetworkReceiveEvent"/>. </summary>
         public void ClearNetworkReceiveEvent() => NetworkReceiveEvent = null;
+        /// <summary> Clears all subscribers from <see cref="NetworkReceiveUnconnectedEvent"/>. </summary>
         public void ClearNetworkReceiveUnconnectedEvent() => NetworkReceiveUnconnectedEvent = null;
+        /// <summary> Clears all subscribers from <see cref="NetworkLatencyUpdateEvent"/>. </summary>
         public void ClearNetworkLatencyUpdateEvent() => NetworkLatencyUpdateEvent = null;
+        /// <summary> Clears all subscribers from <see cref="ConnectionRequestEvent"/>. </summary>
         public void ClearConnectionRequestEvent() => ConnectionRequestEvent = null;
+        /// <summary> Clears all subscribers from <see cref="DeliveryEvent"/>. </summary>
         public void ClearDeliveryEvent() => DeliveryEvent = null;
+        /// <summary> Clears all subscribers from <see cref="NtpResponseEvent"/>. </summary>
         public void ClearNtpResponseEvent() => NtpResponseEvent = null;
+        /// <summary> Clears all subscribers from <see cref="PeerAddressChangedEvent"/>. </summary>
         public void ClearPeerAddressChangedEvent() => PeerAddressChangedEvent = null;
 
         void INetEventListener.OnPeerConnected(NetPeer peer) =>
@@ -293,34 +383,115 @@ namespace LiteNetLib
     /// </summary>
     public class EventBasedLiteNetListener : ILiteNetEventListener
     {
+        /// <summary>
+        /// Delegate for the event that occurs when a new peer has successfully connected.
+        /// </summary>
+        /// <param name="peer">The connected peer.</param>
         public delegate void OnPeerConnected(LiteNetPeer peer);
+        /// <summary>
+        /// Delegate for the event that occurs when a peer disconnects or the connection is lost.
+        /// </summary>
+        /// <param name="peer">The disconnected peer.</param>
+        /// <param name="disconnectInfo">Information regarding the reason and data associated with the disconnection.</param>
         public delegate void OnPeerDisconnected(LiteNetPeer peer, DisconnectInfo disconnectInfo);
+        /// <summary>
+        /// Delegate for the event that occurs when a network error is detected in the underlying socket.
+        /// </summary>
+        /// <param name="endPoint">The endpoint associated with the error.</param>
+        /// <param name="socketError">The specific socket error code.</param>
         public delegate void OnNetworkError(IPEndPoint endPoint, SocketError socketError);
+        /// <summary>
+        /// Delegate for the event that occurs when data is received from a connected peer.
+        /// </summary>
+        /// <param name="peer">The peer that sent the data.</param>
+        /// <param name="reader">The reader containing the received payload.</param>
+        /// <param name="deliveryMethod">The delivery method used for this packet.</param>
         public delegate void OnNetworkReceive(LiteNetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod);
+        /// <summary>
+        /// Delegate for the event that occurs when a message is received from an unconnected endpoint.
+        /// </summary>
+        /// <param name="remoteEndPoint">The endpoint that sent the message.</param>
+        /// <param name="reader">The reader containing the received payload.</param>
+        /// <param name="messageType">The type of unconnected message (e.g., Discovery or UnconnectedData).</param>
         public delegate void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType);
+        /// <summary>
+        /// Delegate for the event that occurs when the round-trip time (RTT) to a peer is updated.
+        /// </summary>
+        /// <param name="peer">The peer whose latency was updated.</param>
+        /// <param name="latency">The new latency value in milliseconds.</param>
         public delegate void OnNetworkLatencyUpdate(LiteNetPeer peer, int latency);
+        /// <summary>
+        /// Delegate for the event that occurs when a new connection request is received.
+        /// </summary>
+        /// <param name="request">The connection request object used to accept or reject the connection.</param>
         public delegate void OnConnectionRequest(LiteConnectionRequest request);
+        /// <summary>
+        /// Delegate for the event that occurs when a reliable packet is successfully delivered or acknowledged.
+        /// </summary>
+        /// <param name="peer">The peer that received the packet.</param>
+        /// <param name="userData">The custom user data that was attached to the sent packet.</param>
         public delegate void OnDeliveryEvent(LiteNetPeer peer, object userData);
+        /// <summary>
+        /// Delegate for the event that occurs when a peer's remote address changes (roaming).
+        /// </summary>
+        /// <param name="peer">The peer whose address changed.</param>
+        /// <param name="previousAddress">The previous IP endpoint of the peer.</param>
         public delegate void OnPeerAddressChangedEvent(LiteNetPeer peer, IPEndPoint previousAddress);
 
+        /// <summary>
+        /// Occurs when a new peer has successfully connected.
+        /// </summary>
         public event OnPeerConnected PeerConnectedEvent;
+        /// <summary>
+        /// Occurs when a peer disconnects or the connection is lost.
+        /// </summary>
         public event OnPeerDisconnected PeerDisconnectedEvent;
+        /// <summary>
+        /// Occurs when a network error is detected in the underlying socket.
+        /// </summary>
         public event OnNetworkError NetworkErrorEvent;
+        /// <summary>
+        /// Occurs when data is received from a connected peer.
+        /// </summary>
         public event OnNetworkReceive NetworkReceiveEvent;
+        /// <summary>
+        /// Occurs when a message is received from an unconnected endpoint.
+        /// </summary>
         public event OnNetworkReceiveUnconnected NetworkReceiveUnconnectedEvent;
+        /// <summary>
+        /// Occurs when the round-trip time (RTT) to a peer is updated.
+        /// </summary>
         public event OnNetworkLatencyUpdate NetworkLatencyUpdateEvent;
+        /// <summary>
+        /// Occurs when a new connection request is received.
+        /// </summary>
         public event OnConnectionRequest ConnectionRequestEvent;
+        /// <summary>
+        /// Occurs when a reliable packet is successfully delivered or acknowledged.
+        /// </summary>
         public event OnDeliveryEvent DeliveryEvent;
+        /// <summary>
+        /// Occurs when a peer's remote address changes.
+        /// </summary>
         public event OnPeerAddressChangedEvent PeerAddressChangedEvent;
 
-        public void ClearPeerConnectedEvent() =>  PeerConnectedEvent = null;
+        /// <summary> Clears all subscribers from <see cref="PeerConnectedEvent"/>. </summary>
+        public void ClearPeerConnectedEvent() => PeerConnectedEvent = null;
+        /// <summary> Clears all subscribers from <see cref="PeerDisconnectedEvent"/>. </summary>
         public void ClearPeerDisconnectedEvent() => PeerDisconnectedEvent = null;
+        /// <summary> Clears all subscribers from <see cref="NetworkErrorEvent"/>. </summary>
         public void ClearNetworkErrorEvent() => NetworkErrorEvent = null;
+        /// <summary> Clears all subscribers from <see cref="NetworkReceiveEvent"/>. </summary>
         public void ClearNetworkReceiveEvent() => NetworkReceiveEvent = null;
+        /// <summary> Clears all subscribers from <see cref="NetworkReceiveUnconnectedEvent"/>. </summary>
         public void ClearNetworkReceiveUnconnectedEvent() => NetworkReceiveUnconnectedEvent = null;
+        /// <summary> Clears all subscribers from <see cref="NetworkLatencyUpdateEvent"/>. </summary>
         public void ClearNetworkLatencyUpdateEvent() => NetworkLatencyUpdateEvent = null;
+        /// <summary> Clears all subscribers from <see cref="ConnectionRequestEvent"/>. </summary>
         public void ClearConnectionRequestEvent() => ConnectionRequestEvent = null;
+        /// <summary> Clears all subscribers from <see cref="DeliveryEvent"/>. </summary>
         public void ClearDeliveryEvent() => DeliveryEvent = null;
+        /// <summary> Clears all subscribers from <see cref="PeerAddressChangedEvent"/>. </summary>
         public void ClearPeerAddressChangedEvent() => PeerAddressChangedEvent = null;
 
         void ILiteNetEventListener.OnPeerConnected(LiteNetPeer peer) =>

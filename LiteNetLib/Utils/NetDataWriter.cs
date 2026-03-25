@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
@@ -97,7 +97,7 @@ namespace LiteNetLib.Utils
         /// <param name="length">Length of array</param>
         public static NetDataWriter FromBytes(byte[] bytes, int offset, int length)
         {
-            var netDataWriter = new NetDataWriter(true, bytes.Length);
+            var netDataWriter = new NetDataWriter(true, length);
             netDataWriter.Put(bytes, offset, length);
             return netDataWriter;
         }
@@ -243,7 +243,7 @@ namespace LiteNetLib.Utils
         /// Serializes a <see cref="char"/> value as a <see cref="ushort"/>.
         /// </summary>
         /// <param name="value">The <see cref="char"/> value to write.</param>
-        public void Put(char value) => Put((ushort)value);
+        public void Put(char value) => PutUnmanaged(value);
 
         /// <summary>
         /// Serializes a <see cref="ushort"/> value.
@@ -562,21 +562,19 @@ namespace LiteNetLib.Utils
                 Put(0);
                 return;
             }
+
             int size = uTF8Encoding.GetByteCount(value);
-            if (size == 0)
-            {
-                Put(0);
-                return;
-            }
             Put(size);
+
             if (_autoResize)
                 ResizeIfNeed(_position + size);
-            uTF8Encoding.GetBytes(value, 0, size, _data, _position);
+
+            uTF8Encoding.GetBytes(value, 0, value.Length, _data, _position);
             _position += size;
         }
 
         /// <summary>
-        /// Serializes a string using a 2-byte <see cref="float"/> length header.
+        /// Serializes a string using a 2-byte <see cref="ushort"/> length header.
         /// </summary>
         /// <param name="value">The string to write to the buffer.</param>
         /// <param name="maxLength">
@@ -595,11 +593,16 @@ namespace LiteNetLib.Utils
                 return;
             }
 
-            int length = maxLength > 0 && value.Length > maxLength ? maxLength : value.Length;
-            int maxSize = uTF8Encoding.GetMaxByteCount(length);
+            ReadOnlySpan<char> source = value.AsSpan();
+            if (maxLength > 0 && source.Length > maxLength)
+            {
+                source = source.Slice(0, maxLength);
+            }
+
+            int maxSize = uTF8Encoding.GetMaxByteCount(source.Length);
             if (_autoResize)
                 ResizeIfNeed(_position + maxSize + sizeof(ushort));
-            int size = uTF8Encoding.GetBytes(value, 0, length, _data, _position + sizeof(ushort));
+            int size = uTF8Encoding.GetBytes(source, _data.AsSpan(_position + sizeof(ushort)));
             if (size == 0)
             {
                 Put((ushort)0);

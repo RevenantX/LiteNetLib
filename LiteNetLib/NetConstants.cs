@@ -37,16 +37,46 @@
     /// </summary>
     public static class NetConstants
     {
-        //can be tuned
+        /// <summary>
+        /// Default window size for reliable channels (number of packets).
+        /// </summary>
         public const int DefaultWindowSize = 64;
-        public const int SocketBufferSize = 1024 * 1024; //1mb
+        /// <summary>
+        /// Size of the underlying UDP socket receive and send buffers in bytes. <br/>
+        /// Default is 1MB.
+        /// </summary>
+        public const int SocketBufferSize = 1024 * 1024;
+        /// <summary>
+        /// Time To Live (TTL) for the UDP packets.
+        /// </summary>
         public const int SocketTTL = 255;
 
+        /// <summary>
+        /// Size of the base packet header (PacketProperty) in <see cref="byte"/>s.
+        /// </summary>
         public const int HeaderSize = 1;
+        /// <summary>
+        /// Size of the header for sequenced or reliable messages in <see cref="byte"/>s. <br/>
+        /// Includes <see cref="HeaderSize"/>, Sequence, and ChannelId.
+        /// </summary>
         public const int ChanneledHeaderSize = 4;
+        /// <summary>
+        /// Additional header size required for fragmented packets in <see cref="byte"/>s. <br/>
+        /// Includes FragmentId, FragmentPart, and FragmentsTotal.
+        /// </summary>
         public const int FragmentHeaderSize = 6;
+        /// <summary>
+        /// Total header size for a fragmented channeled packet in <see cref="byte"/>s. <br/>
+        /// Combines <see cref="ChanneledHeaderSize"/> and <see cref="FragmentHeaderSize"/>.
+        /// </summary>
         public const int FragmentedHeaderTotalSize = ChanneledHeaderSize + FragmentHeaderSize;
+        /// <summary>
+        /// Maximum possible sequence number before wrapping back to zero.
+        /// </summary>
         public const ushort MaxSequence = 32768;
+        /// <summary>
+        /// Half of the <see cref="MaxSequence"/>, used for sequence comparison and wrap-around logic.
+        /// </summary>
         public const ushort HalfMaxSequence = MaxSequence / 2;
 
         //protocol
@@ -67,12 +97,28 @@
             1500 - MaxUdpHeaderSize  //Ethernet II (RFC 1191)
         };
 
-        //Max possible single packet size
+        /// <summary>
+        /// The starting Maximum Transmission Unit (MTU) used for new connections before path MTU discovery.
+        /// </summary>
         public static readonly int InitialMtu = PossibleMtu[0];
+        /// <summary>
+        /// Maximum possible packet size allowed by the library based on the largest supported MTU.
+        /// </summary>
         public static readonly int MaxPacketSize = PossibleMtu[PossibleMtu.Length - 1];
+        /// <summary>
+        /// Maximum payload size for a single unreliable packet in <see cref="byte"/>s. <br/>
+        /// Calculated as <see cref="MaxPacketSize"/> - <see cref="HeaderSize"/>.
+        /// </summary>
         public static readonly int MaxUnreliableDataSize = MaxPacketSize - HeaderSize;
 
-        //peer specific
+        /// <summary>
+        /// Maximum possible value for <see cref="NetPacket.ConnectionNumber"/>.
+        /// </summary>
+        /// <remarks>
+        /// This value is used to distinguish between different connection instances from the same <see cref="System.Net.IPEndPoint"/>. <br/>
+        /// It allows the receiver to identify and discard packets belonging to previous connection attempts that may arrive
+        /// late due to network jitter, even if they originate from the same address and port. <br/>
+        /// </remarks>
         public const byte MaxConnectionNumber = 4;
     }
 }
