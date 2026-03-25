@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
@@ -97,7 +97,7 @@ namespace LiteNetLib.Utils
         /// <param name="length">Length of array</param>
         public static NetDataWriter FromBytes(byte[] bytes, int offset, int length)
         {
-            var netDataWriter = new NetDataWriter(true, bytes.Length);
+            var netDataWriter = new NetDataWriter(true, length);
             netDataWriter.Put(bytes, offset, length);
             return netDataWriter;
         }
@@ -243,7 +243,7 @@ namespace LiteNetLib.Utils
         /// Serializes a <see cref="char"/> value as a <see cref="ushort"/>.
         /// </summary>
         /// <param name="value">The <see cref="char"/> value to write.</param>
-        public void Put(char value) => Put((ushort)value);
+        public void Put(char value) => PutUnmanaged(value);
 
         /// <summary>
         /// Serializes a <see cref="ushort"/> value.
@@ -574,7 +574,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serializes a string using a 2-byte <see cref="float"/> length header.
+        /// Serializes a string using a 2-byte <see cref="ushort"/> length header.
         /// </summary>
         /// <param name="value">The string to write to the buffer.</param>
         /// <param name="maxLength">
