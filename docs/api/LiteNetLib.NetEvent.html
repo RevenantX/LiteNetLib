@@ -91,7 +91,8 @@
 
   <a id="LiteNetLib_NetEvent__ctor_" data-uid="LiteNetLib.NetEvent.#ctor*"></a>
   <h4 id="LiteNetLib_NetEvent__ctor_LiteNetLib_LiteNetManager_" data-uid="LiteNetLib.NetEvent.#ctor(LiteNetLib.LiteNetManager)">NetEvent(LiteNetManager)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="LiteNetLib.NetEvent.html">NetEvent</a> class.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -110,7 +111,8 @@
       <tr>
         <td><a class="xref" href="LiteNetLib.LiteNetManager.html">LiteNetManager</a></td>
         <td><span class="parametername">manager</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="LiteNetLib.LiteNetManager.html">LiteNetManager</a> that owns the packet pool and buffers for this event.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -119,7 +121,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_ChannelNumber" data-uid="LiteNetLib.NetEvent.ChannelNumber">ChannelNumber</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The channel on which the packet was received.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -143,7 +146,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_ConnectionRequest" data-uid="LiteNetLib.NetEvent.ConnectionRequest">ConnectionRequest</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Information about an incoming connection. Only valid when <a class="xref" href="LiteNetLib.NetEvent.html#LiteNetLib_NetEvent_Type">Type</a> is <a class="xref" href="LiteNetLib.NetEvent.EType.html#LiteNetLib_NetEvent_EType_ConnectionRequest">ConnectionRequest</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -167,7 +171,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_DataReader" data-uid="LiteNetLib.NetEvent.DataReader">DataReader</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A reader for accessing the payload of received data, broadcast, or unconnected messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -191,7 +196,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_DeliveryMethod" data-uid="LiteNetLib.NetEvent.DeliveryMethod">DeliveryMethod</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The delivery method used for the received packet. Only valid when <a class="xref" href="LiteNetLib.NetEvent.html#LiteNetLib_NetEvent_Type">Type</a> is <a class="xref" href="LiteNetLib.NetEvent.EType.html#LiteNetLib_NetEvent_EType_Receive">Receive</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -215,7 +221,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_DisconnectReason" data-uid="LiteNetLib.NetEvent.DisconnectReason">DisconnectReason</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The reason for a peer's disconnection. Only valid when <a class="xref" href="LiteNetLib.NetEvent.html#LiteNetLib_NetEvent_Type">Type</a> is <a class="xref" href="LiteNetLib.NetEvent.EType.html#LiteNetLib_NetEvent_EType_Disconnect">Disconnect</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -239,7 +246,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_ErrorCode" data-uid="LiteNetLib.NetEvent.ErrorCode">ErrorCode</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The specific socket error. Only valid when <a class="xref" href="LiteNetLib.NetEvent.html#LiteNetLib_NetEvent_Type">Type</a> is <a class="xref" href="LiteNetLib.NetEvent.EType.html#LiteNetLib_NetEvent_EType_Error">Error</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -263,7 +271,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_Latency" data-uid="LiteNetLib.NetEvent.Latency">Latency</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The updated latency value in milliseconds. Only valid when <a class="xref" href="LiteNetLib.NetEvent.html#LiteNetLib_NetEvent_Type">Type</a> is <a class="xref" href="LiteNetLib.NetEvent.EType.html#LiteNetLib_NetEvent_EType_ConnectionLatencyUpdated">ConnectionLatencyUpdated</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -287,7 +296,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_Next" data-uid="LiteNetLib.NetEvent.Next">Next</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Reference to the next event in the pool or event queue.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -311,7 +321,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_Peer" data-uid="LiteNetLib.NetEvent.Peer">Peer</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The peer associated with this event. <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for unconnected events.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -335,7 +346,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_RemoteEndPoint" data-uid="LiteNetLib.NetEvent.RemoteEndPoint">RemoteEndPoint</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The remote endpoint (IP and Port) from which the event originated.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -359,7 +371,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_Type" data-uid="LiteNetLib.NetEvent.Type">Type</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The type of network event that occurred.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -383,7 +396,8 @@
 
 
   <h4 id="LiteNetLib_NetEvent_UserData" data-uid="LiteNetLib.NetEvent.UserData">UserData</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Optional user data associated with a connection request or disconnect.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">

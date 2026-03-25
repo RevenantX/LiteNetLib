@@ -98,7 +98,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.EventBasedNatPunchListener",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/LiteNetLib.EventBasedNatPunchListener.yml\" sourcestartlinenumber=\"1\">An implementation of <xref href=\"LiteNetLib.INatPunchListener\" data-throw-if-not-resolved=\"false\"></xref> that maps callbacks to events.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -140,7 +140,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.INatPunchListener",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/LiteNetLib.INatPunchListener.yml\" sourcestartlinenumber=\"1\">Interface for handling events related to NAT punchthrough and introduction.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -336,7 +336,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.NatAddressType",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NatAddressType.yml\" sourcestartlinenumber=\"1\">Specifies the type of network address discovered during NAT punchthrough.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -406,7 +406,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.NetEvent.EType",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetEvent.EType.yml\" sourcestartlinenumber=\"1\">Specifies the category of the network event.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -490,7 +490,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.NetStatistics",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/LiteNetLib.NetStatistics.yml\" sourcestartlinenumber=\"1\">Thread-safe counter for network statistics including sent/received packets, bytes, and packet loss.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -588,7 +588,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.Utils.INetSerializable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/LiteNetLib.Utils.INetSerializable.yml\" sourcestartlinenumber=\"1\">Interface for implementing custom data serialization for network transmission.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -728,7 +728,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "LiteNetLib.Utils.PreserveAttribute",
-      "Summary": "<p>PreserveAttribute prevents byte code stripping from removing a class, method, field, or property.</p>\n"
+      "Summary": "<p sourcefile=\"api/LiteNetLib.Utils.PreserveAttribute.yml\" sourcestartlinenumber=\"1\">PreserveAttribute prevents byte code stripping from removing a class, method, field, or property.</p>\n"
     },
     {
       "type": "ManagedReference",

@@ -549,7 +549,8 @@
 
   <a id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable*"></a>
   <h4 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__1_System_Action___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``1(System.Action{``0})">SubscribeNetSerializable&lt;T&gt;(Action&lt;T&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Registers a callback for a packet type that implements <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a> and has a parameterless constructor.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -568,7 +569,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;T&gt;</td>
         <td><span class="parametername">onReceive</span></td>
-        <td></td>
+        <td><p>The delegate to be executed when the packet is received.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -583,15 +585,20 @@
     <tbody>
       <tr>
         <td><span class="parametername">T</span></td>
-        <td></td>
+        <td><p>The type of the packet. Must implement <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a> and have a <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/operators/new-operator">new</a>() constraint.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__1_System_Action___0___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>To reduce allocations, this method uses a single internal reference to <code class="typeparamref">T</code> for deserialization.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable*"></a>
   <h4 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__1_System_Action___0__System_Func___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``1(System.Action{``0},System.Func{``0})">SubscribeNetSerializable&lt;T&gt;(Action&lt;T&gt;, Func&lt;T&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Registers a callback for a packet type that implements <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a>, using a custom constructor.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -610,12 +617,14 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;T&gt;</td>
         <td><span class="parametername">onReceive</span></td>
-        <td></td>
+        <td><p>The delegate to be executed when the packet is received.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
         <td><span class="parametername">packetConstructor</span></td>
-        <td></td>
+        <td><p>A function that returns a new instance of <code class="typeparamref">T</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -630,7 +639,8 @@
     <tbody>
       <tr>
         <td><span class="parametername">T</span></td>
-        <td></td>
+        <td><p>The type of the packet. Must implement <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -638,7 +648,8 @@
 
   <a id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable*"></a>
   <h4 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__2_System_Action___0___1__" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``2(System.Action{``0,``1})">SubscribeNetSerializable&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Registers a callback for a packet type that implements <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a> and has a parameterless constructor, supporting user data.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -657,7 +668,8 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;T, TUserData&gt;</td>
         <td><span class="parametername">onReceive</span></td>
-        <td></td>
+        <td><p>The delegate to be executed when the packet is received.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -672,19 +684,25 @@
     <tbody>
       <tr>
         <td><span class="parametername">T</span></td>
-        <td></td>
+        <td><p>The type of the packet. Must implement <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a> and have a <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/operators/new-operator">new</a>() constraint.</p>
+</td>
       </tr>
       <tr>
         <td><span class="parametername">TUserData</span></td>
-        <td></td>
+        <td><p>The type of the user data (typically <a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a>).</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__2_System_Action___0___1___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>To reduce allocations, this method uses a single internal reference to <code class="typeparamref">T</code> for deserialization.</p>
+</div>
 
 
   <a id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable_" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable*"></a>
   <h4 id="LiteNetLib_Utils_NetPacketProcessor_SubscribeNetSerializable__2_System_Action___0___1__System_Func___0__" data-uid="LiteNetLib.Utils.NetPacketProcessor.SubscribeNetSerializable``2(System.Action{``0,``1},System.Func{``0})">SubscribeNetSerializable&lt;T, TUserData&gt;(Action&lt;T, TUserData&gt;, Func&lt;T&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Registers a callback for a packet type that implements <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a>, using a custom constructor and supporting user data.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -703,12 +721,14 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;T, TUserData&gt;</td>
         <td><span class="parametername">onReceive</span></td>
-        <td></td>
+        <td><p>The delegate to be executed when the packet is received.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;T&gt;</td>
         <td><span class="parametername">packetConstructor</span></td>
-        <td></td>
+        <td><p>A function that returns a new instance of <code class="typeparamref">T</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -723,11 +743,13 @@
     <tbody>
       <tr>
         <td><span class="parametername">T</span></td>
-        <td></td>
+        <td><p>The type of the packet. Must implement <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a>.</p>
+</td>
       </tr>
       <tr>
         <td><span class="parametername">TUserData</span></td>
-        <td></td>
+        <td><p>The type of the user data (typically <a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a>).</p>
+</td>
       </tr>
     </tbody>
   </table>

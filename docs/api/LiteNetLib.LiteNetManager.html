@@ -1015,7 +1015,8 @@ use direct socket calls for send/receive to drastically increase speed and reduc
 
   <a id="LiteNetLib_LiteNetManager_ExtraPacketSizeForLayer_" data-uid="LiteNetLib.LiteNetManager.ExtraPacketSizeForLayer*"></a>
   <h4 id="LiteNetLib_LiteNetManager_ExtraPacketSizeForLayer" data-uid="LiteNetLib.LiteNetManager.ExtraPacketSizeForLayer">ExtraPacketSizeForLayer</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional size in bytes required by the active <a class="xref" href="LiteNetLib.Layers.PacketLayerBase.html">PacketLayerBase</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
@@ -1036,6 +1037,11 @@ use direct socket calls for send/receive to drastically increase speed and reduc
       </tr>
     </tbody>
   </table>
+  <h5 id="LiteNetLib_LiteNetManager_ExtraPacketSizeForLayer_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This value is used by <a class="xref" href="LiteNetLib.NetManager.html">NetManager</a> to calculate the available MTU for user data. <br>
+If a packet layer is active (e.g., for encryption or CRC), this returns the overhead added to every packet.
+Returns 0 if no packet layer is assigned.</p>
+</div>
 
 
   <a id="LiteNetLib_LiteNetManager_FirstPeer_" data-uid="LiteNetLib.LiteNetManager.FirstPeer*"></a>
@@ -3631,7 +3637,7 @@ This mode useful mostly for single-threaded servers</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p>True if peer with id exist, otherwise false</p>
+        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if peer with id exist; otherwise <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a></p>
 </td>
       </tr>
     </tbody>
