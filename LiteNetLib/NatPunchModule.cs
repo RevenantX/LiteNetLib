@@ -176,8 +176,10 @@ namespace LiteNetLib
 
         /// <summary>
         /// Sends NAT introduction packets to both the host and the client to facilitate punchthrough.
-        /// This is typically called by a mediator (Master Server).
         /// </summary>
+        /// <remarks>
+        /// This is typically called by a mediator (e.g. a master server).
+        /// </remarks>
         /// <param name="hostInternal">Internal (LAN) endpoint of the host.</param>
         /// <param name="hostExternal">External (WAN) endpoint of the host.</param>
         /// <param name="clientInternal">Internal (LAN) endpoint of the client.</param>
