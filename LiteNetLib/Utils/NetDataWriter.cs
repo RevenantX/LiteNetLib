@@ -562,16 +562,14 @@ namespace LiteNetLib.Utils
                 Put(0);
                 return;
             }
+
             int size = uTF8Encoding.GetByteCount(value);
-            if (size == 0)
-            {
-                Put(0);
-                return;
-            }
             Put(size);
+
             if (_autoResize)
                 ResizeIfNeed(_position + size);
-            uTF8Encoding.GetBytes(value, 0, size, _data, _position);
+
+            uTF8Encoding.GetBytes(value, 0, value.Length, _data, _position);
             _position += size;
         }
 
