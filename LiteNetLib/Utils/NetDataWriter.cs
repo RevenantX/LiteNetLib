@@ -574,7 +574,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Serializes a string using a 2-byte <see cref="float"/> length header.
+        /// Serializes a string using a 2-byte <see cref="ushort"/> length header.
         /// </summary>
         /// <param name="value">The string to write to the buffer.</param>
         /// <param name="maxLength">
