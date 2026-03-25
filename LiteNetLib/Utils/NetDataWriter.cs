@@ -125,36 +125,56 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Ensures the internal buffer is at least <paramref name="newSize"/>.
+        /// Ensures that the internal buffer is at least <paramref name="newSize"/> bytes long.
         /// </summary>
         /// <param name="newSize">The required minimum size of the buffer.</param>
-        /// <remarks>
-        /// If an allocation is necessary, the buffer grows to either <paramref name="newSize"/>
-        /// or doubles its current size, whichever is larger.
-        /// </remarks>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when <paramref name="newSize"/> exceeds the current buffer capacity
+        /// and automatic resizing is disabled.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when <paramref name="newSize"/> is negative.
+        /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ResizeIfNeed(int newSize)
         {
-            if (_data.Length < newSize)
-            {
-                Array.Resize(ref _data, Math.Max(newSize, _data.Length * 2));
-            }
+            if (newSize < 0)
+                ThrowCapacityExceeded(newSize);
+
+            if (_data.Length >= newSize)
+                return;
+
+            if (!_autoResize)
+                ThrowCapacityExceeded(newSize);
+
+            Array.Resize(ref _data, Math.Max(newSize, _data.Length * 2));
         }
 
         /// <summary>
-        /// Ensures the internal buffer can accommodate <paramref name="additionalSize"/> more <see cref="byte"/>s.
+        /// Throws an <see cref="InvalidOperationException"/> indicating that the buffer capacity was exceeded
+        /// while automatic resizing is disabled.
         /// </summary>
-        /// <param name="additionalSize">The number of additional <see cref="byte"/>s to fit.</param>
-        /// <remarks>
-        /// This checks against the current <see cref="_position"/>. If the capacity is insufficient,
-        /// the buffer grows to either the required size or doubles its current size.
-        /// </remarks>
+        /// <param name="requiredSize">The total buffer size that was required.</param>
+        /// <exception cref="InvalidOperationException">Always thrown.</exception>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void ThrowCapacityExceeded(int requiredSize)
+        {
+            throw new InvalidOperationException(
+                $"Not enough capacity to write {requiredSize - _position} byte(s). " +
+                $"Position={_position}, Capacity={_data.Length}, RequiredSize={requiredSize}");
+        }
+
+        /// <summary>
+        /// Ensures that the internal buffer can accommodate <paramref name="additionalSize"/> more bytes
+        /// from the current write position.
+        /// </summary>
+        /// <param name="additionalSize">The number of additional bytes that must fit.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EnsureFit(int additionalSize)
         {
-            if (_data.Length < _position + additionalSize)
+            if (additionalSize > 0)
             {
-                Array.Resize(ref _data, Math.Max(_position + additionalSize, _data.Length * 2));
+                ResizeIfNeed(_position + additionalSize);
             }
         }
 
@@ -275,8 +295,7 @@ namespace LiteNetLib.Utils
         /// <param name="value">The <see cref="Guid"/> value to write.</param>
         public void Put(Guid value)
         {
-            if (_autoResize)
-                ResizeIfNeed(_position + GuidSize);
+            ResizeIfNeed(_position + GuidSize);
             value.TryWriteBytes(_data.AsSpan(_position));
             _position += GuidSize;
         }
@@ -307,8 +326,7 @@ namespace LiteNetLib.Utils
         /// <param name="data">The span of data to write.</param>
         public void Put(ReadOnlySpan<byte> data)
         {
-            if (_autoResize)
-                ResizeIfNeed(_position + data.Length);
+            ResizeIfNeed(_position + data.Length);
             data.CopyTo(_data.AsSpan(_position));
             _position += data.Length;
         }
@@ -321,8 +339,7 @@ namespace LiteNetLib.Utils
         /// <param name="length">The number of elements to write.</param>
         public void PutSBytesWithLength(sbyte[] data, int offset, ushort length)
         {
-            if (_autoResize)
-                ResizeIfNeed(_position + 2 + length);
+            ResizeIfNeed(_position + 2 + length);
 
             FastBitConverter.GetBytes(_data, _position, length);
             _position += 2;
@@ -351,8 +368,7 @@ namespace LiteNetLib.Utils
         /// <param name="length">The number of <see cref="byte"/>s to write.</param>
         public void PutBytesWithLength(byte[] data, int offset, ushort length)
         {
-            if (_autoResize)
-                ResizeIfNeed(_position + 2 + length);
+            ResizeIfNeed(_position + 2 + length);
 
             FastBitConverter.GetBytes(_data, _position, length);
             _position += 2;
@@ -389,8 +405,7 @@ namespace LiteNetLib.Utils
         {
             ushort length = arr == null ? (ushort)0 : (ushort)arr.Length;
             sz *= length;
-            if (_autoResize)
-                ResizeIfNeed(_position + sz + 2);
+            ResizeIfNeed(_position + sz + 2);
             FastBitConverter.GetBytes(_data, _position, length);
             if (arr != null)
                 Buffer.BlockCopy(arr, 0, _data, _position + 2, sz);
@@ -421,8 +436,7 @@ namespace LiteNetLib.Utils
             var length = (ushort)span.Length;
             var byteLength = length * sizeof(T);
 
-            if (_autoResize)
-                ResizeIfNeed(_position + byteLength + 2);
+            ResizeIfNeed(_position + byteLength + 2);
 
             FastBitConverter.GetBytes(_data, _position, length);
             _position += 2;
@@ -533,8 +547,7 @@ namespace LiteNetLib.Utils
                 throw new ArgumentException($"Unsupported address family: {endPoint.AddressFamily}");
             }
 
-            if (_autoResize)
-                ResizeIfNeed(_position + 1 + addressSize + 2);
+            ResizeIfNeed(_position + 1 + addressSize + 2);
 
             _data[_position++] = familyFlag;
 
@@ -566,8 +579,7 @@ namespace LiteNetLib.Utils
             int size = uTF8Encoding.GetByteCount(value);
             Put(size);
 
-            if (_autoResize)
-                ResizeIfNeed(_position + size);
+            ResizeIfNeed(_position + size);
 
             uTF8Encoding.GetBytes(value, 0, value.Length, _data, _position);
             _position += size;
@@ -595,8 +607,7 @@ namespace LiteNetLib.Utils
 
             int length = maxLength > 0 && value.Length > maxLength ? maxLength : value.Length;
             int maxSize = uTF8Encoding.GetMaxByteCount(length);
-            if (_autoResize)
-                ResizeIfNeed(_position + maxSize + sizeof(ushort));
+            ResizeIfNeed(_position + maxSize + sizeof(ushort));
             int size = uTF8Encoding.GetBytes(value, 0, length, _data, _position + sizeof(ushort));
             if (size == 0)
             {
@@ -617,8 +628,7 @@ namespace LiteNetLib.Utils
         public unsafe void PutUnmanaged<T>(T value) where T : unmanaged
         {
             int size = sizeof(T);
-            if (_autoResize)
-                ResizeIfNeed(_position + size);
+            ResizeIfNeed(_position + size);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += size;
         }
@@ -654,10 +664,7 @@ namespace LiteNetLib.Utils
         public unsafe void PutEnum<T>(T value) where T : unmanaged, Enum
         {
             var size = sizeof(T);
-            if (_autoResize)
-            {
-                ResizeIfNeed(_position + size);
-            }
+            ResizeIfNeed(_position + size);
 
             FastBitConverter.GetBytes(_data, _position, value);
             _position += size;
