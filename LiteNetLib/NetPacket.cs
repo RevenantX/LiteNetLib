@@ -202,9 +202,9 @@ namespace LiteNetLib
         public int HeaderSize => HeaderSizes[RawData[0] & 0x1F];
 
         /// <summary>
-        /// Performs a basic sanity check on the packet header and size.
+        /// Performs a basic check on the packet header and size.
         /// </summary>
-        /// <returns>True if the packet property is valid and the size is sufficient for the headers.</returns>
+        /// <returns><see langword="true"/> if the packet property is valid and the size is sufficient for the headers.</returns>
         public bool Verify()
         {
             byte property = (byte)(RawData[0] & 0x1F);
