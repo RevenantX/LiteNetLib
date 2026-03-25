@@ -593,11 +593,16 @@ namespace LiteNetLib.Utils
                 return;
             }
 
-            int length = maxLength > 0 && value.Length > maxLength ? maxLength : value.Length;
-            int maxSize = uTF8Encoding.GetMaxByteCount(length);
+            ReadOnlySpan<char> source = value.AsSpan();
+            if (maxLength > 0 && source.Length > maxLength)
+            {
+                source = source.Slice(0, maxLength);
+            }
+
+            int maxSize = uTF8Encoding.GetMaxByteCount(source.Length);
             if (_autoResize)
                 ResizeIfNeed(_position + maxSize + sizeof(ushort));
-            int size = uTF8Encoding.GetBytes(value, 0, length, _data, _position + sizeof(ushort));
+            int size = uTF8Encoding.GetBytes(source, _data.AsSpan(_position + sizeof(ushort)));
             if (size == 0)
             {
                 Put((ushort)0);
