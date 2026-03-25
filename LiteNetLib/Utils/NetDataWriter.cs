@@ -374,7 +374,7 @@ namespace LiteNetLib.Utils
         /// Serializes a <see cref="bool"/> value as a single <see cref="byte"/>.
         /// </summary>
         /// <param name="value">The <see cref="bool"/> value to write.</param>
-        public void Put(bool value) => PutUnmanaged(value);
+        public void Put(bool value) => Put((byte)(value ? 1 : 0));
 
         /// <summary>
         /// Serializes an <see cref="Array"/> prefixed with a 2-byte <see cref="ushort"/> length.

@@ -412,14 +412,18 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>Reads the next <see cref="byte"/> from the buffer.</summary>
-        public byte GetByte() => GetUnmanaged<byte>();
+        public byte GetByte()
+        {
+            EnsureAvailable(1);
+            return _data[_position++];
+        }
 
         /// <summary>Reads the next <see cref="sbyte"/> from the buffer.</summary>
-        public sbyte GetSByte() => GetUnmanaged<sbyte>();
+        public sbyte GetSByte() => (sbyte)GetByte();
 
         /// <summary>Reads a <see cref="bool"/> value from the current position.</summary>
         /// <returns><see langword="true"/> if the byte is 1; otherwise, <see langword="false"/>.</returns>
-        public bool GetBool() => GetUnmanaged<bool>();
+        public bool GetBool() => GetByte() == 1;
 
         /// <summary>Reads a <see cref="char"/> value as a 2-byte <see cref="ushort"/>.</summary>
         public char GetChar() => GetUnmanaged<char>();
@@ -712,13 +716,13 @@ namespace LiteNetLib.Utils
         #region PeekMethods
 
         /// <summary>Reads the <see cref="byte"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public byte PeekByte() => PeekUnmanaged<byte>();
+        public byte PeekByte() => _data[_position];
 
         /// <summary>Reads the <see cref="sbyte"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public sbyte PeekSByte() => PeekUnmanaged<sbyte>();
+        public sbyte PeekSByte() => (sbyte)PeekByte();
 
         /// <summary>Reads the <see cref="bool"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public bool PeekBool() => PeekUnmanaged<bool>();
+        public bool PeekBool() => PeekByte() == 1;
 
         /// <summary>Reads the <see cref="char"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public char PeekChar() => PeekUnmanaged<char>();
