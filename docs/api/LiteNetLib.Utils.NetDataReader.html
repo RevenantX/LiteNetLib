@@ -2560,7 +2560,7 @@ advancing the position by the size of <code class="typeparamref">T</code>.</p>
 
   <a id="LiteNetLib_Utils_NetDataReader_Get_" data-uid="LiteNetLib.Utils.NetDataReader.Get*"></a>
   <h4 id="LiteNetLib_Utils_NetDataReader_Get__1___0__System_Func___0__" data-uid="LiteNetLib.Utils.NetDataReader.Get``1(``0@,System.Func{``0})">Get&lt;T&gt;(out T, Func&lt;T&gt;)</h4>
-  <div class="markdown level1 summary"><p>Deserializes a <see cre="class"></see> that implements <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a> using a provided constructor.</p>
+  <div class="markdown level1 summary"><p>Deserializes a <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/class">class</a> that implements <a class="xref" href="LiteNetLib.Utils.INetSerializable.html">INetSerializable</a> using a provided constructor.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -3863,6 +3863,68 @@ advancing the position by the size of <code class="typeparamref">T</code>.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if enough data was available; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_TryGetUnmanaged_" data-uid="LiteNetLib.Utils.NetDataReader.TryGetUnmanaged*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_TryGetUnmanaged__1___0__" data-uid="LiteNetLib.Utils.NetDataReader.TryGetUnmanaged``1(``0@)">TryGetUnmanaged&lt;T&gt;(out T)</h4>
+  <div class="markdown level1 summary"><p>Attempts to read a value of type <code class="typeparamref">T</code> from the internal byte buffer at the current position,
+advancing the position by the size of <code class="typeparamref">T</code> if successful.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetUnmanaged&lt;T&gt;(out T result) where T : unmanaged</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>When this method returns, contains the value read from the buffer, or the default value if the read failed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if enough data was available to read the value; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>An unmanaged value type to read from the buffer.</p>
 </td>
       </tr>
     </tbody>

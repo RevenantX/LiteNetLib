@@ -5696,6 +5696,22 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.TryGetUShort
   nameWithType: NetDataReader.TryGetUShort
+- uid: LiteNetLib.Utils.NetDataReader.TryGetUnmanaged*
+  name: TryGetUnmanaged
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetUnmanaged_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.TryGetUnmanaged
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.TryGetUnmanaged
+  nameWithType: NetDataReader.TryGetUnmanaged
+- uid: LiteNetLib.Utils.NetDataReader.TryGetUnmanaged``1(``0@)
+  name: TryGetUnmanaged<T>(out T)
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_TryGetUnmanaged__1___0__
+  commentId: M:LiteNetLib.Utils.NetDataReader.TryGetUnmanaged``1(``0@)
+  name.vb: TryGetUnmanaged(Of T)(T)
+  fullName: LiteNetLib.Utils.NetDataReader.TryGetUnmanaged<T>(out T)
+  fullName.vb: LiteNetLib.Utils.NetDataReader.TryGetUnmanaged(Of T)(T)
+  nameWithType: NetDataReader.TryGetUnmanaged<T>(out T)
+  nameWithType.vb: NetDataReader.TryGetUnmanaged(Of T)(T)
 - uid: LiteNetLib.Utils.NetDataReader.UserDataOffset
   name: UserDataOffset
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_UserDataOffset
