@@ -98,7 +98,7 @@ namespace LiteNetLib.Utils
         private void EnsureAvailable(int count)
         {
             int available = _dataSize - _position;
-            if ((uint)count > (uint)available)
+            if (count < 0 || available < 0 || count > available)
                 ThrowNotEnoughData(count);
         }
 
