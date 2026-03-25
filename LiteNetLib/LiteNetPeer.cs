@@ -98,12 +98,34 @@ namespace LiteNetLib
         private readonly object _mtuMutex = new object();
 
         //Fragment
-        private class IncomingFragments
+        private sealed class IncomingFragments
         {
-            public NetPacket[] Fragments;
+            public readonly NetPacket[] Fragments;
+            public readonly ushort TotalFragments;
+            public readonly byte ChannelId;
+
             public int ReceivedCount;
             public int TotalSize;
-            public byte ChannelId;
+
+            public IncomingFragments(ushort totalFragments, byte channelId)
+            {
+                TotalFragments = totalFragments;
+                ChannelId = channelId;
+                Fragments = new NetPacket[totalFragments];
+            }
+
+            public void RecycleAll(LiteNetManager netManager)
+            {
+                for (int i = 0; i < Fragments.Length; i++)
+                {
+                    NetPacket packet = Fragments[i];
+                    if (packet != null)
+                    {
+                        netManager.PoolRecycle(packet);
+                        Fragments[i] = null;
+                    }
+                }
+            }
         }
         private int _fragmentId;
         private readonly Dictionary<ushort, IncomingFragments> _holdedFragments;
@@ -698,6 +720,18 @@ namespace LiteNetLib
 
         }
 
+        /// <summary>
+        /// Internally handles the shutdown process for this peer.
+        /// </summary>
+        /// <param name="data">Optional data to include in the unreliable disconnect packet.</param>
+        /// <param name="start">Offset in the <paramref name="data"/> array.</param>
+        /// <param name="length">Length of the data to send.</param>
+        /// <param name="force">
+        /// If <see langword="true"/>, immediately sets state to <see cref="ConnectionState.Disconnected"/> without sending a notification. <br/>
+        /// If <see langword="false"/>, sends unreliable disconnect packets until a timeout occurs and sets state to <see cref="ConnectionState.ShutdownRequested"/>
+        /// Queued reliable packets are bypassed and dropped immediately.
+        /// </param>
+        /// <returns>A <see cref="ShutdownResult"/> indicating the state change transition.</returns>
         internal ShutdownResult Shutdown(byte[] data, int start, int length, bool force)
         {
             lock (_shutdownLock)
@@ -754,12 +788,22 @@ namespace LiteNetLib
         {
             if (p.IsFragmented)
             {
-                if (p.FragmentsTotal > NetManager.MaxFragmentsCount)
+                if (p.FragmentsTotal == 0 || p.FragmentsTotal > NetManager.MaxFragmentsCount)
                 {
                     NetManager.PoolRecycle(p);
+                    NetDebug.WriteError($"Invalid FragmentsTotal: {p.FragmentsTotal}");
                     return;
                 }
+
+                if (p.FragmentPart >= p.FragmentsTotal)
+                {
+                    NetManager.PoolRecycle(p);
+                    NetDebug.WriteError($"FragmentPart {p.FragmentPart} >= FragmentsTotal {p.FragmentsTotal}");
+                    return;
+                }
+
                 NetDebug.Write($"Fragment. Id: {p.FragmentId}, Part: {p.FragmentPart}, Total: {p.FragmentsTotal}");
+
                 //Get needed array from dictionary
                 ushort packetFragId = p.FragmentId;
                 byte packetChannelId = p.ChannelId;
@@ -773,26 +817,27 @@ namespace LiteNetLib
                         return;
                     }
 
-                    incomingFragments = new IncomingFragments
-                    {
-                        Fragments = new NetPacket[p.FragmentsTotal],
-                        ChannelId = p.ChannelId
-                    };
+                    incomingFragments = new IncomingFragments(p.FragmentsTotal, p.ChannelId);
                     _holdedFragments.Add(packetFragId, incomingFragments);
+                }
+                else if (p.FragmentsTotal != incomingFragments.TotalFragments || p.ChannelId != incomingFragments.ChannelId)
+                {
+                    NetManager.PoolRecycle(p);
+                    NetDebug.WriteError("Fragment metadata mismatch");
+                    return;
                 }
 
                 //Cache
                 var fragments = incomingFragments.Fragments;
 
                 //Error check
-                if (p.FragmentPart >= fragments.Length ||
-                    fragments[p.FragmentPart] != null ||
-                    p.ChannelId != incomingFragments.ChannelId)
+                if (fragments[p.FragmentPart] != null)
                 {
                     NetManager.PoolRecycle(p);
                     NetDebug.WriteError("Invalid fragment packet");
                     return;
                 }
+
                 //Fill array
                 fragments[p.FragmentPart] = p;
 
@@ -803,28 +848,40 @@ namespace LiteNetLib
                 incomingFragments.TotalSize += p.Size - NetConstants.FragmentedHeaderTotalSize;
 
                 //Check for finish
-                if (incomingFragments.ReceivedCount != fragments.Length)
+                if (incomingFragments.ReceivedCount != incomingFragments.TotalFragments)
                     return;
 
-                //just simple packet
+                //Just simple packet
                 NetPacket resultingPacket = NetManager.PoolGetPacket(incomingFragments.TotalSize);
 
-                int pos = 0;
-                for (int i = 0; i < incomingFragments.ReceivedCount; i++)
+                void AbortReassembly(string error)
                 {
-                    var fragment = fragments[i];
-                    int writtenSize = fragment.Size - NetConstants.FragmentedHeaderTotalSize;
+                    _holdedFragments.Remove(packetFragId);
+                    incomingFragments.RecycleAll(NetManager);
+                    NetManager.PoolRecycle(resultingPacket);
+                    NetDebug.WriteError(error);
+                }
 
-                    if (pos+writtenSize > resultingPacket.RawData.Length)
+                int pos = 0;
+                for (ushort i = 0; i < incomingFragments.TotalFragments; i++)
+                {
+                    NetPacket fragment = fragments[i];
+                    if (fragment == null)
                     {
-                        _holdedFragments.Remove(packetFragId);
-                        NetDebug.WriteError($"Fragment error pos: {pos + writtenSize} >= resultPacketSize: {resultingPacket.RawData.Length} , totalSize: {incomingFragments.TotalSize}");
+                        AbortReassembly($"Fragment {i} missing during reassembly");
                         return;
                     }
+
                     if (fragment.Size > fragment.RawData.Length)
                     {
-                        _holdedFragments.Remove(packetFragId);
-                        NetDebug.WriteError($"Fragment error size: {fragment.Size} > fragment.RawData.Length: {fragment.RawData.Length}");
+                        AbortReassembly($"Fragment error size: {fragment.Size} > fragment.RawData.Length: {fragment.RawData.Length}");
+                        return;
+                    }
+
+                    int writtenSize = fragment.Size - NetConstants.FragmentedHeaderTotalSize;
+                    if (pos + writtenSize > resultingPacket.RawData.Length)
+                    {
+                        AbortReassembly($"Fragment error pos: {pos + writtenSize} >= resultPacketSize: {resultingPacket.RawData.Length}");
                         return;
                     }
 
@@ -835,6 +892,7 @@ namespace LiteNetLib
                         resultingPacket.RawData,
                         pos,
                         writtenSize);
+
                     pos += writtenSize;
 
                     //Free memory
@@ -929,6 +987,15 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Evaluates incoming connection requests against the current peer state to supply Reconnect Protection.
+        /// </summary>
+        /// <param name="connRequest">The incoming connection request packet.</param>
+        /// <returns>A <see cref="ConnectRequestResult"/> directing how the manager should handle the request.</returns>
+        /// <remarks>
+        /// If the state is <see cref="ConnectionState.ShutdownRequested"/>, the peer lingers to ignore older connection requests
+        /// (where the packet timestamp is smaller than internal <see cref="_connectTime"/>), ensuring older connections are ignored.
+        /// </remarks>
         internal ConnectRequestResult ProcessConnectRequest(NetConnectRequestPacket connRequest)
         {
             //current or new request
@@ -1028,7 +1095,7 @@ namespace LiteNetLib
                             break;
 
                         pos += 2;
-                        if (packet.RawData.Length - pos < size)
+                        if (packet.Size - pos < size)
                             break;
 
                         NetPacket mergedPacket = NetManager.PoolGetPacket(size);

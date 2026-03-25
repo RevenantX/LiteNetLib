@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Class ConnectionRequest </title>
+      <title>Class NetConnectRequestPacket </title>
       <meta name="viewport" content="width=device-width">
-      <meta name="title" content="Class ConnectionRequest ">
+      <meta name="title" content="Class NetConnectRequestPacket ">
     
     
       <link rel="shortcut icon" href="../favicon.ico">
@@ -66,74 +66,36 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="LiteNetLib.ConnectionRequest">
+            <article class="content wrap" id="_content" data-uid="LiteNetLib.NetConnectRequestPacket">
 
 
 
-  <h1 id="LiteNetLib_ConnectionRequest" data-uid="LiteNetLib.ConnectionRequest" class="text-break">Class ConnectionRequest</h1>
+  <h1 id="LiteNetLib_NetConnectRequestPacket" data-uid="LiteNetLib.NetConnectRequestPacket" class="text-break">Class NetConnectRequestPacket</h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">object</span></div>
-    <div class="level1"><a class="xref" href="LiteNetLib.LiteConnectionRequest.html">LiteConnectionRequest</a></div>
-    <div class="level2"><span class="xref">ConnectionRequest</span></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Data">LiteConnectionRequest.Data</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RemoteEndPoint">LiteConnectionRequest.RemoteEndPoint</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_System_Boolean_">LiteConnectionRequest.Reject(byte[], int, int, bool)</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_System_Byte___System_Int32_System_Int32_">LiteConnectionRequest.Reject(byte[], int, int)</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce_System_Byte___System_Int32_System_Int32_">LiteConnectionRequest.RejectForce(byte[], int, int)</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce">LiteConnectionRequest.RejectForce()</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce_System_Byte___">LiteConnectionRequest.RejectForce(byte[])</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce_LiteNetLib_Utils_NetDataWriter_">LiteConnectionRequest.RejectForce(NetDataWriter)</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject">LiteConnectionRequest.Reject()</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_System_Byte___">LiteConnectionRequest.Reject(byte[])</a>
-    </div>
-    <div>
-      <a class="xref" href="LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_LiteNetLib_Utils_NetDataWriter_">LiteConnectionRequest.Reject(NetDataWriter)</a>
-    </div>
+    <div class="level1"><span class="xref">NetConnectRequestPacket</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LiteNetLib.html">LiteNetLib</a></h6>
   <h6><strong>Assembly</strong>: LiteNetLib.dll</h6>
-  <h5 id="LiteNetLib_ConnectionRequest_syntax">Syntax</h5>
+  <h5 id="LiteNetLib_NetConnectRequestPacket_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ConnectionRequest : LiteConnectionRequest</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class NetConnectRequestPacket</code></pre>
   </div>
-  <h3 id="methods">Methods
+  <h3 id="fields">Fields
 </h3>
 
 
-  <a id="LiteNetLib_ConnectionRequest_Accept_" data-uid="LiteNetLib.ConnectionRequest.Accept*"></a>
-  <h4 id="LiteNetLib_ConnectionRequest_Accept" data-uid="LiteNetLib.ConnectionRequest.Accept">Accept()</h4>
+  <h4 id="LiteNetLib_NetConnectRequestPacket_ConnectionNumber" data-uid="LiteNetLib.NetConnectRequestPacket.ConnectionNumber">ConnectionNumber</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public NetPeer Accept()</code></pre>
+    <pre><code class="lang-csharp hljs">public byte ConnectionNumber</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-condensed">
     <thead>
       <tr>
@@ -143,39 +105,45 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
 
 
-  <a id="LiteNetLib_ConnectionRequest_AcceptIfKey_" data-uid="LiteNetLib.ConnectionRequest.AcceptIfKey*"></a>
-  <h4 id="LiteNetLib_ConnectionRequest_AcceptIfKey_System_String_" data-uid="LiteNetLib.ConnectionRequest.AcceptIfKey(System.String)">AcceptIfKey(string)</h4>
+  <h4 id="LiteNetLib_NetConnectRequestPacket_ConnectionTime" data-uid="LiteNetLib.NetConnectRequestPacket.ConnectionTime">ConnectionTime</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public NetPeer AcceptIfKey(string key)</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly long ConnectionTime</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-condensed">
     <thead>
       <tr>
         <th>Type</th>
-        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">key</span></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 class="returns">Returns</h5>
+
+
+  <h4 id="LiteNetLib_NetConnectRequestPacket_Data" data-uid="LiteNetLib.NetConnectRequestPacket.Data">Data</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly NetDataReader Data</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-condensed">
     <thead>
       <tr>
@@ -185,7 +153,79 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LiteNetLib.NetPeer.html">NetPeer</a></td>
+        <td><a class="xref" href="LiteNetLib.Utils.NetDataReader.html">NetDataReader</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4 id="LiteNetLib_NetConnectRequestPacket_HeaderSize" data-uid="LiteNetLib.NetConnectRequestPacket.HeaderSize">HeaderSize</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int HeaderSize = 18</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4 id="LiteNetLib_NetConnectRequestPacket_PeerId" data-uid="LiteNetLib.NetConnectRequestPacket.PeerId">PeerId</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly int PeerId</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h4 id="LiteNetLib_NetConnectRequestPacket_TargetAddress" data-uid="LiteNetLib.NetConnectRequestPacket.TargetAddress">TargetAddress</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly byte[] TargetAddress</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
         <td></td>
       </tr>
     </tbody>

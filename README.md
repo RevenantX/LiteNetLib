@@ -6,6 +6,8 @@ Lite reliable UDP library for .NET Standard 2.1 (Mono, .NET)
 
 **HighLevel API Part**: [LiteEntitySystem](https://github.com/RevenantX/LiteEntitySystem)
 
+**Matrix chat**: [Matrix](https://matrix.to/#/#litenetlib:matrix.org)
+
 **Discord chat**: [![Discord](https://img.shields.io/discord/501682175930925058.svg)](https://discord.gg/FATFPdy)
 
 [OLD BRANCH (and examples) for 1.x](https://github.com/RevenantX/LiteNetLib/tree/1.x)
@@ -122,6 +124,7 @@ while (!Console.KeyAvailable)
 }
 server.Stop();
 ```
+
 
 
 

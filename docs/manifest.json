@@ -242,6 +242,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.LiteConnectionRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.LiteConnectionRequest.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.LiteConnectionRequest",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/LiteNetLib.LiteNetManager.NetPeerEnumerator-1.yml",
       "output": {
         ".html": {
@@ -337,6 +351,20 @@
       "IsMRef": true,
       "Title": "LiteNetLib.NatPunchModule",
       "Summary": "<p sourcefile=\"api/LiteNetLib.NatPunchModule.yml\" sourcestartlinenumber=\"1\">Module for UDP NAT Hole punching operations. Can be accessed from NetManager</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LiteNetLib.NetConnectRequestPacket.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LiteNetLib.NetConnectRequestPacket.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "LiteNetLib.NetConnectRequestPacket",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
