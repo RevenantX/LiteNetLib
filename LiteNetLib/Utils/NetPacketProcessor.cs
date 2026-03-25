@@ -229,6 +229,13 @@ namespace LiteNetLib.Utils
             };
         }
 
+        /// <summary>
+        /// Registers a callback for a packet type that implements <see cref="INetSerializable"/>, using a custom constructor and supporting user data.
+        /// </summary>
+        /// <typeparam name="T">The type of the packet. Must implement <see cref="INetSerializable"/>.</typeparam>
+        /// <typeparam name="TUserData">The type of the user data (typically <see cref="NetPeer"/>).</typeparam>
+        /// <param name="onReceive">The delegate to be executed when the packet is received.</param>
+        /// <param name="packetConstructor">A function that returns a new instance of <typeparamref name="T"/>.</param>
         public void SubscribeNetSerializable<T, TUserData>(
             Action<T, TUserData> onReceive,
             Func<T> packetConstructor) where T : INetSerializable
@@ -241,6 +248,12 @@ namespace LiteNetLib.Utils
             };
         }
 
+        /// <summary>
+        /// Registers a callback for a packet type that implements <see cref="INetSerializable"/>, using a custom constructor.
+        /// </summary>
+        /// <typeparam name="T">The type of the packet. Must implement <see cref="INetSerializable"/>.</typeparam>
+        /// <param name="onReceive">The delegate to be executed when the packet is received.</param>
+        /// <param name="packetConstructor">A function that returns a new instance of <typeparamref name="T"/>.</param>
         public void SubscribeNetSerializable<T>(
             Action<T> onReceive,
             Func<T> packetConstructor) where T : INetSerializable
@@ -253,6 +266,15 @@ namespace LiteNetLib.Utils
             };
         }
 
+        /// <summary>
+        /// Registers a callback for a packet type that implements <see cref="INetSerializable"/> and has a parameterless constructor, supporting user data.
+        /// </summary>
+        /// <remarks>
+        /// To reduce allocations, this method uses a single internal reference to <typeparamref name="T"/> for deserialization.
+        /// </remarks>
+        /// <typeparam name="T">The type of the packet. Must implement <see cref="INetSerializable"/> and have a <see langword="new"/>() constraint.</typeparam>
+        /// <typeparam name="TUserData">The type of the user data (typically <see cref="NetPeer"/>).</typeparam>
+        /// <param name="onReceive">The delegate to be executed when the packet is received.</param>
         public void SubscribeNetSerializable<T, TUserData>(
             Action<T, TUserData> onReceive) where T : INetSerializable, new()
         {
@@ -264,6 +286,14 @@ namespace LiteNetLib.Utils
             };
         }
 
+        /// <summary>
+        /// Registers a callback for a packet type that implements <see cref="INetSerializable"/> and has a parameterless constructor.
+        /// </summary>
+        /// <remarks>
+        /// To reduce allocations, this method uses a single internal reference to <typeparamref name="T"/> for deserialization.
+        /// </remarks>
+        /// <typeparam name="T">The type of the packet. Must implement <see cref="INetSerializable"/> and have a <see langword="new"/>() constraint.</typeparam>
+        /// <param name="onReceive">The delegate to be executed when the packet is received.</param>
         public void SubscribeNetSerializable<T>(
             Action<T> onReceive) where T : INetSerializable, new()
         {
