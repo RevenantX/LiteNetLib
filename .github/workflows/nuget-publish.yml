@@ -33,10 +33,10 @@ jobs:
           PACKAGE_NAME="litenetlib"
 
           # Extract version from project file
-          LOCAL_VERSION=$(grep -o '<Version>[^<]*</Version>' "$PROJECT_PATH" | sed 's/<Version>\(.*\)<\/Version>/\1/')
+          LOCAL_VERSION=$(grep -o '<PackageVersion>[^<]*</PackageVersion>' "$PROJECT_PATH" | sed 's/<PackageVersion>\(.*\)<\/PackageVersion>/\1/')
 
           if [ -z "$LOCAL_VERSION" ]; then
-            echo "No <Version> tag found in $PROJECT_PATH"
+            echo "No <PackageVersion> tag found in $PROJECT_PATH"
             echo "has_packages=false" >> $GITHUB_OUTPUT
             exit 0
           fi
