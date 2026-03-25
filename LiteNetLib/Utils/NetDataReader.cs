@@ -412,21 +412,17 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>Reads the next <see cref="byte"/> from the buffer.</summary>
-        public byte GetByte()
-        {
-            EnsureAvailable(1);
-            return _data[_position++];
-        }
+        public byte GetByte() => GetUnmanaged<byte>();
 
         /// <summary>Reads the next <see cref="sbyte"/> from the buffer.</summary>
-        public sbyte GetSByte() => (sbyte)GetByte();
+        public sbyte GetSByte() => GetUnmanaged<sbyte>();
 
         /// <summary>Reads a <see cref="bool"/> value from the current position.</summary>
         /// <returns><see langword="true"/> if the byte is 1; otherwise, <see langword="false"/>.</returns>
-        public bool GetBool() => GetByte() == 1;
+        public bool GetBool() => GetUnmanaged<bool>();
 
         /// <summary>Reads a <see cref="char"/> value as a 2-byte <see cref="ushort"/>.</summary>
-        public char GetChar() => (char)GetUShort();
+        public char GetChar() => GetUnmanaged<char>();
 
         /// <summary>Reads a <see cref="ushort"/> value using unmanaged memory access.</summary>
         public ushort GetUShort() => GetUnmanaged<ushort>();
@@ -716,16 +712,16 @@ namespace LiteNetLib.Utils
         #region PeekMethods
 
         /// <summary>Reads the <see cref="byte"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public byte PeekByte() => _data[_position];
+        public byte PeekByte() => PeekUnmanaged<byte>();
 
         /// <summary>Reads the <see cref="sbyte"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public sbyte PeekSByte() => (sbyte)PeekByte();
+        public sbyte PeekSByte() => PeekUnmanaged<sbyte>();
 
         /// <summary>Reads the <see cref="bool"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public bool PeekBool() => PeekByte() == 1;
+        public bool PeekBool() => PeekUnmanaged<bool>();
 
         /// <summary>Reads the <see cref="char"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public char PeekChar() => (char)PeekUShort();
+        public char PeekChar() => PeekUnmanaged<char>();
 
         /// <summary>Reads the <see cref="ushort"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public ushort PeekUShort() => PeekUnmanaged<ushort>();
@@ -808,58 +804,22 @@ namespace LiteNetLib.Utils
         /// <summary>Attempts to read a <see cref="byte"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="byte"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetByte(out byte result)
-        {
-            if (AvailableBytes >= 1)
-            {
-                result = GetByte();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetByte(out byte result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read an <see cref="sbyte"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="sbyte"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetSByte(out sbyte result)
-        {
-            if (AvailableBytes >= 1)
-            {
-                result = GetSByte();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetSByte(out sbyte result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="bool"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="bool"/>, or <see langword="false"/> if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetBool(out bool result)
-        {
-            if (AvailableBytes >= 1)
-            {
-                result = GetBool();
-                return true;
-            }
-            result = false;
-            return false;
-        }
+        public bool TryGetBool(out bool result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="char"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="char"/>, or '\0' if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetChar(out char result)
-        {
-            if (!TryGetUShort(out ushort uShortValue))
-            {
-                result = '\0';
-                return false;
-            }
-            result = (char)uShortValue;
-            return true;
-        }
+        public bool TryGetChar(out char result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="short"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="short"/>, or 0 if failed.</param>
