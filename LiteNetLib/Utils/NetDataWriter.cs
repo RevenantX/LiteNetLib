@@ -243,7 +243,7 @@ namespace LiteNetLib.Utils
         /// Serializes a <see cref="char"/> value as a <see cref="ushort"/>.
         /// </summary>
         /// <param name="value">The <see cref="char"/> value to write.</param>
-        public void Put(char value) => Put((ushort)value);
+        public void Put(char value) => PutUnmanaged(value);
 
         /// <summary>
         /// Serializes a <see cref="ushort"/> value.
