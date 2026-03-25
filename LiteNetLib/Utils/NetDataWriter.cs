@@ -97,7 +97,7 @@ namespace LiteNetLib.Utils
         /// <param name="length">Length of array</param>
         public static NetDataWriter FromBytes(byte[] bytes, int offset, int length)
         {
-            var netDataWriter = new NetDataWriter(true, bytes.Length);
+            var netDataWriter = new NetDataWriter(true, length);
             netDataWriter.Put(bytes, offset, length);
             return netDataWriter;
         }
