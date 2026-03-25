@@ -55,12 +55,30 @@ namespace LiteNetLib
                 [In] int socketAddressSize);
         }
 
+        /// <summary>
+        /// Indicates whether the native socket optimizations are supported on the current platform.
+        /// </summary>
         public static readonly bool IsSupported = false;
+        /// <summary>
+        /// Indicates whether the current environment requires Unix-style native socket calls.
+        /// </summary>
         public static readonly bool UnixMode = false;
 
+        /// <summary>
+        /// The size of the native sockaddr_in structure for IPv4.
+        /// </summary>
         public const int IPv4AddrSize = 16;
+        /// <summary>
+        /// The size of the native sockaddr_in6 structure for IPv6.
+        /// </summary>
         public const int IPv6AddrSize = 28;
+        /// <summary>
+        /// Native Address Family constant for IPv4 (AF_INET).
+        /// </summary>
         public const int AF_INET = 2;
+        /// <summary>
+        /// Native Address Family constant for IPv6 (AF_INET6).
+        /// </summary>
         public const int AF_INET6 = 10;
 
         private static readonly Dictionary<int, SocketError> NativeErrorToSocketError = new Dictionary<int, SocketError>
@@ -122,6 +140,15 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Receives a datagram from the specified socket handle using native OS calls.
+        /// </summary>
+        /// <param name="socketHandle">The OS handle for the socket.</param>
+        /// <param name="pinnedBuffer">A pinned byte array to receive the data.</param>
+        /// <param name="len">The number of <see cref="byte"/>s to receive.</param>
+        /// <param name="socketAddress">A pinned byte array to store the source address (sockaddr).</param>
+        /// <param name="socketAddressSize">The size of the <paramref name="socketAddress"/> structure.</param>
+        /// <returns>The number of <see cref="byte"/>s received, or a negative value on error.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int RecvFrom(
             IntPtr socketHandle,
@@ -133,6 +160,15 @@ namespace LiteNetLib
                 ? UnixSock.recvfrom(socketHandle, pinnedBuffer, len, 0, socketAddress, ref socketAddressSize)
                 : WinSock.recvfrom(socketHandle, pinnedBuffer, len, 0, socketAddress, ref socketAddressSize);
 
+        /// <summary>
+        /// Sends a datagram to the specified socket handle using native OS calls.
+        /// </summary>
+        /// <param name="socketHandle">The OS handle for the socket.</param>
+        /// <param name="pinnedBuffer">A pointer to the pinned memory containing data to send.</param>
+        /// <param name="len">The number of <see cref="byte"/>s to send.</param>
+        /// <param name="socketAddress">A pinned byte array containing the destination address (sockaddr).</param>
+        /// <param name="socketAddressSize">The size of the <paramref name="socketAddress"/> structure.</param>
+        /// <returns>The number of <see cref="byte"/>s sent, or a negative value on error.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe int SendTo(
             IntPtr socketHandle,
@@ -144,6 +180,10 @@ namespace LiteNetLib
                 ? UnixSock.sendto(socketHandle, pinnedBuffer, len, 0, socketAddress, socketAddressSize)
                 : WinSock.sendto(socketHandle, pinnedBuffer, len, 0, socketAddress, socketAddressSize);
 
+        /// <summary>
+        /// Retrieves the last OS-specific socket error and translates it to <see cref="SocketError"/>.
+        /// </summary>
+        /// <returns>The translated <see cref="SocketError"/>.</returns>
         public static SocketError GetSocketError()
         {
             int error = Marshal.GetLastWin32Error();
@@ -154,6 +194,10 @@ namespace LiteNetLib
             return (SocketError)error;
         }
 
+        /// <summary>
+        /// Retrieves the last OS-specific socket error and encapsulates it in a <see cref="SocketException"/>.
+        /// </summary>
+        /// <returns>A <see cref="SocketException"/> representing the last native error.</returns>
         public static SocketException GetSocketException()
         {
             int error = Marshal.GetLastWin32Error();
@@ -164,6 +208,11 @@ namespace LiteNetLib
             return new SocketException(error);
         }
 
+        /// <summary>
+        /// Converts the <see cref="AddressFamily"/> of an endpoint to the corresponding native constant.
+        /// </summary>
+        /// <param name="remoteEndPoint">The endpoint to evaluate.</param>
+        /// <returns>The native address family identifier.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static short GetNativeAddressFamily(IPEndPoint remoteEndPoint) =>
             UnixMode

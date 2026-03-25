@@ -6,24 +6,66 @@ using LiteNetLib.Utils;
 
 namespace LiteNetLib
 {
+    /// <summary>
+    /// Specifies the type of network address discovered during NAT punchthrough.
+    /// </summary>
     public enum NatAddressType
     {
+        /// <summary>
+        /// Address within the local area network (LAN).
+        /// </summary>
         Internal,
+        /// <summary>
+        /// Publicly accessible address on the wide area network (WAN).
+        /// </summary>
         External
     }
 
+    /// <summary>
+    /// Interface for handling events related to NAT punchthrough and introduction.
+    /// </summary>
     public interface INatPunchListener
     {
+        /// <summary>
+        /// Called when a NAT introduction request is received from the mediator server.
+        /// </summary>
+        /// <param name="localEndPoint">The local endpoint of the client requesting connection.</param>
+        /// <param name="remoteEndPoint">The remote endpoint of the client requesting connection.</param>
+        /// <param name="token">Custom data token associated with the request.</param>
         void OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token);
+
+        /// <summary>
+        /// Called when NAT punchthrough is successful and a direct connection can be established.
+        /// </summary>
+        /// <param name="targetEndPoint">The resolved endpoint of the remote peer.</param>
+        /// <param name="type">The type of address (Internal or External) that succeeded.</param>
+        /// <param name="token">Custom data token associated with the request.</param>
         void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, NatAddressType type, string token);
     }
 
+    /// <summary>
+    /// An implementation of <see cref="INatPunchListener"/> that maps callbacks to events.
+    /// </summary>
     public class EventBasedNatPunchListener : INatPunchListener
     {
+        /// <summary>
+        /// Delegate for NAT introduction request events.
+        /// </summary>
         public delegate void OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token);
+
+        /// <summary>
+        /// Delegate for NAT introduction success events.
+        /// </summary>
         public delegate void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, NatAddressType type, string token);
 
+        /// <summary>
+        /// Event triggered when a NAT introduction request is received.
+        /// </summary>
         public event OnNatIntroductionRequest NatIntroductionRequest;
+
+        /// <summary>
+        /// Event triggered when NAT punchthrough is successfully completed.
+        /// </summary>
         public event OnNatIntroductionSuccess NatIntroductionSuccess;
 
         void INatPunchListener.OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token)
@@ -84,6 +126,9 @@ namespace LiteNetLib
         private readonly NetDataWriter _cacheWriter = new NetDataWriter();
         private readonly NetPacketProcessor _netPacketProcessor = new NetPacketProcessor(MaxTokenLength);
         private INatPunchListener _natPunchListener;
+        /// <summary>
+        /// Maximum allowed length for the NAT introduction token string.
+        /// </summary>
         public const int MaxTokenLength = 256;
 
         /// <summary>
@@ -108,6 +153,10 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Initializes the NAT punch module with a listener to handle punchthrough events.
+        /// </summary>
+        /// <param name="listener">The listener implementation that will receive NAT events.</param>
         public void Init(INatPunchListener listener)
         {
             _natPunchListener = listener;
@@ -125,6 +174,17 @@ namespace LiteNetLib
             _socket.SendRaw(_cacheWriter.Data, 0, _cacheWriter.Length, target);
         }
 
+        /// <summary>
+        /// Sends NAT introduction packets to both the host and the client to facilitate punchthrough.
+        /// </summary>
+        /// <remarks>
+        /// This is typically called by a mediator (e.g. a master server).
+        /// </remarks>
+        /// <param name="hostInternal">Internal (LAN) endpoint of the host.</param>
+        /// <param name="hostExternal">External (WAN) endpoint of the host.</param>
+        /// <param name="clientInternal">Internal (LAN) endpoint of the client.</param>
+        /// <param name="clientExternal">External (WAN) endpoint of the client.</param>
+        /// <param name="additionalInfo">Custom token or data to include in the introduction.</param>
         public void NatIntroduce(
             IPEndPoint hostInternal,
             IPEndPoint hostExternal,
@@ -148,6 +208,12 @@ namespace LiteNetLib
             Send(req, hostExternal);
         }
 
+        /// <summary>
+        /// Triggers queued NAT punchthrough events (Success or Request) on the provided <see cref="INatPunchListener"/>.
+        /// </summary>
+        /// <remarks>
+        /// This should be called from the main thread if <see cref="UnsyncedEvents"/> is <see langword="false"/>.
+        /// </remarks>
         public void PollEvents()
         {
             if (UnsyncedEvents)
@@ -170,11 +236,22 @@ namespace LiteNetLib
             }
         }
 
+        /// <summary>
+        /// Sends a request to the Master Server to introduce this peer to another peer.
+        /// </summary>
+        /// <param name="host">The hostname or IP of the Master Server.</param>
+        /// <param name="port">The port of the Master Server.</param>
+        /// <param name="additionalInfo">Custom token to identify the connection or room.</param>
         public void SendNatIntroduceRequest(string host, int port, string additionalInfo)
         {
             SendNatIntroduceRequest(NetUtils.MakeEndPoint(host, port), additionalInfo);
         }
 
+        /// <summary>
+        /// Sends a request to the Master Server to introduce this peer to another peer.
+        /// </summary>
+        /// <param name="masterServerEndPoint">The endpoint of the Master Server.</param>
+        /// <param name="additionalInfo">Custom token to identify the connection or room.</param>
         public void SendNatIntroduceRequest(IPEndPoint masterServerEndPoint, string additionalInfo)
         {
             //prepare outgoing data

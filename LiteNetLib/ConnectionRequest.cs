@@ -17,11 +17,17 @@ namespace LiteNetLib
         private readonly LiteNetManager _listener;
         private int _used;
 
+        /// <summary>
+        /// Data sent by the remote peer in the connection request.
+        /// </summary>
         public NetDataReader Data => InternalPacket.Data;
 
         internal ConnectionRequestResult Result { get; private set; }
         internal NetConnectRequestPacket InternalPacket;
 
+        /// <summary>
+        /// The remote endpoint (IP and Port) of the peer requesting the connection.
+        /// </summary>
         public readonly IPEndPoint RemoteEndPoint;
 
         internal void UpdateRequest(NetConnectRequestPacket connectRequest)
@@ -47,6 +53,15 @@ namespace LiteNetLib
             _listener = listener;
         }
 
+        /// <summary>
+        /// Accepts the connection if the first string in the <see cref="Data"/> matches the provided key.
+        /// </summary>
+        /// <remarks>
+        /// This is a helper method for simple password/key validation.
+        /// If the key does not match or data is invalid, the connection is automatically rejected.
+        /// </remarks>
+        /// <param name="key">The required string key to match.</param>
+        /// <returns>A new <see cref="LiteNetPeer"/> if the key matches and connection is accepted; otherwise, <c>null</c>.</returns>
         public LiteNetPeer AcceptIfKey(string key)
         {
             if (!TryActivate())
@@ -164,8 +179,10 @@ namespace LiteNetLib
         {
         }
 
+        /// <inheritdoc cref="LiteConnectionRequest.AcceptIfKey(string)"/>
         public new NetPeer AcceptIfKey(string key) => (NetPeer)base.AcceptIfKey(key);
 
+        /// <inheritdoc cref="LiteConnectionRequest.Accept"/>
         public new NetPeer Accept() => (NetPeer)base.Accept();
     }
 }
