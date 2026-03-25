@@ -4,7 +4,7 @@ using System.Threading;
 namespace LiteNetLib
 {
     /// <summary>
-    /// Base class for all communication channels (Reliable, Unreliable, Sequenced). <br/>
+    /// Base class for reliable and sequenced communication channels. <br/>
     /// Handles the queuing and scheduling of outgoing packets.
     /// </summary>
     internal abstract class BaseChannel

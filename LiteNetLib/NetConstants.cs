@@ -112,8 +112,13 @@
         public static readonly int MaxUnreliableDataSize = MaxPacketSize - HeaderSize;
 
         /// <summary>
-        /// Maximum number of simultaneous connection attempts (pending connections) allowed per peer.
+        /// Maximum possible value for <see cref="NetPacket.ConnectionNumber"/>.
         /// </summary>
+        /// <remarks>
+        /// This value is used to distinguish between different connection instances from the same <see cref="System.Net.IPEndPoint"/>. <br/>
+        /// It allows the receiver to identify and discard packets belonging to previous connection attempts that may arrive
+        /// late due to network jitter, even if they originate from the same address and port. <br/>
+        /// </remarks>
         public const byte MaxConnectionNumber = 4;
     }
 }

@@ -77,9 +77,12 @@ namespace LiteNetLib
         }
 
         /// <summary>
-        /// Gets or sets the connection number used to distinguish between multiple connections from the same endpoint. <br/>
+        /// Gets or sets the connection number used to distinguish between multiple connection instances from the same endpoint.
         /// Stored in bits 6 and 7 of the first byte (0x60 mask).
         /// </summary>
+        /// <remarks>
+        /// Used to discard packets from previous connections made in the same frame/time.
+        /// </remarks>
         public byte ConnectionNumber
         {
             get => (byte)((RawData[0] & 0x60) >> 5);
