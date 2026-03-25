@@ -13,6 +13,10 @@ namespace LiteNetLib.Utils
         protected int _dataSize;
         protected int _offset;
 
+        private const int IPv4Size = 4;
+        private const int IPv6Size = 16;
+        private const int GuidSize = 16;
+
         /// <summary>
         /// Gets the internal <see cref="byte"/> array containing the raw network data.
         /// </summary>
@@ -93,9 +97,21 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureAvailable(int count)
         {
-            if (count < 0 || count > AvailableBytes)
-                throw new InvalidOperationException(
-                    $"Not enough data to read {count} byte(s). Position={_position}, DataSize={_dataSize}");
+            int available = _dataSize - _position;
+            if (count < 0 || available < 0 || count > available)
+                ThrowNotEnoughData(count);
+        }
+
+        /// <summary>
+        /// Throws an <see cref="InvalidOperationException"/> indicating that there is not enough data to read.
+        /// </summary>
+        /// <param name="count">The number of bytes that were attempted to be read.</param>
+        /// <exception cref="InvalidOperationException">Always thrown.</exception>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void ThrowNotEnoughData(int count)
+        {
+            throw new InvalidOperationException(
+                $"Not enough data to read {count} byte(s). Position={_position}, DataSize={_dataSize}");
         }
 
         /// <summary>
@@ -170,7 +186,7 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Deserializes a <see cre="class"/> that implements <see cref="INetSerializable"/> using a provided constructor.
+        /// Deserializes a <see langword="class"/> that implements <see cref="INetSerializable"/> using a provided constructor.
         /// </summary>
         /// <typeparam name="T">A <see langword="class"/> type implementing <see cref="INetSerializable"/>.</typeparam>
         /// <param name="result">The deserialized <see langword="class"/> instance output.</param>
@@ -197,21 +213,13 @@ namespace LiteNetLib.Utils
         /// </remarks>
         public IPEndPoint GetIPEndPoint()
         {
-            IPAddress address;
-            //IPv4
-            if (GetByte() == 0)
-            {
-                EnsureAvailable(4);
-                address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, 4));
-                _position += 4;
-            }
-            //IPv6
-            else
-            {
-                EnsureAvailable(16);
-                address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, 16));
-                _position += 16;
-            }
+            bool isIPv4 = GetByte() == 0;
+
+            int size = isIPv4 ? IPv4Size : IPv6Size;
+            EnsureAvailable(size);
+
+            IPAddress address = new IPAddress(new ReadOnlySpan<byte>(_data, _position, size));
+            _position += size;
             return new IPEndPoint(address, GetUShort());
         }
 
@@ -219,7 +227,7 @@ namespace LiteNetLib.Utils
         public void Get(out byte result) => result = GetByte();
 
         /// <summary>Reads an <see cref="sbyte"/> and assigns it to <paramref name="result"/>.</summary>
-        public void Get(out sbyte result) => result = (sbyte)GetByte();
+        public void Get(out sbyte result) => result = GetSByte();
 
         /// <summary>Reads a <see cref="bool"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out bool result) => result = GetBool();
@@ -260,12 +268,6 @@ namespace LiteNetLib.Utils
         /// <summary>Reads a <see cref="Guid"/> and assigns it to <paramref name="result"/>.</summary>
         public void Get(out Guid result) => result = GetGuid();
 
-        /// <summary>Reads the next <see cref="byte"/> from the buffer.</summary>
-        public byte GetByte() => _data[_position++];
-
-        /// <summary>Reads the next <see cref="sbyte"/> from the buffer.</summary>
-        public sbyte GetSByte() => (sbyte)GetByte();
-
         /// <summary>
         /// Reads an array of unmanaged values prefixed by a <see cref="ushort"/> length.
         /// </summary>
@@ -274,7 +276,10 @@ namespace LiteNetLib.Utils
         public unsafe T[] GetUnmanagedArray<T>() where T : unmanaged
         {
             ushort length = GetUShort();
-            int byteLength = length * sizeof(T);
+
+            int byteLength = checked(length * sizeof(T));
+            EnsureAvailable(byteLength);
+
             ReadOnlySpan<byte> slice = _data.AsSpan(_position, byteLength);
             T[] result = MemoryMarshal.Cast<byte, T>(slice)
                 .ToArray();
@@ -373,12 +378,15 @@ namespace LiteNetLib.Utils
         public string[] GetStringArray()
         {
             ushort length = GetUShort();
-            string[] arr = new string[length];
+            EnsureAvailable(checked(length * sizeof(ushort))); // 2 bytes (ushort) for string length
+
+            string[] result = new string[length];
             for (int i = 0; i < length; i++)
             {
-                arr[i] = GetString();
+                result[i] = GetString();
             }
-            return arr;
+
+            return result;
         }
 
         /// <summary>
@@ -392,13 +400,26 @@ namespace LiteNetLib.Utils
         public string[] GetStringArray(int maxStringLength)
         {
             ushort length = GetUShort();
-            string[] arr = new string[length];
+            EnsureAvailable(checked(length * sizeof(ushort))); // 2 bytes (ushort) for string length
+
+            string[] result = new string[length];
             for (int i = 0; i < length; i++)
             {
-                arr[i] = GetString(maxStringLength);
+                result[i] = GetString(maxStringLength);
             }
-            return arr;
+
+            return result;
         }
+
+        /// <summary>Reads the next <see cref="byte"/> from the buffer.</summary>
+        public byte GetByte()
+        {
+            EnsureAvailable(1);
+            return _data[_position++];
+        }
+
+        /// <summary>Reads the next <see cref="sbyte"/> from the buffer.</summary>
+        public sbyte GetSByte() => (sbyte)GetByte();
 
         /// <summary>Reads a <see cref="bool"/> value from the current position.</summary>
         /// <returns><see langword="true"/> if the byte is 1; otherwise, <see langword="false"/>.</returns>
@@ -498,9 +519,9 @@ namespace LiteNetLib.Utils
         /// <returns>The deserialized <see cref="Guid"/>.</returns>
         public Guid GetGuid()
         {
-            EnsureAvailable(16);
-            var result = new Guid(_data.AsSpan(_position, 16));
-            _position += 16;
+            EnsureAvailable(GuidSize);
+            var result = new Guid(_data.AsSpan(_position, GuidSize));
+            _position += GuidSize;
             return result;
         }
 
@@ -535,9 +556,8 @@ namespace LiteNetLib.Utils
         /// <returns>The deserialized <see langword="struct"/>.</returns>
         public T Get<T>() where T : struct, INetSerializable
         {
-            var obj = default(T);
-            obj.Deserialize(this);
-            return obj;
+            Get(out T result);
+            return result;
         }
 
         /// <summary>
@@ -548,9 +568,8 @@ namespace LiteNetLib.Utils
         /// <returns>A new instance of <typeparamref name="T"/>.</returns>
         public T Get<T>(Func<T> constructor) where T : class, INetSerializable
         {
-            var obj = constructor();
-            obj.Deserialize(this);
-            return obj;
+            Get(out T result, constructor);
+            return result;
         }
 
         /// <summary>
@@ -560,7 +579,7 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<byte> GetRemainingBytesSpan()
         {
-            var result = new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
+            var result = new ReadOnlySpan<byte>(_data, _position, AvailableBytes);
             _position = _dataSize;
             return result;
         }
@@ -572,7 +591,7 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlyMemory<byte> GetRemainingBytesMemory()
         {
-            var result = new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
+            var result = new ReadOnlyMemory<byte>(_data, _position, AvailableBytes);
             _position = _dataSize;
             return result;
         }
@@ -587,10 +606,13 @@ namespace LiteNetLib.Utils
         public byte[] GetRemainingBytes()
         {
             int size = _dataSize - _position;
-            byte[] outgoingData = new byte[size];
-            Buffer.BlockCopy(_data, _position, outgoingData, 0, size);
+            if (size == 0)
+                return Array.Empty<byte>();
+
+            byte[] result = new byte[size];
+            Buffer.BlockCopy(_data, _position, result, 0, size);
             _position = _dataSize;
-            return outgoingData;
+            return result;
         }
 
         /// <summary>
@@ -687,20 +709,7 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <typeparam name="T">An unmanaged enum type to read.</typeparam>
         /// <returns>The enum value read from the buffer.</returns>
-        public unsafe T GetEnum<T>() where T : unmanaged, Enum
-        {
-            int size = sizeof(T);
-            ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(_data, _position, size);
-            _position += size;
-#if NET8_0_OR_GREATER
-            return Unsafe.ReadUnaligned<T>(ref MemoryMarshal.GetReference(span));
-#else
-            fixed (byte* ptr = span)
-            {
-                return *(T*)ptr;
-            }
-#endif
-        }
+        public unsafe T GetEnum<T>() where T : unmanaged, Enum => GetUnmanaged<T>();
 
         #endregion
 
@@ -710,13 +719,13 @@ namespace LiteNetLib.Utils
         public byte PeekByte() => _data[_position];
 
         /// <summary>Reads the <see cref="sbyte"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public sbyte PeekSByte() => (sbyte)_data[_position];
+        public sbyte PeekSByte() => (sbyte)PeekByte();
 
         /// <summary>Reads the <see cref="bool"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public bool PeekBool() => _data[_position] == 1;
+        public bool PeekBool() => PeekByte() == 1;
 
         /// <summary>Reads the <see cref="char"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public char PeekChar() => PeekUnmanaged<char>();
+        public char PeekChar() => (char)PeekUShort();
 
         /// <summary>Reads the <see cref="ushort"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public ushort PeekUShort() => PeekUnmanaged<ushort>();
@@ -754,9 +763,9 @@ namespace LiteNetLib.Utils
                 return string.Empty;
 
             int actualSize = size - 1;
-            return (maxLength > 0 && NetDataWriter.uTF8Encoding.GetCharCount(_data, _position + 2, actualSize) > maxLength)
+            return (maxLength > 0 && NetDataWriter.uTF8Encoding.GetCharCount(_data, _position + sizeof(ushort), actualSize) > maxLength)
                 ? string.Empty
-                : NetDataWriter.uTF8Encoding.GetString(_data, _position + 2, actualSize);
+                : NetDataWriter.uTF8Encoding.GetString(_data, _position + sizeof(ushort), actualSize);
         }
 
         /// <summary>
@@ -769,7 +778,7 @@ namespace LiteNetLib.Utils
                 return string.Empty;
 
             int actualSize = size - 1;
-            return NetDataWriter.uTF8Encoding.GetString(_data, _position + 2, actualSize);
+            return NetDataWriter.uTF8Encoding.GetString(_data, _position + sizeof(ushort), actualSize);
         }
 
         /// <summary>
@@ -791,9 +800,11 @@ namespace LiteNetLib.Utils
             return value;
 #endif
         }
+
         #endregion
 
         #region TryGetMethods
+
         /// <summary>Attempts to read a <see cref="byte"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="byte"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
@@ -853,133 +864,65 @@ namespace LiteNetLib.Utils
         /// <summary>Attempts to read a <see cref="short"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="short"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetShort(out short result)
-        {
-            if (AvailableBytes >= 2)
-            {
-                result = GetShort();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetShort(out short result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="ushort"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="ushort"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetUShort(out ushort result)
-        {
-            if (AvailableBytes >= 2)
-            {
-                result = GetUShort();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetUShort(out ushort result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read an <see cref="int"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="int"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetInt(out int result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                result = GetInt();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetInt(out int result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="uint"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="uint"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetUInt(out uint result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                result = GetUInt();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetUInt(out uint result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="long"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="long"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetLong(out long result)
-        {
-            if (AvailableBytes >= 8)
-            {
-                result = GetLong();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetLong(out long result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="ulong"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="ulong"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetULong(out ulong result)
-        {
-            if (AvailableBytes >= 8)
-            {
-                result = GetULong();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetULong(out ulong result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="float"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="float"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetFloat(out float result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                result = GetFloat();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetFloat(out float result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="double"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="double"/>, or 0 if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
-        public bool TryGetDouble(out double result)
-        {
-            if (AvailableBytes >= 8)
-            {
-                result = GetDouble();
-                return true;
-            }
-            result = 0;
-            return false;
-        }
+        public bool TryGetDouble(out double result) => TryGetUnmanaged(out result);
 
         /// <summary>Attempts to read a <see cref="string"/> without throwing an exception.</summary>
         /// <param name="result">The deserialized <see cref="string"/>, or <see langword="null"/> if failed.</param>
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetString(out string result)
         {
-            if (AvailableBytes >= 2)
+            if (AvailableBytes < sizeof(ushort))
             {
-                ushort strSize = PeekUShort();
-                int actualSize = strSize == 0 ? 0 : strSize - 1;
-
-                if (AvailableBytes >= 2 + actualSize)
-                {
-                    result = GetString();
-                    return true;
-                }
+                result = null;
+                return false;
             }
-            result = null;
-            return false;
+
+            ushort size = PeekUShort();
+            int actualSize = size == 0 ? 0 : size - 1;
+
+            if (AvailableBytes < sizeof(ushort) + actualSize)
+            {
+                result = null;
+                return false;
+            }
+
+            result = GetString();
+            return true;
         }
 
         /// <summary>Attempts to read a <see cref="string"/> array without throwing an exception.</summary>
@@ -987,22 +930,34 @@ namespace LiteNetLib.Utils
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetStringArray(out string[] result)
         {
-            if (!TryGetUShort(out ushort strArrayLength))
+            if (AvailableBytes < sizeof(ushort))
             {
                 result = null;
                 return false;
             }
 
-            result = new string[strArrayLength];
-            for (int i = 0; i < strArrayLength; i++)
+            int startPosition = _position;
+
+            ushort length = GetUShort();
+            if (AvailableBytes < checked(length * sizeof(ushort))) // 2 bytes (ushort) for string length
             {
-                if (!TryGetString(out result[i]))
+                _position = startPosition; // Roll back to the original position
+                result = null;
+                return false;
+            }
+
+            string[] values = new string[length];
+            for (int i = 0; i < length; i++)
+            {
+                if (!TryGetString(out values[i]))
                 {
+                    _position = startPosition; // Roll back to the original position
                     result = null;
                     return false;
                 }
             }
 
+            result = values;
             return true;
         }
 
@@ -1011,18 +966,53 @@ namespace LiteNetLib.Utils
         /// <returns><see langword="true"/> if enough data was available; otherwise, <see langword="false"/>.</returns>
         public bool TryGetBytesWithLength(out byte[] result)
         {
-            if (AvailableBytes >= 2)
+            if (AvailableBytes < sizeof(ushort))
             {
-                ushort length = PeekUShort();
-                if (AvailableBytes >= 2 + length)
-                {
-                    result = GetBytesWithLength();
-                    return true;
-                }
+                result = null;
+                return false;
             }
-            result = null;
-            return false;
+
+            ushort length = PeekUShort();
+            if (AvailableBytes < sizeof(ushort) + length)
+            {
+                result = null;
+                return false;
+            }
+
+            result = GetBytesWithLength();
+            return true;
         }
+
+        /// <summary>
+        /// Attempts to read a value of type <typeparamref name="T"/> from the internal byte buffer at the current position,
+        /// advancing the position by the size of <typeparamref name="T"/> if successful.
+        /// </summary>
+        /// <typeparam name="T">An unmanaged value type to read from the buffer.</typeparam>
+        /// <param name="result">When this method returns, contains the value read from the buffer, or the default value if the read failed.</param>
+        /// <returns><see langword="true"/> if enough data was available to read the value; otherwise, <see langword="false"/>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe bool TryGetUnmanaged<T>(out T result) where T : unmanaged
+        {
+            int size = sizeof(T);
+            if (AvailableBytes < size)
+            {
+                result = default;
+                return false;
+            }
+
+#if NET8_0_OR_GREATER
+            result = Unsafe.ReadUnaligned<T>(ref _data[_position]);
+#else
+            fixed (byte* ptr = &_data[_position])
+            {
+                result = *(T*)ptr;
+            }
+#endif
+
+            _position += size;
+            return true;
+        }
+
         #endregion
 
         /// <summary>Clears the reader state and releases the reference to the internal buffer.</summary>
