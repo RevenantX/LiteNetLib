@@ -541,53 +541,46 @@ namespace LiteNetLib.Utils
         /// <summary>
         /// Gets an <see cref="ArraySegment{T}"/> containing all remaining <see cref="byte"/>s.
         /// </summary>
-        /// <param name="advance">advance position after call</param>
         /// <returns>An <see cref="ArraySegment{T}"/> from the current position to the end of the data.</returns>
-        public ArraySegment<byte> GetRemainingBytesSegment(bool advance = true)
+        public ArraySegment<byte> GetRemainingBytesSegment()
         {
             ArraySegment<byte> segment = new ArraySegment<byte>(_data, _position, AvailableBytes);
-            if(advance)
-                _position = _dataSize;
+            _position = _dataSize;
             return segment;
         }
 
         /// <summary>
         /// Returns a <see cref="ReadOnlySpan{T}"/> of <see cref="byte"/>s containing all remaining data.
         /// </summary>
-        /// <param name="advance">advance position after call</param>
         /// <returns>A <see cref="ReadOnlySpan{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<byte> GetRemainingBytesSpan(bool advance = true)
+        public ReadOnlySpan<byte> GetRemainingBytesSpan()
         {
             var result = new ReadOnlySpan<byte>(_data, _position, AvailableBytes);
-            if(advance)
-                _position = _dataSize;
+            _position = _dataSize;
             return result;
         }
 
         /// <summary>
         /// Returns a <see cref="ReadOnlyMemory{T}"/> of <see cref="byte"/>s containing all remaining data.
         /// </summary>
-        /// <param name="advance">advance position after call</param>
         /// <returns>A <see cref="ReadOnlyMemory{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlyMemory<byte> GetRemainingBytesMemory(bool advance = true)
+        public ReadOnlyMemory<byte> GetRemainingBytesMemory()
         {
             var result = new ReadOnlyMemory<byte>(_data, _position, AvailableBytes);
-            if(advance)
-                _position = _dataSize;
+            _position = _dataSize;
             return result;
         }
 
         /// <summary>
         /// Reads all remaining <see cref="byte"/>s and returns them as a new array.
         /// </summary>
-        /// <param name="advance">advance position after call</param>
         /// <returns>A new <see cref="byte"/> array containing the remaining data.</returns>
         /// <remarks>
         /// This method performs a heap allocation and advances the <see cref="Position"/> to the end of the data.
         /// </remarks>
-        public byte[] GetRemainingBytes(bool advance = true)
+        public byte[] GetRemainingBytes()
         {
             int size = _dataSize - _position;
             if (size == 0)
@@ -595,8 +588,7 @@ namespace LiteNetLib.Utils
 
             byte[] result = new byte[size];
             Buffer.BlockCopy(_data, _position, result, 0, size);
-            if(advance)
-                _position = _dataSize;
+            _position = _dataSize;
             return result;
         }
 
@@ -807,6 +799,44 @@ namespace LiteNetLib.Utils
             }
             return value;
 #endif
+        }
+
+        /// <summary>
+        /// Returns a <see cref="ReadOnlySpan{T}"/> of <see cref="byte"/>s containing all remaining data without advancing the reader <see cref="_position"/>.
+        /// </summary>
+        /// <returns>A <see cref="ReadOnlySpan{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlySpan<byte> PeekRemainingBytesSpan()
+        {
+            return new ReadOnlySpan<byte>(_data, _position, AvailableBytes);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="ReadOnlyMemory{T}"/> of <see cref="byte"/>s containing all remaining data without advancing the reader <see cref="_position"/>.
+        /// </summary>
+        /// <returns>A <see cref="ReadOnlyMemory{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlyMemory<byte> PeekRemainingBytesMemory()
+        {
+            return new ReadOnlyMemory<byte>(_data, _position, AvailableBytes);
+        }
+
+        /// <summary>
+        /// Reads all remaining <see cref="byte"/>s and returns them as a new array without advancing the reader <see cref="_position"/>.
+        /// </summary>
+        /// <returns>A new <see cref="byte"/> array containing the remaining data.</returns>
+        /// <remarks>
+        /// This method performs a heap allocation by copying the data into a new array.
+        /// </remarks>
+        public byte[] PeekRemainingBytes()
+        {
+            int size = _dataSize - _position;
+            if (size == 0)
+                return Array.Empty<byte>();
+
+            byte[] result = new byte[size];
+            Buffer.BlockCopy(_data, _position, result, 0, size);
+            return result;
         }
 
         #endregion
