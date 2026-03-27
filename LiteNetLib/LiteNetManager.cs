@@ -270,6 +270,12 @@ namespace LiteNetLib
         public int ConnectedPeersCount => (int)Interlocked.Read(ref _connectedPeersCount);
 
         /// <summary>
+        /// Maximum packets that can be received per one ManualReceive (PollEvents when started using StartInManualMode)
+        /// 0 - infinite - but this can cause some big delays there is too many incoming packets
+        /// </summary>
+        public int MaxPacketPerManualReceive = 256;
+
+        /// <summary>
         /// Gets the additional size in bytes required by the active <see cref="PacketLayerBase"/>.
         /// </summary>
         /// <remarks>

@@ -101,9 +101,14 @@ namespace LiteNetLib
             //Reading data
             try
             {
-                int available = socket.Available;
-                while (available > 0)
-                    available -= ReceiveFrom(socket, ref bufferEndPoint);
+                int count = MaxPacketPerManualReceive;
+                while (socket.Available > 0 && (count > 0 || MaxPacketPerManualReceive == 0))
+                {
+                    if(ReceiveFrom(socket, ref bufferEndPoint) > 0)
+                        count--;
+                    else
+                        break;
+                }
             }
             catch (SocketException ex)
             {
