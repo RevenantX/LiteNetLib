@@ -195,6 +195,14 @@ namespace LiteNetLib
             return ((ReliableChannel)_channels[idx])?.PacketsInQueue ?? 0;
         }
 
+        /// <summary>
+        /// Returns packets count in queue for reliable channel 0
+        /// </summary>
+        /// <param name="ordered">type of channel ReliableOrdered or ReliableUnordered</param>
+        /// <returns>packets count in channel queue</returns>
+        public new int GetPacketsCountInReliableQueue(bool ordered) =>
+            GetPacketsCountInReliableQueue(0, ordered);
+
         protected override void UpdateChannels()
         {
             //Pending send
