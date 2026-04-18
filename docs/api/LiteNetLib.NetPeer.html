@@ -133,9 +133,6 @@
       <a class="xref" href="LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_GetHashCode">LiteNetPeer.GetHashCode()</a>
     </div>
     <div>
-      <a class="xref" href="LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_GetPacketsCountInReliableQueue_System_Boolean_">LiteNetPeer.GetPacketsCountInReliableQueue(bool)</a>
-    </div>
-    <div>
       <a class="xref" href="LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_CreatePacketFromPool_LiteNetLib_DeliveryMethod_">LiteNetPeer.CreatePacketFromPool(DeliveryMethod)</a>
     </div>
     <div>
@@ -292,6 +289,51 @@
       <tr>
         <td><a class="xref" href="LiteNetLib.PooledPacket.html">PooledPacket</a></td>
         <td><p>PooledPacket that you can use to write data starting from UserDataOffset</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_NetPeer_GetPacketsCountInReliableQueue_" data-uid="LiteNetLib.NetPeer.GetPacketsCountInReliableQueue*"></a>
+  <h4 id="LiteNetLib_NetPeer_GetPacketsCountInReliableQueue_System_Boolean_" data-uid="LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Boolean)">GetPacketsCountInReliableQueue(bool)</h4>
+  <div class="markdown level1 summary"><p>Returns packets count in queue for reliable channel 0</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetPacketsCountInReliableQueue(bool ordered)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">ordered</span></td>
+        <td><p>type of channel ReliableOrdered or ReliableUnordered</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><p>packets count in channel queue</p>
 </td>
       </tr>
     </tbody>

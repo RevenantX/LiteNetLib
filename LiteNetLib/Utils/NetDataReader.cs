@@ -550,29 +550,6 @@ namespace LiteNetLib.Utils
         }
 
         /// <summary>
-        /// Deserializes a <see langword="struct"/> that implements <see cref="INetSerializable"/>.
-        /// </summary>
-        /// <typeparam name="T">A <see langword="struct"/> type implementing <see cref="INetSerializable"/>.</typeparam>
-        /// <returns>The deserialized <see langword="struct"/>.</returns>
-        public T Get<T>() where T : struct, INetSerializable
-        {
-            Get(out T result);
-            return result;
-        }
-
-        /// <summary>
-        /// Deserializes a <see langword="class"/> that implements <see cref="INetSerializable"/> using a provided constructor.
-        /// </summary>
-        /// <typeparam name="T">A <see langword="class"/> type implementing <see cref="INetSerializable"/>.</typeparam>
-        /// <param name="constructor">The factory <see langword="delegate"/> used to instantiate the <see langword="class"/>.</param>
-        /// <returns>A new instance of <typeparamref name="T"/>.</returns>
-        public T Get<T>(Func<T> constructor) where T : class, INetSerializable
-        {
-            Get(out T result, constructor);
-            return result;
-        }
-
-        /// <summary>
         /// Returns a <see cref="ReadOnlySpan{T}"/> of <see cref="byte"/>s containing all remaining data.
         /// </summary>
         /// <returns>A <see cref="ReadOnlySpan{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
@@ -612,6 +589,29 @@ namespace LiteNetLib.Utils
             byte[] result = new byte[size];
             Buffer.BlockCopy(_data, _position, result, 0, size);
             _position = _dataSize;
+            return result;
+        }
+
+        /// <summary>
+        /// Deserializes a <see langword="struct"/> that implements <see cref="INetSerializable"/>.
+        /// </summary>
+        /// <typeparam name="T">A <see langword="struct"/> type implementing <see cref="INetSerializable"/>.</typeparam>
+        /// <returns>The deserialized <see langword="struct"/>.</returns>
+        public T Get<T>() where T : struct, INetSerializable
+        {
+            Get(out T result);
+            return result;
+        }
+
+        /// <summary>
+        /// Deserializes a <see langword="class"/> that implements <see cref="INetSerializable"/> using a provided constructor.
+        /// </summary>
+        /// <typeparam name="T">A <see langword="class"/> type implementing <see cref="INetSerializable"/>.</typeparam>
+        /// <param name="constructor">The factory <see langword="delegate"/> used to instantiate the <see langword="class"/>.</param>
+        /// <returns>A new instance of <typeparamref name="T"/>.</returns>
+        public T Get<T>(Func<T> constructor) where T : class, INetSerializable
+        {
+            Get(out T result, constructor);
             return result;
         }
 
@@ -799,6 +799,44 @@ namespace LiteNetLib.Utils
             }
             return value;
 #endif
+        }
+
+        /// <summary>
+        /// Returns a <see cref="ReadOnlySpan{T}"/> of <see cref="byte"/>s containing all remaining data without advancing the reader <see cref="_position"/>.
+        /// </summary>
+        /// <returns>A <see cref="ReadOnlySpan{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlySpan<byte> PeekRemainingBytesSpan()
+        {
+            return new ReadOnlySpan<byte>(_data, _position, AvailableBytes);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="ReadOnlyMemory{T}"/> of <see cref="byte"/>s containing all remaining data without advancing the reader <see cref="_position"/>.
+        /// </summary>
+        /// <returns>A <see cref="ReadOnlyMemory{T}"/> from the current <see cref="Position"/> to the end of the buffer.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlyMemory<byte> PeekRemainingBytesMemory()
+        {
+            return new ReadOnlyMemory<byte>(_data, _position, AvailableBytes);
+        }
+
+        /// <summary>
+        /// Reads all remaining <see cref="byte"/>s and returns them as a new array without advancing the reader <see cref="_position"/>.
+        /// </summary>
+        /// <returns>A new <see cref="byte"/> array containing the remaining data.</returns>
+        /// <remarks>
+        /// This method performs a heap allocation by copying the data into a new array.
+        /// </remarks>
+        public byte[] PeekRemainingBytes()
+        {
+            int size = _dataSize - _position;
+            if (size == 0)
+                return Array.Empty<byte>();
+
+            byte[] result = new byte[size];
+            Buffer.BlockCopy(_data, _position, result, 0, size);
+            return result;
         }
 
         #endregion

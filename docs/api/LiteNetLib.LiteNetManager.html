@@ -409,6 +409,32 @@ If the DontRoute flag is set to True, then data will be delivered on the local s
   </table>
 
 
+  <h4 id="LiteNetLib_LiteNetManager_MaxPacketPerManualReceive" data-uid="LiteNetLib.LiteNetManager.MaxPacketPerManualReceive">MaxPacketPerManualReceive</h4>
+  <div class="markdown level1 summary"><p>Maximum packets that can be received per one ManualReceive (PollEvents when started using StartInManualMode)
+0 - infinite - but this can cause some big delays there is too many incoming packets</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MaxPacketPerManualReceive</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <h4 id="LiteNetLib_LiteNetManager_MtuDiscovery" data-uid="LiteNetLib.LiteNetManager.MtuDiscovery">MtuDiscovery</h4>
   <div class="markdown level1 summary"><p>Automatically discovery mtu starting from. Use at own risk because some routers can break MTU detection
 and connection in result</p>
