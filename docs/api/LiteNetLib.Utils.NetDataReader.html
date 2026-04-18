@@ -2791,6 +2791,90 @@ advancing the position by the size of <code class="typeparamref">T</code>.</p>
   </table>
 
 
+  <a id="LiteNetLib_Utils_NetDataReader_PeekRemainingBytes_" data-uid="LiteNetLib.Utils.NetDataReader.PeekRemainingBytes*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_PeekRemainingBytes" data-uid="LiteNetLib.Utils.NetDataReader.PeekRemainingBytes">PeekRemainingBytes()</h4>
+  <div class="markdown level1 summary"><p>Reads all remaining <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s and returns them as a new array without advancing the reader <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__position">_position</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte[] PeekRemainingBytes()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><p>A new <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a> array containing the remaining data.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LiteNetLib_Utils_NetDataReader_PeekRemainingBytes_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method performs a heap allocation by copying the data into a new array.</p>
+</div>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_PeekRemainingBytesMemory_" data-uid="LiteNetLib.Utils.NetDataReader.PeekRemainingBytesMemory*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_PeekRemainingBytesMemory" data-uid="LiteNetLib.Utils.NetDataReader.PeekRemainingBytesMemory">PeekRemainingBytesMemory()</h4>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlymemory-1">ReadOnlyMemory&lt;T&gt;</a> of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s containing all remaining data without advancing the reader <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__position">_position</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ReadOnlyMemory&lt;byte&gt; PeekRemainingBytesMemory()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlymemory-1">ReadOnlyMemory</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlymemory-1">ReadOnlyMemory&lt;T&gt;</a> from the current <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Position">Position</a> to the end of the buffer.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_Utils_NetDataReader_PeekRemainingBytesSpan_" data-uid="LiteNetLib.Utils.NetDataReader.PeekRemainingBytesSpan*"></a>
+  <h4 id="LiteNetLib_Utils_NetDataReader_PeekRemainingBytesSpan" data-uid="LiteNetLib.Utils.NetDataReader.PeekRemainingBytesSpan">PeekRemainingBytesSpan()</h4>
+  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan&lt;T&gt;</a> of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>s containing all remaining data without advancing the reader <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader__position">_position</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ReadOnlySpan&lt;byte&gt; PeekRemainingBytesSpan()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan&lt;T&gt;</a> from the current <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Position">Position</a> to the end of the buffer.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="LiteNetLib_Utils_NetDataReader_PeekSByte_" data-uid="LiteNetLib.Utils.NetDataReader.PeekSByte*"></a>
   <h4 id="LiteNetLib_Utils_NetDataReader_PeekSByte" data-uid="LiteNetLib.Utils.NetDataReader.PeekSByte">PeekSByte()</h4>
   <div class="markdown level1 summary"><p>Reads the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.sbyte">sbyte</a> at the current position without advancing the <a class="xref" href="LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_Position">Position</a>.</p>

@@ -1789,6 +1789,12 @@ references:
   commentId: F:LiteNetLib.LiteNetManager.MaxFragmentsCount
   fullName: LiteNetLib.LiteNetManager.MaxFragmentsCount
   nameWithType: LiteNetManager.MaxFragmentsCount
+- uid: LiteNetLib.LiteNetManager.MaxPacketPerManualReceive
+  name: MaxPacketPerManualReceive
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_MaxPacketPerManualReceive
+  commentId: F:LiteNetLib.LiteNetManager.MaxPacketPerManualReceive
+  fullName: LiteNetLib.LiteNetManager.MaxPacketPerManualReceive
+  nameWithType: LiteNetManager.MaxPacketPerManualReceive
 - uid: LiteNetLib.LiteNetManager.MtuDiscovery
   name: MtuDiscovery
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_MtuDiscovery
@@ -3715,6 +3721,15 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.NetPeer.CreatePacketFromPool
   nameWithType: NetPeer.CreatePacketFromPool
+- uid: LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Boolean)
+  name: GetPacketsCountInReliableQueue(bool)
+  href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_GetPacketsCountInReliableQueue_System_Boolean_
+  commentId: M:LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Boolean)
+  name.vb: GetPacketsCountInReliableQueue(Boolean)
+  fullName: LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(bool)
+  fullName.vb: LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(Boolean)
+  nameWithType: NetPeer.GetPacketsCountInReliableQueue(bool)
+  nameWithType.vb: NetPeer.GetPacketsCountInReliableQueue(Boolean)
 - uid: LiteNetLib.NetPeer.GetPacketsCountInReliableQueue(System.Byte,System.Boolean)
   name: GetPacketsCountInReliableQueue(byte, bool)
   href: api/LiteNetLib.NetPeer.html#LiteNetLib_NetPeer_GetPacketsCountInReliableQueue_System_Byte_System_Boolean_
@@ -5251,6 +5266,45 @@ references:
   isSpec: "True"
   fullName: LiteNetLib.Utils.NetDataReader.PeekLong
   nameWithType: NetDataReader.PeekLong
+- uid: LiteNetLib.Utils.NetDataReader.PeekRemainingBytes
+  name: PeekRemainingBytes()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekRemainingBytes
+  commentId: M:LiteNetLib.Utils.NetDataReader.PeekRemainingBytes
+  fullName: LiteNetLib.Utils.NetDataReader.PeekRemainingBytes()
+  nameWithType: NetDataReader.PeekRemainingBytes()
+- uid: LiteNetLib.Utils.NetDataReader.PeekRemainingBytes*
+  name: PeekRemainingBytes
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekRemainingBytes_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.PeekRemainingBytes
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.PeekRemainingBytes
+  nameWithType: NetDataReader.PeekRemainingBytes
+- uid: LiteNetLib.Utils.NetDataReader.PeekRemainingBytesMemory
+  name: PeekRemainingBytesMemory()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekRemainingBytesMemory
+  commentId: M:LiteNetLib.Utils.NetDataReader.PeekRemainingBytesMemory
+  fullName: LiteNetLib.Utils.NetDataReader.PeekRemainingBytesMemory()
+  nameWithType: NetDataReader.PeekRemainingBytesMemory()
+- uid: LiteNetLib.Utils.NetDataReader.PeekRemainingBytesMemory*
+  name: PeekRemainingBytesMemory
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekRemainingBytesMemory_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.PeekRemainingBytesMemory
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.PeekRemainingBytesMemory
+  nameWithType: NetDataReader.PeekRemainingBytesMemory
+- uid: LiteNetLib.Utils.NetDataReader.PeekRemainingBytesSpan
+  name: PeekRemainingBytesSpan()
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekRemainingBytesSpan
+  commentId: M:LiteNetLib.Utils.NetDataReader.PeekRemainingBytesSpan
+  fullName: LiteNetLib.Utils.NetDataReader.PeekRemainingBytesSpan()
+  nameWithType: NetDataReader.PeekRemainingBytesSpan()
+- uid: LiteNetLib.Utils.NetDataReader.PeekRemainingBytesSpan*
+  name: PeekRemainingBytesSpan
+  href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekRemainingBytesSpan_
+  commentId: Overload:LiteNetLib.Utils.NetDataReader.PeekRemainingBytesSpan
+  isSpec: "True"
+  fullName: LiteNetLib.Utils.NetDataReader.PeekRemainingBytesSpan
+  nameWithType: NetDataReader.PeekRemainingBytesSpan
 - uid: LiteNetLib.Utils.NetDataReader.PeekSByte
   name: PeekSByte()
   href: api/LiteNetLib.Utils.NetDataReader.html#LiteNetLib_Utils_NetDataReader_PeekSByte
