@@ -315,6 +315,39 @@ namespace LiteNetLib
         }
 
         /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        public void SendToAll(ReadOnlySpan<byte> data, byte channelNumber, DeliveryMethod options) =>
+            SendToAll(data, channelNumber, options, null);
+
+        /// <summary>
+        /// Send data to all connected peers
+        /// </summary>
+        /// <param name="data">Data</param>
+        /// <param name="channelNumber">Number of channel (from 0 to channelsCount - 1)</param>
+        /// <param name="options">Send options (reliable, unreliable, etc.)</param>
+        /// <param name="excludePeer">Excluded peer</param>
+        public void SendToAll(ReadOnlySpan<byte> data, byte channelNumber, DeliveryMethod options, LiteNetPeer excludePeer)
+        {
+            try
+            {
+                _peersLock.EnterReadLock();
+                for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
+                {
+                    if (netPeer != excludePeer)
+                        ((NetPeer)netPeer).Send(data, channelNumber, options);
+                }
+            }
+            finally
+            {
+                _peersLock.ExitReadLock();
+            }
+        }
+
+        /// <summary>
         /// Connect to remote host
         /// </summary>
         /// <param name="address">Server IP or hostname</param>

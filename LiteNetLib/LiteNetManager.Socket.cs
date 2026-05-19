@@ -545,20 +545,10 @@ namespace LiteNetLib
             }
 #endif
 
-            return SendRawCoreWithCleanup(message, start, length, remoteEndPoint, expandedPacket);
-        }
-
-        private int SendRawCoreWithCleanup(byte[] message, int start, int length, IPEndPoint remoteEndPoint, NetPacket expandedPacket)
-        {
-            try
-            {
-                return SendRawCore(message, start, length, remoteEndPoint);
-            }
-            finally
-            {
-                if (expandedPacket != null)
-                    PoolRecycle(expandedPacket);
-            }
+            int result = SendRawCore(message, start, length, remoteEndPoint);
+            if (expandedPacket != null)
+                PoolRecycle(expandedPacket);
+            return result;
         }
 
         // Core socket sending logic without simulation - used by both SendRaw and delayed packet processing
