@@ -716,7 +716,8 @@ namespace LiteNetLib.Tests
             {
                 using var sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 var endpoint = new IPEndPoint(IPAddress.Loopback, DefaultPort);
-                byte[] droppedPacket = {1};
+                byte[] droppedPacket = CreateUnconnectedPacket("drop", addChecksum: true);
+                droppedPacket[droppedPacket.Length - 1] ^= 0xFF;
 
                 for (int i = 0; i < droppedPacketCount; i++)
                     sender.SendTo(droppedPacket, endpoint);
