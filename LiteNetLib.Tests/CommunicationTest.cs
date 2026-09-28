@@ -702,6 +702,99 @@ namespace LiteNetLib.Tests
         }
 
         [Test, CancelAfter(TestTimeout)]
+        public void ManualMode_EmptyDatagramDoesNotStallQueue()
+        {
+            const string payload = "manual-empty-datagram";
+            bool received = false;
+            var serverListener = new EventBasedNetListener();
+            var server = new NetManager(serverListener)
+            {
+                UnconnectedMessagesEnabled = true
+            };
+
+            serverListener.NetworkReceiveUnconnectedEvent += (_, reader, type) =>
+            {
+                if (type != UnconnectedMessageType.BasicMessage)
+                    return;
+                received = Encoding.ASCII.GetString(reader.GetRemainingBytes()) == payload;
+            };
+
+            Assert.That(server.StartInManualMode(DefaultPort), Is.True);
+            try
+            {
+                using var sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                var endpoint = new IPEndPoint(IPAddress.Loopback, DefaultPort);
+
+                sender.SendTo(Array.Empty<byte>(), endpoint);
+                sender.SendTo(CreateUnconnectedPacket(payload), endpoint);
+
+                for (int i = 0; i < 40 && !received; i++)
+                {
+                    server.PollEvents();
+                    server.ManualUpdate(15);
+                    Thread.Sleep(15);
+                }
+
+                Assert.That(received, Is.True);
+            }
+            finally
+            {
+                server.Stop();
+            }
+        }
+
+        [Test, CancelAfter(TestTimeout)]
+        public void ManualMode_DroppedLayerPacketsDoNotBlockQueue()
+        {
+            const int maxPacketsPerPoll = 32;
+            const int droppedPacketCount = maxPacketsPerPoll * 3;
+            const string payload = "manual-layer-drop";
+            bool received = false;
+
+            var serverListener = new EventBasedNetListener();
+            var server = new NetManager(serverListener, new Crc32cLayer())
+            {
+                MaxPacketPerManualReceive = maxPacketsPerPoll,
+                UnconnectedMessagesEnabled = true
+            };
+
+            serverListener.NetworkReceiveUnconnectedEvent += (_, reader, type) =>
+            {
+                if (type != UnconnectedMessageType.BasicMessage)
+                    return;
+                received = Encoding.ASCII.GetString(reader.GetRemainingBytes()) == payload;
+            };
+
+            Assert.That(server.StartInManualMode(DefaultPort), Is.True);
+            try
+            {
+                using var sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                var endpoint = new IPEndPoint(IPAddress.Loopback, DefaultPort);
+                byte[] droppedPacket = {1};
+
+                for (int i = 0; i < droppedPacketCount; i++)
+                    sender.SendTo(droppedPacket, endpoint);
+
+                sender.SendTo(CreateUnconnectedPacket(payload, addChecksum: true), endpoint);
+
+                Thread.Sleep(15);
+
+                for (int i = 0; i < 4 && !received; i++)
+                {
+                    server.PollEvents();
+                    server.ManualUpdate(15);
+                    Thread.Sleep(15);
+                }
+
+                Assert.That(received, Is.True);
+            }
+            finally
+            {
+                server.Stop();
+            }
+        }
+
+        [Test, CancelAfter(TestTimeout)]
         public void SendRawDataToAll()
         {
             var clientCount = 10;
@@ -746,6 +839,24 @@ namespace LiteNetLib.Tests
                 Assert.That(ManagerStack.Client(i).ConnectedPeersCount, Is.EqualTo(1));
                 Assert.That(data, Is.EqualTo(dataStack.Pop()).AsCollection);
             }
+        }
+
+        private static byte[] CreateUnconnectedPacket(string payload, bool addChecksum = false)
+        {
+            byte[] payloadBytes = Encoding.ASCII.GetBytes(payload);
+            int headerSize = 1;
+            int packetSize = headerSize + payloadBytes.Length + (addChecksum ? CRC32C.ChecksumSize : 0);
+            byte[] packet = new byte[packetSize];
+            packet[0] = 9; // PacketProperty.UnconnectedMessage
+            Buffer.BlockCopy(payloadBytes, 0, packet, headerSize, payloadBytes.Length);
+
+            if (addChecksum)
+            {
+                uint checksum = CRC32C.Compute(packet, 0, headerSize + payloadBytes.Length);
+                FastBitConverter.GetBytes(packet, headerSize + payloadBytes.Length, checksum);
+            }
+
+            return packet;
         }
     }
 }

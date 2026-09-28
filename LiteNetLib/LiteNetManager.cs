@@ -848,7 +848,10 @@ namespace LiteNetLib
             {
                 _extraPacketLayer.ProcessInboundPacket(ref remoteEndPoint, ref packet.RawData, ref packet.Size);
                 if (packet.Size == 0)
+                {
+                    PoolRecycle(packet);
                     return;
+                }
             }
 
             if (!packet.Verify())
