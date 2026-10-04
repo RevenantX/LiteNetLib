@@ -3,6 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if UNITY_ANDROID
+using Unity.Collections.LowLevel.Unsafe;
+#endif
 
 namespace LiteNetLib.Utils
 {
@@ -671,7 +674,13 @@ namespace LiteNetLib.Utils
             T value;
             fixed (byte* ptr = &_data[_position])
             {
+    #if UNITY_ANDROID
+                T* valueBuffer = stackalloc T[1];
+                UnsafeUtility.MemCpy(valueBuffer, ptr, size);
+                value = valueBuffer[0];
+    #else
                 value = *(T*)ptr;
+    #endif
             }
 #endif
 
@@ -795,7 +804,13 @@ namespace LiteNetLib.Utils
             T value;
             fixed (byte* ptr = &_data[_position])
             {
+    #if UNITY_ANDROID
+                T* valueBuffer = stackalloc T[1];
+                UnsafeUtility.MemCpy(valueBuffer, ptr, size);
+                value = valueBuffer[0];
+    #else
                 value = *(T*)ptr;
+    #endif
             }
             return value;
 #endif
@@ -1007,7 +1022,13 @@ namespace LiteNetLib.Utils
 #else
             fixed (byte* ptr = &_data[_position])
             {
+    #if UNITY_ANDROID
+                T* valueBuffer = stackalloc T[1];
+                UnsafeUtility.MemCpy(valueBuffer, ptr, size);
+                result = valueBuffer[0];
+    #else
                 result = *(T*)ptr;
+    #endif
             }
 #endif
 
