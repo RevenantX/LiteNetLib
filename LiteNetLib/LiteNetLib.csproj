@@ -12,8 +12,8 @@
     <NoWarn>1701;1702;1705;1591</NoWarn>
     <PackageVersion>2.1.4</PackageVersion>
     <Title>Lite reliable UDP library for Mono and .NET </Title>
-    <IsTrimmable>true</IsTrimmable>
-    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
     <AssemblyVersion>2.1.4</AssemblyVersion>
   </PropertyGroup>
 
