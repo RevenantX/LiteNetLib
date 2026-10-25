@@ -336,5 +336,33 @@ namespace LiteNetLib.Tests
             Assert.That(readIpep6, Is.EqualTo(ipep6));
             Assert.That(ndr.AvailableBytes, Is.EqualTo(0));
         }
+
+        [Test]
+        public void PeekPastEndThrows()
+        {
+            var ndr = new NetDataReader(new byte[] { 1, 2 });
+
+            Assert.Throws<InvalidOperationException>(() => ndr.PeekInt());
+            Assert.Throws<InvalidOperationException>(() => ndr.PeekLong());
+            Assert.That(ndr.PeekUShort(), Is.EqualTo(0x0201));
+            Assert.That(ndr.Position, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void PeekRespectsDataSizeOfLargerBuffer()
+        {
+            // writer's backing array is larger than the written data
+            var ndw = new NetDataWriter();
+            ndw.Put((ushort)10);
+
+            var ndr = new NetDataReader(ndw);
+            Assert.Throws<InvalidOperationException>(() => ndr.PeekInt());
+            Assert.Throws<InvalidOperationException>(() => ndr.PeekString());
+            Assert.Throws<InvalidOperationException>(() => ndr.PeekString(100));
+
+            ndr.SkipBytes(2);
+            Assert.Throws<InvalidOperationException>(() => ndr.PeekByte());
+            Assert.Throws<InvalidOperationException>(() => ndr.PeekBool());
+        }
     }
 }

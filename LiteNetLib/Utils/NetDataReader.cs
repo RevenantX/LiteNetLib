@@ -725,7 +725,11 @@ namespace LiteNetLib.Utils
         #region PeekMethods
 
         /// <summary>Reads the <see cref="byte"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public byte PeekByte() => _data[_position];
+        public byte PeekByte()
+        {
+            EnsureAvailable(1);
+            return _data[_position];
+        }
 
         /// <summary>Reads the <see cref="sbyte"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public sbyte PeekSByte() => (sbyte)PeekByte();
@@ -772,6 +776,7 @@ namespace LiteNetLib.Utils
                 return string.Empty;
 
             int actualSize = size - 1;
+            EnsureAvailable(sizeof(ushort) + actualSize);
             return (maxLength > 0 && NetDataWriter.uTF8Encoding.GetCharCount(_data, _position + sizeof(ushort), actualSize) > maxLength)
                 ? string.Empty
                 : NetDataWriter.uTF8Encoding.GetString(_data, _position + sizeof(ushort), actualSize);
@@ -787,6 +792,7 @@ namespace LiteNetLib.Utils
                 return string.Empty;
 
             int actualSize = size - 1;
+            EnsureAvailable(sizeof(ushort) + actualSize);
             return NetDataWriter.uTF8Encoding.GetString(_data, _position + sizeof(ushort), actualSize);
         }
 
@@ -798,6 +804,9 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe T PeekUnmanaged<T>() where T : unmanaged
         {
+            int size = sizeof(T);
+            EnsureAvailable(size);
+
 #if NET8_0_OR_GREATER
             return Unsafe.ReadUnaligned<T>(ref _data[_position]);
 #else
