@@ -378,6 +378,71 @@ If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin
   </table>
 
 
+  <a id="LiteNetLib_LiteConnectionRequest_Reject_" data-uid="LiteNetLib.LiteConnectionRequest.Reject*"></a>
+  <h4 id="LiteNetLib_LiteConnectionRequest_Reject_System_ReadOnlySpan_System_Byte__" data-uid="LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan{System.Byte})">Reject(ReadOnlySpan&lt;byte&gt;)</h4>
+  <div class="markdown level1 summary"><p>Rejects the connection reliably.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reject(ReadOnlySpan&lt;byte&gt; rejectData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">rejectData</span></td>
+        <td><p>Data to send with the rejection.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteConnectionRequest_Reject_" data-uid="LiteNetLib.LiteConnectionRequest.Reject*"></a>
+  <h4 id="LiteNetLib_LiteConnectionRequest_Reject_System_ReadOnlySpan_System_Byte__System_Boolean_" data-uid="LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan{System.Byte},System.Boolean)">Reject(ReadOnlySpan&lt;byte&gt;, bool)</h4>
+  <div class="markdown level1 summary"><p>Rejects the connection request.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reject(ReadOnlySpan&lt;byte&gt; rejectData, bool force)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">rejectData</span></td>
+        <td><p>Optional user data to send along with the rejection packet.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">force</span></td>
+        <td><p>If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>, immediately removes the request, if <code class="paramref">rejectData</code> is not empty a reject packet is also sent. <br>
+If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>, creates a temporary peer that sends rejection packets and lingers in memory until a timeout occurs to handle late-arriving packets.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="LiteNetLib_LiteConnectionRequest_RejectForce_" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce*"></a>
   <h4 id="LiteNetLib_LiteConnectionRequest_RejectForce" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce">RejectForce()</h4>
   <div class="markdown level1 summary"><p>Rejects the connection immediately without sending any packet.</p>
@@ -483,6 +548,35 @@ Minimizes resource usage by not creating an internal peer.</p>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">length</span></td>
         <td><p>Length of the data to be sent.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LiteNetLib_LiteConnectionRequest_RejectForce_" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce*"></a>
+  <h4 id="LiteNetLib_LiteConnectionRequest_RejectForce_System_ReadOnlySpan_System_Byte__" data-uid="LiteNetLib.LiteConnectionRequest.RejectForce(System.ReadOnlySpan{System.Byte})">RejectForce(ReadOnlySpan&lt;byte&gt;)</h4>
+  <div class="markdown level1 summary"><p>Rejects the connection immediately without reliability.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RejectForce(ReadOnlySpan&lt;byte&gt; rejectData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>&gt;</td>
+        <td><span class="parametername">rejectData</span></td>
+        <td><p>Data to send with the rejection.</p>
 </td>
       </tr>
     </tbody>

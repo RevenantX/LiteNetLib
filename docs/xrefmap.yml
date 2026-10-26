@@ -1285,6 +1285,24 @@ references:
   fullName.vb: LiteNetLib.LiteConnectionRequest.Reject(Byte(), Integer, Integer, Boolean)
   nameWithType: LiteConnectionRequest.Reject(byte[], int, int, bool)
   nameWithType.vb: LiteConnectionRequest.Reject(Byte(), Integer, Integer, Boolean)
+- uid: LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan{System.Byte})
+  name: Reject(ReadOnlySpan<byte>)
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_System_ReadOnlySpan_System_Byte__
+  commentId: M:LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan{System.Byte})
+  name.vb: Reject(ReadOnlySpan(Of Byte))
+  fullName: LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan<byte>)
+  fullName.vb: LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan(Of Byte))
+  nameWithType: LiteConnectionRequest.Reject(ReadOnlySpan<byte>)
+  nameWithType.vb: LiteConnectionRequest.Reject(ReadOnlySpan(Of Byte))
+- uid: LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan{System.Byte},System.Boolean)
+  name: Reject(ReadOnlySpan<byte>, bool)
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_System_ReadOnlySpan_System_Byte__System_Boolean_
+  commentId: M:LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan{System.Byte},System.Boolean)
+  name.vb: Reject(ReadOnlySpan(Of Byte), Boolean)
+  fullName: LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan<byte>, bool)
+  fullName.vb: LiteNetLib.LiteConnectionRequest.Reject(System.ReadOnlySpan(Of Byte), Boolean)
+  nameWithType: LiteConnectionRequest.Reject(ReadOnlySpan<byte>, bool)
+  nameWithType.vb: LiteConnectionRequest.Reject(ReadOnlySpan(Of Byte), Boolean)
 - uid: LiteNetLib.LiteConnectionRequest.Reject*
   name: Reject
   href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_Reject_
@@ -1322,6 +1340,15 @@ references:
   fullName.vb: LiteNetLib.LiteConnectionRequest.RejectForce(Byte(), Integer, Integer)
   nameWithType: LiteConnectionRequest.RejectForce(byte[], int, int)
   nameWithType.vb: LiteConnectionRequest.RejectForce(Byte(), Integer, Integer)
+- uid: LiteNetLib.LiteConnectionRequest.RejectForce(System.ReadOnlySpan{System.Byte})
+  name: RejectForce(ReadOnlySpan<byte>)
+  href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce_System_ReadOnlySpan_System_Byte__
+  commentId: M:LiteNetLib.LiteConnectionRequest.RejectForce(System.ReadOnlySpan{System.Byte})
+  name.vb: RejectForce(ReadOnlySpan(Of Byte))
+  fullName: LiteNetLib.LiteConnectionRequest.RejectForce(System.ReadOnlySpan<byte>)
+  fullName.vb: LiteNetLib.LiteConnectionRequest.RejectForce(System.ReadOnlySpan(Of Byte))
+  nameWithType: LiteConnectionRequest.RejectForce(ReadOnlySpan<byte>)
+  nameWithType.vb: LiteConnectionRequest.RejectForce(ReadOnlySpan(Of Byte))
 - uid: LiteNetLib.LiteConnectionRequest.RejectForce*
   name: RejectForce
   href: api/LiteNetLib.LiteConnectionRequest.html#LiteNetLib_LiteConnectionRequest_RejectForce_
@@ -1542,6 +1569,15 @@ references:
   fullName.vb: LiteNetLib.LiteNetManager.DisconnectAll(Byte(), Integer, Integer)
   nameWithType: LiteNetManager.DisconnectAll(byte[], int, int)
   nameWithType.vb: LiteNetManager.DisconnectAll(Byte(), Integer, Integer)
+- uid: LiteNetLib.LiteNetManager.DisconnectAll(System.ReadOnlySpan{System.Byte})
+  name: DisconnectAll(ReadOnlySpan<byte>)
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_DisconnectAll_System_ReadOnlySpan_System_Byte__
+  commentId: M:LiteNetLib.LiteNetManager.DisconnectAll(System.ReadOnlySpan{System.Byte})
+  name.vb: DisconnectAll(ReadOnlySpan(Of Byte))
+  fullName: LiteNetLib.LiteNetManager.DisconnectAll(System.ReadOnlySpan<byte>)
+  fullName.vb: LiteNetLib.LiteNetManager.DisconnectAll(System.ReadOnlySpan(Of Byte))
+  nameWithType: LiteNetManager.DisconnectAll(ReadOnlySpan<byte>)
+  nameWithType.vb: LiteNetManager.DisconnectAll(ReadOnlySpan(Of Byte))
 - uid: LiteNetLib.LiteNetManager.DisconnectAll*
   name: DisconnectAll
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_DisconnectAll_
@@ -1585,6 +1621,15 @@ references:
   fullName.vb: LiteNetLib.LiteNetManager.DisconnectPeer(LiteNetLib.LiteNetPeer, Byte(), Integer, Integer)
   nameWithType: LiteNetManager.DisconnectPeer(LiteNetPeer, byte[], int, int)
   nameWithType.vb: LiteNetManager.DisconnectPeer(LiteNetPeer, Byte(), Integer, Integer)
+- uid: LiteNetLib.LiteNetManager.DisconnectPeer(LiteNetLib.LiteNetPeer,System.ReadOnlySpan{System.Byte})
+  name: DisconnectPeer(LiteNetPeer, ReadOnlySpan<byte>)
+  href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_DisconnectPeer_LiteNetLib_LiteNetPeer_System_ReadOnlySpan_System_Byte__
+  commentId: M:LiteNetLib.LiteNetManager.DisconnectPeer(LiteNetLib.LiteNetPeer,System.ReadOnlySpan{System.Byte})
+  name.vb: DisconnectPeer(LiteNetPeer, ReadOnlySpan(Of Byte))
+  fullName: LiteNetLib.LiteNetManager.DisconnectPeer(LiteNetLib.LiteNetPeer, System.ReadOnlySpan<byte>)
+  fullName.vb: LiteNetLib.LiteNetManager.DisconnectPeer(LiteNetLib.LiteNetPeer, System.ReadOnlySpan(Of Byte))
+  nameWithType: LiteNetManager.DisconnectPeer(LiteNetPeer, ReadOnlySpan<byte>)
+  nameWithType.vb: LiteNetManager.DisconnectPeer(LiteNetPeer, ReadOnlySpan(Of Byte))
 - uid: LiteNetLib.LiteNetManager.DisconnectPeer*
   name: DisconnectPeer
   href: api/LiteNetLib.LiteNetManager.html#LiteNetLib_LiteNetManager_DisconnectPeer_
@@ -2565,6 +2610,15 @@ references:
   fullName.vb: LiteNetLib.LiteNetPeer.Disconnect(Byte(), Integer, Integer)
   nameWithType: LiteNetPeer.Disconnect(byte[], int, int)
   nameWithType.vb: LiteNetPeer.Disconnect(Byte(), Integer, Integer)
+- uid: LiteNetLib.LiteNetPeer.Disconnect(System.ReadOnlySpan{System.Byte})
+  name: Disconnect(ReadOnlySpan<byte>)
+  href: api/LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_Disconnect_System_ReadOnlySpan_System_Byte__
+  commentId: M:LiteNetLib.LiteNetPeer.Disconnect(System.ReadOnlySpan{System.Byte})
+  name.vb: Disconnect(ReadOnlySpan(Of Byte))
+  fullName: LiteNetLib.LiteNetPeer.Disconnect(System.ReadOnlySpan<byte>)
+  fullName.vb: LiteNetLib.LiteNetPeer.Disconnect(System.ReadOnlySpan(Of Byte))
+  nameWithType: LiteNetPeer.Disconnect(ReadOnlySpan<byte>)
+  nameWithType.vb: LiteNetPeer.Disconnect(ReadOnlySpan(Of Byte))
 - uid: LiteNetLib.LiteNetPeer.Disconnect*
   name: Disconnect
   href: api/LiteNetLib.LiteNetPeer.html#LiteNetLib_LiteNetPeer_Disconnect_
@@ -3660,6 +3714,24 @@ references:
   fullName.vb: LiteNetLib.NetManager.SendToAll(Byte(), Integer, Integer, Byte, LiteNetLib.DeliveryMethod, LiteNetLib.LiteNetPeer)
   nameWithType: NetManager.SendToAll(byte[], int, int, byte, DeliveryMethod, LiteNetPeer)
   nameWithType.vb: NetManager.SendToAll(Byte(), Integer, Integer, Byte, DeliveryMethod, LiteNetPeer)
+- uid: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod)
+  name: SendToAll(ReadOnlySpan<byte>, byte, DeliveryMethod)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__System_Byte_LiteNetLib_DeliveryMethod_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod)
+  name.vb: SendToAll(ReadOnlySpan(Of Byte), Byte, DeliveryMethod)
+  fullName: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan<byte>, byte, LiteNetLib.DeliveryMethod)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan(Of Byte), Byte, LiteNetLib.DeliveryMethod)
+  nameWithType: NetManager.SendToAll(ReadOnlySpan<byte>, byte, DeliveryMethod)
+  nameWithType.vb: NetManager.SendToAll(ReadOnlySpan(Of Byte), Byte, DeliveryMethod)
+- uid: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.LiteNetPeer)
+  name: SendToAll(ReadOnlySpan<byte>, byte, DeliveryMethod, LiteNetPeer)
+  href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_System_ReadOnlySpan_System_Byte__System_Byte_LiteNetLib_DeliveryMethod_LiteNetLib_LiteNetPeer_
+  commentId: M:LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan{System.Byte},System.Byte,LiteNetLib.DeliveryMethod,LiteNetLib.LiteNetPeer)
+  name.vb: SendToAll(ReadOnlySpan(Of Byte), Byte, DeliveryMethod, LiteNetPeer)
+  fullName: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan<byte>, byte, LiteNetLib.DeliveryMethod, LiteNetLib.LiteNetPeer)
+  fullName.vb: LiteNetLib.NetManager.SendToAll(System.ReadOnlySpan(Of Byte), Byte, LiteNetLib.DeliveryMethod, LiteNetLib.LiteNetPeer)
+  nameWithType: NetManager.SendToAll(ReadOnlySpan<byte>, byte, DeliveryMethod, LiteNetPeer)
+  nameWithType.vb: NetManager.SendToAll(ReadOnlySpan(Of Byte), Byte, DeliveryMethod, LiteNetPeer)
 - uid: LiteNetLib.NetManager.SendToAll*
   name: SendToAll
   href: api/LiteNetLib.NetManager.html#LiteNetLib_NetManager_SendToAll_
