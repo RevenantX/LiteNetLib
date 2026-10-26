@@ -313,7 +313,7 @@ namespace LiteNetLib
             DisconnectReason reason,
             SocketError socketErrorCode,
             NetPacket eventData) =>
-            DisconnectPeer(peer, reason, socketErrorCode, true, null, 0, 0, eventData);
+            DisconnectPeer(peer, reason, socketErrorCode, true, ReadOnlySpan<byte>.Empty, eventData);
 
         /// <summary>
         /// Disconnects a peer and handles internal state cleanup.
@@ -327,20 +327,16 @@ namespace LiteNetLib
         /// Peer will linger until <see cref="DisconnectTimeout"/> to ignore late-arriving packets from the old session.
         /// </param>
         /// <param name="data">Optional custom data to include in the disconnect packet.</param>
-        /// <param name="start">Offset in the <paramref name="data"/> array.</param>
-        /// <param name="count">Number of bytes to send from the <paramref name="data"/> array.</param>
         /// <param name="eventData">Internal packet data associated with the disconnect event.</param>
         private void DisconnectPeer(
             LiteNetPeer peer,
             DisconnectReason reason,
             SocketError socketErrorCode,
             bool force,
-            byte[] data,
-            int start,
-            int count,
+            ReadOnlySpan<byte> data,
             NetPacket eventData)
         {
-            var shutdownResult = peer.Shutdown(data, start, count, force);
+            var shutdownResult = peer.Shutdown(data, force);
             if (shutdownResult == ShutdownResult.None)
                 return;
             if (shutdownResult == ShutdownResult.WasConnected)
@@ -631,22 +627,22 @@ namespace LiteNetLib
         protected virtual LiteConnectionRequest CreateConnectionRequest(IPEndPoint remoteEndPoint, NetConnectRequestPacket requestPacket) =>
             new LiteConnectionRequest(remoteEndPoint, requestPacket, this);
 
-        internal LiteNetPeer OnConnectionSolved(LiteConnectionRequest request, byte[] rejectData, int start, int length)
+        internal LiteNetPeer OnConnectionSolved(LiteConnectionRequest request, ReadOnlySpan<byte> rejectData)
         {
             LiteNetPeer netPeer = null;
 
             if (request.Result == ConnectionRequestResult.RejectForce)
             {
                 NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject force.");
-                if (rejectData != null && length > 0)
+                if (!rejectData.IsEmpty)
                 {
-                    var shutdownPacket = PoolGetWithProperty(PacketProperty.Disconnect, length);
+                    var shutdownPacket = PoolGetWithProperty(PacketProperty.Disconnect, rejectData.Length);
                     shutdownPacket.ConnectionNumber = request.InternalPacket.ConnectionNumber;
                     FastBitConverter.GetBytes(shutdownPacket.RawData, 1, request.InternalPacket.ConnectionTime);
                     if (shutdownPacket.Size >= NetConstants.PossibleMtu[0])
                         NetDebug.WriteError("[Peer] Disconnect additional data size more than MTU!");
                     else
-                        Buffer.BlockCopy(rejectData, start, shutdownPacket.RawData, 9, length);
+                        rejectData.CopyTo(shutdownPacket.RawData.AsSpan(9));
                     SendRawAndRecycle(shutdownPacket, request.RemoteEndPoint);
                 }
                 lock (_requestsDict)
@@ -661,7 +657,7 @@ namespace LiteNetLib
                 else if (request.Result == ConnectionRequestResult.Reject)
                 {
                     netPeer = CreateRejectPeer(request.RemoteEndPoint, GetNextPeerId());
-                    netPeer.Reject(request.InternalPacket, rejectData, start, length);
+                    netPeer.Reject(request.InternalPacket, rejectData);
                     AddPeer(netPeer);
                     NetDebug.Write(NetLogLevel.Trace, "[NM] Peer connect reject.");
                 }
@@ -852,7 +848,10 @@ namespace LiteNetLib
             {
                 _extraPacketLayer.ProcessInboundPacket(ref remoteEndPoint, ref packet.RawData, ref packet.Size);
                 if (packet.Size == 0)
+                {
+                    PoolRecycle(packet);
                     return;
+                }
             }
 
             if (!packet.Verify())
@@ -1490,7 +1489,7 @@ namespace LiteNetLib
 
             //Send last disconnect
             for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
-                netPeer.Shutdown(null, 0, 0, !sendDisconnectMessages);
+                netPeer.Shutdown(ReadOnlySpan<byte>.Empty, !sendDisconnectMessages);
 
             //Stop
             CloseSocket();
@@ -1576,7 +1575,7 @@ namespace LiteNetLib
         /// Disconnect all peers without any additional data
         /// </summary>
         public void DisconnectAll() =>
-            DisconnectAll(null, 0, 0);
+            DisconnectAll(ReadOnlySpan<byte>.Empty);
 
         /// <summary>
         /// Disconnect all peers with shutdown message
@@ -1584,7 +1583,14 @@ namespace LiteNetLib
         /// <param name="data">Data to send (must be less or equal MTU)</param>
         /// <param name="start">Data start</param>
         /// <param name="count">Data count</param>
-        public void DisconnectAll(byte[] data, int start, int count)
+        public void DisconnectAll(byte[] data, int start, int count) =>
+            DisconnectAll(new ReadOnlySpan<byte>(data, start, count));
+
+        /// <summary>
+        /// Disconnect all peers with shutdown message
+        /// </summary>
+        /// <param name="data">Data to send (must be less or equal MTU)</param>
+        public void DisconnectAll(ReadOnlySpan<byte> data)
         {
             //Send disconnect packets
             _peersLock.EnterReadLock();
@@ -1596,8 +1602,6 @@ namespace LiteNetLib
                     0,
                     false,
                     data,
-                    start,
-                    count,
                     null);
             }
             _peersLock.ExitReadLock();
@@ -1615,7 +1619,7 @@ namespace LiteNetLib
         /// </summary>
         /// <param name="peer">peer to disconnect</param>
         public void DisconnectPeer(LiteNetPeer peer) =>
-            DisconnectPeer(peer, null, 0, 0);
+            DisconnectPeer(peer, ReadOnlySpan<byte>.Empty);
 
         /// <summary>
         /// Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
@@ -1623,7 +1627,7 @@ namespace LiteNetLib
         /// <param name="peer">peer to disconnect</param>
         /// <param name="data">additional data</param>
         public void DisconnectPeer(LiteNetPeer peer, byte[] data) =>
-            DisconnectPeer(peer, data, 0, data.Length);
+            DisconnectPeer(peer, new ReadOnlySpan<byte>(data));
 
         /// <summary>
         /// Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
@@ -1631,7 +1635,7 @@ namespace LiteNetLib
         /// <param name="peer">peer to disconnect</param>
         /// <param name="writer">additional data</param>
         public void DisconnectPeer(LiteNetPeer peer, NetDataWriter writer) =>
-            DisconnectPeer(peer, writer.Data, 0, writer.Length);
+            DisconnectPeer(peer, writer.AsReadOnlySpan());
 
         /// <summary>
         /// Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
@@ -1640,7 +1644,15 @@ namespace LiteNetLib
         /// <param name="data">additional data</param>
         /// <param name="start">data start</param>
         /// <param name="count">data length</param>
-        public void DisconnectPeer(LiteNetPeer peer, byte[] data, int start, int count)
+        public void DisconnectPeer(LiteNetPeer peer, byte[] data, int start, int count) =>
+            DisconnectPeer(peer, new ReadOnlySpan<byte>(data, start, count));
+
+        /// <summary>
+        /// Disconnect peer from server and send additional data (Size must be less or equal MTU - 8)
+        /// </summary>
+        /// <param name="peer">peer to disconnect</param>
+        /// <param name="data">additional data</param>
+        public void DisconnectPeer(LiteNetPeer peer, ReadOnlySpan<byte> data)
         {
             DisconnectPeer(
                 peer,
@@ -1648,8 +1660,6 @@ namespace LiteNetLib
                 0,
                 false,
                 data,
-                start,
-                count,
                 null);
         }
 

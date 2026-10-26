@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading;
 using LiteNetLib.Utils;
 
@@ -76,10 +77,10 @@ namespace LiteNetLib
                 NetDebug.WriteError("[AC] Invalid incoming data");
             }
             if (Result == ConnectionRequestResult.Accept)
-                return _listener.OnConnectionSolved(this, null, 0, 0);
+                return _listener.OnConnectionSolved(this, ReadOnlySpan<byte>.Empty);
 
             Result = ConnectionRequestResult.Reject;
-            _listener.OnConnectionSolved(this, null, 0, 0);
+            _listener.OnConnectionSolved(this, ReadOnlySpan<byte>.Empty);
             return null;
         }
 
@@ -92,7 +93,23 @@ namespace LiteNetLib
             if (!TryActivate())
                 return null;
             Result = ConnectionRequestResult.Accept;
-            return _listener.OnConnectionSolved(this, null, 0, 0);
+            return _listener.OnConnectionSolved(this, ReadOnlySpan<byte>.Empty);
+        }
+
+        /// <summary>
+        /// Rejects the connection request.
+        /// </summary>
+        /// <param name="rejectData">Optional user data to send along with the rejection packet.</param>
+        /// <param name="force">
+        /// If <see langword="true"/>, immediately removes the request, if <paramref name="rejectData"/> is not empty a reject packet is also sent. <br/>
+        /// If <see langword="false"/>, creates a temporary peer that sends rejection packets and lingers in memory until a timeout occurs to handle late-arriving packets.
+        /// </param>
+        public void Reject(ReadOnlySpan<byte> rejectData, bool force)
+        {
+            if (!TryActivate())
+                return;
+            Result = force ? ConnectionRequestResult.RejectForce : ConnectionRequestResult.Reject;
+            _listener.OnConnectionSolved(this, rejectData);
         }
 
         /// <summary>
@@ -105,13 +122,8 @@ namespace LiteNetLib
         /// If <see langword="true"/>, immediately removes the request, if <paramref name="rejectData"/> is not <see langword="null"/> a reject packet is also sent. <br/>
         /// If <see langword="false"/>, creates a temporary peer that sends rejection packets and lingers in memory until a timeout occurs to handle late-arriving packets.
         /// </param>
-        public void Reject(byte[] rejectData, int start, int length, bool force)
-        {
-            if (!TryActivate())
-                return;
-            Result = force ? ConnectionRequestResult.RejectForce : ConnectionRequestResult.Reject;
-            _listener.OnConnectionSolved(this, rejectData, start, length);
-        }
+        public void Reject(byte[] rejectData, int start, int length, bool force) =>
+            Reject(new ReadOnlySpan<byte>(rejectData, start, length), force);
 
         /// <summary>
         /// Rejects the connection reliably. Creates a temporary peer to handle packet loss.
@@ -120,7 +132,7 @@ namespace LiteNetLib
         /// <param name="start">Offset in the <paramref name="rejectData"/> array.</param>
         /// <param name="length">Length of the data to be sent.</param>
         public void Reject(byte[] rejectData, int start, int length) =>
-            Reject(rejectData, start, length, false);
+            Reject(new ReadOnlySpan<byte>(rejectData, start, length), false);
 
         /// <summary>
         /// Rejects the connection immediately without reliability.
@@ -130,47 +142,61 @@ namespace LiteNetLib
         /// <param name="start">Offset in the <paramref name="rejectData"/> array.</param>
         /// <param name="length">Length of the data to be sent.</param>
         public void RejectForce(byte[] rejectData, int start, int length) =>
-            Reject(rejectData, start, length, true);
+            Reject(new ReadOnlySpan<byte>(rejectData, start, length), true);
 
         /// <summary>
         /// Rejects the connection immediately without sending any packet.
         /// </summary>
         public void RejectForce() =>
-            Reject(null, 0, 0, true);
+            Reject(ReadOnlySpan<byte>.Empty, true);
 
         /// <summary>
         /// Rejects the connection immediately without reliability.
         /// </summary>
         /// <param name="rejectData">Data to send with the rejection.</param>
         public void RejectForce(byte[] rejectData) =>
-            Reject(rejectData, 0, rejectData.Length, true);
+            Reject(new ReadOnlySpan<byte>(rejectData), true);
 
         /// <summary>
         /// Rejects the connection immediately without reliability using data from a <see cref="NetDataWriter"/>.
         /// </summary>
         /// <param name="rejectData">Writer containing the data to send.</param>
         public void RejectForce(NetDataWriter rejectData) =>
-            Reject(rejectData.Data, 0, rejectData.Length, true);
+            Reject(rejectData.AsReadOnlySpan(), true);
+
+        /// <summary>
+        /// Rejects the connection immediately without reliability.
+        /// </summary>
+        /// <param name="rejectData">Data to send with the rejection.</param>
+        public void RejectForce(ReadOnlySpan<byte> rejectData) =>
+            Reject(rejectData, true);
 
         /// <summary>
         /// Rejects the connection reliably without additional data.
         /// </summary>
         public void Reject() =>
-            Reject(null, 0, 0, false);
+            Reject(ReadOnlySpan<byte>.Empty, false);
 
         /// <summary>
         /// Rejects the connection reliably.
         /// </summary>
         /// <param name="rejectData">Data to send with the rejection.</param>
         public void Reject(byte[] rejectData) =>
-            Reject(rejectData, 0, rejectData.Length, false);
+            Reject(new ReadOnlySpan<byte>(rejectData), false);
 
         /// <summary>
         /// Rejects the connection reliably using data from a <see cref="NetDataWriter"/>.
         /// </summary>
         /// <param name="rejectData">Writer containing the data to send.</param>
         public void Reject(NetDataWriter rejectData) =>
-            Reject(rejectData.Data, 0, rejectData.Length, false);
+            Reject(rejectData.AsReadOnlySpan(), false);
+
+        /// <summary>
+        /// Rejects the connection reliably.
+        /// </summary>
+        /// <param name="rejectData">Data to send with the rejection.</param>
+        public void Reject(ReadOnlySpan<byte> rejectData) =>
+            Reject(rejectData, false);
     }
 
     public class ConnectionRequest : LiteConnectionRequest

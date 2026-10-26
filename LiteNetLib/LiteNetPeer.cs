@@ -446,11 +446,11 @@ namespace LiteNetLib
         }
 
         //Reject
-        internal void Reject(NetConnectRequestPacket requestData, byte[] data, int start, int length)
+        internal void Reject(NetConnectRequestPacket requestData, ReadOnlySpan<byte> data)
         {
             _connectTime = requestData.ConnectionTime;
             _connectNum = requestData.ConnectionNumber;
-            Shutdown(data, start, length, false);
+            Shutdown(data, false);
         }
 
         internal bool ProcessConnectAccept(NetConnectAcceptPacket packet)
@@ -698,6 +698,9 @@ namespace LiteNetLib
         public void Disconnect(byte[] data, int start, int count) =>
             NetManager.DisconnectPeer(this, data, start, count);
 
+        public void Disconnect(ReadOnlySpan<byte> data) =>
+            NetManager.DisconnectPeer(this, data);
+
         public void Disconnect() =>
             NetManager.DisconnectPeer(this);
 
@@ -724,15 +727,13 @@ namespace LiteNetLib
         /// Internally handles the shutdown process for this peer.
         /// </summary>
         /// <param name="data">Optional data to include in the unreliable disconnect packet.</param>
-        /// <param name="start">Offset in the <paramref name="data"/> array.</param>
-        /// <param name="length">Length of the data to send.</param>
         /// <param name="force">
         /// If <see langword="true"/>, immediately sets state to <see cref="ConnectionState.Disconnected"/> without sending a notification. <br/>
         /// If <see langword="false"/>, sends unreliable disconnect packets until a timeout occurs and sets state to <see cref="ConnectionState.ShutdownRequested"/>
         /// Queued reliable packets are bypassed and dropped immediately.
         /// </param>
         /// <returns>A <see cref="ShutdownResult"/> indicating the state change transition.</returns>
-        internal ShutdownResult Shutdown(byte[] data, int start, int length, bool force)
+        internal ShutdownResult Shutdown(ReadOnlySpan<byte> data, bool force)
         {
             lock (_shutdownLock)
             {
@@ -758,16 +759,16 @@ namespace LiteNetLib
                 Interlocked.Exchange(ref _timeSinceLastPacket, 0);
 
                 //send shutdown packet
-                _shutdownPacket = new NetPacket(PacketProperty.Disconnect, length) {ConnectionNumber = _connectNum};
+                _shutdownPacket = new NetPacket(PacketProperty.Disconnect, data.Length) {ConnectionNumber = _connectNum};
                 FastBitConverter.GetBytes(_shutdownPacket.RawData, 1, _connectTime);
                 if (_shutdownPacket.Size >= _mtu)
                 {
                     //Drop additional data
                     NetDebug.WriteError("[Peer] Disconnect additional data size more than MTU - 8!");
                 }
-                else if (data != null && length > 0)
+                else if (!data.IsEmpty)
                 {
-                    Buffer.BlockCopy(data, start, _shutdownPacket.RawData, 9, length);
+                    data.CopyTo(_shutdownPacket.RawData.AsSpan(9));
                 }
                 _connectionState = ConnectionState.ShutdownRequested;
                 NetDebug.Write("[Peer] Send disconnect");

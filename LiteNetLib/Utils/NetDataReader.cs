@@ -3,6 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if UNITY_ANDROID
+using Unity.Collections.LowLevel.Unsafe;
+#endif
 
 namespace LiteNetLib.Utils
 {
@@ -671,7 +674,13 @@ namespace LiteNetLib.Utils
             T value;
             fixed (byte* ptr = &_data[_position])
             {
+    #if UNITY_ANDROID
+                T* valueBuffer = stackalloc T[1];
+                UnsafeUtility.MemCpy(valueBuffer, ptr, size);
+                value = valueBuffer[0];
+    #else
                 value = *(T*)ptr;
+    #endif
             }
 #endif
 
@@ -716,7 +725,11 @@ namespace LiteNetLib.Utils
         #region PeekMethods
 
         /// <summary>Reads the <see cref="byte"/> at the current position without advancing the <see cref="Position"/>.</summary>
-        public byte PeekByte() => _data[_position];
+        public byte PeekByte()
+        {
+            EnsureAvailable(1);
+            return _data[_position];
+        }
 
         /// <summary>Reads the <see cref="sbyte"/> at the current position without advancing the <see cref="Position"/>.</summary>
         public sbyte PeekSByte() => (sbyte)PeekByte();
@@ -763,6 +776,7 @@ namespace LiteNetLib.Utils
                 return string.Empty;
 
             int actualSize = size - 1;
+            EnsureAvailable(sizeof(ushort) + actualSize);
             return (maxLength > 0 && NetDataWriter.uTF8Encoding.GetCharCount(_data, _position + sizeof(ushort), actualSize) > maxLength)
                 ? string.Empty
                 : NetDataWriter.uTF8Encoding.GetString(_data, _position + sizeof(ushort), actualSize);
@@ -778,6 +792,7 @@ namespace LiteNetLib.Utils
                 return string.Empty;
 
             int actualSize = size - 1;
+            EnsureAvailable(sizeof(ushort) + actualSize);
             return NetDataWriter.uTF8Encoding.GetString(_data, _position + sizeof(ushort), actualSize);
         }
 
@@ -789,13 +804,22 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe T PeekUnmanaged<T>() where T : unmanaged
         {
+            int size = sizeof(T);
+            EnsureAvailable(size);
+
 #if NET8_0_OR_GREATER
             return Unsafe.ReadUnaligned<T>(ref _data[_position]);
 #else
             T value;
             fixed (byte* ptr = &_data[_position])
             {
+    #if UNITY_ANDROID
+                T* valueBuffer = stackalloc T[1];
+                UnsafeUtility.MemCpy(valueBuffer, ptr, size);
+                value = valueBuffer[0];
+    #else
                 value = *(T*)ptr;
+    #endif
             }
             return value;
 #endif
@@ -1007,7 +1031,13 @@ namespace LiteNetLib.Utils
 #else
             fixed (byte* ptr = &_data[_position])
             {
+    #if UNITY_ANDROID
+                T* valueBuffer = stackalloc T[1];
+                UnsafeUtility.MemCpy(valueBuffer, ptr, size);
+                result = valueBuffer[0];
+    #else
                 result = *(T*)ptr;
+    #endif
             }
 #endif
 
