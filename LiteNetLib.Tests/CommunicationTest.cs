@@ -56,6 +56,48 @@ namespace LiteNetLib.Tests
         }
 
         [Test, CancelAfter(TestTimeout)]
+        public void NativeSocketPeerLookup()
+        {
+            var serverListener = new EventBasedNetListener();
+            var clientListener = new EventBasedNetListener();
+            serverListener.ConnectionRequestEvent += request => request.AcceptIfKey(DefaultAppKey);
+            bool messageReceived = false;
+            serverListener.NetworkReceiveEvent += (peer, reader, channel, method) => messageReceived = true;
+
+            var server = new NetManager(serverListener, new Crc32cLayer()) { UseNativeSockets = true };
+            var client = new NetManager(clientListener, new Crc32cLayer()) { UseNativeSockets = true };
+            try
+            {
+                Assert.That(server.Start(DefaultPort + 1), Is.True);
+                Assert.That(client.Start(), Is.True);
+                if (!server.UseNativeSockets || !client.UseNativeSockets)
+                    Assert.Ignore("Native sockets are not supported on this platform");
+
+                client.Connect("127.0.0.1", DefaultPort + 1, DefaultAppKey);
+                while (server.ConnectedPeersCount != 1 || client.ConnectedPeersCount != 1)
+                {
+                    Thread.Sleep(15);
+                    server.PollEvents();
+                    client.PollEvents();
+                }
+
+                client.FirstPeer.Send(new byte[] { 1 }, DeliveryMethod.Unreliable);
+                while (!messageReceived)
+                {
+                    Thread.Sleep(15);
+                    server.PollEvents();
+                }
+
+                Assert.That(messageReceived, Is.True);
+            }
+            finally
+            {
+                client.Stop();
+                server.Stop();
+            }
+        }
+
+        [Test, CancelAfter(TestTimeout)]
         public void P2PConnect()
         {
             var client1 = ManagerStack.Client(1);

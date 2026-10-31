@@ -230,11 +230,13 @@ namespace LiteNetLib
 
         private SocketAddress _cachedSocketAddr;
         private int _cachedHashCode;
+        private NativeEndpointKey _nativeEndpointKey;
         private ReliableChannel _reliableChannel;
         private ReliableChannel _reliableUnorderedChannel;
         private SequencedChannel _sequencedChannel;
 
         internal byte[] NativeAddress;
+        internal NativeEndpointKey EndpointKey => _nativeEndpointKey;
 
         protected virtual int ChannelsCount => 1;
 
@@ -255,6 +257,7 @@ namespace LiteNetLib
             Id = id;
             Statistics = new NetStatistics();
             NetManager = netManager;
+            _nativeEndpointKey = NativeEndpointKey.FromEndPoint(this);
 
             _cachedSocketAddr = base.Serialize();
             if (NetManager.UseNativeSockets)
@@ -296,6 +299,7 @@ namespace LiteNetLib
 
             Address = newEndPoint.Address;
             Port = newEndPoint.Port;
+            _nativeEndpointKey = NativeEndpointKey.FromEndPoint(this);
 
             _cachedSocketAddr = base.Serialize();
             if (NetManager.UseNativeSockets)

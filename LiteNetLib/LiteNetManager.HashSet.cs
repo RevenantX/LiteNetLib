@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 
@@ -84,6 +85,9 @@ namespace LiteNetLib
             _peersLock.ExitWriteLock();
         }
 
+        private int GetPeerHashCode(LiteNetPeer peer) =>
+            (UseNativeSockets ? peer.EndpointKey.GetHashCode() : peer.GetHashCode()) & Lower31BitMask;
+
         protected bool ContainsPeer(LiteNetPeer item)
         {
             if (item == null)
@@ -93,7 +97,7 @@ namespace LiteNetLib
             }
             if (_buckets != null)
             {
-                int hashCode = item.GetHashCode() & Lower31BitMask;
+                int hashCode = GetPeerHashCode(item);
                 for (int i = _buckets[hashCode % _buckets.Length] - 1; i >= 0; i = _slots[i].Next)
                 {
                     if (_slots[i].HashCode == hashCode && _slots[i].Value.Equals(item))
@@ -181,7 +185,7 @@ namespace LiteNetLib
         {
             if (_buckets == null || peer == null)
                 return false;
-            int hashCode = peer.GetHashCode() & Lower31BitMask;
+            int hashCode = GetPeerHashCode(peer);
             int bucket = hashCode % _buckets.Length;
             int last = -1;
             for (int i = _buckets[bucket] - 1; i >= 0; last = i, i = _slots[i].Next)
@@ -212,20 +216,45 @@ namespace LiteNetLib
             return false;
         }
 
+        private bool TryGetPeer(NativeEndpointKey endpointKey, out LiteNetPeer actualValue)
+        {
+            if (_buckets != null)
+            {
+                int hashCode = endpointKey.GetHashCode() & Lower31BitMask;
+                _peersLock.EnterReadLock();
+                for (int i = _buckets[hashCode % _buckets.Length] - 1; i >= 0; i = _slots[i].Next)
+                {
+                    if (_slots[i].HashCode == hashCode && _slots[i].Value.EndpointKey.Equals(endpointKey))
+                    {
+                        actualValue = _slots[i].Value;
+                        _peersLock.ExitReadLock();
+                        return true;
+                    }
+                }
+                _peersLock.ExitReadLock();
+            }
+            actualValue = null;
+            return false;
+        }
+
         private bool TryGetPeer(IPEndPoint endPoint, out LiteNetPeer actualValue)
         {
             if (_buckets != null)
             {
+                bool useNativeKey = UseNativeSockets;
+                NativeEndpointKey endpointKey = useNativeKey ? NativeEndpointKey.FromEndPoint(endPoint) : default;
 #if NET8_0_OR_GREATER
                 //can be NetPeer or IPEndPoint
-                int hashCode = (UseNativeSockets ? endPoint.GetHashCode() : endPoint.Serialize().GetHashCode()) & Lower31BitMask;
+                int hashCode = (useNativeKey ? endpointKey.GetHashCode() : endPoint.Serialize().GetHashCode()) & Lower31BitMask;
 #else
-                int hashCode = endPoint.GetHashCode() & Lower31BitMask;
+                int hashCode = (useNativeKey ? endpointKey.GetHashCode() : endPoint.GetHashCode()) & Lower31BitMask;
 #endif
                 _peersLock.EnterReadLock();
                 for (int i = _buckets[hashCode % _buckets.Length] - 1; i >= 0; i = _slots[i].Next)
                 {
-                    if (_slots[i].HashCode == hashCode && _slots[i].Value.Equals(endPoint))
+                    if (_slots[i].HashCode == hashCode && (useNativeKey
+                            ? _slots[i].Value.EndpointKey.Equals(endpointKey)
+                            : _slots[i].Value.Equals(endPoint)))
                     {
                         actualValue = _slots[i].Value;
                         _peersLock.ExitReadLock();
@@ -269,7 +298,7 @@ namespace LiteNetLib
                 _slots = new Slot[size];
             }
 
-            int hashCode = value.GetHashCode() & Lower31BitMask;
+            int hashCode = GetPeerHashCode(value);
             int bucket = hashCode % _buckets.Length;
             for (int i = _buckets[hashCode % _buckets.Length] - 1; i >= 0; i = _slots[i].Next)
             {

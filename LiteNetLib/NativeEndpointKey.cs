@@ -1,0 +1,118 @@
+﻿using System;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Net.Sockets;
+
+namespace LiteNetLib
+{
+    internal readonly struct NativeEndpointKey : IEquatable<NativeEndpointKey>
+    {
+        private readonly AddressFamily _addressFamily;
+        private readonly uint _address0;
+        private readonly uint _address1;
+        private readonly uint _address2;
+        private readonly uint _address3;
+        private readonly uint _scope;
+        private readonly ushort _port;
+
+        private NativeEndpointKey(AddressFamily addressFamily, uint address0, uint address1, uint address2, uint address3, uint scope, ushort port)
+        {
+            _addressFamily = addressFamily;
+            _address0 = address0;
+            _address1 = address1;
+            _address2 = address2;
+            _address3 = address3;
+            _scope = scope;
+            _port = port;
+        }
+
+        internal static NativeEndpointKey FromNativeAddress(byte[] address)
+        {
+            short family = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+                ? (short)((address[1] << 8) | address[0])
+                : BitConverter.ToInt16(address, 0);
+            ushort port = (ushort)((address[2] << 8) | address[3]);
+            bool isIPv6 = NativeSocket.UnixMode
+                ? family == NativeSocket.AF_INET6
+                : (AddressFamily)family == AddressFamily.InterNetworkV6;
+
+            if (isIPv6)
+            {
+                return new NativeEndpointKey(
+                    AddressFamily.InterNetworkV6,
+                    ReadUInt32LE(address, 8),
+                    ReadUInt32LE(address, 12),
+                    ReadUInt32LE(address, 16),
+                    ReadUInt32LE(address, 20),
+                    BitConverter.ToUInt32(address, 24),
+                    port);
+            }
+
+            return new NativeEndpointKey(
+                AddressFamily.InterNetwork,
+                ReadUInt32LE(address, 4),
+                0,
+                0,
+                0,
+                0,
+                port);
+        }
+
+        internal static NativeEndpointKey FromEndPoint(IPEndPoint endPoint)
+        {
+            Span<byte> address = stackalloc byte[16];
+            endPoint.Address.TryWriteBytes(address, out _);
+            var addressFamily = endPoint.Address.AddressFamily;
+            uint scope = addressFamily == AddressFamily.InterNetworkV6
+                ? (uint)endPoint.Address.ScopeId
+                : 0;
+
+            return new NativeEndpointKey(
+                addressFamily,
+                ReadUInt32LE(address, 0),
+                addressFamily == AddressFamily.InterNetworkV6 ? ReadUInt32LE(address, 4) : 0,
+                addressFamily == AddressFamily.InterNetworkV6 ? ReadUInt32LE(address, 8) : 0,
+                addressFamily == AddressFamily.InterNetworkV6 ? ReadUInt32LE(address, 12) : 0,
+                scope,
+                (ushort)endPoint.Port);
+        }
+
+        internal IPEndPoint ToEndPoint()
+        {
+            Span<byte> address = stackalloc byte[16];
+            WriteUInt32LE(address, 0, _address0);
+            if (_addressFamily == AddressFamily.InterNetworkV6)
+            {
+                WriteUInt32LE(address, 4, _address1);
+                WriteUInt32LE(address, 8, _address2);
+                WriteUInt32LE(address, 12, _address3);
+                return new IPEndPoint(new IPAddress(address, _scope), _port);
+            }
+
+            return new IPEndPoint(new IPAddress(address.Slice(0, 4)), _port);
+        }
+
+        public bool Equals(NativeEndpointKey other) =>
+            _addressFamily == other._addressFamily &&
+            _address0 == other._address0 &&
+            _address1 == other._address1 &&
+            _address2 == other._address2 &&
+            _address3 == other._address3 &&
+            _scope == other._scope &&
+            _port == other._port;
+
+        public override int GetHashCode() =>
+            HashCode.Combine(_addressFamily, _address0, _address1, _address2, _address3, _scope, _port);
+
+        private static uint ReadUInt32LE(ReadOnlySpan<byte> bytes, int offset) =>
+            (uint)(bytes[offset] | bytes[offset + 1] << 8 | bytes[offset + 2] << 16 | bytes[offset + 3] << 24);
+
+        private static void WriteUInt32LE(Span<byte> bytes, int offset, uint value)
+        {
+            bytes[offset] = (byte)value;
+            bytes[offset + 1] = (byte)(value >> 8);
+            bytes[offset + 2] = (byte)(value >> 16);
+            bytes[offset + 3] = (byte)(value >> 24);
+        }
+    }
+}

@@ -134,7 +134,6 @@ namespace LiteNetLib
             IntPtr socketHandle6 = _udpSocketv6?.Handle ?? IntPtr.Zero;
             byte[] addrBuffer4 = new byte[NativeSocket.IPv4AddrSize];
             byte[] addrBuffer6 = new byte[NativeSocket.IPv6AddrSize];
-            var tempEndPoint = new IPEndPoint(IPAddress.Any, 0);
             var selectReadList = new List<Socket>(2);
             var socketv4 = _udpSocketv4;
             var socketV6 = _udpSocketv6;
@@ -210,37 +209,8 @@ namespace LiteNetLib
                 }
 
                 //NetDebug.WriteForce($"[R]Received data from {endPoint}, result: {packet.Size}");
-                //refresh temp Addr/Port
-                short family = (short)((address[1] << 8) | address[0]);
-                tempEndPoint.Port = (ushort)((address[2] << 8) | address[3]);
-                if ((NativeSocket.UnixMode && family == NativeSocket.AF_INET6) || (!NativeSocket.UnixMode && (AddressFamily)family == AddressFamily.InterNetworkV6))
-                {
-                    uint scope = unchecked((uint)(
-                        (address[27] << 24) +
-                        (address[26] << 16) +
-                        (address[25] << 8) +
-                        (address[24])));
-                    tempEndPoint.Address = new IPAddress(new ReadOnlySpan<byte>(address, 8, 16), scope);
-                }
-                else //IPv4
-                {
-                    long ipv4Addr = unchecked((uint)((address[4] & 0x000000FF) |
-                                                     (address[5] << 8 & 0x0000FF00) |
-                                                     (address[6] << 16 & 0x00FF0000) |
-                                                     (address[7] << 24)));
-                    tempEndPoint.Address = new IPAddress(ipv4Addr);
-                }
-
-                if (TryGetPeer(tempEndPoint, out var peer))
-                {
-                    //use cached native ep
-                    OnMessageReceived(packet, peer);
-                }
-                else
-                {
-                    OnMessageReceived(packet, tempEndPoint);
-                    tempEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                }
+                var ep = NativeEndpointKey.FromNativeAddress(address);
+                OnMessageReceived(packet, TryGetPeer(ep, out var peer) ? peer : ep.ToEndPoint());
                 packet = PoolGetPacket(NetConstants.MaxPacketSize);
                 return true;
             }
@@ -696,7 +666,8 @@ namespace LiteNetLib
             }
             catch (SocketException ex)
             {
-                if (ex.SocketErrorCode == SocketError.HostUnreachable)
+                if (ex.SocketErrorCode == SocketError.HostUnreachable ||
+                    ex.SocketErrorCode == SocketError.NetworkUnreachable)
                     return broadcastSuccess;
                 NetDebug.WriteError($"[S][MCAST] {ex}");
                 return broadcastSuccess;
