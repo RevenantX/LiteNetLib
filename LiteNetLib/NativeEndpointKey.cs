@@ -35,45 +35,52 @@ namespace LiteNetLib
             bool isIPv6 = NativeSocket.UnixMode
                 ? family == NativeSocket.AF_INET6
                 : (AddressFamily)family == AddressFamily.InterNetworkV6;
-
-            if (isIPv6)
-            {
-                return new NativeEndpointKey(
+            return isIPv6
+                ? new NativeEndpointKey(
                     AddressFamily.InterNetworkV6,
                     ReadUInt32LE(address, 8),
                     ReadUInt32LE(address, 12),
                     ReadUInt32LE(address, 16),
                     ReadUInt32LE(address, 20),
                     BitConverter.ToUInt32(address, 24),
+                    port)
+                : new NativeEndpointKey(AddressFamily.InterNetwork, ReadUInt32LE(address, 4), 0, 0, 0, 0, port);
+        }
+
+        internal static NativeEndpointKey FromSocketAddress(SocketAddress socketAddress)
+        {
+            ushort port = (ushort)((socketAddress[2] << 8) | socketAddress[3]);
+            if (socketAddress.Family == AddressFamily.InterNetworkV6)
+            {
+                return new NativeEndpointKey(
+                    AddressFamily.InterNetworkV6,
+                    ReadUInt32LE(socketAddress, 8),
+                    ReadUInt32LE(socketAddress, 12),
+                    ReadUInt32LE(socketAddress, 16),
+                    ReadUInt32LE(socketAddress, 20),
+                    ReadUInt32NativeEndian(socketAddress, 24),
                     port);
             }
+            else if (socketAddress.Family != AddressFamily.InterNetwork)
+            {
+                throw new ArgumentException("Socket address must be IPv4 or IPv6.", nameof(socketAddress));
+            }
 
-            return new NativeEndpointKey(
-                AddressFamily.InterNetwork,
-                ReadUInt32LE(address, 4),
-                0,
-                0,
-                0,
-                0,
-                port);
+            return new NativeEndpointKey(AddressFamily.InterNetwork, ReadUInt32LE(socketAddress, 4), 0, 0, 0, 0, port);
         }
 
         internal static NativeEndpointKey FromEndPoint(IPEndPoint endPoint)
         {
             Span<byte> address = stackalloc byte[16];
             endPoint.Address.TryWriteBytes(address, out _);
-            var addressFamily = endPoint.Address.AddressFamily;
-            uint scope = addressFamily == AddressFamily.InterNetworkV6
-                ? (uint)endPoint.Address.ScopeId
-                : 0;
-
+            var af = endPoint.Address.AddressFamily;
             return new NativeEndpointKey(
-                addressFamily,
+                af,
                 ReadUInt32LE(address, 0),
-                addressFamily == AddressFamily.InterNetworkV6 ? ReadUInt32LE(address, 4) : 0,
-                addressFamily == AddressFamily.InterNetworkV6 ? ReadUInt32LE(address, 8) : 0,
-                addressFamily == AddressFamily.InterNetworkV6 ? ReadUInt32LE(address, 12) : 0,
-                scope,
+                af == AddressFamily.InterNetworkV6 ? ReadUInt32LE(address, 4) : 0,
+                af == AddressFamily.InterNetworkV6 ? ReadUInt32LE(address, 8) : 0,
+                af == AddressFamily.InterNetworkV6 ? ReadUInt32LE(address, 12) : 0,
+                af == AddressFamily.InterNetworkV6 ? (uint)endPoint.Address.ScopeId : 0,
                 (ushort)endPoint.Port);
         }
 
@@ -89,7 +96,7 @@ namespace LiteNetLib
                 return new IPEndPoint(new IPAddress(address, _scope), _port);
             }
 
-            return new IPEndPoint(new IPAddress(address.Slice(0, 4)), _port);
+            return new IPEndPoint(new IPAddress(address[..4]), _port);
         }
 
         public bool Equals(NativeEndpointKey other) =>
@@ -106,6 +113,13 @@ namespace LiteNetLib
 
         private static uint ReadUInt32LE(ReadOnlySpan<byte> bytes, int offset) =>
             (uint)(bytes[offset] | bytes[offset + 1] << 8 | bytes[offset + 2] << 16 | bytes[offset + 3] << 24);
+
+        private static uint ReadUInt32LE(SocketAddress address, int offset) =>
+            (uint)(address[offset] | address[offset + 1] << 8 | address[offset + 2] << 16 | address[offset + 3] << 24);
+
+        private static uint ReadUInt32NativeEndian(SocketAddress address, int offset) => BitConverter.IsLittleEndian
+            ? ReadUInt32LE(address, offset)
+            : (uint)(address[offset] << 24 | address[offset + 1] << 16 | address[offset + 2] << 8 | address[offset + 3]);
 
         private static void WriteUInt32LE(Span<byte> bytes, int offset, uint value)
         {

@@ -266,11 +266,7 @@ namespace LiteNetLib
                 for (int i = 0; i < _cachedSocketAddr.Size; i++)
                     NativeAddress[i] = _cachedSocketAddr[i];
             }
-#if NET8_0_OR_GREATER
-            _cachedHashCode = NetManager.UseNativeSockets ? base.GetHashCode() : _cachedSocketAddr.GetHashCode();
-#else
-            _cachedHashCode = base.GetHashCode();
-#endif
+            _cachedHashCode = _nativeEndpointKey.GetHashCode();
 
             ResetMtu();
 
@@ -308,11 +304,7 @@ namespace LiteNetLib
                 for (int i = 0; i < _cachedSocketAddr.Size; i++)
                     NativeAddress[i] = _cachedSocketAddr[i];
             }
-#if NET8_0_OR_GREATER
-            _cachedHashCode = NetManager.UseNativeSockets ? base.GetHashCode() : _cachedSocketAddr.GetHashCode();
-#else
-            _cachedHashCode = base.GetHashCode();
-#endif
+            _cachedHashCode = _nativeEndpointKey.GetHashCode();
         }
 
         internal void ResetMtu()
