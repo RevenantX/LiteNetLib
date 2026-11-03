@@ -127,8 +127,8 @@ server.Stop();
 * **SimulationMaxLatency**
   * maximum simulated latency
   * default value: **100 msec**
-* **BroadcastEnabled**
-  * Allows receive Broadcast packets
+* **BroadcastReceiveEnabled**
+  * Allows receiving packets sent with `SendBroadcast`
   * default value: **false**
 * **ReconnectDelay**
   * delay betwen connection attempts
@@ -139,3 +139,24 @@ server.Stop();
 * **UnsyncedEvents**
   * Experimental feature. Events automatically will be called without PollEvents method from another thread
   * default value: **false**
+
+### Broadcast on a specific network interface
+
+`Start(port)` binds the IPv4 socket to `IPAddress.Any`. If the host has multiple network interfaces, bind to the local IPv4 address of the interface you want to use for broadcast. Received packets are reported through `OnNetworkReceiveUnconnected` with `UnconnectedMessageType.Broadcast`:
+
+```csharp
+using System.Net;
+using LiteNetLib;
+
+var listener = new EventBasedNetListener();
+IPAddress localAddress = IPAddress.Parse("192.168.1.10"); // address assigned to the desired interface
+var manager = new NetManager(listener)
+{
+    BroadcastReceiveEnabled = true,
+    IPv6Enabled = false
+};
+
+manager.Start(localAddress, IPAddress.IPv6Any, 9050);
+```
+
+Use the `Start(IPAddress, IPAddress, int)` overload for the receiver as well as the sender. To use multiple IPv4 interfaces, create a manager bound to each interface address.
