@@ -222,9 +222,9 @@ server.Stop();
 <li>default value: <strong>100 msec</strong></li>
 </ul>
 </li>
-<li><strong>BroadcastEnabled</strong>
+<li><strong>BroadcastReceiveEnabled</strong>
 <ul>
-<li>Allows receive Broadcast packets</li>
+<li>Allows receiving packets sent with <code>SendBroadcast</code></li>
 <li>default value: <strong>false</strong></li>
 </ul>
 </li>
@@ -247,6 +247,23 @@ server.Stop();
 </ul>
 </li>
 </ul>
+
+<h3 id="broadcast-on-a-specific-network-interface">Broadcast on a specific network interface</h3>
+<p><code>Start(port)</code> binds the IPv4 socket to <code>IPAddress.Any</code>. If the host has multiple network interfaces, bind to the local IPv4 address of the interface you want to use for broadcast. Received packets are reported through <code>OnNetworkReceiveUnconnected</code> with <code>UnconnectedMessageType.Broadcast</code>:</p>
+<pre><code class="lang-csharp">using System.Net;
+using LiteNetLib;
+
+var listener = new EventBasedNetListener();
+IPAddress localAddress = IPAddress.Parse("192.168.1.10"); // address assigned to the desired interface
+var manager = new NetManager(listener)
+{
+    BroadcastReceiveEnabled = true,
+    IPv6Enabled = false
+};
+
+manager.Start(localAddress, IPAddress.IPv6Any, 9050);
+</code></pre>
+<p>Use the <code>Start(IPAddress, IPAddress, int)</code> overload for the receiver as well as the sender. To use multiple IPv4 interfaces, create a manager bound to each interface address.</p>
 
 </article>
           </div>

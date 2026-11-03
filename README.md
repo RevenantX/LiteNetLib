@@ -125,6 +125,27 @@ while (!Console.KeyAvailable)
 server.Stop();
 ```
 
+### Broadcast discovery
+
+Set `BroadcastReceiveEnabled` on a manager that should receive broadcast packets. They are reported through `OnNetworkReceiveUnconnected` with `UnconnectedMessageType.Broadcast`. With multiple network interfaces, bind the manager to the local IPv4 address of the interface to use instead of calling `Start(port)`:
+
+```csharp
+using System.Net;
+using LiteNetLib;
+
+var listener = new EventBasedNetListener();
+var manager = new NetManager(listener)
+{
+    BroadcastReceiveEnabled = true,
+    IPv6Enabled = false
+};
+
+var localAddress = IPAddress.Parse("192.168.1.10"); // address assigned to the desired interface
+manager.Start(localAddress, IPAddress.IPv6Any, 9050);
+```
+
+Use the same address-specific `Start` overload for a sender. To use multiple IPv4 interfaces, create a manager bound to each interface address.
+
 
 
 
