@@ -38,7 +38,12 @@
     public static class NetConstants
     {
         //can be tuned
-        public const int DefaultWindowSize = 64;
+        // WIRE-COMPATIBILITY: Moz's deployed v1 clients and the known-good server
+        // use a 2048-packet reliable window. ReliableChannel serializes one ACK
+        // bit per window entry, so changing this value changes ACK packet size.
+        // A stock LiteNetLib value of 64 makes the peers reject each other's ACKs
+        // and resend every reliable packet indefinitely.
+        public const int DefaultWindowSize = 2048;
         public const int SocketBufferSize = 1024 * 1024; //1mb
         public const int SocketTTL = 255;
 
@@ -62,7 +67,8 @@
             1460 - MaxUdpHeaderSize, //google cloud
             1472 - MaxUdpHeaderSize, //VPN
             1492 - MaxUdpHeaderSize, //Ethernet with LLC and SNAP, PPPoE (RFC 1042)
-            1500 - MaxUdpHeaderSize  //Ethernet II (RFC 1191)
+            1500 - MaxUdpHeaderSize, //Ethernet II (RFC 1191)
+            9000                     //Moz legacy deployment (jumbo-frame probe)
         };
 
         //Max possible single packet size
