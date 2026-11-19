@@ -596,7 +596,9 @@ namespace LiteNetLib.Utils
             ReadOnlySpan<char> source = value.AsSpan();
             if (maxLength > 0 && source.Length > maxLength)
             {
-                source = source.Slice(0, maxLength);
+                // do not cut a surrogate pair in half: the strict encoder throws on a lone surrogate
+                int length = char.IsHighSurrogate(source[maxLength - 1]) ? maxLength - 1 : maxLength;
+                source = source.Slice(0, length);
             }
 
             int maxSize = uTF8Encoding.GetMaxByteCount(source.Length);

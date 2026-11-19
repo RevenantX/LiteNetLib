@@ -244,6 +244,33 @@ namespace LiteNetLib.Tests
         }
 
         [Test]
+        public void WriteReadStringTruncated()
+        {
+            var ndw = new NetDataWriter();
+            ndw.Put("Long string", 4);
+
+            var ndr = new NetDataReader(ndw);
+            var readString = ndr.GetString(4);
+
+            Assert.That(readString, Is.EqualTo("Long"));
+        }
+
+        [Test]
+        public void WriteReadStringTruncatedBeforeSurrogatePair()
+        {
+            // "\U0001F600" is one character made of two UTF-16 code units
+            var ndw = new NetDataWriter();
+            ndw.Put("ab\U0001F600c", 3);
+            ndw.PutArray(new[] { "\U0001F600", "x\U0001F600" }, 1);
+
+            var ndr = new NetDataReader(ndw);
+
+            Assert.That(ndr.GetString(3), Is.EqualTo("ab"));
+            Assert.That(ndr.GetStringArray(1), Is.EqualTo(new[] { "", "x" }).AsCollection);
+            Assert.That(ndr.AvailableBytes, Is.EqualTo(0));
+        }
+
+        [Test]
         public void WriteReadStringArray()
         {
             var ndw = new NetDataWriter();
