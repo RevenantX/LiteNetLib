@@ -387,7 +387,7 @@ namespace LiteNetLib.Utils
         /// </remarks>
         public void PutArray(Array arr, int sz)
         {
-            ushort length = arr == null ? (ushort)0 : (ushort)arr.Length;
+            ushort length = arr == null ? (ushort)0 : ToArrayLength(arr.Length, nameof(arr));
             sz *= length;
             if (_autoResize)
                 ResizeIfNeed(_position + sz + 2);
@@ -418,7 +418,7 @@ namespace LiteNetLib.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void PutSpan<T>(Span<T> span) where T : unmanaged
         {
-            var length = (ushort)span.Length;
+            var length = ToArrayLength(span.Length, nameof(span));
             var byteLength = length * sizeof(T);
 
             if (_autoResize)
@@ -473,7 +473,7 @@ namespace LiteNetLib.Utils
         /// </remarks>
         public void PutArray(string[] value)
         {
-            ushort strArrayLength = value == null ? (ushort)0 : (ushort)value.Length;
+            ushort strArrayLength = value == null ? (ushort)0 : ToArrayLength(value.Length, nameof(value));
             Put(strArrayLength);
             for (int i = 0; i < strArrayLength; i++)
                 Put(value[i]);
@@ -486,7 +486,7 @@ namespace LiteNetLib.Utils
         /// <param name="strMaxLength">The maximum allowed length for each individual <see cref="string"/>.</param>
         public void PutArray(string[] value, int strMaxLength)
         {
-            ushort strArrayLength = value == null ? (ushort)0 : (ushort)value.Length;
+            ushort strArrayLength = value == null ? (ushort)0 : ToArrayLength(value.Length, nameof(value));
             Put(strArrayLength);
             for (int i = 0; i < strArrayLength; i++)
                 Put(value[i], strMaxLength);
@@ -499,10 +499,29 @@ namespace LiteNetLib.Utils
         /// <param name="value">The array of objects to serialize.</param>
         public void PutArray<T>(T[] value) where T : INetSerializable, new()
         {
-            ushort strArrayLength = (ushort)(value?.Length ?? 0);
+            ushort strArrayLength = value == null ? (ushort)0 : ToArrayLength(value.Length, nameof(value));
             Put(strArrayLength);
             for (int i = 0; i < strArrayLength; i++)
                 value[i].Serialize(this);
+        }
+
+        /// <summary>
+        /// Converts an element count to the 2-byte <see cref="ushort"/> length header used by array methods.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="length"/> exceeds <see cref="ushort.MaxValue"/>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ushort ToArrayLength(int length, string paramName)
+        {
+            if (length > ushort.MaxValue)
+                ThrowArrayTooLong(length, paramName);
+            return (ushort)length;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowArrayTooLong(int length, string paramName)
+        {
+            throw new ArgumentOutOfRangeException(paramName, length,
+                $"Array length must not exceed {ushort.MaxValue} because it is written as a ushort.");
         }
 
         /// <summary>
