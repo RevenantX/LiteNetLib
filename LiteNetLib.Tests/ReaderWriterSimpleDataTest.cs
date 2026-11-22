@@ -391,5 +391,44 @@ namespace LiteNetLib.Tests
             Assert.Throws<InvalidOperationException>(() => ndr.PeekByte());
             Assert.Throws<InvalidOperationException>(() => ndr.PeekBool());
         }
+
+        [Test]
+        public void PutArrayLongerThanUShortMaxValueThrows()
+        {
+            // the length header is a ushort, so 65536 elements would be written as an empty array
+            var ndw = new NetDataWriter();
+            Assert.Throws<ArgumentOutOfRangeException>(() => ndw.PutArray(new int[ushort.MaxValue + 1]));
+            Assert.Throws<ArgumentOutOfRangeException>(() => ndw.PutArray(new int[ushort.MaxValue + 2]));
+            Assert.Throws<ArgumentOutOfRangeException>(() => ndw.PutBytesWithLength(new byte[70000]));
+            Assert.Throws<ArgumentOutOfRangeException>(() => ndw.PutSBytesWithLength(new sbyte[70000]));
+            Assert.Throws<ArgumentOutOfRangeException>(() => ndw.PutArray(new string[ushort.MaxValue + 1]));
+            Assert.Throws<ArgumentOutOfRangeException>(() => ndw.PutArray(new string[ushort.MaxValue + 1], 10));
+            Assert.Throws<ArgumentOutOfRangeException>(() => ndw.PutArray(new SerializableItem[ushort.MaxValue + 1]));
+            Assert.That(ndw.Length, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void PutArrayOfUShortMaxValueElementsRoundTrips()
+        {
+            var ints = new int[ushort.MaxValue];
+            ints[ints.Length - 1] = 42;
+            var bytes = new byte[ushort.MaxValue];
+            bytes[bytes.Length - 1] = 7;
+
+            var ndw = new NetDataWriter();
+            ndw.PutArray(ints);
+            ndw.PutBytesWithLength(bytes);
+
+            var ndr = new NetDataReader(ndw);
+            Assert.That(ndr.GetIntArray(), Is.EqualTo(ints).AsCollection);
+            Assert.That(ndr.GetBytesWithLength(), Is.EqualTo(bytes).AsCollection);
+            Assert.That(ndr.AvailableBytes, Is.EqualTo(0));
+        }
+
+        private class SerializableItem : INetSerializable
+        {
+            public void Serialize(NetDataWriter writer) => writer.Put((byte)1);
+            public void Deserialize(NetDataReader reader) => reader.GetByte();
+        }
     }
 }
