@@ -403,7 +403,9 @@ namespace LiteNetLib
         private bool BindSocket(Socket socket, IPEndPoint ep)
         {
             //Setup socket
-            socket.ReceiveTimeout = 500;
+            // Without IPv6, the native receive thread blocks in recvfrom up to this timeout and Stop joins that
+            // thread, so use the polling interval of the other receive paths instead of 500 ms.
+            socket.ReceiveTimeout = UseNativeSockets ? Math.Max(1, ReceivePollingTime / 1000) : 500;
             socket.SendTimeout = 500;
             socket.ReceiveBufferSize = NetConstants.SocketBufferSize;
             socket.SendBufferSize = NetConstants.SocketBufferSize;
