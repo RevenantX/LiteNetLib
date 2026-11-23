@@ -184,6 +184,22 @@ namespace LiteNetLib
         public bool ReuseAddress = false;
 
         /// <summary>
+        /// Called on the logic thread in every update, before the peers update and send. In manual mode it is
+        /// called from <see cref="ManualUpdate"/>. Packets sent from it go out in the same update.
+        /// </summary>
+        public Action BeforePeersUpdate;
+
+        /// <summary>
+        /// Total wall-clock <see cref="Stopwatch"/> ticks the logic thread spent working, not waiting for the next
+        /// update. Time the thread is preempted while working counts as working. Not counted in manual mode.
+        /// Sample it twice and divide the difference by the <see cref="Stopwatch.GetTimestamp"/> difference to get
+        /// the share of time the thread was busy. Near 1 it no longer keeps up with <see cref="UpdateTime"/>.
+        /// </summary>
+        public long LogicThreadBusyTicks => Interlocked.Read(ref _logicBusyTicks);
+
+        private long _logicBusyTicks;
+
+        /// <summary>
         /// UDP Only Socket Option
         /// Normally IP sockets send packets of data through routers and gateways until they reach the final destination.
         /// If the DontRoute flag is set to True, then data will be delivered on the local subnet only.
@@ -501,10 +517,13 @@ namespace LiteNetLib
             {
                 try
                 {
+                    long busyStart = Stopwatch.GetTimestamp();
                     ProcessDelayedPackets();
                     float elapsed = (float)(stopwatch.ElapsedTicks / (double)Stopwatch.Frequency * 1000.0);
                     elapsed = elapsed <= 0.0f ? 0.001f : elapsed;
                     stopwatch.Restart();
+
+                    BeforePeersUpdate?.Invoke();
 
                     for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
                     {
@@ -529,6 +548,8 @@ namespace LiteNetLib
                     }
 
                     ProcessNtpRequests(elapsed);
+
+                    Interlocked.Add(ref _logicBusyTicks, Stopwatch.GetTimestamp() - busyStart);
 
                     int sleepTime = UpdateTime - (int)stopwatch.ElapsedMilliseconds;
                     if (sleepTime > 0)
@@ -597,6 +618,8 @@ namespace LiteNetLib
         {
             if (!_manualMode)
                 return;
+
+            BeforePeersUpdate?.Invoke();
 
             for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
             {
