@@ -86,7 +86,7 @@ namespace LiteNetLib.Utils
                 if (list == null)
                 {
                     len = 0;
-                    w.Put(0);
+                    w.Put((ushort)0);
                     return null;
                 }
                 len = list.Count;
