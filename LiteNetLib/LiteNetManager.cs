@@ -184,20 +184,34 @@ namespace LiteNetLib
         public bool ReuseAddress = false;
 
         /// <summary>
-        /// Called on the logic thread in every update, before the peers update and send. In manual mode it is
-        /// called from <see cref="ManualUpdate"/>. Packets sent from it go out in the same update.
+        /// Raised once per update, right before all peers are updated and their queued packets are flushed.
+        /// Packets sent from a handler go out in the same update.
         /// </summary>
-        public Action BeforePeersUpdate;
+        /// <remarks>
+        /// <para>Runs on the logic thread, or on the thread calling <see cref="ManualUpdate"/> in manual mode.
+        /// Use it to send from a single thread or to build outgoing state as late as possible before the flush.
+        /// It does not lower latency compared to calling Send from another thread: both are flushed by the next
+        /// update. Use <see cref="TriggerUpdate"/> for that.</para>
+        /// <para>On the logic thread, an exception from a handler is logged and the update continues.
+        /// In manual mode it propagates to the caller of <see cref="ManualUpdate"/> and peers are not updated in
+        /// that call.</para>
+        /// <para>Do not call <see cref="Stop()"/> from a handler: it waits for the logic thread and deadlocks.</para>
+        /// </remarks>
+        public event Action BeforePeersUpdate;
 
         /// <summary>
-        /// Total wall-clock <see cref="Stopwatch"/> ticks the logic thread spent working, not waiting for the next
-        /// update. Time the thread is preempted while working counts as working. Not counted in manual mode.
-        /// Sample it twice and divide the difference by the <see cref="Stopwatch.GetTimestamp"/> difference to get
-        /// the share of time the thread was busy. Near 1 it no longer keeps up with <see cref="UpdateTime"/>.
+        /// Total <see cref="Stopwatch"/> ticks (not <see cref="TimeSpan"/> ticks) the logic thread spent in
+        /// updates, excluding the wait between them. Includes time spent in <see cref="BeforePeersUpdate"/>
+        /// handlers and time the thread was preempted. Always 0 in manual mode.
         /// </summary>
-        public long LogicThreadBusyTicks => Interlocked.Read(ref _logicBusyTicks);
+        /// <remarks>
+        /// Busy share = delta of this value / delta of <see cref="Stopwatch.GetTimestamp"/> between two samples.
+        /// Near 1 means the thread no longer idles between updates: it cannot keep up with
+        /// <see cref="UpdateTime"/>, or <see cref="TriggerUpdate"/> wakes it continuously.
+        /// </remarks>
+        public long LogicThreadBusyTicks => Interlocked.Read(ref _logicThreadBusyTicks);
 
-        private long _logicBusyTicks;
+        private long _logicThreadBusyTicks;
 
         /// <summary>
         /// UDP Only Socket Option
@@ -515,15 +529,23 @@ namespace LiteNetLib
 
             while (_isRunning)
             {
+                long busyStart = Stopwatch.GetTimestamp();
                 try
                 {
-                    long busyStart = Stopwatch.GetTimestamp();
                     ProcessDelayedPackets();
                     float elapsed = (float)(stopwatch.ElapsedTicks / (double)Stopwatch.Frequency * 1000.0);
                     elapsed = elapsed <= 0.0f ? 0.001f : elapsed;
                     stopwatch.Restart();
 
-                    BeforePeersUpdate?.Invoke();
+                    // Isolated so a failing handler cannot skip peer updates (timeouts, resends) for this tick
+                    try
+                    {
+                        BeforePeersUpdate?.Invoke();
+                    }
+                    catch (Exception e) when (!(e is ThreadAbortException))
+                    {
+                        NetDebug.WriteError("[NM] BeforePeersUpdate handler error: " + e);
+                    }
 
                     for (var netPeer = _headPeer; netPeer != null; netPeer = netPeer.NextPeer)
                     {
@@ -548,12 +570,6 @@ namespace LiteNetLib
                     }
 
                     ProcessNtpRequests(elapsed);
-
-                    Interlocked.Add(ref _logicBusyTicks, Stopwatch.GetTimestamp() - busyStart);
-
-                    int sleepTime = UpdateTime - (int)stopwatch.ElapsedMilliseconds;
-                    if (sleepTime > 0)
-                        _updateTriggerEvent.WaitOne(sleepTime);
                 }
                 catch (ThreadAbortException)
                 {
@@ -563,6 +579,13 @@ namespace LiteNetLib
                 {
                     NetDebug.WriteError("[NM] LogicThread error: " + e);
                 }
+
+                Interlocked.Add(ref _logicThreadBusyTicks, Stopwatch.GetTimestamp() - busyStart);
+
+                // Outside the try: a failing update still waits instead of spinning
+                int sleepTime = UpdateTime - (int)stopwatch.ElapsedMilliseconds;
+                if (sleepTime > 0)
+                    _updateTriggerEvent.WaitOne(sleepTime);
             }
             stopwatch.Stop();
         }
