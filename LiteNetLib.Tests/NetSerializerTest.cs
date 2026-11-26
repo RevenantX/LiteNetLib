@@ -284,6 +284,29 @@ namespace LiteNetLib.Tests
 
             Assert.That(readPackage.SampleClassArray, Is.EqualTo(_samplePacket.SampleClassArray).AsCollection);
             Assert.That(readPackage.SampleClassList, Is.EqualTo(_samplePacket.SampleClassList).AsCollection);
+
+            //null list test
+            _samplePacket.SampleClassList = null;
+            _samplePacket.VectorList = null;
+
+            writer.Reset();
+            _packetProcessor.Write(writer, _samplePacket);
+            reader.SetSource(writer);
+            _packetProcessor.ReadAllPackets(reader);
+
+            Assert.That(readPackage.SampleClassList, Is.Empty);
+            Assert.That(readPackage.VectorList, Is.Empty);
+            Assert.That(readPackage.FastVectorList, Is.EqualTo(_samplePacket.FastVectorList).AsCollection);
+
+            //null last list test
+            _samplePacket.FastVectorList = null;
+
+            writer.Reset();
+            _packetProcessor.Write(writer, _samplePacket);
+            reader.SetSource(writer);
+            _packetProcessor.ReadAllPackets(reader);
+
+            Assert.That(readPackage.FastVectorList, Is.Empty);
         }
     }
 }
