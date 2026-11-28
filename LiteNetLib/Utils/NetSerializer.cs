@@ -64,6 +64,11 @@ namespace LiteNetLib.Utils
             protected TProperty[] WriteArrayHelper(TClass inf, NetDataWriter w)
             {
                 var arr = GetterArr(inf);
+                if (arr == null)
+                {
+                    w.Put((ushort)0);
+                    return Array.Empty<TProperty>();
+                }
                 w.Put((ushort)arr.Length);
                 return arr;
             }
