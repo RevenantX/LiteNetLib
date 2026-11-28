@@ -308,5 +308,32 @@ namespace LiteNetLib.Tests
 
             Assert.That(readPackage.FastVectorList, Is.Empty);
         }
+
+        [Test, MaxTime(2000)]
+        public void NullArraysAreWrittenAsEmpty()
+        {
+            _samplePacket.SomeIntArray = null;
+            _samplePacket.SomeVectors = null;
+            _samplePacket.SomeFastVectors = null;
+            _samplePacket.TestArray = null;
+            _samplePacket.SampleClassArray = null;
+
+            var writer = new NetDataWriter();
+            _packetProcessor.Write(writer, _samplePacket);
+
+            var reader = new NetDataReader(writer);
+            SamplePacket readPackage = null;
+            _packetProcessor.SubscribeReusable<SamplePacket>(packet => readPackage = packet);
+            _packetProcessor.ReadAllPackets(reader);
+
+            Assert.That(readPackage, Is.Not.Null);
+            Assert.That(readPackage.SomeIntArray, Is.Empty);
+            Assert.That(readPackage.SomeVectors, Is.Empty);
+            Assert.That(readPackage.SomeFastVectors, Is.Empty);
+            Assert.That(readPackage.TestArray, Is.Empty);
+            Assert.That(readPackage.SampleClassArray, Is.Empty);
+            Assert.That(readPackage.SampleClassList, Is.EqualTo(_samplePacket.SampleClassList).AsCollection);
+            Assert.That(readPackage.FastVectorList, Is.EqualTo(_samplePacket.FastVectorList).AsCollection);
+        }
     }
 }
